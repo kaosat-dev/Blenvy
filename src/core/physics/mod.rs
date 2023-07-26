@@ -2,14 +2,12 @@ pub mod physics_replace_proxies;
 pub use physics_replace_proxies::*;
 
 pub mod utils;
-pub(crate) use utils::*;
 
 pub mod controls;
 pub use controls::*;
 
 use bevy::prelude::*;
-// use crate::state::{GameState};
-use crate::Collider;
+// use crate::Collider;
 pub struct PhysicsPlugin;
 impl Plugin for PhysicsPlugin {
   fn build(&self, app: &mut App) {

@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy::render::primitives::Aabb;
+// use bevy::render::primitives::Aabb;
 use bevy_rapier3d::geometry::Collider as RapierCollider;
 use bevy_rapier3d::dynamics::RigidBody as RapierRigidBody;
 use bevy_rapier3d::prelude::{ComputedColliderShape, ActiveEvents, ActiveCollisionTypes};

@@ -3,16 +3,11 @@ use core::ops::Deref;
 
 use serde_json::Value;
 use serde::de::DeserializeSeed;
-use serde::{Deserialize, Serialize};
-
 
 use bevy::prelude::*;
 use bevy::reflect::serde::{UntypedReflectDeserializer, ReflectSerializer};
 use bevy::reflect::TypeRegistryInternal;
 use bevy::gltf::{Gltf, GltfExtras};
-
-use crate::Player;
-use crate::camera::{CameraTracking, CameraTrackingOffset};
 
 use super::capitalize_first_letter;
 
@@ -120,7 +115,7 @@ pub fn gltf_extras_to_components(
     type_registry: &TypeRegistryInternal
   ) -> Vec<Box<dyn Reflect>> {
     println!("RON string {}", ron_string);
-    let lookup: HashMap<String, Value> = ron::from_str(ron_string.as_str()).unwrap();  //serde_json::from_str(ron_string.as_str()).unwrap();
+    let lookup: HashMap<String, Value> = ron::from_str(ron_string.as_str()).unwrap(); 
     let mut components: Vec<Box<dyn Reflect>> = Vec::new();
     for (key, value) in lookup.into_iter() {
       println!("KEY {} , VALUE {}", key, value);
@@ -148,7 +143,7 @@ pub fn gltf_extras_to_components(
           }
         }
       
-        let mut ron_string = format!("
+        let ron_string = format!("
           {{
               \"{}\":{}
             }}",

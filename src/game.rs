@@ -63,14 +63,13 @@ pub fn test_collision_events(
     mut contact_force_events: EventReader<ContactForceEvent>,
 )
 {
-
     for collision_event in collision_events.iter() {
         println!("collision");
         match collision_event {
-            CollisionEvent::Started(entity1, entity2 ,_) => {
+            CollisionEvent::Started(_entity1, _entity2 ,_) => {
                 println!("collision started")
             }
-            CollisionEvent::Stopped(entity1, entity2 ,_) => {
+            CollisionEvent::Stopped(_entity1, _entity2 ,_) => {
                 println!("collision ended")
 
             }
