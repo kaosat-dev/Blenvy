@@ -27,7 +27,6 @@ impl Default for CameraTrackingOffset {
 
 impl CameraTrackingOffset {
     fn new (input: Vec3) -> Self {
-        println!("NEEEW");
         CameraTrackingOffset(input)
     }
 }

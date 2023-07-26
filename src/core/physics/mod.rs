@@ -9,7 +9,7 @@ pub use controls::*;
 
 use bevy::prelude::*;
 // use crate::state::{GameState};
-use super::Collider;
+use crate::Collider;
 pub struct PhysicsPlugin;
 impl Plugin for PhysicsPlugin {
   fn build(&self, app: &mut App) {

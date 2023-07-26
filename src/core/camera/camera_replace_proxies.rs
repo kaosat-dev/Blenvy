@@ -3,11 +3,11 @@ use bevy::prelude::*;
 use bevy::core_pipeline::bloom::{BloomSettings, BloomCompositeMode};
 use bevy::core_pipeline::tonemapping::{Tonemapping, DebandDither};
 
-use super::CameraTracking;
+use super::CameraTrackingOffset;
 
 pub fn camera_replace_proxies (
     mut commands: Commands,
-    mut added_cameras: Query<(Entity, &mut Camera), (Added<Camera>, With<CameraTracking>)>,
+    mut added_cameras: Query<(Entity, &mut Camera), (Added<Camera>, With<CameraTrackingOffset>)>,
 ) {
 
     for (entity, mut camera) in added_cameras.iter_mut(){
@@ -18,11 +18,11 @@ pub fn camera_replace_proxies (
             DebandDither::Enabled
           )
           .insert(
-            Tonemapping::None
+            Tonemapping::BlenderFilmic
           )
           .insert(
             BloomSettings{
-              intensity: 0.08,
+              intensity: 0.01,
               composite_mode:BloomCompositeMode::Additive,
               ..default()
              }
