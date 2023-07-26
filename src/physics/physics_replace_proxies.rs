@@ -55,14 +55,14 @@ pub fn physics_replace_proxies (
             *visibility = Visibility::Hidden;
         }
 
-        let rapier_collider:RapierCollider;
+        let mut rapier_collider:RapierCollider;
         match collider_proxy{
             Collider::Ball(radius) => {
                 println!("proxy: ball");
                 rapier_collider = RapierCollider::ball(*radius);
                 commands.entity(entity)
                     .insert(rapier_collider)
-                    .insert(ActiveEvents::COLLISION_EVENTS)
+                    .insert(ActiveEvents::COLLISION_EVENTS)  // FIXME: this is just for demo purposes !!!
                     ;
             }
             Collider::Cuboid(size) => {
@@ -70,7 +70,7 @@ pub fn physics_replace_proxies (
                 rapier_collider = RapierCollider::cuboid(size.x, size.y, size.z);
                 commands.entity(entity)
                     .insert(rapier_collider)
-                    .insert(ActiveEvents::COLLISION_EVENTS)
+                    .insert(ActiveEvents::COLLISION_EVENTS)  // FIXME: this is just for demo purposes !!!
                     ;
             }
             Collider::Capsule(a, b, radius) => {
@@ -78,7 +78,7 @@ pub fn physics_replace_proxies (
                 rapier_collider = RapierCollider::capsule(*a, *b, *radius);
                 commands.entity(entity)
                     .insert(rapier_collider)
-                    .insert(ActiveEvents::COLLISION_EVENTS)
+                    .insert(ActiveEvents::COLLISION_EVENTS)  // FIXME: this is just for demo purposes !!!
                     ;
             }
             Collider::Mesh => {
@@ -88,17 +88,13 @@ pub fn physics_replace_proxies (
                     rapier_collider = RapierCollider::from_bevy_mesh(collider_mesh, &ComputedColliderShape::TriMesh).unwrap();
                     commands.entity(entity)
                         .insert(rapier_collider)
+                         // FIXME: this is just for demo purposes !!!
                         .insert(ActiveCollisionTypes::default() | ActiveCollisionTypes::KINEMATIC_STATIC | ActiveCollisionTypes::STATIC_STATIC | ActiveCollisionTypes::DYNAMIC_STATIC)
-
                         .insert(ActiveEvents::COLLISION_EVENTS)
                         ;
                     //  .insert(ActiveEvents::COLLISION_EVENTS)
-                    break;
+                    // break;
                     // RapierCollider::convex_hull(points)
-                    /*commands.entity(entity)
-                        .insert(rapier_collider)
-                        ;
-                    */
                 }
 
             }
