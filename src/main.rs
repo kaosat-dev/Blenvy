@@ -7,7 +7,10 @@ mod core;
 use crate::core::*;
 
 mod game;
-use crate::game::*;
+use game::*;
+
+mod test_components;
+use test_components::*;
 
 #[derive(Component, Reflect, Default, Debug, )]
 #[reflect(Component)]
@@ -43,7 +46,8 @@ fn main(){
         RapierDebugRenderPlugin::default(),
         // our custom plugins
         CorePlugin, // reusable plugins
-        DemoPlugin // specific to our game
+        DemoPlugin, // specific to our game
+        ComponentsTestPlugin // Showcases different type of components /structs
     ))
 
     .add_state::<AppState>()

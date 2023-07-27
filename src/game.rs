@@ -33,6 +33,12 @@ pub struct ShouldBeWithPlayer;
 /// Demo marker component
 pub struct Interactible;
 
+#[derive(Component, Reflect, Default, Debug, )]
+#[reflect(Component)]
+/// Demo marker component
+pub struct Pickable;
+
+
 
 fn player_move_demo(
     keycode: Res<Input<KeyCode>>,
@@ -87,6 +93,7 @@ impl Plugin for DemoPlugin {
   fn build(&self, app: &mut App) {
       app
         .register_type::<Interactible>()
+        .register_type::<Pickable>()
         .register_type::<SoundMaterial>()
         .register_type::<Player>()
         // little helper utility, to automatically inject components that are dependant on an other component

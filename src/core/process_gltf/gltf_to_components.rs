@@ -125,20 +125,68 @@ pub fn gltf_extras_to_components(
       parsed_value = ron::from_str(parsed_value.as_str()).unwrap_or(parsed_value);
   
       if let Some(type_registration) = type_registry.get_with_short_name(capitalized_type_name.as_str()) {  
-        debug!("parsed value {}",parsed_value);       
+        // FIXME : in the long run, replace all the text based, clunky unoptimised things with use of type_registration.type_info()
+        let blabla = type_registry.get_with_name("bevy_render::color::Color").unwrap();
+        println!("TYPE INFO {:?}", type_registration.type_info());
+        // println!("parsed value {}",parsed_value);       
         if parsed_value == "" {
           parsed_value = "()".to_string();
         } 
-        if parsed_value.starts_with("[") && parsed_value.ends_with("]")  {
-          // FIXME/ horrible, and how about actual vec!s and not vec2/vec3 s?
+        else if parsed_value.starts_with("[") && parsed_value.ends_with("]")  {
+          // FIXME/ horrible, and how about actual vec!s and not vec2/vec3 s? 
+          // the worst part is, we have the component information, so we SHOULD be able to infer the input struct type
+          // perhaps use better logic than the unwrap ? we could do parsed:Vec<u64> as well, and drop it otherwise ?
           let parsed: Vec<f32> = ron::from_str(&parsed_value).unwrap();
           if parsed.len() == 2 {
             parsed_value = format!("((x:{},y:{}))", parsed[0], parsed[1]);
           }
-          if parsed.len() == 3 {          
+          // FIXME god awfull hacks
+          if parsed.len() == 3 && !key.to_lowercase().contains("color"){          
             parsed_value = format!("((x:{},y:{},z:{}))", parsed[0], parsed[1], parsed[2]);
           }
-          
+          if parsed.len() == 3 && key.to_lowercase().contains("color"){          
+            parsed_value = format!("(Rgba(red:{},green:{},blue:{}, alpha: 1.0))", parsed[0], parsed[1], parsed[2]);
+          }
+          if parsed.len() == 4 && !key.to_lowercase().contains("color") {          
+            parsed_value = format!("((x:{},y:{},z:{},w:{}))", parsed[0], parsed[1], parsed[2], parsed[3]);
+          }
+          if parsed.len() == 4 && key.to_lowercase().contains("color"){          
+            parsed_value = format!("(Rgba(red:{},green:{},blue:{}, alpha:{}))", parsed[0], parsed[1], parsed[2], parsed[3]);
+          }
+          /*match ron::from_str(&parsed_value) {
+            Err(e) => panic!("{:?}", e),
+            Ok::<Vec<f32>, _>(parsed) => {
+              if parsed.len() == 2 {
+                parsed_value = format!("((x:{},y:{}))", parsed[0], parsed[1]);
+              }
+              if parsed.len() == 3 {          
+                parsed_value = format!("((x:{},y:{},z:{}))", parsed[0], parsed[1], parsed[2]);
+              }
+            },
+            Ok::<Color, _>(parsed) => {
+              parsed_value = format!("((x:{},y:{}))", parsed[0], parsed[1]);
+            }
+          }*/
+         
+        }
+        // FIXME: inneficient
+        else if parsed_value.starts_with("\"") && parsed_value.ends_with("\"") {
+            parsed_value = format!("({})",parsed_value);
+        }
+        else {
+          // FIXME: inneficient
+          if let Ok(parsed) =  parsed_value.parse::<f32>() {
+            parsed_value = format!("({})",parsed);
+          }
+          else if let Ok(parsed) =  parsed_value.parse::<f64>() {
+            parsed_value = format!("({})",parsed);
+          }
+          else if let Ok(parsed) =  parsed_value.parse::<u64>() {
+            parsed_value = format!("({})",parsed);
+          }
+          else if let Ok(parsed) =  parsed_value.parse::<bool>() {
+            parsed_value = format!("({})",parsed);
+          }
         }
       
         let ron_string = format!("{{ \"{}\":{} }}",
@@ -146,14 +194,15 @@ pub fn gltf_extras_to_components(
           parsed_value
         );
 
-        /* 
-        let test_struct = CameraTrackingOffset::default();
+         
+        // usefull to determine what an entity looks like Serialized
+        /*let test_struct = TuppleTestStr::default();
         let serializer = ReflectSerializer::new(&test_struct, &type_registry);
         let serialized =
             ron::ser::to_string_pretty(&serializer, ron::ser::PrettyConfig::default()).unwrap();
-        println!("serialized player {}", serialized);*/
+        println!("serialized Component {}", serialized);*/
 
-        debug!("component data json string {}", ron_string);
+        debug!("component data ron string {}", ron_string);
         let mut deserializer =  ron::Deserializer::from_str(ron_string.as_str()).unwrap();
         let reflect_deserializer = UntypedReflectDeserializer::new(&type_registry);
         let component = reflect_deserializer.deserialize(&mut deserializer).expect(format!("failed to deserialize component {} with value: {}", key, value).as_str());
