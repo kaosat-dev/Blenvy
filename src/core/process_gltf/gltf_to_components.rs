@@ -114,39 +114,34 @@ pub fn gltf_extras_to_components(
     ron_string: &String,
     type_registry: &TypeRegistryInternal
   ) -> Vec<Box<dyn Reflect>> {
-    println!("RON string {}", ron_string);
     let lookup: HashMap<String, Value> = ron::from_str(ron_string.as_str()).unwrap(); 
     let mut components: Vec<Box<dyn Reflect>> = Vec::new();
     for (key, value) in lookup.into_iter() {
-      println!("KEY {} , VALUE {}", key, value);
       let type_string = key.replace("component: ", "").trim().to_string();
       let capitalized_type_name = capitalize_first_letter(type_string.as_str());
-      println!("capitalized_type_name {}", capitalized_type_name);
+      // println!("capitalized_type_name {}", capitalized_type_name);
+
       let mut parsed_value = format!("{}", value);
       parsed_value = ron::from_str(parsed_value.as_str()).unwrap_or(parsed_value);
   
       if let Some(type_registration) = type_registry.get_with_short_name(capitalized_type_name.as_str()) {  
-        println!("parsed value {}",parsed_value);       
+        debug!("parsed value {}",parsed_value);       
         if parsed_value == "" {
           parsed_value = "()".to_string();
         } 
         if parsed_value.starts_with("[") && parsed_value.ends_with("]")  {
-          // FIXME/ horrible
+          // FIXME/ horrible, and how about actual vec!s and not vec2/vec3 s?
           let parsed: Vec<f32> = ron::from_str(&parsed_value).unwrap();
-          if parsed.len() == 3 {
-            let bla = Vec3::from_array([parsed[0], parsed[1], parsed[2]]);
-            println!("TOTO 2222 {:?}", bla);
-            /*let serializer = ReflectSerializer::new(&bla, &type_registry);
-            let serialized = ron::ser::to_string_pretty(&serializer, ron::ser::PrettyConfig::default()).unwrap();
-            parsed_value = serialized;*/
-            parsed_value = format!("((x:{},y:{},z:{}))", bla.x, bla.y, bla.z);
+          if parsed.len() == 2 {
+            parsed_value = format!("((x:{},y:{}))", parsed[0], parsed[1]);
           }
+          if parsed.len() == 3 {          
+            parsed_value = format!("((x:{},y:{},z:{}))", parsed[0], parsed[1], parsed[2]);
+          }
+          
         }
       
-        let ron_string = format!("
-          {{
-              \"{}\":{}
-            }}",
+        let ron_string = format!("{{ \"{}\":{} }}",
           type_registration.type_name(),
           parsed_value
         );
@@ -164,7 +159,7 @@ pub fn gltf_extras_to_components(
         let component = reflect_deserializer.deserialize(&mut deserializer).expect(format!("failed to deserialize component {} with value: {}", key, value).as_str());
 
         components.push(component);
-        println!("found type registration for {}", capitalized_type_name);
+        debug!("found type registration for {}", capitalized_type_name);
       } else {
         warn!("no type registration for {}", capitalized_type_name);
       }
