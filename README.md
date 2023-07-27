@@ -20,18 +20,35 @@ It also allows you to setup 'blueprints' in Blender by using collections (the re
 * minimal setup & code,  you can have something basic running fast
 * opensource 
 
+There is a [video tutorial/explanation]() if you want, or you can skip to the text version ahead
+
 ## Workflow
 
 The workflow goes as follows (once you got your Bevy code setup)
-- add the ```process_gltf``` [module code](./core/process_gltf/) 
+
+### All core/helper modules
+
+- add the ```core```[module](./src/core/)
+- add the ```CorePlugin```, to your app
+    ```rust 
+    .add_plugins((
+        CorePlugin
+    ))
+    ``` (see  [here](./src/main.rs#45))
+
+### Or, More modular 
+
+- add the ```process_gltf``` [module code](./src/core/process_gltf/) 
 - add the ```ProcessGltfPlugin```, to your app
     ```rust 
     .add_plugins((
         ProcessGltfPlugin
     ))
     ```
-    (and any other ```proxy``` processing plugins that you need )
-    see [here](./main.rs#69)
+    (and any other ```proxy``` processing plugins that you need (or create your own))
+    see [here](./src/core/mod.rs)
+
+### Then...
 
 - create & register all your components you want to be able to set from the Blender side (this is basic Bevy, no specific work needed)
 
@@ -110,7 +127,7 @@ Included are the following modules / tools
     you get a warning if you use this though, as I consider this to be stop-gap solution (usually you should have either a bundle, or directly define all needed components)
  * [```camera```](./src/core/camera/) an example post process/replace proxies plugin, for Camera that also adds CameraTracking functions (to enable a camera to follow an object, ie the player)
  * [```lighting```](./src/core/lighting/) an other example post process/replace proxies plugin for lighting, that toggles shadows, lighting config, etc so that things look closer to the original Blender data
-   * [```physics```](./src/core/physics/) an other example post process/replace proxies plugin for physics, that add [Rapier](https://rapier.rs/docs/user_guides/bevy_plugin/getting_started_bevy) Colliders, Rigidbodies etc . Most of these do not need proxies these days, as the most Rapier components are in the Registry & can be used directly
+ * [```physics```](./src/core/physics/) an other example post process/replace proxies plugin for physics, that add [Rapier](https://rapier.rs/docs/user_guides/bevy_plugin/getting_started_bevy) Colliders, Rigidbodies etc . Most of these do not need proxies these days, as the most Rapier components are in the Registry & can be used directly
 
 
 
@@ -173,4 +190,8 @@ It is **very** barebones and messy, but it does a minimal ok job.
 
 ## License
 
-This example, all its contents & assets is licensed under MIT.
+This example, all its code, contents & assets is Dual-licensed under either of
+
+- Apache License, Version 2.0, ([LICENSE-APACHE](/LICENSE_APACHE) or https://www.apache.org/licenses/LICENSE-2.0)
+- MIT license ([LICENSE-MIT](/LICENSE_MIT) or https://opensource.org/licenses/MIT)
+
