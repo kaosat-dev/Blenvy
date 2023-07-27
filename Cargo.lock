@@ -1217,7 +1217,6 @@ dependencies = [
  "bevy_rapier3d",
  "ron",
  "serde",
- "serde_json",
 ]
 
 [[package]]
