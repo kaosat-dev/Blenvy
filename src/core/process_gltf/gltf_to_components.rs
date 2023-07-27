@@ -1,3 +1,4 @@
+use std::any::TypeId;
 use std::collections::HashMap;
 use core::ops::Deref;
 
@@ -6,7 +7,7 @@ use serde::de::DeserializeSeed;
 
 use bevy::prelude::*;
 use bevy::reflect::serde::{UntypedReflectDeserializer, ReflectSerializer};
-use bevy::reflect::TypeRegistryInternal;
+use bevy::reflect::{TypeRegistryInternal, TypeInfo};
 use bevy::gltf::{Gltf, GltfExtras};
 
 use super::capitalize_first_letter;
@@ -125,14 +126,89 @@ pub fn gltf_extras_to_components(
       parsed_value = ron::from_str(parsed_value.as_str()).unwrap_or(parsed_value);
   
       if let Some(type_registration) = type_registry.get_with_short_name(capitalized_type_name.as_str()) {  
-        // FIXME : in the long run, replace all the text based, clunky unoptimised things with use of type_registration.type_info()
-        let blabla = type_registry.get_with_name("bevy_render::color::Color").unwrap();
-        println!("TYPE INFO {:?}", type_registration.type_info());
+        // println!("TYPE INFO {:?}", type_registration.type_info());
+
+        match type_registration.type_info() {
+          TypeInfo::TupleStruct (info) => {
+            // we handle tupple strucs with only one field differently, as Blender's custom properties with custom ui (float, int, bool, etc) always give us a tupple struct 
+            if info.field_len() == 1 { 
+              let field = info.field_at(0).expect("we should always have at least one field here");
+              let field_name = field.type_name();   
+              // println!("field name {}", field_name);           
+              // let bla = TypeId::of::<f32>();
+              // TODO: find a way to cast with typeId instead of this matching
+              /*match field.type_id(){
+                TypeId::of::<f32>() => {
+                  println!("WE HAVE A f32");
+                }
+                }
+                Vec3 => {
+                  println!("WE HAVE A VEC3");
+                  let bla:Vec3 = ron::from_str(&parsed_value).unwrap();
+                  println!("bla {}", bla)
+                }
+                _ =>{}
+              }*/
+              let mut formated = parsed_value.clone();
+              match field_name {
+                  "f32" => {
+                    formated = parsed_value.parse::<f32>().unwrap().to_string();
+                  }
+                  "f64" => {
+                    formated = parsed_value.parse::<f64>().unwrap().to_string();
+                  }
+                  "u8" => {
+                    formated = parsed_value.parse::<u8>().unwrap().to_string();
+                  }
+                  "u16" => {
+                    formated = parsed_value.parse::<u16>().unwrap().to_string();
+                  }
+                  "u32" => {
+                    formated = parsed_value.parse::<u32>().unwrap().to_string();
+                  }
+                  "u64" => {
+                    formated = parsed_value.parse::<u64>().unwrap().to_string();
+                  }
+                  "u128" => {
+                    formated = parsed_value.parse::<u128>().unwrap().to_string();
+                  }
+                
+                  "glam::f32::vec2::Vec2" => {
+                    //println!("WE HAVE A VEC2 {}", parsed_value);
+                    let parsed: Vec<f32> = ron::from_str(&parsed_value).unwrap();
+                    formated = format!("(x:{},y:{})", parsed[0], parsed[1]);
+                  }
+                  "glam::f32::vec3::Vec3" => {
+                    //println!("WE HAVE A VEC3 {}", parsed_value);
+                    let parsed: Vec<f32> = ron::from_str(&parsed_value).unwrap();
+                    formated = format!("(x:{},y:{},z:{})", parsed[0], parsed[1], parsed[2]);
+                  },
+                  "bevy_render::color::Color" => {
+                    let parsed: Vec<f32> = ron::from_str(&parsed_value).unwrap();
+                    if parsed.len() == 3 {          
+                      formated = format!("Rgba(red:{},green:{},blue:{}, alpha: 1.0)", parsed[0], parsed[1], parsed[2]);
+                    }
+                    if parsed.len() == 4 {          
+                      formated = format!("Rgba(red:{},green:{},blue:{}, alpha:{})", parsed[0], parsed[1], parsed[2], parsed[3]);
+                    }
+                  }
+                  _ => {}
+              }
+
+              parsed_value = format!("({formated})");
+              
+            }
+          }
+            _ => {
+
+            }
+        }
+
         // println!("parsed value {}",parsed_value);       
         if parsed_value == "" {
           parsed_value = "()".to_string();
         } 
-        else if parsed_value.starts_with("[") && parsed_value.ends_with("]")  {
+        /*else if parsed_value.starts_with("[") && parsed_value.ends_with("]")  {
           // FIXME/ horrible, and how about actual vec!s and not vec2/vec3 s? 
           // the worst part is, we have the component information, so we SHOULD be able to infer the input struct type
           // perhaps use better logic than the unwrap ? we could do parsed:Vec<u64> as well, and drop it otherwise ?
@@ -153,20 +229,6 @@ pub fn gltf_extras_to_components(
           if parsed.len() == 4 && key.to_lowercase().contains("color"){          
             parsed_value = format!("(Rgba(red:{},green:{},blue:{}, alpha:{}))", parsed[0], parsed[1], parsed[2], parsed[3]);
           }
-          /*match ron::from_str(&parsed_value) {
-            Err(e) => panic!("{:?}", e),
-            Ok::<Vec<f32>, _>(parsed) => {
-              if parsed.len() == 2 {
-                parsed_value = format!("((x:{},y:{}))", parsed[0], parsed[1]);
-              }
-              if parsed.len() == 3 {          
-                parsed_value = format!("((x:{},y:{},z:{}))", parsed[0], parsed[1], parsed[2]);
-              }
-            },
-            Ok::<Color, _>(parsed) => {
-              parsed_value = format!("((x:{},y:{}))", parsed[0], parsed[1]);
-            }
-          }*/
          
         }
         // FIXME: inneficient
@@ -187,7 +249,7 @@ pub fn gltf_extras_to_components(
           else if let Ok(parsed) =  parsed_value.parse::<bool>() {
             parsed_value = format!("({})",parsed);
           }
-        }
+        }*/
       
         let ron_string = format!("{{ \"{}\":{} }}",
           type_registration.type_name(),
@@ -202,7 +264,7 @@ pub fn gltf_extras_to_components(
             ron::ser::to_string_pretty(&serializer, ron::ser::PrettyConfig::default()).unwrap();
         println!("serialized Component {}", serialized);*/
 
-        debug!("component data ron string {}", ron_string);
+        println!("component data ron string {}", ron_string);
         let mut deserializer =  ron::Deserializer::from_str(ron_string.as_str()).unwrap();
         let reflect_deserializer = UntypedReflectDeserializer::new(&type_registry);
         let component = reflect_deserializer.deserialize(&mut deserializer).expect(format!("failed to deserialize component {} with value: {}", key, value).as_str());

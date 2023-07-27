@@ -76,9 +76,11 @@ impl Plugin for ComponentsTestPlugin {
         .register_type::<TuppleVec2>()
         .register_type::<TuppleVec3>()
         .register_type::<EnumTest>()
-
         .register_type::<TuppleTestColor>()
-        // .register_type::<TuppleVec>()
+
+        .register_type::<TuppleVec>()
+        .register_type::<Vec<String>>()
+
        ;
   }
 }
