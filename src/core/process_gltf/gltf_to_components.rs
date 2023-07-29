@@ -31,7 +31,7 @@ pub fn gltf_extras_to_components(
         added_components = reflect_components.len();
         debug!("Found components {}", added_components);
 
-        // we assign the components specified in entity_data/xxx_components objects to their parent node
+        // we assign the components specified /xxx_components objects to their parent node
         let mut target_entity = entity;
         // if the node contains "components" or ends with "_pa" (ie add to parent), the components will not be added to the entity itself but to its parent
         // this is mostly used for Blender collections
