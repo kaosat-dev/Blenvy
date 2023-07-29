@@ -1,5 +1,5 @@
 
-# Blender_gltf_components
+# Blender_bevy_components_worklflow
 
 ![demo](./docs/blender_gltf_components.png)
 
