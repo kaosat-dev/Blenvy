@@ -259,9 +259,6 @@ def auto_export():
     folder_path = os.path.dirname(file_path)
     addon_prefs = bpy.context.preferences.addons[__name__].preferences
 
-
-    library_scene = bpy.data.scenes["library"]
-
     """
     print("folder", folder_path)
         scn_col = bpy.context.scene.collection
@@ -315,7 +312,7 @@ def auto_export():
         export_cameras=True,
         export_extras=True, # For custom exported properties.
         export_lights=True,
-        export_yup=False,
+        export_yup=True,
         export_skins=True,
         export_morph=False,
         export_apply=False,
@@ -323,7 +320,7 @@ def auto_export():
     )
         
     for key in addon_prefs.__annotations__.keys():
-        if key is not "export_game" and key is not "export_game_scene_name" and key is not "export_game_output_name": #FIXME: ugh, cleanup
+        if key is not "export_on_library_changes" and key is not "export_main_scene_name" and key is not "export_main_output_name" and key is not "export_library_scene_name": #FIXME: ugh, cleanup
             gltf_export_preferences[key] = getattr(addon_prefs,key)
             print("overriding setting", key, "value", getattr(addon_prefs,key))
 
@@ -338,29 +335,32 @@ def auto_export():
     # export the main game world
     # export_main(game_scene, folder_path, gltf_export_preferences)
 
-    export_game = getattr(addon_prefs,"export_game")
-    export_game_scene_name = getattr(addon_prefs,"export_game_scene_name")
-    export_game_output_name = getattr(addon_prefs,"export_game_output_name")
+    export_main_scene_name = getattr(addon_prefs,"export_main_scene_name")
+    export_main_output_name = getattr(addon_prefs,"export_main_output_name")
+    export_on_library_changes = getattr(addon_prefs,"export_on_library_changes")
 
-    print("exporting ??", export_game, export_game_scene_name, export_game_output_name)
+    export_library_scene_name = getattr(addon_prefs,"export_library_scene_name")
+
+    print("exporting ??", export_on_library_changes, export_main_scene_name, export_main_output_name)
     print("last changed", bpy.context.scene.changedScene)
     # optimised variation
     last_changed = bpy.context.scene.changedScene #get_changedScene()
-    if last_changed == export_game_scene_name:
+    if last_changed == export_main_scene_name:
          # export the main game world
-        if export_game:
-            game_scene = bpy.data.scenes[export_game_scene_name]
+        game_scene = bpy.data.scenes[export_main_scene_name]
 
-            print("game world changed, exporting game gltf only")
-            export_main(game_scene, folder_path, gltf_export_preferences, export_game_output_name)
-    if last_changed == "library": # if the library has changed, so will likely the game world that uses the library assets
+        print("game world changed, exporting game gltf only")
+        export_main(game_scene, folder_path, gltf_export_preferences, export_main_output_name)
+    if last_changed == export_library_scene_name and export_library_scene_name is not "" : # if the library has changed, so will likely the game world that uses the library assets
         print("library changed, exporting both game & library gltf")
+        library_scene = bpy.data.scenes[export_library_scene_name]
+
         # export the library 
         # export_library_merged(library_scene, folder_path, gltf_export_preferences)
         # export the main game world
-        if export_game:
-            game_scene = bpy.data.scenes[export_game_scene_name]
-            export_main(game_scene, folder_path, gltf_export_preferences, export_game_output_name)
+        if export_on_library_changes:
+            game_scene = bpy.data.scenes[export_main_scene_name]
+            export_main(game_scene, folder_path, gltf_export_preferences, export_main_output_name)
 
     return {'FINISHED'}
 
@@ -403,22 +403,30 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         default='GLB'
     )
 
-    export_game: BoolProperty(
-        name='Export world/level',
-        description='Export world/level into a seperate gltf file',
-        default=False
-    )
-    export_game_scene_name: StringProperty(
-        name='Scene to auto export',
+  
+    export_main_scene_name: StringProperty(
+        name='Main scene',
         description='The name of the main scene/level/world to auto export',
-        default='world'
+        default='Scene'
     )
-    export_game_output_name: StringProperty(
+    export_main_output_name: StringProperty(
         name='Glb output name',
         description='The glb output name for the main scene to auto export',
         default='world'
     )
+    export_on_library_changes: BoolProperty(
+        name='Export on library changes',
+        description='Export main scene on library changes',
+        default=False
+    )
+    export_library_scene_name: StringProperty(
+        name='Library scene',
+        description='The name of the library scene to auto export',
+        default=''
+    )
 
+
+    #####
     export_copyright: StringProperty(
         name='Copyright',
         description='Legal rights and conditions for the model',
@@ -624,7 +632,7 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
     export_yup: BoolProperty(
         name='+Y Up',
         description='Export using glTF convention, +Y up',
-        default=False
+        default=True
     )
 
     use_visible: BoolProperty(
