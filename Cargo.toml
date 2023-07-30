@@ -1,16 +1,21 @@
 [package]
-name = "blender-worklfow"
-version = "0.1.0"
+name = "blender_bevy_components_worklflow"
+version = "0.2.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-bevy="0.11.0"
-serde = "*"
-ron="*"
+[dev-dependencies]
+bevy="0.11"
 bevy_rapier3d = { version = "0.22.0", features = [ "serde-serialize", "debug-render-3d", "enhanced-determinism"] }
 bevy_editor_pls = { git="https://github.com/jakobhellermann/bevy_editor_pls.git" }
+
+[dependencies]
+bevy = { version = "0.11", default-features = false, features = ["bevy_asset", "bevy_scene", "bevy_gltf"] }
+serde = "*"
+ron="*"
+
+[[example]]
+name = "general"
+path = "examples/general/main.rs"
 
 #### --------------------Dev/ debug-------------------------------
 # Enable high optimizations for dependencies (incl. Bevy), but not for our code:
