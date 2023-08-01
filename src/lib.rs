@@ -17,7 +17,7 @@ use bevy::prelude::{
 /// Add this plugin to your Bevy app to get access to this feature
 /// ```
 /// # use bevy::prelude::*;
-/// # use bevy_gltf_components::prelude::*;
+/// # use bevy_gltf_components::ComponentsFromGltfPlugin::*;
 /// 
 /// 
 /// fn main() {
