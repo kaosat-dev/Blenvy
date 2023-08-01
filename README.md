@@ -184,7 +184,7 @@ pub fn setup_game(
 
 ```
 
-# Workflow with blender
+# Workflow with blender / demo information
 
 This example, is actually closer to a boilerplate + tooling showcases how to use a minimalistic [Blender](https://www.blender.org/) (gltf) centric workflow for [Bevy](https://bevyengine.org/), ie defining entites & their components
 inside Blender using Blender's objects **custom properties**.
@@ -214,25 +214,8 @@ The workflow goes as follows (once you got your Bevy code setup)
 
 ### All core/helper modules
 
-- add the ```core```[module](./src/core/)
-- add the ```CorePlugin```, to your app
-    ```rust 
-    .add_plugins((
-        CorePlugin
-    ))
-    ``` (see  [here](./src/main.rs#45))
+see the [example](./examples/general/) for more information on how to set things up
 
-### Or, More modular 
-
-- add the ```process_gltf``` [module code](./src/core/process_gltf/) 
-- add the ```ProcessGltfPlugin```, to your app
-    ```rust 
-    .add_plugins((
-        ProcessGltfPlugin
-    ))
-    ```
-    (and any other ```proxy``` processing plugins that you need (or create your own))
-    see [here](./src/core/mod.rs)
 
 ### Then...
 
@@ -255,7 +238,7 @@ The workflow goes as follows (once you got your Bevy code setup)
 
         ![unit struct components in Bevy](./docs/demo_simple_components.png)
 
-        (the Rust struct for these components for reference is [here](./src/game.rs#34) )
+        (the Rust struct for these components for reference is [here](./examples/general/game.rs#34) )
 
 
         ![complex components in Blender](./docs/components_blender_parameters.png)
@@ -264,9 +247,9 @@ The workflow goes as follows (once you got your Bevy code setup)
 
         ![complex components in Blender](./docs/camera_tracking_component.png)
 
-        (the Rust struct for this component for reference is [here](./src/core/camera/camera_tracking.rs#21) )
+        (the Rust struct for this component for reference is [here](./examples/general/core/camera/camera_tracking.rs#21) )
 
-        There is an other examples of using various Component types: Enums, Tupple structs,  strucs with fields etc [here](./src/test_components.rs),
+        There is an other examples of using various Component types: Enums, Tupple structs,  strucs with fields etc [here](./examples/general/test_components.rs),
         even colors, Vecs (arrays), Vec2, Vec3 etc are all supported
 
         ![complex components in Blender](./docs/components_blender_parameters2.png)
@@ -309,14 +292,14 @@ you will get a warning **per entity**
 * You usually define either the Components directly or use ```Proxy components``` that get replaced in Bevy systems with the actual Components that you want (usually when for some reason, ie external crates with unregistered components etc) you cannot use the components directly.
 
 Included are the following modules / tools
- * [```process_gltf```](./src/core/process_gltf/) the most important module: this is the one extracting ```component``` information from the gltf files
- * [```insert_dependant_component```](./src/core/relationships/relationships_insert_dependant_components.rs)  a small utility to automatically inject 
+ * [```process_gltf```](./src/process_gltfs.rs) the most important module: this is the one extracting ```component``` information from the gltf files
+ * [```insert_dependant_component```](./examples/general/core/relationships/relationships_insert_dependant_components.rs)  a small utility to automatically inject 
     components that are dependant on an other component
     for example an Entity with a Player component should also always have a ShouldBeWithPlayer component
     you get a warning if you use this though, as I consider this to be stop-gap solution (usually you should have either a bundle, or directly define all needed components)
- * [```camera```](./src/core/camera/) an example post process/replace proxies plugin, for Camera that also adds CameraTracking functions (to enable a camera to follow an object, ie the player)
- * [```lighting```](./src/core/lighting/) an other example post process/replace proxies plugin for lighting, that toggles shadows, lighting config, etc so that things look closer to the original Blender data
- * [```physics```](./src/core/physics/) an other example post process/replace proxies plugin for physics, that add [Rapier](https://rapier.rs/docs/user_guides/bevy_plugin/getting_started_bevy) Colliders, Rigidbodies etc . Most of these do not need proxies these days, as the most Rapier components are in the Registry & can be used directly
+ * [```camera```](./examples/general/core/camera/) an example post process/replace proxies plugin, for Camera that also adds CameraTracking functions (to enable a camera to follow an object, ie the player)
+ * [```lighting```](./examples/general/core/lighting/) an other example post process/replace proxies plugin for lighting, that toggles shadows, lighting config, etc so that things look closer to the original Blender data
+ * [```physics```](./examples/general/core/physics/) an other example post process/replace proxies plugin for physics, that add [Rapier](https://rapier.rs/docs/user_guides/bevy_plugin/getting_started_bevy) Colliders, Rigidbodies etc . Most of these do not need proxies these days, as the most Rapier components are in the Registry & can be used directly
 
 
 
@@ -327,7 +310,7 @@ This tooling and workflow has enabled me to go from a blank Bevy + Blender setup
 You can then add your own components & systems for your own gameplay very easilly
 
 ## Information
-- the Bevy/ Rust code is [here](./src/main.rs)
+- the Bevy/ Rust code is [here](./examples/general/main.rs)
 - the Blender file is [here](./assets/models/level.blend)
 - I added [bevy_editor_pls](https://github.com/jakobhellermann/bevy_editor_pls) as a dependency for convenience so you can inspect your level/components
 
