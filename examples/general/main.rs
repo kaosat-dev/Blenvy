@@ -2,6 +2,7 @@ use std::time::Duration;
 use bevy::{prelude::*, asset::ChangeWatcher, gltf::Gltf};
 use bevy_editor_pls::prelude::*;
 use bevy_rapier3d::prelude::*;
+use bevy_gltf_components::ComponentsFromGltfPlugin;
 
 mod core;
 use crate::core::*;
@@ -45,6 +46,7 @@ fn main(){
         RapierPhysicsPlugin::<NoUserData>::default(),
         RapierDebugRenderPlugin::default(),
         // our custom plugins
+        ComponentsFromGltfPlugin,
         CorePlugin, // reusable plugins
         DemoPlugin, // specific to our game
         ComponentsTestPlugin // Showcases different type of components /structs
@@ -61,10 +63,10 @@ fn main(){
 
 
 #[derive(Resource)]
-struct AssetLoadHack(Handle<Scene>);
+struct AssetLoadHelper(Handle<Scene>);
 // we preload the data here, but this is for DEMO PURPOSES ONLY !! Please use https://github.com/NiklasEi/bevy_asset_loader or a similar logic to seperate loading / pre processing 
 // of assets from the spawning
-// AssetLoadHack is also just for the same purpose, you do not need it in a real scenario
+// AssetLoadHelper is also just for the same purpose, you do not need it in a real scenario
 // the states here are also for demo purposes only, 
 fn setup(
     mut commands: Commands,
@@ -72,13 +74,13 @@ fn setup(
 ) {
 
     let tmp: Handle<Scene>  = asset_server.load("models/level1.glb#Scene0");
-    commands.insert_resource(AssetLoadHack(tmp));
+    commands.insert_resource(AssetLoadHelper(tmp));
 }
 
 fn spawn_level(
     mut commands: Commands,
     scene_markers: Query<&LoadedMarker>,
-    preloaded_scene: Res<AssetLoadHack>,
+    preloaded_scene: Res<AssetLoadHelper>,
 
     mut asset_event_reader: EventReader<AssetEvent<Gltf>>,
     mut next_state: ResMut<NextState<AppState>>,
@@ -106,7 +108,4 @@ fn spawn_level(
             _ => ()
         }
     }
-
-   
-   
 }

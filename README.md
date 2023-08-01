@@ -1,8 +1,190 @@
 
-# Blender_bevy_components_worklflow
+# bevy_gltf_components
 
 ![demo](./docs/blender_gltf_components.png)
 
+A plugin & tools for adding components from gltf files in the [bevy](https://bevyengine.org/) game engine.
+
+It enables minimalistic [Blender](https://www.blender.org/) (gltf) centric workflow for Bevy, ie defining entites & their components
+inside Blender using Blender's objects **custom properties**. 
+Aka "Blender as editor for Bevy"
+
+It also allows you to setup 'blueprints' in Blender by using collections (the recomended way to go most of the time), or directly on single use objects .
+
+## Features
+
+* Useful if you want to use Blender (or any editor allowing to export gltf with configurable gltf_extras) as your Editor
+* define Bevy components as custom properties in Blender (RON, though an older JSON version is also available)
+* no plugin or extra tools needed in Blender (but I provide a little Blender plugin to auto-export to gltf on save if you want !)
+* define components in Blender Collections & override any of them in your collection instances if you want
+* minimal setup & code,  you can have something basic running fast
+
+## Usage
+
+1. Add the crate to your dependencies
+```toml
+[dependencies]
+bevy_gltf_components = { git="https://github.com/kaosat-dev/Blender_bevy_components_worklflow.git" }
+
+```
+(not on crates.io yet !)
+
+2. Import 
+
+```rust
+use bevy_gltf_components::ComponentsFromGltfPlugin;
+```
+
+3. Add the plugin
+```rust
+.add_plugin(ComponentsFromGltfPlugin)
+```
+
+### Example (without bevy_asset_loader)
+
+See [here](./examples/general/main.rs) for more details
+
+ ```rust
+use bevy::prelude::*;
+use bevy_gltf_components::ComponentsFromGltfPlugin;
+
+
+#[derive(Component, Reflect, Default, Debug, Deref, DerefMut)]
+#[reflect(Component)]
+struct TuppleTestF32(f32);
+
+#[derive(Component, Reflect, Default, Debug, )]
+#[reflect(Component)]
+/// helper marker component, for demo only
+pub struct LoadedMarker;
+
+
+#[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
+enum AppState {
+    #[default]
+    Loading,
+    Running,
+}
+
+fn main(){
+    App::new()
+    .add_plugins((
+        DefaultPlugins,
+        ComponentsFromGltfPlugin,
+    ))
+
+    .add_state::<AppState>()
+    .add_systems(Startup, setup)
+    .add_systems(Update, (
+        spawn_level.run_if(in_state(AppState::Loading)),
+    ))
+    .run();
+}
+
+#[derive(Resource)]
+struct AssetLoadHelper(Handle<Scene>);
+// we preload the data here, but this is for DEMO PURPOSES ONLY !! Please use https://github.com/NiklasEi/bevy_asset_loader or a similar logic to seperate loading / pre processing 
+// of assets from the spawning
+// AssetLoadHelper is also just for the same purpose, you do not need it in a real scenario
+// the states here are also for demo purposes only, 
+fn setup(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+) {
+
+    let tmp: Handle<Scene>  = asset_server.load("models/level1.glb#Scene0");
+    commands.insert_resource(AssetLoadHelper(tmp));
+}
+
+fn spawn_level(
+    mut commands: Commands,
+    scene_markers: Query<&LoadedMarker>,
+    preloaded_scene: Res<AssetLoadHelper>,
+
+    mut asset_event_reader: EventReader<AssetEvent<Gltf>>,
+    mut next_state: ResMut<NextState<AppState>>,
+){
+
+    if let Some(asset_event) = asset_event_reader.iter().next() {
+        match asset_event {
+            AssetEvent::Created { handle: _ } => {
+                info!("GLTF loaded");
+                if scene_markers.is_empty() {
+                    info!("spawning scene");
+                    commands.spawn(
+                        (
+                            SceneBundle {
+                                scene: preloaded_scene.0.clone(),
+                                ..default()
+                            },
+                            LoadedMarker,
+                            Name::new("Level1")
+                        )
+                    );
+                    next_state.set(AppState::Running);
+                }
+            }
+            _ => ()
+        }
+    }
+}
+
+
+```
+
+
+### Example (with bevy_asset_loader, recommended for ease of use)
+
+- follow [bevy_asset_loader's](https://github.com/NiklasEi/bevy_asset_loader) docs to setup your gltf asset loading
+- also add this plugin
+
+ ```rust
+use bevy::prelude::*;
+use bevy_gltf_components::ComponentsFromGltfPlugin;
+
+// replace this with your actual states !
+#[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
+enum AppState {
+    #[default]
+    Loading,
+    Running,
+}
+
+
+fn main(){
+    App::new()
+    .add_plugins((
+        DefaultPlugins,
+        ComponentsFromGltfPlugin,
+    ))
+    // do the setup for bevy_asset_loader
+    .add_system(setup_game.in_schedule(OnEnter(AppState::Running)))
+
+    .run();
+}
+
+
+pub fn setup_game(
+    mut commands: Commands,
+    game_assets: Res<GameAssets>, // assets with your "world" or "level" gltf for example
+) {
+  
+
+    // more fast approach, load the game seperatly
+    commands.spawn((
+        SceneBundle {
+            scene: game_assets.world.clone(),
+            ..default()
+        },
+        bevy::prelude::Name::from("world"),
+    ));
+
+}
+   
+
+```
+
+# Workflow with blender
 
 This example, is actually closer to a boilerplate + tooling showcases how to use a minimalistic [Blender](https://www.blender.org/) (gltf) centric workflow for [Bevy](https://bevyengine.org/), ie defining entites & their components
 inside Blender using Blender's objects **custom properties**.
@@ -12,7 +194,7 @@ It also allows you to setup 'blueprints' in Blender by using collections (the re
 
 ## Features
 
-* Useful if you want to use Blender as your Editor
+* Useful if you want to use Blender (or any editor allowing to export gltf with configurable gltf_extras) as your Editor
 * define Bevy components as custom properties in Blender (RON, though an older JSON version is also available)
 * no plugin or extra tools needed in Blender (but I provide a little Blender plugin to auto-export to gltf on save if you want !)
 * define components in Blender Collections & override any of them in your collection instances if you want
@@ -21,6 +203,10 @@ It also allows you to setup 'blueprints' in Blender by using collections (the re
 * opensource 
 
 There is a [video tutorial/explanation](https://youtu.be/-lcScjQCA3c) if you want, or you can skip to the text version ahead
+
+
+important : the plugin for processing gltf files runs in *preUpdate* , so you cannot use the components directly if you spawn your scene from gltf in *setup* (the additional components will not show up)
+Please see the included example or use bevy_asset_loader for a reliable workflow
 
 ## Workflow
 

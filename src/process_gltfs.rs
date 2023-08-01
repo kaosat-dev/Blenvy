@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use bevy::utils::HashSet;
 use bevy::{prelude::*, asset::LoadState};
 use bevy::gltf::Gltf;
 

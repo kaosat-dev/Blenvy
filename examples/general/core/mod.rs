@@ -1,6 +1,3 @@
-pub mod process_gltf;
-pub use process_gltf::*;
-
 pub mod camera;
 pub use camera::*;
 
@@ -19,7 +16,6 @@ impl Plugin for CorePlugin {
   fn build(&self, app: &mut App) {
       app
         .add_plugins((
-            ProcessGltfPlugin,
             LightingPlugin,
             CameraPlugin,
             PhysicsPlugin
