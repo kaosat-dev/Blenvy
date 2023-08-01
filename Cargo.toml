@@ -1,7 +1,8 @@
 [package]
-name = "blender_bevy_components_worklflow"
+name = "bevy_gltf_components"
 version = "0.2.0"
 edition = "2021"
+license = "MIT OR Apache-2.0"
 
 [dev-dependencies]
 bevy="0.11"

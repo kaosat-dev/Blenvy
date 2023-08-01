@@ -676,6 +676,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "bevy_gltf_components"
+version = "0.2.0"
+dependencies = [
+ "bevy",
+ "bevy_editor_pls",
+ "bevy_rapier3d",
+ "ron",
+ "serde",
+]
+
+[[package]]
 name = "bevy_hierarchy"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1207,17 +1218,6 @@ name = "bitflags"
 version = "2.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "630be753d4e58660abd17930c71b647fe46c27ea6b63cc59e1e3851406972e42"
-
-[[package]]
-name = "blender_bevy_components_worklflow"
-version = "0.2.0"
-dependencies = [
- "bevy",
- "bevy_editor_pls",
- "bevy_rapier3d",
- "ron",
- "serde",
-]
 
 [[package]]
 name = "block"

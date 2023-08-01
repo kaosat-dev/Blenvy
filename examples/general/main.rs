@@ -2,7 +2,7 @@ use std::time::Duration;
 use bevy::{prelude::*, asset::ChangeWatcher, gltf::Gltf};
 use bevy_editor_pls::prelude::*;
 use bevy_rapier3d::prelude::*;
-use blender_bevy_components_worklflow::ProcessGltfPlugin;
+use bevy_gltf_components::ComponentsFromGltfPlugin;
 
 mod core;
 use crate::core::*;
@@ -46,7 +46,7 @@ fn main(){
         RapierPhysicsPlugin::<NoUserData>::default(),
         RapierDebugRenderPlugin::default(),
         // our custom plugins
-        ProcessGltfPlugin,
+        ComponentsFromGltfPlugin,
         CorePlugin, // reusable plugins
         DemoPlugin, // specific to our game
         ComponentsTestPlugin // Showcases different type of components /structs

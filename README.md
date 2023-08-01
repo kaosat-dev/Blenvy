@@ -22,6 +22,10 @@ It also allows you to setup 'blueprints' in Blender by using collections (the re
 
 There is a [video tutorial/explanation](https://youtu.be/-lcScjQCA3c) if you want, or you can skip to the text version ahead
 
+
+important : the plugin for processing gltf files runs in *preUpdate* , so you cannot use the components directly if you spawn your scene from gltf in *setup* (the additional components will not show up)
+Please see the included example or use bevy_asset_loader for a reliable workflow
+
 ## Workflow
 
 The workflow goes as follows (once you got your Bevy code setup)
