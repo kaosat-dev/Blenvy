@@ -20,7 +20,11 @@ It also allows you to setup 'blueprints' in Blender by using collections (the re
 There is a [video tutorial/explanation](https://youtu.be/-lcScjQCA3c) if you want, or you can skip to the text version ahead
 
 
+## Running this example
 
+```
+cargo run --example general  --features bevy/dynamic_linking
+```
 
 ## Workflow
 
