@@ -63,8 +63,8 @@ use super::gltf_extras_to_components;
           // TODO this is a temporary workaround for library management 
           if let Some(asset_path) = asset_server.get_handle_path(gltf_handle) {
             let gltf_name = asset_path.path().file_stem().unwrap().to_str().unwrap();
-            gltf_extras_to_components(gltf, &mut scenes, &*type_registry, &gltf_name);
-            //gltf_extras_to_prefab_infos(gltf, &mut scenes, &*type_registry, &gltf_name);
+            gltf_extras_to_components(gltf, &mut scenes, &*type_registry, gltf_name);
+            //gltf_extras_to_prefab_infos(gltf, &mut scenes, &*type_registry, gltf_name);
           }
           else {
             gltf_extras_to_components(gltf, &mut scenes, &*type_registry, "");

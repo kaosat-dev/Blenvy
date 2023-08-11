@@ -1,6 +1,5 @@
 use core::ops::Deref;
 
-
 use ron::Value;
 use serde::de::DeserializeSeed;
 
@@ -80,7 +79,7 @@ pub fn gltf_extras_to_components(
       // find a way to link this name to the current entity ? => WOULD BE VERY USEFULL for animations & co !!
       debug!("done pre-processing components, now adding them to entities");
       for (entity, components) in entity_components {
-        if components.len() > 0 {
+        if !components.is_empty() {
           debug!("--entity {:?}, components {}", entity, components.len());
         }
         for component in components {
@@ -99,8 +98,8 @@ pub fn gltf_extras_to_components(
             // scene.world.components().
                 // TODO: how can we insert any additional components "by hand" here ?
         }
-        let e_mut = scene.world.entity_mut(entity);
-        let archetype = e_mut.archetype().clone();//.components();
+        let entity_mut = scene.world.entity_mut(entity);
+        let archetype = entity_mut.archetype().clone();
         let _all_components = archetype.components();
         // println!("All components {:?}", all_components);
 
@@ -129,7 +128,7 @@ pub fn gltf_extras_to_components(
           parsed_value = str;
         }
         _=> {
-          parsed_value = format!("{}", ron::to_string(&value).unwrap() )
+          parsed_value = ron::to_string(&value).unwrap().to_string()
         }
       }
       
@@ -180,12 +179,10 @@ pub fn gltf_extras_to_components(
                     formated = parsed_value.parse::<u128>().unwrap().to_string();
                   }
                   "glam::f32::vec2::Vec2" => {
-                    //println!("WE HAVE A VEC2 {}", parsed_value);
                     let parsed: Vec<f32> = ron::from_str(&parsed_value).unwrap();
                     formated = format!("(x:{},y:{})", parsed[0], parsed[1]);
                   }
                   "glam::f32::vec3::Vec3" => {
-                    //println!("WE HAVE A VEC3 {}", parsed_value);
                     let parsed: Vec<f32> = ron::from_str(&parsed_value).unwrap();
                     formated = format!("(x:{},y:{},z:{})", parsed[0], parsed[1], parsed[2]);
                   },
@@ -209,7 +206,7 @@ pub fn gltf_extras_to_components(
         }
 
         // println!("parsed value {}",parsed_value);       
-        if parsed_value == "" {
+        if parsed_value.is_empty() {
           parsed_value = "()".to_string();
         } 
       
@@ -225,9 +222,9 @@ pub fn gltf_extras_to_components(
             ron::ser::to_string_pretty(&serializer, ron::ser::PrettyConfig::default()).unwrap();
         println!("serialized Component {}", serialized);*/
 
-        println!("component data ron string {}", ron_string);
+        // println!("component data ron string {}", ron_string);
         let mut deserializer =  ron::Deserializer::from_str(ron_string.as_str()).unwrap();
-        let reflect_deserializer = UntypedReflectDeserializer::new(&type_registry);
+        let reflect_deserializer = UntypedReflectDeserializer::new(type_registry);
         let component = reflect_deserializer.deserialize(&mut deserializer).expect(format!("failed to deserialize component {} with value: {:?}", key, value).as_str());
 
         components.push(component);

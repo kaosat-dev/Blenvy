@@ -1,3 +1,5 @@
+[![Bevy tracking](https://img.shields.io/badge/Bevy%20tracking-released%20version-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
+
 
 # bevy_gltf_components
 
@@ -20,6 +22,9 @@ It also allows you to setup 'blueprints' in Blender by using collections (the re
 * minimal setup & code,  you can have something basic running fast
 
 ## Usage
+
+***important*** : the plugin for processing gltf files runs in ***preUpdate*** , so you cannot use the components directly if you spawn your scene from gltf in ***setup*** (the additional components will not show up)
+Please see the included example or use bevy_asset_loader for a reliable workflow
 
 1. Add the crate to your dependencies
 ```toml
@@ -205,8 +210,7 @@ It also allows you to setup 'blueprints' in Blender by using collections (the re
 There is a [video tutorial/explanation](https://youtu.be/-lcScjQCA3c) if you want, or you can skip to the text version ahead
 
 
-important : the plugin for processing gltf files runs in *preUpdate* , so you cannot use the components directly if you spawn your scene from gltf in *setup* (the additional components will not show up)
-Please see the included example or use bevy_asset_loader for a reliable workflow
+
 
 ## Workflow
 
@@ -264,8 +268,6 @@ see the [example](./examples/general/) for more information on how to set things
     * In the Level/world itself, just create an instance of the collection (standard Blender, ie Shift+A -> collection instance -> pick the collection)
 
 
-
-
 - export your level as a glb/gltf file :
     !!**IMPORTANT** you need to check the following:
     - custom properties
@@ -301,9 +303,6 @@ Included are the following modules / tools
  * [```lighting```](./examples/general/core/lighting/) an other example post process/replace proxies plugin for lighting, that toggles shadows, lighting config, etc so that things look closer to the original Blender data
  * [```physics```](./examples/general/core/physics/) an other example post process/replace proxies plugin for physics, that add [Rapier](https://rapier.rs/docs/user_guides/bevy_plugin/getting_started_bevy) Colliders, Rigidbodies etc . Most of these do not need proxies these days, as the most Rapier components are in the Registry & can be used directly
 
-
-
-
 Feel free to use as you want, rip it appart, use any/all parts that you need !
 
 This tooling and workflow has enabled me to go from a blank Bevy + Blender setup to a working barebones level in very little time (30 minutes or so ?) !
@@ -326,34 +325,11 @@ You can then add your own components & systems for your own gameplay very easill
  * gltf spawning tools where you just need to preload gltf files then you can spawn 1...n entities defined in gltf files by name (for example enemies, powerups, etc)
  * simplified animation logic: ie instead of having to manually specify the animations you need from a gltf file, it is integrated with the spawning system above, which creates a ```Animations``` component in all entities that have an ```AnimationPlayer``` and you can simply query for both to easilly control your animations per entity.
 
-## Bonus !!
-- for convenience I also added a [Blender addon](./tools/blender_auto_export/blender_auto_export_gltf.py) that automatically exports your level/world from Blender to gltf whenever you save your Blend file
+## Blender gltf_auto_export
+- for convenience I also added a [Blender addon](./tools/blender_auto_export/README.md) that automatically exports your level/world from Blender to gltf whenever you save your Blend file
 (actually when you save inside your level/world scene or in the "library" scene, where I personally usually store all collections to instanciate).
-It is **very** barebones and messy, but it does a minimal ok job.
+It is **very** barebones and messy, but it does a minimal ok job. Please read the README of the add-on for installation instructions
 
-### Installation: 
-
-* in Blender go to edit =>  preferences => install
-
-![blender addon install](./docs/blender_addon_install.png)
-
-* choose the path where ```blender_auto_export/blender_auto_export_gltf.py``` is stored
-
-![blender addon install](./docs/blender_addon_install2.png)
-
-### Usage: 
-
-* before it can automatically save to gltf, you need to configure it
-* go to file => export => gltf auto export
-
-![blender addon use](./docs/blender_addon_use.png)
-
-* set up your parameters: output path, name of your main scene etc
-
-    ![blender addon use2](./docs/blender_addon_use2.png)
-
-* click on "apply settings"
-* now next time you save your blend file you will get an automatically exported gltf file
 
 
 ## Credits
