@@ -109,7 +109,6 @@ def export_library_split(scene, folder_path, gltf_export_preferences):
     # reset current scene from backup
     bpy.context.window.scene = old_current_scene
 
-
 def debug_test(scene):
     root_collection = scene.collection 
     collections_lookup = get_collection_hierarchy(root_collection, 1)
@@ -238,10 +237,80 @@ def export_library_merged(scene, folder_path, gltf_export_preferences):
     # reset current scene from backup
     bpy.context.window.scene = old_current_scene
 
+
+#Recursivly transverse layer_collection for a particular name
+def recurLayerCollection(layerColl, collName):
+    found = None
+    if (layerColl.name == collName):
+        return layerColl
+    for layer in layerColl.children:
+        found = recurLayerCollection(layer, collName)
+        if found:
+            return found
+
+def get_used_collections(scene): 
+    root_collection = scene.collection 
+
+    scene_objects = [o for o in root_collection.objects]
+    collection_names = set()
+    used_collections = []
+    for object in scene_objects:
+        print("object ", object)
+        if object.instance_type == 'COLLECTION':
+            print("THIS OBJECT IS A COLLECTION")
+            # print("instance_type" ,object.instance_type)
+            collection_name = object.instance_collection.name
+            print("instance collection", object.instance_collection.name)
+            #object.instance_collection.users_scene
+            # del object['blueprint']
+            """we inject the collection/blueprint name, as a component called 'BlueprintName'"""
+            object['BlueprintName'] = '"'+collection_name+'"'
+            if not collection_name in collection_names: 
+                collection_names.add(collection_name)
+                used_collections.append(object.instance_collection)
+
+    print("scene objects", scene_objects) 
+    return (collection_names, used_collections)
+
+def export_used_collections(scene, folder_path, gltf_export_preferences): 
+    (collection_names, used_collections) = get_used_collections(scene)
+    print("used collection names", collection_names, used_collections)
+   
+    # set active scene to be the library scene (hack for now)
+    bpy.context.window.scene = bpy.data.scenes["library"]
+    # save current active collection
+    active_collection =  bpy.context.view_layer.active_layer_collection
+
+    for collection_name in list(collection_names):
+        print("exporting collection", collection_name)
+
+        layer_collection = bpy.context.view_layer.layer_collection
+        layerColl = recurLayerCollection(layer_collection, collection_name)
+        # set active collection to the collection
+        bpy.context.view_layer.active_layer_collection = layerColl
+
+        print("layercoll", layerColl)
+        gltf_output_path = os.path.join(folder_path, "library", collection_name)
+
+        export_settings = { **gltf_export_preferences, 'use_active_scene': True, 'use_active_collection': True} #'use_visible': False,
+        export_gltf(gltf_output_path, export_settings)
+    
+    # reset active collection to the one we save before
+    bpy.context.view_layer.active_layer_collection = active_collection
+
 def export_main(scene, folder_path, gltf_export_preferences, output_name): 
+    
     print("exporting to", folder_path, output_name)
     # backup current active scene
     old_current_scene = bpy.context.scene
+
+    try:
+        #gltf_output_path = os.path.join(folder_path, "library")
+        #export_gltf(gltf_output_path, export_settings)
+        export_used_collections(scene, folder_path, gltf_export_preferences)
+    except Exception:
+        print("failed to export collections to gltf")
+
     # set active scene to be the given scene
     bpy.context.window.scene = scene
 
@@ -324,7 +393,7 @@ def auto_export():
             gltf_export_preferences[key] = getattr(addon_prefs,key)
             print("overriding setting", key, "value", getattr(addon_prefs,key))
 
-    # testing (we want an in-memory scene, not one that is visible in the ui)
+    # (we want an in-memory scene, not one that is visible in the ui)
     #invisible_scene = bpy.types.Scene("foo")
 
 
