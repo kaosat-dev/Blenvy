@@ -6,54 +6,6 @@ use bevy_rapier3d::prelude::*; // FIXME: temporary: used for velocity of newly s
 use crate::{assets::{LibraryPack, GameAssets}, core::AnimationHelper};
 use super::{SpawnRequestedEvent, Spawner, GameWorldTag, ItemType};
 
-pub fn spawn_entities(
-    mut spawn_requested_events: EventReader<SpawnRequestedEvent>,  
-    mut commands: Commands,
-  
-    library_pack: Res<LibraryPack>,
-    assets_gltf: Res<Assets<Gltf>>,
-    mut game_world: Query<Entity, With<GameWorldTag>>,
-  ){
-  
-    for spawn_request in spawn_requested_events.iter() {
-  
-      //let (spawner, transform) = spawners.get(ev.spawner_id).unwrap();
-      //let position = transform.translation.clone() + Vec3::new(0.0, 0.0, 0.5);
-      let what = spawn_request.what.clone();
-      let position = spawn_request.position;
-      let amount = spawn_request.amount;
-  
-      if let Some(library) = assets_gltf.get(&library_pack.0) {
-        info!("attempting to spawn {}", what);
-        if !library.named_scenes.contains_key(&what) {
-          warn!("there is no item in the library called {}", what)
-        } else {
-          let world = game_world.single_mut();
-          // println!("spawner velocity ranges {:?}", spawner.vel_x_range);
-  
-          for _ in 0..amount {
-           
-            let child_scene = commands.spawn(
-              (
-                  SceneBundle {
-                      scene: library.named_scenes[&what.to_string()].clone(),
-                      transform: Transform::from_translation(position),
-                      ..Default::default()
-                  },
-                  bevy::prelude::Name::from(["scene_wrapper", &what.clone()].join("_") ),
-                  // Parent(world) // FIXME/ would be good if this worked directly
-                  SpawnedRoot,
-              )).id();
-              commands.entity(world).add_child(child_scene);
-          }
-  
-        }  
-      }
-    }
-  }
-  
-
-
   pub fn spawn_entities2(
     mut spawn_requested_events: EventReader<SpawnRequestedEvent>,  
     game_assets: Res<GameAssets>,

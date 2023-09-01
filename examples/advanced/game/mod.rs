@@ -1,6 +1,10 @@
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
-use crate::insert_dependant_component;
+use crate::{insert_dependant_component, state::AppState};
+
+
+pub mod in_game;
+pub use in_game::*;
 
 // this file is just for demo purposes, contains various types of components, systems etc
 
@@ -88,8 +92,8 @@ pub fn test_collision_events(
 }
 
 
-pub struct DemoPlugin;
-impl Plugin for DemoPlugin {
+pub struct GamePlugin;
+impl Plugin for GamePlugin {
   fn build(&self, app: &mut App) {
       app
         .register_type::<Interactible>()
@@ -104,6 +108,12 @@ impl Plugin for DemoPlugin {
             player_move_demo, //.run_if(in_state(AppState::Running)),
             test_collision_events
         ))
+
+
+        .add_systems(
+            OnEnter(AppState::GameRunning),
+            setup_game
+          )
     ;
   }
 }
