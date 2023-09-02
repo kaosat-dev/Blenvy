@@ -2,11 +2,23 @@ use rand::Rng;
 use bevy::prelude::*;
 use bevy::gltf::Gltf;
 use bevy_rapier3d::prelude::*; // FIXME: temporary: used for velocity of newly spawned items
+use bevy::utils::HashMap;
 
-use crate::{assets::{LibraryPack, GameAssets}, core::AnimationHelper};
+use crate::test_components::BlueprintName;
+
+// TODO: move this out, likely
+// this is a flag component for our levels/game world
+#[derive(Component)]
+pub struct GameWorldTag;
+
+#[derive(Component)]
+/// FlagComponent for dynamically spawned scenes
+pub struct SpawnedRoot;
+
+/*use crate::{assets::{LibraryPack, GameAssets}, core::AnimationHelper};
 use super::{SpawnRequestedEvent, Spawner, GameWorldTag, ItemType};
 
-  pub fn spawn_entities2(
+pub fn spawn_entities(
     mut spawn_requested_events: EventReader<SpawnRequestedEvent>,  
     game_assets: Res<GameAssets>,
     mut commands: Commands,
@@ -54,14 +66,24 @@ use super::{SpawnRequestedEvent, Spawner, GameWorldTag, ItemType};
     }
   }
 
-  
-  #[derive(Component)]
-  /// FlagComponent for dynamically spawned scenes
-  pub struct SpawnedRoot;
+  */
+ 
+  // FIXME: move to more relevant module
+  #[derive(Component, Reflect, Default, Debug, )]
+  #[reflect(Component)]
+  pub struct AnimationHelper {
+    pub named_animations: HashMap<String, Handle<AnimationClip>>,
+  }
   
   #[derive(Component)]
   /// FlagComponent for dynamically spawned scenes
   pub struct SpawnedRootProcessed;
+
+    
+  #[derive(Component)]
+  /// FlagComponent for spawned enetity
+  pub struct Spawned;
+
   
   /// this system updates the first (and normally only) child of a scene flaged SpawnedRoot
   /// - adds a name based on parent component (spawned scene) which is named on the scene name/prefab to be instanciated
@@ -76,8 +98,7 @@ use super::{SpawnRequestedEvent, Spawner, GameWorldTag, ItemType};
   
     mut commands: Commands,
   
-    test :Query<(Entity, &Children, &Name ), (With<SpawnedRoot>, Without<SpawnedRootProcessed>)>,
-    // tmp: Query<(Entity, &Name, &Children), Added<SpawnedRoot>>, 
+    unprocessed_entities :Query<(Entity, &Children, &Name, Option<&BlueprintName> ), (With<SpawnedRoot>, Without<SpawnedRootProcessed>)>,
     mut game_world: Query<(Entity, &Children), With<GameWorldTag>>,
 
     // FIXME: should be done at a more generic gltf level
@@ -106,8 +127,7 @@ use super::{SpawnRequestedEvent, Spawner, GameWorldTag, ItemType};
         FIME: this is all highly dependent on the hierachy ;..
      */
    
-    
-    for (scene_instance, chidren, name) in test.iter()  {
+    for (scene_instance, chidren, name, blueprint_name) in unprocessed_entities.iter()  {
         println!("children of scene {:?}", chidren);
         let root_node = chidren.first().unwrap(); //FIXME: and what about childless ones ??
         let root_node_data = all_children.get(*root_node).unwrap();
@@ -122,15 +142,23 @@ use super::{SpawnRequestedEvent, Spawner, GameWorldTag, ItemType};
         let vel_z: f32 = rng.gen_range(2.0..2.5);
         // add missing name of entity, based on the wrapper's name
         let name= name.clone().replace("scene_wrapper_", "");
-        //ItemType
+
+        // this is our new actual entity
         commands.entity(*root_node).insert((
             bevy::prelude::Name::from(name.clone()),
-            ItemType {name},
+            // ItemType {name},
+            Spawned,
             Velocity {
               linvel: Vec3::new(vel_x, vel_y, vel_z),
               angvel: Vec3::new(0.0, 0.0, 0.0),
             },
         ));
+        // IF the original had a BlueprintName component, reinject that into the new entity
+        if let Some(blueprint_name) = blueprint_name {
+          commands.entity(*root_node).insert(
+            BlueprintName(blueprint_name.0.clone())
+          );
+        }
   
         // flag the spawned_root as being processed
         commands.entity(scene_instance).insert(SpawnedRootProcessed);
@@ -142,7 +170,7 @@ use super::{SpawnRequestedEvent, Spawner, GameWorldTag, ItemType};
         // commands.entity(world).push_children(&actual_stuff);
         //
         // let original_transforms = 
-        // commands.entity(world).add_child(*root_node);
+        commands.entity(world).add_child(*root_node);
         // commands.entity(*root_node).despawn_recursive();
 
         let matching_animation_helper = animation_helpers.get(scene_instance);
