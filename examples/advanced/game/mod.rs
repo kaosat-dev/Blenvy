@@ -1,10 +1,14 @@
+pub mod in_game;
+pub use in_game::*;
+
+pub mod picking;
+pub use picking::*;
+
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use crate::{insert_dependant_component, state::AppState};
 
 
-pub mod in_game;
-pub use in_game::*;
 
 // this file is just for demo purposes, contains various types of components, systems etc
 
@@ -37,10 +41,7 @@ pub struct ShouldBeWithPlayer;
 /// Demo marker component
 pub struct Interactible;
 
-#[derive(Component, Reflect, Default, Debug, )]
-#[reflect(Component)]
-/// Demo marker component
-pub struct Pickable;
+
 
 
 
@@ -96,8 +97,9 @@ pub struct GamePlugin;
 impl Plugin for GamePlugin {
   fn build(&self, app: &mut App) {
       app
+        .add_plugins(PickingPlugin)
+        
         .register_type::<Interactible>()
-        .register_type::<Pickable>()
         .register_type::<SoundMaterial>()
         .register_type::<Player>()
         // little helper utility, to automatically inject components that are dependant on an other component
