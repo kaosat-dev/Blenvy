@@ -238,6 +238,81 @@ def export_library_merged(scene, folder_path, gltf_export_preferences):
     bpy.context.window.scene = old_current_scene
 
 
+# the active collection is a View Layer concept, so you actually have to find the active LayerCollection
+# which must be done recursively
+def find_layer_collection_recursive(find, col):
+    for c in col.children:
+        if c.collection == find:
+            return c
+    return None
+
+
+# Makes an empty, at location, stores it in existing collection, from https://blender.stackexchange.com/questions/51290/how-to-add-empty-object-not-using-bpy-ops
+def make_empty(name, location, coll_name): #string, vector, string of existing coll
+    empty_obj = bpy.data.objects.new( "empty", None, )
+    empty_obj.name = name
+    empty_obj.empty_display_size = 1 
+    bpy.data.collections[coll_name].objects.link(empty_obj)
+    empty_obj.location = location
+    return empty_obj
+
+
+def make_empty2(name, location, collection):
+    object_data = None #bpy.data.meshes.new("NewMesh") #None
+    empty_obj = bpy.data.objects.new( name, object_data )
+    empty_obj.name = name
+    empty_obj.location = location
+
+
+    empty_obj.empty_display_size = 2
+    empty_obj.empty_display_type = 'PLAIN_AXES'   
+    collection.objects.link( empty_obj )
+    return empty_obj
+
+# generate a copy of a scene that replaces collection instances with empties
+# FIXME: will not preserver original names
+# alternative: copy original names before creating a new scene, & reset them
+# or create empties, hide original ones, and do the same renaming trick
+def generate_hollow_scene(scene): 
+    root_collection = scene.collection 
+    temp_scene = bpy.data.scenes.new(name="temp_scene")
+    copy_root_collection = temp_scene.collection
+    scene_objects = [o for o in root_collection.objects]
+
+
+    found = find_layer_collection_recursive(copy_root_collection, bpy.context.view_layer.layer_collection)
+    if found:
+        print("FOUND COLLECTION")
+        # once it's found, set the active layer collection to the one we found
+        bpy.context.view_layer.active_layer_collection = found
+
+    original_names = {}
+    for object in scene_objects:
+        if object.instance_type == 'COLLECTION':
+            collection_name = object.instance_collection.name
+
+            # original_names[object.name] = object.name + "____bak"
+            #print("custom properties", object, object.keys(), object.items())
+            #for k, e in object.items():
+            #    print("custom properties ", k, e)
+            print("object location", object.location)
+            empty_obj = make_empty2(object.name, object.location, copy_root_collection)
+
+            # empty_obj['BlueprintName'] = '"'+collection_name+'"'
+            for k, v in object.items():
+                empty_obj[k] = v
+        else:
+            copy_root_collection.objects.link(object)
+
+    # bpy.data.scenes.remove(temp_scene)
+    # objs = bpy.data.objects
+    #objs.remove(objs["Cube"], do_unlink=True)
+    return temp_scene
+
+def clear_hollow_scene(temp_scene):
+    bpy.data.scenes.remove(temp_scene)
+
+
 #Recursivly transverse layer_collection for a particular name
 def recurLayerCollection(layerColl, collName):
     found = None
@@ -310,14 +385,28 @@ def export_main(scene, folder_path, gltf_export_preferences, output_name):
         export_used_collections(scene, folder_path, gltf_export_preferences)
     except Exception:
         print("failed to export collections to gltf")
+    
+    #try:
+    hollow_scene = generate_hollow_scene(scene)
+    #except Exception:
+    #    print("failed to create hollow scene")
 
     # set active scene to be the given scene
-    bpy.context.window.scene = scene
+    bpy.context.window.scene = hollow_scene
 
     gltf_output_path = os.path.join(folder_path, output_name)
 
-    export_settings = { **gltf_export_preferences, 'use_active_scene': True}
+    export_settings = { **gltf_export_preferences, 
+                       'use_active_scene': True, 
+                       'use_active_collection':True, 
+                       'use_active_collection_with_nested':True,  
+                       'use_visible': False,
+                       'use_renderable': False,
+                       'export_apply':True
+                       }
     export_gltf(gltf_output_path, export_settings)
+
+    # clear_hollow_scene(hollow_scene)
 
     # reset current scene from backup
     bpy.context.window.scene = old_current_scene
@@ -407,7 +496,6 @@ def auto_export():
     export_main_scene_name = getattr(addon_prefs,"export_main_scene_name")
     export_main_output_name = getattr(addon_prefs,"export_main_output_name")
     export_on_library_changes = getattr(addon_prefs,"export_on_library_changes")
-
     export_library_scene_name = getattr(addon_prefs,"export_library_scene_name")
 
     print("exporting ??", export_on_library_changes, export_main_scene_name, export_main_output_name)
