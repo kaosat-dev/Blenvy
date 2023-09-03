@@ -22,7 +22,7 @@ use crate::{test_components::BlueprintName, assets::GameAssets, state::{AppState
 #[derive(Component)]
 pub struct Original(Entity);
 
-// TODO: also take in account the already exisiting override components ?? ie any component overrides
+// also takes into account the already exisiting override components ?? ie any component overrides
 pub fn spawn_placeholders(
     spawn_placeholders: Query<(Entity, &Name, &BlueprintName, &Transform), (Added<BlueprintName>,  Without<Spawned>, Without<SpawnedRoot>)>,
 

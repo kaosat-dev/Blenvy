@@ -117,11 +117,9 @@ use bevy::ecs::entity::EntityMap;
 use serde::{Deserialize, Serialize};
 
 // almost identical to setup_game, !!??
-fn load_game(
+fn load_world(
     mut commands: Commands,
         game_assets: Res<GameAssets>,
-    
-        asset_server: Res<AssetServer>,
         // scenes: ResMut<Scene>,
 ){
     info!("loading");
@@ -135,8 +133,6 @@ fn load_game(
         GameWorldTag,
         InGameRunning
     ));
-
-    let foo: Handle<DynamicScene> = asset_server.load(NEW_SCENE_FILE_PATH);
     
     /*commands.spawn((
         DynamicSceneBundle {
@@ -337,14 +333,18 @@ const SCENE_FILE_PATH: &str = "save.scn.ron";
 #[derive(Component, Debug, )]
 pub struct TempLoadedSceneMarker;
 
-fn load_scene_system(
+
+#[derive(Component, Debug, )]
+pub struct SaveablesToRemove(Vec<(Entity, Name)>);
+
+fn load_saved_scene(
     mut game_world: Query<(Entity, &Children), With<GameWorldTag>>,
 
     mut commands: Commands, 
     asset_server: Res<AssetServer>
 ) {
-    let world = game_world.single_mut();
-    let world = world.1[0]; // FIXME: dangerous hack because our gltf data have a single child like this, but might not always be the case
+    //let world = game_world.single_mut();
+    // let world = world.1[0]; // FIXME: dangerous hack because our gltf data have a single child like this, but might not always be the case
     // "Spawning" a scene bundle creates a new entity and spawns new instances
     // of the given scene's entities as children of that entity.
 
@@ -362,34 +362,95 @@ fn load_scene_system(
 
 fn process_loaded_scene(
     entities: Query<(Entity, &Children), With<TempLoadedSceneMarker>>,
-    named_enditites: Query<(Entity, &Name, &Parent)>, // FIXME: very inneficient
+    named_entities: Query<(Entity, &Name, &Parent)>, // FIXME: very inneficient
     mut commands: Commands, 
 
+    saveables: Query<(Entity, &Name), With<Saveable>>
 ){
     for (entity, children) in entities.iter(){
-        //let root_entity = children.first().unwrap(); //FIXME: and what about childless ones ??
-        // println!("scene {:?} ROOT ENTITY {:?}", entity, root_entity);
-        // let
-        for child in children.iter() {
-           if let Ok((child, name, parent)) = named_enditites.get(*child) {
-            for (e, n, p) in named_enditites.iter(){
-                if(e != child && name.as_str() == n.as_str()){
-                    println!("found entity with same name {} {} {:?} {:?}", name, n, child, e);
-                    // child is entity within the newly loaded scene (source), e is within the existing world (destination)
-                    println!("copying data from {:?} to {:?}", child, e);
+        let mut entities_to_load:Vec<(Entity, Name)> = vec![];
+
+        for saved_source in children.iter() {
+           if let Ok((source, name, _)) = named_entities.get(*saved_source) {
+            println!("AAAAAAA {}", name);
+            entities_to_load.push((source, name.clone()));
+
+            for (e, n, p) in named_entities.iter(){
+                if e != source && name.as_str() == n.as_str(){
+                    println!("found entity with same name {} {} {:?} {:?}", name, n, source, e);
+                    // source is entity within the newly loaded scene (source), e is within the existing world (destination)
+                    info!("copying data from {:?} to {:?}", source, e);
                     commands.add(CloneEntity {
-                        source: child,
+                        source: source,
                         destination: e,
                     });
                     // FIXME: issue with hierarchy & parenting, would be nice to be able to filter out components from CloneEntity
                     commands.entity(p.get()).add_child(e);
-                    commands.entity(child).despawn_recursive();
+                    commands.entity(source).despawn_recursive();
 
                 }
             }
            }
         }
+        commands.spawn(SaveablesToRemove(entities_to_load.clone()));
+        
+       
+       
+        // if an entity is present in the world but NOT in the saved entities , it should be removed from the world
+        // ideally this should be run between spawning of the world/level AND spawn_placeholders
+
         commands.entity(entity).despawn_recursive();
+    }
+    /*for saveable in saveables.iter(){
+        println!("SAVEABLE {:?}", saveable)
+    }*/
+}
+
+fn final_cleanup(
+    saveables_to_remove: Query<&SaveablesToRemove>,
+    mut commands: Commands, 
+    saveables: Query<(Entity, &Name), With<Saveable>>
+){
+    if let Ok(entities_to_load) = saveables_to_remove.get_single()
+    {
+        for (e, n) in saveables.iter(){
+            let mut found = false;
+            println!("SAVEABLE {}", n);
+    
+            //let entities_to_load = saveables_to_remove.single();
+            for (en, na) in entities_to_load.0.iter(){
+                found = na.as_str() == n.as_str();
+                if found {
+                    break;
+                }
+            }
+            if !found {
+                println!("REMOVING THIS ONE {}", n);
+                commands.entity(e).despawn_recursive();
+            }
+        }
+        // if there is a saveable that is NOT in the list of entities to load, despawn it
+    }
+    
+}
+
+fn process_loaded_scene_load_alt(
+    entities: Query<(Entity, &Children), With<TempLoadedSceneMarker>>,
+    named_entities: Query<(Entity, &Name, &Parent)>, // FIXME: very inneficient
+    mut commands: Commands, 
+
+){
+    for (entity, children) in entities.iter(){
+        let mut entities_to_load:Vec<(Entity, Name)> = vec![];
+        for saved_source in children.iter() {
+           if let Ok((source, name, _)) = named_entities.get(*saved_source) {
+            println!("AAAAAAA {}", name);
+            entities_to_load.push((source, name.clone()));
+           }
+        }
+        println!("entities to load {:?}", entities_to_load);
+
+         commands.entity(entity).despawn_recursive();
     }
 }
 
@@ -400,30 +461,28 @@ impl Plugin for SaveLoadPlugin {
         .register_type::<Uuid>()
         .register_type::<Saveable>()
 
-        /* .add_systems(
-            Update, 
-            (
-                save_game,
-                load_game
-            ).run_if(in_state(AppState::GameRunning))
-        )*/
-
-
         .add_systems(PreUpdate, save_game2.run_if(should_save))
         .add_systems(Update, 
 
-           (
-            load_scene_system,
-            //process_loaded_scene
-            ).run_if(should_load)
+            (
+                unload_world,
+                load_world,
+                load_saved_scene,
+                // process_loaded_scene
+            )
+            .chain()
+            .run_if(should_load) // .run_if(in_state(AppState::GameRunning))
         )
-        .add_systems(Update,
-            process_loaded_scene
+         .add_systems(Update,
+
+            (
+                process_loaded_scene,
+                final_cleanup
+            ).chain()
         )
         /* .add_systems(PreUpdate, 
             (
                 // unload_world,
-                // load_game, // FIXME: problem, this actually takes place later, as the spawning is async XD
                 // unload_saveables,
                 post_load,
                 ron_test
