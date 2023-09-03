@@ -4,7 +4,10 @@ use bevy::gltf::Gltf;
 use bevy_rapier3d::prelude::*; // FIXME: temporary: used for velocity of newly spawned items
 use bevy::utils::HashMap;
 
+use crate::core::spawning::CloneEntity;
 use crate::test_components::BlueprintName;
+
+use super::Original;
 
 // TODO: move this out, likely
 // this is a flag component for our levels/game world
@@ -93,12 +96,11 @@ pub fn spawn_entities(
   // - scene instance -> does not work
   // it might be due to how we add components to the PARENT item in gltf to components
   pub(crate) fn update_spawned_root_first_child(
-    added_spawned_roots :Query<(Entity, &Children, &Name), Added<SpawnedRoot>>,
     all_children: Query<(Entity, &Children)>,
   
     mut commands: Commands,
   
-    unprocessed_entities :Query<(Entity, &Children, &Name, Option<&BlueprintName> ), (With<SpawnedRoot>, Without<SpawnedRootProcessed>)>,
+    unprocessed_entities :Query<(Entity, &Children, &Name, Option<&BlueprintName>, &Parent, &Original ), (With<SpawnedRoot>, Without<SpawnedRootProcessed>)>,
     mut game_world: Query<(Entity, &Children), With<GameWorldTag>>,
 
     // FIXME: should be done at a more generic gltf level
@@ -127,10 +129,11 @@ pub fn spawn_entities(
         FIME: this is all highly dependent on the hierachy ;..
      */
    
-    for (scene_instance, chidren, name, blueprint_name) in unprocessed_entities.iter()  {
+    for (scene_instance, chidren, name, blueprint_name, parent, original) in unprocessed_entities.iter()  {
         println!("children of scene {:?}", chidren);
-        let root_node = chidren.first().unwrap(); //FIXME: and what about childless ones ??
-        let root_node_data = all_children.get(*root_node).unwrap();
+        // the root node is the first & normally only child inside a scene, it is the one that has all relevant components
+        let root_entity = chidren.first().unwrap(); //FIXME: and what about childless ones ??
+        let root_entity_data = all_children.get(*root_entity).unwrap();
   
         // fixme : randomization should be controlled via parameters, perhaps even the seed could be specified ?
         // use this https://rust-random.github.io/book/guide-seeding.html#a-simple-number, blenders seeds are also uInts
@@ -144,7 +147,7 @@ pub fn spawn_entities(
         let name= name.clone().replace("scene_wrapper_", "");
 
         // this is our new actual entity
-        commands.entity(*root_node).insert((
+        commands.entity(*root_entity).insert((
             bevy::prelude::Name::from(name.clone()),
             // ItemType {name},
             Spawned,
@@ -154,25 +157,27 @@ pub fn spawn_entities(
             },
         ));
         // IF the original had a BlueprintName component, reinject that into the new entity
-        if let Some(blueprint_name) = blueprint_name {
-          commands.entity(*root_node).insert(
+        /*if let Some(blueprint_name) = blueprint_name {
+          commands.entity(*root_entity).insert(
             BlueprintName(blueprint_name.0.clone())
           );
-        }
+        }*/
   
         // flag the spawned_root as being processed
         commands.entity(scene_instance).insert(SpawnedRootProcessed);
   
         // these are the things we want, move them one level up
-        let actual_stuff = root_node_data.1; 
-        let world = game_world.single_mut();
-        let world = world.1[0]; // FIXME: dangerous hack because our gltf data have a single child like this, but might not always be the case
-        // commands.entity(world).push_children(&actual_stuff);
+        // let actual_stuff = root_entity_data.1; 
+        // let world = game_world.single_mut();
+        // let world = world.1[0]; // FIXME: dangerous hack because our gltf data have a single child like this, but might not always be the case
         //
         // let original_transforms = 
-        commands.entity(world).add_child(*root_node);
-        // commands.entity(*root_node).despawn_recursive();
-
+        // parent is either the world or an entity with a marker (BlueprintName)
+        commands.entity(parent.get()).add_child(*root_entity);
+        // commands.entity(*root_entity).despawn_recursive();
+        // commands.entity(parent.get()).push_children(&actual_stuff);
+        //commands.entity(*root_entity).log_components();
+    
         let matching_animation_helper = animation_helpers.get(scene_instance);
         
         // println!("WE HAVE SOME ADDED ANIMATION PLAYERS {:?}", matching_animation_helper);
@@ -186,6 +191,21 @@ pub fn spawn_entities(
             );
           }
         }
+
+        
+        commands.add(CloneEntity {
+          source: original.0,
+          destination: *root_entity,
+        });
+
+        // remove the original entity, now that we have cloned it into the spawned scenes first child
+        commands.entity(original.0).despawn_recursive();
+
+        /*commands.add(CloneEntity {
+          source: parent.get(),
+          destination: *root_entity,
+        });*/
+
 
     }
   }

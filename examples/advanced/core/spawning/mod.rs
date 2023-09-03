@@ -2,6 +2,9 @@
 pub mod spawn_entities;
 pub use spawn_entities::*;
 
+pub mod clone_entity;
+pub use clone_entity::*;
+
 /*pub mod spawning_components;
 pub use spawning_components::*;
 
@@ -13,6 +16,11 @@ use bevy::{prelude::*, gltf::Gltf};
 
 use crate::{test_components::BlueprintName, assets::GameAssets, state::{AppState, GameState}};
 
+
+
+
+#[derive(Component)]
+pub struct Original(Entity);
 
 // TODO: also take in account the already exisiting override components ?? ie any component overrides
 pub fn spawn_placeholders(
@@ -59,12 +67,10 @@ pub fn spawn_placeholders(
                 named_animations: gltf.named_animations.clone(),
                 // animations: gltf.named_animations.values().clone()
               },*/
-              BlueprintName(what.to_string())
+              // BlueprintName(what.to_string())
+              Original(entity)
           )).id();
           commands.entity(world).add_child(child_scene);
-          // FIXME: not very efficient to despawn them, to recreate them with all the added components
-          // we should change the whole spawn processing strategy to move component to the original ?
-          // commands.entity(entity).despawn_recursive();
     }
 }
 
@@ -79,7 +85,7 @@ impl Plugin for SpawningPlugin {
         .add_event::<SpawnRequestedEvent>()
         .add_event::<DespawnRequestedEvent>()*/
     
-        .add_systems(
+         .add_systems(
           Update,
           (
             // spawn_entities,
@@ -89,6 +95,8 @@ impl Plugin for SpawningPlugin {
           .chain()
           .run_if(in_state(AppState::GameRunning)) // GameState::InGame
         )
+
+
         /* .add_systems(
           PostUpdate, 
           despawn_entity.after(bevy::render::view::VisibilitySystems::CalculateBounds) // found this after digging around in Bevy discord, not 100M sure of its reliability
