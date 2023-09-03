@@ -4,6 +4,7 @@ use bevy::gltf::Gltf;
 use bevy_rapier3d::prelude::*; // FIXME: temporary: used for velocity of newly spawned items
 use bevy::utils::HashMap;
 
+use crate::core::save_load::TempLoadedSceneMarker;
 use crate::core::spawning::CloneEntity;
 use crate::test_components::BlueprintName;
 
@@ -129,10 +130,10 @@ pub fn spawn_entities(
         FIME: this is all highly dependent on the hierachy ;..
      */
    
-    for (scene_instance, chidren, name, blueprint_name, parent, original) in unprocessed_entities.iter()  {
-        println!("children of scene {:?}", chidren);
+    for (scene_instance, children, name, blueprint_name, parent, original) in unprocessed_entities.iter()  {
+        println!("children of scene {:?}", children);
         // the root node is the first & normally only child inside a scene, it is the one that has all relevant components
-        let root_entity = chidren.first().unwrap(); //FIXME: and what about childless ones ??
+        let root_entity = children.first().unwrap(); //FIXME: and what about childless ones ??
         let root_entity_data = all_children.get(*root_entity).unwrap();
   
         // fixme : randomization should be controlled via parameters, perhaps even the seed could be specified ?

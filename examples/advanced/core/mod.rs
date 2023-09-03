@@ -13,6 +13,9 @@ pub use physics::*;
 pub mod spawning;
 pub use spawning::*;
 
+pub mod save_load;
+pub use save_load::*;
+
 use bevy::prelude::*;
 pub struct CorePlugin;
 impl Plugin for CorePlugin {
@@ -22,7 +25,8 @@ impl Plugin for CorePlugin {
             LightingPlugin,
             CameraPlugin,
             PhysicsPlugin, 
-            SpawningPlugin
+            SpawningPlugin,
+            SaveLoadPlugin
         ));
   }
 }

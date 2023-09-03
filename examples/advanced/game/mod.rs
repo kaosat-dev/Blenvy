@@ -104,7 +104,7 @@ impl Plugin for GamePlugin {
         // ie, here an Entity with a Player component should also always have a ShouldBeWithPlayer component
         // you get a warning if you use this, as I consider this to be stop-gap solution (usually you should have either a bundle, or directly define all needed components)
         .add_systems(Update, (
-            insert_dependant_component::<Player, ShouldBeWithPlayer>,
+            // insert_dependant_component::<Player, ShouldBeWithPlayer>,
             player_move_demo, //.run_if(in_state(AppState::Running)),
             test_collision_events
         ))
