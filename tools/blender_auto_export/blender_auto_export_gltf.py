@@ -269,6 +269,15 @@ def make_empty2(name, location, collection):
     collection.objects.link( empty_obj )
     return empty_obj
 
+def make_empty3(name, location, collection): 
+    original_active_object = bpy.context.active_object
+    bpy.ops.object.empty_add(type='PLAIN_AXES', location=location)
+    empty_obj = bpy.context.active_object
+    empty_obj.name = name
+    collection.objects.link( empty_obj )
+    bpy.context.view_layer.objects.active = original_active_object
+    return empty_obj
+
 # generate a copy of a scene that replaces collection instances with empties
 # FIXME: will not preserver original names
 # alternative: copy original names before creating a new scene, & reset them
@@ -301,9 +310,11 @@ def generate_hollow_scene(scene):
             original_names.append(original_name)
 
             object.name = original_name + "____bak"
-            empty_obj = make_empty2(original_name, object.location, copy_root_collection)
+            empty_obj = make_empty3(original_name, object.location, copy_root_collection)
+            """we inject the collection/blueprint name, as a component called 'BlueprintName', but we only do this in the empty, not the original object"""
+            empty_obj['BlueprintName'] = '"'+collection_name+'"'
+            empty_obj['SpawnHere'] = ''
 
-            # empty_obj['BlueprintName'] = '"'+collection_name+'"'
             for k, v in object.items():
                 empty_obj[k] = v
         else:
@@ -315,7 +326,7 @@ def generate_hollow_scene(scene):
     return (temp_scene, original_names)
 
 def clear_hollow_scene(temp_scene, original_scene, original_names):
-    bpy.data.scenes.remove(temp_scene)
+    
 
     # reset original names
     root_collection = original_scene.collection 
@@ -328,6 +339,14 @@ def clear_hollow_scene(temp_scene, original_scene, original_names):
                 print("reseting")
                 object.name = object.name.replace("____bak", "")
 
+    # remove empties (only needed when we go via ops ????)
+    root_collection = temp_scene.collection 
+    scene_objects = [o for o in root_collection.objects]
+    for object in scene_objects:
+        if object.type == 'EMPTY':
+            bpy.data.objects.remove(object, do_unlink=True)
+    
+    bpy.data.scenes.remove(temp_scene)
 
 #Recursivly transverse layer_collection for a particular name
 def recurLayerCollection(layerColl, collName):
@@ -354,8 +373,7 @@ def get_used_collections(scene):
             print("instance collection", object.instance_collection.name)
             #object.instance_collection.users_scene
             # del object['blueprint']
-            """we inject the collection/blueprint name, as a component called 'BlueprintName'"""
-            object['BlueprintName'] = '"'+collection_name+'"'
+            # object['BlueprintName'] = '"'+collection_name+'"'
             if not collection_name in collection_names: 
                 collection_names.add(collection_name)
                 used_collections.append(object.instance_collection)
