@@ -16,15 +16,16 @@ use bevy::{prelude::*, gltf::Gltf};
 
 use crate::{test_components::BlueprintName, assets::GameAssets, state::{AppState, GameState}};
 
-
-
+#[derive(Component, Reflect, Default, Debug, )]
+#[reflect(Component)]
+pub struct SpawnHere;
 
 #[derive(Component)]
 pub struct Original(Entity);
 
 // also takes into account the already exisiting override components ?? ie any component overrides
 pub fn spawn_placeholders(
-    spawn_placeholders: Query<(Entity, &Name, &BlueprintName, &Transform), (Added<BlueprintName>,  Without<Spawned>, Without<SpawnedRoot>)>,
+    spawn_placeholders: Query<(Entity, &Name, &BlueprintName, &Transform), (Added<BlueprintName>, Added<SpawnHere>, Without<Spawned>, Without<SpawnedRoot>)>,
 
     mut commands: Commands,
     mut game_world: Query<(Entity, &Children), With<GameWorldTag>>,
@@ -39,19 +40,18 @@ pub fn spawn_placeholders(
         let what = &blupeprint_name.0;
         let model_path = format!("models/library/{}.glb", &what);
         let scene = game_assets.models.get(&model_path).expect(&format!("no matching model {:?} found", model_path));
-        println!("fooooo {:?}",game_assets.models.keys());
         info!("attempting to spawn {:?}",model_path);
 
         let world = game_world.single_mut();
         let world = world.1[0]; // FIXME: dangerous hack because our gltf data have a single child like this, but might not always be the case
         
         let gltf = assets_gltf.get(scene).expect("this gltf should have been loaded");
-        println!("baaaar {:?}", &gltf.named_scenes);
-        let scene = &gltf.named_scenes["library"]; // TODO: carefull ! this needs to match the blender scene name !!! including lower/upper casing
+        // TODO: we work under the assumtion that there is ONLY ONE named scene, and that the first one is the right one
+        let main_scene_name =gltf.named_scenes.keys().nth(0).expect("there should be at least one named scene in the gltf file to spawn");
+        let scene = &gltf.named_scenes[main_scene_name]; // TODO: carefull ! this needs to match the blender scene name !!! including lower/upper casing
 
 
         let position = global_transform.translation;
-        println!("POSITION {}", position);
         //spawn_requested_events.send(SpawnRequestedEvent { what: "enemy".into(), position, amount: 1, spawner_id: None });
         let child_scene = commands.spawn(
           (
@@ -81,6 +81,7 @@ impl Plugin for SpawningPlugin {
   fn build(&self, app: &mut App) {
       app
         .add_systems(Update, spawn_placeholders.run_if(in_state(AppState::GameRunning)))
+        .register_type::<SpawnHere>()
         /* .register_type::<Spawner>()
         .add_event::<SpawnRequestedEvent>()
         .add_event::<DespawnRequestedEvent>()*/

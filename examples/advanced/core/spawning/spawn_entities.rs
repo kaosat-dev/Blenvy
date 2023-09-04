@@ -202,12 +202,6 @@ pub fn spawn_entities(
         // remove the original entity, now that we have cloned it into the spawned scenes first child
         commands.entity(original.0).despawn_recursive();
 
-        /*commands.add(CloneEntity {
-          source: parent.get(),
-          destination: *root_entity,
-        });*/
-
-
     }
   }
   
