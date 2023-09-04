@@ -598,6 +598,12 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         default=''
     )
 
+    export_on_library_changes: BoolProperty(
+        name='Empty Collection instances',
+        description='Replaces collection instances with an Empty with a BlueprintName custom property',
+        default=False
+    )
+
 
     #####
     export_copyright: StringProperty(

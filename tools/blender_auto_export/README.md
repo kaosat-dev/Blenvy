@@ -27,3 +27,8 @@ It is **very** barebones and messy, but it does a minimal ok job.
 
 * click on "apply settings"
 * now next time you save your blend file you will get an automatically exported gltf file
+
+
+### TODO:
+- [ ] add option for toggling collection replacement logic
+- [ ] add categories/dropdowns in ui
