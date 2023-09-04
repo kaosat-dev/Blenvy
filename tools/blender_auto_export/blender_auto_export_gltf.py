@@ -286,17 +286,22 @@ def generate_hollow_scene(scene):
         # once it's found, set the active layer collection to the one we found
         bpy.context.view_layer.active_layer_collection = found
 
-    original_names = {}
+    #original_names = {}
+    original_names = []
     for object in scene_objects:
         if object.instance_type == 'COLLECTION':
             collection_name = object.instance_collection.name
 
-            # original_names[object.name] = object.name + "____bak"
+            #original_names[object.name] = object.name# + "____bak"
             #print("custom properties", object, object.keys(), object.items())
             #for k, e in object.items():
             #    print("custom properties ", k, e)
             print("object location", object.location)
-            empty_obj = make_empty2(object.name, object.location, copy_root_collection)
+            original_name = object.name
+            original_names.append(original_name)
+
+            object.name = original_name + "____bak"
+            empty_obj = make_empty2(original_name, object.location, copy_root_collection)
 
             # empty_obj['BlueprintName'] = '"'+collection_name+'"'
             for k, v in object.items():
@@ -307,10 +312,21 @@ def generate_hollow_scene(scene):
     # bpy.data.scenes.remove(temp_scene)
     # objs = bpy.data.objects
     #objs.remove(objs["Cube"], do_unlink=True)
-    return temp_scene
+    return (temp_scene, original_names)
 
-def clear_hollow_scene(temp_scene):
+def clear_hollow_scene(temp_scene, original_scene, original_names):
     bpy.data.scenes.remove(temp_scene)
+
+    # reset original names
+    root_collection = original_scene.collection 
+    scene_objects = [o for o in root_collection.objects]
+
+    for object in scene_objects:
+        if object.instance_type == 'COLLECTION':
+            print("object name to reset", object.name)
+            if object.name.endswith("____bak"):
+                print("reseting")
+                object.name = object.name.replace("____bak", "")
 
 
 #Recursivly transverse layer_collection for a particular name
@@ -387,7 +403,7 @@ def export_main(scene, folder_path, gltf_export_preferences, output_name):
         print("failed to export collections to gltf")
     
     #try:
-    hollow_scene = generate_hollow_scene(scene)
+    (hollow_scene, object_names) = generate_hollow_scene(scene)
     #except Exception:
     #    print("failed to create hollow scene")
 
@@ -406,7 +422,7 @@ def export_main(scene, folder_path, gltf_export_preferences, output_name):
                        }
     export_gltf(gltf_output_path, export_settings)
 
-    # clear_hollow_scene(hollow_scene)
+    clear_hollow_scene(hollow_scene, scene, object_names)
 
     # reset current scene from backup
     bpy.context.window.scene = old_current_scene
