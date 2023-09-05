@@ -73,17 +73,32 @@ pub fn spawn_placeholders(
 }
 
 
+#[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
+pub enum SpawnSet{
+  Spawn,
+  AfterSpawn, 
+  Bla
+}
 
 pub struct SpawningPlugin;
 impl Plugin for SpawningPlugin {
   fn build(&self, app: &mut App) {
       app
-        .add_systems(Update, spawn_placeholders.run_if(in_state(AppState::GameRunning)))
         .register_type::<SpawnHere>()
         /* .register_type::<Spawner>()
         .add_event::<SpawnRequestedEvent>()
         .add_event::<DespawnRequestedEvent>()*/
+        .configure_sets(
+          Update,
+          (SpawnSet::Spawn, SpawnSet::AfterSpawn, SpawnSet::Bla).chain()
+        )
     
+        .add_systems(Update, 
+          (spawn_placeholders, apply_deferred).chain()
+          .run_if(in_state(AppState::LoadingGame).or_else(in_state(AppState::GameRunning)))
+          .in_set(SpawnSet::Spawn),
+        )
+
          .add_systems(
           Update,
           (
@@ -92,7 +107,8 @@ impl Plugin for SpawningPlugin {
             cleanup_scene_instances,
           )
           .chain()
-          .run_if(in_state(AppState::GameRunning)) // GameState::InGame
+          .run_if(in_state(AppState::LoadingGame).or_else(in_state(AppState::GameRunning)))
+          .in_set(SpawnSet::AfterSpawn),
         )
 
 

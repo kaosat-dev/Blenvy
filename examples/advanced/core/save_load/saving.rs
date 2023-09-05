@@ -24,12 +24,17 @@ pub fn save_game(
     info!("saving");
 
     let mut scene_world = World::new();
-    let entities: Vec<Entity> = world
+    let saveable_entities: Vec<Entity> = world
     .query_filtered::<Entity, With<Saveable>>()
     .iter(world)
     .collect();
 
-   let mut scene_builder = DynamicSceneBuilder::from_world(world);
+    /*let static_entities: Vec<Entity> = world
+    .query_filtered::<Entity, Without<Saveable>>()
+    .iter(world)
+    .collect();*/
+
+    let mut scene_builder = DynamicSceneBuilder::from_world(world);
     scene_builder
         .deny::<Children>()
         .deny::<Parent>()
@@ -52,7 +57,10 @@ pub fn save_game(
         // .allow::<Enemy>()// FIXME: useless ? ...hmm might be needed for dynamically generated entities during the lifetime of the game
         */
 
-        .extract_entities(entities.into_iter());
+        .extract_entities(saveable_entities.into_iter());
+
+
+
    let dyn_scene = scene_builder.build();
 
    let serialized_scene = dyn_scene.serialize_ron(world.resource::<AppTypeRegistry>()).unwrap();

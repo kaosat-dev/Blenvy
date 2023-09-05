@@ -3,7 +3,7 @@ use bevy::prelude::*;
 use crate::{
     core::spawning::{spawn_entities::GameWorldTag, clone_entity::CloneEntity}, 
     assets::GameAssets, 
-    state::InGameRunning
+    state::{InGameRunning, AppState, GameState}
 };
 
 use super::Saveable;
@@ -13,6 +13,15 @@ pub fn should_load(
     keycode: Res<Input<KeyCode>>,
 ) -> bool {
     return keycode.just_pressed(KeyCode::L)
+}
+
+pub fn load_prepare(
+    mut next_app_state: ResMut<NextState<AppState>>,
+    mut next_game_state: ResMut<NextState<GameState>>,
+){
+    
+    next_app_state.set(AppState::LoadingGame);
+    next_game_state.set(GameState::None)
 }
 
 /// unload the level recursively
@@ -91,12 +100,11 @@ pub fn process_loaded_scene(
 
         for saved_source in children.iter() {
            if let Ok((source, name, _)) = named_entities.get(*saved_source) {
-            println!("AAAAAAA {}", name);
             entities_to_load.push((source, name.clone()));
 
             for (e, n, p) in named_entities.iter(){
                 if e != source && name.as_str() == n.as_str(){
-                    println!("found entity with same name {} {} {:?} {:?}", name, n, source, e);
+                    // println!("found entity with same name {} {} {:?} {:?}", name, n, source, e);
                     // source is entity within the newly loaded scene (source), e is within the existing world (destination)
                     info!("copying data from {:?} to {:?}", source, e);
                     commands.add(CloneEntity {
@@ -120,9 +128,9 @@ pub fn process_loaded_scene(
 
         commands.entity(entity).despawn_recursive();
     }
-    /*for saveable in saveables.iter(){
-        println!("SAVEABLE {:?}", saveable)
-    }*/
+    //for saveable in saveables.iter(){
+    //    println!("SAVEABLE BEFORE {:?}", saveable)
+    //}
 }
 
 pub fn final_cleanup(
@@ -132,6 +140,7 @@ pub fn final_cleanup(
 ){
     if let Ok((e, entities_to_load)) = saveables_to_remove.get_single()
     {
+        info!("saveables to remove {:?}", entities_to_load);
         for (e, n) in saveables.iter(){
             let mut found = false;
             println!("SAVEABLE {}", n);
@@ -149,6 +158,8 @@ pub fn final_cleanup(
             }
         }
         // if there is a saveable that is NOT in the list of entities to load, despawn it
+
+        // despawn list
         commands.entity(e).despawn_recursive();
     }
     
