@@ -1,0 +1,1 @@
+- [ ] seperate "spawn velocity" into a seperate (optional) component

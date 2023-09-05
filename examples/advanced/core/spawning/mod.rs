@@ -46,18 +46,17 @@ pub fn spawn_placeholders(
         let world = world.1[0]; // FIXME: dangerous hack because our gltf data have a single child like this, but might not always be the case
         
         let gltf = assets_gltf.get(scene).expect("this gltf should have been loaded");
-        // TODO: we work under the assumtion that there is ONLY ONE named scene, and that the first one is the right one
+        // WARNING we work under the assumtion that there is ONLY ONE named scene, and that the first one is the right one
         let main_scene_name =gltf.named_scenes.keys().nth(0).expect("there should be at least one named scene in the gltf file to spawn");
-        let scene = &gltf.named_scenes[main_scene_name]; // TODO: carefull ! this needs to match the blender scene name !!! including lower/upper casing
+        let scene = &gltf.named_scenes[main_scene_name];
 
 
-        let position = global_transform.translation;
         //spawn_requested_events.send(SpawnRequestedEvent { what: "enemy".into(), position, amount: 1, spawner_id: None });
         let child_scene = commands.spawn(
           (
               SceneBundle {
                   scene: scene.clone(),
-                  transform: Transform::from_translation(position), // FIMXE: incomplete
+                  transform: global_transform.clone(),
                   ..Default::default()
               },
               bevy::prelude::Name::from(["scene_wrapper", &name.clone()].join("_") ),
@@ -67,7 +66,6 @@ pub fn spawn_placeholders(
                 named_animations: gltf.named_animations.clone(),
                 // animations: gltf.named_animations.values().clone()
               },*/
-              // BlueprintName(what.to_string())
               Original(entity)
           )).id();
           commands.entity(world).add_child(child_scene);
