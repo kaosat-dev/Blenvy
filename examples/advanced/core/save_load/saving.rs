@@ -1,8 +1,10 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, gltf::GltfExtras};
 use bevy::tasks::IoTaskPool;
+use bevy_rapier3d::prelude::RigidBody;
 use std::io::Write;
 use std::fs::File;
 
+use crate::core::physics::Collider;
 use crate::game::{Pickable, Player};
 
 use super::Saveable;
@@ -29,6 +31,17 @@ pub fn save_game(
 
    let mut scene_builder = DynamicSceneBuilder::from_world(world);
     scene_builder
+        .deny::<Children>()
+        .deny::<Parent>()
+        .deny::<ComputedVisibility>()
+        .deny::<Visibility>()
+        .deny::<GltfExtras>()
+        .deny::<GlobalTransform>()
+
+        .deny::<Collider>()
+        .deny::<RigidBody>()
+
+        /* 
         .allow::<bevy::core::Name>()
         .allow::<Saveable>()
         .allow::<Transform>()
@@ -37,6 +50,7 @@ pub fn save_game(
 
         .allow::<Player>()// FIXME: useless ? ...hmm might be needed for dynamically generated entities during the lifetime of the game
         // .allow::<Enemy>()// FIXME: useless ? ...hmm might be needed for dynamically generated entities during the lifetime of the game
+        */
 
         .extract_entities(entities.into_iter());
    let dyn_scene = scene_builder.build();

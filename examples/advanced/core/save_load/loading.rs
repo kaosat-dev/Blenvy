@@ -62,16 +62,10 @@ pub struct TempLoadedSceneMarker;
 pub struct SaveablesToRemove(Vec<(Entity, Name)>);
 
 pub fn load_saved_scene(
-    mut game_world: Query<(Entity, &Children), With<GameWorldTag>>,
-
     mut commands: Commands, 
     asset_server: Res<AssetServer>
 ) {
-    //let world = game_world.single_mut();
-    // let world = world.1[0]; // FIXME: dangerous hack because our gltf data have a single child like this, but might not always be the case
-    // "Spawning" a scene bundle creates a new entity and spawns new instances
-    // of the given scene's entities as children of that entity.
-
+   
     let child_scene = commands.spawn(
     (
         DynamicSceneBundle {
@@ -82,6 +76,7 @@ pub fn load_saved_scene(
         TempLoadedSceneMarker
     )).id();
     // commands.entity(world).add_child(child_scene);
+    info!("loaded saved scene, post processing now");
 }
 
 pub fn process_loaded_scene(
@@ -131,11 +126,11 @@ pub fn process_loaded_scene(
 }
 
 pub fn final_cleanup(
-    saveables_to_remove: Query<&SaveablesToRemove>,
+    saveables_to_remove: Query<(Entity, &SaveablesToRemove)>,
     mut commands: Commands, 
     saveables: Query<(Entity, &Name), With<Saveable>>
 ){
-    if let Ok(entities_to_load) = saveables_to_remove.get_single()
+    if let Ok((e, entities_to_load)) = saveables_to_remove.get_single()
     {
         for (e, n) in saveables.iter(){
             let mut found = false;
@@ -154,6 +149,7 @@ pub fn final_cleanup(
             }
         }
         // if there is a saveable that is NOT in the list of entities to load, despawn it
+        commands.entity(e).despawn_recursive();
     }
     
 }

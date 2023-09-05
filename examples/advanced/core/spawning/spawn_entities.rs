@@ -5,7 +5,7 @@ use bevy_rapier3d::prelude::*; // FIXME: temporary: used for velocity of newly s
 use bevy::utils::HashMap;
 
 use crate::core::save_load::TempLoadedSceneMarker;
-use crate::core::spawning::CloneEntity;
+use crate::core::spawning::{CloneEntity, SpawnHere};
 use crate::test_components::BlueprintName;
 
 use super::Original;
@@ -97,12 +97,9 @@ pub fn spawn_entities(
   // - scene instance -> does not work
   // it might be due to how we add components to the PARENT item in gltf to components
   pub(crate) fn update_spawned_root_first_child(
-    all_children: Query<(Entity, &Children)>,
-  
+    all_children: Query<(Entity, &Children)>,  
+    unprocessed_entities :Query<(Entity, &Children, &Name, &Parent, &Original ), (With<SpawnedRoot>, Without<SpawnedRootProcessed>)>,
     mut commands: Commands,
-  
-    unprocessed_entities :Query<(Entity, &Children, &Name, Option<&BlueprintName>, &Parent, &Original ), (With<SpawnedRoot>, Without<SpawnedRootProcessed>)>,
-    mut game_world: Query<(Entity, &Children), With<GameWorldTag>>,
 
     // FIXME: should be done at a more generic gltf level
     animation_helpers: Query<&AnimationHelper>,
@@ -130,7 +127,7 @@ pub fn spawn_entities(
         FIME: this is all highly dependent on the hierachy ;..
      */
    
-    for (scene_instance, children, name, blueprint_name, parent, original) in unprocessed_entities.iter()  {
+    for (scene_instance, children, name, parent, original) in unprocessed_entities.iter()  {
         println!("children of scene {:?}", children);
         // the root node is the first & normally only child inside a scene, it is the one that has all relevant components
         let root_entity = children.first().unwrap(); //FIXME: and what about childless ones ??
@@ -144,6 +141,7 @@ pub fn spawn_entities(
         let vel_x: f32 = rng.gen_range(-range..range);
         let vel_y: f32 = rng.gen_range(-range..range);
         let vel_z: f32 = rng.gen_range(2.0..2.5);
+
         // add missing name of entity, based on the wrapper's name
         let name= name.clone().replace("scene_wrapper_", "");
 
@@ -151,27 +149,17 @@ pub fn spawn_entities(
         commands.entity(*root_entity).insert((
             bevy::prelude::Name::from(name.clone()),
             // ItemType {name},
-            Spawned,
+            // Spawned, // FIXME: not sure
             Velocity {
               linvel: Vec3::new(vel_x, vel_y, vel_z),
               angvel: Vec3::new(0.0, 0.0, 0.0),
             },
         ));
-        // IF the original had a BlueprintName component, reinject that into the new entity
-        /*if let Some(blueprint_name) = blueprint_name {
-          commands.entity(*root_entity).insert(
-            BlueprintName(blueprint_name.0.clone())
-          );
-        }*/
-  
+      
         // flag the spawned_root as being processed
         commands.entity(scene_instance).insert(SpawnedRootProcessed);
   
-        // these are the things we want, move them one level up
-        // let actual_stuff = root_entity_data.1; 
-        // let world = game_world.single_mut();
-        // let world = world.1[0]; // FIXME: dangerous hack because our gltf data have a single child like this, but might not always be the case
-        //
+       
         // let original_transforms = 
         // parent is either the world or an entity with a marker (BlueprintName)
         commands.entity(parent.get()).add_child(*root_entity);
@@ -193,7 +181,6 @@ pub fn spawn_entities(
           }
         }
 
-        
         commands.add(CloneEntity {
           source: original.0,
           destination: *root_entity,
@@ -201,7 +188,7 @@ pub fn spawn_entities(
 
         // remove the original entity, now that we have cloned it into the spawned scenes first child
         commands.entity(original.0).despawn_recursive();
-
+        commands.entity(*root_entity).remove::<SpawnHere>();
     }
   }
   
