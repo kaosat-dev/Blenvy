@@ -1,10 +1,11 @@
 use bevy::prelude::*;
 
-use crate::{assets::GameAssets, core::spawning::GameWorldTag, state::InGameRunning};
+use crate::{assets::GameAssets, core::spawning::GameWorldTag, state::{InGameRunning, GameState}};
 
 pub fn setup_game(
     mut commands: Commands,
     game_assets: Res<GameAssets>,
+    mut next_game_state: ResMut<NextState<GameState>>,
 
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
@@ -27,4 +28,5 @@ pub fn setup_game(
         InGameRunning
     ));
    
+    next_game_state.set(GameState::InGame)
 }
