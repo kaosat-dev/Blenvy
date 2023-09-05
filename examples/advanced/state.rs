@@ -8,7 +8,10 @@ pub enum AppState{
     #[default]
     GameLoading,
     GameRunning,
-    GameEnding
+    GameEnding,
+
+    // FIXME: not sure
+    LoadingGame
 }
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Default, States)]
