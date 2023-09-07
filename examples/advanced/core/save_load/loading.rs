@@ -212,7 +212,7 @@ pub fn final_cleanup(
         // despawn list
         commands.entity(e).despawn_recursive();
 
-        println!("hereeeee");
+        info!("--loading: done, move to InGame state");
         // next_app_state.set(AppState::AppRunning);
         next_game_state.set(GameState::InGame);
     }

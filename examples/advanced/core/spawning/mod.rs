@@ -138,7 +138,9 @@ impl Plugin for SpawningPlugin {
           (
             // spawn_entities,
             update_spawned_root_first_child, 
+            apply_deferred,
             cleanup_scene_instances,
+            apply_deferred,
           )
           .chain()
           .run_if(in_state(AppState::LoadingGame).or_else(in_state(AppState::AppRunning)))

@@ -128,7 +128,7 @@ pub fn spawn_entities(
      */
    
     for (scene_instance, children, name, parent, original) in unprocessed_entities.iter()  {
-        println!("children of scene {:?}", children);
+        // println!("children of scene {:?}", children);
         // the root node is the first & normally only child inside a scene, it is the one that has all relevant components
         let root_entity = children.first().unwrap(); //FIXME: and what about childless ones ??
         let root_entity_data = all_children.get(*root_entity).unwrap();
@@ -201,12 +201,12 @@ pub fn spawn_entities(
   ){
     for (entity, children) in scene_instances.iter(){
         if children.len() == 0{ // it seems this does not happen ?
-            println!("empty scene instance can be cleaned up");
+            info!("cleaning up emptied spawned scene instance");
             commands.entity(entity).despawn_recursive();
         }
     }
     for entity in without_children.iter() {
-        println!("empty scene instance can be cleaned up");
-        commands.entity(entity).despawn_recursive();
+      info!("cleaning up emptied spawned scene instance");
+      commands.entity(entity).despawn_recursive();
     }
   }

@@ -58,7 +58,7 @@ pub fn physics_replace_proxies (
         let mut rapier_collider:RapierCollider;
         match collider_proxy{
             Collider::Ball(radius) => {
-                println!("proxy: ball");
+                info!("generating collider from proxy: ball");
                 rapier_collider = RapierCollider::ball(*radius);
                 commands.entity(entity)
                     .insert(rapier_collider)
@@ -66,7 +66,7 @@ pub fn physics_replace_proxies (
                     ;
             }
             Collider::Cuboid(size) => {
-                println!("proxy: cuboid");
+                info!("generating collider from proxy: cuboid");
                 rapier_collider = RapierCollider::cuboid(size.x, size.y, size.z);
                 commands.entity(entity)
                     .insert(rapier_collider)
@@ -74,7 +74,7 @@ pub fn physics_replace_proxies (
                     ;
             }
             Collider::Capsule(a, b, radius) => {
-                println!("proxy: capsule");
+                info!("generating collider from proxy: capsule");
                 rapier_collider = RapierCollider::capsule(*a, *b, *radius);
                 commands.entity(entity)
                     .insert(rapier_collider)
@@ -82,7 +82,7 @@ pub fn physics_replace_proxies (
                     ;
             }
             Collider::Mesh => {
-                println!("proxy: mesh");
+                info!("generating collider from proxy: mesh");
                 for (_, collider_mesh) in Mesh::search_in_children(entity, &children, &meshes, &mesh_handles)
                 {
                     rapier_collider = RapierCollider::from_bevy_mesh(collider_mesh, &ComputedColliderShape::TriMesh).unwrap();
@@ -102,14 +102,13 @@ pub fn physics_replace_proxies (
     }
     // rigidbodies
     for (entity, proxy_rigidbody) in proxy_rigidbodies.iter() {
-        info!("Proxy rigid body !! {:?}", proxy_rigidbody );
+        info!("Generation rigid body from Proxy rigid body !! {:?}", proxy_rigidbody );
         let rigid_body:RapierRigidBody = match proxy_rigidbody {
             RigidBodyProxy::Dynamic => RapierRigidBody::Dynamic,
             RigidBodyProxy::Fixed=>  RapierRigidBody::Fixed,
             RigidBodyProxy::Position =>  RapierRigidBody::KinematicPositionBased,
             RigidBodyProxy::Velocity =>  RapierRigidBody::KinematicVelocityBased,
         };
-        println!("inserting rigidbody {:?}", rigid_body);
         commands.entity(entity)
             .insert(rigid_body)
             // IMPORTANT ! this allows collisions between dynamic & static(fixed) entities

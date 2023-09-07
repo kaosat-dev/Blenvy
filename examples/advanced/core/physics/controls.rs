@@ -7,6 +7,6 @@ pub fn pause_physics(mut physics_config: ResMut<RapierConfiguration>){
 }
 
 pub fn resume_physics(mut physics_config: ResMut<RapierConfiguration>){
-    info!("resuming physics");
+    info!("unpausing physics");
     physics_config.physics_pipeline_active = true;
 }

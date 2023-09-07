@@ -1,3 +1,6 @@
+use bevy::pbr::{Clusters, VisiblePointLights};
+use bevy::render::camera::CameraRenderGraph;
+use bevy::render::view::VisibleEntities;
 use bevy::{prelude::*, gltf::GltfExtras};
 use bevy::tasks::IoTaskPool;
 use bevy_rapier3d::prelude::RigidBody;
@@ -47,6 +50,17 @@ pub fn save_game(
         .deny::<RigidBody>()
         .deny::<RigidBodyProxy>()
         .deny::<Saveable>()
+
+        // camera stuff
+        .deny::<Camera>()
+        .deny::<CameraRenderGraph>()
+        .deny::<Camera3d>()
+        .deny::<Clusters>()
+        .deny::<VisibleEntities>()
+        .deny::<VisiblePointLights>()
+        //.deny::<HasGizmoMarker>()
+
+
         .extract_entities(saveable_entities.into_iter());
 
         

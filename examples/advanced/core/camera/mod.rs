@@ -5,6 +5,7 @@ pub mod camera_replace_proxies;
 pub use camera_replace_proxies::*;
 
 use bevy::prelude::*;
+use super::spawning::SpawnSet;
 
 pub struct CameraPlugin;
 impl Plugin for CameraPlugin {
@@ -16,7 +17,7 @@ impl Plugin for CameraPlugin {
 
         .add_systems(Update, 
           (
-            camera_replace_proxies,
+            camera_replace_proxies.after(SpawnSet::AfterSpawn),
             camera_track,
           )
         )
