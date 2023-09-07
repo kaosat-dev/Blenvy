@@ -33,6 +33,7 @@ impl CloneEntity {
                       .unwrap()
               })
               .map(|type_id| {
+                // println!("type_id {:?}", type_id);
                   registry
                       .get(type_id)
                       .unwrap()

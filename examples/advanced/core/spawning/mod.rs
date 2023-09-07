@@ -72,12 +72,40 @@ pub fn spawn_placeholders(
     }
 }
 
+use rand::Rng;
+
+fn spawn_test(
+  keycode: Res<Input<KeyCode>>,
+  mut commands: Commands,
+
+  mut game_world: Query<(Entity, &Children), With<GameWorldTag>>,
+  
+
+) {
+  if keycode.just_pressed(KeyCode::T) {
+    let world = game_world.single_mut();
+    let world = world.1[0];
+
+    let mut rng = rand::thread_rng();
+    let range = 5.5;
+    let x: f32 = rng.gen_range(-range..range);
+    let y: f32 = rng.gen_range(-range..range);
+    let name_index:u64 = rng.gen();
+
+    let new_entity = commands.spawn((
+      bevy::prelude::Name::from(format!("test{}", name_index)),
+      BlueprintName("Health_Pickup".to_string()),
+      SpawnHere,
+      TransformBundle::from_transform(Transform::from_xyz(x, 1.0, y))
+    )).id();
+    commands.entity(world).add_child(new_entity);
+  }
+}
 
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
 pub enum SpawnSet{
   Spawn,
   AfterSpawn, 
-  Bla
 }
 
 pub struct SpawningPlugin;
@@ -90,12 +118,18 @@ impl Plugin for SpawningPlugin {
         .add_event::<DespawnRequestedEvent>()*/
         .configure_sets(
           Update,
-          (SpawnSet::Spawn, SpawnSet::AfterSpawn, SpawnSet::Bla).chain()
+          (SpawnSet::Spawn, SpawnSet::AfterSpawn).chain()
+        )
+
+        // just for testing
+        .add_systems(
+          Update, 
+          spawn_test
         )
     
         .add_systems(Update, 
-          (spawn_placeholders, apply_deferred).chain()
-          .run_if(in_state(AppState::LoadingGame).or_else(in_state(AppState::GameRunning)))
+          (spawn_placeholders).chain()
+          .run_if(in_state(AppState::AppRunning).or_else(in_state(AppState::LoadingGame)))
           .in_set(SpawnSet::Spawn),
         )
 
@@ -107,7 +141,7 @@ impl Plugin for SpawningPlugin {
             cleanup_scene_instances,
           )
           .chain()
-          .run_if(in_state(AppState::LoadingGame).or_else(in_state(AppState::GameRunning)))
+          .run_if(in_state(AppState::LoadingGame).or_else(in_state(AppState::AppRunning)))
           .in_set(SpawnSet::AfterSpawn),
         )
 
