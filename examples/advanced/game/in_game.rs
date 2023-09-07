@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{assets::GameAssets, core::spawning::GameWorldTag, state::{InGameRunning, GameState}};
+use crate::{assets::GameAssets, core::spawning::GameWorldTag, state::{InAppRunning, GameState}};
 
 pub fn setup_game(
     mut commands: Commands,
@@ -25,7 +25,7 @@ pub fn setup_game(
         },
         bevy::prelude::Name::from("world"),
         GameWorldTag,
-        InGameRunning
+        InAppRunning
     ));
    
     next_game_state.set(GameState::InGame)

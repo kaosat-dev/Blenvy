@@ -6,9 +6,9 @@ pub enum AppState{
     CoreLoading,
     MenuRunning,
     #[default]
-    GameLoading,
-    GameRunning,
-    GameEnding,
+    AppLoading,
+    AppRunning,
+    AppEnding,
 
     // FIXME: not sure
     LoadingGame
@@ -34,9 +34,9 @@ pub struct InCoreLoading;
 #[derive(Component, Default)]
 pub struct InMenuRunning;
 #[derive(Component)]
-pub struct InGameLoading;
+pub struct InAppLoading;
 #[derive(Component)]
-pub struct InGameRunning;
+pub struct InAppRunning;
 
 // components for tagging in game vs in game menu stuff
 #[derive(Component, Default)]
