@@ -6,7 +6,7 @@ pub use picking::*;
 
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
-use crate::{insert_dependant_component, state::AppState};
+use crate::{insert_dependant_component, state::{AppState, GameState}};
 
 
 
@@ -108,14 +108,14 @@ impl Plugin for GamePlugin {
         .add_systems(Update, (
             // insert_dependant_component::<Player, ShouldBeWithPlayer>,
             player_move_demo, //.run_if(in_state(AppState::Running)),
-            test_collision_events
-        ))
-
+            // test_collision_events
+        )
+        .run_if(in_state(GameState::InGame)))
 
         .add_systems(
-            OnEnter(AppState::GameRunning),
+            OnEnter(AppState::AppRunning),
             setup_game
-          )
+        )
     ;
   }
 }
