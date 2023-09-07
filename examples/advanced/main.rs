@@ -29,7 +29,7 @@ fn main(){
                 // This tells the AssetServer to watch for changes to assets.
                 // It enables our scenes to automatically reload in game when we modify their files.
                 // practical in our case to be able to edit the shaders without needing to recompile
-                watch_for_changes: ChangeWatcher::with_delay(Duration::from_millis(50)),
+                // watch_for_changes: ChangeWatcher::with_delay(Duration::from_millis(50)), : FIXME: breaks scene save/loading
                 ..default()
             }
         ),
