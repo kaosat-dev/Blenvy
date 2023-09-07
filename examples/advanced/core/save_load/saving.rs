@@ -4,7 +4,7 @@ use bevy_rapier3d::prelude::RigidBody;
 use std::io::Write;
 use std::fs::File;
 
-use crate::core::physics::Collider;
+use crate::core::physics::{Collider, RigidBodyProxy};
 use crate::game::{Pickable, Player};
 
 use super::Saveable;
@@ -23,7 +23,6 @@ pub fn save_game(
 ){
     info!("saving");
 
-    let mut scene_world = World::new();
     let saveable_entities: Vec<Entity> = world
     .query_filtered::<Entity, With<Saveable>>()
     .iter(world)
@@ -33,6 +32,7 @@ pub fn save_game(
     .query_filtered::<Entity, Without<Saveable>>()
     .iter(world)
     .collect();*/
+    println!("saveable entities {}", saveable_entities.len());
 
     let mut scene_builder = DynamicSceneBuilder::from_world(world);
     scene_builder
@@ -45,26 +45,14 @@ pub fn save_game(
 
         .deny::<Collider>()
         .deny::<RigidBody>()
-
-        /* 
-        .allow::<bevy::core::Name>()
-        .allow::<Saveable>()
-        .allow::<Transform>()
-        // .allow::<BlueprintName>()
-        .allow::<Pickable>()
-
-        .allow::<Player>()// FIXME: useless ? ...hmm might be needed for dynamically generated entities during the lifetime of the game
-        // .allow::<Enemy>()// FIXME: useless ? ...hmm might be needed for dynamically generated entities during the lifetime of the game
-        */
-
+        .deny::<RigidBodyProxy>()
+        .deny::<Saveable>()
         .extract_entities(saveable_entities.into_iter());
 
-
+        
 
    let dyn_scene = scene_builder.build();
-
    let serialized_scene = dyn_scene.serialize_ron(world.resource::<AppTypeRegistry>()).unwrap();
-
 
    #[cfg(not(target_arch = "wasm32"))]
           IoTaskPool::get()
@@ -75,26 +63,4 @@ pub fn save_game(
                       .expect("Error while writing scene to file");
               })
               .detach();
-}
-
-// let my_uuid = Uuid::new_v4();
-fn save_game_alt(
-    keycode: Res<Input<KeyCode>>,
-    saveables: Query<&Saveable>
-){
-    if keycode.just_pressed(KeyCode::S) {
-        info!("saving");
-        println!("saveables {:?}", saveables);
-
-        let serialized_scene ="";
-        #[cfg(not(target_arch = "wasm32"))]
-        IoTaskPool::get()
-            .spawn(async move {
-                // Write the scene RON data to file
-                File::create(format!("assets/{NEW_SCENE_FILE_PATH}"))
-                    .and_then(|mut file| file.write(serialized_scene.as_bytes()))
-                    .expect("Error while writing scene to file");
-            })
-            .detach();
-    }
 }

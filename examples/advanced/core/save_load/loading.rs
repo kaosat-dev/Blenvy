@@ -1,12 +1,21 @@
 use bevy::prelude::*;
 
 use crate::{
-    core::spawning::{spawn_entities::GameWorldTag, clone_entity::CloneEntity}, 
+    core::spawning::{spawn_entities::GameWorldTag, clone_entity::CloneEntity, SpawnHere}, 
     assets::GameAssets, 
-    state::{InGameRunning, AppState, GameState}
+    state::{InAppRunning, AppState, GameState}
 };
 
 use super::Saveable;
+
+const SCENE_FILE_PATH: &str = "save.scn.ron";
+
+#[derive(Component, Debug, )]
+pub struct TempLoadedSceneMarker;
+
+#[derive(Component, Debug, )]
+pub struct SaveablesToRemove(Vec<(Entity, Name)>);
+
 
 
 pub fn should_load(
@@ -21,11 +30,12 @@ pub fn load_prepare(
 ){
     
     next_app_state.set(AppState::LoadingGame);
-    next_game_state.set(GameState::None)
+    next_game_state.set(GameState::None);
+    info!("--loading: prepare")
 }
 
 /// unload the level recursively
-pub fn unload_world(world: &mut World) {
+pub fn unload_world_old(world: &mut World) {
     let entities: Vec<Entity> = world
         // .query_filtered::<Entity, Or<(With<Save>, With<Unload>)>>()
         .query_filtered::<Entity, With<GameWorldTag>>()// our level/world contains this component
@@ -39,7 +49,15 @@ pub fn unload_world(world: &mut World) {
     }
 }
 
-
+pub fn unload_world(
+    mut commands: Commands,
+    gameworlds: Query<Entity, With<GameWorldTag>>
+){
+    for e in gameworlds.iter(){
+        info!("--loading: despawn old world/level");
+        commands.entity(e).despawn_recursive();
+    }
+}
 
 // almost identical to setup_game, !!??
 pub fn load_world(
@@ -47,7 +65,7 @@ pub fn load_world(
         game_assets: Res<GameAssets>,
         // scenes: ResMut<Scene>,
 ){
-    info!("loading");
+    info!("--loading: loading world/level");
   
     commands.spawn((
         SceneBundle {
@@ -56,26 +74,18 @@ pub fn load_world(
         },
         bevy::prelude::Name::from("world"),
         GameWorldTag,
-        InGameRunning
+        InAppRunning
     ));
 }
 
 
-const SCENE_FILE_PATH: &str = "save.scn.ron";
 
-#[derive(Component, Debug, )]
-pub struct TempLoadedSceneMarker;
-
-
-#[derive(Component, Debug, )]
-pub struct SaveablesToRemove(Vec<(Entity, Name)>);
 
 pub fn load_saved_scene(
     mut commands: Commands, 
     asset_server: Res<AssetServer>
 ) {
-   
-    let child_scene = commands.spawn(
+    commands.spawn(
     (
         DynamicSceneBundle {
             // Scenes are loaded just like any other asset.
@@ -83,40 +93,71 @@ pub fn load_saved_scene(
             ..default()
         },
         TempLoadedSceneMarker
-    )).id();
+    ));
     // commands.entity(world).add_child(child_scene);
-    info!("loaded saved scene, post processing now");
+    info!("--loading: loaded saved scene");
 }
 
 pub fn process_loaded_scene(
-    entities: Query<(Entity, &Children), With<TempLoadedSceneMarker>>,
+    loaded_scene: Query<(Entity, &Children), (With<TempLoadedSceneMarker>)>,
     named_entities: Query<(Entity, &Name, &Parent)>, // FIXME: very inneficient
     mut commands: Commands, 
 
-    saveables: Query<(Entity, &Name), With<Saveable>>
+    mut game_world: Query<(Entity, &Children), With<GameWorldTag>>,
+    saveables: Query<(Entity, &Name), With<Saveable>>,
+    asset_server: Res<AssetServer>
 ){
-    for (entity, children) in entities.iter(){
+    for (loaded_scene, children) in loaded_scene.iter(){
+        info!("--loading: post processing loaded scene");
+
         let mut entities_to_load:Vec<(Entity, Name)> = vec![];
 
-        for saved_source in children.iter() {
-           if let Ok((source, name, _)) = named_entities.get(*saved_source) {
-            entities_to_load.push((source, name.clone()));
+        for loaded_entity in children.iter() {
+           if let Ok((source, name, _)) = named_entities.get(*loaded_entity) {
+                entities_to_load.push((source, name.clone()));
 
-            for (e, n, p) in named_entities.iter(){
-                if e != source && name.as_str() == n.as_str(){
-                    // println!("found entity with same name {} {} {:?} {:?}", name, n, source, e);
-                    // source is entity within the newly loaded scene (source), e is within the existing world (destination)
-                    info!("copying data from {:?} to {:?}", source, e);
+                let mut found = false;
+                for (e, n, p) in named_entities.iter(){
+                    // if we have an entity with the same name as in same file, overwrite
+                    if e != source && name.as_str() == n.as_str(){
+                        // println!("found entity with same name {} {} {:?} {:?}", name, n, source, e);
+                        // source is entity within the newly loaded scene (source), e is within the existing world (destination)
+                        info!("copying data from {:?} to {:?}", source, e);
+                        commands.add(CloneEntity {
+                            source: source,
+                            destination: e,
+                        });
+                        // FIXME: issue with hierarchy & parenting, would be nice to be able to filter out components from CloneEntity
+                        commands.entity(p.get()).add_child(e);
+                        commands.entity(source).despawn_recursive();
+                        found = true;
+                        break;
+                    }
+                }
+                // entity not found in the list of existing entities (ie entities that came as part of the level)
+                // so we spawn a new one
+                if !found {
+                    info!("generating new entity");
+                    let world = game_world.single_mut();
+                    let world = world.1[0];
+
+                    let new_entity = commands.spawn((
+                        bevy::prelude::Name::from(name.clone()),
+                        SpawnHere,
+                    )).id();
+
                     commands.add(CloneEntity {
                         source: source,
-                        destination: e,
+                        destination: new_entity,
                     });
-                    // FIXME: issue with hierarchy & parenting, would be nice to be able to filter out components from CloneEntity
-                    commands.entity(p.get()).add_child(e);
-                    commands.entity(source).despawn_recursive();
 
+                    commands.entity(world).add_child(new_entity);
+                    info!("copying data from {:?} to {:?}", source, new_entity);
+
+                 
+                    
                 }
-            }
+
            }
         }
         commands.spawn(SaveablesToRemove(entities_to_load.clone()));
@@ -126,7 +167,13 @@ pub fn process_loaded_scene(
         // if an entity is present in the world but NOT in the saved entities , it should be removed from the world
         // ideally this should be run between spawning of the world/level AND spawn_placeholders
 
-        commands.entity(entity).despawn_recursive();
+        // remove the dynamic scene
+        info!("--loading: DESPAWNING LOADED SCENE");
+        commands.entity(loaded_scene).despawn_recursive();
+
+        asset_server.mark_unused_assets();
+        asset_server.free_unused_assets();
+
     }
     //for saveable in saveables.iter(){
     //    println!("SAVEABLE BEFORE {:?}", saveable)
@@ -136,7 +183,10 @@ pub fn process_loaded_scene(
 pub fn final_cleanup(
     saveables_to_remove: Query<(Entity, &SaveablesToRemove)>,
     mut commands: Commands, 
-    saveables: Query<(Entity, &Name), With<Saveable>>
+    saveables: Query<(Entity, &Name), With<Saveable>>,
+    mut next_app_state: ResMut<NextState<AppState>>,
+    mut next_game_state: ResMut<NextState<GameState>>,
+
 ){
     if let Ok((e, entities_to_load)) = saveables_to_remove.get_single()
     {
@@ -161,8 +211,11 @@ pub fn final_cleanup(
 
         // despawn list
         commands.entity(e).despawn_recursive();
+
+        println!("hereeeee");
+        // next_app_state.set(AppState::AppRunning);
+        next_game_state.set(GameState::InGame);
     }
-    
 }
 
 fn process_loaded_scene_load_alt(

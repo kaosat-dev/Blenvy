@@ -1,4 +1,6 @@
 pub mod saveable;
+use bevy::asset::free_unused_assets_system;
+use bevy_gltf_components::GltfComponentsSet;
 pub use saveable::*;
 
 pub mod saving;
@@ -31,9 +33,9 @@ impl Plugin for SaveLoadPlugin {
         .configure_sets(
             Update,
             (LoadingSet::Load, LoadingSet::PostLoad)
-            .after(SpawnSet::AfterSpawn)
-
-                .chain()
+            .chain()
+            .before(SpawnSet::Spawn)
+            .before(GltfComponentsSet::Injection)
         )
 
         .add_systems(PreUpdate, save_game.run_if(should_save))
@@ -47,18 +49,20 @@ impl Plugin for SaveLoadPlugin {
                 // process_loaded_scene
             )
             .chain()
-            .run_if(should_load) // .run_if(in_state(AppState::GameRunning))
+            .run_if(should_load) // .run_if(in_state(AppState::AppRunning))
             .in_set(LoadingSet::Load)
         )
          .add_systems(Update,
             (
                 process_loaded_scene,
                 apply_deferred,
-                final_cleanup
+                final_cleanup,
+                apply_deferred,
+                free_unused_assets_system
             )
                 .chain()
-                .in_set(SpawnSet::Bla)
-        )
+                .in_set(LoadingSet::PostLoad)
+            )
 
         
       ;
