@@ -21,7 +21,7 @@ pub fn gltf_extras_to_components(
 ){
     let mut added_components = 0;  
     for (_name, scene) in &gltf.named_scenes {
-      info!("gltf: {:?} scene name {:?}", gltf_name, _name);
+      debug!("gltf: {:?} scene name {:?}", gltf_name, _name);
    
       let scene = scenes.get_mut(scene).unwrap();
 
@@ -49,7 +49,6 @@ pub fn gltf_extras_to_components(
         if entity_components.contains_key(&target_entity) {
           let mut updated_components: Vec<Box<dyn Reflect>> = Vec::new();
           let current_components = &entity_components[&target_entity];
-          
           // first inject the current components
           for component in current_components {
             updated_components.push(component.clone_value());
@@ -74,7 +73,6 @@ pub fn gltf_extras_to_components(
           debug!("-----value {:?}", &extras.value);
       }
 
-      // println!("FOUND ASSET {:?}", foob);
       // GltfNode
       // find a way to link this name to the current entity ? => WOULD BE VERY USEFULL for animations & co !!
       debug!("done pre-processing components, now adding them to entities");
@@ -98,10 +96,9 @@ pub fn gltf_extras_to_components(
             // scene.world.components().
                 // TODO: how can we insert any additional components "by hand" here ?
         }
-        let entity_mut = scene.world.entity_mut(entity);
-        let archetype = entity_mut.archetype().clone();
-        let _all_components = archetype.components();
-        // println!("All components {:?}", all_components);
+        // let entity_mut = scene.world.entity_mut(entity);
+        // let archetype = entity_mut.archetype().clone();
+        // let _all_components = archetype.components();
 
         if added_components > 0 {
           debug!("------done adding {} components", added_components);
@@ -120,7 +117,6 @@ pub fn gltf_extras_to_components(
     for (key, value) in lookup.into_iter() {
       let type_string = key.replace("component: ", "").trim().to_string();
       let capitalized_type_name = capitalize_first_letter(type_string.as_str());
-      // println!("capitalized_type_name {}", capitalized_type_name);
 
       let mut parsed_value:String;
       match value.clone() {
@@ -140,8 +136,6 @@ pub fn gltf_extras_to_components(
             if info.field_len() == 1 { 
               let field = info.field_at(0).expect("we should always have at least one field here");
               let field_name = field.type_name();   
-              // println!("field name {}", field_name);           
-              // let bla = TypeId::of::<f32>();
               // TODO: find a way to cast with typeId instead of this matching
               /*match field.type_id(){
                 TypeId::of::<f32>() => {

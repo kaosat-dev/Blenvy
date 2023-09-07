@@ -8,7 +8,7 @@ pub mod process_gltfs;
 pub use process_gltfs::*;
 
 use bevy::prelude::{
-  App,Plugin, PreUpdate
+  App,Plugin, PreUpdate, Update, SystemSet, IntoSystemConfigs
 };
 
 
@@ -41,6 +41,14 @@ use bevy::prelude::{
 /// 
 ///}
 /// ```
+
+
+#[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
+pub enum GltfComponentsSet{
+  Injection, 
+}
+
+
 #[derive(Default)]
 pub struct ComponentsFromGltfPlugin;
 impl Plugin for ComponentsFromGltfPlugin {
@@ -48,10 +56,15 @@ impl Plugin for ComponentsFromGltfPlugin {
       app
         .insert_resource(GltfLoadingTracker::new())
 
-        .add_systems(PreUpdate, (
+        .add_systems(Update, (
           track_new_gltf, 
           process_loaded_scenes,
         ))
+
+        .add_systems(Update, 
+          (process_loaded_scenes)
+          .in_set(GltfComponentsSet::Injection)
+        )
       ;
   }
 }
