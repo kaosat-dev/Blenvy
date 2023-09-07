@@ -5,14 +5,14 @@ edition = "2021"
 license = "MIT OR Apache-2.0"
 
 [dev-dependencies]
-bevy="0.11"
+bevy="0.11.2"
 bevy_rapier3d = { version = "0.22.0", features = [ "serde-serialize", "debug-render-3d", "enhanced-determinism"] }
 bevy_editor_pls = { git="https://github.com/jakobhellermann/bevy_editor_pls.git" }
 bevy_asset_loader = { version = "0.17.0", features = ["standard_dynamic_assets" ]} #version = "0.16",
 rand = "0.8.5"
 
 [dependencies]
-bevy = { version = "0.11", default-features = false, features = ["bevy_asset", "bevy_scene", "bevy_gltf"] }
+bevy = { version = "0.11.2", default-features = false, features = ["bevy_asset", "bevy_scene", "bevy_gltf"] }
 serde = "*"
 ron="*"
 
