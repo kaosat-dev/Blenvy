@@ -61,17 +61,11 @@ pub enum EnumTest{
   None
 }
 
-#[derive(Component, Reflect, Default, Debug, )]
-#[reflect(Component)]
-pub struct BlueprintName(pub String);
-
 
 pub struct ComponentsTestPlugin;
 impl Plugin for ComponentsTestPlugin {
   fn build(&self, app: &mut App) {
       app
-        .register_type::<BlueprintName>()
-
         .register_type::<BasicTest>()
         .register_type::<UnitTest>()
         .register_type::<TuppleTestF32>()

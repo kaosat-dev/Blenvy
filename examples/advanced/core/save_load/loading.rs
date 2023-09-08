@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use crate::{
-    core::spawning::{spawn_entities::GameWorldTag, clone_entity::CloneEntity, SpawnHere}, 
+    core::blueprints::{clone_entity::CloneEntity, SpawnHere, GameWorldTag}, 
     assets::GameAssets, 
     state::{InAppRunning, AppState, GameState}
 };

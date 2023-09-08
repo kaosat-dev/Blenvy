@@ -13,7 +13,7 @@ use bevy::prelude::*;
 use bevy::prelude::{App, Plugin, IntoSystemConfigs};
 use bevy::utils::Uuid;
 
-use super::spawning::SpawnSet;
+use super::blueprints::SpawnSet;
 
 
 

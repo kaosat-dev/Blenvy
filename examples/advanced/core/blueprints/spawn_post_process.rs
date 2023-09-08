@@ -5,19 +5,10 @@ use bevy_rapier3d::prelude::*; // FIXME: temporary: used for velocity of newly s
 use bevy::utils::HashMap;
 
 use crate::core::save_load::TempLoadedSceneMarker;
-use crate::core::spawning::{CloneEntity, SpawnHere};
-use crate::test_components::BlueprintName;
+use crate::core::blueprints::{CloneEntity, SpawnHere};
+use super::{Original, SpawnedRoot};
 
-use super::Original;
 
-// TODO: move this out, likely
-// this is a flag component for our levels/game world
-#[derive(Component)]
-pub struct GameWorldTag;
-
-#[derive(Component)]
-/// FlagComponent for dynamically spawned scenes
-pub struct SpawnedRoot;
 
 /*use crate::{assets::{LibraryPack, GameAssets}, core::AnimationHelper};
 use super::{SpawnRequestedEvent, Spawner, GameWorldTag, ItemType};
@@ -81,13 +72,9 @@ pub fn spawn_entities(
   
   #[derive(Component)]
   /// FlagComponent for dynamically spawned scenes
-  pub struct SpawnedRootProcessed;
+  pub(crate) struct SpawnedRootProcessed;
 
     
-  #[derive(Component)]
-  /// FlagComponent for spawned enetity
-  pub struct Spawned;
-
   
   /// this system updates the first (and normally only) child of a scene flaged SpawnedRoot
   /// - adds a name based on parent component (spawned scene) which is named on the scene name/prefab to be instanciated

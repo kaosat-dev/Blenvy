@@ -10,8 +10,8 @@ pub use relationships::*;
 pub mod physics;
 pub use physics::*;
 
-pub mod spawning;
-pub use spawning::*;
+pub mod blueprints;
+pub use blueprints::*;
 
 pub mod save_load;
 pub use save_load::*;
