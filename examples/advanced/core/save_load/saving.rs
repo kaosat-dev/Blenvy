@@ -15,14 +15,25 @@ use super::Saveable;
 
 const NEW_SCENE_FILE_PATH:&str="save.scn.ron";
 
+#[derive(Component, Event)]
+pub struct SaveRequest {
+    pub path: String,
+}
+
 pub fn should_save(
     keycode: Res<Input<KeyCode>>,
+    mut save_requested_events: EventReader<SaveRequest>,  
+
 ) -> bool {
+    for request in save_requested_events.iter(){
+        
+    }
     return keycode.just_pressed(KeyCode::S)
 }
 
 pub fn save_game(
     world: &mut World,
+    // save_requests:
 ){
     info!("saving");
 
@@ -72,7 +83,7 @@ pub fn save_game(
           IoTaskPool::get()
               .spawn(async move {
                   // Write the scene RON data to file
-                  File::create(format!("assets/{NEW_SCENE_FILE_PATH}"))
+                  File::create(format!("assets/scenes/{NEW_SCENE_FILE_PATH}"))
                       .and_then(|mut file| file.write(serialized_scene.as_bytes()))
                       .expect("Error while writing scene to file");
               })

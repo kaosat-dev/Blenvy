@@ -8,7 +8,7 @@ use crate::{
 
 use super::Saveable;
 
-const SCENE_FILE_PATH: &str = "save.scn.ron";
+const SCENE_FILE_PATH: &str = "scenes/save.scn.ron";
 
 #[derive(Component, Debug, )]
 pub struct TempLoadedSceneMarker;

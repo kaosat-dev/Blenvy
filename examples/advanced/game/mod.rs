@@ -1,6 +1,9 @@
 pub mod in_game;
 pub use in_game::*;
 
+pub mod in_main_menu;
+pub use in_main_menu::*;
+
 pub mod picking;
 pub use picking::*;
 
@@ -111,6 +114,18 @@ impl Plugin for GamePlugin {
             // test_collision_events
         )
         .run_if(in_state(GameState::InGame)))
+
+
+        .add_systems(
+            OnEnter(AppState::MenuRunning),
+            setup_main_menu
+        )
+        .add_systems(
+            OnExit(AppState::MenuRunning),
+            teardown_main_menu
+        )
+        .add_systems(Update, (main_menu))
+
 
         .add_systems(
             OnEnter(AppState::AppRunning),
