@@ -1,7 +1,7 @@
 use bevy::prelude::*;
+use bevy_gltf_blueprints::{clone_entity::CloneEntity, SpawnHere, GameWorldTag};
 
 use crate::{
-    core::blueprints::{clone_entity::CloneEntity, SpawnHere, GameWorldTag}, 
     assets::GameAssets, 
     state::{InAppRunning, AppState, GameState}
 };
@@ -16,12 +16,16 @@ pub struct TempLoadedSceneMarker;
 #[derive(Component, Debug, )]
 pub struct SaveablesToRemove(Vec<(Entity, Name)>);
 
+#[derive(Component, Event)]
+pub struct LoadRequest {
+    pub path: String,
+}
 
 
 pub fn should_load(
-    keycode: Res<Input<KeyCode>>,
+    save_requested_events: EventReader<LoadRequest>,  
 ) -> bool {
-    return keycode.just_pressed(KeyCode::L)
+    return save_requested_events.len() > 0
 }
 
 pub fn load_prepare(

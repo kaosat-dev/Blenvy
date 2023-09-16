@@ -714,12 +714,34 @@ dependencies = [
 ]
 
 [[package]]
+name = "bevy_gltf_blueprints"
+version = "0.3.0"
+dependencies = [
+ "bevy",
+ "bevy_gltf_components",
+ "rand",
+ "ron",
+ "serde",
+]
+
+[[package]]
 name = "bevy_gltf_components"
+version = "0.3.0"
+dependencies = [
+ "bevy",
+ "ron",
+ "serde",
+]
+
+[[package]]
+name = "bevy_gltf_flow"
 version = "0.2.0"
 dependencies = [
  "bevy",
  "bevy_asset_loader",
  "bevy_editor_pls",
+ "bevy_gltf_blueprints",
+ "bevy_gltf_components",
  "bevy_rapier3d",
  "rand",
  "ron",

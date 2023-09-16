@@ -1,0 +1,29 @@
+[package]
+name = "bevy_gltf_blueprints"
+version = "0.3.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+
+[dev-dependencies]
+bevy="0.11.2"
+
+[dependencies]
+bevy_gltf_components = { path = "../bevy_gltf_components" }
+bevy = { version = "0.11.2", default-features = false, features = ["bevy_asset", "bevy_scene", "bevy_gltf"] }
+serde = "*"
+ron="*"
+rand = "0.8.5"
+
+
+#### --------------------Dev/ debug-------------------------------
+# Enable high optimizations for dependencies (incl. Bevy), but not for our code:
+[profile.dev.package."*"]
+opt-level = 3
+
+[profile.dev.package.bevy]
+features = ["dynamic"]
+
+#### --------------------Production/ release-------------------------------
+[profile.release]
+strip = "debuginfo"
+lto = "thin"

@@ -1,11 +1,8 @@
 use rand::Rng;
 use bevy::prelude::*;
-use bevy::gltf::Gltf;
-use bevy_rapier3d::prelude::*; // FIXME: temporary: used for velocity of newly spawned items
 use bevy::utils::HashMap;
 
-use crate::core::save_load::TempLoadedSceneMarker;
-use crate::core::blueprints::{CloneEntity, SpawnHere};
+use super::{CloneEntity, SpawnHere};
 use super::{Original, SpawnedRoot};
 
 
@@ -115,7 +112,10 @@ pub fn spawn_entities(
      */
    
     for (scene_instance, children, name, parent, original) in unprocessed_entities.iter()  {
-        // println!("children of scene {:?}", children);
+        println!("children of scene {:?}", children);
+        if children.len() == 0 {
+          continue;
+        }
         // the root node is the first & normally only child inside a scene, it is the one that has all relevant components
         let root_entity = children.first().unwrap(); //FIXME: and what about childless ones ??
         let root_entity_data = all_children.get(*root_entity).unwrap();
@@ -137,10 +137,11 @@ pub fn spawn_entities(
             bevy::prelude::Name::from(name.clone()),
             // ItemType {name},
             // Spawned, // FIXME: not sure
-            Velocity {
+            // FIXME: to support this in an independant we need a way to be able to add Velocity AFTER our systemSet
+            /*Velocity {
               linvel: Vec3::new(vel_x, vel_y, vel_z),
               angvel: Vec3::new(0.0, 0.0, 0.0),
-            },
+            },*/
         ));
       
         // flag the spawned_root as being processed

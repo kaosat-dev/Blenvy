@@ -8,8 +8,8 @@ pub use controls::*;
 
 use bevy::prelude::*;
 use crate::state::GameState;
-use super::blueprints::SpawnSet;
-
+// use super::blueprints::SpawnSet;
+use bevy_gltf_blueprints::SpawnSet;
 // use crate::Collider;
 pub struct PhysicsPlugin;
 impl Plugin for PhysicsPlugin {

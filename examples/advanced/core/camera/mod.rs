@@ -5,7 +5,7 @@ pub mod camera_replace_proxies;
 pub use camera_replace_proxies::*;
 
 use bevy::prelude::*;
-use super::blueprints::SpawnSet;
+use bevy_gltf_blueprints::SpawnSet;
 
 pub struct CameraPlugin;
 impl Plugin for CameraPlugin {

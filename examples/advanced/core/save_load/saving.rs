@@ -20,22 +20,26 @@ pub struct SaveRequest {
     pub path: String,
 }
 
+
 pub fn should_save(
-    keycode: Res<Input<KeyCode>>,
-    mut save_requested_events: EventReader<SaveRequest>,  
+    // keycode: Res<Input<KeyCode>>,
+    save_requested_events: EventReader<SaveRequest>,  
 
 ) -> bool {
-    for request in save_requested_events.iter(){
-        
-    }
-    return keycode.just_pressed(KeyCode::S)
+    return save_requested_events.len() > 0;
+    
+    // return keycode.just_pressed(KeyCode::S)
 }
 
 pub fn save_game(
     world: &mut World,
-    // save_requests:
+    // save_requested_events: EventReader<SaveRequest>,  
 ){
     info!("saving");
+    // world.
+    /*for bli in save_requested_events.iter(){
+        println!("SAAAAVE TO THISSSSS {:?}", bli.path)
+    }*/
 
     let saveable_entities: Vec<Entity> = world
     .query_filtered::<Entity, With<Saveable>>()

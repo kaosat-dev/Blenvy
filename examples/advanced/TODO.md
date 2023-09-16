@@ -12,8 +12,12 @@
         - [ ] no hardcoded keypresses
         - [ ] ability to choose what save to load ?
         - [ ] take a look at bevy_moonshine_save
-        
+        - [ ] move to system pipelines
+
 - [ ] split Blueprints into a seperate crate: perhaps bevy_gltf_blueprints
+        - [ ] how to deal with states that are not defined as part of the plugin/crate ?
+        - [ ] same issue for the assets
+
 - [ ] support multiple main scenes in the blender plugin ?
 - [ ] study possibilities of expanding the bevy & blender tooling side to define UIS
         - likely using the blender data only as a placeholder/ directly replace in Python

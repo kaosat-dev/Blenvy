@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::state::{AppState, GameState, InMainMenu};
+use crate::{state::{AppState, GameState, InMainMenu}, core::save_load::{LoadRequest, SaveRequest}};
 
 pub fn setup_main_menu(mut commands: Commands){
     commands.spawn((Camera2dBundle::default(), InMainMenu));
@@ -94,13 +94,22 @@ pub fn main_menu(
 
     mut next_app_state: ResMut<NextState<AppState>>,
     mut next_game_state: ResMut<NextState<GameState>>,
+
+    mut save_requested_events: EventWriter<SaveRequest>,  
+    mut load_requested_events: EventWriter<LoadRequest>,  
+
 ){
     if keycode.just_pressed(KeyCode::Return) {
         next_app_state.set(AppState::AppLoading);
         // next_game_state.set(GameState::None);
     }
 
-    if keycode.just_pressed(KeyCode::K) {
+    if keycode.just_pressed(KeyCode::L) {
+        next_app_state.set(AppState::AppLoading);
+        load_requested_events.send(LoadRequest { path: "toto".into() })
+    }
 
+    if keycode.just_pressed(KeyCode::S) {
+        save_requested_events.send(SaveRequest { path: "toto".into() })
     }
 }

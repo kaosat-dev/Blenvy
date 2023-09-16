@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 
-use crate::{assets::GameAssets, core::blueprints::GameWorldTag, state::{InAppRunning, GameState}};
+use crate::{assets::GameAssets, state::{InAppRunning, GameState}};
+use bevy_gltf_blueprints::GameWorldTag;
 
 pub fn setup_game(
     mut commands: Commands,

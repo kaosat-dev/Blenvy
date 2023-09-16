@@ -1,6 +1,4 @@
 use bevy::{prelude::*, gltf::Gltf};
-use crate::assets::GameAssets;
-
 
 // this is a flag component for our levels/game world
 #[derive(Component)]
@@ -33,23 +31,25 @@ pub(crate) fn spawn_from_blueprints(
 
     mut commands: Commands,
     mut game_world: Query<(Entity, &Children), With<GameWorldTag>>,
-    game_assets: Res<GameAssets>,
-    assets_gltf: Res<Assets<Gltf>>,
 
-    // mut spawn_requested_events: EventWriter<SpawnRequestedEvent>,
+    // game_assets: Res<GameAssets>,
+    assets_gltf: Res<Assets<Gltf>>,
+    asset_server: Res<AssetServer>,
+
 ){
 
     for (entity, name, blupeprint_name, global_transform) in spawn_placeholders.iter() {
         info!("need to spawn {:?}", blupeprint_name.0);
         let what = &blupeprint_name.0;
         let model_path = format!("models/library/{}.glb", &what);
-        let scene = game_assets.models.get(&model_path).expect(&format!("no matching model {:?} found", model_path));
+        let scene:Handle<Gltf> = asset_server.load(&model_path);
+        // let scene = game_assets.models.get(&model_path).expect(&format!("no matching model {:?} found", model_path));
         info!("attempting to spawn {:?}",model_path);
 
         let world = game_world.single_mut();
         let world = world.1[0]; // FIXME: dangerous hack because our gltf data have a single child like this, but might not always be the case
         
-        let gltf = assets_gltf.get(scene).expect("this gltf should have been loaded");
+        let gltf = assets_gltf.get(&scene).expect("this gltf should have been loaded");
         // WARNING we work under the assumtion that there is ONLY ONE named scene, and that the first one is the right one
         let main_scene_name =gltf.named_scenes.keys().nth(0).expect("there should be at least one named scene in the gltf file to spawn");
         let scene = &gltf.named_scenes[main_scene_name];

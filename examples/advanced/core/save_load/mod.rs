@@ -13,7 +13,7 @@ use bevy::prelude::*;
 use bevy::prelude::{App, Plugin, IntoSystemConfigs};
 use bevy::utils::Uuid;
 
-use super::blueprints::SpawnSet;
+use bevy_gltf_blueprints::SpawnSet;
 
 
 
@@ -29,6 +29,8 @@ impl Plugin for SaveLoadPlugin {
       app
         .register_type::<Uuid>()
         .register_type::<Saveable>()
+        .add_event::<SaveRequest>()
+        .add_event::<LoadRequest>()
 
         .configure_sets(
             Update,
@@ -64,6 +66,7 @@ impl Plugin for SaveLoadPlugin {
                 .in_set(LoadingSet::PostLoad)
             )
 
+        // .add_systems(Update, bla)
         
       ;
   }
