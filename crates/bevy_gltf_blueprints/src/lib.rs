@@ -1,5 +1,6 @@
 
 pub mod spawn_from_blueprints;
+use bevy_gltf_components::GltfComponentsSet;
 pub use spawn_from_blueprints::*;
 
 pub mod spawn_post_process;
@@ -11,7 +12,7 @@ pub use clone_entity::*;
 use bevy::prelude::*;
 
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
-pub enum SpawnSet{
+pub enum GltfBlueprintsSet{
   Spawn,
   AfterSpawn, 
 }
@@ -28,13 +29,13 @@ impl Plugin for BlueprintsPlugin {
         .add_event::<DespawnRequestedEvent>()*/
         .configure_sets(
           Update,
-          (SpawnSet::Spawn, SpawnSet::AfterSpawn).chain()
+          (GltfBlueprintsSet::Spawn, GltfBlueprintsSet::AfterSpawn).chain().after(GltfComponentsSet::Injection)
         )
 
         .add_systems(Update, 
           (spawn_from_blueprints)
           // .run_if(in_state(AppState::AppRunning).or_else(in_state(AppState::LoadingGame))) // FIXME: how to replace this with a crate compatible version ? 
-          .in_set(SpawnSet::Spawn),
+          .in_set(GltfBlueprintsSet::Spawn),
         )
 
          .add_systems(
@@ -48,7 +49,7 @@ impl Plugin for BlueprintsPlugin {
           )
           .chain()
           // .run_if(in_state(AppState::LoadingGame).or_else(in_state(AppState::AppRunning))) // FIXME: how to replace this with a crate compatible version ? 
-          .in_set(SpawnSet::AfterSpawn),
+          .in_set(GltfBlueprintsSet::AfterSpawn),
         )
 
 

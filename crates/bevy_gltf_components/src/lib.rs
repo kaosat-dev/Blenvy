@@ -8,7 +8,7 @@ pub mod process_gltfs;
 pub use process_gltfs::*;
 
 use bevy::prelude::{
-  App,Plugin, PreUpdate, Update, SystemSet, IntoSystemConfigs
+  App,Plugin, Update, SystemSet, IntoSystemConfigs
 };
 
 

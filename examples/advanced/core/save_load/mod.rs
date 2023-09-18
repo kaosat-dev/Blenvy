@@ -13,7 +13,7 @@ use bevy::prelude::*;
 use bevy::prelude::{App, Plugin, IntoSystemConfigs};
 use bevy::utils::Uuid;
 
-use bevy_gltf_blueprints::SpawnSet;
+use bevy_gltf_blueprints::GltfBlueprintsSet;
 
 
 
@@ -36,7 +36,7 @@ impl Plugin for SaveLoadPlugin {
             Update,
             (LoadingSet::Load, LoadingSet::PostLoad)
             .chain()
-            .before(SpawnSet::Spawn)
+            .before(GltfBlueprintsSet::Spawn)
             .before(GltfComponentsSet::Injection)
         )
 

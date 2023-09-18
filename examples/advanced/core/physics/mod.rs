@@ -8,8 +8,8 @@ pub use controls::*;
 
 use bevy::prelude::*;
 use crate::state::GameState;
-// use super::blueprints::SpawnSet;
-use bevy_gltf_blueprints::SpawnSet;
+// use super::blueprints::GltfBlueprintsSet;
+use bevy_gltf_blueprints::GltfBlueprintsSet;
 // use crate::Collider;
 pub struct PhysicsPlugin;
 impl Plugin for PhysicsPlugin {
@@ -23,7 +23,7 @@ impl Plugin for PhysicsPlugin {
         // .register_type::<bevy_rapier3d::dynamics::CoefficientCombineRule>()
         //bevy_rapier3d::dynamics::CoefficientCombineRule
 
-        .add_systems(Update, physics_replace_proxies.after(SpawnSet::AfterSpawn))
+        .add_systems(Update, physics_replace_proxies.after(GltfBlueprintsSet::AfterSpawn))
 
         .add_systems(
           OnEnter(GameState::InGame),
