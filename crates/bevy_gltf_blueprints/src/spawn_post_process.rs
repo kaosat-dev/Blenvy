@@ -26,13 +26,13 @@ pub(crate) struct SpawnedRootProcessed;
 // - scene instance -> does not work
 // it might be due to how we add components to the PARENT item in gltf to components
 pub(crate) fn update_spawned_root_first_child(
-  all_children: Query<(Entity, &Children)>,  
+  // all_children: Query<(Entity, &Children)>,  
   unprocessed_entities :Query<(Entity, &Children, &Name, &Parent, &Original ), (With<SpawnedRoot>, Without<SpawnedRootProcessed>)>,
   mut commands: Commands,
 
   // FIXME: should be done at a more generic gltf level
   animation_helpers: Query<&AnimationHelper>,
-  added_animation_helpers : Query<(Entity, &AnimationPlayer), (Added<AnimationPlayer>)>
+  added_animation_helpers : Query<(Entity, &AnimationPlayer), Added<AnimationPlayer>>
 ){
   /*
       currently we have

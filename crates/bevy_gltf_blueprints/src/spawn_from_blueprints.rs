@@ -1,13 +1,15 @@
 use bevy::{prelude::*, gltf::Gltf};
 
-// this is a flag component for our levels/game world
+/// this is a flag component for our levels/game world
 #[derive(Component)]
 pub struct GameWorldTag;
 
+/// Main component for the blueprints
 #[derive(Component, Reflect, Default, Debug, )]
 #[reflect(Component)]
 pub struct BlueprintName(pub String);
 
+/// flag component needed to signify the intent to spawn a Blueprint
 #[derive(Component, Reflect, Default, Debug, )]
 #[reflect(Component)]
 pub struct SpawnHere;
@@ -25,17 +27,16 @@ pub(crate) struct Original(pub Entity);
 /// FlagComponent for dynamically spawned scenes
 pub struct SpawnedRoot;
 
-// also takes into account the already exisiting override components
+/// main spawning functions, 
+/// * also takes into account the already exisiting "override" components, ie "override components" > components from blueprint
 pub(crate) fn spawn_from_blueprints(
     spawn_placeholders: Query<(Entity, &Name, &BlueprintName, &Transform), (Added<BlueprintName>, Added<SpawnHere>, Without<Spawned>, Without<SpawnedRoot>)>,
 
     mut commands: Commands,
     mut game_world: Query<(Entity, &Children), With<GameWorldTag>>,
 
-    // game_assets: Res<GameAssets>,
     assets_gltf: Res<Assets<Gltf>>,
     asset_server: Res<AssetServer>,
-
 ){
 
     for (entity, name, blupeprint_name, global_transform) in spawn_placeholders.iter() {

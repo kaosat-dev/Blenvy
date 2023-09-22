@@ -44,6 +44,7 @@ use bevy::prelude::{
 
 
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
+// systemset to order your systems after the component injection when needed
 pub enum GltfComponentsSet{
   Injection, 
 }

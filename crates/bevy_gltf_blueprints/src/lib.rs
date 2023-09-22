@@ -12,11 +12,27 @@ pub use clone_entity::*;
 use bevy::prelude::*;
 
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
+/// set for the two stages of blueprint based spawning :
 pub enum GltfBlueprintsSet{
   Spawn,
   AfterSpawn, 
 }
 
+#[derive(Bundle)]
+pub struct BluePrintBundle {
+    pub blueprint: BlueprintName,
+    pub spawn_here: SpawnHere,
+    pub transform: TransformBundle
+}
+impl Default for BluePrintBundle {
+  fn default() -> Self {
+    BluePrintBundle { 
+      blueprint: BlueprintName("default".into()),
+      spawn_here: SpawnHere,
+      transform: TransformBundle::default()
+    }
+  }
+}
 
 pub struct BlueprintsPlugin;
 impl Plugin for BlueprintsPlugin {
@@ -24,9 +40,7 @@ impl Plugin for BlueprintsPlugin {
       app
         .register_type::<BlueprintName>()
         .register_type::<SpawnHere>()
-        /* .register_type::<Spawner>()
-        .add_event::<SpawnRequestedEvent>()
-        .add_event::<DespawnRequestedEvent>()*/
+     
         .configure_sets(
           Update,
           (GltfBlueprintsSet::Spawn, GltfBlueprintsSet::AfterSpawn).chain().after(GltfComponentsSet::Injection)
@@ -51,12 +65,6 @@ impl Plugin for BlueprintsPlugin {
           // .run_if(in_state(AppState::LoadingGame).or_else(in_state(AppState::AppRunning))) // FIXME: how to replace this with a crate compatible version ? 
           .in_set(GltfBlueprintsSet::AfterSpawn),
         )
-
-
-        /* .add_systems(
-          PostUpdate, 
-          despawn_entity.after(bevy::render::view::VisibilitySystems::CalculateBounds) // found this after digging around in Bevy discord, not 100M sure of its reliability
-        )*/
       ;
   }
 }

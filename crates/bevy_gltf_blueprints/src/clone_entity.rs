@@ -3,6 +3,7 @@ use bevy::ecs::system::Command;
 
 // modified version from https://github.com/bevyengine/bevy/issues/1515,
 // more specifically https://gist.github.com/nwtnni/85d6b87ae75337a522166c500c9a8418
+// to work with Bevy 0.11
 pub struct CloneEntity {
   pub source: Entity,
   pub destination: Entity,

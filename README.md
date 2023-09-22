@@ -23,7 +23,7 @@ It also allows you to setup 'blueprints' in Blender by using collections (the re
 
 ## Usage
 
-***important*** : the plugin for processing gltf files runs in ***preUpdate*** , so you cannot use the components directly if you spawn your scene from gltf in ***setup*** (the additional components will not show up)
+***important*** : the plugin for processing gltf files runs in ***update*** , so you cannot use the components directly if you spawn your scene from gltf in ***setup*** (the additional components will not show up)
 Please see the included example or use bevy_asset_loader for a reliable workflow
 
 1. Add the crate to your dependencies
