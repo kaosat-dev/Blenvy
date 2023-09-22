@@ -1,5 +1,7 @@
 use bevy::{prelude::*, gltf::Gltf};
 
+use crate::BluePrintsConfig;
+
 /// this is a flag component for our levels/game world
 #[derive(Component)]
 pub struct GameWorldTag;
@@ -37,12 +39,13 @@ pub(crate) fn spawn_from_blueprints(
 
     assets_gltf: Res<Assets<Gltf>>,
     asset_server: Res<AssetServer>,
+    blueprints_config: Res<BluePrintsConfig>
 ){
 
     for (entity, name, blupeprint_name, global_transform) in spawn_placeholders.iter() {
         info!("need to spawn {:?}", blupeprint_name.0);
         let what = &blupeprint_name.0;
-        let model_path = format!("models/library/{}.glb", &what);
+        let model_path = format!("{}/{}.glb", &blueprints_config.library_folder, &what); // FIXME: needs to be platform agnostic
         let scene:Handle<Gltf> = asset_server.load(&model_path);
         // let scene = game_assets.models.get(&model_path).expect(&format!("no matching model {:?} found", model_path));
         info!("attempting to spawn {:?}",model_path);

@@ -79,7 +79,9 @@ impl Plugin for CorePlugin {
             CameraPlugin,
             PhysicsPlugin, 
             SaveLoadPlugin,
-            BlueprintsPlugin
+            BlueprintsPlugin{
+              library_folder: "advanced/models/library".into()
+            }
         ))
         
           // just for testing

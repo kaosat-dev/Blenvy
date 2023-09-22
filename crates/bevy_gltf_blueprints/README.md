@@ -54,6 +54,11 @@ fn spawn_blueprint(
 }
 ```
 
+## Setup
+
+- configure your "library"/"blueprints" path: 
+    advanced/models/library/
+
 ## Spawning entities from blueprints
 
 You can spawn entities from blueprints like this:

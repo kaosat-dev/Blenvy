@@ -34,12 +34,32 @@ impl Default for BluePrintBundle {
   }
 }
 
-pub struct BlueprintsPlugin;
+
+#[derive(Clone, Resource)]
+pub(crate) struct BluePrintsConfig {
+    pub(crate) library_folder: String,
+}
+
+#[derive(Debug, Clone)]
+pub struct BlueprintsPlugin {
+  /// The base folder where library/blueprints assets are loaded from, relative to the executable.
+  pub library_folder: String,
+}
+
+impl Default for BlueprintsPlugin {
+  fn default() -> Self {
+      Self {
+        library_folder: "assets/models/library".to_string(),
+      }
+  }
+}
+
 impl Plugin for BlueprintsPlugin {
   fn build(&self, app: &mut App) {
       app
         .register_type::<BlueprintName>()
         .register_type::<SpawnHere>()
+        .insert_resource(BluePrintsConfig{library_folder: self.library_folder.clone()})
      
         .configure_sets(
           Update,
