@@ -1,4 +1,4 @@
-- [ ] seperate "spawn velocity" into a seperate (optional) component
+- [x] seperate "spawn velocity" into a seperate (optional) component
 - [x] try dynamically spawned entities with save & load
 - [ ] fix issues with multiple entites having the same name ??
 - [ ] fix issues with system ordering

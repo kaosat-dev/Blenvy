@@ -39,7 +39,7 @@ pub fn load_prepare(
 }
 
 /// unload the level recursively
-pub fn unload_world_old(world: &mut World) {
+pub fn _unload_world_old(world: &mut World) {
     let entities: Vec<Entity> = world
         // .query_filtered::<Entity, Or<(With<Save>, With<Unload>)>>()
         .query_filtered::<Entity, With<GameWorldTag>>()// our level/world contains this component
@@ -103,7 +103,7 @@ pub fn load_saved_scene(
 }
 
 pub fn process_loaded_scene(
-    loaded_scene: Query<(Entity, &Children), (With<TempLoadedSceneMarker>)>,
+    loaded_scene: Query<(Entity, &Children), With<TempLoadedSceneMarker>>,
     named_entities: Query<(Entity, &Name, &Parent)>, // FIXME: very inneficient
     mut commands: Commands, 
 

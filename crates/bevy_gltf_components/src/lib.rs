@@ -34,7 +34,7 @@ use bevy::prelude::{
 /// asset_server: Res<AssetServer>, 
 ///  mut commands: bevy::prelude::Commands
 /// ){
-///  asset_server.load("models/level1.glb#Scene0")
+///  asset_server.load("basic/models/level1.glb#Scene0")
 /// }
 /// 
 /// fn spawn_level(){

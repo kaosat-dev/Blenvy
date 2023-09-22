@@ -73,7 +73,7 @@ fn setup(
     asset_server: Res<AssetServer>,
 ) {
 
-    let tmp: Handle<Scene>  = asset_server.load("models/level1.glb#Scene0");
+    let tmp: Handle<Scene>  = asset_server.load("basic/models/level1.glb#Scene0");
     commands.insert_resource(AssetLoadHelper(tmp));
 }
 

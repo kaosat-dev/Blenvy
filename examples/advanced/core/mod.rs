@@ -51,10 +51,15 @@ fn spawn_test(
     let name_index:u64 = rng.gen();
 
     let new_entity = commands.spawn((
+      BluePrintBundle{
+        blueprint: BlueprintName("Health_Pickup".to_string()),
+        transform: TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
+        ..Default::default()
+      },
       bevy::prelude::Name::from(format!("test{}", name_index)),
-      BlueprintName("Health_Pickup".to_string()),
-      SpawnHere,
-      TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
+      // BlueprintName("Health_Pickup".to_string()),
+      // SpawnHere,
+      // TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
 
       Velocity {
         linvel: Vec3::new(vel_x, vel_y, vel_z),

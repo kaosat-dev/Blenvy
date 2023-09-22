@@ -7,9 +7,6 @@ pub fn setup_game(
     mut commands: Commands,
     game_assets: Res<GameAssets>,
     mut next_game_state: ResMut<NextState<GameState>>,
-
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
 
     println!("setting up all stuff");

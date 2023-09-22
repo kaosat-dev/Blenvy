@@ -7,7 +7,7 @@ pub fn setup_main_menu(mut commands: Commands){
 
     commands.spawn((
         TextBundle::from_section(
-            "Some game title !!",
+            "SOME GAME TITLE !!",
             TextStyle {
                 //font: asset_server.load("fonts/FiraMono-Medium.ttf"),
                 font_size: 18.0,
@@ -27,7 +27,7 @@ pub fn setup_main_menu(mut commands: Commands){
 
     commands.spawn((
         TextBundle::from_section(
-            "New Game",
+            "New Game (press Enter to start, press T once the game is started for demo spawning)",
             TextStyle {
                 //font: asset_server.load("fonts/FiraMono-Medium.ttf"),
                 font_size: 18.0,
@@ -44,6 +44,7 @@ pub fn setup_main_menu(mut commands: Commands){
         InMainMenu
     ));
 
+    /* 
     commands.spawn((
         TextBundle::from_section(
             "Load Game",
@@ -80,7 +81,7 @@ pub fn setup_main_menu(mut commands: Commands){
             ..default()
         }),
         InMainMenu
-    ));
+    ));*/
 }
 
 pub fn teardown_main_menu(bla: Query<Entity, With<InMainMenu>>, mut commands: Commands){
@@ -93,7 +94,7 @@ pub fn main_menu(
     keycode: Res<Input<KeyCode>>,
 
     mut next_app_state: ResMut<NextState<AppState>>,
-    mut next_game_state: ResMut<NextState<GameState>>,
+    // mut next_game_state: ResMut<NextState<GameState>>,
 
     mut save_requested_events: EventWriter<SaveRequest>,  
     mut load_requested_events: EventWriter<LoadRequest>,  
@@ -106,10 +107,10 @@ pub fn main_menu(
 
     if keycode.just_pressed(KeyCode::L) {
         next_app_state.set(AppState::AppLoading);
-        load_requested_events.send(LoadRequest { path: "toto".into() })
+        // load_requested_events.send(LoadRequest { path: "toto".into() })
     }
 
     if keycode.just_pressed(KeyCode::S) {
-        save_requested_events.send(SaveRequest { path: "toto".into() })
+        // save_requested_events.send(SaveRequest { path: "toto".into() })
     }
 }
