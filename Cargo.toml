@@ -27,8 +27,8 @@ serde = "*"
 ron="*"
 
 [[example]]
-name = "general"
-path = "examples/general/main.rs"
+name = "basic"
+path = "examples/basic/main.rs"
 
 [[example]]
 name = "advanced"
