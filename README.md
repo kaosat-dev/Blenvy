@@ -22,6 +22,7 @@ It also allows you to setup 'blueprints' in Blender by using collections (the re
 * define components in Blender Collections & override any of them in your collection instances if you want
 * ability to automatically turn your Blender collections into [gltf Blueprints](./crates/bevy_gltf_blueprints/) for reuse
 * minimal setup & code,  you can have something basic running fast
+* minimal dependencies: Bevy, Serde & Ron only !
 * opensource 
 
 

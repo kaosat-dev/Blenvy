@@ -39,17 +39,19 @@ fn main() {
 ```
 
 
-## SystemSets
+## SystemSet
 
 the ordering of systems is very important ! 
 
 For example to replace your proxy components (stand-in components when you cannot/ do not want to use real components in the gltf file) with actual ones, 
 
 which should happen **AFTER** the components from the gltf files have been injected, 
-so ```bevy_gltf_components``` provides **SystemSets** for that purpose:[```GltfComponentsSet```](./src/lib.rs#46)
+
+so ```bevy_gltf_components``` provides a **SystemSet** for that purpose:[```GltfComponentsSet```](./src/lib.rs#46)
 
 Typically , the order of systems should be
-***bevy_gltf_components*** => ***replace_proxies***
+
+***bevy_gltf_components (GltfComponentsSet::Injection)*** => ***replace_proxies***
 
 ## Examples
 

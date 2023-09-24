@@ -5,13 +5,14 @@
 
 # bevy_gltf_blueprints
 
-Built upon [bevy_gltf_components]() this crate adds the ability to define Blueprints/Prefabs for [Bevy](https://bevyengine.org/) inside gltf files and spawn them in Bevy.
+Built upon [bevy_gltf_components](https://crates.io/crates/bevy_gltf_components) this crate adds the ability to define Blueprints/Prefabs for [Bevy](https://bevyengine.org/) inside gltf files and spawn them in Bevy.
 
 A blueprint is a set of **overrideable** components + a hierarchy: ie 
-    * just a Gltf file with Gltf_extras specifying components 
-    * a component call BlueprintName
 
-Particularly useful when using Blender as an editor for the [Bevy](https://bevyengine.org/) game engine, combined with the [Blender plugin](https://github.com/kaosat-dev/Blender_bevy_components_worklflow/tree/main/tools/blender_auto_export) that does a lot of the work for you 
+    * just a Gltf file with Gltf_extras specifying components 
+    * a component called BlueprintName
+
+Particularly useful when using [Blender](https://www.blender.org/) as an editor for the [Bevy](https://bevyengine.org/) game engine, combined with the [Blender plugin](https://github.com/kaosat-dev/Blender_bevy_components_worklflow/tree/main/tools/blender_auto_export) that does a lot of the work for you 
 
 
 ## Usage
@@ -77,7 +78,7 @@ Once spawning of the actual entity is done, the spawned Blueprint will be *gone/
 > Important :
 you can **add** or **override** components present inside your Blueprint when spawning the BluePrint itself: ie
 
-### Adding components no specified inside the blueprint
+### Adding components not specified inside the blueprint
 
 you can just add any additional components you need when spawning :
 
@@ -86,7 +87,7 @@ commands.spawn((
     BlueprintName("Health_Pickup".to_string()),
     SpawnHere,
     TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
-    // from Rapier: this means the "Health_Pickup" entity will also have a velocity component when inserted into the world
+    // from Rapier/bevy_xpbd: this means the entity will also have a velocity component when inserted into the world
     Velocity {
         linvel: Vec3::new(vel_x, vel_y, vel_z),
         angvel: Vec3::new(0.0, 0.0, 0.0),
@@ -119,15 +120,17 @@ There is also a bundle for convenience , which just has
 [```BluePrintBundle```](./src/lib.rs#22)
 
 
-## SystemSets
+## SystemSet
 
 the ordering of systems is very important ! 
 
 For example to replace your proxy components (stand-in components when you cannot/ do not want to use real components in the gltf file) with actual ones, which should happen **AFTER** the Blueprint based spawning, 
-so ```bevy_gltf_blueprints``` provides **SystemSets** for that purpose:[```GltfBlueprintsSet```](./src/lib.rs#16)
+
+so ```bevy_gltf_blueprints``` provides a **SystemSet** for that purpose:[```GltfBlueprintsSet```](./src/lib.rs#16)
 
 Typically , the order of systems should be
-***bevy_gltf_components*** => ***bevy_gltf_blueprints*** => ***replace_proxies***
+
+***bevy_gltf_components (GltfComponentsSet::Injection)*** => ***bevy_gltf_blueprints (GltfBlueprintsSet::Spawn, GltfBlueprintsSet::AfterSpawn)*** => ***replace_proxies***
 
 see https://github.com/kaosat-dev/Blender_bevy_components_worklflow/tree/main/examples/advanced for how to set it up correctly
 
