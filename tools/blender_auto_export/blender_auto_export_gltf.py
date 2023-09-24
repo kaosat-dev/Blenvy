@@ -399,7 +399,7 @@ def export_used_collections(scene, folder_path, gltf_export_preferences):
         bpy.context.view_layer.active_layer_collection = layerColl
 
         print("layercoll", layerColl)
-        gltf_output_path = os.path.join(folder_path, "library", collection_name)
+        gltf_output_path = os.path.join(folder_path, collection_name)
 
         export_settings = { **gltf_export_preferences, 'use_active_scene': True, 'use_active_collection': True} #'use_visible': False,
         export_gltf(gltf_output_path, export_settings)
@@ -407,26 +407,31 @@ def export_used_collections(scene, folder_path, gltf_export_preferences):
     # reset active collection to the one we save before
     bpy.context.view_layer.active_layer_collection = active_collection
 
-def export_main(scene, folder_path, gltf_export_preferences, output_name): 
-    
+def export_main(scene, folder_path, gltf_export_preferences, output_name, addon_prefs): 
     print("exporting to", folder_path, output_name)
+    export_blueprints = getattr(addon_prefs,"export_blueprints")
+    export_blueprints_path = os.path.join(folder_path, getattr(addon_prefs,"export_blueprints_path")) if getattr(addon_prefs,"export_blueprints_path") != '' else folder_path
+
     # backup current active scene
     old_current_scene = bpy.context.scene
 
-    try:
-        #gltf_output_path = os.path.join(folder_path, "library")
-        #export_gltf(gltf_output_path, export_settings)
-        export_used_collections(scene, folder_path, gltf_export_preferences)
-    except Exception:
-        print("failed to export collections to gltf")
-    
-    #try:
-    (hollow_scene, object_names) = generate_hollow_scene(scene)
-    #except Exception:
-    #    print("failed to create hollow scene")
+    if export_blueprints : 
+        print("-----EXPORTING BLUEPRINTS----")
+        print("LIBRARY EXPORT", export_blueprints_path )
 
-    # set active scene to be the given scene
-    bpy.context.window.scene = hollow_scene
+        try:
+            #gltf_output_path = os.path.join(folder_path, "library")
+            #export_gltf(gltf_output_path, export_settings)
+            export_used_collections(scene, export_blueprints_path, gltf_export_preferences)
+        except Exception:
+            print("failed to export collections to gltf")
+
+        (hollow_scene, object_names) = generate_hollow_scene(scene)
+        #except Exception:
+        #    print("failed to create hollow scene")
+
+        # set active scene to be the given scene
+        bpy.context.window.scene = hollow_scene
 
     gltf_output_path = os.path.join(folder_path, output_name)
 
@@ -440,7 +445,8 @@ def export_main(scene, folder_path, gltf_export_preferences, output_name):
                        }
     export_gltf(gltf_output_path, export_settings)
 
-    clear_hollow_scene(hollow_scene, scene, object_names)
+    if export_blueprints : 
+        clear_hollow_scene(hollow_scene, scene, object_names)
 
     # reset current scene from backup
     bpy.context.window.scene = old_current_scene
@@ -512,7 +518,7 @@ def auto_export():
     )
         
     for key in addon_prefs.__annotations__.keys():
-        if key is not "export_on_library_changes" and key is not "export_main_scene_name" and key is not "export_main_output_name" and key is not "export_library_scene_name": #FIXME: ugh, cleanup
+        if key != "export_on_library_changes" and key != "export_main_scene_name" and key != "export_main_output_name" and key != "export_library_scene_name" and key != "export_blueprints" and key != "export_blueprints_path": #FIXME: ugh, cleanup
             gltf_export_preferences[key] = getattr(addon_prefs,key)
             print("overriding setting", key, "value", getattr(addon_prefs,key))
 
@@ -532,7 +538,7 @@ def auto_export():
     export_on_library_changes = getattr(addon_prefs,"export_on_library_changes")
     export_library_scene_name = getattr(addon_prefs,"export_library_scene_name")
 
-    print("exporting ??", export_on_library_changes, export_main_scene_name, export_main_output_name)
+    # print("ADD ON PARAMS FOR EXPORT ??", export_on_library_changes, export_main_scene_name, export_main_output_name, export_blueprints)
     print("last changed", bpy.context.scene.changedScene)
     # optimised variation
     last_changed = bpy.context.scene.changedScene #get_changedScene()
@@ -541,8 +547,8 @@ def auto_export():
         game_scene = bpy.data.scenes[export_main_scene_name]
 
         print("game world changed, exporting game gltf only")
-        export_main(game_scene, folder_path, gltf_export_preferences, export_main_output_name)
-    if last_changed == export_library_scene_name and export_library_scene_name is not "" : # if the library has changed, so will likely the game world that uses the library assets
+        export_main(game_scene, folder_path, gltf_export_preferences, export_main_output_name, addon_prefs)
+    if last_changed == export_library_scene_name and export_library_scene_name != "" : # if the library has changed, so will likely the game world that uses the library assets
         print("library changed, exporting both game & library gltf")
         library_scene = bpy.data.scenes[export_library_scene_name]
 
@@ -551,7 +557,7 @@ def auto_export():
         # export the main game world
         if export_on_library_changes:
             game_scene = bpy.data.scenes[export_main_scene_name]
-            export_main(game_scene, folder_path, gltf_export_preferences, export_main_output_name)
+            export_main(game_scene, folder_path, gltf_export_preferences, export_main_output_name, addon_prefs)
 
     return {'FINISHED'}
 
@@ -616,10 +622,17 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         default=''
     )
 
-    export_on_library_changes: BoolProperty(
-        name='Empty Collection instances',
+    # blueprint settings
+    export_blueprints: BoolProperty(
+        name='Export Blueprints',
         description='Replaces collection instances with an Empty with a BlueprintName custom property',
         default=False
+    )
+
+    export_blueprints_path: StringProperty(
+        name='Export Blueprints path',
+        description='path to export the blueprints to',
+        default=''
     )
 
 
