@@ -102,7 +102,7 @@ The workflow goes as follows (once you got your Bevy code setup)
         - custom properties
         - cameras & lights if you want a complete level (as in this example)
         ![gltf_export](./docs/gltf_export.png)
-    - using [Blender_auto_export_gltf](./tools/blender_auto_export/)
+    - using [gltf_auto_export](./tools/blender_auto_export/)
 
 
 

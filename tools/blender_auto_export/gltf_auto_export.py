@@ -1,5 +1,5 @@
 bl_info = {
-    "name": "blender_auto_export_gltf",
+    "name": "gltf_auto_export",
     "author": "kaosigh",
     "version": (0, 1),
     "blender": (3, 4, 0),
@@ -30,17 +30,19 @@ from bpy.props import (BoolProperty,
 #see here for original gltf exporter infos https://github.com/KhronosGroup/glTF-Blender-IO/blob/main/addons/io_scene_gltf2/__init__.py
 @persistent
 def deps_update_handler(scene, depsgraph):
+    
+    #print("depsgraph_update_post", scene.name)
+    """
     print("-------------")
-    print("depsgraph_update_post", scene.name)
+    changed_objects = []
     for obj in depsgraph.updates:
-        #if isinstance(obj.id, object):
-        print("object changed, amazing", obj)
-
+        if isinstance(obj.id, bpy.types.Object):
+            print("object changed, amazing", obj.id, obj.id.name)
+            changed_objects.append(obj)
+    """
     changed = scene.name or ""
-    print("changed", changed)
+    # bpy.context.scene.changedObjects = changed_objects
     bpy.context.scene.changedScene = changed
-    #set_ChangedScene(changed)
-    #auto_export()
 
 @persistent
 def save_handler(dummy): 
@@ -52,8 +54,15 @@ def save_handler(dummy):
 def get_changedScene(self):
     return self["changedScene"]
 
-def set_ChangedScene(self, value):
+def set_changedScene(self, value):
     self["changedScene"] = value
+
+
+#def get_changedObjects(self):
+#    return self["changedObjects"]
+
+#def set_changedObjects(self, value):
+#    self["changedObjects"] = value
 
 #https://docs.blender.org/api/current/bpy.ops.export_scene.html#bpy.ops.export_scene.gltf
 def export_gltf (path, export_settings):
@@ -224,6 +233,7 @@ def get_used_collections(scene):
 
 
 def generate_gltf_export_preferences(addon_prefs): 
+    # default values
     gltf_export_preferences = dict(
         export_format= 'GLB', #'GLB', 'GLTF_SEPARATE', 'GLTF_EMBEDDED'
         check_existing=False,
@@ -257,20 +267,22 @@ def generate_gltf_export_preferences(addon_prefs):
     )
         
     for key in addon_prefs.__annotations__.keys():
-        if key != "export_on_library_changes" and key != "export_main_scene_name" and key != "export_main_output_name" and key != "export_library_scene_name" and key != "export_blueprints" and key != "export_blueprints_path": #FIXME: ugh, cleanup
-            gltf_export_preferences[key] = getattr(addon_prefs,key)
+        if str(key) not in AutoExportGltfPreferenceNames:
             print("overriding setting", key, "value", getattr(addon_prefs,key))
+            gltf_export_preferences[key] = getattr(addon_prefs,key)
+
     return gltf_export_preferences
 
 ######################################################
 #### Export logic #####
 
-def export_used_collections(scene, folder_path, gltf_export_preferences): 
+def export_used_collections(scene, folder_path, addon_prefs, gltf_export_preferences): 
     (collection_names, used_collections) = get_used_collections(scene)
+    library_scene = getattr(addon_prefs, "export_library_scene_name")
     print("used collection names", collection_names, used_collections)
    
     # set active scene to be the library scene (hack for now)
-    bpy.context.window.scene = bpy.data.scenes["library"]
+    bpy.context.window.scene = bpy.data.scenes[library_scene]
     # save current active collection
     active_collection =  bpy.context.view_layer.active_layer_collection
 
@@ -282,7 +294,6 @@ def export_used_collections(scene, folder_path, gltf_export_preferences):
         # set active collection to the collection
         bpy.context.view_layer.active_layer_collection = layerColl
 
-        print("layercoll", layerColl)
         gltf_output_path = os.path.join(folder_path, collection_name)
 
         export_settings = { **gltf_export_preferences, 'use_active_scene': True, 'use_active_collection': True} #'use_visible': False,
@@ -293,26 +304,27 @@ def export_used_collections(scene, folder_path, gltf_export_preferences):
 
 
 def export_main(scene, folder_path, addon_prefs): 
-    print("exporting to", folder_path, output_name)
     output_name = getattr(addon_prefs,"export_main_output_name")
     gltf_export_preferences = generate_gltf_export_preferences(addon_prefs)
+    print("exporting to", folder_path, output_name)
 
     export_blueprints = getattr(addon_prefs,"export_blueprints")
     export_blueprints_path = os.path.join(folder_path, getattr(addon_prefs,"export_blueprints_path")) if getattr(addon_prefs,"export_blueprints_path") != '' else folder_path
 
     # backup current active scene
     old_current_scene = bpy.context.scene
+    # backup current selections
+    old_selections = bpy.context.selected_objects
+
 
     if export_blueprints : 
         print("-----EXPORTING BLUEPRINTS----")
         print("LIBRARY EXPORT", export_blueprints_path )
 
         try:
-            #gltf_output_path = os.path.join(folder_path, "library")
-            #export_gltf(gltf_output_path, export_settings)
-            export_used_collections(scene, export_blueprints_path, gltf_export_preferences)
-        except Exception:
-            print("failed to export collections to gltf")
+            export_used_collections(scene, export_blueprints_path, addon_prefs, gltf_export_preferences)
+        except Exception as error:
+            print("failed to export collections to gltf: ", error)
 
         (hollow_scene, object_names) = generate_hollow_scene(scene)
         #except Exception:
@@ -338,6 +350,10 @@ def export_main(scene, folder_path, addon_prefs):
 
     # reset current scene from backup
     bpy.context.window.scene = old_current_scene
+    # reset selections
+    for obj in old_selections:
+        obj.select_set(True)
+
 
 """Main function"""
 def auto_export():
@@ -373,37 +389,26 @@ def auto_export():
 ######################################################
 ## ui logic & co
 
+AutoExportGltfPreferenceNames = [
+    'auto_export',
+    'export_main_scene_name',
+    'export_main_output_name',
+    'export_on_library_changes',
+    'export_library_scene_name',
+    'export_blueprints',
+    'export_blueprints_path'
+]
+
 class AutoExportGltfAddonPreferences(AddonPreferences):
     # this must match the add-on name, use '__package__'
     # when defining this in a submodule of a python package.
     bl_idname = __name__
-    ui_tab: EnumProperty(
-        items=(('GENERAL', "General", "General settings"),
-               ('MESHES', "Meshes", "Mesh settings"),
-               ('OBJECTS', "Objects", "Object settings"),
-               ('ANIMATION', "Animation", "Animation settings")),
-        name="ui_tab",
-        description="Export setting categories",
+   
+    auto_export: BoolProperty(
+        name='Auto export',
+        description='Automatically export to gltf on save',
+        default=True
     )
-    export_format: EnumProperty(
-        name='Format',
-        items=(('GLB', 'glTF Binary (.glb)',
-                'Exports a single file, with all data packed in binary form. '
-                'Most efficient and portable, but more difficult to edit later'),
-               ('GLTF_EMBEDDED', 'glTF Embedded (.gltf)',
-                'Exports a single file, with all data packed in JSON. '
-                'Less efficient than binary, but easier to edit later'),
-               ('GLTF_SEPARATE', 'glTF Separate (.gltf + .bin + textures)',
-                'Exports multiple files, with separate JSON, binary and texture data. '
-                'Easiest to edit later')),
-        description=(
-            'Output format and embedding options. Binary is most efficient, '
-            'but JSON (embedded or separate) may be easier to edit later'
-        ),
-        default='GLB'
-    )
-
-  
     export_main_scene_name: StringProperty(
         name='Main scene',
         description='The name of the main scene/level/world to auto export',
@@ -422,24 +427,39 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
     export_library_scene_name: StringProperty(
         name='Library scene',
         description='The name of the library scene to auto export',
-        default=''
+        default='Library'
     )
-
     # blueprint settings
     export_blueprints: BoolProperty(
         name='Export Blueprints',
         description='Replaces collection instances with an Empty with a BlueprintName custom property',
         default=False
     )
-
     export_blueprints_path: StringProperty(
-        name='Export Blueprints path',
-        description='path to export the blueprints to',
+        name='Blueprints path',
+        description='path to export the blueprints to (relative to this Blend file)',
         default=''
     )
 
 
     #####
+    export_format: EnumProperty(
+        name='Format',
+        items=(('GLB', 'glTF Binary (.glb)',
+                'Exports a single file, with all data packed in binary form. '
+                'Most efficient and portable, but more difficult to edit later'),
+               ('GLTF_EMBEDDED', 'glTF Embedded (.gltf)',
+                'Exports a single file, with all data packed in JSON. '
+                'Less efficient than binary, but easier to edit later'),
+               ('GLTF_SEPARATE', 'glTF Separate (.gltf + .bin + textures)',
+                'Exports multiple files, with separate JSON, binary and texture data. '
+                'Easiest to edit later')),
+        description=(
+            'Output format and embedding options. Binary is most efficient, '
+            'but JSON (embedded or separate) may be easier to edit later'
+        ),
+        default='GLB'
+    )
     export_copyright: StringProperty(
         name='Copyright',
         description='Legal rights and conditions for the model',
@@ -672,7 +692,7 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         default=False
     )
 
-class AutoExportGLTF2(Operator, ExportHelper):
+class AutoExportGLTF(Operator, ExportHelper):
     """test"""
     bl_idname = "export_scenes.auto_gltf"
     bl_label = "Apply settings"
@@ -685,7 +705,7 @@ class AutoExportGLTF2(Operator, ExportHelper):
             default='*.glb;*.gltf', 
             options={'HIDDEN'}
     )
-
+    """
     auto_export: BoolProperty(
         name='Auto export',
         description='Automatically export to gltf on save',
@@ -721,10 +741,7 @@ class AutoExportGLTF2(Operator, ExportHelper):
         name='Blueprints path',
         description='path to export the blueprints to (relative to this Blend file)',
         default=''
-    )
-
-    # existing gltf export settings
-    
+    )"""
     
     def draw(self, context):
         pass
@@ -759,8 +776,8 @@ class GLTF_PT_auto_export_root(bpy.types.Panel):
     bl_space_type = 'FILE_BROWSER'
     bl_region_type = 'TOOL_PROPS'
     bl_label = "Auto export"
-    bl_parent_id = "FILE_PT_operator"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "GLTF_PT_auto_export_main"
+    #bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -780,7 +797,8 @@ class GLTF_PT_auto_export_root(bpy.types.Panel):
         layout.use_property_decorate = False  # No animation.
 
         sfile = context.space_data
-        operator = sfile.active_operator
+        #operator = sfile.active_operator
+        operator = bpy.context.preferences.addons[__name__].preferences
 
         layout.active = operator.auto_export
         layout.prop(operator, "export_main_scene_name")
@@ -809,21 +827,57 @@ class GLTF_PT_auto_export_blueprints(bpy.types.Panel):
 
         sfile = context.space_data
         operator = sfile.active_operator
+        addon_prefs = bpy.context.preferences.addons[__name__].preferences
 
-        layout.prop(operator, "export_blueprints")
-        layout.prop(operator, "export_blueprints_path")
+        layout.prop(addon_prefs, "export_blueprints")
+        layout.prop(addon_prefs, "export_blueprints_path")
 
+class GLTF_PT_auto_export_gltf(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Gltf"
+    bl_parent_id = "GLTF_PT_auto_export_main"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "EXPORT_SCENES_OT_auto_gltf" #"EXPORT_SCENE_OT_gltf"
+    
+    def draw(self, context):
+        preferences = context.preferences
+        addon_prefs = preferences.addons[__name__].preferences
+        layout = self.layout
+
+        #preferences = context.preferences
+        #print("ADDON PREFERENCES ", list(preferences.addons.keys()))
+        #print("standard blender gltf prefs", list(preferences.addons["io_scene_gltf2"].preferences.keys()))
+        # we get the addon preferences from the standard gltf exporter & use those :
+        addon_prefs_gltf = preferences.addons["io_scene_gltf2"].preferences
+
+        #addon_prefs = preferences.addons[__name__].preferences
+
+        # print("KEYS", dir(addon_prefs))
+        #print("BLAS", addon_prefs.__annotations__)
+        #print(addon_prefs.__dict__)
+        for key in addon_prefs.__annotations__.keys():
+            if key not in AutoExportGltfPreferenceNames:
+                layout.prop(addon_prefs, key)
+        #for key in addon_prefs_gltf.__annotations__.keys():
+        #    layout.prop(addon_prefs_gltf, key)
 
 def menu_func_import(self, context):
-    self.layout.operator(AutoExportGLTF2.bl_idname, text="glTF auto Export (.glb/gltf)")
+    self.layout.operator(AutoExportGLTF.bl_idname, text="glTF auto Export (.glb/gltf)")
 
 classes = [
-    AutoExportGLTF2, 
+    AutoExportGLTF, 
     AutoExportGltfAddonPreferences,
     GLTF_PT_auto_export_main,
     GLTF_PT_auto_export_root,
     GLTF_PT_auto_export_blueprints,
-
+    GLTF_PT_auto_export_gltf
 ]
 
 def register():
@@ -833,7 +887,8 @@ def register():
     # setup handlers for updates & saving
     bpy.app.handlers.depsgraph_update_post.append(deps_update_handler)
     bpy.app.handlers.save_post.append(save_handler)
-    bpy.types.Scene.changedScene = bpy.props.StringProperty(get=get_changedScene, set=set_ChangedScene)
+    bpy.types.Scene.changedScene = bpy.props.StringProperty(get=get_changedScene, set=set_changedScene)
+    #bpy.types.Scene.changedObjects = bpy.props.CollectionProperty(get=get_changedObjects, set=set_changedObjects)
 
     # add our addon to the toolbar
     bpy.types.TOPBAR_MT_file_export.append(menu_func_import)
@@ -850,6 +905,7 @@ def unregister():
     bpy.app.handlers.depsgraph_update_post.remove(deps_update_handler)
     bpy.app.handlers.save_post.remove(save_handler)
     del bpy.types.Scene.changedScene
+    #del bpy.types.Scene.changedObjects
 
 if __name__ == "__main__":
     register()

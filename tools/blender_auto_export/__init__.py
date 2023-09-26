@@ -1,4 +1,4 @@
-#TODO: this is not actually in use yet, just use the blender_auto_export_gltf.py file
+#TODO: this is not actually in use yet, just use the gltf_auto_export.py file
 bl_info = {
     "name": "Test glTF/glb auto-export",
     "author": "kaosigh",
@@ -14,11 +14,11 @@ bl_info = {
 
 import bpy
 
-from .blender_auto_export_gltf import TEST_AUTO_OT_gltf
-from .blender_auto_export_gltf import deps_update_handler
-from .blender_auto_export_gltf import save_handler
-from .blender_auto_export_gltf import get_changedScene
-from .blender_auto_export_gltf import set_ChangedScene
+from .gltf_auto_export import TEST_AUTO_OT_gltf
+from .gltf_auto_export import deps_update_handler
+from .gltf_auto_export import save_handler
+from .gltf_auto_export import get_changedScene
+from .gltf_auto_export import set_ChangedScene
 
 
 # Only needed if you want to add into a dynamic menu

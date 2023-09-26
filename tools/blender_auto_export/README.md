@@ -1,6 +1,6 @@
 # gltf_auto_export
 
-For convenience I also added this [Blender addon](./blender_auto_export_gltf.py) that automatically exports your level/world from Blender to gltf whenever you save your Blend file
+For convenience I also added this [Blender addon](./gltf_auto_export.py) that automatically exports your level/world from Blender to gltf whenever you save your Blend file
 (actually when you save inside your level/world scene or in the "library" scene, where I personally usually store all collections to instanciate).
 It is **very** barebones and messy, but it does a minimal ok job.
 
@@ -10,7 +10,7 @@ It is **very** barebones and messy, but it does a minimal ok job.
 
 ![blender addon install](../../docs/blender_addon_install.png)
 
-* choose the path where ```blender_auto_export/blender_auto_export_gltf.py``` is stored
+* choose the path where ```blender_auto_export/gltf_auto_export.py``` is stored
 
 ![blender addon install](../../docs/blender_addon_install2.png)
 
