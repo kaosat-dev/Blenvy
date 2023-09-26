@@ -18,7 +18,7 @@ It also allows you to setup 'blueprints' in Blender by using collections (the re
 
 * Useful if you want to use Blender (or any editor allowing to export gltf with configurable gltf_extras) as your Editor
 * define Bevy components as custom properties in Blender (some visually , some using RON, though an older JSON version is also available)
-* no plugin or extra tools needed in Blender (but I provide a [little Blender plugin](./tools/blender_auto_export/) to auto-export to gltf on save (and more !) if you want !)
+* no plugin or extra tools needed in Blender (but I provide a [little Blender plugin](./tools/gltf_auto_export/) to auto-export to gltf on save (and more !) if you want !)
 * define components in Blender Collections & override any of them in your collection instances if you want
 * ability to automatically turn your Blender collections into [gltf Blueprints](./crates/bevy_gltf_blueprints/) for reuse
 * minimal setup & code,  you can have something basic running fast
@@ -38,7 +38,7 @@ There is a [video tutorial/explanation](https://youtu.be/-lcScjQCA3c) if you wan
 
 ### Blender gltf_auto_export
 
-- for convenience I also added a [Blender addon](./tools/blender_auto_export/README.md) that automatically exports your level/world from Blender to gltf whenever you save your Blend file
+- for convenience I also added a [Blender addon](./tools/gltf_auto_export/README.md) that automatically exports your level/world from Blender to gltf whenever you save your Blend file
 (actually when you save inside your level/world scene or in the "library" scene, where I personally usually store all collections to instanciate).
 It is **very** barebones and messy, but it does a minimal ok job. Please read the README of the add-on for installation instructions
 
@@ -102,7 +102,7 @@ The workflow goes as follows (once you got your Bevy code setup)
         - custom properties
         - cameras & lights if you want a complete level (as in this example)
         ![gltf_export](./docs/gltf_export.png)
-    - using [gltf_auto_export](./tools/blender_auto_export/)
+    - using [gltf_auto_export](./tools/gltf_auto_export/)
 
 
 

@@ -1,5 +1,5 @@
 bl_info = {
-    "name": "blender_auto_export_gltf",
+    "name": "gltf_auto_export_gltf",
     "author": "kaosigh",
     "version": (0, 1),
     "blender": (3, 4, 0),

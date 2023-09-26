@@ -12,7 +12,7 @@ A blueprint is a set of **overrideable** components + a hierarchy: ie
     * just a Gltf file with Gltf_extras specifying components 
     * a component called BlueprintName
 
-Particularly useful when using [Blender](https://www.blender.org/) as an editor for the [Bevy](https://bevyengine.org/) game engine, combined with the [Blender plugin](https://github.com/kaosat-dev/Blender_bevy_components_worklflow/tree/main/tools/blender_auto_export) that does a lot of the work for you 
+Particularly useful when using [Blender](https://www.blender.org/) as an editor for the [Bevy](https://bevyengine.org/) game engine, combined with the [Blender plugin](https://github.com/kaosat-dev/Blender_bevy_components_worklflow/tree/main/tools/gltf_auto_export) that does a lot of the work for you 
 
 
 ## Usage
