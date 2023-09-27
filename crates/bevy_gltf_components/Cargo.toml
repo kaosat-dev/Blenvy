@@ -1,6 +1,11 @@
 [package]
 name = "bevy_gltf_components"
-version = "0.3.0"
+version = "0.1.0"
+description = "Allows you to define [Bevy](https://bevyengine.org/) components direclty inside gltf files and instanciate the components on the Bevy side."
+homepage = "https://github.com/kaosat-dev/Blender_bevy_components_worklflow"
+repository = "https://github.com/kaosat-dev/Blender_bevy_components_worklflow"
+keywords = ["gamedev", "bevy", "assets", "gltf", "components"]
+categories = ["game-development"]
 edition = "2021"
 license = "MIT OR Apache-2.0"
 
