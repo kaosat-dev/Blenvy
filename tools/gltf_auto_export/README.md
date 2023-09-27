@@ -24,12 +24,17 @@ It is **very** barebones and messy, but it does a minimal ok job.
 
 ![blender addon use](../../docs/blender_addon_use.png)
 
-* set up your parameters: output path, name of your main scene etc
+* set the autoexport parameters : output path, name of your main scene etc in the **auto export** panel
 
-    ![blender addon use2](../../docs/blender_addon_use2.png)
+![blender addon use3](../../docs/blender_addon_use3.png)
+
+* and your standard gltf export parameters in the **gltf** panel
+
+![blender addon use2](../../docs/blender_addon_use2.png)
+
 
 * click on "apply settings"
-* now next time you save your blend file you will get an automatically exported gltf file
+* now next time you save your blend file you will get an automatically exported gltf file (or more than one, depending on your settings, see below)
 
 ### Blueprints
 
@@ -40,13 +45,40 @@ You can enable this option to automatically replace all the **collection instanc
     * your main scene/ level will be exported to a much more trimmed down gltf file (see next point)
     * all the original collections (that you used to create the instances) will be exported as **seperate gltf files** into the "library" folder
 
+- this means you will have 
+    * one small main gltf file (your level/world)
+    * as many gltf files as you have used collections in the main scene , in the library path you specified :
+    for the included [advanced](../../examples/advanced/) example's [assets](../../assets/advanced/models/), it looks something like this: 
 
-## Process
+    ![library](../../docs/exported_library_files.png)
+    
+    the .blend file that they are generate from can be found [here](../../assets/advanced/advanced.blend)
+
+#### Process
+
+This is the internal logic of the export process with blueprints 
 
 ![process](../../docs/process.svg)
+
+ie this is an example scene...
+
+![](../../docs/workflow_original.jpg)
+
+and what actually gets exported for the main scene/world/level
+
+![](../../docs/workflow_empties.jpg)
+
+all collections instances replaced with empties, and all those collections exported to gltf files as seen above
 
 
 ### TODO:
 
 - [ ] add ability to have multiple main & library scenes
 - [ ] detect which objects have been changed to only re-export those
+
+## License
+
+This tool, all its code, contents & assets is Dual-licensed under either of
+
+- Apache License, Version 2.0, ([LICENSE-APACHE](../LICENSE_APACHE.md) or https://www.apache.org/licenses/LICENSE-2.0)
+- MIT license ([LICENSE-MIT](../LICENSE_MIT.md) or https://opensource.org/licenses/MIT)

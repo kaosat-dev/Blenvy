@@ -24,8 +24,8 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      inkscape:zoom="0.72426347"
-     inkscape:cx="833.95066"
-     inkscape:cy="309.97007"
+     inkscape:cx="-439.06674"
+     inkscape:cy="597.15838"
      inkscape:window-width="2560"
      inkscape:window-height="1011"
      inkscape:window-x="0"
@@ -102,7 +102,7 @@
        id="text1"><tspan
          sodipodi:role="line"
          id="tspan1"
-         style="stroke-width:0.264583"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
          x="102.90446"
          y="11.789397">Original</tspan></text>
     <rect
@@ -144,13 +144,13 @@
            id="text7"><tspan
              sodipodi:role="line"
              id="tspan7"
-             style="fill:#efff81;fill-opacity:1;stroke-width:0.264583"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
              x="124.65015"
              y="97.640045">Object A</tspan><tspan
              sodipodi:role="line"
-             style="fill:#efff81;fill-opacity:1;stroke-width:0.264583"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
              x="124.65015"
-             y="101.6088"
+             y="101.76033"
              id="tspan72">(unique)</tspan></text>
       </g>
       <text
@@ -161,7 +161,7 @@
          id="text8"><tspan
            sodipodi:role="line"
            id="tspan8"
-           style="stroke-width:0.264583"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
            x="126.33414"
            y="14.70156">Main Scene (world/level)</tspan></text>
       <g
@@ -184,7 +184,7 @@
            id="text9"><tspan
              sodipodi:role="line"
              id="tspan9"
-             style="fill:#81ffc7;fill-opacity:1;stroke-width:0.264583"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
              x="162.26337"
              y="90.613953">Object B1 (instance)</tspan></text>
       </g>
@@ -207,7 +207,7 @@
            id="text10"><tspan
              sodipodi:role="line"
              id="tspan10"
-             style="stroke-width:0.264583"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
              x="158.16835"
              y="113.52198">Object C0 (instance)</tspan></text>
       </g>
@@ -232,13 +232,13 @@
            ry="1.0529197" />
         <text
            xml:space="preserve"
-           style="font-size:3.175px;fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+           style="font-size:3.175px;fill:#000000;stroke:none;stroke-width:0.264583;stroke-dasharray:none;-inkscape-font-specification:Ubuntu;font-family:Ubuntu;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;fill-opacity:1"
            x="158.16835"
            y="113.52198"
            id="text17"><tspan
              sodipodi:role="line"
              id="tspan17"
-             style="stroke-width:0.264583"
+             style="stroke-width:0.264583;-inkscape-font-specification:Ubuntu;font-family:Ubuntu;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;stroke:none;fill:#000000;fill-opacity:1"
              x="158.16835"
              y="113.52198">Object C1 (instance)</tspan></text>
       </g>
@@ -256,7 +256,7 @@
        id="text11"><tspan
          sodipodi:role="line"
          id="tspan11"
-         style="stroke-width:0.264583"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
          x="145.92572"
          y="22.124336">Library Scene</tspan></text>
     <rect
@@ -275,7 +275,7 @@
        id="text12"><tspan
          sodipodi:role="line"
          id="tspan12"
-         style="stroke-width:0.264583"
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
          x="142.59734"
          y="32.46125">Object B: collection/ blueprint</tspan></text>
     <g
@@ -297,7 +297,7 @@
          id="text13"><tspan
            sodipodi:role="line"
            id="tspan13"
-           style="stroke-width:0.264583"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
            x="142.59734"
            y="53.155746">Object C: collection/ blueprint</tspan></text>
     </g>
@@ -316,13 +316,13 @@
        ry="3.0587275" />
     <text
        xml:space="preserve"
-       style="font-size:3.175px;fill:none;stroke:#000000;stroke-width:0.264583"
+       style="font-size:3.175px;fill:#000000;stroke:none;stroke-width:0.264583;fill-opacity:1"
        x="97.815292"
        y="99.943169"
        id="text28"><tspan
          sodipodi:role="line"
          id="tspan28"
-         style="stroke-width:0.264583"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
          x="97.815292"
          y="99.943169">Transform Step</tspan></text>
     <rect
@@ -364,13 +364,13 @@
            id="text31"><tspan
              sodipodi:role="line"
              id="tspan31"
-             style="fill:#efff81;fill-opacity:1;stroke-width:0.264583"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-opacity:1"
              x="124.65015"
              y="97.640045">Object A</tspan><tspan
              sodipodi:role="line"
-             style="fill:#efff81;fill-opacity:1;stroke-width:0.264583"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-opacity:1"
              x="124.65015"
-             y="101.6088"
+             y="101.76033"
              id="tspan73">(unique)</tspan></text>
       </g>
       <text
@@ -381,7 +381,7 @@
          id="text32"><tspan
            sodipodi:role="line"
            id="tspan32"
-           style="stroke-width:0.264583"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
            x="126.33414"
            y="14.70156">Temporary Scene (world/level)</tspan></text>
       <g
@@ -404,19 +404,21 @@
            id="text33"><tspan
              sodipodi:role="line"
              id="tspan33"
-             style="fill:#81ffc7;fill-opacity:1;stroke-width:0.264583"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
              x="162.26337"
              y="90.613953">Object B1 (Empty)</tspan><tspan
              sodipodi:role="line"
-             style="fill:#81ffc7;fill-opacity:1;stroke-width:0.264583"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
              x="162.26337"
-             y="94.582703"
+             y="94.734238"
              id="tspan44">+ blueprintName(&quot;ObjectB&quot;)</tspan><tspan
              sodipodi:role="line"
              style="fill:#81ffc7;fill-opacity:1;stroke-width:0.264583"
              x="162.26337"
-             y="98.551453"
-             id="tspan47">+ spawnHere </tspan></text>
+             y="98.854515"
+             id="tspan47"><tspan
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none"
+   id="tspan78">+ spawnHere</tspan> </tspan></text>
       </g>
       <g
          id="g34"
@@ -437,19 +439,21 @@
            id="text34"><tspan
              sodipodi:role="line"
              id="tspan34"
-             style="stroke-width:0.264583"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
              x="158.16835"
              y="113.52198">Object C0 (Empty)</tspan><tspan
              sodipodi:role="line"
-             style="stroke-width:0.264583"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
              x="158.16835"
-             y="117.49073"
+             y="117.64227"
              id="tspan45">+ blueprintName(&quot;ObjectC&quot;)</tspan><tspan
              sodipodi:role="line"
              style="stroke-width:0.264583"
              x="158.16835"
-             y="121.45948"
-             id="tspan48">+ spawnHere </tspan></text>
+             y="121.76254"
+             id="tspan48"><tspan
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none"
+   id="tspan79">+ spawnHere</tspan> </tspan></text>
       </g>
       <path
          style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:2.11666, 0.264583;stroke-dashoffset:0;marker-end:url(#ArrowWide)"
@@ -478,19 +482,21 @@
            id="text35"><tspan
              sodipodi:role="line"
              id="tspan35"
-             style="stroke-width:0.264583"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
              x="158.16835"
              y="113.52198">Object C1 (Empty)</tspan><tspan
              sodipodi:role="line"
-             style="stroke-width:0.264583"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
              x="158.16835"
-             y="117.49073"
+             y="117.64227"
              id="tspan46">+ blueprintName(&quot;ObjectC&quot;)</tspan><tspan
              sodipodi:role="line"
              style="stroke-width:0.264583"
              x="158.16835"
-             y="121.45948"
-             id="tspan49">+ spawnHere </tspan></text>
+             y="121.76254"
+             id="tspan49"><tspan
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none"
+   id="tspan80">+ spawnHere</tspan> </tspan></text>
       </g>
       <path
          style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:2.11666, 0.264583;stroke-dashoffset:0;marker-end:url(#ArrowWide)"
@@ -500,15 +506,15 @@
     </g>
     <text
        xml:space="preserve"
-       style="font-size:3.175px;fill:none;stroke:#000000;stroke-width:0.264583"
-       x="130.0507"
-       y="112.5375"
+       style="font-size:3.175px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="124.89855"
+       y="112.52866"
        id="text36"><tspan
          sodipodi:role="line"
-         style="stroke-width:0.264583"
-         x="130.0507"
-         y="112.5375"
-         id="tspan39">Determe used Collections to export</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="124.89855"
+         y="112.52866"
+         id="tspan39">Determine used Collections to export</tspan></text>
     <rect
        style="fill:#ff9342;fill-opacity:1;stroke:#000000;stroke-width:0.32101;stroke-dasharray:none"
        id="rect36"
@@ -524,7 +530,7 @@
        y="122.87442"
        id="text37"><tspan
          sodipodi:role="line"
-         style="stroke-width:0.264583"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
          x="142.59734"
          y="122.87442"
          id="tspan40">Object B</tspan><tspan
@@ -548,7 +554,7 @@
        y="140.92308"
        id="text38"><tspan
          sodipodi:role="line"
-         style="stroke-width:0.264583"
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
          x="142.59734"
          y="140.92308"
          id="tspan42">Object C</tspan><tspan
@@ -572,13 +578,13 @@
        ry="3.0587275" />
     <text
        xml:space="preserve"
-       style="font-size:3.175px;fill:none;stroke:#000000;stroke-width:0.264583"
+       style="font-size:3.175px;fill:#000000;stroke:none;stroke-width:0.264583;fill-opacity:1"
        x="106.60861"
        y="201.20203"
        id="text50"><tspan
          sodipodi:role="line"
          id="tspan50"
-         style="stroke-width:0.264583"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
          x="106.60861"
          y="201.20203">Result</tspan></text>
     <rect
@@ -612,13 +618,13 @@
            id="text52"><tspan
              sodipodi:role="line"
              id="tspan52"
-             style="fill:#efff81;fill-opacity:1;stroke-width:0.264583"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
              x="124.65015"
              y="97.110878">Entity A</tspan><tspan
              sodipodi:role="line"
-             style="fill:#efff81;fill-opacity:1;stroke-width:0.264583"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
              x="124.65015"
-             y="101.07963"
+             y="101.23116"
              id="tspan74">(unique)</tspan></text>
       </g>
       <rect
@@ -637,7 +643,7 @@
          id="text53"><tspan
            sodipodi:role="line"
            id="tspan53"
-           style="fill:#0090ff;fill-opacity:1;stroke:#0090ff;stroke-width:0.264583;stroke-opacity:1"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';fill:#0090ff;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-opacity:1"
            x="135.33"
            y="14.70156">world/level.gltf</tspan></text>
       <g
@@ -660,18 +666,18 @@
            id="text56"><tspan
              sodipodi:role="line"
              id="tspan54"
-             style="fill:#81ffc7;fill-opacity:1;stroke-width:0.264583"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
              x="162.26337"
              y="90.613953">Entity B1</tspan><tspan
              sodipodi:role="line"
-             style="fill:#81ffc7;fill-opacity:1;stroke-width:0.264583"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
              x="162.26337"
-             y="94.582703"
+             y="94.734238"
              id="tspan55">+ blueprintName(&quot;ObjectB&quot;)</tspan><tspan
              sodipodi:role="line"
-             style="fill:#81ffc7;fill-opacity:1;stroke-width:0.264583"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
              x="162.26337"
-             y="98.551453"
+             y="98.854515"
              id="tspan56">+ spawnHere </tspan></text>
       </g>
       <g
@@ -693,18 +699,18 @@
            id="text59"><tspan
              sodipodi:role="line"
              id="tspan57"
-             style="stroke-width:0.264583"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
              x="158.16835"
              y="113.52198">Entity C0</tspan><tspan
              sodipodi:role="line"
-             style="stroke-width:0.264583"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
              x="158.16835"
-             y="117.49073"
+             y="117.64227"
              id="tspan58">+ blueprintName(&quot;ObjectC&quot;)</tspan><tspan
              sodipodi:role="line"
-             style="stroke-width:0.264583"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
              x="158.16835"
-             y="121.45948"
+             y="121.76254"
              id="tspan59">+ spawnHere </tspan></text>
       </g>
       <path
@@ -734,18 +740,18 @@
            id="text62"><tspan
              sodipodi:role="line"
              id="tspan60"
-             style="stroke-width:0.264583"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
              x="158.16835"
              y="113.52198">Entity C1</tspan><tspan
              sodipodi:role="line"
-             style="stroke-width:0.264583"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
              x="158.16835"
-             y="117.49073"
+             y="117.64227"
              id="tspan61">+ blueprintName(&quot;ObjectC&quot;)</tspan><tspan
              sodipodi:role="line"
-             style="stroke-width:0.264583"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
              x="158.16835"
-             y="121.45948"
+             y="121.76254"
              id="tspan62">+ spawnHere </tspan></text>
       </g>
       <path
@@ -761,7 +767,7 @@
        y="214.18282"
        id="text63"><tspan
          sodipodi:role="line"
-         style="fill:#0090ff;fill-opacity:1;stroke:#0090ff;stroke-width:0.264583;stroke-opacity:1"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';fill:#0090ff;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-opacity:1"
          x="117.87988"
          y="214.18282"
          id="tspan63">Library of gltf files (one per Collection/Blueprint)</tspan></text>
@@ -781,18 +787,18 @@
        id="text66"><tspan
          sodipodi:role="line"
          id="tspan64"
-         style="stroke-width:0.264583"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
          x="142.59734"
          y="224.51973">Object B.gltf </tspan><tspan
          sodipodi:role="line"
-         style="stroke-width:0.264583"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
          x="142.59734"
-         y="228.48848"
+         y="228.64001"
          id="tspan65">  + blueprintName(&quot;ObjectB&quot;)</tspan><tspan
          sodipodi:role="line"
          style="stroke-width:0.264583"
          x="142.59734"
-         y="232.45723"
+         y="232.60876"
          id="tspan66" /></text>
     <rect
        style="fill:#ff9342;fill-opacity:1;stroke:#000000;stroke-width:0.321404;stroke-dasharray:none"
@@ -810,18 +816,18 @@
        id="text69"><tspan
          sodipodi:role="line"
          id="tspan67"
-         style="stroke-width:0.264583"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
          x="142.59734"
          y="242.56839">Object C:.gltf</tspan><tspan
          sodipodi:role="line"
-         style="stroke-width:0.264583"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
          x="142.59734"
-         y="246.53714"
+         y="246.68867"
          id="tspan68">  + blueprintName(&quot;ObjectC&quot;)</tspan><tspan
          sodipodi:role="line"
          style="stroke-width:0.264583"
          x="142.59734"
-         y="250.50589"
+         y="250.65742"
          id="tspan69" /></text>
     <g
        id="g70"
@@ -842,13 +848,13 @@
          id="text70"><tspan
            sodipodi:role="line"
            id="tspan70"
-           style="stroke-width:0.264583"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
            x="142.59734"
            y="52.097412">Object D: unused collection/ </tspan><tspan
            sodipodi:role="line"
-           style="stroke-width:0.264583"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
            x="142.59734"
-           y="56.066162"
+           y="56.217693"
            id="tspan71">blueprint</tspan></text>
     </g>
     <path

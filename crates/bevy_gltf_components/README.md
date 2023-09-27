@@ -55,3 +55,12 @@ Typically , the order of systems should be
 
 ## Examples
 
+https://github.com/kaosat-dev/Blender_bevy_components_worklflow/tree/main/examples/basic
+
+
+## License
+
+This crate, all its code, contents & assets is Dual-licensed under either of
+
+- Apache License, Version 2.0, ([LICENSE-APACHE](./LICENSE_APACHE.md) or https://www.apache.org/licenses/LICENSE-2.0)
+- MIT license ([LICENSE-MIT](./LICENSE_MIT.md) or https://opensource.org/licenses/MIT)

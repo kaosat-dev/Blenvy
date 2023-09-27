@@ -18,9 +18,9 @@ It also allows you to setup 'blueprints' in Blender by using collections (the re
 
 * Useful if you want to use Blender (or any editor allowing to export gltf with configurable gltf_extras) as your Editor
 * define Bevy components as custom properties in Blender (some visually , some using RON, though an older JSON version is also available)
-* no plugin or extra tools needed in Blender (but I provide a [little Blender plugin](./tools/gltf_auto_export/) to auto-export to gltf on save (and more !) if you want !)
+* no plugin or extra tools needed in Blender (but I provide a [little Blender plugin](./tools/gltf_auto_export/README.md) to auto-export to gltf on save (and more !) if you want !)
 * define components in Blender Collections & override any of them in your collection instances if you want
-* ability to automatically turn your Blender collections into [gltf Blueprints](./crates/bevy_gltf_blueprints/) for reuse
+* ability to automatically turn your Blender collections into [gltf Blueprints](./crates/bevy_gltf_blueprints/README.md) for reuse
 * minimal setup & code,  you can have something basic running fast
 * minimal dependencies: Bevy, Serde & Ron only !
 * opensource 
@@ -36,11 +36,12 @@ There is a [video tutorial/explanation](https://youtu.be/-lcScjQCA3c) if you wan
 
 ## Tools
 
-### Blender gltf_auto_export
+### Blender: gltf_auto_export
 
 - for convenience I also added a [Blender addon](./tools/gltf_auto_export/README.md) that automatically exports your level/world from Blender to gltf whenever you save your Blend file
-(actually when you save inside your level/world scene or in the "library" scene, where I personally usually store all collections to instanciate).
-It is **very** barebones and messy, but it does a minimal ok job. Please read the README of the add-on for installation instructions
+- it also supports automatical exports of collections as [Gltf blueprints](./crates/bevy_gltf_blueprints/README.md) & more !
+
+Please read the [README]((./tools/gltf_auto_export/README.md)) of the add-on for installation & use instructions
 
 
 ## Examples
@@ -69,7 +70,7 @@ The workflow goes as follows (once you got your Bevy code setup)
 
         ![unit struct components in Bevy](./docs/demo_simple_components.png)
 
-        (the Rust struct for these components for reference is [here](./examples/general/game.rs#34) )
+        (the Rust struct for these components for reference is [here](./examples/basic/game.rs#34) )
 
 
         ![complex components in Blender](./docs/components_blender_parameters.png)
@@ -78,9 +79,9 @@ The workflow goes as follows (once you got your Bevy code setup)
 
         ![complex components in Blender](./docs/camera_tracking_component.png)
 
-        (the Rust struct for this component for reference is [here](./examples/general/core/camera/camera_tracking.rs#21) )
+        (the Rust struct for this component for reference is [here](./examples/basic/core/camera/camera_tracking.rs#21) )
 
-        There is an other examples of using various Component types: Enums, Tupple structs,  strucs with fields etc [here](./examples/general/test_components.rs),
+        There is an other examples of using various Component types: Enums, Tupple structs,  strucs with fields etc [here](./examples/basic/test_components.rs),
         even colors, Vecs (arrays), Vec2, Vec3 etc are all supported
 
         ![complex components in Blender](./docs/components_blender_parameters2.png)
@@ -102,7 +103,7 @@ The workflow goes as follows (once you got your Bevy code setup)
         - custom properties
         - cameras & lights if you want a complete level (as in this example)
         ![gltf_export](./docs/gltf_export.png)
-    - using [gltf_auto_export](./tools/gltf_auto_export/)
+    - or much better, using [gltf_auto_export](./tools/gltf_auto_export/)
 
 
 
@@ -137,8 +138,7 @@ you will get a warning **per entity**
 
 ## License
 
-This example, all its code, contents & assets is Dual-licensed under either of
+This repo, all its code, contents & assets is Dual-licensed under either of
 
-- Apache License, Version 2.0, ([LICENSE-APACHE](/LICENSE_APACHE) or https://www.apache.org/licenses/LICENSE-2.0)
-- MIT license ([LICENSE-MIT](/LICENSE_MIT) or https://opensource.org/licenses/MIT)
-
+- Apache License, Version 2.0, ([LICENSE-APACHE](./LICENSE_APACHE.md) or https://www.apache.org/licenses/LICENSE-2.0)
+- MIT license ([LICENSE-MIT](./LICENSE_MIT.md) or https://opensource.org/licenses/MIT)
