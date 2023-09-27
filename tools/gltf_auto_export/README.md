@@ -4,7 +4,7 @@ For convenience I also added this [Blender addon](./gltf_auto_export.py) that au
 (actually when you save inside your level/world scene or in the "library" scene, where I personally usually store all collections to instanciate).
 It is **very** barebones and messy, but it does a minimal ok job.
 
-### Installation: 
+## Installation: 
 
 * in Blender go to edit =>  preferences => install
 
@@ -14,10 +14,10 @@ It is **very** barebones and messy, but it does a minimal ok job.
 
 ![blender addon install](../../docs/blender_addon_install2.png)
 
-### Usage: 
+## Usage: 
 
 
-#### Basics
+### Basics
 
 * before it can automatically save to gltf, you need to configure it
 * go to file => export => gltf auto export
@@ -31,7 +31,7 @@ It is **very** barebones and messy, but it does a minimal ok job.
 * click on "apply settings"
 * now next time you save your blend file you will get an automatically exported gltf file
 
-#### Blueprints
+### Blueprints
 
 You can enable this option to automatically replace all the **collection instances** inside your main scene with blueprints
 - whenever you change your main scene (or your library scene , if that option is enabled), all your collection instances 
@@ -39,6 +39,11 @@ You can enable this option to automatically replace all the **collection instanc
     * those empties will have additional components : ```BlueprintName``` & ```SpawnHere```
     * your main scene/ level will be exported to a much more trimmed down gltf file (see next point)
     * all the original collections (that you used to create the instances) will be exported as **seperate gltf files** into the "library" folder
+
+
+## Process
+
+![process](../../docs/process.svg)
 
 
 ### TODO:
