@@ -17,24 +17,25 @@ use bevy::prelude::{
 /// Add this plugin to your Bevy app to get access to this feature
 /// ```
 /// # use bevy::prelude::*;
-/// # use bevy_gltf_components::ComponentsFromGltfPlugin::*;
+/// # use bevy::gltf::*;
+/// # use bevy_gltf_components::ComponentsFromGltfPlugin;
 /// 
 /// 
 /// fn main() {
 ///    App::new()
 ///         .add_plugins(DefaultPlugins)
-///         .add_plugin(GltfComponentsPlugin)
+///         .add_plugin(ComponentsFromGltfPlugin)
 ///         .add_startup_system(setup)
 ///         .add_system(spawn_level)
 ///         .run();
 /// }
 /// 
 /// fn setup(
-/// mut state: ResMut<State>, 
+/// // mut state: ResMut<State>, 
 /// asset_server: Res<AssetServer>, 
 ///  mut commands: bevy::prelude::Commands
 /// ){
-///  asset_server.load("basic/models/level1.glb#Scene0")
+///   let loaded:Handle<Gltf> = asset_server.load("basic/models/level1.glb#Scene0");
 /// }
 /// 
 /// fn spawn_level(){
