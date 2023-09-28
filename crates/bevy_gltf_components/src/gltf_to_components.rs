@@ -13,6 +13,7 @@ use bevy::gltf::{Gltf, GltfExtras};
 
 use super::capitalize_first_letter;
 
+/// main function: injects components into each entity in gltf files that have gltf_extras, using reflection
 pub fn gltf_extras_to_components(
     gltf: &mut Gltf,
     scenes: &mut ResMut<Assets<Scene>>,

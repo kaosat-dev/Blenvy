@@ -5,7 +5,8 @@ use bevy::gltf::Gltf;
 use super::gltf_extras_to_components;
 
 #[derive(Resource)]
-  pub struct GltfLoadingTracker{
+/// component to keep track of gltfs' loading state
+pub struct GltfLoadingTracker{
     pub loading_gltfs: HashSet<Handle<Gltf>>,
     pub loaded_gltfs: HashSet<Handle<Gltf>>
   }

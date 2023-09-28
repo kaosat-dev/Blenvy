@@ -12,7 +12,7 @@ This crate allows you to define [Bevy](https://bevyengine.org/) components direc
 
 ***important*** : the plugin for processing gltf files runs in ***update*** , so you cannot use the components directly if you spawn your scene from gltf in ***setup*** (the additional components will not show up)
 
-Please see the included example or use [```bevy_asset_loader```](https://github.com/NiklasEi/bevy_asset_loader) for a reliable workflow.
+Please see the included [example](https://github.com/kaosat-dev/Blender_bevy_components_worklflow/examples/basic) or use [```bevy_asset_loader```](https://github.com/NiklasEi/bevy_asset_loader) for a reliable workflow.
 Or alternatively, use the [```bevy_gltf_blueprints```](https://github.com/kaosat-dev/Blender_bevy_components_worklflow/blob/main/crates/bevy_gltf_blueprints) crate that allows you to directly spawn entities from gltf based blueprints.
 
 Here's a minimal usage example:
