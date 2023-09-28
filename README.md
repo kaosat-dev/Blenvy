@@ -1,8 +1,8 @@
 [![Bevy tracking](https://img.shields.io/badge/Bevy%20tracking-released%20version-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
-[![License](https://img.shields.io/crates/l/bevy_gltf_components)](https://github.com/kaosat-dev/Blender_bevy_components_worklflow/blob/main/LICENSE.md)
+[![License](https://img.shields.io/crates/l/bevy_gltf_components)](https://github.com/kaosat-dev/Blender_bevy_components_workflow/blob/main/LICENSE.md)
 
 
-# Blender_bevy_components_worklflow
+# Blender_bevy_components_workflow
 
 ![demo](./docs/blender_gltf_components.png)
 

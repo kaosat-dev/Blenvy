@@ -20,7 +20,7 @@ use bevy::prelude::{
 /// # use bevy::gltf::*;
 /// # use bevy_gltf_components::ComponentsFromGltfPlugin;
 /// 
-/// //too barebones of an example to be meaningfull, please see https://github.com/kaosat-dev/Blender_bevy_components_worklflow/examples/basic for a real example
+/// //too barebones of an example to be meaningfull, please see https://github.com/kaosat-dev/Blender_bevy_components_workflow/examples/basic for a real example
 /// fn main() {
 ///    App::new()
 ///         .add_plugins(DefaultPlugins)
