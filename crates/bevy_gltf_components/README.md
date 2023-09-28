@@ -12,28 +12,45 @@ This crate allows you to define [Bevy](https://bevyengine.org/) components direc
 
 ***important*** : the plugin for processing gltf files runs in ***update*** , so you cannot use the components directly if you spawn your scene from gltf in ***setup*** (the additional components will not show up)
 
-Please see the included [example](https://github.com/kaosat-dev/Blender_bevy_components_worklflow/examples/basic) or use [```bevy_asset_loader```](https://github.com/NiklasEi/bevy_asset_loader) for a reliable workflow.
-Or alternatively, use the [```bevy_gltf_blueprints```](https://github.com/kaosat-dev/Blender_bevy_components_worklflow/blob/main/crates/bevy_gltf_blueprints) crate that allows you to directly spawn entities from gltf based blueprints.
+Please see the 
+ * [example](https://github.com/kaosat-dev/Blender_bevy_components_worklflow/examples/basic) 
+ * or use [```bevy_asset_loader```](https://github.com/NiklasEi/bevy_asset_loader) for a reliable workflow.
+ * alternatively, use the [```bevy_gltf_blueprints```](https://github.com/kaosat-dev/Blender_bevy_components_worklflow/blob/main/crates/bevy_gltf_blueprints) crate, build on this crate's features,
+  that allows you to directly spawn entities from gltf based blueprints.
 
 Here's a minimal usage example:
 
 ```toml
 # Cargo.toml
 [dependencies]
-bevy_gltf_components = { version = "0.3.0"} 
+bevy="0.11.2"
+bevy_gltf_components = { version = "0.1.0"} 
 
 ```
 
 ```rust no_run
-use bevy::prelude::*;
-use bevy_gltf_components::*;
-
-fn main() {
+//too barebones of an example to be meaningfull, please see https://github.com/kaosat-dev/Blender_bevy_components_worklflow/examples/basic for a real example
+ fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
-        .add_plugin(ComponentsFromGltfPlugin)
+         .add_plugins(DefaultPlugins)
+         .add_plugin(ComponentsFromGltfPlugin)
+         .add_system(spawn_level)
+         .run();
+ }
+ 
+ fn spawn_level(
+   asset_server: Res<AssetServer>, 
+   mut commands: bevy::prelude::Commands,
+   keycode: Res<Input<KeyCode>>,
 
-        .run();
+ ){
+ if keycode.just_pressed(KeyCode::Return) {
+  commands.spawn(SceneBundle {
+   scene: asset_server.load("basic/models/level1.glb#Scene0"),
+   transform: Transform::from_xyz(2.0, 0.0, -5.0),
+ ..Default::default()
+ });
+ }
 }
 
 ```
