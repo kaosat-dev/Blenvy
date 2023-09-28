@@ -1,6 +1,6 @@
 [![Crates.io](https://img.shields.io/crates/v/bevy_gltf_blueprints)](https://crates.io/crates/bevy_gltf_blueprints)
 [![Docs](https://img.shields.io/docsrs/bevy_gltf_blueprints)](https://docs.rs/bevy_gltf_blueprints/latest/bevy_gltf_blueprints/)
-[![License](https://img.shields.io/crates/l/bevy_gltf_blueprints)](https://github.com/kaosat-dev/Blender_bevy_components_worklflow/blob/main/crates/bevy_gltf_blueprints/License.md)
+[![License](https://img.shields.io/crates/l/bevy_gltf_blueprints)](https://github.com/kaosat-dev/Blender_bevy_components_workflow/blob/main/crates/bevy_gltf_blueprints/License.md)
 [![Bevy tracking](https://img.shields.io/badge/Bevy%20tracking-released%20version-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
 
 # bevy_gltf_blueprints
@@ -12,7 +12,7 @@ A blueprint is a set of **overrideable** components + a hierarchy: ie
     * just a Gltf file with Gltf_extras specifying components 
     * a component called BlueprintName
 
-Particularly useful when using [Blender](https://www.blender.org/) as an editor for the [Bevy](https://bevyengine.org/) game engine, combined with the [Blender plugin](https://github.com/kaosat-dev/Blender_bevy_components_worklflow/tree/main/tools/gltf_auto_export) that does a lot of the work for you 
+Particularly useful when using [Blender](https://www.blender.org/) as an editor for the [Bevy](https://bevyengine.org/) game engine, combined with the [Blender plugin](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/gltf_auto_export) that does a lot of the work for you 
 
 
 ## Usage
@@ -22,7 +22,8 @@ Here's a minimal usage example:
 ```toml
 # Cargo.toml
 [dependencies]
-bevy_gltf_blueprints = { version = "0.1.0"} 
+bevy="0.11.2"
+bevy_gltf_blueprints = { version = "0.1.1"} 
 
 ```
 
@@ -55,10 +56,54 @@ fn spawn_blueprint(
 }
 ```
 
+##  Installation
+
+Add the following to your `[dependencies]` section in `Cargo.toml`:
+
+```toml
+bevy_gltf_blueprints = "0.1.1"
+```
+
+Or use `cargo add`:
+
+```toml
+cargo add bevy_gltf_blueprints
+```
+
 ## Setup
 
-- configure your "library"/"blueprints" path: 
-    advanced/models/library/
+```rust no_run
+use bevy::prelude::*;
+use bevy_gltf_blueprints::*;
+
+fn main() {
+    App::new()
+        .add_plugins(DefaultPlugins)
+        .add_plugin(BlueprintsPlugin)
+
+        .run();
+}
+
+```
+
+you may want to configure your "library"/"blueprints" path: (defaults to ```assets/models/library```) so the plugin know where to look for the blueprint files
+
+```rust no_run
+use bevy::prelude::*;
+use bevy_gltf_blueprints::*;
+
+fn main() {
+    App::new()
+        .add_plugins(DefaultPlugins)
+        .add_plugin(
+             BlueprintsPlugin{
+              library_folder: "advanced/models/library".into() // replace this with your blueprints library path , relative to the assets folder
+            }
+        )
+        .run();
+}
+
+```
 
 ## Spawning entities from blueprints
 
@@ -132,11 +177,11 @@ Typically , the order of systems should be
 
 ***bevy_gltf_components (GltfComponentsSet::Injection)*** => ***bevy_gltf_blueprints (GltfBlueprintsSet::Spawn, GltfBlueprintsSet::AfterSpawn)*** => ***replace_proxies***
 
-see https://github.com/kaosat-dev/Blender_bevy_components_worklflow/tree/main/examples/advanced for how to set it up correctly
+see https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/advanced for how to set it up correctly
 
 ## Examples
 
-https://github.com/kaosat-dev/Blender_bevy_components_worklflow/tree/main/examples/advanced
+https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/advanced
 
 ## License
 

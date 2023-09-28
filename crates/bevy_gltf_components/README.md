@@ -1,6 +1,6 @@
 [![Crates.io](https://img.shields.io/crates/v/bevy_gltf_components)](https://crates.io/crates/bevy_gltf_components)
 [![Docs](https://img.shields.io/docsrs/bevy_gltf_components)](https://docs.rs/bevy_gltf_components/latest/bevy_gltf_components/)
-[![License](https://img.shields.io/crates/l/bevy_gltf_components)](https://github.com/kaosat-dev/Blender_bevy_components_worklflow/blob/main/crates/bevy_gltf_components/License.md)
+[![License](https://img.shields.io/crates/l/bevy_gltf_components)](https://github.com/kaosat-dev/Blender_bevy_components_workflow/blob/main/crates/bevy_gltf_components/License.md)
 [![Bevy tracking](https://img.shields.io/badge/Bevy%20tracking-released%20version-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
 
 
@@ -13,9 +13,9 @@ This crate allows you to define [Bevy](https://bevyengine.org/) components direc
 ***important*** : the plugin for processing gltf files runs in ***update*** , so you cannot use the components directly if you spawn your scene from gltf in ***setup*** (the additional components will not show up)
 
 Please see the 
- * [example](https://github.com/kaosat-dev/Blender_bevy_components_worklflow/examples/basic) 
+ * [example](https://github.com/kaosat-dev/Blender_bevy_components_workflow/examples/basic) 
  * or use [```bevy_asset_loader```](https://github.com/NiklasEi/bevy_asset_loader) for a reliable workflow.
- * alternatively, use the [```bevy_gltf_blueprints```](https://github.com/kaosat-dev/Blender_bevy_components_worklflow/blob/main/crates/bevy_gltf_blueprints) crate, build on this crate's features,
+ * alternatively, use the [```bevy_gltf_blueprints```](https://github.com/kaosat-dev/Blender_bevy_components_workflow/blob/main/crates/bevy_gltf_blueprints) crate, build on this crate's features,
   that allows you to directly spawn entities from gltf based blueprints.
 
 Here's a minimal usage example:
@@ -24,12 +24,12 @@ Here's a minimal usage example:
 # Cargo.toml
 [dependencies]
 bevy="0.11.2"
-bevy_gltf_components = { version = "0.1.0"} 
+bevy_gltf_components = { version = "0.1.1"} 
 
 ```
 
 ```rust no_run
-//too barebones of an example to be meaningfull, please see https://github.com/kaosat-dev/Blender_bevy_components_worklflow/examples/basic for a real example
+//too barebones of an example to be meaningfull, please see https://github.com/kaosat-dev/Blender_bevy_components_workflow/examples/basic for a real example
  fn main() {
     App::new()
          .add_plugins(DefaultPlugins)
@@ -55,6 +55,19 @@ bevy_gltf_components = { version = "0.1.0"}
 
 ```
 
+##  Installation
+
+Add the following to your `[dependencies]` section in `Cargo.toml`:
+
+```toml
+bevy_gltf_components = "0.1.1"
+```
+
+Or use `cargo add`:
+
+```toml
+cargo add bevy_gltf_components
+```
 
 ## SystemSet
 
@@ -72,7 +85,7 @@ Typically , the order of systems should be
 
 ## Examples
 
-https://github.com/kaosat-dev/Blender_bevy_components_worklflow/tree/main/examples/basic
+https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/basic
 
 
 ## License
