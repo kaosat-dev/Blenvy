@@ -15,5 +15,5 @@ bevy="0.11.2"
 
 [dependencies]
 bevy = { version = "0.11.2", default-features = false, features = ["bevy_asset", "bevy_scene", "bevy_gltf"] }
-serde = "*"
-ron="*"
+serde = "1.0.188"
+ron="0.8.1"
