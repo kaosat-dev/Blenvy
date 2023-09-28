@@ -24,7 +24,7 @@ Here's a minimal usage example:
 # Cargo.toml
 [dependencies]
 bevy="0.11.2"
-bevy_gltf_components = { version = "0.1.0"} 
+bevy_gltf_components = { version = "0.1.1"} 
 
 ```
 
@@ -55,6 +55,19 @@ bevy_gltf_components = { version = "0.1.0"}
 
 ```
 
+##  Installation
+
+Add the following to your `[dependencies]` section in `Cargo.toml`:
+
+```toml
+bevy_gltf_components = "0.1.1"
+```
+
+Or use `cargo add`:
+
+```toml
+cargo add bevy_gltf_components
+```
 
 ## SystemSet
 

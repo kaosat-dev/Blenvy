@@ -22,7 +22,8 @@ Here's a minimal usage example:
 ```toml
 # Cargo.toml
 [dependencies]
-bevy_gltf_blueprints = { version = "0.1.0"} 
+bevy="0.11.2"
+bevy_gltf_blueprints = { version = "0.1.1"} 
 
 ```
 
@@ -55,10 +56,54 @@ fn spawn_blueprint(
 }
 ```
 
+##  Installation
+
+Add the following to your `[dependencies]` section in `Cargo.toml`:
+
+```toml
+bevy_gltf_blueprints = "0.1.1"
+```
+
+Or use `cargo add`:
+
+```toml
+cargo add bevy_gltf_blueprints
+```
+
 ## Setup
 
-- configure your "library"/"blueprints" path: 
-    advanced/models/library/
+```rust no_run
+use bevy::prelude::*;
+use bevy_gltf_blueprints::*;
+
+fn main() {
+    App::new()
+        .add_plugins(DefaultPlugins)
+        .add_plugin(BlueprintsPlugin)
+
+        .run();
+}
+
+```
+
+you may want to configure your "library"/"blueprints" path: (defaults to ```assets/models/library```) so the plugin know where to look for the blueprint files
+
+```rust no_run
+use bevy::prelude::*;
+use bevy_gltf_blueprints::*;
+
+fn main() {
+    App::new()
+        .add_plugins(DefaultPlugins)
+        .add_plugin(
+             BlueprintsPlugin{
+              library_folder: "advanced/models/library".into() // replace this with your blueprints library path , relative to the assets folder
+            }
+        )
+        .run();
+}
+
+```
 
 ## Spawning entities from blueprints
 
