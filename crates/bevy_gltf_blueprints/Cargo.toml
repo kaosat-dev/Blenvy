@@ -15,4 +15,4 @@ bevy="0.11.2"
 
 [dependencies]
 bevy_gltf_components = "0.1.0"
-bevy = { version = "0.11.2", default-features = false, features = ["bevy_asset", "bevy_scene", "bevy_gltf"] }
+bevy = { version = "0.11.2", default-features = false, features = ["bevy_asset", "bevy_scene", "bevy_gltf", "bevy_animation"] }
