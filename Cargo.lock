@@ -721,15 +721,17 @@ dependencies = [
 
 [[package]]
 name = "bevy_gltf_blueprints"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "bevy",
- "bevy_gltf_components 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "bevy_gltf_components 0.1.2",
 ]
 
 [[package]]
 name = "bevy_gltf_components"
-version = "0.1.1"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9e39a0250b75ec5cfbe5b56f0348da8b08da433ec4e31ebb1cae6ae5fe4d26ae"
 dependencies = [
  "bevy",
  "ron",
@@ -738,9 +740,7 @@ dependencies = [
 
 [[package]]
 name = "bevy_gltf_components"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "680276f556c9caf53a32ec0604f9aa4ae336c506bec40d34f6daa33f32a22f13"
+version = "0.1.3"
 dependencies = [
  "bevy",
  "ron",
@@ -755,7 +755,7 @@ dependencies = [
  "bevy_asset_loader",
  "bevy_editor_pls",
  "bevy_gltf_blueprints",
- "bevy_gltf_components 0.1.1",
+ "bevy_gltf_components 0.1.3",
  "bevy_rapier3d",
  "rand",
  "ron",
