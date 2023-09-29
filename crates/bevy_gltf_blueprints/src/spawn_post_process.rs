@@ -21,7 +21,7 @@ pub(crate) struct SpawnedRootProcessed;
 /// this system updates the first (and normally only) child of a scene flaged SpawnedRoot
 /// - adds a name based on parent component (spawned scene) which is named on the scene name/prefab to be instanciated
 /// - adds the initial physics impulse (FIXME: we would need to add a temporary physics component to those who do not have it)
-// FIXME: updating hierarchy does not work in all cases ! this is sadly dependant on the structure of the exported blend data, disablin for now
+// FIXME: updating hierarchy does not work in all cases ! this is sadly dependant on the structure of the exported blend data
 // - blender root-> object with properties => WORKS
 // - scene instance -> does not work
 // it might be due to how we add components to the PARENT item in gltf to components
@@ -57,12 +57,14 @@ pub(crate) fn update_spawned_root_first_child(
     */
   
   for (scene_instance, children, name, parent, original) in unprocessed_entities.iter()  {
-      println!("children of scene {:?}", children);
+      //
       if children.len() == 0 {
+        warn!("timing issue ! no children found, please restart your bevy app (bug being investigated)");
+        // println!("children of scene {:?}", children);
         continue;
       }
       // the root node is the first & normally only child inside a scene, it is the one that has all relevant components
-      let root_entity = children.first().unwrap(); //FIXME: and what about childless ones ??
+      let root_entity = children.first().unwrap(); //FIXME: and what about childless ones ?? => should not be possible normally
       // let root_entity_data = all_children.get(*root_entity).unwrap();
 
       // fixme : randomization should be controlled via parameters, perhaps even the seed could be specified ?
@@ -117,7 +119,6 @@ pub(crate) fn update_spawned_root_first_child(
 }
 
 /// cleans up dynamically spawned scenes so that they get despawned if they have no more children
-// FIXME: this can run too early , and since withouth_children matches not yet completed scene instances, boom, it removes components/children before they can be used
 pub(crate) fn cleanup_scene_instances(
   scene_instances: Query<(Entity, &Children), With<SpawnedRootProcessed>>,
   without_children: Query<Entity, (With<SpawnedRootProcessed>, Without<Children>)>,// if there are not children left, bevy removes Children ?
