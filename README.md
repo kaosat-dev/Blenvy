@@ -32,6 +32,8 @@ It also allows you to setup 'blueprints' in Blender by using collections (the re
 There is a [video tutorial/explanation](https://youtu.be/-lcScjQCA3c) if you want, or you can read the crate docs/ basic example
 
 - [bevy_gltf_blueprints](./crates/bevy_gltf_blueprints/) This crate adds the ability to define Blueprints/Prefabs for Bevy inside gltf files and spawn them in Bevy. With the ability to override and add components when spawning.
+There is a [video tutorial/explanation](https://youtu.be/CgyNtwgYwdM) for this one too, or you can read the crate docs/ basic example
+
 
 
 ## Tools
