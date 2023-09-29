@@ -14,5 +14,5 @@ license = "MIT OR Apache-2.0"
 bevy = { version = "0.11", default-features = false, features = ["bevy_asset", "bevy_scene", "bevy_gltf", "bevy_animation"] }
 
 [dependencies]
-bevy_gltf_components = "0.1.2"
+bevy_gltf_components = "0.1"
 bevy = { version = "0.11", default-features = false, features = ["bevy_asset", "bevy_scene", "bevy_gltf", "bevy_animation"] }

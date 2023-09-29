@@ -22,7 +22,7 @@ Here's a minimal usage example:
 ```toml
 # Cargo.toml
 [dependencies]
-bevy="0.11.2"
+bevy="0.11"
 bevy_gltf_blueprints = { version = "0.1"} 
 
 ```
