@@ -23,8 +23,8 @@ Here's a minimal usage example:
 ```toml
 # Cargo.toml
 [dependencies]
-bevy="0.11.2"
-bevy_gltf_components = { version = "0.1.1"} 
+bevy="0.11"
+bevy_gltf_components = { version = "0.1"} 
 
 ```
 
@@ -60,7 +60,7 @@ bevy_gltf_components = { version = "0.1.1"}
 Add the following to your `[dependencies]` section in `Cargo.toml`:
 
 ```toml
-bevy_gltf_components = "0.1.1"
+bevy_gltf_components = "0.1"
 ```
 
 Or use `cargo add`:
