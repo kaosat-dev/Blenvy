@@ -1,6 +1,6 @@
 
+
 pub mod spawn_from_blueprints;
-use bevy_gltf_components::GltfComponentsSet;
 pub use spawn_from_blueprints::*;
 
 pub mod spawn_post_process;
@@ -9,7 +9,10 @@ pub use spawn_post_process::*;
 pub mod clone_entity;
 pub use clone_entity::*;
 
+use std::path::PathBuf;
+
 use bevy::prelude::*;
+use bevy_gltf_components::GltfComponentsSet;
 
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
 /// set for the two stages of blueprint based spawning :
@@ -37,19 +40,19 @@ impl Default for BluePrintBundle {
 
 #[derive(Clone, Resource)]
 pub(crate) struct BluePrintsConfig {
-    pub(crate) library_folder: String,
+    pub(crate) library_folder: PathBuf,
 }
 
 #[derive(Debug, Clone)]
 pub struct BlueprintsPlugin {
   /// The base folder where library/blueprints assets are loaded from, relative to the executable.
-  pub library_folder: String,
+  pub library_folder: PathBuf,
 }
 
 impl Default for BlueprintsPlugin {
   fn default() -> Self {
       Self {
-        library_folder: "assets/models/library".to_string(),
+        library_folder: PathBuf::from("assets/models/library"),
       }
   }
 }
