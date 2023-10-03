@@ -1,3 +1,5 @@
+use std::path::Path;
+
 use bevy::{prelude::*, gltf::Gltf};
 
 use crate::BluePrintsConfig;
@@ -45,10 +47,13 @@ pub(crate) fn spawn_from_blueprints(
     for (entity, name, blupeprint_name, global_transform) in spawn_placeholders.iter() {
         info!("need to spawn {:?}", blupeprint_name.0);
         let what = &blupeprint_name.0;
-        let model_path = format!("{}/{}.glb", &blueprints_config.library_folder, &what); // FIXME: needs to be platform agnostic
-        let scene:Handle<Gltf> = asset_server.load(&model_path);
-        // let scene = game_assets.models.get(&model_path).expect(&format!("no matching model {:?} found", model_path));
+        let model_file_name = format!("{}.glb",&what); 
+        let model_path = Path::new(&blueprints_config.library_folder)
+            .join(Path::new(model_file_name.as_str()));
+        
         info!("attempting to spawn {:?}",model_path);
+        let scene:Handle<Gltf> = asset_server.load(model_path);
+        // let scene = game_assets.models.get(&model_path).expect(&format!("no matching model {:?} found", model_path));
 
         let world = game_world.single_mut();
         let world = world.1[0]; // FIXME: dangerous hack because our gltf data have a single child like this, but might not always be the case
