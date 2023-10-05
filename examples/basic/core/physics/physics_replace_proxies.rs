@@ -1,20 +1,9 @@
 use bevy::prelude::*;
 // use bevy::render::primitives::Aabb;
 use bevy_rapier3d::geometry::Collider as RapierCollider;
-use bevy_rapier3d::dynamics::RigidBody as RapierRigidBody;
 use bevy_rapier3d::prelude::{ComputedColliderShape, ActiveEvents, ActiveCollisionTypes};
 
 use super::utils::*;
-
-#[derive(Component, Reflect, Default, Debug, )]
-#[reflect(Component)]
-pub enum RigidBodyProxy{
-    #[default]
-    Dynamic,
-    Fixed,
-    Position,
-    Velocity
-}
 
 #[derive(Component, Reflect, Default, Debug, )]
 #[reflect(Component)]
@@ -25,7 +14,6 @@ pub enum Collider {
     #[default]
     Mesh,
 }
-
 
 #[derive(Component, Reflect, Default, Debug, )]
 #[reflect(Component)]
@@ -40,8 +28,6 @@ pub enum AutoAABBCollider {
 pub fn physics_replace_proxies (  
     meshes: Res<Assets<Mesh>>,
     mesh_handles: Query<&Handle<Mesh>>,
-    // rigidbodies
-    proxy_rigidbodies: Query<(Entity, &RigidBodyProxy,), (Without<RapierRigidBody>, Added<RigidBodyProxy>)>,
     mut proxy_colliders: Query<(Entity, &Collider, &Name, &mut Visibility), (Without<RapierCollider>, Added<Collider>)>,
     // needed for tri meshes
     children: Query<&Children>,    
@@ -96,27 +82,7 @@ pub fn physics_replace_proxies (
                     // break;
                     // RapierCollider::convex_hull(points)
                 }
-
             }
         }
     }
-    // rigidbodies
-    for (entity, proxy_rigidbody) in proxy_rigidbodies.iter() {
-        info!("Proxy rigid body !! {:?}", proxy_rigidbody );
-        let rigid_body:RapierRigidBody = match proxy_rigidbody {
-            RigidBodyProxy::Dynamic => RapierRigidBody::Dynamic,
-            RigidBodyProxy::Fixed=>  RapierRigidBody::Fixed,
-            RigidBodyProxy::Position =>  RapierRigidBody::KinematicPositionBased,
-            RigidBodyProxy::Velocity =>  RapierRigidBody::KinematicVelocityBased,
-        };
-        println!("inserting rigidbody {:?}", rigid_body);
-        commands.entity(entity)
-            .insert(rigid_body)
-            // IMPORTANT ! this allows collisions between dynamic & static(fixed) entities
-            // see https://rapier.rs/docs/user_guides/bevy_plugin/colliders#active-collision-types
-            .insert(ActiveCollisionTypes::default() | ActiveCollisionTypes::KINEMATIC_STATIC | ActiveCollisionTypes::STATIC_STATIC | ActiveCollisionTypes::DYNAMIC_STATIC)
-            .insert(ActiveEvents::COLLISION_EVENTS)
-            ;
-    }
-
 }
