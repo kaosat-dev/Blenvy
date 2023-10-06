@@ -232,6 +232,24 @@ def get_used_collections(scene):
     return (collection_names, used_collections)
 
 
+def traverse_tree(t):
+    yield t
+    for child in t.children:
+        yield from traverse_tree(child)
+
+# gets all collections that should ALWAYS be exported to their respective gltf files, even if they are not used in the main scene/level
+def get_marked_collections(scene):
+    print("checking library for marked collections")
+    root_collection = scene.collection
+    marked_collections = []
+    collection_names = []
+    for collection in traverse_tree(root_collection):
+        if 'AutoExport' in collection and collection['AutoExport'] == True:
+            marked_collections.append(collection)
+            collection_names.append(collection.name)
+    return (collection_names, marked_collections)
+
+
 def generate_gltf_export_preferences(addon_prefs): 
     # default values
     gltf_export_preferences = dict(
@@ -276,17 +294,21 @@ def generate_gltf_export_preferences(addon_prefs):
 ######################################################
 #### Export logic #####
 
-def export_used_collections(scene, folder_path, addon_prefs, gltf_export_preferences): 
+# export collections: all the collections that have an instance in the main scene AND any marked collections, even if they do not have instances
+def export_collections(scene, folder_path, addon_prefs, gltf_export_preferences): 
     (collection_names, used_collections) = get_used_collections(scene)
     library_scene = getattr(addon_prefs, "export_library_scene_name")
+    marked_collections = get_marked_collections(bpy.data.scenes[library_scene])
     print("used collection names", collection_names, used_collections)
+    print("marked collection names", marked_collections[0])
    
     # set active scene to be the library scene (hack for now)
     bpy.context.window.scene = bpy.data.scenes[library_scene]
     # save current active collection
     active_collection =  bpy.context.view_layer.active_layer_collection
 
-    for collection_name in list(collection_names):
+    
+    for collection_name in list(collection_names) + marked_collections[0]:
         print("exporting collection", collection_name)
 
         layer_collection = bpy.context.view_layer.layer_collection
@@ -322,7 +344,7 @@ def export_main(scene, folder_path, addon_prefs):
         print("LIBRARY EXPORT", export_blueprints_path )
 
         try:
-            export_used_collections(scene, export_blueprints_path, addon_prefs, gltf_export_preferences)
+            export_collections(scene, export_blueprints_path, addon_prefs, gltf_export_preferences)
         except Exception as error:
             print("failed to export collections to gltf: ", error)
 

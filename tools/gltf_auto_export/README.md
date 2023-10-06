@@ -55,6 +55,15 @@ You can enable this option to automatically replace all the **collection instanc
     
     the .blend file that they are generated from can be found [here](../../assets/advanced/advanced.blend)
 
+- the above only applies to collections that have **instances** in your main scene!
+    if you want a specific collection in your library to always get exported regardless of its use, you need to add 
+    a **COLLECTION** (boolean) custom property called ```AutoExport``` set to true
+    > not at the object level ! the collection level !
+
+    ![force-export](../../docs/force_export.jpg)
+
+    It will get automatically exported like any of the "in-use" collections.
+
 #### Process
 
 This is the internal logic of the export process with blueprints 
