@@ -1,7 +1,7 @@
 bl_info = {
     "name": "gltf_auto_export",
     "author": "kaosigh",
-    "version": (0, 1),
+    "version": (0, 2),
     "blender": (3, 4, 0),
     "location": "File > Import-Export",
     "description": "glTF/glb auto-export",
@@ -46,14 +46,11 @@ def deps_update_handler(scene, depsgraph):
     for obj in changed_objects:
         new_entry = bpy.context.window_manager.changedObjects.add()
         new_entry.name = obj
-        #my_prop.value = 123
-
         #bpy.context.window_manager.changedObjects.add(obj)
 
     print("changed objects", bpy.context.window_manager.changedObjects)
 
     bpy.context.window_manager.changedScene = changed
-    bpy.context.window_manager.foo = "blabla"
 
 @persistent
 def save_handler(dummy): 
@@ -67,12 +64,6 @@ def get_changedScene(self):
 
 def set_changedScene(self, value):
     self["changedScene"] = value
-
-def get_changedFoo(self):
-    return self["foo"]
-
-def set_changedFoo(self, value):
-    self["foo"] = value
 
 
 #https://docs.blender.org/api/current/bpy.ops.export_scene.html#bpy.ops.export_scene.gltf
@@ -880,7 +871,7 @@ class GLTF_PT_auto_export_collections_list(bpy.types.Panel):
     bl_label = "Blueprints: Exported Collections"
     bl_parent_id = "GLTF_PT_auto_export_blueprints"
     bl_options = {'DEFAULT_CLOSED'}
-    
+
     @classmethod
     def poll(cls, context):
         sfile = context.space_data
@@ -989,11 +980,6 @@ def register():
     bpy.types.WindowManager.changedScene = bpy.props.StringProperty(get=get_changedScene, set=set_changedScene)
     bpy.types.WindowManager.changedObjects = bpy.props.CollectionProperty(type=ChangedObjects)
     bpy.types.WindowManager.exportedCollections = bpy.props.CollectionProperty(type=CollectionsToExport)
-
-
-
-    bpy.types.WindowManager.foo = bpy.props.StringProperty(get=get_changedFoo, set=set_changedFoo)
-
 
     # add our addon to the toolbar
     bpy.types.TOPBAR_MT_file_export.append(menu_func_import)
