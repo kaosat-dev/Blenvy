@@ -138,6 +138,12 @@ you will get a warning **per entity**
 
 - somebody I cannot recall helped me originally with the gltf loading tracker in the Bevy Discord, so thanks ! And if it was you, please let me know so I can give credit where credit is due :)
 
+## Contributors
+
+Thanks to all the contributors helping out with this project ! Big kudos to you, contributions are always appreciated ! :)
+
+- [GitGhillie](https://github.com/GitGhillie)
+
 ## License
 
 This repo, all its code, contents & assets is Dual-licensed under either of
