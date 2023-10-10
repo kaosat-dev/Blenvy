@@ -7,7 +7,7 @@ use bevy_rapier3d::prelude::RigidBody;
 use std::io::Write;
 use std::fs::File;
 
-use crate::core::physics::{Collider, RigidBodyProxy};
+use crate::core::physics::Collider;
 use crate::game::{Pickable, Player};
 
 use super::Saveable;
@@ -63,7 +63,6 @@ pub fn save_game(
 
         .deny::<Collider>()
         .deny::<RigidBody>()
-        .deny::<RigidBodyProxy>()
         .deny::<Saveable>()
 
         // camera stuff

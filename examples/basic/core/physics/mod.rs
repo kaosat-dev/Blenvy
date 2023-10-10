@@ -14,7 +14,6 @@ impl Plugin for PhysicsPlugin {
       app
         .register_type::<AutoAABBCollider>()
         .register_type::<physics_replace_proxies::Collider>()
-        .register_type::<physics_replace_proxies::RigidBodyProxy>()
 
         // find a way to make serde's stuff serializable
         // .register_type::<bevy_rapier3d::dynamics::CoefficientCombineRule>()
