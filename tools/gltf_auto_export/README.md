@@ -64,6 +64,10 @@ You can enable this option to automatically replace all the **collection instanc
 
     It will get automatically exported like any of the "in-use" collections.
 
+- you can also get an overview of all the exported collections in the export menu
+
+    ![exported collections](../../docs/exported_collections.png)
+
 #### Process
 
 This is the internal logic of the export process with blueprints 
