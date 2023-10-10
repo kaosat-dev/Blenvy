@@ -1,7 +1,7 @@
 bl_info = {
     "name": "gltf_auto_export",
     "author": "kaosigh",
-    "version": (0, 1),
+    "version": (0, 2),
     "blender": (3, 4, 0),
     "location": "File > Import-Export",
     "description": "glTF/glb auto-export",
@@ -31,18 +31,26 @@ from bpy.props import (BoolProperty,
 @persistent
 def deps_update_handler(scene, depsgraph):
     
-    #print("depsgraph_update_post", scene.name)
-    """
+    print("depsgraph_update_post", scene.name)
+    print("toto")
     print("-------------")
     changed_objects = []
     for obj in depsgraph.updates:
         if isinstance(obj.id, bpy.types.Object):
             print("object changed, amazing", obj.id, obj.id.name)
-            changed_objects.append(obj)
-    """
+            changed_objects.append(obj.id.name)
+    
     changed = scene.name or ""
-    # bpy.context.scene.changedObjects = changed_objects
-    bpy.context.scene.changedScene = changed
+
+    bpy.context.window_manager.changedObjects.clear()
+    for obj in changed_objects:
+        new_entry = bpy.context.window_manager.changedObjects.add()
+        new_entry.name = obj
+        #bpy.context.window_manager.changedObjects.add(obj)
+
+    print("changed objects", bpy.context.window_manager.changedObjects)
+
+    bpy.context.window_manager.changedScene = changed
 
 @persistent
 def save_handler(dummy): 
@@ -57,12 +65,6 @@ def get_changedScene(self):
 def set_changedScene(self, value):
     self["changedScene"] = value
 
-
-#def get_changedObjects(self):
-#    return self["changedObjects"]
-
-#def set_changedObjects(self, value):
-#    self["changedObjects"] = value
 
 #https://docs.blender.org/api/current/bpy.ops.export_scene.html#bpy.ops.export_scene.gltf
 def export_gltf (path, export_settings):
@@ -232,6 +234,24 @@ def get_used_collections(scene):
     return (collection_names, used_collections)
 
 
+def traverse_tree(t):
+    yield t
+    for child in t.children:
+        yield from traverse_tree(child)
+
+# gets all collections that should ALWAYS be exported to their respective gltf files, even if they are not used in the main scene/level
+def get_marked_collections(scene):
+    print("checking library for marked collections")
+    root_collection = scene.collection
+    marked_collections = []
+    collection_names = []
+    for collection in traverse_tree(root_collection):
+        if 'AutoExport' in collection and collection['AutoExport'] == True:
+            marked_collections.append(collection)
+            collection_names.append(collection.name)
+    return (collection_names, marked_collections)
+
+
 def generate_gltf_export_preferences(addon_prefs): 
     # default values
     gltf_export_preferences = dict(
@@ -276,18 +296,30 @@ def generate_gltf_export_preferences(addon_prefs):
 ######################################################
 #### Export logic #####
 
-def export_used_collections(scene, folder_path, addon_prefs, gltf_export_preferences): 
+# export collections: all the collections that have an instance in the main scene AND any marked collections, even if they do not have instances
+def export_collections(scene, folder_path, addon_prefs, gltf_export_preferences): 
     (collection_names, used_collections) = get_used_collections(scene)
     library_scene = getattr(addon_prefs, "export_library_scene_name")
+    marked_collections = get_marked_collections(bpy.data.scenes[library_scene])
     print("used collection names", collection_names, used_collections)
+    print("marked collection names", marked_collections[0])
    
     # set active scene to be the library scene (hack for now)
     bpy.context.window.scene = bpy.data.scenes[library_scene]
     # save current active collection
     active_collection =  bpy.context.view_layer.active_layer_collection
 
-    for collection_name in list(collection_names):
+    all_collections = list(collection_names) + marked_collections[0]
+    # we save this list of collections in the context
+    bpy.context.window_manager.exportedCollections.clear()
+
+    for collection_name in all_collections:
         print("exporting collection", collection_name)
+
+        #TODO: add error handling for this
+        ui_info = bpy.context.window_manager.exportedCollections.add()
+        ui_info.name = collection_name
+
 
         layer_collection = bpy.context.view_layer.layer_collection
         layerColl = recurLayerCollection(layer_collection, collection_name)
@@ -322,7 +354,7 @@ def export_main(scene, folder_path, addon_prefs):
         print("LIBRARY EXPORT", export_blueprints_path )
 
         try:
-            export_used_collections(scene, export_blueprints_path, addon_prefs, gltf_export_preferences)
+            export_collections(scene, export_blueprints_path, addon_prefs, gltf_export_preferences)
         except Exception as error:
             print("failed to export collections to gltf: ", error)
 
@@ -363,10 +395,10 @@ def auto_export():
     # get the preferences for our addon
     addon_prefs = bpy.context.preferences.addons[__name__].preferences
 
-    print("last changed", bpy.context.scene.changedScene)
+    print("last changed", bpy.context.window_manager.changedScene)
 
     # optimised variation
-    last_changed = bpy.context.scene.changedScene
+    last_changed = bpy.context.window_manager.changedScene
 
     export_main_scene_name = getattr(addon_prefs,"export_main_scene_name")
     export_on_library_changes = getattr(addon_prefs,"export_on_library_changes")
@@ -832,6 +864,34 @@ class GLTF_PT_auto_export_blueprints(bpy.types.Panel):
         layout.prop(addon_prefs, "export_blueprints")
         layout.prop(addon_prefs, "export_blueprints_path")
 
+
+class GLTF_PT_auto_export_collections_list(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Blueprints: Exported Collections"
+    bl_parent_id = "GLTF_PT_auto_export_blueprints"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "EXPORT_SCENES_OT_auto_gltf" #"EXPORT_SCENE_OT_gltf"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+        addon_prefs = bpy.context.preferences.addons[__name__].preferences
+
+        for collection in bpy.context.window_manager.exportedCollections:
+            row = layout.row()
+            row.label(text=collection.name)
+
 class GLTF_PT_auto_export_gltf(bpy.types.Panel):
     bl_space_type = 'FILE_BROWSER'
     bl_region_type = 'TOOL_PROPS'
@@ -871,14 +931,43 @@ class GLTF_PT_auto_export_gltf(bpy.types.Panel):
 def menu_func_import(self, context):
     self.layout.operator(AutoExportGLTF.bl_idname, text="glTF auto Export (.glb/gltf)")
 
+######################################################
+# internals
+class ChangedObject(bpy.types.PropertyGroup):
+    name: bpy.props.StringProperty(name="")
+
+class ChangedObjects(bpy.types.PropertyGroup):
+    name = bpy.props.StringProperty(name="List of changed objects", default="Unknown")
+    items: bpy.props.CollectionProperty(type = ChangedObject)
+
+
+class CollectionToExport(bpy.types.PropertyGroup):
+    name: bpy.props.StringProperty(name="")
+
+class CollectionsToExport(bpy.types.PropertyGroup):
+    name = bpy.props.StringProperty(name="List of collections to export", default="Unknown")
+    items: bpy.props.CollectionProperty(type = CollectionToExport)
+
+
+######################################################
+
 classes = [
     AutoExportGLTF, 
     AutoExportGltfAddonPreferences,
+
+    ChangedObject,
+    ChangedObjects,
+
+    CollectionToExport,
+    CollectionsToExport,
+
     GLTF_PT_auto_export_main,
     GLTF_PT_auto_export_root,
     GLTF_PT_auto_export_blueprints,
+    GLTF_PT_auto_export_collections_list,
     GLTF_PT_auto_export_gltf
 ]
+
 
 def register():
     for cls in classes:
@@ -887,12 +976,13 @@ def register():
     # setup handlers for updates & saving
     bpy.app.handlers.depsgraph_update_post.append(deps_update_handler)
     bpy.app.handlers.save_post.append(save_handler)
-    bpy.types.Scene.changedScene = bpy.props.StringProperty(get=get_changedScene, set=set_changedScene)
-    #bpy.types.Scene.changedObjects = bpy.props.CollectionProperty(get=get_changedObjects, set=set_changedObjects)
+
+    bpy.types.WindowManager.changedScene = bpy.props.StringProperty(get=get_changedScene, set=set_changedScene)
+    bpy.types.WindowManager.changedObjects = bpy.props.CollectionProperty(type=ChangedObjects)
+    bpy.types.WindowManager.exportedCollections = bpy.props.CollectionProperty(type=CollectionsToExport)
 
     # add our addon to the toolbar
     bpy.types.TOPBAR_MT_file_export.append(menu_func_import)
-
 
 
 def unregister():
@@ -904,8 +994,10 @@ def unregister():
     # remove handlers & co
     bpy.app.handlers.depsgraph_update_post.remove(deps_update_handler)
     bpy.app.handlers.save_post.remove(save_handler)
-    del bpy.types.Scene.changedScene
-    #del bpy.types.Scene.changedObjects
+    
+    del bpy.types.WindowManager.changedScene
+    del bpy.types.WindowManager.changedObjects
+    del bpy.types.WindowManager.exportedCollections
 
 if __name__ == "__main__":
     register()
