@@ -1,17 +1,14 @@
 use bevy::prelude::*;
-use bevy::utils::{Uuid};
+use bevy::utils::Uuid;
 
-#[derive(Component, Reflect, Debug, )]
+#[derive(Component, Reflect, Debug)]
 #[reflect(Component)]
-pub struct Saveable{
-    id: Uuid
+pub struct Saveable {
+    id: Uuid,
 }
 
-impl Default for Saveable{
+impl Default for Saveable {
     fn default() -> Self {
-        Saveable{
-            id: Uuid::new_v4()
-        }
+        Saveable { id: Uuid::new_v4() }
     }
 }
-

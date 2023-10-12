@@ -1,6 +1,9 @@
 use bevy::prelude::*;
 
-use crate::{assets::GameAssets, state::{InAppRunning, GameState}};
+use crate::{
+    assets::GameAssets,
+    state::{GameState, InAppRunning},
+};
 use bevy_gltf_blueprints::GameWorldTag;
 
 pub fn setup_game(
@@ -8,7 +11,6 @@ pub fn setup_game(
     game_assets: Res<GameAssets>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
-
     println!("setting up all stuff");
     commands.insert_resource(AmbientLight {
         color: Color::WHITE,
@@ -23,8 +25,8 @@ pub fn setup_game(
         },
         bevy::prelude::Name::from("world"),
         GameWorldTag,
-        InAppRunning
+        InAppRunning,
     ));
-   
+
     next_game_state.set(GameState::InGame)
 }
