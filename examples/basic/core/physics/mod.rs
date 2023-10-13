@@ -10,8 +10,8 @@ use bevy::prelude::*;
 // use crate::Collider;
 pub struct PhysicsPlugin;
 impl Plugin for PhysicsPlugin {
-  fn build(&self, app: &mut App) {
-      app
+    fn build(&self, app: &mut App) {
+        app
         .register_type::<AutoAABBCollider>()
         .register_type::<physics_replace_proxies::Collider>()
 
@@ -23,6 +23,5 @@ impl Plugin for PhysicsPlugin {
         //.add_system(pause_physics.in_schedule(OnEnter(GameState::InMenu)))
         //.add_system(resume_physics.in_schedule(OnEnter(GameState::InGame)))
       ;
-  }
+    }
 }
-

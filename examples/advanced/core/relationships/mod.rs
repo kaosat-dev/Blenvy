@@ -5,7 +5,7 @@ use bevy::prelude::*;
 
 pub struct EcsRelationshipsPlugin;
 impl Plugin for EcsRelationshipsPlugin {
-  fn build(&self, app: &mut App) {
-      app;
-  }
+    fn build(&self, app: &mut App) {
+        app;
+    }
 }

@@ -1,8 +1,11 @@
 use bevy::prelude::*;
 
-use crate::{state::{AppState, GameState, InMainMenu}, core::save_load::{LoadRequest, SaveRequest}};
+use crate::{
+    core::save_load::{LoadRequest, SaveRequest},
+    state::{AppState, GameState, InMainMenu},
+};
 
-pub fn setup_main_menu(mut commands: Commands){
+pub fn setup_main_menu(mut commands: Commands) {
     commands.spawn((Camera2dBundle::default(), InMainMenu));
 
     commands.spawn((
@@ -21,9 +24,8 @@ pub fn setup_main_menu(mut commands: Commands){
             left: Val::Px(200.0),
             ..default()
         }),
-        InMainMenu
+        InMainMenu,
     ));
-
 
     commands.spawn((
         TextBundle::from_section(
@@ -41,10 +43,10 @@ pub fn setup_main_menu(mut commands: Commands){
             left: Val::Px(200.0),
             ..default()
         }),
-        InMainMenu
+        InMainMenu,
     ));
 
-    /* 
+    /*
     commands.spawn((
         TextBundle::from_section(
             "Load Game",
@@ -84,8 +86,8 @@ pub fn setup_main_menu(mut commands: Commands){
     ));*/
 }
 
-pub fn teardown_main_menu(bla: Query<Entity, With<InMainMenu>>, mut commands: Commands){
-    for bli in bla.iter(){
+pub fn teardown_main_menu(bla: Query<Entity, With<InMainMenu>>, mut commands: Commands) {
+    for bli in bla.iter() {
         commands.entity(bli).despawn_recursive();
     }
 }
@@ -95,11 +97,9 @@ pub fn main_menu(
 
     mut next_app_state: ResMut<NextState<AppState>>,
     // mut next_game_state: ResMut<NextState<GameState>>,
-
-    mut save_requested_events: EventWriter<SaveRequest>,  
-    mut load_requested_events: EventWriter<LoadRequest>,  
-
-){
+    mut save_requested_events: EventWriter<SaveRequest>,
+    mut load_requested_events: EventWriter<LoadRequest>,
+) {
     if keycode.just_pressed(KeyCode::Return) {
         next_app_state.set(AppState::AppLoading);
         // next_game_state.set(GameState::None);

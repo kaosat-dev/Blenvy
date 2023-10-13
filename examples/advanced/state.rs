@@ -1,8 +1,8 @@
-use bevy::prelude::*;
 use bevy::app::AppExit;
+use bevy::prelude::*;
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Default, States)]
-pub enum AppState{
+pub enum AppState {
     #[default]
     CoreLoading,
     MenuRunning,
@@ -11,21 +11,21 @@ pub enum AppState{
     AppEnding,
 
     // FIXME: not sure
-    LoadingGame
+    LoadingGame,
 }
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Default, States)]
 pub enum GameState {
     #[default]
     None,
-    
+
     InMenu,
     InGame,
 
     InGameOver,
 
     InSaving,
-    InLoading
+    InLoading,
 }
 
 // tag components for all entities within a certain state (for despawning them if needed) , FIXME: seems kinda hack-ish
@@ -46,13 +46,9 @@ pub struct InMenu;
 #[derive(Component, Default)]
 pub struct InGame;
 
-
 pub struct StatePlugin;
 impl Plugin for StatePlugin {
-  fn build(&self, app: &mut App) {
-      app
-        .add_state::<AppState>()
-        .add_state::<GameState>()
-    ;
-  }
+    fn build(&self, app: &mut App) {
+        app.add_state::<AppState>().add_state::<GameState>();
+    }
 }
