@@ -124,12 +124,12 @@ pub(crate) fn cleanup_scene_instances(
     for (entity, children) in scene_instances.iter() {
         if children.len() == 0 {
             // it seems this does not happen ?
-            info!("cleaning up emptied spawned scene instance");
+            debug!("cleaning up emptied spawned scene instance");
             commands.entity(entity).despawn_recursive();
         }
     }
     for entity in without_children.iter() {
-        info!("cleaning up emptied spawned scene instance");
+        debug!("cleaning up emptied spawned scene instance");
         commands.entity(entity).despawn_recursive();
     }
 }

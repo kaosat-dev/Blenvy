@@ -10,7 +10,7 @@ pub use clone_entity::*;
 use std::path::PathBuf;
 
 use bevy::prelude::*;
-use bevy_gltf_components::GltfComponentsSet;
+use bevy_gltf_components::{ComponentsFromGltfPlugin, GltfComponentsSet};
 
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
 /// set for the two stages of blueprint based spawning :
@@ -49,14 +49,15 @@ pub struct BlueprintsPlugin {
 impl Default for BlueprintsPlugin {
     fn default() -> Self {
         Self {
-            library_folder: PathBuf::from("assets/models/library"),
+            library_folder: PathBuf::from("models/library"),
         }
     }
 }
 
 impl Plugin for BlueprintsPlugin {
     fn build(&self, app: &mut App) {
-        app.register_type::<BlueprintName>()
+        app.add_plugins(ComponentsFromGltfPlugin)
+            .register_type::<BlueprintName>()
             .register_type::<SpawnHere>()
             .insert_resource(BluePrintsConfig {
                 library_folder: self.library_folder.clone(),

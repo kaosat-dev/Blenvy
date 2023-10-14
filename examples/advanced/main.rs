@@ -1,8 +1,5 @@
-use bevy::{asset::ChangeWatcher, gltf::Gltf, prelude::*};
+use bevy::{asset::ChangeWatcher, prelude::*};
 use bevy_editor_pls::prelude::*;
-use bevy_gltf_components::ComponentsFromGltfPlugin;
-use bevy_rapier3d::prelude::*;
-use std::time::Duration;
 
 mod core;
 use crate::core::*;
@@ -31,11 +28,7 @@ fn main() {
             }),
             // editor
             EditorPlugin::default(),
-            // physics
-            RapierPhysicsPlugin::<NoUserData>::default(),
-            RapierDebugRenderPlugin::default(),
             // our custom plugins
-            ComponentsFromGltfPlugin,
             StatePlugin,
             AssetsPlugin,
             CorePlugin,           // reusable plugins
