@@ -2,7 +2,7 @@ bl_info = {
     "name": "gltf_auto_export",
     "author": "kaosigh",
     "version": (0, 2),
-    "blender": (3, 4, 0),
+    "blender": (3, 4, 1),
     "location": "File > Import-Export",
     "description": "glTF/glb auto-export",
     "warning": "",
@@ -328,7 +328,7 @@ def export_collections(scene, folder_path, addon_prefs, gltf_export_preferences)
 
         gltf_output_path = os.path.join(folder_path, collection_name)
 
-        export_settings = { **gltf_export_preferences, 'use_active_scene': True, 'use_active_collection': True} #'use_visible': False,
+        export_settings = { **gltf_export_preferences, 'use_active_scene': True, 'use_active_collection': True, 'use_active_collection_with_nested':True} #'use_visible': False,
         export_gltf(gltf_output_path, export_settings)
     
     # reset active collection to the one we save before
