@@ -50,7 +50,7 @@ pub(crate) fn spawn_from_blueprints(
     asset_server: Res<AssetServer>,
     blueprints_config: Res<BluePrintsConfig>,
 ) {
-    for (entity, name, blupeprint_name, global_transform) in spawn_placeholders.iter() {
+    for (entity, name, blupeprint_name, transform) in spawn_placeholders.iter() {
         debug!("need to spawn {:?}", blupeprint_name.0);
         let what = &blupeprint_name.0;
         let model_file_name = format!("{}.glb", &what);
@@ -59,7 +59,6 @@ pub(crate) fn spawn_from_blueprints(
 
         debug!("attempting to spawn {:?}", model_path);
         let scene: Handle<Gltf> = asset_server.load(model_path);
-        // let scene = game_assets.models.get(&model_path).expect(&format!("no matching model {:?} found", model_path));
 
         let world = game_world.single_mut();
         let world = world.1[0]; // FIXME: dangerous hack because our gltf data have a single child like this, but might not always be the case
@@ -75,21 +74,16 @@ pub(crate) fn spawn_from_blueprints(
             .expect("there should be at least one named scene in the gltf file to spawn");
         let scene = &gltf.named_scenes[main_scene_name];
 
-        //spawn_requested_events.send(SpawnRequestedEvent { what: "enemy".into(), position, amount: 1, spawner_id: None });
         let child_scene = commands
             .spawn((
                 SceneBundle {
                     scene: scene.clone(),
-                    transform: global_transform.clone(),
+                    transform: transform.clone(),
                     ..Default::default()
                 },
                 bevy::prelude::Name::from(["scene_wrapper", &name.clone()].join("_")),
                 // Parent(world) // FIXME/ would be good if this worked directly
                 SpawnedRoot,
-                /*AnimationHelper{ // TODO: insert this at the ENTITY level, not the scene level
-                  named_animations: gltf.named_animations.clone(),
-                  // animations: gltf.named_animations.values().clone()
-                },*/
                 Original(entity),
             ))
             .id();

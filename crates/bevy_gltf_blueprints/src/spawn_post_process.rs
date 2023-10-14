@@ -17,7 +17,6 @@ pub(crate) struct SpawnedRootProcessed;
 
 /// this system updates the first (and normally only) child of a scene flaged SpawnedRoot
 /// - adds a name based on parent component (spawned scene) which is named on the scene name/prefab to be instanciated
-/// - adds the initial physics impulse (FIXME: we would need to add a temporary physics component to those who do not have it)
 // FIXME: updating hierarchy does not work in all cases ! this is sadly dependant on the structure of the exported blend data
 // - blender root-> object with properties => WORKS
 // - scene instance -> does not work
@@ -78,28 +77,20 @@ pub(crate) fn update_spawned_root_first_child(
         commands.entity(*root_entity).insert((
             bevy::prelude::Name::from(name.clone()),
             // ItemType {name},
-            // Spawned, // FIXME: not sure
         ));
 
         // flag the spawned_root as being processed
         commands.entity(scene_instance).insert(SpawnedRootProcessed);
 
-        // let original_transforms =
         // parent is either the world or an entity with a marker (BlueprintName)
         commands.entity(parent.get()).add_child(*root_entity);
-        // commands.entity(*root_entity).despawn_recursive();
-        // commands.entity(parent.get()).push_children(&actual_stuff);
-        //commands.entity(*root_entity).log_components();
-
+      
         let matching_animation_helper = animation_helpers.get(scene_instance);
 
-        // println!("WE HAVE SOME ADDED ANIMATION PLAYERS {:?}", matching_animation_helper);
         if let Ok(anim_helper) = matching_animation_helper {
             for (added, _) in added_animation_helpers.iter() {
                 commands.entity(added).insert(AnimationHelper {
-                    // TODO: insert this at the ENTITY level, not the scene level
                     named_animations: anim_helper.named_animations.clone(),
-                    // animations: gltf.named_animations.values().clone()
                 });
             }
         }
