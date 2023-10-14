@@ -51,13 +51,13 @@ pub(crate) fn spawn_from_blueprints(
     blueprints_config: Res<BluePrintsConfig>,
 ) {
     for (entity, name, blupeprint_name, global_transform) in spawn_placeholders.iter() {
-        info!("need to spawn {:?}", blupeprint_name.0);
+        debug!("need to spawn {:?}", blupeprint_name.0);
         let what = &blupeprint_name.0;
         let model_file_name = format!("{}.glb", &what);
         let model_path =
             Path::new(&blueprints_config.library_folder).join(Path::new(model_file_name.as_str()));
 
-        info!("attempting to spawn {:?}", model_path);
+        debug!("attempting to spawn {:?}", model_path);
         let scene: Handle<Gltf> = asset_server.load(model_path);
         // let scene = game_assets.models.get(&model_path).expect(&format!("no matching model {:?} found", model_path));
 
