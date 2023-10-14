@@ -89,7 +89,9 @@ def get_collection_hierarchy(root_col, levels=1):
 # the active collection is a View Layer concept, so you actually have to find the active LayerCollection
 # which must be done recursively
 def find_layer_collection_recursive(find, col):
+    print("root collection", col)
     for c in col.children:
+        print("child collection", c)
         if c.collection == find:
             return c
     return None
@@ -132,14 +134,9 @@ def make_empty3(name, location, rotation, scale, collection):
     bpy.ops.object.empty_add(type='PLAIN_AXES', location=location, rotation=rotation, scale=scale)
     empty_obj = bpy.context.active_object
     empty_obj.name = name
-    collection.objects.link( empty_obj )
-    print("creating empty", name, scale)
     empty_obj.scale = scale # scale is not set correctly ?????
-    print("empty ", empty_obj.scale)
-
     bpy.context.view_layer.objects.active = original_active_object
     return empty_obj
-
 
 # generate a copy of a scene that replaces collection instances with empties
 # alternative: copy original names before creating a new scene, & reset them
@@ -150,13 +147,15 @@ def generate_hollow_scene(scene):
     copy_root_collection = temp_scene.collection
     scene_objects = [o for o in root_collection.objects]
 
+    # we set our active scene to be this one : this is needed otherwise the stand-in empties get generated in the wrong scene
+    bpy.context.window.scene = temp_scene
 
     found = find_layer_collection_recursive(copy_root_collection, bpy.context.view_layer.layer_collection)
     if found:
         print("FOUND COLLECTION")
         # once it's found, set the active layer collection to the one we found
         bpy.context.view_layer.active_layer_collection = found
-
+    
     #original_names = {}
     original_names = []
     for object in scene_objects:
@@ -176,7 +175,6 @@ def generate_hollow_scene(scene):
             """we inject the collection/blueprint name, as a component called 'BlueprintName', but we only do this in the empty, not the original object"""
             empty_obj['BlueprintName'] = '"'+collection_name+'"'
             empty_obj['SpawnHere'] = ''
-            empty_obj.scale = object.scale # another attempt to force the scale
 
             for k, v in object.items():
                 empty_obj[k] = v
