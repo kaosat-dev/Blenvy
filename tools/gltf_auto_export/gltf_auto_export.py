@@ -1,8 +1,8 @@
 bl_info = {
     "name": "gltf_auto_export",
     "author": "kaosigh",
-    "version": (0, 2),
-    "blender": (3, 4, 1),
+    "version": (0, 3),
+    "blender": (3, 4, 0),
     "location": "File > Import-Export",
     "description": "glTF/glb auto-export",
     "warning": "",
@@ -30,9 +30,7 @@ from bpy.props import (BoolProperty,
 #see here for original gltf exporter infos https://github.com/KhronosGroup/glTF-Blender-IO/blob/main/addons/io_scene_gltf2/__init__.py
 @persistent
 def deps_update_handler(scene, depsgraph):
-    
     print("depsgraph_update_post", scene.name)
-    print("toto")
     print("-------------")
     changed_objects = []
     for obj in depsgraph.updates:
@@ -129,18 +127,21 @@ def make_empty2(name, location, collection):
     collection.objects.link( empty_obj )
     return empty_obj
 
-def make_empty3(name, location, collection): 
+def make_empty3(name, location, rotation, scale, collection): 
     original_active_object = bpy.context.active_object
-    bpy.ops.object.empty_add(type='PLAIN_AXES', location=location)
+    bpy.ops.object.empty_add(type='PLAIN_AXES', location=location, rotation=rotation, scale=scale)
     empty_obj = bpy.context.active_object
     empty_obj.name = name
     collection.objects.link( empty_obj )
+    print("creating empty", name, scale)
+    empty_obj.scale = scale # scale is not set correctly ?????
+    print("empty ", empty_obj.scale)
+
     bpy.context.view_layer.objects.active = original_active_object
     return empty_obj
 
 
 # generate a copy of a scene that replaces collection instances with empties
-# FIXME: will not preserve original names
 # alternative: copy original names before creating a new scene, & reset them
 # or create empties, hide original ones, and do the same renaming trick
 def generate_hollow_scene(scene): 
@@ -171,10 +172,11 @@ def generate_hollow_scene(scene):
             original_names.append(original_name)
 
             object.name = original_name + "____bak"
-            empty_obj = make_empty3(original_name, object.location, copy_root_collection)
+            empty_obj = make_empty3(original_name, object.location, object.rotation_euler, object.scale, copy_root_collection)
             """we inject the collection/blueprint name, as a component called 'BlueprintName', but we only do this in the empty, not the original object"""
             empty_obj['BlueprintName'] = '"'+collection_name+'"'
             empty_obj['SpawnHere'] = ''
+            empty_obj.scale = object.scale # another attempt to force the scale
 
             for k, v in object.items():
                 empty_obj[k] = v
@@ -194,9 +196,7 @@ def clear_hollow_scene(temp_scene, original_scene, original_names):
 
     for object in scene_objects:
         if object.instance_type == 'COLLECTION':
-            print("object name to reset", object.name)
             if object.name.endswith("____bak"):
-                print("reseting")
                 object.name = object.name.replace("____bak", "")
 
     # remove empties (only needed when we go via ops ????)
@@ -204,8 +204,12 @@ def clear_hollow_scene(temp_scene, original_scene, original_names):
     scene_objects = [o for o in root_collection.objects]
     for object in scene_objects:
         if object.type == 'EMPTY':
-            bpy.data.objects.remove(object, do_unlink=True)
-    
+            if hasattr(object, "SpawnHere"):
+                bpy.data.objects.remove(object, do_unlink=True)
+            else: 
+                bpy.context.scene.collection.objects.unlink(object)
+            #bpy.data.objects.remove(object, do_unlink=True)
+
     bpy.data.scenes.remove(temp_scene)
 
 
