@@ -338,13 +338,12 @@ def export_collections(scene, folder_path, addon_prefs, gltf_export_preferences)
 
 
 def export_main(scene, folder_path, addon_prefs): 
-    output_name = getattr(addon_prefs,"export_main_output_name")
+    export_output_folder = getattr(addon_prefs,"export_output_folder")
     gltf_export_preferences = generate_gltf_export_preferences(addon_prefs)
-    print("exporting to", folder_path, output_name)
+    print("exporting to", folder_path, export_output_folder)
 
     export_blueprints = getattr(addon_prefs,"export_blueprints")
-    export_blueprints_path = os.path.join(folder_path, getattr(addon_prefs,"export_blueprints_path")) if getattr(addon_prefs,"export_blueprints_path") != '' else folder_path
-
+    export_blueprints_path = os.path.join(folder_path, export_output_folder, getattr(addon_prefs,"export_blueprints_path")) if getattr(addon_prefs,"export_blueprints_path") != '' else folder_path
     # backup current active scene
     old_current_scene = bpy.context.scene
     # backup current selections
@@ -367,7 +366,7 @@ def export_main(scene, folder_path, addon_prefs):
         # set active scene to be the given scene
         bpy.context.window.scene = hollow_scene
 
-    gltf_output_path = os.path.join(folder_path, output_name)
+    gltf_output_path = os.path.join(folder_path, export_output_folder, scene.name)
 
     export_settings = { **gltf_export_preferences, 
                        'use_active_scene': True, 
@@ -389,35 +388,43 @@ def export_main(scene, folder_path, addon_prefs):
         obj.select_set(True)
 
 
+
 """Main function"""
 def auto_export():
-    file_path = bpy.data.filepath
-    # Get the folder
-    folder_path = os.path.dirname(file_path)
-    # get the preferences for our addon
-    addon_prefs = bpy.context.preferences.addons[__name__].preferences
+    try:
+        file_path = bpy.data.filepath
+        # Get the folder
+        folder_path = os.path.dirname(file_path)
+        # get the preferences for our addon
+        addon_prefs = bpy.context.preferences.addons[__name__].preferences
 
-    print("last changed", bpy.context.window_manager.changedScene)
+        print("last changed", bpy.context.window_manager.changedScene)
 
-    # optimised variation
-    last_changed = bpy.context.window_manager.changedScene
+        # optimised variation
+        last_changed = bpy.context.window_manager.changedScene
 
-    export_main_scene_name = getattr(addon_prefs,"export_main_scene_name")
-    export_on_library_changes = getattr(addon_prefs,"export_on_library_changes")
-    export_library_scene_name = getattr(addon_prefs,"export_library_scene_name")
+        export_main_scene_name = getattr(addon_prefs,"export_main_scene_name")
+        export_on_library_changes = getattr(addon_prefs,"export_on_library_changes")
+        export_library_scene_name = getattr(addon_prefs,"export_library_scene_name")
 
-    # export the main game world
-    game_scene = bpy.data.scenes[export_main_scene_name]
+        # export the main game world
+        game_scene = bpy.data.scenes[export_main_scene_name]
 
-    # most recent change was in the main scene (game world/ level)
-    if last_changed == export_main_scene_name:
-        print("game world changed, exporting game gltf only")
-        export_main(game_scene, folder_path, addon_prefs)
+        # most recent change was in the main scene (game world/ level)
+        if last_changed == export_main_scene_name:
+            print("game world changed, exporting game gltf only")
+            export_main(game_scene, folder_path, addon_prefs)
 
-    # if the library has changed, so will likely the game world that uses the library assets
-    if last_changed == export_library_scene_name and export_library_scene_name != ""  and export_on_library_changes: 
-        print("library changed")
-        export_main(game_scene, folder_path, addon_prefs)
+        # if the library has changed, so will likely the game world that uses the library assets
+        if last_changed == export_library_scene_name and export_library_scene_name != ""  and export_on_library_changes: 
+            print("library changed")
+            export_main(game_scene, folder_path, addon_prefs)
+    except Exception as error:
+        def error_message(self, context):
+            self.layout.label(text="Failure during auto_export: please check your main scene name & make sure your output folder exists. Error: "+ str(error))
+
+        bpy.context.window_manager.popup_menu(error_message, title="Error", icon='ERROR')
+
 
 
 ######################################################
@@ -426,7 +433,7 @@ def auto_export():
 AutoExportGltfPreferenceNames = [
     'auto_export',
     'export_main_scene_name',
-    'export_main_output_name',
+    'export_output_folder',
     'export_on_library_changes',
     'export_library_scene_name',
     'export_blueprints',
@@ -448,15 +455,15 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         description='The name of the main scene/level/world to auto export',
         default='Scene'
     )
-    export_main_output_name: StringProperty(
-        name='Glb output name',
-        description='The glb output name for the main scene to auto export',
-        default='world'
+    export_output_folder: StringProperty(
+        name='Export folder (relative)',
+        description='The root folder for all exports(relative to current file) Defaults to current folder',
+        default=''
     )
     export_on_library_changes: BoolProperty(
         name='Export on library changes',
         description='Export main scene on library changes',
-        default=False
+        default=True
     )
     export_library_scene_name: StringProperty(
         name='Library scene',
@@ -467,12 +474,12 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
     export_blueprints: BoolProperty(
         name='Export Blueprints',
         description='Replaces collection instances with an Empty with a BlueprintName custom property',
-        default=False
+        default=True
     )
     export_blueprints_path: StringProperty(
         name='Blueprints path',
-        description='path to export the blueprints to (relative to this Blend file)',
-        default=''
+        description='path to export the blueprints to (relative to the Export folder)',
+        default='library'
     )
 
 
@@ -750,7 +757,7 @@ class AutoExportGLTF(Operator, ExportHelper):
         description='The name of the main scene/level/world to auto export',
         default='Scene'
     )
-    export_main_output_name: StringProperty(
+    export_output_folder: StringProperty(
         name='Glb output name',
         description='The glb output name for the main scene to auto export',
         default='world'
@@ -838,7 +845,7 @@ class GLTF_PT_auto_export_root(bpy.types.Panel):
         layout.prop(operator, "export_main_scene_name")
         layout.prop(operator, "export_library_scene_name")
 
-        layout.prop(operator, "export_main_output_name")
+        layout.prop(operator, "export_output_folder")
         layout.prop(operator, "export_on_library_changes")
        
 class GLTF_PT_auto_export_blueprints(bpy.types.Panel):
