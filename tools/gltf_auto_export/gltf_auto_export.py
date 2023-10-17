@@ -13,6 +13,7 @@ bl_info = {
 
 import os
 import bpy
+import traceback
 from bpy.types import Operator, AddonPreferences
 from bpy.app.handlers import persistent
 from bpy_extras.io_utils import ExportHelper
@@ -25,6 +26,8 @@ from bpy.props import (BoolProperty,
 
 bpy.context.window_manager['changed_objects_per_scene'] = {}
 bpy.context.window_manager['__gltf_auto_export_initialized'] = False
+bpy.context.window_manager['__gltf_auto_export_gltf_params_changed'] = False
+
 scene_key = "auto_gltfExportSettings"
 
 
@@ -61,6 +64,11 @@ def save_handler(dummy):
     changes =  bpy.context.window_manager['changed_objects_per_scene']
     #changes = bpy.context.window_manager['changed_objects_per_scene'] if hasattr(bpy.context.window_manager, "changed_objects_per_scene") else {}
     auto_export(changes)
+
+    # reset a few things after exporting
+    # reset wether the gltf export paramters were changed since the last save 
+    bpy.context.window_manager['__gltf_auto_export_gltf_params_changed'] = False
+    # reset whether there have been changed objects since the last save 
     bpy.context.window_manager['changed_objects_per_scene'] = {}
 
 def get_changedScene(self):
@@ -398,7 +406,7 @@ def auto_export(changes_per_scene):
     addon_prefs = bpy.context.preferences.addons[__name__].preferences
 
     # a semi_hack to ensure we have the latest version of the settings
-    initialized = bpy.context.window_manager['__gltf_auto_export_initialized'] if  '__gltf_auto_export_initialized' in bpy.context.window_manager else False
+    initialized = bpy.context.window_manager['__gltf_auto_export_initialized'] if '__gltf_auto_export_initialized' in bpy.context.window_manager else False
     if not initialized:
         print("not initialized, fetching settings if any")
         # semi_hack to restore the correct settings if the add_on was installed before
@@ -415,6 +423,9 @@ def auto_export(changes_per_scene):
                 print("error setting preferences from saved settings", error)
         bpy.context.window_manager['__gltf_auto_export_initialized'] = True
 
+    # have the export parameters (not auto export, just gltf export) have changed: if yes (for example switch from glb to gltf, compression or not, animations or not etc), we need to re-export everything
+    changed_export_parameters = bpy.context.window_manager['__gltf_auto_export_gltf_params_changed'] if '__gltf_auto_export_gltf_params_changed' in bpy.context.window_manager else False
+    print ("changed_export_parameters", changed_export_parameters)
     try:
         file_path = bpy.data.filepath
         # Get the folder
@@ -471,13 +482,16 @@ def auto_export(changes_per_scene):
             # backup current selections
             old_selections = bpy.context.selected_objects
 
-            if export_main_scene_name in changes_per_scene.keys() and len(changes_per_scene[export_main_scene_name].keys()) > 0:
-                print("export MAIN scene", changes_per_scene[export_main_scene_name])
+            do_export_main_scene =  changed_export_parameters or (export_main_scene_name in changes_per_scene.keys() and len(changes_per_scene[export_main_scene_name].keys()) > 0) 
+            if do_export_main_scene:
+                print("export MAIN scene")
                 export_main_scene(game_scene, folder_path, addon_prefs)
 
-            export_library_scene = len(collections_to_export) > 0 # export_library_scene_name in changes_per_scene.keys()
-            if export_library_scene:
+            do_export_library_scene = changed_export_parameters or len(collections_to_export) > 0 # export_library_scene_name in changes_per_scene.keys()
+            if do_export_library_scene:
                 print("export LIBRARY") #, changes_per_scene[export_library_scene_name])
+                # we need to re_export everything if the export parameters have been changed
+                collections_to_export = collections if changed_export_parameters else collections_to_export
                 export_blueprints_from_collections(collections_to_export, folder_path, addon_prefs)
 
 
@@ -493,6 +507,7 @@ def auto_export(changes_per_scene):
             export_main_scene(game_scene, folder_path, addon_prefs)
 
     except Exception as error:
+        traceback.print_stack()
         def error_message(self, context):
             self.layout.label(text="Failure during auto_export: please check your main scene name & make sure your output folder exists. Error: "+ str(error))
 
@@ -821,6 +836,8 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         description='Store glTF export settings in the Blender project',
         default=True
     )
+
+    previous_params = {}
   
     def __init__bla(self):
         print("INIT")
@@ -848,16 +865,46 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         print("saving settings", export_props)#, self.properties, dir(self.properties))
         context.scene[self.scene_key] = export_props
 
-        print("override preferences")
+      
+    def apply_settings_to_preferences(self, context):
+        # find all props to save
+        exceptional = [
+            # options that don't start with 'export_'  
+        ]
+        all_props = self.properties
+        export_props = {
+            x: getattr(self, x) for x in dir(all_props)
+            if (x.startswith("export_") or x in exceptional) and all_props.get(x) is not None
+        }
         addon_prefs = bpy.context.preferences.addons[__name__].preferences
+
+        for (k, v) in addon_prefs.items():
+            self.previous_params[k] = v
+
         for (k, v) in export_props.items():
             setattr(addon_prefs, k, v)
 
+    def get_changed_parameters(self, context):
+        addon_prefs = bpy.context.preferences.addons[__name__].preferences
+        set1 = set(self.previous_params.items())
+        set2 = set(addon_prefs.items())
+        difference = dict(set1 ^ set2)
+        
+        changed_param_names = list(set(difference.keys())- set(AutoExportGltfPreferenceNames))
+      
+        print("difference", difference, "changed_param_names", changed_param_names)
+        bpy.context.window_manager['__gltf_auto_export_gltf_params_changed'] = len(changed_param_names) > 0
 
     def execute(self, context):     
         if self.will_save_settings:
             self.save_settings(context)
 
+        # apply the operator properties to the addon preferences
+        self.apply_settings_to_preferences(context)
+       
+        # check for changes
+        self.get_changed_parameters(context)
+       
         return {'FINISHED'}    
     
     def invoke(self, context, event):
