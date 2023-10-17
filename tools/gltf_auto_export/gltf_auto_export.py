@@ -301,10 +301,11 @@ def get_exportable_collections(main_scene, addon_prefs):
     all_collections = list(collection_names) + marked_collections[0]
     return all_collections
 
-def check_if_blueprints_exist(collections, folder_path):
+def check_if_blueprints_exist(collections, folder_path, extension):
     not_found_blueprints = []
     for collection_name in collections:
-        gltf_output_path = os.path.join(folder_path, collection_name + '.glb')
+        gltf_output_path = os.path.join(folder_path, collection_name + extension)
+        print("gltf_output_path", gltf_output_path)
         found = os.path.exists(gltf_output_path) and os.path.isfile(gltf_output_path)
         if not found:
             not_found_blueprints.append(collection_name)
@@ -360,12 +361,7 @@ def export_main_scene(scene, folder_path, addon_prefs):
     print("exporting to", folder_path, export_output_folder)
 
     export_blueprints = getattr(addon_prefs,"export_blueprints")
-    # backup current active scene
-    old_current_scene = bpy.context.scene
-    # backup current selections
-    old_selections = bpy.context.selected_objects
-
-
+  
     if export_blueprints : 
         (hollow_scene, object_names) = generate_hollow_scene(scene)
         #except Exception:
@@ -388,14 +384,6 @@ def export_main_scene(scene, folder_path, addon_prefs):
 
     if export_blueprints : 
         clear_hollow_scene(hollow_scene, scene, object_names)
-
-    # reset current scene from backup
-    bpy.context.window.scene = old_current_scene
-    # reset selections
-    for obj in old_selections:
-        obj.select_set(True)
-
-
 
 """Main function"""
 def auto_export(changes_per_scene):
@@ -425,7 +413,9 @@ def auto_export(changes_per_scene):
             # in your current Blender session for example)
             export_blueprints_path = os.path.join(folder_path, export_output_folder, getattr(addon_prefs,"export_blueprints_path")) if getattr(addon_prefs,"export_blueprints_path") != '' else folder_path
 
-            collections_not_on_disk = check_if_blueprints_exist(collections, export_blueprints_path)
+            gltf_extension = getattr(addon_prefs, "export_format")
+            gltf_extension = '.glb' if gltf_extension == 'GLB' else '.gltf'
+            collections_not_on_disk = check_if_blueprints_exist(collections, export_blueprints_path, gltf_extension)
             changed_collections = []
 
 
@@ -450,14 +440,27 @@ def auto_export(changes_per_scene):
             print("collections: not found on disk:", collections_not_on_disk)
             print("collections:          to export:", collections_to_export)
 
+            # backup current active scene
+            old_current_scene = bpy.context.scene
+            # backup current selections
+            old_selections = bpy.context.selected_objects
 
             if export_main_scene_name in changes_per_scene.keys() and len(changes_per_scene[export_main_scene_name].keys()) > 0:
                 print("export MAIN scene", changes_per_scene[export_main_scene_name])
                 export_main_scene(game_scene, folder_path, addon_prefs)
 
-            if export_library_scene_name in changes_per_scene.keys() and len(collections_to_export) > 0:
-                print("export LIBRARY", changes_per_scene[export_library_scene_name])
+            export_library_scene = len(collections_to_export) > 0 # export_library_scene_name in changes_per_scene.keys()
+            if export_library_scene:
+                print("export LIBRARY") #, changes_per_scene[export_library_scene_name])
                 export_blueprints_from_collections(collections_to_export, folder_path, addon_prefs)
+
+
+            # reset current scene from backup
+            bpy.context.window.scene = old_current_scene
+            # reset selections
+            for obj in old_selections:
+                obj.select_set(True)
+
 
         else:
             print("dsfsfsdf")
@@ -792,7 +795,6 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         description='Store glTF export settings in the Blender project',
         default=True
     )
-
   
     def __init__bla(self):
         print("INIT")
