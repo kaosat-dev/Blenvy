@@ -24,6 +24,8 @@ from bpy.props import (BoolProperty,
                        )
 
 bpy.context.window_manager['changed_objects_per_scene'] = {}
+bpy.context.window_manager['__gltf_auto_export_initialized'] = False
+scene_key = "auto_gltfExportSettings"
 
 
 #see here for original gltf exporter infos https://github.com/KhronosGroup/glTF-Blender-IO/blob/main/addons/io_scene_gltf2/__init__.py
@@ -35,6 +37,8 @@ def deps_update_handler(scene, depsgraph):
         changed = scene.name or ""
 
         # depsgraph = bpy.context.evaluated_depsgraph_get()
+        if not 'changed_objects_per_scene' in bpy.context.window_manager:
+            bpy.context.window_manager['changed_objects_per_scene'] = {}
 
         if not changed in bpy.context.window_manager['changed_objects_per_scene']:
             bpy.context.window_manager['changed_objects_per_scene'][changed] = {}
@@ -51,7 +55,11 @@ def deps_update_handler(scene, depsgraph):
 def save_handler(dummy): 
     print("-------------")
     print("saved", bpy.data.filepath)
-    changes = bpy.context.window_manager['changed_objects_per_scene']
+    if not 'changed_objects_per_scene' in bpy.context.window_manager:
+        bpy.context.window_manager['changed_objects_per_scene'] = {}
+  
+    changes =  bpy.context.window_manager['changed_objects_per_scene']
+    #changes = bpy.context.window_manager['changed_objects_per_scene'] if hasattr(bpy.context.window_manager, "changed_objects_per_scene") else {}
     auto_export(changes)
     bpy.context.window_manager['changed_objects_per_scene'] = {}
 
@@ -389,6 +397,24 @@ def export_main_scene(scene, folder_path, addon_prefs):
 def auto_export(changes_per_scene):
     addon_prefs = bpy.context.preferences.addons[__name__].preferences
 
+    # a semi_hack to ensure we have the latest version of the settings
+    initialized = bpy.context.window_manager['__gltf_auto_export_initialized'] if  '__gltf_auto_export_initialized' in bpy.context.window_manager else False
+    if not initialized:
+        print("not initialized, fetching settings if any")
+        # semi_hack to restore the correct settings if the add_on was installed before
+        settings = bpy.context.scene.get(scene_key)
+        if settings:
+            print("loading settings")
+            try:
+                # Update filter if user saved settings
+                #if hasattr(self, 'export_format'):
+                #    self.filter_glob = '*.glb' if self.export_format == 'GLB' else '*.gltf'
+                for (k, v) in settings.items():
+                    setattr(addon_prefs, k, v)
+            except Exception as error:
+                print("error setting preferences from saved settings", error)
+        bpy.context.window_manager['__gltf_auto_export_initialized'] = True
+
     try:
         file_path = bpy.data.filepath
         # Get the folder
@@ -400,7 +426,7 @@ def auto_export(changes_per_scene):
         export_blueprints = getattr(addon_prefs,"export_blueprints")
         export_output_folder = getattr(addon_prefs,"export_output_folder")
 
-        print("export_output_folder", export_output_folder)
+        print("export_output_folder", export_output_folder, 'export_main_scene_name', export_main_scene_name)
 
         # export the main game world
         game_scene = bpy.data.scenes[export_main_scene_name]
@@ -419,7 +445,7 @@ def auto_export(changes_per_scene):
             changed_collections = []
 
 
-            print('changes_per_scene blabla', changes_per_scene.items(), changes_per_scene.keys())
+            print('changes_per_scene', changes_per_scene.items(), changes_per_scene.keys())
             for scene, bla in changes_per_scene.items():
                 print("  changed scene", scene)
                 for obj_name, obj in bla.items():
@@ -1064,7 +1090,6 @@ def register():
 
     # add our addon to the toolbar
     bpy.types.TOPBAR_MT_file_export.append(menu_func_import)
-
 
 def unregister():
     for cls in classes:
