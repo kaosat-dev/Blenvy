@@ -32,6 +32,27 @@ bpy.context.window_manager['__gltf_auto_export_gltf_params_changed'] = False
 scene_key = "auto_gltfExportSettings"
 
 
+################## 
+### internals too
+
+class SceneLink(bpy.types.PropertyGroup):
+    name: bpy.props.StringProperty(name="")
+    scene: bpy.props.PointerProperty(type=bpy.types.Scene)
+
+class SceneLinks(bpy.types.PropertyGroup):
+    name = bpy.props.StringProperty(name="List of scenes to export", default="Unknown")
+    items: bpy.props.CollectionProperty(type = SceneLink)
+
+class CUSTOM_PG_sceneName(bpy.types.PropertyGroup):
+    # name: bpy.props.StringProperty()
+    name: bpy.props.StringProperty()
+    display: bpy.props.BoolProperty()
+
+
+################
+
+
+
 #see here for original gltf exporter infos https://github.com/KhronosGroup/glTF-Blender-IO/blob/main/addons/io_scene_gltf2/__init__.py
 @persistent
 def deps_update_handler(scene, depsgraph):
@@ -66,20 +87,25 @@ def save_handler(dummy):
     #determine changed parameters
     addon_prefs = bpy.context.preferences.addons[__name__].preferences
 
+    print("addon_prefs", addon_prefs.items())
+    """ TODO: add back
+    for (k,v) in addon_prefs.items():
+        print("addon pre name ,", k," value: ", v)
     set1 = set(bpy.context.window_manager['previous_params'].items())
     set2 = set(addon_prefs.items())
     difference = dict(set1 ^ set2)
     
     changed_param_names = list(set(difference.keys())- set(AutoExportGltfPreferenceNames))
-    changed_parameters = len(changed_param_names) > 0
-
+    changed_parameters = len(changed_param_names) > 0"""
+    changed_parameters= False
     # do the export
     auto_export(changes_per_scene, changed_parameters)
 
 
     # save the parameters
-    for (k, v) in addon_prefs.items():
-        bpy.context.window_manager['previous_params'][k] = v
+    # todo add back
+    #for (k, v) in addon_prefs.items():
+    #    bpy.context.window_manager['previous_params'][k] = v
 
     # reset a few things after exporting
     # reset wether the gltf export paramters were changed since the last save 
@@ -327,7 +353,7 @@ def generate_gltf_export_preferences(addon_prefs):
 
 
 # get exportable collections from lists of mains scenes and lists of library scenes
-def get_exportable_collections2(main_scenes, library_scenes): 
+def get_exportable_collections(main_scenes, library_scenes): 
     all_collections = []
     for main_scene in main_scenes:
         (collection_names, _) = get_used_collections(main_scene)
@@ -335,13 +361,6 @@ def get_exportable_collections2(main_scenes, library_scenes):
     for library_scene in library_scenes:
         marked_collections = get_marked_collections(library_scene)
         all_collections = all_collections + marked_collections[0]
-    return all_collections
-
-
-def get_exportable_collections(main_scene, library_scene): 
-    (collection_names, used_collections) = get_used_collections(main_scene)
-    marked_collections = get_marked_collections(library_scene)
-    all_collections = list(collection_names) + marked_collections[0]
     return all_collections
 
 def check_if_blueprints_exist(collections, folder_path, extension):
@@ -357,13 +376,39 @@ def check_if_blueprints_exist(collections, folder_path, extension):
 ######################################################
 #### Export logic #####
 
+# find which of the library scenes the given collection stems from
+# TODO: does not seem efficient at all ?
+def get_source_scene(collection_name, library_scenes): 
+    match = None
+    for scene in library_scenes:
+        root_collection = scene.collection
+        found = False
+        for cur_collection in traverse_tree(root_collection):
+            if cur_collection.name == collection_name:
+                found = True
+                break
+        if found:
+            match = scene
+            break
+    return match
+
+def get_collections_per_scene(collection_names, library_scenes): 
+    collections_per_scene = {}
+    for scene in library_scenes:
+        root_collection = scene.collection
+        for cur_collection in traverse_tree(root_collection):
+            if cur_collection.name in collection_names:
+                if not scene.name in collections_per_scene:
+                    collections_per_scene[scene.name] = []
+                collections_per_scene[scene.name].append(cur_collection.name)
+                
+    return collections_per_scene
+
 # export collections: all the collections that have an instance in the main scene AND any marked collections, even if they do not have instances
-def export_collections(collections, folder_path, addon_prefs, gltf_export_preferences): 
-    print("export collections")
-    library_scene = getattr(addon_prefs, "export_library_scene_name")
-   
+def export_collections(collections, folder_path, library_scene, addon_prefs, gltf_export_preferences): 
+    print("export collections")   
     # set active scene to be the library scene (hack for now)
-    bpy.context.window.scene = bpy.data.scenes[library_scene]
+    bpy.context.window.scene = library_scene
     # save current active collection
     active_collection =  bpy.context.view_layer.active_layer_collection
 
@@ -372,6 +417,7 @@ def export_collections(collections, folder_path, addon_prefs, gltf_export_prefer
 
         layer_collection = bpy.context.view_layer.layer_collection
         layerColl = recurLayerCollection(layer_collection, collection_name)
+        print("layerColl", layer_collection, layerColl)
         # set active collection to the collection
         bpy.context.view_layer.active_layer_collection = layerColl
 
@@ -384,18 +430,19 @@ def export_collections(collections, folder_path, addon_prefs, gltf_export_prefer
     bpy.context.view_layer.active_layer_collection = active_collection
 
 
-def export_blueprints_from_collections(collections, folder_path, addon_prefs):
+def export_blueprints_from_collections(collections, library_scene, folder_path, addon_prefs):
     export_output_folder = getattr(addon_prefs,"export_output_folder")
     gltf_export_preferences = generate_gltf_export_preferences(addon_prefs)
     export_blueprints_path = os.path.join(folder_path, export_output_folder, getattr(addon_prefs,"export_blueprints_path")) if getattr(addon_prefs,"export_blueprints_path") != '' else folder_path
 
-    print("-----EXPORTING BLUEPRINTS----")
-    print("LIBRARY EXPORT", export_blueprints_path )
+    #print("-----EXPORTING BLUEPRINTS----")
+    #print("LIBRARY EXPORT", export_blueprints_path )
 
     try:
-        export_collections(collections, export_blueprints_path, addon_prefs, gltf_export_preferences)
+        export_collections(collections, export_blueprints_path, library_scene, addon_prefs, gltf_export_preferences)
     except Exception as error:
         print("failed to export collections to gltf: ", error)
+        # TODO : rethrow
 
 
 # export all main scenes
@@ -463,23 +510,23 @@ def auto_export(changes_per_scene, changed_export_parameters):
         folder_path = os.path.dirname(file_path)
         # get the preferences for our addon
 
-        export_main_scene_name = getattr(addon_prefs,"export_main_scene_name")
-        export_library_scene_name = getattr(addon_prefs,"export_library_scene_name")
         export_blueprints = getattr(addon_prefs,"export_blueprints")
         export_output_folder = getattr(addon_prefs,"export_output_folder")
 
-        print("export_output_folder", export_output_folder, 'export_main_scene_name', export_main_scene_name)
+        main_scene_names= list(map(lambda scene: scene.name, getattr(addon_prefs,"main_scenes")))
+        library_scene_names = list(map(lambda scene: scene.name, getattr(addon_prefs,"library_scenes")))
+        print("main scenes", main_scene_names, "library_scenes", library_scene_names)
+        print("export_output_folder", export_output_folder)
 
         # export the main game world
-        game_scene = bpy.data.scenes[export_main_scene_name]
-        library_scene = bpy.data.scenes[export_library_scene_name]
-        level_scenes = [game_scene]
-        library_scenes = [library_scene]
-
+        level_scenes = list(map(lambda name: bpy.data.scenes[name], main_scene_names))
+        library_scenes = list(map(lambda name: bpy.data.scenes[name], library_scene_names))
+        print("HEEERE")
         # export everything everytime
         if export_blueprints:
+            print("EXPORTING")
             # get a list of all collections actually in use
-            collections = get_exportable_collections2(level_scenes, library_scenes)
+            collections = get_exportable_collections(level_scenes, library_scenes)
             # first check if all collections have already been exported before (if this is the first time the exporter is run
             # in your current Blender session for example)
             export_blueprints_path = os.path.join(folder_path, export_output_folder, getattr(addon_prefs,"export_blueprints_path")) if getattr(addon_prefs,"export_blueprints_path") != '' else folder_path
@@ -516,17 +563,25 @@ def auto_export(changes_per_scene, changed_export_parameters):
             # backup current selections
             old_selections = bpy.context.selected_objects
 
-            do_export_main_scene =  changed_export_parameters or (export_main_scene_name in changes_per_scene.keys() and len(changes_per_scene[export_main_scene_name].keys()) > 0) 
-            if do_export_main_scene:
-                print("export MAIN scene")
-                export_main_scene(game_scene, folder_path, addon_prefs)
+            for scene_name in main_scene_names:
+                do_export_main_scene =  changed_export_parameters or (scene_name in changes_per_scene.keys() and len(changes_per_scene[scene_name].keys()) > 0) 
+                if do_export_main_scene:
+                    print("export MAIN scene")
+                    export_main_scene(bpy.data.scenes[scene_name], folder_path, addon_prefs)
 
+
+            # now deal with blueprints/collections
+            collections_per_scene = get_collections_per_scene(collections_to_export, library_scenes)
+            print("collections_per_scene", collections_per_scene)
             do_export_library_scene = changed_export_parameters or len(collections_to_export) > 0 # export_library_scene_name in changes_per_scene.keys()
             if do_export_library_scene:
                 print("export LIBRARY") #, changes_per_scene[export_library_scene_name])
-                # we need to re_export everything if the export parameters have been changed
-                collections_to_export = collections if changed_export_parameters else collections_to_export
-                export_blueprints_from_collections(collections_to_export, folder_path, addon_prefs)
+                for scene_name in library_scene_names:
+                    # we need to re_export everything if the export parameters have been changed
+                    # collections_to_export = collections if changed_export_parameters else collections_to_export
+                    collections_to_export = collections_per_scene[scene_name] if changed_export_parameters else collections_to_export
+                    library_scene = bpy.data.scenes[scene_name]
+                    export_blueprints_from_collections(collections_to_export, library_scene, folder_path, addon_prefs)
 
 
             # reset current scene from backup
@@ -538,7 +593,8 @@ def auto_export(changes_per_scene, changed_export_parameters):
 
         else:
             print("dsfsfsdf")
-            export_main_scene(game_scene, folder_path, addon_prefs)
+            for scene_name in main_scene_names:
+                export_main_scene(bpy.data.scenes[scene_name], folder_path, addon_prefs)
 
     except Exception as error:
         traceback.print_stack()
@@ -559,7 +615,10 @@ AutoExportGltfPreferenceNames = [
     'export_output_folder',
     'export_library_scene_name',
     'export_blueprints',
-    'export_blueprints_path'
+    'export_blueprints_path',
+
+    'main_scenes',
+    'library_scenes'
 ]
 
 class AutoExportGltfAddonPreferences(AddonPreferences):
@@ -599,6 +658,9 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         description='path to export the blueprints to (relative to the Export folder)',
         default='library'
     )
+
+    main_scenes: CollectionProperty(name="main scenes", type=CUSTOM_PG_sceneName)
+    library_scenes: CollectionProperty(name="library scenes", type=CUSTOM_PG_sceneName)
 
 
     #####
@@ -935,6 +997,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
                 self.report({"ERROR"}, "Loading export settings failed. Removed corrupted settings")
                 del context.scene[self.scene_key]
 
+        """ TODO: add back 
         addon_prefs = self.properties
         export_main_scene_name = getattr(addon_prefs,"export_main_scene_name")
         export_library_scene_name = getattr(addon_prefs, "export_library_scene_name")
@@ -942,7 +1005,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         level_scenes = [bpy.data.scenes[export_main_scene_name]]
         library_scenes = [bpy.data.scenes[export_library_scene_name]]
 
-        collections = get_exportable_collections2(level_scenes, library_scenes)
+        collections = get_exportable_collections(level_scenes, library_scenes)
 
         try:
             # we save this list of collections in the context
@@ -953,7 +1016,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
                 ui_info.name = collection_name
         except Exception as error:
             self.report({"ERROR"}, "Failed to populate list of exported collections/blueprints")
-
+"""     
         wm = context.window_manager
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
@@ -1013,19 +1076,41 @@ class GLTF_PT_auto_export_root(bpy.types.Panel):
 
         layout.active = operator.auto_export
         layout.prop(operator, 'will_save_settings')
-        layout.prop(operator, "export_main_scene_name")
-        layout.prop(operator, "export_library_scene_name")
+        #layout.prop(operator, "export_main_scene_name")
+        #layout.prop(operator, "export_library_scene_name")
         layout.prop(operator, "export_output_folder")
 
 
         # scene selectors
-        layout.prop(context.scene, "main_scene")
-        layout.prop(context.scene, "library_scene")
 
-        layout.prop(context.scene, "FOO")
+        # FIXME: this is using addon prefs instead of operator temporarly
+        layout.label(text="main scenes")
+        for i in  bpy.context.preferences.addons[__name__].preferences.main_scenes:
+            layout.prop(i, "name")
+        layout.label(text="library scenes")
+        for i in  bpy.context.preferences.addons[__name__].preferences.library_scenes:
+            layout.prop(i, "name")
+        foo = bpy.context.preferences.addons[__name__].preferences.main_scenes
 
-        obj = context.object
-        layout.template_list("MATERIAL_UL_matslots_example", "", obj, "material_slots", obj, "active_material_index")
+        row = layout.row()
+        col = row.column(align=True)
+        col.prop(context.scene, "main_scene")
+        col.separator()
+        col = row.column(align=True)
+        col.prop(context.scene, "library_scene")
+        col.label(text="fsd")
+
+        #layout.prop(context.scene, "scenes_test")
+
+        for i in context.scene.scenes_test:
+            layout.prop(i, "scene")
+
+        #layout.prop(context.scene, "FOO")
+        #obj = context.object
+        #layout.template_list("SCENES_UL", "", foo, "items", foo, "list_index")
+        #bpy.data.scenes
+      
+        
 
        
 class GLTF_PT_auto_export_blueprints(bpy.types.Panel):
@@ -1120,7 +1205,7 @@ class GLTF_PT_auto_export_gltf(bpy.types.Panel):
 
     
 
-class MATERIAL_UL_matslots_example(bpy.types.UIList):
+class SCENES_UL(bpy.types.UIList):
     # The draw_item function is called for each item of the collection that is visible in the list.
     #   data is the RNA object containing the collection,
     #   item is the current drawn item of the collection,
@@ -1135,18 +1220,17 @@ class MATERIAL_UL_matslots_example(bpy.types.UIList):
     #         need them.
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname):
         ob = data
-        slot = item
-        ma = slot.material
         # draw_item must handle the three layout types... Usually 'DEFAULT' and 'COMPACT' can share the same code.
         if self.layout_type in {'DEFAULT', 'COMPACT'}:
             # You should always start your row layout by a label (icon + text), or a non-embossed text field,
             # this will also make the row easily selectable in the list! The later also enables ctrl-click rename.
             # We use icon_value of label, as our given icon is an integer value, not an enum ID.
             # Note "data" names should never be translated!
-            if ma:
-                layout.prop(ma, "name", text="", emboss=False, icon_value=icon)
-            else:
-                layout.label(text="", translate=False, icon_value=icon)
+            #if ma:
+            #    layout.prop(ma, "name", text="", emboss=False, icon_value=icon)
+            #else:
+            #    layout.label(text="", translate=False, icon_value=icon)
+            layout.prop(item, "name", text="", emboss=False, icon_value=icon)
         # 'GRID' layout type should be as compact as possible (typically a single icon!).
         elif self.layout_type == 'GRID':
             layout.alignment = 'CENTER'
@@ -1168,25 +1252,21 @@ class CollectionsToExport(bpy.types.PropertyGroup):
 
 
 
-class SceneLink(bpy.types.PropertyGroup):
-    name: bpy.props.StringProperty(name="")
-    scene: bpy.props.PointerProperty(type=bpy.types.Scene)
-
-class SceneLinks(bpy.types.PropertyGroup):
-    name = bpy.props.StringProperty(name="List of scenes to export", default="Unknown")
-    items: bpy.props.CollectionProperty(type = SceneLink)
 
 ######################################################
 
 classes = [
+    SceneLink,
+    SceneLinks,
+    CUSTOM_PG_sceneName,
+
     AutoExportGLTF, 
     AutoExportGltfAddonPreferences,
 
     CollectionToExport,
     CollectionsToExport,
 
-    SceneLink,
-    SceneLinks,
+    
 
     GLTF_PT_auto_export_main,
     GLTF_PT_auto_export_root,
@@ -1203,9 +1283,12 @@ def register():
 
     bpy.types.Scene.main_scene = bpy.props.PointerProperty(type=bpy.types.Scene, name="main scene", description="foo")
     bpy.types.Scene.library_scene = bpy.props.PointerProperty(type=bpy.types.Scene, name="library scene", description="foo")
+    
+    bpy.types.Scene.scenes_test = bpy.props.CollectionProperty(type=SceneLinks, name="all scenes", description="foo")
+
 
     #bpy.types.Scene.FOO = bpy.props.CollectionProperty(type=LevelScenes)
-    bpy.utils.register_class(MATERIAL_UL_matslots_example)
+    bpy.utils.register_class(SCENES_UL)
 
 
     # setup handlers for updates & saving
@@ -1217,6 +1300,27 @@ def register():
 
     # add our addon to the toolbar
     bpy.types.TOPBAR_MT_file_export.append(menu_func_import)
+
+
+
+    ## just experiments
+    bpy.types.Object.list_index = IntProperty(name = "Index for demo_list",
+                                             default = 0)
+    
+    
+    mock_main_scenes = ["World", "level2"]
+    main_scenes = bpy.context.preferences.addons[__name__].preferences.main_scenes
+    for item_name in mock_main_scenes:
+        item = main_scenes.add()
+        item.name = item_name
+    
+    mock_library_scenes = ["Library", "Library2"]
+    library_scenes = bpy.context.preferences.addons[__name__].preferences.library_scenes
+    for item_name in mock_library_scenes:
+        item = library_scenes.add()
+        item.name = item_name
+
+
 
 def unregister():
     for cls in classes:
@@ -1231,10 +1335,13 @@ def unregister():
     del bpy.types.WindowManager.changedScene
     del bpy.types.WindowManager.exportedCollections
 
+    del bpy.types.Scene.scenes_test
 
     del bpy.types.Scene.main_scene
     del bpy.types.Scene.library_scene
     #del bpy.types.Scene.FOO
+    del bpy.types.Object.list_index
+
 
 
 if __name__ == "__main__":
