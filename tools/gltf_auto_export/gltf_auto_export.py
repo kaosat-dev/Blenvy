@@ -88,24 +88,26 @@ def save_handler(dummy):
     addon_prefs = bpy.context.preferences.addons[__name__].preferences
 
     print("addon_prefs", addon_prefs.items())
-    """ TODO: add back
+    prefs = {}
     for (k,v) in addon_prefs.items():
-        print("addon pre name ,", k," value: ", v)
+        if k not in AutoExportGltfPreferenceNames:
+            prefs[k] = v
+            print("addon pre name ,", k," value: ", v)
+
     set1 = set(bpy.context.window_manager['previous_params'].items())
-    set2 = set(addon_prefs.items())
+    set2 = set(prefs.items())
     difference = dict(set1 ^ set2)
     
     changed_param_names = list(set(difference.keys())- set(AutoExportGltfPreferenceNames))
-    changed_parameters = len(changed_param_names) > 0"""
-    changed_parameters= False
+    changed_parameters = len(changed_param_names) > 0
     # do the export
     auto_export(changes_per_scene, changed_parameters)
 
 
     # save the parameters
     # todo add back
-    #for (k, v) in addon_prefs.items():
-    #    bpy.context.window_manager['previous_params'][k] = v
+    for (k, v) in prefs.items():
+        bpy.context.window_manager['previous_params'][k] = v
 
     # reset a few things after exporting
     # reset wether the gltf export paramters were changed since the last save 
@@ -999,14 +1001,14 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
                 self.report({"ERROR"}, "Loading export settings failed. Removed corrupted settings")
                 del context.scene[self.scene_key]
 
-        """ TODO: add back 
-        addon_prefs = self.properties
-        export_main_scene_name = getattr(addon_prefs,"export_main_scene_name")
-        export_library_scene_name = getattr(addon_prefs, "export_library_scene_name")
 
-        level_scenes = [bpy.data.scenes[export_main_scene_name]]
-        library_scenes = [bpy.data.scenes[export_library_scene_name]]
+        addon_prefs = bpy.context.preferences.addons[__name__].preferences
 
+        main_scene_names= list(map(lambda scene: scene.name, getattr(addon_prefs,"main_scenes")))
+        library_scene_names = list(map(lambda scene: scene.name, getattr(addon_prefs,"library_scenes")))
+        level_scenes = list(map(lambda name: bpy.data.scenes[name], main_scene_names))
+        library_scenes = list(map(lambda name: bpy.data.scenes[name], library_scene_names))
+       
         collections = get_exportable_collections(level_scenes, library_scenes)
 
         try:
@@ -1018,7 +1020,9 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
                 ui_info.name = collection_name
         except Exception as error:
             self.report({"ERROR"}, "Failed to populate list of exported collections/blueprints")
-"""     
+     
+
+
         wm = context.window_manager
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
