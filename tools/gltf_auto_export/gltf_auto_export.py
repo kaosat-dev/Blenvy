@@ -1,7 +1,7 @@
 bl_info = {
     "name": "gltf_auto_export",
     "author": "kaosigh",
-    "version": (0, 4),
+    "version": (0, 5),
     "blender": (3, 4, 0),
     "location": "File > Import-Export",
     "description": "glTF/glb auto-export",
@@ -50,7 +50,76 @@ class CUSTOM_PG_sceneName(bpy.types.PropertyGroup):
 
 
 ################
+# TODO: move this out
+class CUSTOM_OT_actions(Operator):
+    """Move items up and down, add and remove"""
+    bl_idname = "scene_list.list_action"
+    bl_label = "List Actions"
+    bl_description = "Move items up and down, add and remove"
+    bl_options = {'REGISTER'}
 
+    action: bpy.props.EnumProperty(
+        items=(
+            ('UP', "Up", ""),
+            ('DOWN', "Down", ""),
+            ('REMOVE', "Remove", ""),
+            ('ADD', "Add", "")))
+    
+
+    scene_type: bpy.props.StringProperty()#TODO: replace with enum
+
+    def invoke(self, context, event):
+        print("INVOKE", self.scene_type, __name__)
+        source = bpy.context.preferences.addons[__name__].preferences
+        target_name = "library_scenes"
+        target_index = "library_scenes_index"
+        if self.scene_type == "level":
+            target_name = "main_scenes"
+            target_index = "main_scenes_index"
+        
+        target = getattr(source, target_name)
+        idx = getattr(source, target_index)
+
+        try:
+            item = target[idx]
+        except IndexError:
+            pass
+        else:
+            if self.action == 'DOWN' and idx < len(target) - 1:
+                item_next = target[idx + 1].name
+                target.move(idx, idx + 1)
+                source[target_index] += 1
+                info = 'Item "%s" moved to position %d' % (item.name, source[target_index] + 1)
+                self.report({'INFO'}, info)
+
+            elif self.action == 'UP' and idx >= 1:
+                item_prev = target[idx - 1].name
+                target.move(idx, idx - 1)
+                source[target_index] -= 1
+                info = 'Item "%s" moved to position %d' % (item.name, source[target_index] + 1)
+                self.report({'INFO'}, info)
+
+            elif self.action == 'REMOVE':
+                info = 'Item "%s" removed from list' % (target[idx].name)
+                source[target_index] -= 1
+                target.remove(idx)
+                self.report({'INFO'}, info)
+
+        if self.action == 'ADD':
+            item = target.add()
+            item.name = f"Rule {idx +1}"
+            #name = f"Rule {idx +1}"
+            #target.append({"name": name})
+
+            source[target_index] = len(target) - 1
+            info = '"%s" added to list' % (item.name)
+            self.report({'INFO'}, info)
+        
+        return {"FINISHED"}
+
+
+
+#############
 
 
 #see here for original gltf exporter infos https://github.com/KhronosGroup/glTF-Blender-IO/blob/main/addons/io_scene_gltf2/__init__.py
@@ -87,12 +156,10 @@ def save_handler(dummy):
     #determine changed parameters
     addon_prefs = bpy.context.preferences.addons[__name__].preferences
 
-    print("addon_prefs", addon_prefs.items())
     prefs = {}
     for (k,v) in addon_prefs.items():
         if k not in AutoExportGltfPreferenceNames:
             prefs[k] = v
-            print("addon pre name ,", k," value: ", v)
 
     set1 = set(bpy.context.window_manager['previous_params'].items())
     set2 = set(prefs.items())
@@ -664,8 +731,10 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
     )
 
     main_scenes: CollectionProperty(name="main scenes", type=CUSTOM_PG_sceneName)
-    library_scenes: CollectionProperty(name="library scenes", type=CUSTOM_PG_sceneName)
+    main_scenes_index: IntProperty(name = "Index for main scenes list", default = 0)
 
+    library_scenes: CollectionProperty(name="library scenes", type=CUSTOM_PG_sceneName)
+    library_scenes_index: IntProperty(name = "Index for library scenes list", default = 0)
 
     #####
     export_format: EnumProperty(
@@ -1088,37 +1157,56 @@ class GLTF_PT_auto_export_root(bpy.types.Panel):
 
 
         # scene selectors
-
-        # FIXME: this is using addon prefs instead of operator temporarly
-        layout.label(text="main scenes")
-        for i in  bpy.context.preferences.addons[__name__].preferences.main_scenes:
-            layout.prop(i, "name")
-        layout.label(text="library scenes")
-        for i in  bpy.context.preferences.addons[__name__].preferences.library_scenes:
-            layout.prop(i, "name")
-        foo = bpy.context.preferences.addons[__name__].preferences.main_scenes
-
         row = layout.row()
         col = row.column(align=True)
         col.prop(context.scene, "main_scene")
         col.separator()
         col = row.column(align=True)
         col.prop(context.scene, "library_scene")
-        col.label(text="fsd")
-
-        #layout.prop(context.scene, "scenes_test")
-
-        for i in context.scene.scenes_test:
-            layout.prop(i, "scene")
 
         #layout.prop(context.scene, "FOO")
-        #obj = context.object
-        #layout.template_list("SCENES_UL", "", foo, "items", foo, "list_index")
-        #bpy.data.scenes
-      
-        
+        source = bpy.context.preferences.addons[__name__].preferences
 
-       
+        rows = 2
+
+        # main/level scenes
+        layout.label(text="main scenes")
+        row = layout.row()
+
+        row.template_list("SCENES_UL", "level scenes", source, "main_scenes", source, "main_scenes_index", rows=rows)
+
+        col = row.column(align=True)
+        add_operator = col.operator("scene_list.list_action", icon='ADD', text="")
+        add_operator.action = 'ADD'
+        add_operator.scene_type = 'level'
+
+        remove_operator = col.operator("scene_list.list_action", icon='REMOVE', text="")
+        remove_operator.action = 'REMOVE'
+        remove_operator.scene_type = 'level'
+        col.separator()
+
+        #up_operator = col.operator("scene_list.list_action", icon='TRIA_UP', text="")
+        #up_operator.action = 'UP'
+        #col.operator("scene_list.list_action", icon='TRIA_DOWN', text="").action = 'DOWN'
+
+        # library scenes
+        layout.label(text="library scenes")
+        row = layout.row()
+
+        row.template_list("SCENES_UL", "library scenes", source, "library_scenes", source, "library_scenes_index", rows=rows)
+
+        col = row.column(align=True)
+        add_operator = col.operator("scene_list.list_action", icon='ADD', text="")
+        add_operator.action = 'ADD'
+        add_operator.scene_type = 'library'
+
+        remove_operator = col.operator("scene_list.list_action", icon='REMOVE', text="")
+        remove_operator.action = 'REMOVE'
+        remove_operator.scene_type = 'library'
+        col.separator()
+
+
+      
 class GLTF_PT_auto_export_blueprints(bpy.types.Panel):
     bl_space_type = 'FILE_BROWSER'
     bl_region_type = 'TOOL_PROPS'
@@ -1265,14 +1353,14 @@ classes = [
     SceneLink,
     SceneLinks,
     CUSTOM_PG_sceneName,
+    SCENES_UL,
+    CUSTOM_OT_actions,
 
     AutoExportGLTF, 
     AutoExportGltfAddonPreferences,
 
     CollectionToExport,
     CollectionsToExport,
-
-    
 
     GLTF_PT_auto_export_main,
     GLTF_PT_auto_export_root,
@@ -1293,10 +1381,6 @@ def register():
     bpy.types.Scene.scenes_test = bpy.props.CollectionProperty(type=SceneLinks, name="all scenes", description="foo")
 
 
-    #bpy.types.Scene.FOO = bpy.props.CollectionProperty(type=LevelScenes)
-    bpy.utils.register_class(SCENES_UL)
-
-
     # setup handlers for updates & saving
     bpy.app.handlers.depsgraph_update_post.append(deps_update_handler)
     bpy.app.handlers.save_post.append(save_handler)
@@ -1310,9 +1394,9 @@ def register():
 
 
     ## just experiments
-    bpy.types.Object.list_index = IntProperty(name = "Index for demo_list",
-                                             default = 0)
-    
+    bpy.types.Scene.main_scenes_list_index = IntProperty(name = "Index for main scenes list", default = 0)
+    bpy.types.Scene.library_scenes_list_index = IntProperty(name = "Index for library scenes list", default = 0)
+
     
     mock_main_scenes = ["World", "level2"]
     main_scenes = bpy.context.preferences.addons[__name__].preferences.main_scenes
@@ -1325,6 +1409,10 @@ def register():
     for item_name in mock_library_scenes:
         item = library_scenes.add()
         item.name = item_name
+
+    bpy.context.preferences.addons[__name__].preferences.main_scenes_index = 0
+    bpy.context.preferences.addons[__name__].preferences.library_scenes_index = 0
+
 
 
 
@@ -1345,8 +1433,9 @@ def unregister():
 
     del bpy.types.Scene.main_scene
     del bpy.types.Scene.library_scene
-    #del bpy.types.Scene.FOO
-    del bpy.types.Object.list_index
+
+    del bpy.types.Scene.main_scenes_list_index
+    del bpy.types.Scene.library_scenes_list_index
 
 
 
