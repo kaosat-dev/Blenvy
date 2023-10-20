@@ -47,6 +47,7 @@ class CUSTOM_PG_sceneName(bpy.types.PropertyGroup):
     # name: bpy.props.StringProperty()
     name: bpy.props.StringProperty()
     display: bpy.props.BoolProperty()
+    # scene:bpy.props.PointerProperty(type=bpy.types.Scene, name="library scene", description="foo")
 
 
 ################
