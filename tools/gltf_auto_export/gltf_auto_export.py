@@ -1354,7 +1354,8 @@ class SCENES_UL(bpy.types.UIList):
             #    layout.prop(ma, "name", text="", emboss=False, icon_value=icon)
             #else:
             #    layout.label(text="", translate=False, icon_value=icon)
-            layout.prop(item, "name", text="", emboss=False, icon_value=icon)
+            layout.label(text=item.name, icon_value=icon)
+            #layout.prop(item, "name", text="", emboss=False, icon_value=icon)
         # 'GRID' layout type should be as compact as possible (typically a single icon!).
         elif self.layout_type == 'GRID':
             layout.alignment = 'CENTER'
