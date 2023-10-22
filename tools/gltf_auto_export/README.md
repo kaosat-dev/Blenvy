@@ -2,8 +2,15 @@
 
 For convenience I also added this [Blender addon](./gltf_auto_export.py) that 
 - automatically exports your level/world from Blender to gltf whenever you save your Blend file.
-- it also supports automatical exports of used collections as [Gltf blueprints](../../crates/bevy_gltf_blueprints/README.md) & more !
- 
+- in Blueprints mode (highly recommended !) : 
+    - supports automatic exports of used collections as [Gltf blueprints](../../crates/bevy_gltf_blueprints/README.md)
+    - supports any number of main/level scenes 
+        - Blender scenes where you define your levels, and all collection instances are replaced with "pointers" to other gltf files (all automatic)
+    - supports any number of library scenes
+        - Blender scenes where you define the assets that you use in your levels, in the form of collections
+    - automatic export of **changed** objects & collections only ! a sort of "incremental export", where only the changed collections (if in use)
+        get exported when you save your blend file
+   
 
 ## Installation: 
 
@@ -25,9 +32,26 @@ For convenience I also added this [Blender addon](./gltf_auto_export.py) that
 
 ![blender addon use](../../docs/blender_addon_use.png)
 
-* set the autoexport parameters : output path, name of your main scene etc in the **auto export** panel
+* set the autoexport parameters  in the **auto export** panel: 
 
-![blender addon use3](../../docs/blender_addon_use3.png)
+    ![blender addon use3](../../docs/blender_addon_use3.png)
+
+
+    - export folder
+    - pick your main (level) scenes and library scenes (see the chapter about Blueprints below)   
+        - click in the scene picker & select your scene
+
+        ![select scene](../../docs/blender_addon_add_scene.png)
+
+        - click on the "+" icon
+
+        ![select scene2](../../docs/blender_addon_add_scene2.png)
+
+        - your scene is added to the list
+        
+        ![select scene3](../../docs/blender_addon_add_scene3.png) 
+
+
 
 * and your standard gltf export parameters in the **gltf** panel
 
@@ -83,12 +107,6 @@ and what actually gets exported for the main scene/world/level
 ![](../../docs/workflow_empties.jpg)
 
 all collections instances replaced with empties, and all those collections exported to gltf files as seen above
-
-
-### TODO:
-
-- [ ] add ability to have multiple main & library scenes
-- [ ] detect which objects have been changed to only re-export those
 
 ## License
 
