@@ -44,10 +44,8 @@ class SceneLinks(bpy.types.PropertyGroup):
     items: bpy.props.CollectionProperty(type = SceneLink)
 
 class CUSTOM_PG_sceneName(bpy.types.PropertyGroup):
-    # name: bpy.props.StringProperty()
     name: bpy.props.StringProperty()
     display: bpy.props.BoolProperty()
-    # scene:bpy.props.PointerProperty(type=bpy.types.Scene, name="library scene", description="foo")
 
 
 ################
@@ -71,7 +69,7 @@ class CUSTOM_OT_actions(Operator):
     scene_type: bpy.props.StringProperty()#TODO: replace with enum
 
     def invoke(self, context, event):
-        print("INVOKE", self.scene_type, __name__, context.scene.main_scene)
+        print("INVOKE", self.scene_type, __name__)
         source = bpy.context.preferences.addons[__name__].preferences
         target_name = "library_scenes"
         target_index = "library_scenes_index"
@@ -1027,16 +1025,12 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
     # Custom scene property for saving settings
     scene_key = "auto_gltfExportSettings"
 
-    #@classmethod
-    #def poll(cls, context):
-    #    prefs = context.preferences.addons[__name__].preferences
-    #    return len(prefs.main_scenes) > 0 and len(prefs.library_scenes) > 0
-
-
     def save_settings(self, context):
         # find all props to save
         exceptional = [
             # options that don't start with 'export_'  
+            'main_scenes',
+            'library_scenes'
         ]
         all_props = self.properties
         export_props = {
@@ -1051,6 +1045,8 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         # find all props to save
         exceptional = [
             # options that don't start with 'export_'  
+            'main_scenes',
+            'library_scenes'
         ]
         all_props = self.properties
         export_props = {
@@ -1068,10 +1064,6 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
             self.save_settings(context)
         # apply the operator properties to the addon preferences
         self.apply_settings_to_preferences(context)
-
-        main_scene_name = context.scene.main_scene.name if context.scene.main_scene else ""
-        library_scene_name = context.scene.library_scene.name if context.scene.library_scene else ""
-        print("pointers", main_scene_name, "lib", library_scene_name)
 
         return {'FINISHED'}    
     
@@ -1094,6 +1086,9 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
                 self.report({"ERROR"}, "Loading export settings failed. Removed corrupted settings")
                 del context.scene[self.scene_key]
 
+
+        for (k, v) in self.properties.items():
+            print("PROPERTIES", k, v)
 
         addon_prefs = bpy.context.preferences.addons[__name__].preferences
 
@@ -1171,21 +1166,16 @@ class GLTF_PT_auto_export_root(bpy.types.Panel):
 
         sfile = context.space_data
         operator = sfile.active_operator
-        #operator = bpy.context.preferences.addons[__name__].preferences
 
         layout.active = operator.auto_export
         layout.prop(operator, 'will_save_settings')
-        #layout.prop(operator, "export_main_scene_name")
-        #layout.prop(operator, "export_library_scene_name")
         layout.prop(operator, "export_output_folder")
-
 
         # scene selectors
         row = layout.row()
         col = row.column(align=True)
         col.separator()
 
-        #layout.prop(context.scene, "FOO")
         source = bpy.context.preferences.addons[__name__].preferences
 
         rows = 2
@@ -1195,13 +1185,14 @@ class GLTF_PT_auto_export_root(bpy.types.Panel):
         layout.prop(context.scene, "main_scene", text='')
 
         row = layout.row()
-        row.template_list("SCENES_UL", "level scenes", source, "main_scenes", source, "main_scenes_index", rows=rows)
+        row.template_list("GLTF_auto_export_UL_SCENES", "level scenes", source, "main_scenes", source, "main_scenes_index", rows=rows)
 
         col = row.column(align=True)
         sub_row = col.row()
         add_operator = sub_row.operator("scene_list.list_action", icon='ADD', text="")
         add_operator.action = 'ADD'
         add_operator.scene_type = 'level'
+        #add_operator.source = operator
         sub_row.enabled = context.scene.main_scene is not None
 
         sub_row = col.row()
@@ -1219,7 +1210,7 @@ class GLTF_PT_auto_export_root(bpy.types.Panel):
         layout.prop(context.scene, "library_scene", text='')
 
         row = layout.row()
-        row.template_list("SCENES_UL", "library scenes", source, "library_scenes", source, "library_scenes_index", rows=rows)
+        row.template_list("GLTF_auto_export_UL_SCENES", "library scenes", source, "library_scenes", source, "library_scenes_index", rows=rows)
 
         col = row.column(align=True)
         sub_row = col.row()
@@ -1329,7 +1320,7 @@ class GLTF_PT_auto_export_gltf(bpy.types.Panel):
 
     
 
-class SCENES_UL(bpy.types.UIList):
+class GLTF_auto_export_UL_SCENES(bpy.types.UIList):
     # The draw_item function is called for each item of the collection that is visible in the list.
     #   data is the RNA object containing the collection,
     #   item is the current drawn item of the collection,
@@ -1384,7 +1375,7 @@ classes = [
     SceneLink,
     SceneLinks,
     CUSTOM_PG_sceneName,
-    SCENES_UL,
+    GLTF_auto_export_UL_SCENES,
     CUSTOM_OT_actions,
 
     AutoExportGLTF, 
@@ -1401,16 +1392,7 @@ classes = [
 ]
 
 
-def main_scene_adder_change(self, context):
-    print("main scene adder")
-    print(context.area.type)
-    return None
 
-def library_scene_adder_change(self, context):
-    print("library scene adder")
-    #print(context.copy())
-    print(context.area.type)
-    return None
 
 def is_scene_ok(self, scene):
     prefs = bpy.context.preferences.addons[__name__].preferences
@@ -1421,12 +1403,8 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-
-    bpy.types.Scene.main_scene = bpy.props.PointerProperty(type=bpy.types.Scene, name="main scene", description="main_scene_chooser", update=main_scene_adder_change, poll=is_scene_ok)
-    bpy.types.Scene.library_scene = bpy.props.PointerProperty(type=bpy.types.Scene, name="library scene", description="library_scene_picker", update=library_scene_adder_change, poll=is_scene_ok)
-    
-    bpy.types.Scene.scenes_test = bpy.props.CollectionProperty(type=SceneLinks, name="all scenes", description="foo")
-
+    bpy.types.Scene.main_scene = bpy.props.PointerProperty(type=bpy.types.Scene, name="main scene", description="main_scene_chooser", poll=is_scene_ok)
+    bpy.types.Scene.library_scene = bpy.props.PointerProperty(type=bpy.types.Scene, name="library scene", description="library_scene_picker", poll=is_scene_ok)
 
     # setup handlers for updates & saving
     bpy.app.handlers.depsgraph_update_post.append(deps_update_handler)
@@ -1473,8 +1451,6 @@ def unregister():
     
     del bpy.types.WindowManager.changedScene
     del bpy.types.WindowManager.exportedCollections
-
-    del bpy.types.Scene.scenes_test
 
     del bpy.types.Scene.main_scene
     del bpy.types.Scene.library_scene
