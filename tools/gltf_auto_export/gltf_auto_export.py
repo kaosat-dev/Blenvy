@@ -1,7 +1,7 @@
 bl_info = {
     "name": "gltf_auto_export",
     "author": "kaosigh",
-    "version": (0, 5),
+    "version": (0, 5, 1),
     "blender": (3, 4, 0),
     "location": "File > Import-Export",
     "description": "glTF/glb auto-export",
@@ -175,7 +175,8 @@ def save_handler(dummy):
         if k not in AutoExportGltfPreferenceNames:
             prefs[k] = v
 
-    set1 = set(bpy.context.window_manager['previous_params'].items())
+    previous_params = bpy.context.window_manager['previous_params'] if 'previous_params' in bpy.context.window_manager else {}
+    set1 = set(previous_params.items())
     set2 = set(prefs.items())
     difference = dict(set1 ^ set2)
     
@@ -206,6 +207,7 @@ def set_changedScene(self, value):
 #https://docs.blender.org/api/current/bpy.ops.export_scene.html#bpy.ops.export_scene.gltf
 def export_gltf (path, export_settings):
     settings = {**export_settings, "filepath": path}
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     bpy.ops.export_scene.gltf(**settings)
 
 
@@ -456,6 +458,13 @@ def check_if_blueprints_exist(collections, folder_path, extension):
             not_found_blueprints.append(collection_name)
     return not_found_blueprints
 
+
+def check_if_level_on_disk(scene_name, folder_path, extension):
+    gltf_output_path = os.path.join(folder_path, scene_name + extension)
+    found = os.path.exists(gltf_output_path) and os.path.isfile(gltf_output_path)
+    print("level", scene_name, "found", found, "path", gltf_output_path)
+    return found
+
 ######################################################
 #### Export logic #####
 
@@ -593,14 +602,12 @@ def auto_export(changes_per_scene, changed_export_parameters):
         export_blueprints = getattr(addon_prefs,"export_blueprints")
         export_output_folder = getattr(addon_prefs,"export_output_folder")
 
-        main_scene_names= list(map(lambda scene: scene.name, getattr(addon_prefs,"main_scenes")))
-        library_scene_names = list(map(lambda scene: scene.name, getattr(addon_prefs,"library_scenes")))
+        [main_scene_names, level_scenes, library_scene_names, library_scenes] = get_scenes(addon_prefs)
+
         print("main scenes", main_scene_names, "library_scenes", library_scene_names)
         print("export_output_folder", export_output_folder)
 
-        # export the main game world
-        level_scenes = list(map(lambda name: bpy.data.scenes[name], main_scene_names))
-        library_scenes = list(map(lambda name: bpy.data.scenes[name], library_scene_names))
+
 
         # export everything everytime
         if export_blueprints:
@@ -610,6 +617,7 @@ def auto_export(changes_per_scene, changed_export_parameters):
             # first check if all collections have already been exported before (if this is the first time the exporter is run
             # in your current Blender session for example)
             export_blueprints_path = os.path.join(folder_path, export_output_folder, getattr(addon_prefs,"export_blueprints_path")) if getattr(addon_prefs,"export_blueprints_path") != '' else folder_path
+            export_levels_path = os.path.join(folder_path, export_output_folder)
 
             gltf_extension = getattr(addon_prefs, "export_format")
             gltf_extension = '.glb' if gltf_extension == 'GLB' else '.gltf'
@@ -651,7 +659,7 @@ def auto_export(changes_per_scene, changed_export_parameters):
             # first export any main/level/world scenes
             print("export MAIN scenes")
             for scene_name in main_scene_names:
-                do_export_main_scene =  changed_export_parameters or (scene_name in changes_per_scene.keys() and len(changes_per_scene[scene_name].keys()) > 0) 
+                do_export_main_scene =  changed_export_parameters or (scene_name in changes_per_scene.keys() and len(changes_per_scene[scene_name].keys()) > 0) or not check_if_level_on_disk(scene_name, export_levels_path, gltf_extension)
                 if do_export_main_scene:
                     print("     exporting scene:", scene_name)
                     export_main_scene(bpy.data.scenes[scene_name], folder_path, addon_prefs)
@@ -688,8 +696,18 @@ def auto_export(changes_per_scene, changed_export_parameters):
 
         bpy.context.window_manager.popup_menu(error_message, title="Error", icon='ERROR')
 
+# convenience utility to get lists of scenes
+def get_scenes(addon_prefs):
+    level_scene_names= list(map(lambda scene: scene.name, getattr(addon_prefs,"main_scenes")))
+    library_scene_names = list(map(lambda scene: scene.name, getattr(addon_prefs,"library_scenes")))
 
+    level_scene_names = list(filter(lambda name: name in bpy.data.scenes, level_scene_names))
+    library_scene_names = list(filter(lambda name: name in bpy.data.scenes, library_scene_names))
 
+    level_scenes = list(map(lambda name: bpy.data.scenes[name], level_scene_names))
+    library_scenes = list(map(lambda name: bpy.data.scenes[name], library_scene_names))
+    
+    return [level_scene_names, level_scenes, library_scene_names, library_scenes]
 
 ######################################################
 ## ui logic & co
@@ -1092,11 +1110,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
 
         addon_prefs = bpy.context.preferences.addons[__name__].preferences
 
-        main_scene_names= list(map(lambda scene: scene.name, getattr(addon_prefs,"main_scenes")))
-        library_scene_names = list(map(lambda scene: scene.name, getattr(addon_prefs,"library_scenes")))
-        level_scenes = list(map(lambda name: bpy.data.scenes[name], main_scene_names))
-        library_scenes = list(map(lambda name: bpy.data.scenes[name], library_scene_names))
-       
+        [main_scene_names, level_scenes, library_scene_names, library_scenes]=get_scenes(addon_prefs)
         collections = get_exportable_collections(level_scenes, library_scenes)
 
         try:
