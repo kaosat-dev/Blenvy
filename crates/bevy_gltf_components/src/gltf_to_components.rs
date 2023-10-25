@@ -6,109 +6,18 @@ use serde::de::DeserializeSeed;
 use bevy::ecs::{entity::Entity, reflect::ReflectComponent};
 use bevy::gltf::{Gltf, GltfExtras};
 use bevy::prelude::{debug, info, warn, Assets, Name, Parent, ResMut};
-use bevy::reflect::serde::UntypedReflectDeserializer;
-use bevy::reflect::{Reflect, TypeInfo, TypeRegistryInternal};
+use bevy::reflect::serde::{UntypedReflectDeserializer, ReflectSerializer};
+use bevy::reflect::{Reflect, TypeInfo, TypeRegistry, DynamicStruct};
 use bevy::scene::Scene;
 use bevy::utils::HashMap;
 
+
 use super::capitalize_first_letter;
 
-/// main function: injects components into each entity in gltf files that have gltf_extras, using reflection
-pub fn gltf_extras_to_components(
-    gltf: &mut Gltf,
-    scenes: &mut ResMut<Assets<Scene>>,
-    type_registry: impl Deref<Target = TypeRegistryInternal>,
-    gltf_name: &str,
-) {
-    let mut added_components = 0;
-    for (_name, scene) in &gltf.named_scenes {
-        debug!("gltf: {:?} scene name {:?}", gltf_name, _name);
-
-        let scene = scenes.get_mut(scene).unwrap();
-
-        let mut query = scene.world.query::<(Entity, &Name, &GltfExtras, &Parent)>();
-        let mut entity_components: HashMap<Entity, Vec<Box<dyn Reflect>>> = HashMap::new();
-        for (entity, name, extras, parent) in query.iter(&scene.world) {
-            debug!("Name: {}, entity {:?}, parent: {:?}", name, entity, parent);
-            let reflect_components = ronstring_to_reflect_component(&extras.value, &type_registry);
-            added_components = reflect_components.len();
-            debug!("Found components {}", added_components);
-
-            // we assign the components specified /xxx_components objects to their parent node
-            let mut target_entity = entity;
-            // if the node contains "components" or ends with "_pa" (ie add to parent), the components will not be added to the entity itself but to its parent
-            // this is mostly used for Blender collections
-            if name.as_str().contains("components") || name.as_str().ends_with("_pa") {
-                debug!("adding components to parent");
-                target_entity = parent.get();
-            }
-
-            debug!("adding to {:?}", target_entity);
-
-            // if there where already components set to be added to this entity (for example when entity_data was refering to a parent), update the vec of entity_components accordingly
-            // this allows for example blender collection to provide basic ecs data & the instances to override/ define their own values
-            if entity_components.contains_key(&target_entity) {
-                let mut updated_components: Vec<Box<dyn Reflect>> = Vec::new();
-                let current_components = &entity_components[&target_entity];
-                // first inject the current components
-                for component in current_components {
-                    updated_components.push(component.clone_value());
-                }
-                // then inject the new components: this also enables overwrite components set in the collection
-                for component in reflect_components {
-                    updated_components.push(component.clone_value());
-                }
-                entity_components.insert(target_entity, updated_components);
-            } else {
-                entity_components.insert(target_entity, reflect_components);
-            }
-            // shorthand, did not manage to get it working
-            /*  entity_components.insert(
-            target_entity,
-            if entity_components.contains_key(&target_entity) {
-              entity_components[&target_entity].push(reflect_components) } else { reflect_components }
-            );*/
-
-            debug!("-----value {:?}", &extras.value);
-        }
-
-        // GltfNode
-        // find a way to link this name to the current entity ? => WOULD BE VERY USEFULL for animations & co !!
-        debug!("done pre-processing components, now adding them to entities");
-        for (entity, components) in entity_components {
-            if !components.is_empty() {
-                debug!("--entity {:?}, components {}", entity, components.len());
-            }
-            for component in components {
-                let mut entity_mut = scene.world.entity_mut(entity);
-                debug!("------adding {} {:?}", component.type_name(), component);
-
-                type_registry
-                    .get_with_name(component.type_name())
-                    .unwrap() // Component was successfully deserialized, it has to be in the registry
-                    .data::<ReflectComponent>()
-                    .unwrap() // Hopefully, the component deserializer ensures those are components
-                    .insert(&mut entity_mut, &*component);
-
-                // info!("all components {:?}", scene.world.entity(entity).archetype().components());
-                // scene.world.components().
-                // TODO: how can we insert any additional components "by hand" here ?
-            }
-            // let entity_mut = scene.world.entity_mut(entity);
-            // let archetype = entity_mut.archetype().clone();
-            // let _all_components = archetype.components();
-
-            if added_components > 0 {
-                debug!("------done adding {} components", added_components);
-            }
-        }
-    }
-    info!("done extracting gltf_extras /n");
-}
 
 pub fn ronstring_to_reflect_component(
     ron_string: &String,
-    type_registry: &TypeRegistryInternal,
+    type_registry: &TypeRegistry,
 ) -> Vec<Box<dyn Reflect>> {
     let lookup: HashMap<String, Value> = ron::from_str(ron_string.as_str()).unwrap();
     let mut components: Vec<Box<dyn Reflect>> = Vec::new();
@@ -125,9 +34,9 @@ pub fn ronstring_to_reflect_component(
         }
 
         if let Some(type_registration) =
-            type_registry.get_with_short_name(capitalized_type_name.as_str())
+            type_registry.get_with_short_type_path(capitalized_type_name.as_str())
         {
-            // println!("TYPE INFO {:?}", type_registration.type_info());
+            info!("TYPE INFO {:?}", type_registration.type_info());
             match type_registration.type_info() {
                 TypeInfo::TupleStruct(info) => {
                     // we handle tupple strucs with only one field differently, as Blender's custom properties with custom ui (float, int, bool, etc) always give us a tupple struct
@@ -135,7 +44,7 @@ pub fn ronstring_to_reflect_component(
                         let field = info
                             .field_at(0)
                             .expect("we should always have at least one field here");
-                        let field_name = field.type_name();
+                        let field_name = field.type_path();
                         // TODO: find a way to cast with typeId instead of this matching
                         /*match field.type_id(){
                           TypeId::of::<f32>() => {
@@ -212,18 +121,18 @@ pub fn ronstring_to_reflect_component(
 
             let ron_string = format!(
                 "{{ \"{}\":{} }}",
-                type_registration.type_name(),
+                type_registration.type_info().type_path(),
                 parsed_value
             );
 
             // usefull to determine what an entity looks like Serialized
-            /*let test_struct = TuppleTestStr::default();
+            let test_struct = Enemy::default();
             let serializer = ReflectSerializer::new(&test_struct, &type_registry);
             let serialized =
                 ron::ser::to_string_pretty(&serializer, ron::ser::PrettyConfig::default()).unwrap();
-            println!("serialized Component {}", serialized);*/
+            println!("serialized Component {}", serialized);
 
-            // println!("component data ron string {}", ron_string);
+            info!("component data ron string {}", ron_string);
             let mut deserializer = ron::Deserializer::from_str(ron_string.as_str()).unwrap();
             let reflect_deserializer = UntypedReflectDeserializer::new(type_registry);
             let component = reflect_deserializer.deserialize(&mut deserializer).expect(
@@ -234,11 +143,114 @@ pub fn ronstring_to_reflect_component(
                 .as_str(),
             );
 
+            info!("component {:?}", component);
+            info!("real type {:?}", component.get_represented_type_info());
+
+            let _deserialized_struct = component.downcast_ref::<DynamicStruct>();
+            
+            info!("component test {:?}", _deserialized_struct);
+
             components.push(component);
-            debug!("found type registration for {}", capitalized_type_name);
+            info!("found type registration for {}", capitalized_type_name);
         } else {
             warn!("no type registration for {}", capitalized_type_name);
         }
     }
     components
+}
+
+
+/// main function: injects components into each entity in gltf files that have gltf_extras, using reflection
+pub fn gltf_extras_to_components(
+    gltf: &mut Gltf,
+    scenes: &mut ResMut<Assets<Scene>>,
+    type_registry: impl Deref<Target = TypeRegistry>,
+    gltf_name: &str,
+) {
+    let mut added_components = 0;
+    for (_name, scene) in &gltf.named_scenes {
+        info!("gltf: {:?} scene name {:?}", gltf_name, _name);
+
+        let scene = scenes.get_mut(scene).unwrap();
+
+        let mut query = scene.world.query::<(Entity, &Name, &GltfExtras, &Parent)>();
+        let mut entity_components: HashMap<Entity, Vec<Box<dyn Reflect>>> = HashMap::new();
+        for (entity, name, extras, parent) in query.iter(&scene.world) {
+            info!("Name: {}, entity {:?}, parent: {:?}", name, entity, parent);
+            let reflect_components = ronstring_to_reflect_component(&extras.value, &type_registry);
+            added_components = reflect_components.len();
+            info!("Found components {}", added_components);
+
+            // we assign the components specified /xxx_components objects to their parent node
+            let mut target_entity = entity;
+            // if the node contains "components" or ends with "_pa" (ie add to parent), the components will not be added to the entity itself but to its parent
+            // this is mostly used for Blender collections
+            if name.as_str().contains("components") || name.as_str().ends_with("_pa") {
+                info!("adding components to parent");
+                target_entity = parent.get();
+            }
+
+            info!("adding to {:?}", target_entity);
+
+            // if there where already components set to be added to this entity (for example when entity_data was refering to a parent), update the vec of entity_components accordingly
+            // this allows for example blender collection to provide basic ecs data & the instances to override/ define their own values
+            if entity_components.contains_key(&target_entity) {
+                let mut updated_components: Vec<Box<dyn Reflect>> = Vec::new();
+                let current_components = &entity_components[&target_entity];
+                // first inject the current components
+                for component in current_components {
+                    updated_components.push(component.clone_value());
+                }
+                // then inject the new components: this also enables overwrite components set in the collection
+                for component in reflect_components {
+                    updated_components.push(component.clone_value());
+                }
+                entity_components.insert(target_entity, updated_components);
+            } else {
+                entity_components.insert(target_entity, reflect_components);
+            }
+            // shorthand, did not manage to get it working
+            /*  entity_components.insert(
+            target_entity,
+            if entity_components.contains_key(&target_entity) {
+              entity_components[&target_entity].push(reflect_components) } else { reflect_components }
+            );*/
+
+            info!("-----value {:?}", &extras.value);
+        }
+
+        // GltfNode
+        // find a way to link this name to the current entity ? => WOULD BE VERY USEFULL for animations & co !!
+        info!("done pre-processing components, now adding them to entities");
+        for (entity, components) in entity_components {
+            if !components.is_empty() {
+                info!("--entity {:?}, components {}", entity, components.len());
+            }
+            for component in components {
+                let mut entity_mut = scene.world.entity_mut(entity);
+                info!("------adding {} {:?}", component.get_represented_type_info().unwrap().type_path(), component);
+                
+                let toto = component.get_represented_type_info().unwrap().type_path();
+                info!("MIERDA {:?}",toto);//component.reflect_type_path());
+                type_registry
+                    .get_with_type_path(toto)//component.reflect_type_path())
+                    .unwrap() // Component was successfully deserialized, it has to be in the registry
+                    .data::<ReflectComponent>()
+                    .unwrap() // Hopefully, the component deserializer ensures those are components
+                    .insert(&mut entity_mut, &*component);
+
+                // info!("all components {:?}", scene.world.entity(entity).archetype().components());
+                // scene.world.components().
+                // TODO: how can we insert any additional components "by hand" here ?
+            }
+            // let entity_mut = scene.world.entity_mut(entity);
+            // let archetype = entity_mut.archetype().clone();
+            // let _all_components = archetype.components();
+
+            if added_components > 0 {
+                info!("------done adding {} components", added_components);
+            }
+        }
+    }
+    // info_old!("done extracting gltf_extras /n");
 }
