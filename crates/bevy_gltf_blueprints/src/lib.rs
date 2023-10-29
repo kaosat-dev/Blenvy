@@ -59,6 +59,9 @@ impl Plugin for BlueprintsPlugin {
         app.add_plugins(ComponentsFromGltfPlugin)
             .register_type::<BlueprintName>()
             .register_type::<SpawnHere>()
+
+            .register_type::<Animations>()
+            
             .insert_resource(BluePrintsConfig {
                 library_folder: self.library_folder.clone(),
             })

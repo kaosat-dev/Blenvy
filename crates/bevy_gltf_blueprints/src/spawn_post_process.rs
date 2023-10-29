@@ -7,7 +7,7 @@ use super::{Original, SpawnedRoot};
 // FIXME: move to more relevant module
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-pub struct AnimationHelper {
+pub struct Animations {
     pub named_animations: HashMap<String, Handle<AnimationClip>>,
 }
 
@@ -22,7 +22,7 @@ pub(crate) struct SpawnedRootProcessed;
 // - scene instance -> does not work
 // it might be due to how we add components to the PARENT item in gltf to components
 pub(crate) fn update_spawned_root_first_child(
-    // all_children: Query<(Entity, &Children)>,
+    // 
     unprocessed_entities: Query<
         (Entity, &Children, &Name, &Parent, &Original),
         (With<SpawnedRoot>, Without<SpawnedRootProcessed>),
@@ -30,8 +30,12 @@ pub(crate) fn update_spawned_root_first_child(
     mut commands: Commands,
 
     // FIXME: should be done at a more generic gltf level
-    animation_helpers: Query<&AnimationHelper>,
-    added_animation_helpers: Query<(Entity, &AnimationPlayer), Added<AnimationPlayer>>,
+    animations: Query<&Animations>,
+    added_animation_players: Query<(Entity, &AnimationPlayer, &Name, &Parent), Added<AnimationPlayer>>,
+    animaton_clips: ResMut<Assets<AnimationClip>>,
+    all_children: Query<(Entity, &Children)>,
+
+    
 ) {
     /*
       currently we have
@@ -85,15 +89,55 @@ pub(crate) fn update_spawned_root_first_child(
         // parent is either the world or an entity with a marker (BlueprintName)
         commands.entity(parent.get()).add_child(*root_entity);
       
-        let matching_animation_helper = animation_helpers.get(scene_instance);
+        
+        let matching_animations = animations.get(scene_instance);
 
-        if let Ok(anim_helper) = matching_animation_helper {
-            for (added, _) in added_animation_helpers.iter() {
-                commands.entity(added).insert(AnimationHelper {
-                    named_animations: anim_helper.named_animations.clone(),
-                });
+        if let Ok(animations) = matching_animations {
+            if animations.named_animations.keys().len() > 0 {
+
+            println!("found animations");
+            for (added, _, name, parent) in added_animation_players.iter() {
+                println!("added {:?} {} vs rt {:?}", added, name, root_entity);
+                if parent.get() == *root_entity {
+                    println!("parent of root node");
+               
+
+               
+                println!("adding animations to {:?} {:?} {:?}",added, name, animations.named_animations.keys());
+                    /*let my_anims: HashMap<String, Handle<AnimationClip>> = HashMap::new(); //HashMap<String, Handle<AnimationClip>>();
+                    for anim in animations.named_animations.iter() {
+                        let animation_name = anim.0.clone();
+                        let bla = anim.1;
+                        // *bla.
+                        //let gna = animaton_clips.get(bla);
+                        if let Some(toto) = animaton_clips.get(bla) {
+                            println!("got some clip {:?}", toto.curves());
+                            
+                        }
+                        let toto = AnimationClip::default();
+                        // my_anims.insert(animation_name, toto);
+                    }*/
+
+                    commands.entity(added).insert(Animations {
+                        named_animations: animations.named_animations.clone(),
+                    });
+                // }
+                 }
+            }
+                // commands.entity(*root_entity).insert(AnimationPlayer::default());
             }
         }
+        /* 
+        let blabla = added_animation_players.get(*root_entity);
+        if let Ok(truc) = blabla {
+            println!("FOUND ANIMATION");
+        }
+        for bla in added_animation_players.iter(){
+            println!("BLA ANIM {:?}", bla.0);
+            println!("aaah {:?}, bbbbb {:?}", root_entity, scene_instance);
+        }*/
+
+        
 
         commands.add(CloneEntity {
             source: original.0,

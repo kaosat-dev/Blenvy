@@ -2,7 +2,7 @@ use std::path::Path;
 
 use bevy::{gltf::Gltf, prelude::*};
 
-use crate::BluePrintsConfig;
+use crate::{BluePrintsConfig, Animations};
 
 /// this is a flag component for our levels/game world
 #[derive(Component)]
@@ -85,6 +85,11 @@ pub(crate) fn spawn_from_blueprints(
                 // Parent(world) // FIXME/ would be good if this worked directly
                 SpawnedRoot,
                 Original(entity),
+
+                Animations{ // TODO: insert this at the ENTITY level, not the scene level
+                    named_animations: gltf.named_animations.clone(),
+                    // animations: gltf.named_animations.values().clone()
+                },
             ))
             .id();
         commands.entity(world).add_child(child_scene);
