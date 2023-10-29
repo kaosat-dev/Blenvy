@@ -31,6 +31,10 @@ name = "basic"
 path = "examples/basic/main.rs"
 
 [[example]]
+name = "animation"
+path = "examples/animation/main.rs"
+
+[[example]]
 name = "advanced"
 path = "examples/advanced/main.rs"
 
