@@ -11,6 +11,9 @@ pub struct Animations {
     pub named_animations: HashMap<String, Handle<AnimationClip>>,
 }
 
+#[derive(Component, Debug)]
+pub struct AnimationPlayerLink(pub Entity);
+
 #[derive(Component)]
 /// FlagComponent for dynamically spawned scenes
 pub(crate) struct SpawnedRootProcessed;
@@ -100,10 +103,7 @@ pub(crate) fn update_spawned_root_first_child(
                 println!("added {:?} {} vs rt {:?}", added, name, root_entity);
                 if parent.get() == *root_entity {
                     println!("parent of root node");
-               
-
-               
-                println!("adding animations to {:?} {:?} {:?}",added, name, animations.named_animations.keys());
+                    println!("adding animations to {:?} {:?} {:?}",added, name, animations.named_animations.keys());
                     /*let my_anims: HashMap<String, Handle<AnimationClip>> = HashMap::new(); //HashMap<String, Handle<AnimationClip>>();
                     for anim in animations.named_animations.iter() {
                         let animation_name = anim.0.clone();
@@ -119,6 +119,14 @@ pub(crate) fn update_spawned_root_first_child(
                     }*/
 
                     commands.entity(added).insert(Animations {
+                        named_animations: animations.named_animations.clone(),
+                    });
+                    // FIXME: stopgap solution: since we cannot insert an AnimationPlayer at the root entity level
+                    // and we cannot update animation clips, so that the EntityPaths point to one level deeper,
+                    // BUT we still want to have some marker/control at the root entity level, we add this
+                    commands.entity(*root_entity).insert(AnimationPlayerLink(added));
+
+                    commands.entity(*root_entity).insert(Animations {
                         named_animations: animations.named_animations.clone(),
                     });
                 // }

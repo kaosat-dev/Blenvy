@@ -6,7 +6,9 @@ use crate::{
     assets::GameAssets,
     state::{GameState, InAppRunning},
 };
-use bevy_gltf_blueprints::{GameWorldTag, Animations};
+use bevy_gltf_blueprints::{GameWorldTag, Animations, AnimationPlayerLink};
+
+use super::Enemy;
 
 pub fn setup_game(
     mut commands: Commands,
@@ -35,10 +37,45 @@ pub fn setup_game(
 
 
 pub fn animation_control(
-    mut entities_with_animations : Query<(&mut AnimationPlayer, &mut Animations)>,
+    // mut entities_with_animations : Query<(&mut AnimationPlayer, &mut Animations)>,
+
+    animated_enemies: Query<(&AnimationPlayerLink, &Animations), With<Enemy>>,
+    mut animation_players: Query<&mut AnimationPlayer>,
+
     keycode: Res<Input<KeyCode>>,
 ) {
-    for (mut anim_player, animations) in entities_with_animations.iter_mut(){
+    if keycode.just_pressed(KeyCode::B) {
+        for (link, animations) in  animated_enemies.iter() {
+            let mut animation_player = animation_players.get_mut(link.0).unwrap();
+            let anim_name = "Scan";
+            if animations.named_animations.contains_key(anim_name) {
+                let clip = animations.named_animations.get(anim_name).unwrap();
+                animation_player.play_with_transition(clip.clone(), Duration::from_secs(5)).repeat();
+            }
+        }
+    }
+
+    /* 
+    // a bit more ideal API
+    if keycode.just_pressed(KeyCode::B) {
+        for (animation_player, animations) in  animated_enemies.iter() {
+            let anim_name = "Scan";
+            if animations.named_animations.contains_key(anim_name) {
+                let clip = animations.named_animations.get(anim_name).unwrap();
+                animation_player.play_with_transition(clip.clone(), Duration::from_secs(5)).repeat();
+            }
+        }
+    }
+
+    // even better API
+    if keycode.just_pressed(KeyCode::B) {
+        for (animation_player, animations) in  animated_enemies.iter() {
+            animation_player.play_with_transition("Scan", Duration::from_secs(5)).repeat();
+        }
+    }*/
+
+
+    /*for (mut anim_player, animations) in entities_with_animations.iter_mut(){
 
         if keycode.just_pressed(KeyCode::W) {
             let anim_name = "Walk";
@@ -78,5 +115,5 @@ pub fn animation_control(
                 anim_player.play_with_transition(clip.clone(), Duration::from_secs(5)).repeat();
             }
         }    
-    }
+    }*/
 }
