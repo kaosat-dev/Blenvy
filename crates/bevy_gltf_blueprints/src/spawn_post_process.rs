@@ -1,18 +1,10 @@
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 
+use crate::{Animations, AnimationPlayerLink};
+
 use super::{CloneEntity, SpawnHere};
 use super::{Original, SpawnedRoot};
-
-// FIXME: move to more relevant module
-#[derive(Component, Reflect, Default, Debug)]
-#[reflect(Component)]
-pub struct Animations {
-    pub named_animations: HashMap<String, Handle<AnimationClip>>,
-}
-
-#[derive(Component, Debug)]
-pub struct AnimationPlayerLink(pub Entity);
 
 #[derive(Component)]
 /// FlagComponent for dynamically spawned scenes
@@ -36,9 +28,7 @@ pub(crate) fn update_spawned_root_first_child(
     animations: Query<&Animations>,
     added_animation_players: Query<(Entity, &AnimationPlayer, &Name, &Parent), Added<AnimationPlayer>>,
     animaton_clips: ResMut<Assets<AnimationClip>>,
-    all_children: Query<(Entity, &Children)>,
-
-    
+    all_children: Query<(Entity, &Children)>, 
 ) {
     /*
       currently we have
