@@ -1,10 +1,9 @@
 use bevy::prelude::*;
-use bevy::utils::HashMap;
-
-use crate::{Animations, AnimationPlayerLink};
 
 use super::{CloneEntity, SpawnHere};
 use super::{Original, SpawnedRoot};
+use super::{Animations, AnimationPlayerLink};
+
 
 #[derive(Component)]
 /// FlagComponent for dynamically spawned scenes
@@ -24,11 +23,9 @@ pub(crate) fn update_spawned_root_first_child(
     >,
     mut commands: Commands,
 
-    // FIXME: should be done at a more generic gltf level
+    // FIXME: not sure , but might be better if done at a more generic gltf level 
     animations: Query<&Animations>,
-    added_animation_players: Query<(Entity, &AnimationPlayer, &Name, &Parent), Added<AnimationPlayer>>,
-    animaton_clips: ResMut<Assets<AnimationClip>>,
-    all_children: Query<(Entity, &Children)>, 
+    added_animation_players: Query<(Entity, &Parent), Added<AnimationPlayer>>,
 ) {
     /*
       currently we have
@@ -88,34 +85,12 @@ pub(crate) fn update_spawned_root_first_child(
         if let Ok(animations) = matching_animations {
             if animations.named_animations.keys().len() > 0 {
 
-            println!("found animations");
-            for (added, _, name, parent) in added_animation_players.iter() {
-                println!("added {:?} {} vs rt {:?}", added, name, root_entity);
+            for (added, parent) in added_animation_players.iter() {
                 if parent.get() == *root_entity {
-                    println!("parent of root node");
-                    println!("adding animations to {:?} {:?} {:?}",added, name, animations.named_animations.keys());
-                    /*let my_anims: HashMap<String, Handle<AnimationClip>> = HashMap::new(); //HashMap<String, Handle<AnimationClip>>();
-                    for anim in animations.named_animations.iter() {
-                        let animation_name = anim.0.clone();
-                        let bla = anim.1;
-                        // *bla.
-                        //let gna = animaton_clips.get(bla);
-                        if let Some(toto) = animaton_clips.get(bla) {
-                            println!("got some clip {:?}", toto.curves());
-                            
-                        }
-                        let toto = AnimationClip::default();
-                        // my_anims.insert(animation_name, toto);
-                    }*/
-
-                    /*commands.entity(added).insert(Animations {
-                        named_animations: animations.named_animations.clone(),
-                    });*/
-                    // FIXME: stopgap solution: since we cannot insert an AnimationPlayer at the root entity level
-                    // and we cannot update animation clips, so that the EntityPaths point to one level deeper,
+                    // FIXME: stopgap solution: since we cannot use an AnimationPlayer at the root entity level
+                    // and we cannot update animation clips so that the EntityPaths point to one level deeper,
                     // BUT we still want to have some marker/control at the root entity level, we add this
                     commands.entity(*root_entity).insert(AnimationPlayerLink(added));
-
                     commands.entity(*root_entity).insert(Animations {
                         named_animations: animations.named_animations.clone(),
                     });

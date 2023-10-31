@@ -52,7 +52,7 @@ pub struct Fox;
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
 /// Demo marker component
-pub struct Enemy;
+pub struct Robot;
 
 
 fn player_move_demo(
@@ -106,7 +106,7 @@ impl Plugin for GamePlugin {
             .register_type::<Interactible>()
             .register_type::<SoundMaterial>()
             .register_type::<Player>()
-            .register_type::<Enemy>()
+            .register_type::<Robot>()
             .register_type::<Fox>()
 
             // little helper utility, to automatically inject components that are dependant on an other component

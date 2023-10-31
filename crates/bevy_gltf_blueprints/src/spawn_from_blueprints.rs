@@ -86,9 +86,8 @@ pub(crate) fn spawn_from_blueprints(
                 SpawnedRoot,
                 Original(entity),
 
-                Animations{ // TODO: insert this at the ENTITY level, not the scene level
+                Animations{ 
                     named_animations: gltf.named_animations.clone(),
-                    // animations: gltf.named_animations.values().clone()
                 },
             ))
             .id();

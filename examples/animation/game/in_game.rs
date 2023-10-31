@@ -8,7 +8,7 @@ use crate::{
 };
 use bevy_gltf_blueprints::{GameWorldTag, Animations, AnimationPlayerLink};
 
-use super::{Enemy, Fox, Player};
+use super::{Robot, Fox, Player};
 
 pub fn setup_game(
     mut commands: Commands,
@@ -71,7 +71,7 @@ pub fn animation_change_on_proximity_foxes(
 // example of changing animation of entities based on proximity to the player, this time for the "robot" entities  (Tag component)
 pub fn animation_change_on_proximity_robots(
     players: Query<&GlobalTransform, With<Player>>,
-    animated_robots: Query<(&GlobalTransform, &AnimationPlayerLink, &Animations ), With<Enemy>>,
+    animated_robots: Query<(&GlobalTransform, &AnimationPlayerLink, &Animations ), With<Robot>>,
 
     mut animation_players: Query<&mut AnimationPlayer>,
 
@@ -84,11 +84,15 @@ pub fn animation_change_on_proximity_robots(
 
             let mut anim_name = "Idle"; 
             if distance < 8.5 {
-                anim_name = "Scan"; 
+                anim_name = "Jump"; 
             }
-            else if distance >= 8.5 && distance < 15.0{
+            else if distance >= 8.5 && distance < 10.0{
+                anim_name = "Scan";
+            }
+            else if distance >= 10.0 && distance < 15.0{
                 anim_name = "Idle";
             }
+
             // now play the animation based on the chosen animation name
             let mut animation_player = animation_players.get_mut(link.0).unwrap();
             animation_player.play_with_transition(
@@ -102,14 +106,13 @@ pub fn animation_change_on_proximity_robots(
 
 
 pub fn animation_control(
-    animated_enemies: Query<(&AnimationPlayerLink, &Animations), With<Enemy>>,
+    animated_enemies: Query<(&AnimationPlayerLink, &Animations), With<Robot>>,
     animated_foxes: Query<(&AnimationPlayerLink, &Animations), With<Fox>>,
 
     mut animation_players: Query<&mut AnimationPlayer>,
 
     keycode: Res<Input<KeyCode>>,
     // mut entities_with_animations : Query<(&mut AnimationPlayer, &mut Animations)>,
-
 ) {
     // robots
     if keycode.just_pressed(KeyCode::B) {
@@ -121,13 +124,6 @@ pub fn animation_control(
                 Duration::from_secs(5)
             ).repeat();
             
-        }
-    }
-
-    if keycode.just_pressed(KeyCode::N) {
-        for (link, _) in  animated_enemies.iter() {
-            let mut animation_player = animation_players.get_mut(link.0).unwrap();
-            animation_player.stop_repeating();
         }
     }
 
@@ -165,18 +161,7 @@ pub fn animation_control(
         }
     }
 
-    /*if keycode.just_pressed(KeyCode::B) {
-        for (link, animations) in  animated_enemies.iter() {
-            let mut animation_player = animation_players.get_mut(link.0).unwrap();
-            let anim_name = "Scan";
-            animation_player.play_with_transition(
-                animations.named_animations.get(anim_name).expect("animation name should be in the list").clone(), Duration::from_secs(5)
-            ).repeat();
-            
-        }
-    }*/
-
-    /* 
+    /* Improveement ideas for the future
     // a bit more ideal API
     if keycode.just_pressed(KeyCode::B) {
         for (animation_player, animations) in  animated_enemies.iter() {
@@ -191,8 +176,8 @@ pub fn animation_control(
     // even better API
     if keycode.just_pressed(KeyCode::B) {
         for (animation_player, animations) in  animated_enemies.iter() {
-            animation_player.play_with_transition("Scan", Duration::from_secs(5)).repeat();
-            // alternative, perhaps more realistic
+            animation_player.play_with_transition("Scan", Duration::from_secs(5)).repeat(); // with a merged animationPlayer + animations storage
+            // alternative, perhaps more realistic, and better seperation of concerns
             animation_player.play_with_transition(animations, "Scan", Duration::from_secs(5)).repeat();
 
         }
