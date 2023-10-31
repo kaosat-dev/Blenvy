@@ -7,6 +7,9 @@
 
 Built upon [bevy_gltf_components](https://crates.io/crates/bevy_gltf_components) this crate adds the ability to define Blueprints/Prefabs for [Bevy](https://bevyengine.org/) inside gltf files and spawn them in Bevy.
 
+* Allows you to create lightweight levels, where all assets are different gltf files and loaded after the main level is loaded
+* Allows you to spawn different entities from gtlf files at runtime in a clean manner, including simplified animation support !
+
 A blueprint is a set of **overrideable** components + a hierarchy: ie 
 
     * just a Gltf file with Gltf_extras specifying components 
@@ -23,7 +26,7 @@ Here's a minimal usage example:
 # Cargo.toml
 [dependencies]
 bevy="0.11"
-bevy_gltf_blueprints = { version = "0.1"} 
+bevy_gltf_blueprints = { version = "0.2"} 
 
 ```
 
@@ -179,9 +182,69 @@ Typically , the order of systems should be
 
 see https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/advanced for how to set it up correctly
 
+
+
+## Animation
+
+```bevy_gltf_blueprints``` provides some lightweight helpers to deal with animations stored in gltf files
+
+ * an ```Animations``` component that gets inserted into spawned (root) entities that contains a hashmap of all animations contained inside that entity/gltf file .
+ (this is a copy of the ```named_animations``` inside Bevy's gltf structures )
+ * an ```AnimationPlayerLink``` component that gets inserted into spawned (root) entities, to make it easier to trigger/ control animations than it usually is inside Bevy + Gltf files
+
+The workflow for animations is as follows:
+* create a gltf file with animations (using Blender & co) as you would normally do
+* inside Bevy, use the ```bevy_gltf_blueprints``` boilerplate (see sections above), no specific setup beyond that is required
+* to control the animation of an entity, you need to query for entities that have both ```AnimationPlayerLink``` and ```Animations``` components (added by ```bevy_gltf_blueprints```) AND entities with the ```AnimationPlayer``` component
+ 
+For example:
+
+```rust no_run
+// example of changing animation of entities based on proximity to the player, for "fox" entities (Tag component)
+pub fn animation_change_on_proximity_foxes(
+    players: Query<&GlobalTransform, With<Player>>,
+    animated_foxes: Query<(&GlobalTransform, &AnimationPlayerLink, &Animations ), With<Fox>>,
+
+    mut animation_players: Query<&mut AnimationPlayer>,
+
+){
+    for player_transforms in players.iter() {
+        for (fox_tranforms, link, animations) in animated_foxes.iter() {
+            let distance = player_transforms
+                .translation()
+                .distance(fox_tranforms.translation());
+            let mut anim_name = "Walk"; 
+            if distance < 8.5 {
+                anim_name = "Run"; 
+            }
+            else if distance >= 8.5 && distance < 10.0{
+                anim_name = "Walk";
+            }
+            else if distance >= 10.0 && distance < 15.0{
+                anim_name = "Survey";
+            }
+            // now play the animation based on the chosen animation name
+            let mut animation_player = animation_players.get_mut(link.0).unwrap();
+            animation_player.play_with_transition(
+                animations.named_animations.get(anim_name).expect("animation name should be in the list").clone(), 
+                Duration::from_secs(3)
+            ).repeat();
+        }
+    }
+}
+```
+
+see https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/animation for how to set it up correctly
+
+particularly from https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/animation/game/in_game.rs#86
+onward 
+
+
 ## Examples
 
 https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/advanced
+https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/animation
+
 
 ## License
 

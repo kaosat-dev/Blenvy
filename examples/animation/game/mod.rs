@@ -117,6 +117,8 @@ impl Plugin for GamePlugin {
                 (
                     player_move_demo,
 
+                    spawn_test,
+
                     animation_control,
                     animation_change_on_proximity_foxes,
                     animation_change_on_proximity_robots
