@@ -1,9 +1,8 @@
 use bevy::prelude::*;
 
+use super::{AnimationPlayerLink, Animations};
 use super::{CloneEntity, SpawnHere};
 use super::{Original, SpawnedRoot};
-use super::{Animations, AnimationPlayerLink};
-
 
 #[derive(Component)]
 /// FlagComponent for dynamically spawned scenes
@@ -16,14 +15,14 @@ pub(crate) struct SpawnedRootProcessed;
 // - scene instance -> does not work
 // it might be due to how we add components to the PARENT item in gltf to components
 pub(crate) fn update_spawned_root_first_child(
-    // 
+    //
     unprocessed_entities: Query<
         (Entity, &Children, &Name, &Parent, &Original),
         (With<SpawnedRoot>, Without<SpawnedRootProcessed>),
     >,
     mut commands: Commands,
 
-    // FIXME: not sure , but might be better if done at a more generic gltf level 
+    // FIXME: not sure , but might be better if done at a more generic gltf level
     animations: Query<&Animations>,
     added_animation_players: Query<(Entity, &Parent), Added<AnimationPlayer>>,
 ) {
@@ -78,27 +77,27 @@ pub(crate) fn update_spawned_root_first_child(
 
         // parent is either the world or an entity with a marker (BlueprintName)
         commands.entity(parent.get()).add_child(*root_entity);
-      
-        
+
         let matching_animations = animations.get(scene_instance);
 
         if let Ok(animations) = matching_animations {
             if animations.named_animations.keys().len() > 0 {
-
-            for (added, parent) in added_animation_players.iter() {
-                if parent.get() == *root_entity {
-                    // FIXME: stopgap solution: since we cannot use an AnimationPlayer at the root entity level
-                    // and we cannot update animation clips so that the EntityPaths point to one level deeper,
-                    // BUT we still want to have some marker/control at the root entity level, we add this
-                    commands.entity(*root_entity).insert(AnimationPlayerLink(added));
-                    commands.entity(*root_entity).insert(Animations {
-                        named_animations: animations.named_animations.clone(),
-                    });
-                 }
-            }
+                for (added, parent) in added_animation_players.iter() {
+                    if parent.get() == *root_entity {
+                        // FIXME: stopgap solution: since we cannot use an AnimationPlayer at the root entity level
+                        // and we cannot update animation clips so that the EntityPaths point to one level deeper,
+                        // BUT we still want to have some marker/control at the root entity level, we add this
+                        commands
+                            .entity(*root_entity)
+                            .insert(AnimationPlayerLink(added));
+                        commands.entity(*root_entity).insert(Animations {
+                            named_animations: animations.named_animations.clone(),
+                        });
+                    }
+                }
             }
         }
-      
+
         commands.add(CloneEntity {
             source: original.0,
             destination: *root_entity,

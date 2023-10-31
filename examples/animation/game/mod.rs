@@ -43,7 +43,6 @@ pub struct ShouldBeWithPlayer;
 /// Demo marker component
 pub struct Interactible;
 
-
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
 /// Demo marker component
@@ -53,7 +52,6 @@ pub struct Fox;
 #[reflect(Component)]
 /// Demo marker component
 pub struct Robot;
-
 
 fn player_move_demo(
     keycode: Res<Input<KeyCode>>,
@@ -108,7 +106,6 @@ impl Plugin for GamePlugin {
             .register_type::<Player>()
             .register_type::<Robot>()
             .register_type::<Fox>()
-
             // little helper utility, to automatically inject components that are dependant on an other component
             // ie, here an Entity with a Player component should also always have a ShouldBeWithPlayer component
             // you get a warning if you use this, as I consider this to be stop-gap solution (usually you should have either a bundle, or directly define all needed components)
@@ -116,12 +113,10 @@ impl Plugin for GamePlugin {
                 Update,
                 (
                     player_move_demo,
-
                     spawn_test,
-
                     animation_control,
                     animation_change_on_proximity_foxes,
-                    animation_change_on_proximity_robots
+                    animation_change_on_proximity_robots,
                 )
                     .run_if(in_state(GameState::InGame)),
             )

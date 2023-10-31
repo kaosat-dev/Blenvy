@@ -11,6 +11,6 @@ pub struct Animations {
 #[derive(Component, Debug)]
 /// Stop gap helper component : this is inserted into a "root" entity (an entity representing a whole gltf file)
 /// so that the root entity knows which of its children contains an actualy AnimationPlayer component
-/// this is for convenience, because currently , Bevy's gltf parsing inserts AnimationPlayers "one level down" 
+/// this is for convenience, because currently , Bevy's gltf parsing inserts AnimationPlayers "one level down"
 /// ie armature/root for animated models, which means more complex queries to trigger animations that we want to avoid
 pub struct AnimationPlayerLink(pub Entity);
