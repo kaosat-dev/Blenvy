@@ -108,9 +108,9 @@ pub(crate) fn update_spawned_root_first_child(
                         // my_anims.insert(animation_name, toto);
                     }*/
 
-                    commands.entity(added).insert(Animations {
+                    /*commands.entity(added).insert(Animations {
                         named_animations: animations.named_animations.clone(),
-                    });
+                    });*/
                     // FIXME: stopgap solution: since we cannot insert an AnimationPlayer at the root entity level
                     // and we cannot update animation clips, so that the EntityPaths point to one level deeper,
                     // BUT we still want to have some marker/control at the root entity level, we add this
@@ -119,24 +119,11 @@ pub(crate) fn update_spawned_root_first_child(
                     commands.entity(*root_entity).insert(Animations {
                         named_animations: animations.named_animations.clone(),
                     });
-                // }
                  }
             }
-                // commands.entity(*root_entity).insert(AnimationPlayer::default());
             }
         }
-        /* 
-        let blabla = added_animation_players.get(*root_entity);
-        if let Ok(truc) = blabla {
-            println!("FOUND ANIMATION");
-        }
-        for bla in added_animation_players.iter(){
-            println!("BLA ANIM {:?}", bla.0);
-            println!("aaah {:?}, bbbbb {:?}", root_entity, scene_instance);
-        }*/
-
-        
-
+      
         commands.add(CloneEntity {
             source: original.0,
             destination: *root_entity,

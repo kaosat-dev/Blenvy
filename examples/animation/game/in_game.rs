@@ -35,8 +35,8 @@ pub fn setup_game(
     next_game_state.set(GameState::InGame)
 }
 
-
-pub fn animation_change_on_proximity(
+// example of changing animation of entities based on proximity to the player, for "fox" entities (Tag component)
+pub fn animation_change_on_proximity_foxes(
     players: Query<&GlobalTransform, With<Player>>,
     animated_foxes: Query<(&GlobalTransform, &AnimationPlayerLink, &Animations ), With<Fox>>,
 
@@ -48,26 +48,58 @@ pub fn animation_change_on_proximity(
             let distance = player_transforms
                 .translation()
                 .distance(fox_tranforms.translation());
+            let mut anim_name = "Walk"; 
             if distance < 8.5 {
-                // commands.entity(pickable).despawn_recursive();
-                let mut animation_player = animation_players.get_mut(link.0).unwrap();
-                let anim_name = "Walk";
-                animation_player.play_with_transition(
-                    animations.named_animations.get(anim_name).expect("animation name should be in the list").clone(), 
-                    Duration::from_secs(3)
-                ).repeat();
+                anim_name = "Run"; 
             }
-            else {
-                let mut animation_player = animation_players.get_mut(link.0).unwrap();
-                let anim_name = "Survey";
-                animation_player.play_with_transition(
-                    animations.named_animations.get(anim_name).expect("animation name should be in the list").clone(), 
-                    Duration::from_secs(3)
-                ).repeat();
+            else if distance >= 8.5 && distance < 10.0{
+                anim_name = "Walk";
             }
+            else if distance >= 10.0 && distance < 15.0{
+                anim_name = "Survey";
+            }
+            // now play the animation based on the chosen animation name
+            let mut animation_player = animation_players.get_mut(link.0).unwrap();
+            animation_player.play_with_transition(
+                animations.named_animations.get(anim_name).expect("animation name should be in the list").clone(), 
+                Duration::from_secs(3)
+            ).repeat();
         }
     }
 }
+
+// example of changing animation of entities based on proximity to the player, this time for the "robot" entities  (Tag component)
+pub fn animation_change_on_proximity_robots(
+    players: Query<&GlobalTransform, With<Player>>,
+    animated_robots: Query<(&GlobalTransform, &AnimationPlayerLink, &Animations ), With<Enemy>>,
+
+    mut animation_players: Query<&mut AnimationPlayer>,
+
+){
+    for player_transforms in players.iter() {
+        for (robot_tranforms, link, animations) in animated_robots.iter() {
+            let distance = player_transforms
+                .translation()
+                .distance(robot_tranforms.translation());
+
+            let mut anim_name = "Idle"; 
+            if distance < 8.5 {
+                anim_name = "Scan"; 
+            }
+            else if distance >= 8.5 && distance < 15.0{
+                anim_name = "Idle";
+            }
+            // now play the animation based on the chosen animation name
+            let mut animation_player = animation_players.get_mut(link.0).unwrap();
+            animation_player.play_with_transition(
+                animations.named_animations.get(anim_name).expect("animation name should be in the list").clone(), 
+                Duration::from_secs(3)
+            ).repeat();
+
+        }
+    }
+}
+
 
 pub fn animation_control(
     animated_enemies: Query<(&AnimationPlayerLink, &Animations), With<Enemy>>,
@@ -89,6 +121,13 @@ pub fn animation_control(
                 Duration::from_secs(5)
             ).repeat();
             
+        }
+    }
+
+    if keycode.just_pressed(KeyCode::N) {
+        for (link, _) in  animated_enemies.iter() {
+            let mut animation_player = animation_players.get_mut(link.0).unwrap();
+            animation_player.stop_repeating();
         }
     }
 

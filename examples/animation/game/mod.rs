@@ -115,11 +115,11 @@ impl Plugin for GamePlugin {
             .add_systems(
                 Update,
                 (
-                    // insert_dependant_component::<Player, ShouldBeWithPlayer>,
-                    player_move_demo, //.run_if(in_state(AppState::Running)),
-                                      // test_collision_events
+                    player_move_demo,
+
                     animation_control,
-                    animation_change_on_proximity
+                    animation_change_on_proximity_foxes,
+                    animation_change_on_proximity_robots
                 )
                     .run_if(in_state(GameState::InGame)),
             )
