@@ -1,0 +1,6 @@
+({
+    "world":File (path: "animation/models/Level1.glb#Scene0"),
+    "models": Folder (
+        path: "animation/models/library",
+    ),
+})
