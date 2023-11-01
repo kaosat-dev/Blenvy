@@ -2,7 +2,7 @@ pub mod spawn_from_blueprints;
 pub use spawn_from_blueprints::*;
 
 pub mod spawn_post_process;
-pub use spawn_post_process::*;
+pub(crate) use spawn_post_process::*;
 
 pub mod animation;
 pub use animation::*;
