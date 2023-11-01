@@ -64,7 +64,7 @@ fn spawn_blueprint(
 Add the following to your `[dependencies]` section in `Cargo.toml`:
 
 ```toml
-bevy_gltf_blueprints = "0.1"
+bevy_gltf_blueprints = "0.2"
 ```
 
 Or use `cargo add`:
