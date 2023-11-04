@@ -23,8 +23,8 @@ Here's a minimal usage example:
 ```toml
 # Cargo.toml
 [dependencies]
-bevy="0.11"
-bevy_gltf_components = { version = "0.1"} 
+bevy="0.12"
+bevy_gltf_components = { version = "0.2"} 
 
 ```
 

@@ -12,14 +12,14 @@ members = [
 
 
 [dev-dependencies]
-bevy="0.11"
+bevy="0.12"
 bevy_rapier3d = { version = "0.22.0", features = [ "serde-serialize", "debug-render-3d", "enhanced-determinism"] }
 bevy_editor_pls = { version = "0.5.0" }
 bevy_asset_loader = { version = "0.17.0", features = ["standard_dynamic_assets" ]} #version = "0.16",
 rand = "0.8.5"
 
 [dependencies]
-bevy = { version = "0.11", default-features = false, features = ["bevy_asset", "bevy_scene", "bevy_gltf"] }
+bevy = { version = "0.12", default-features = false, features = ["bevy_asset", "bevy_scene", "bevy_gltf"] }
 bevy_gltf_components = { path = "crates/bevy_gltf_components" }
 bevy_gltf_blueprints = { path = "crates/bevy_gltf_blueprints" }
 
