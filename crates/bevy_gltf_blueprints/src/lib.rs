@@ -2,7 +2,10 @@ pub mod spawn_from_blueprints;
 pub use spawn_from_blueprints::*;
 
 pub mod spawn_post_process;
-pub use spawn_post_process::*;
+pub(crate) use spawn_post_process::*;
+
+pub mod animation;
+pub use animation::*;
 
 pub mod clone_entity;
 pub use clone_entity::*;
@@ -59,6 +62,7 @@ impl Plugin for BlueprintsPlugin {
         app.add_plugins(ComponentsFromGltfPlugin)
             .register_type::<BlueprintName>()
             .register_type::<SpawnHere>()
+            .register_type::<Animations>()
             .insert_resource(BluePrintsConfig {
                 library_folder: self.library_folder.clone(),
             })

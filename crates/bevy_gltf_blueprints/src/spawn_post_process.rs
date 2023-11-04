@@ -1,15 +1,8 @@
 use bevy::prelude::*;
-use bevy::utils::HashMap;
 
+use super::{AnimationPlayerLink, Animations};
 use super::{CloneEntity, SpawnHere};
 use super::{Original, SpawnedRoot};
-
-// FIXME: move to more relevant module
-#[derive(Component, Reflect, Default, Debug)]
-#[reflect(Component)]
-pub struct AnimationHelper {
-    pub named_animations: HashMap<String, Handle<AnimationClip>>,
-}
 
 #[derive(Component)]
 /// FlagComponent for dynamically spawned scenes
@@ -22,16 +15,16 @@ pub(crate) struct SpawnedRootProcessed;
 // - scene instance -> does not work
 // it might be due to how we add components to the PARENT item in gltf to components
 pub(crate) fn update_spawned_root_first_child(
-    // all_children: Query<(Entity, &Children)>,
+    //
     unprocessed_entities: Query<
         (Entity, &Children, &Name, &Parent, &Original),
         (With<SpawnedRoot>, Without<SpawnedRootProcessed>),
     >,
     mut commands: Commands,
 
-    // FIXME: should be done at a more generic gltf level
-    animation_helpers: Query<&AnimationHelper>,
-    added_animation_helpers: Query<(Entity, &AnimationPlayer), Added<AnimationPlayer>>,
+    // FIXME: not sure , but might be better if done at a more generic gltf level
+    animations: Query<&Animations>,
+    added_animation_players: Query<(Entity, &Parent), Added<AnimationPlayer>>,
 ) {
     /*
       currently we have
@@ -84,14 +77,24 @@ pub(crate) fn update_spawned_root_first_child(
 
         // parent is either the world or an entity with a marker (BlueprintName)
         commands.entity(parent.get()).add_child(*root_entity);
-      
-        let matching_animation_helper = animation_helpers.get(scene_instance);
 
-        if let Ok(anim_helper) = matching_animation_helper {
-            for (added, _) in added_animation_helpers.iter() {
-                commands.entity(added).insert(AnimationHelper {
-                    named_animations: anim_helper.named_animations.clone(),
-                });
+        let matching_animations = animations.get(scene_instance);
+
+        if let Ok(animations) = matching_animations {
+            if animations.named_animations.keys().len() > 0 {
+                for (added, parent) in added_animation_players.iter() {
+                    if parent.get() == *root_entity {
+                        // FIXME: stopgap solution: since we cannot use an AnimationPlayer at the root entity level
+                        // and we cannot update animation clips so that the EntityPaths point to one level deeper,
+                        // BUT we still want to have some marker/control at the root entity level, we add this
+                        commands
+                            .entity(*root_entity)
+                            .insert(AnimationPlayerLink(added));
+                        commands.entity(*root_entity).insert(Animations {
+                            named_animations: animations.named_animations.clone(),
+                        });
+                    }
+                }
             }
         }
 

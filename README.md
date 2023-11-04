@@ -50,6 +50,7 @@ Please read the [README]((./tools/gltf_auto_export/README.md)) of the add-on for
 
 - [basic](./examples/basic/) use of ```bevy_gltf_components``` only, to spawn entities with components defined inside gltf files
 - [advanced](./examples/advanced/) more advanced example : use of ```bevy_gltf_blueprints``` to spawn a level and then populate it with entities coming from different gltf files, live (at runtime) spawning of entities etc
+- [animation](./examples/animation/) how to use and trigger animations from gltf files (a feature of ```bevy_gltf_blueprints```)
 
 ## Workflow
 
