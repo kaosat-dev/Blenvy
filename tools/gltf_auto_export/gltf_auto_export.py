@@ -282,7 +282,7 @@ def make_empty3(name, location, rotation, scale, collection):
 # generate a copy of a scene that replaces collection instances with empties
 # alternative: copy original names before creating a new scene, & reset them
 # or create empties, hide original ones, and do the same renaming trick
-def generate_hollow_scene(scene): 
+def generate_hollow_scene(scene, library_collections): 
     root_collection = scene.collection 
     temp_scene = bpy.data.scenes.new(name="temp_scene")
     copy_root_collection = temp_scene.collection
@@ -300,7 +300,7 @@ def generate_hollow_scene(scene):
     #original_names = {}
     original_names = []
     for object in scene_objects:
-        if object.instance_type == 'COLLECTION':
+        if object.instance_type == 'COLLECTION' and (object.instance_collection.name in library_collections):
             collection_name = object.instance_collection.name
 
             #original_names[object.name] = object.name# + "____bak"
@@ -539,7 +539,7 @@ def export_main_scenes(scenes, folder_path, addon_prefs):
     for scene in scenes:
         export_main_scene(scene, folder_path, addon_prefs)
 
-def export_main_scene(scene, folder_path, addon_prefs): 
+def export_main_scene(scene, folder_path, addon_prefs, library_collections): 
     export_output_folder = getattr(addon_prefs,"export_output_folder")
     gltf_export_preferences = generate_gltf_export_preferences(addon_prefs)
     print("exporting to", folder_path, export_output_folder)
@@ -547,7 +547,7 @@ def export_main_scene(scene, folder_path, addon_prefs):
     export_blueprints = getattr(addon_prefs,"export_blueprints")
   
     if export_blueprints : 
-        (hollow_scene, object_names) = generate_hollow_scene(scene)
+        (hollow_scene, object_names) = generate_hollow_scene(scene, library_collections)
         #except Exception:
         #    print("failed to create hollow scene")
 
@@ -642,14 +642,19 @@ def auto_export(changes_per_scene, changed_export_parameters):
 
             # we need to re_export everything if the export parameters have been changed
             collections_to_export = collections if changed_export_parameters else collections_to_export
+
             collections_per_scene = get_collections_per_scene(collections_to_export, library_scenes)
+
+            # collections that do not come from a library should not be exported
+            library_collections = [name for sublist in collections_per_scene.values() for name in sublist]
+            collections_to_export = list(set(collections_to_export).intersection(set(library_collections)))
 
             print("--------------")
             print("collections:               all:", collections)
             print("collections:           changed:", changed_collections)
             print("collections: not found on disk:", collections_not_on_disk)
-            print("collections:          to export:", collections_to_export)
-            print("collections:          per_scene:", collections_per_scene)
+            print("collections:         to export:", collections_to_export)
+            print("collections:         per_scene:", collections_per_scene)
 
             # backup current active scene
             old_current_scene = bpy.context.scene
@@ -662,7 +667,7 @@ def auto_export(changes_per_scene, changed_export_parameters):
                 do_export_main_scene =  changed_export_parameters or (scene_name in changes_per_scene.keys() and len(changes_per_scene[scene_name].keys()) > 0) or not check_if_level_on_disk(scene_name, export_levels_path, gltf_extension)
                 if do_export_main_scene:
                     print("     exporting scene:", scene_name)
-                    export_main_scene(bpy.data.scenes[scene_name], folder_path, addon_prefs)
+                    export_main_scene(bpy.data.scenes[scene_name], folder_path, addon_prefs, collections_to_export)
 
 
             # now deal with blueprints/collections
