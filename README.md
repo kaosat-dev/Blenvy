@@ -144,6 +144,7 @@ you will get a warning **per entity**
 Thanks to all the contributors helping out with this project ! Big kudos to you, contributions are always appreciated ! :)
 
 - [GitGhillie](https://github.com/GitGhillie)
+- [Azorlogh](https://github.com/Azorlogh)
 
 ## License
 
