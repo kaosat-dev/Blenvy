@@ -1,8 +1,7 @@
-use bevy::{asset::ChangeWatcher, gltf::Gltf, prelude::*};
+use bevy::{gltf::Gltf, prelude::*};
 use bevy_editor_pls::prelude::*;
 use bevy_gltf_components::ComponentsFromGltfPlugin;
 use bevy_rapier3d::prelude::*;
-use std::time::Duration;
 
 mod core;
 use crate::core::*;
@@ -28,13 +27,9 @@ enum AppState {
 fn main() {
     App::new()
         .add_plugins((
-            DefaultPlugins.set(AssetPlugin {
-                // This tells the AssetServer to watch for changes to assets.
-                // It enables our scenes to automatically reload in game when we modify their files.
-                // practical in our case to be able to edit the shaders without needing to recompile
-                watch_for_changes: ChangeWatcher::with_delay(Duration::from_millis(50)),
-                ..default()
-            }),
+            DefaultPlugins.set(
+                AssetPlugin::default()
+            ),
             // editor
             EditorPlugin::default(),
             // physics
@@ -73,7 +68,7 @@ fn spawn_level(
 ) {
     if let Some(asset_event) = asset_event_reader.iter().next() {
         match asset_event {
-            AssetEvent::Created { handle: _ } => {
+            AssetEvent::Added { id: _ } => {
                 info!("GLTF loaded");
                 if scene_markers.is_empty() {
                     info!("spawning scene");

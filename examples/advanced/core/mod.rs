@@ -14,8 +14,8 @@ pub use physics::*;
 // pub mod blueprints;
 // pub use blueprints::*;
 
-pub mod save_load;
-pub use save_load::*;
+// pub mod save_load;
+// pub use save_load::*;
 
 use bevy::prelude::*;
 use bevy_gltf_blueprints::*;
@@ -73,7 +73,7 @@ impl Plugin for CorePlugin {
             LightingPlugin,
             CameraPlugin,
             PhysicsPlugin,
-            SaveLoadPlugin,
+            // SaveLoadPlugin,
             BlueprintsPlugin {
                 library_folder: "advanced/models/library".into(),
             },

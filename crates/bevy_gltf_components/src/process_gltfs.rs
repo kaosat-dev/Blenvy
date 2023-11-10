@@ -31,7 +31,7 @@ pub fn track_new_gltf(
 ) {
     for event in events.read() {
         if let AssetEvent::Added { id } = event {
-            let handle = asset_server.get_id_handle(*id).unwrap();
+            let handle = asset_server.get_id_handle(*id).expect("this gltf should have been loaded");
             tracker.add_scene(handle.clone());
             debug!("gltf created {:?}", handle.clone());
         }
