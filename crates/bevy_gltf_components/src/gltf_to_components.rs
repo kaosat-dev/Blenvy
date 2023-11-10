@@ -58,6 +58,7 @@ pub fn ronstring_to_reflect_component(
                           }
                           _ =>{}
                         }*/
+
                         let mut formated = parsed_value.clone();
                         match field_name {
                             "f32" => {
@@ -81,11 +82,11 @@ pub fn ronstring_to_reflect_component(
                             "u128" => {
                                 formated = parsed_value.parse::<u128>().unwrap().to_string();
                             }
-                            "glam::f32::vec2::Vec2" => {
+                            "glam::Vec2" => {
                                 let parsed: Vec<f32> = ron::from_str(&parsed_value).unwrap();
                                 formated = format!("(x:{},y:{})", parsed[0], parsed[1]);
                             }
-                            "glam::f32::vec3::Vec3" => {
+                            "glam::Vec3" => {
                                 let parsed: Vec<f32> = ron::from_str(&parsed_value).unwrap();
                                 formated =
                                     format!("(x:{},y:{},z:{})", parsed[0], parsed[1], parsed[2]);

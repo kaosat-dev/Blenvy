@@ -19,7 +19,7 @@ impl GltfLoadingTracker {
             loading_gltfs: HashSet::new(),
         }
     }
-    pub fn add_scene(&mut self, handle: Handle<Gltf>) {
+    pub fn add_gltf(&mut self, handle: Handle<Gltf>) {
         self.loading_gltfs.insert(handle);
     }
 }
@@ -30,9 +30,10 @@ pub fn track_new_gltf(
     asset_server: Res<AssetServer>,
 ) {
     for event in events.read() {
+        println!("asset event {:?}", event);
         if let AssetEvent::Added { id } = event {
             let handle = asset_server.get_id_handle(*id).expect("this gltf should have been loaded");
-            tracker.add_scene(handle.clone());
+            tracker.add_gltf(handle.clone());
             debug!("gltf created {:?}", handle.clone());
         }
     }
