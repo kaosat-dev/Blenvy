@@ -1,9 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{
-    // core::save_load::{LoadRequest, SaveRequest},
-    state::{AppState, GameState, InMainMenu},
-};
+use crate::state::{AppState, GameState, InMainMenu};
 
 pub fn setup_main_menu(mut commands: Commands) {
     commands.spawn((Camera2dBundle::default(), InMainMenu));

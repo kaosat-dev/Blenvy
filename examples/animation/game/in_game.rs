@@ -30,7 +30,11 @@ pub fn setup_game(
     commands.spawn((
         SceneBundle {
             // note: because of this issue https://github.com/bevyengine/bevy/issues/10436, "world" is now a gltf file instead of a scene
-            scene: models.get(game_assets.world.id()).expect("main level should have been loaded").scenes[0].clone(),
+            scene: models
+                .get(game_assets.world.id())
+                .expect("main level should have been loaded")
+                .scenes[0]
+                .clone(),
             ..default()
         },
         bevy::prelude::Name::from("world"),

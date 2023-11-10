@@ -6,14 +6,12 @@ use serde::de::DeserializeSeed;
 use bevy::ecs::{entity::Entity, reflect::ReflectComponent};
 use bevy::gltf::{Gltf, GltfExtras};
 use bevy::prelude::{debug, info, warn, Assets, Name, Parent, ResMut};
-use bevy::reflect::serde::{UntypedReflectDeserializer, ReflectSerializer};
-use bevy::reflect::{Reflect, TypeInfo, TypeRegistry, DynamicStruct};
+use bevy::reflect::serde::{ReflectSerializer, UntypedReflectDeserializer};
+use bevy::reflect::{DynamicStruct, Reflect, TypeInfo, TypeRegistry};
 use bevy::scene::Scene;
 use bevy::utils::HashMap;
 
-
 use super::capitalize_first_letter;
-
 
 pub fn ronstring_to_reflect_component(
     ron_string: &String,
@@ -148,7 +146,7 @@ pub fn ronstring_to_reflect_component(
             info!("real type {:?}", component.get_represented_type_info());
 
             let _deserialized_struct = component.downcast_ref::<DynamicStruct>();
-            
+
             info!("component test {:?}", _deserialized_struct);
 
             components.push(component);
@@ -159,7 +157,6 @@ pub fn ronstring_to_reflect_component(
     }
     components
 }
-
 
 /// main function: injects components into each entity in gltf files that have gltf_extras, using reflection
 pub fn gltf_extras_to_components(
@@ -229,12 +226,16 @@ pub fn gltf_extras_to_components(
             }
             for component in components {
                 let mut entity_mut = scene.world.entity_mut(entity);
-                info!("------adding {} {:?}", component.get_represented_type_info().unwrap().type_path(), component);
-                
+                info!(
+                    "------adding {} {:?}",
+                    component.get_represented_type_info().unwrap().type_path(),
+                    component
+                );
+
                 let toto = component.get_represented_type_info().unwrap().type_path();
-                info!("MIERDA {:?}",toto);//component.reflect_type_path());
+                info!("MIERDA {:?}", toto); //component.reflect_type_path());
                 type_registry
-                    .get_with_type_path(toto)//component.reflect_type_path())
+                    .get_with_type_path(toto) //component.reflect_type_path())
                     .unwrap() // Component was successfully deserialized, it has to be in the registry
                     .data::<ReflectComponent>()
                     .unwrap() // Hopefully, the component deserializer ensures those are components

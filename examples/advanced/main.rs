@@ -1,4 +1,4 @@
-use bevy:: prelude::*;
+use bevy::prelude::*;
 use bevy_editor_pls::prelude::*;
 
 mod core;

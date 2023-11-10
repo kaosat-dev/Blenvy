@@ -27,9 +27,7 @@ enum AppState {
 fn main() {
     App::new()
         .add_plugins((
-            DefaultPlugins.set(
-                AssetPlugin::default()
-            ),
+            DefaultPlugins.set(AssetPlugin::default()),
             // editor
             EditorPlugin::default(),
             // physics
@@ -47,9 +45,8 @@ fn main() {
         .run();
 }
 
-
 #[derive(Resource)]
-pub struct MyGltf ( pub Handle<Gltf> );
+pub struct MyGltf(pub Handle<Gltf>);
 
 // we preload the data here, but this is for DEMO PURPOSES ONLY !! Please use https://github.com/NiklasEi/bevy_asset_loader or a similar logic to seperate loading / pre processing
 // of assets from the spawning
@@ -64,7 +61,7 @@ fn spawn_level(
     scene_markers: Query<&LoadedMarker>,
     mut asset_event_reader: EventReader<AssetEvent<Gltf>>,
     mut next_state: ResMut<NextState<AppState>>,
-    models: Res<Assets<bevy::gltf::Gltf>>
+    models: Res<Assets<bevy::gltf::Gltf>>,
 ) {
     if let Some(asset_event) = asset_event_reader.read().next() {
         match asset_event {

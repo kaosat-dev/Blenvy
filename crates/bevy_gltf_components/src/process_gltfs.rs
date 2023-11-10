@@ -4,7 +4,6 @@ use bevy::{asset::LoadState, prelude::*};
 
 use crate::gltf_extras_to_components;
 
-
 #[derive(Resource)]
 /// component to keep track of gltfs' loading state
 pub struct GltfLoadingTracker {
@@ -32,7 +31,9 @@ pub fn track_new_gltf(
     for event in events.read() {
         println!("asset event {:?}", event);
         if let AssetEvent::Added { id } = event {
-            let handle = asset_server.get_id_handle(*id).expect("this gltf should have been loaded");
+            let handle = asset_server
+                .get_id_handle(*id)
+                .expect("this gltf should have been loaded");
             tracker.add_gltf(handle.clone());
             debug!("gltf created {:?}", handle.clone());
         }
@@ -53,8 +54,8 @@ pub fn process_loaded_scenes(
             "checking for loaded gltfs {:?}",
             asset_server.get_load_state(gltf)
         );
-        
-        if let Some(load_state) = asset_server.get_load_state(gltf.clone()){
+
+        if let Some(load_state) = asset_server.get_load_state(gltf.clone()) {
             if load_state == LoadState::Loaded {
                 debug!("Adding scene to processing list");
                 loaded_gltfs.push(gltf.clone());
@@ -69,7 +70,7 @@ pub fn process_loaded_scenes(
             // TODO this is a temporary workaround for library management
             info!("PROCESSED !!");
             gltf_extras_to_components(gltf, &mut scenes, &*type_registry, "");
-            /* 
+            /*
             if let Some(asset_path) = asset_server.get_handle_path(gltf_handle) {
                 let gltf_name = asset_path.path().file_stem().unwrap().to_str().unwrap();
                 // gltf_extras_to_components(gltf, &mut scenes, &*type_registry, gltf_name);
