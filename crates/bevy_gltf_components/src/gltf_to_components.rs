@@ -162,11 +162,10 @@ pub fn gltf_extras_to_components(
     gltf: &mut Gltf,
     scenes: &mut ResMut<Assets<Scene>>,
     type_registry: impl Deref<Target = TypeRegistry>,
-    gltf_name: &str,
 ) {
     let mut added_components = 0;
     for (_name, scene) in &gltf.named_scenes {
-        debug!("gltf: {:?} scene name {:?}", gltf_name, _name);
+        debug!("gltf: scene name {:?}", _name);
 
         let scene = scenes.get_mut(scene).unwrap();
 
@@ -253,5 +252,5 @@ pub fn gltf_extras_to_components(
             }
         }
     }
-    info!("done extracting gltf_extras /n");
+    info!("done injecting components from gltf_extras /n");
 }

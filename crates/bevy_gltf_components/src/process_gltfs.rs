@@ -29,7 +29,6 @@ pub fn track_new_gltf(
     asset_server: Res<AssetServer>,
 ) {
     for event in events.read() {
-        println!("asset event {:?}", event);
         if let AssetEvent::Added { id } = event {
             let handle = asset_server
                 .get_id_handle(*id)
@@ -50,7 +49,7 @@ pub fn process_loaded_scenes(
 ) {
     let mut loaded_gltfs = Vec::new();
     for gltf in &tracker.loading_gltfs {
-        info!(
+        debug!(
             "checking for loaded gltfs {:?}",
             asset_server.get_load_state(gltf)
         );
@@ -67,20 +66,7 @@ pub fn process_loaded_scenes(
 
     for gltf_handle in &loaded_gltfs {
         if let Some(gltf) = gltfs.get_mut(gltf_handle) {
-            // TODO this is a temporary workaround for library management
-            info!("PROCESSED !!");
-            gltf_extras_to_components(gltf, &mut scenes, &*type_registry, "");
-            /*
-            if let Some(asset_path) = asset_server.get_handle_path(gltf_handle) {
-                let gltf_name = asset_path.path().file_stem().unwrap().to_str().unwrap();
-                // gltf_extras_to_components(gltf, &mut scenes, &*type_registry, gltf_name);
-                //gltf_extras_to_prefab_infos(gltf, &mut scenes, &*type_registry, gltf_name);
-                info!("PROCESSED !!")
-            } else {
-                //gltf_extras_to_components(gltf, &mut scenes, &*type_registry, "");
-                info!("PROCESSED !!")
-
-            }*/
+            gltf_extras_to_components(gltf, &mut scenes, &*type_registry);
         }
         tracker.loading_gltfs.remove(gltf_handle);
         tracker.loaded_gltfs.insert(gltf_handle.clone());
