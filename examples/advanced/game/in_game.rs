@@ -4,10 +4,10 @@ use crate::{
     assets::GameAssets,
     state::{GameState, InAppRunning},
 };
-use bevy_gltf_blueprints::{GameWorldTag, BluePrintBundle, BlueprintName};
+use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, GameWorldTag};
 
-use rand::Rng;
 use bevy_rapier3d::prelude::Velocity;
+use rand::Rng;
 
 pub fn setup_game(
     mut commands: Commands,
@@ -39,7 +39,6 @@ pub fn setup_game(
 
     next_game_state.set(GameState::InGame)
 }
-
 
 pub fn spawn_test(
     keycode: Res<Input<KeyCode>>,

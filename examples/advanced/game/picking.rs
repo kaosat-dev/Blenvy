@@ -28,11 +28,7 @@ pub fn picking(
 pub struct PickingPlugin;
 impl Plugin for PickingPlugin {
     fn build(&self, app: &mut App) {
-        app.register_type::<Pickable>().add_systems(
-            Update,
-            (
-                picking.after(GltfBlueprintsSet::AfterSpawn),
-            ),
-        );
+        app.register_type::<Pickable>()
+            .add_systems(Update, (picking.after(GltfBlueprintsSet::AfterSpawn),));
     }
 }

@@ -26,7 +26,7 @@ impl Plugin for CorePlugin {
             // SaveLoadPlugin,
             BlueprintsPlugin {
                 library_folder: "advanced/models/library".into(),
-            }
+            },
         ));
     }
 }
