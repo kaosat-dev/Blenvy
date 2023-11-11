@@ -1,5 +1,6 @@
 use super::Player;
 use bevy::prelude::*;
+use bevy_gltf_blueprints::GltfBlueprintsSet;
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
@@ -27,11 +28,7 @@ pub fn picking(
 pub struct PickingPlugin;
 impl Plugin for PickingPlugin {
     fn build(&self, app: &mut App) {
-        app.register_type::<Pickable>().add_systems(
-            Update,
-            (
-                picking, //.run_if(in_state(AppState::Running)),
-            ),
-        );
+        app.register_type::<Pickable>()
+            .add_systems(Update, (picking.after(GltfBlueprintsSet::AfterSpawn),));
     }
 }

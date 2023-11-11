@@ -2,7 +2,7 @@ use bevy::gltf::Gltf;
 use bevy::utils::HashSet;
 use bevy::{asset::LoadState, prelude::*};
 
-use super::gltf_extras_to_components;
+use crate::gltf_extras_to_components;
 
 #[derive(Resource)]
 /// component to keep track of gltfs' loading state
@@ -18,7 +18,7 @@ impl GltfLoadingTracker {
             loading_gltfs: HashSet::new(),
         }
     }
-    pub fn add_scene(&mut self, handle: Handle<Gltf>) {
+    pub fn add_gltf(&mut self, handle: Handle<Gltf>) {
         self.loading_gltfs.insert(handle);
     }
 }
@@ -26,10 +26,14 @@ impl GltfLoadingTracker {
 pub fn track_new_gltf(
     mut tracker: ResMut<GltfLoadingTracker>,
     mut events: EventReader<AssetEvent<Gltf>>,
+    asset_server: Res<AssetServer>,
 ) {
-    for event in events.iter() {
-        if let AssetEvent::Created { handle } = event {
-            tracker.add_scene(handle.clone());
+    for event in events.read() {
+        if let AssetEvent::Added { id } = event {
+            let handle = asset_server
+                .get_id_handle(*id)
+                .expect("this gltf should have been loaded");
+            tracker.add_gltf(handle.clone());
             debug!("gltf created {:?}", handle.clone());
         }
     }
@@ -38,21 +42,23 @@ pub fn track_new_gltf(
 
 pub fn process_loaded_scenes(
     mut gltfs: ResMut<Assets<Gltf>>,
-    mut scenes: ResMut<Assets<Scene>>,
     mut tracker: ResMut<GltfLoadingTracker>,
+    mut scenes: ResMut<Assets<Scene>>,
     app_type_registry: Res<AppTypeRegistry>,
     asset_server: Res<AssetServer>,
 ) {
     let mut loaded_gltfs = Vec::new();
     for gltf in &tracker.loading_gltfs {
-        info!(
+        debug!(
             "checking for loaded gltfs {:?}",
             asset_server.get_load_state(gltf)
         );
 
-        if asset_server.get_load_state(gltf.clone()) == LoadState::Loaded {
-            debug!("Adding scene to processing list");
-            loaded_gltfs.push(gltf.clone());
+        if let Some(load_state) = asset_server.get_load_state(gltf.clone()) {
+            if load_state == LoadState::Loaded {
+                debug!("Adding scene to processing list");
+                loaded_gltfs.push(gltf.clone());
+            }
         }
     }
 
@@ -60,14 +66,7 @@ pub fn process_loaded_scenes(
 
     for gltf_handle in &loaded_gltfs {
         if let Some(gltf) = gltfs.get_mut(gltf_handle) {
-            // TODO this is a temporary workaround for library management
-            if let Some(asset_path) = asset_server.get_handle_path(gltf_handle) {
-                let gltf_name = asset_path.path().file_stem().unwrap().to_str().unwrap();
-                gltf_extras_to_components(gltf, &mut scenes, &*type_registry, gltf_name);
-                //gltf_extras_to_prefab_infos(gltf, &mut scenes, &*type_registry, gltf_name);
-            } else {
-                gltf_extras_to_components(gltf, &mut scenes, &*type_registry, "");
-            }
+            gltf_extras_to_components(gltf, &mut scenes, &*type_registry);
         }
         tracker.loading_gltfs.remove(gltf_handle);
         tracker.loaded_gltfs.insert(gltf_handle.clone());

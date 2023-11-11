@@ -128,11 +128,9 @@ you will get a warning **per entity**
 ## Limitations / issues
 - some components have to be defined in ```text``` in Blender, might try using the AppTypeRegistry and some Python code on the Blender side for a nicer UI (although this loses the "fast & easy, no tooling" approach)
 - Some of `bevy_rapier`/physics code / ways to define colliders could perhaps be done better within Blender (currently it also goes via RON)
-- there seem to be some random system ordering issues that I am still investigating (only when replacing proxy components, no breaking bugs, just restarting your Bevy app is enough)
 
 ## Future work
 - I have a number of other tools/ code  helpers that I have not yet included here, because they need cleanup/ might make this example too complex
- * simplified animation logic: ie instead of having to manually specify the animations you need from a gltf file, it is integrated with the spawning system above, which creates a ```Animations``` component in all entities that have an ```AnimationPlayer``` and you can simply query for both to easilly control your animations per entity.
 
 
 ## Credits

@@ -23,8 +23,8 @@ Here's a minimal usage example:
 ```toml
 # Cargo.toml
 [dependencies]
-bevy="0.11"
-bevy_gltf_components = { version = "0.1"} 
+bevy="0.12"
+bevy_gltf_components = { version = "0.2"} 
 
 ```
 
@@ -86,6 +86,20 @@ Typically , the order of systems should be
 ## Examples
 
 https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/basic
+
+
+
+## Compatible Bevy versions
+
+The main branch is compatible with the latest Bevy release, while the branch `bevy_main` tries to track the `main` branch of Bevy (PRs updating the tracked commit are welcome).
+
+Compatibility of `bevy_gltf_components` versions:
+| `bevy_gltf_components` | `bevy` |
+| :--                 | :--    |
+| `0.2`               | `0.12` |
+| `0.1`               | `0.11` |
+| branch `main`       | `0.12` |
+| branch `bevy_main`  | `main` |
 
 
 ## License

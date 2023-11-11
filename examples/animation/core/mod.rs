@@ -1,5 +1,4 @@
 pub mod camera;
-use bevy_rapier3d::prelude::Velocity;
 pub use camera::*;
 
 pub mod lighting;

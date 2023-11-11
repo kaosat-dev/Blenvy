@@ -70,7 +70,7 @@ pub fn test_collision_events(
     mut collision_events: EventReader<CollisionEvent>,
     mut contact_force_events: EventReader<ContactForceEvent>,
 ) {
-    for collision_event in collision_events.iter() {
+    for collision_event in collision_events.read() {
         println!("collision");
         match collision_event {
             CollisionEvent::Started(_entity1, _entity2, _) => {
@@ -82,7 +82,7 @@ pub fn test_collision_events(
         }
     }
 
-    for contact_force_event in contact_force_events.iter() {
+    for contact_force_event in contact_force_events.read() {
         println!("Received contact force event: {:?}", contact_force_event);
     }
 }
@@ -102,7 +102,8 @@ impl Plugin for GamePlugin {
                 (
                     // insert_dependant_component::<Player, ShouldBeWithPlayer>,
                     player_move_demo, //.run_if(in_state(AppState::Running)),
-                                      // test_collision_events
+                    // test_collision_events
+                    spawn_test,
                 )
                     .run_if(in_state(GameState::InGame)),
             )

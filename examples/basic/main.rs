@@ -1,8 +1,7 @@
-use bevy::{asset::ChangeWatcher, gltf::Gltf, prelude::*};
+use bevy::{gltf::Gltf, prelude::*};
 use bevy_editor_pls::prelude::*;
 use bevy_gltf_components::ComponentsFromGltfPlugin;
 use bevy_rapier3d::prelude::*;
-use std::time::Duration;
 
 mod core;
 use crate::core::*;
@@ -28,13 +27,7 @@ enum AppState {
 fn main() {
     App::new()
         .add_plugins((
-            DefaultPlugins.set(AssetPlugin {
-                // This tells the AssetServer to watch for changes to assets.
-                // It enables our scenes to automatically reload in game when we modify their files.
-                // practical in our case to be able to edit the shaders without needing to recompile
-                watch_for_changes: ChangeWatcher::with_delay(Duration::from_millis(50)),
-                ..default()
-            }),
+            DefaultPlugins.set(AssetPlugin::default()),
             // editor
             EditorPlugin::default(),
             // physics
@@ -53,33 +46,33 @@ fn main() {
 }
 
 #[derive(Resource)]
-struct AssetLoadHelper(Handle<Scene>);
+pub struct MyGltf(pub Handle<Gltf>);
+
 // we preload the data here, but this is for DEMO PURPOSES ONLY !! Please use https://github.com/NiklasEi/bevy_asset_loader or a similar logic to seperate loading / pre processing
 // of assets from the spawning
-// AssetLoadHelper is also just for the same purpose, you do not need it in a real scenario
+// MyGltf is also just for the same purpose, you do not need it in a real scenario
 // the states here are also for demo purposes only,
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let tmp: Handle<Scene> = asset_server.load("basic/models/level1.glb#Scene0");
-    commands.insert_resource(AssetLoadHelper(tmp));
+    commands.insert_resource(MyGltf(asset_server.load("basic/models/level1.glb")));
 }
 
 fn spawn_level(
     mut commands: Commands,
     scene_markers: Query<&LoadedMarker>,
-    preloaded_scene: Res<AssetLoadHelper>,
-
     mut asset_event_reader: EventReader<AssetEvent<Gltf>>,
     mut next_state: ResMut<NextState<AppState>>,
+    models: Res<Assets<bevy::gltf::Gltf>>,
 ) {
-    if let Some(asset_event) = asset_event_reader.iter().next() {
+    if let Some(asset_event) = asset_event_reader.read().next() {
         match asset_event {
-            AssetEvent::Created { handle: _ } => {
-                info!("GLTF loaded");
+            AssetEvent::Added { id } => {
+                info!("GLTF loaded/ added {:?}", asset_event);
+                let my_gltf = models.get(*id).unwrap();
                 if scene_markers.is_empty() {
                     info!("spawning scene");
                     commands.spawn((
                         SceneBundle {
-                            scene: preloaded_scene.0.clone(),
+                            scene: my_gltf.scenes[0].clone(),
                             ..default()
                         },
                         LoadedMarker,

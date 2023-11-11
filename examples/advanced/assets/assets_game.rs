@@ -6,7 +6,7 @@ use bevy_asset_loader::prelude::*;
 #[derive(AssetCollection, Resource)]
 pub struct GameAssets {
     #[asset(key = "world")]
-    pub world: Handle<Scene>,
+    pub world: Handle<Gltf>,
 
     #[asset(key = "models", collection(typed, mapped))]
     pub models: HashMap<String, Handle<Gltf>>,

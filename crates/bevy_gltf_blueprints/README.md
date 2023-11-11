@@ -25,8 +25,8 @@ Here's a minimal usage example:
 ```toml
 # Cargo.toml
 [dependencies]
-bevy="0.11"
-bevy_gltf_blueprints = { version = "0.2"} 
+bevy="0.12"
+bevy_gltf_blueprints = { version = "0.3"} 
 
 ```
 
@@ -64,7 +64,7 @@ fn spawn_blueprint(
 Add the following to your `[dependencies]` section in `Cargo.toml`:
 
 ```toml
-bevy_gltf_blueprints = "0.2"
+bevy_gltf_blueprints = "0.3"
 ```
 
 Or use `cargo add`:
@@ -244,6 +244,19 @@ onward
 
 https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/advanced
 https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/animation
+
+
+## Compatible Bevy versions
+
+The main branch is compatible with the latest Bevy release, while the branch `bevy_main` tries to track the `main` branch of Bevy (PRs updating the tracked commit are welcome).
+
+Compatibility of `bevy_gltf_blueprints` versions:
+| `bevy_gltf_blueprints` | `bevy` |
+| :--                 | :--    |
+| `0.3`               | `0.12` |
+| `0.1 -0.2`          | `0.11` |
+| branch `main`       | `0.12` |
+| branch `bevy_main`  | `main` |
 
 
 ## License
