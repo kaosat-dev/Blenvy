@@ -103,6 +103,8 @@ impl Plugin for GamePlugin {
                     // insert_dependant_component::<Player, ShouldBeWithPlayer>,
                     player_move_demo, //.run_if(in_state(AppState::Running)),
                                       // test_collision_events
+                    spawn_test,
+
                 )
                     .run_if(in_state(GameState::InGame)),
             )
