@@ -58,14 +58,15 @@ pub(crate) fn spawn_from_blueprints(
             Path::new(&blueprints_config.library_folder).join(Path::new(model_file_name.as_str()));
 
         debug!("attempting to spawn {:?}", model_path);
-        let scene: Handle<Gltf> = asset_server.load(model_path);
+        let model_handle: Handle<Gltf> = asset_server.load(model_path);
 
         let world = game_world.single_mut();
         let world = world.1[0]; // FIXME: dangerous hack because our gltf data have a single child like this, but might not always be the case
 
         let gltf = assets_gltf
-            .get(&scene)
+            .get(&model_handle)
             .expect("this gltf should have been loaded");
+
         // WARNING we work under the assumtion that there is ONLY ONE named scene, and that the first one is the right one
         let main_scene_name = gltf
             .named_scenes
