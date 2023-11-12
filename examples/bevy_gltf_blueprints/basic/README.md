@@ -11,7 +11,7 @@ It also allows you to setup 'blueprints' in Blender by using collections (the re
 ## Running this example
 
 ```
-cargo run --example advanced  --features bevy/dynamic_linking
+cargo run --features bevy/dynamic_linking
 ```
 
 ### Additional notes

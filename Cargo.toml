@@ -8,6 +8,7 @@ license = "MIT OR Apache-2.0"
 members = [
     "crates/bevy_gltf_components",
     "crates/bevy_gltf_blueprints",
+
 ]
 
 [dev-dependencies]

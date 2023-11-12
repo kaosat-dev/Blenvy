@@ -1,0 +1,13 @@
+[package]
+name = "bevy_gltf_components_basic_example"
+version = "0.3.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+
+[workspace]
+
+[dependencies]
+bevy="0.12"
+bevy_gltf_components = { path = "../../../crates/bevy_gltf_components" }
+bevy_rapier3d = { version = "0.23.0", features = [ "serde-serialize", "debug-render-3d", "enhanced-determinism"] }
+bevy_editor_pls = { version = "0.6" }

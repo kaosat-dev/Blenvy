@@ -18,7 +18,7 @@
         - [x] how to deal with states that are not defined as part of the plugin/crate ?
         - [x] same issue for the assets
 
-- [ ] support multiple main scenes in the blender plugin ?
+- [x] support multiple main scenes in the blender plugin ?
 - [ ] study possibilities of expanding the bevy & blender tooling side to define UIS
         - likely using the blender data only as a placeholder/ directly replace in Python
 
