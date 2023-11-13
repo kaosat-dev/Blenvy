@@ -4,24 +4,8 @@ version = "0.3.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 
-[workspace]
-
 [dependencies]
 bevy="0.12"
 bevy_gltf_components = { path = "../../../crates/bevy_gltf_components" }
 bevy_rapier3d = { version = "0.23.0", features = [ "serde-serialize", "debug-render-3d", "enhanced-determinism"] }
 bevy_editor_pls = { version = "0.6" }
-
-
-#### --------------------Dev/ debug-------------------------------
-# Enable high optimizations for dependencies (incl. Bevy), but not for our code:
-[profile.dev.package."*"]
-opt-level = 3
-
-[profile.dev.package.bevy]
-features = ["dynamic"]
-
-#### --------------------Production/ release-------------------------------
-[profile.release]
-strip = "debuginfo"
-lto = "thin"

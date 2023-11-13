@@ -2,9 +2,23 @@
 members = [
     "crates/bevy_gltf_components",
     "crates/bevy_gltf_blueprints",
-    #"examples/*"
+    "examples/bevy_gltf_components/basic/",
+    "examples/bevy_gltf_blueprints/basic/",
+    "examples/bevy_gltf_blueprints/basic_xpbd_physics/",
+    "examples/bevy_gltf_blueprints/animation/"
+
 ]
 resolver = "2"
 
-[profile.dev]
-opt-level = 1 # Use slightly better optimization, so examples work
+#### --------------------Dev/ debug-------------------------------
+# Enable high optimizations for dependencies (incl. Bevy), but not for our code:
+[profile.dev.package."*"]
+opt-level = 3
+
+[profile.dev.package.bevy]
+features = ["dynamic"]
+
+#### --------------------Production/ release-------------------------------
+[profile.release]
+strip = "debuginfo"
+lto = "thin"

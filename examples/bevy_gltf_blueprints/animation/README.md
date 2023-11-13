@@ -1,5 +1,5 @@
 
-# Animation demo
+# Animation example/demo
 
 Example on how to control animations & how to use the provided helpers 
 Two animated blueprints are provided: Bevy's Fox, and a Robot I created.

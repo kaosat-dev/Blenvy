@@ -1,10 +1,8 @@
 [package]
-name = "bevy_gltf_blueprints_basic_example"
+name = "bevy_gltf_blueprints_animation_example"
 version = "0.3.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
-
-[workspace]
 
 [dependencies]
 bevy="0.12"
@@ -13,16 +11,3 @@ bevy_rapier3d = { version = "0.23.0", features = [ "serde-serialize", "debug-ren
 bevy_asset_loader = { version = "0.18", features = ["standard_dynamic_assets" ]} 
 bevy_editor_pls = { version = "0.6" }
 rand = "0.8.5"
-
-#### --------------------Dev/ debug-------------------------------
-# Enable high optimizations for dependencies (incl. Bevy), but not for our code:
-[profile.dev.package."*"]
-opt-level = 3
-
-[profile.dev.package.bevy]
-features = ["dynamic"]
-
-#### --------------------Production/ release-------------------------------
-[profile.release]
-strip = "debuginfo"
-lto = "thin"
