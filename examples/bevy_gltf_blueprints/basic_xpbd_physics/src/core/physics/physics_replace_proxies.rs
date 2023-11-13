@@ -23,7 +23,7 @@ pub enum AutoAABBCollider {
     Capsule,
 }
 
-// replaces all physics stand-ins with the actual rapier types
+// replaces all physics stand-ins with the actual xpbd types
 pub fn physics_replace_proxies(
     meshes: Res<Assets<Mesh>>,
     mesh_handles: Query<&Handle<Mesh>>,

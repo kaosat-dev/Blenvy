@@ -11,16 +11,3 @@ bevy_xpbd_3d = "0.3"
 bevy_asset_loader = { version = "0.18", features = ["standard_dynamic_assets" ]} 
 bevy_editor_pls = { version = "0.6" }
 rand = "0.8.5"
-
-#### --------------------Dev/ debug-------------------------------
-# Enable high optimizations for dependencies (incl. Bevy), but not for our code:
-[profile.dev.package."*"]
-opt-level = 3
-
-[profile.dev.package.bevy]
-features = ["dynamic"]
-
-#### --------------------Production/ release-------------------------------
-[profile.release]
-strip = "debuginfo"
-lto = "thin"
