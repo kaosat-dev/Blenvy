@@ -1,15 +1,16 @@
 [package]
-name = "bevy_gltf_components_basic_example"
+name = "bevy_gltf_blueprints_basic_xpbd_physics_example"
 version = "0.3.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 
 [dependencies]
 bevy="0.12"
-bevy_gltf_components = { path = "../../../crates/bevy_gltf_components" }
-bevy_rapier3d = { version = "0.23.0", features = [ "serde-serialize", "debug-render-3d", "enhanced-determinism"] }
+bevy_gltf_blueprints = { path = "../../../crates/bevy_gltf_blueprints" }
+bevy_xpbd_3d = "0.3"
+bevy_asset_loader = { version = "0.18", features = ["standard_dynamic_assets" ]} 
 bevy_editor_pls = { version = "0.6" }
-
+rand = "0.8.5"
 
 #### --------------------Dev/ debug-------------------------------
 # Enable high optimizations for dependencies (incl. Bevy), but not for our code:

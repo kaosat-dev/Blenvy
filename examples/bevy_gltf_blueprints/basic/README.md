@@ -1,5 +1,8 @@
+# Basic physics example/demo
 
-# Workflow with blender / demo information
+This example showcases various components & blueprints extracted from the gltf files, including physics colliders & rigid bodies
+
+## Notes Workflow with blender / demo information
 
 This example, is actually closer to a boilerplate + tooling showcases how to use a minimalistic [Blender](https://www.blender.org/) (gltf) centric workflow for [Bevy](https://bevyengine.org/), ie defining entites & their components
 inside Blender using Blender's objects **custom properties**.

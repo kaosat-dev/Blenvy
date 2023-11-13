@@ -1,10 +1,8 @@
 [package]
-name = "bevy_gltf_blueprints_basic_example"
+name = "bevy_gltf_blueprints_animation_example"
 version = "0.3.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
-
-[workspace]
 
 [dependencies]
 bevy="0.12"

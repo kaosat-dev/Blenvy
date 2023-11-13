@@ -2,7 +2,11 @@
 members = [
     "crates/bevy_gltf_components",
     "crates/bevy_gltf_blueprints",
-    #"examples/*"
+    "examples/bevy_gltf_components/basic/",
+    "examples/bevy_gltf_blueprints/basic/",
+    "examples/bevy_gltf_blueprints/basic_xpbd_physics/",
+    "examples/bevy_gltf_blueprints/animation/"
+
 ]
 resolver = "2"
 
