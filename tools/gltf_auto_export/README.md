@@ -1,6 +1,6 @@
 # gltf_auto_export
 
-For convenience I also added this [Blender addon](./gltf_auto_export.py) that 
+This [Blender addon](./gltf_auto_export.py)  
 - automatically exports your level/world from Blender to gltf whenever you save your Blend file.
 - in Blueprints mode (highly recommended !) : 
     - supports automatic exports of used collections as [Gltf blueprints](../../crates/bevy_gltf_blueprints/README.md)
