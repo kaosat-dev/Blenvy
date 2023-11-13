@@ -29,11 +29,13 @@ It also allows you to setup 'blueprints' in Blender by using collections (the re
 ## Crates
 
 - [bevy_gltf_components](./crates/bevy_gltf_components/) This crate allows you to define components direclty inside gltf files and instanciate/inject the components on the Bevy side.
-There is a [video tutorial/explanation](https://youtu.be/-lcScjQCA3c) if you want, or you can read the crate docs/ basic example
+There is a [video tutorial/explanation](https://youtu.be/-lcScjQCA3c) if you want, or you can read the crate docs.
+The examples for the crate are [here](./examples/bevy_gltf_components/)
 
-- [bevy_gltf_blueprints](./crates/bevy_gltf_blueprints/) This crate adds the ability to define Blueprints/Prefabs for Bevy inside gltf files and spawn them in Bevy. With the ability to override and add components when spawning.
-There is a [video tutorial/explanation](https://youtu.be/CgyNtwgYwdM) for this one too, or you can read the crate docs/ basic example
-
+- [bevy_gltf_blueprints](./crates/bevy_gltf_blueprints/) This crate adds the ability to define Blueprints/Prefabs for Bevy inside gltf files and spawn them in Bevy. With the ability to override and add components when spawning, efficient "level" loading etc
+There is a [video tutorial/explanation](https://youtu.be/CgyNtwgYwdM) for this one too, or you can read the crate docs
+The examples for the crate are [here](./examples/bevy_gltf_blueprints/)
+> Note: this is the recomended crate to use and uses ```bevy_gltf_components``` under the hood
 
 
 ## Tools
@@ -48,9 +50,14 @@ Please read the [README]((./tools/gltf_auto_export/README.md)) of the add-on for
 
 ## Examples
 
-- [basic](./examples/basic/) use of ```bevy_gltf_components``` only, to spawn entities with components defined inside gltf files
-- [advanced](./examples/advanced/) more advanced example : use of ```bevy_gltf_blueprints``` to spawn a level and then populate it with entities coming from different gltf files, live (at runtime) spawning of entities etc
-- [animation](./examples/animation/) how to use and trigger animations from gltf files (a feature of ```bevy_gltf_blueprints```)
+you can find all examples, by crate as seperate crates for clearer dependencies in [here](./examples/)
+
+- [bevy_gltf_components](./examples/bevy_gltf_components/) 
+    * [basic](./examples/bevy_gltf_components/basic/) use of ```bevy_gltf_components``` only, to spawn entities with components defined inside gltf files
+
+- [bevy_gltf_blueprints](./examples/bevy_gltf_blueprints/) 
+    * [basic](./examples/bevy_gltf_blueprints/basic/) more advanced example : use of ```bevy_gltf_blueprints``` to spawn a level and then populate it with entities coming from different gltf files, live (at runtime) spawning of entities etc
+    * [animation](./examples/bevy_gltf_blueprints/animation/) how to use and trigger animations from gltf files (a feature of ```bevy_gltf_blueprints```)
 
 ## Workflow
 
@@ -127,11 +134,10 @@ you will get a warning **per entity**
 
 ## Limitations / issues
 - some components have to be defined in ```text``` in Blender, might try using the AppTypeRegistry and some Python code on the Blender side for a nicer UI (although this loses the "fast & easy, no tooling" approach)
-- Some of `bevy_rapier`/physics code / ways to define colliders could perhaps be done better within Blender (currently it also goes via RON)
+- Some of `bevy_rapier`/physics code / ways to define colliders could perhaps be done better/visually within Blender (currently it also goes via RON)
 
 ## Future work
 - I have a number of other tools/ code  helpers that I have not yet included here, because they need cleanup/ might make this example too complex
-
 
 ## Credits
 

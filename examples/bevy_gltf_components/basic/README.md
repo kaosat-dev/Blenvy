@@ -5,7 +5,6 @@ This example, is actually closer to a boilerplate + tooling showcases how to use
 inside Blender using Blender's objects **custom properties**.
 Aka "Blender as editor for Bevy"
 
-It also allows you to setup 'blueprints' in Blender by using collections (the recomended way to go most of the time), or directly on single use objects .
 
 ## Features
 
@@ -23,7 +22,7 @@ There is a [video tutorial/explanation](https://youtu.be/-lcScjQCA3c) if you wan
 ## Running this example
 
 ```
-cargo run --example general  --features bevy/dynamic_linking
+cargo run --features bevy/dynamic_linking
 ```
 
 ## Workflow

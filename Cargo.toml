@@ -8,8 +8,10 @@ license = "MIT OR Apache-2.0"
 members = [
     "crates/bevy_gltf_components",
     "crates/bevy_gltf_blueprints",
-
+    #"examples/*"
 ]
+
+resolver = "2"
 
 [dev-dependencies]
 bevy="0.12"
@@ -26,17 +28,6 @@ bevy_gltf_blueprints = { path = "crates/bevy_gltf_blueprints" }
 serde = "*"
 ron="*"
 
-[[example]]
-name = "basic"
-path = "examples/basic/main.rs"
-
-[[example]]
-name = "animation"
-path = "examples/animation/main.rs"
-
-[[example]]
-name = "advanced"
-path = "examples/advanced/main.rs"
 
 #### --------------------Dev/ debug-------------------------------
 # Enable high optimizations for dependencies (incl. Bevy), but not for our code:
