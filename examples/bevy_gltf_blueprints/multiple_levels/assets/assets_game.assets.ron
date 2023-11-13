@@ -1,0 +1,8 @@
+({
+    "world":File (path: "models/StartLevel.glb"),
+    "level1":File (path: "models/Level1.glb"),
+
+    "models": Folder (
+        path: "models/library",
+    ),
+})
