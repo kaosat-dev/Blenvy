@@ -19,7 +19,7 @@ impl Plugin for AssetsPlugin {
             )
             .add_dynamic_collection_to_loading_state::<_, StandardDynamicAssetCollection>(
                 AppState::CoreLoading,
-                "animation/assets_core.assets.ron",
+                "assets_core.assets.ron",
             )
             .add_collection_to_loading_state::<_, CoreAssets>(AppState::CoreLoading)
             // load game assets
@@ -28,7 +28,7 @@ impl Plugin for AssetsPlugin {
             )
             .add_dynamic_collection_to_loading_state::<_, StandardDynamicAssetCollection>(
                 AppState::AppLoading,
-                "animation/assets_game.assets.ron",
+                "assets_game.assets.ron",
             )
             .add_collection_to_loading_state::<_, GameAssets>(AppState::AppLoading);
     }

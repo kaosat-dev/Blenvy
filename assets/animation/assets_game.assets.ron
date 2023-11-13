@@ -1,6 +1,0 @@
-({
-    "world":File (path: "animation/models/Level1.glb"),
-    "models": Folder (
-        path: "animation/models/library",
-    ),
-})

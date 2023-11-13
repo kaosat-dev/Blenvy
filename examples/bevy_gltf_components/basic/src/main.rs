@@ -53,7 +53,7 @@ pub struct MyGltf(pub Handle<Gltf>);
 // MyGltf is also just for the same purpose, you do not need it in a real scenario
 // the states here are also for demo purposes only,
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-    commands.insert_resource(MyGltf(asset_server.load("basic/models/level1.glb")));
+    commands.insert_resource(MyGltf(asset_server.load("models/level1.glb")));
 }
 
 fn spawn_level(
