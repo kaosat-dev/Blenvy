@@ -1,5 +1,2 @@
-/target
 *.blend1
-/examples/bevy_gltf_components/basic/target
-/examples/bevy_gltf_blueprints/basic/target
-/examples/bevy_gltf_blueprints/animation/target
+target/

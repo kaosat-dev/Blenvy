@@ -1,43 +1,10 @@
-[package]
-name = "bevy_gltf_flow"
-version = "0.3.0"
-edition = "2021"
-license = "MIT OR Apache-2.0"
-
 [workspace]
 members = [
     "crates/bevy_gltf_components",
     "crates/bevy_gltf_blueprints",
     #"examples/*"
 ]
-
 resolver = "2"
 
-[dev-dependencies]
-bevy="0.12"
-bevy_asset_loader = { version = "0.18", features = ["standard_dynamic_assets" ]} 
-bevy_rapier3d = { version = "0.23.0", features = [ "serde-serialize", "debug-render-3d", "enhanced-determinism"] }
-bevy_editor_pls = { version = "0.6" }
-rand = "0.8.5"
-
-[dependencies]
-bevy = { version = "0.12", default-features = false, features = ["bevy_asset", "bevy_scene", "bevy_gltf"] }
-bevy_gltf_components = { path = "crates/bevy_gltf_components" }
-bevy_gltf_blueprints = { path = "crates/bevy_gltf_blueprints" }
-
-serde = "*"
-ron="*"
-
-
-#### --------------------Dev/ debug-------------------------------
-# Enable high optimizations for dependencies (incl. Bevy), but not for our code:
-[profile.dev.package."*"]
-opt-level = 3
-
-[profile.dev.package.bevy]
-features = ["dynamic"]
-
-#### --------------------Production/ release-------------------------------
-[profile.release]
-strip = "debuginfo"
-lto = "thin"
+[profile.dev]
+opt-level = 1 # Use slightly better optimization, so examples work
