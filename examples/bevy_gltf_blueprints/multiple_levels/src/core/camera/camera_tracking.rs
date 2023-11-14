@@ -44,14 +44,14 @@ pub fn init_camera_track(
         With<Camera>,
         With<CameraTrackingOffset>,
         Without<CameraTrackable>,
-        Added<Camera>
     ),
 >,
-camera_tracked: Query<&Transform, With<CameraTrackable>>,
+camera_tracked: Query<&Transform, (With<CameraTrackable>, Added<CameraTrackable>)>,
 ){
     for (mut camera_transform, tracking_offset) in tracking_cameras.iter_mut() {
-        println!("added tracking camera");
         for tracked_transform in camera_tracked.iter() {
+            println!("ADDED tracking camera");
+
             let target_position = tracked_transform.translation + tracking_offset.0;
             camera_transform.translation = target_position;
             *camera_transform = camera_transform.looking_at(tracked_transform.translation, Vec3::Y);

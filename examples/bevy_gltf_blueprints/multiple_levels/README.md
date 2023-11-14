@@ -1,6 +1,8 @@
 # Multiple levels example/demo
 
-This example showcases multiple levels
+This example showcases multiple levels, and using triggers to load another level.
+It currently has NO state persistence between levels.
+You can press "D" to toggle the physics debug view.
 
 
 ## Running this example
@@ -8,8 +10,3 @@ This example showcases multiple levels
 ```
 cargo run --features bevy/dynamic_linking
 ```
-
-### Additional notes
-
-* You usually define either the Components directly or use ```Proxy components``` that get replaced in Bevy systems with the actual Components that you want (usually when for some reason, ie external crates with unregistered components etc) you cannot use the components directly.
-* this example contains code for future features, not finished yet ! please disregard anything related to saving & loading
