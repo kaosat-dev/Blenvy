@@ -79,7 +79,7 @@ The workflow goes as follows (once you got your Bevy code setup)
 
       ![unit struct components in Bevy](./docs/demo_simple_components.png)
 
-      (the Rust struct for these components for reference is [here](./examples/bevy_gltf_components/basic/src/main.rs#L32) )
+      (the Rust struct for these components for reference is [here](./examples/bevy_gltf_components/basic/src/game.rs#L32) )
 
       ![complex components in Blender](./docs/components_blender_parameters.png)
 
