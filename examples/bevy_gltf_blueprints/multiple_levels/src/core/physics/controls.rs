@@ -1,4 +1,4 @@
-use bevy::prelude::{info, Res, ResMut, Input, KeyCode};
+use bevy::prelude::{info, Input, KeyCode, Res, ResMut};
 use bevy_rapier3d::{prelude::RapierConfiguration, render::DebugRenderContext};
 
 pub fn pause_physics(mut physics_config: ResMut<RapierConfiguration>) {
@@ -14,7 +14,7 @@ pub fn resume_physics(mut physics_config: ResMut<RapierConfiguration>) {
 pub fn toggle_physics_debug(
     mut debug_config: ResMut<DebugRenderContext>,
     keycode: Res<Input<KeyCode>>,
-){
+) {
     if keycode.just_pressed(KeyCode::D) {
         debug_config.enabled = !debug_config.enabled;
     }

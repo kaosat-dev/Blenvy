@@ -39,15 +39,15 @@ pub struct CameraTrackable;
 // this system ensures that the camera is at the correct position immediatly after spawning
 pub fn init_camera_track(
     mut tracking_cameras: Query<
-    (&mut Transform, &CameraTrackingOffset),
-    (
-        With<Camera>,
-        With<CameraTrackingOffset>,
-        Without<CameraTrackable>,
-    ),
->,
-camera_tracked: Query<&Transform, (With<CameraTrackable>, Added<CameraTrackable>)>,
-){
+        (&mut Transform, &CameraTrackingOffset),
+        (
+            With<Camera>,
+            With<CameraTrackingOffset>,
+            Without<CameraTrackable>,
+        ),
+    >,
+    camera_tracked: Query<&Transform, (With<CameraTrackable>, Added<CameraTrackable>)>,
+) {
     for (mut camera_transform, tracking_offset) in tracking_cameras.iter_mut() {
         for tracked_transform in camera_tracked.iter() {
             println!("ADDED tracking camera");

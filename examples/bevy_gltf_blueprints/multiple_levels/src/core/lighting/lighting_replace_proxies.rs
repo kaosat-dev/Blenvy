@@ -2,7 +2,6 @@ use bevy::prelude::*;
 
 use bevy::pbr::{CascadeShadowConfig, CascadeShadowConfigBuilder};
 
-// fixme might be too specific to might needs, should it be moved out ? also these are all for lights, not models
 pub fn lighting_replace_proxies(
     mut added_dirights: Query<(Entity, &mut DirectionalLight), Added<DirectionalLight>>,
     mut added_spotlights: Query<&mut SpotLight, Added<SpotLight>>,
@@ -26,8 +25,7 @@ pub fn lighting_replace_proxies(
     }
 
     for mut light in added_pointlights.iter_mut() {
-        println!("pointlight!!");
-        light.intensity *= 0.001;
+        light.intensity *= 0.001; // arbitrary/ eyeballed to match the levels of Blender
         light.shadows_enabled = true;
     }
 }

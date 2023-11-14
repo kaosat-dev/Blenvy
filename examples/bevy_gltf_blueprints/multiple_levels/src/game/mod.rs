@@ -11,8 +11,9 @@ pub mod level_transitions;
 pub use level_transitions::*;
 
 use crate::{
+    assets::GameAssets,
     insert_dependant_component,
-    state::{AppState, GameState, InAppRunning}, assets::GameAssets,
+    state::{AppState, GameState, InAppRunning},
 };
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
@@ -90,7 +91,6 @@ pub fn test_collision_events(
     }
 }
 
-
 pub struct GamePlugin;
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
@@ -98,9 +98,7 @@ impl Plugin for GamePlugin {
             .register_type::<Interactible>()
             .register_type::<SoundMaterial>()
             .register_type::<Player>()
-
             .register_type::<LevelTransition>()
-
             // little helper utility, to automatically inject components that are dependant on an other component
             // ie, here an Entity with a Player component should also always have a ShouldBeWithPlayer component
             // you get a warning if you use this, as I consider this to be stop-gap solution (usually you should have either a bundle, or directly define all needed components)

@@ -43,7 +43,7 @@ pub fn physics_replace_proxies(
         if name.ends_with("_collider") || name.ends_with("_sensor") {
             *visibility = Visibility::Hidden;
         }
-        // also entities marked with collider names are actually children colliders 
+        // also entities marked with collider names are actually children colliders
 
         let mut rapier_collider: RapierCollider;
         match collider_proxy {

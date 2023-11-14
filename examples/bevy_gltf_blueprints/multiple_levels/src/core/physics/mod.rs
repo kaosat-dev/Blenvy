@@ -31,7 +31,6 @@ impl Plugin for PhysicsPlugin {
         // physics controls
         .add_systems(OnEnter(GameState::InGame), resume_physics)
         .add_systems(OnExit(GameState::InGame), pause_physics)
-        .add_systems(Update, toggle_physics_debug)
-        ;
+        .add_systems(Update, toggle_physics_debug);
     }
 }

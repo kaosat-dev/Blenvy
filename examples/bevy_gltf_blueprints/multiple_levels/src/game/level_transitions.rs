@@ -1,14 +1,12 @@
-use bevy_gltf_blueprints::GameWorldTag;
-use crate::{
-    state::InAppRunning, assets::GameAssets,
-};
+use crate::{assets::GameAssets, state::InAppRunning};
 use bevy::prelude::*;
+use bevy_gltf_blueprints::GameWorldTag;
 use bevy_rapier3d::prelude::*;
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-pub struct LevelTransition{
-    pub target: String
+pub struct LevelTransition {
+    pub target: String,
 }
 
 // very barebones example of triggering level transitions
@@ -21,31 +19,31 @@ pub fn trigger_level_transition(
     game_assets: Res<GameAssets>,
     models: Res<Assets<bevy::gltf::Gltf>>,
 
-    game_world: Query<(Entity, &GameWorldTag)>
-){
+    game_world: Query<(Entity, &GameWorldTag)>,
+) {
     for collision_event in collision_events.read() {
         match collision_event {
             CollisionEvent::Started(entity1, entity2, _) => {
                 // we need to accomodate for the fact that the collider may be a child of the level transition (FIXME: is this a missunderstanding on my part about rapier child colliders ?)
                 let entity1_parent = parents.get(*entity1).unwrap();
                 let entity2_parent = parents.get(*entity2).unwrap();
-                if 
-                    level_transition_triggers.get(*entity1).is_ok() ||  
-                    level_transition_triggers.get(*entity2).is_ok() ||  
-                    level_transition_triggers.get(entity1_parent.get()).is_ok() || 
-                    level_transition_triggers.get(entity2_parent.get()).is_ok()
+                if level_transition_triggers.get(*entity1).is_ok()
+                    || level_transition_triggers.get(*entity2).is_ok()
+                    || level_transition_triggers.get(entity1_parent.get()).is_ok()
+                    || level_transition_triggers.get(entity2_parent.get()).is_ok()
                 {
                     println!("collision started, we can transition to level");
                     let transition_trigger;
                     if level_transition_triggers.get(*entity1).is_ok() {
                         transition_trigger = level_transition_triggers.get(*entity1).unwrap();
-                    }else if  level_transition_triggers.get(*entity2).is_ok() {
+                    } else if level_transition_triggers.get(*entity2).is_ok() {
                         transition_trigger = level_transition_triggers.get(*entity2).unwrap();
-                    }else if level_transition_triggers.get(entity1_parent.get()).is_ok(){
-                        transition_trigger = level_transition_triggers.get(entity1_parent.get()).unwrap();
-                    }
-                    else {
-                        transition_trigger = level_transition_triggers.get(entity2_parent.get()).unwrap();
+                    } else if level_transition_triggers.get(entity1_parent.get()).is_ok() {
+                        transition_trigger =
+                            level_transition_triggers.get(entity1_parent.get()).unwrap();
+                    } else {
+                        transition_trigger =
+                            level_transition_triggers.get(entity2_parent.get()).unwrap();
                     }
                     let current_game_world = game_world.single();
 
@@ -56,12 +54,11 @@ pub fn trigger_level_transition(
                     let target_level = &transition_trigger.target;
                     let level;
                     println!("target level {}", target_level);
-                    if target_level == "Level1"{
+                    if target_level == "Level1" {
                         level = &game_assets.level1;
-                    }else if(target_level == "Level2"){
+                    } else if (target_level == "Level2") {
                         level = &game_assets.level2;
-                    }
-                    else{
+                    } else {
                         level = &game_assets.world;
                     }
                     info!("spawning new level");
@@ -79,7 +76,6 @@ pub fn trigger_level_transition(
                         GameWorldTag,
                         InAppRunning,
                     ));
-
                 }
             }
             CollisionEvent::Stopped(_entity1, _entity2, _) => {
