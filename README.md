@@ -67,30 +67,32 @@ The workflow goes as follows (once you got your Bevy code setup)
 - Create an object / collection (for reuse) in Blender
 - Go to object properties => add a property, and add your component data
 
-  - unit structs, enums, and more complex strucs / components are all supported, (if the fields are basic data types at least,
-    have not tried more complex ones yet, but should also work) - for structs with no params (unit structs): use a **STRING** property & an empty value - for structs with params: use a RON representation of your fields (see below) - for tupple strucs you can use any of the built in Blender custom property types: Strings, Booleans, floats, Vectors, etc
+  - unit structs, enums, and more complex strucs / components are all supported, (if the fields are basic data types at least, have not tried more complex ones yet, but should also work)
 
-        ![unit struct components in Blender](./docs/components_blender.png)
+    - for structs with no params (unit structs): use a **STRING** property & an empty value
+    - for structs with params: use a RON representation of your fields (see below
+    - for tupple strucs you can use any of the built in Blender custom property types: Strings, Booleans, floats, Vectors, etc
 
-        In rust:
+      ![unit struct components in Blender](./docs/components_blender.png)
 
-        ![unit struct components in Bevy](./docs/demo_simple_components.png)
+      In rust:
 
-        (the Rust struct for these components for reference is [here](./examples/bevy_gltf_components/basic/src/main.rs#32) )
+      ![unit struct components in Bevy](./docs/demo_simple_components.png)
 
+      (the Rust struct for these components for reference is [here](./examples/bevy_gltf_components/basic/src/main.rs#32) )
 
-        ![complex components in Blender](./docs/components_blender_parameters.png)
+      ![complex components in Blender](./docs/components_blender_parameters.png)
 
-        In rust:
+      In rust:
 
-        ![complex components in Blender](./docs/camera_tracking_component.png)
+      ![complex components in Blender](./docs/camera_tracking_component.png)
 
-        (the Rust struct for this component for reference is [here](./examples/bevy_gltf_components/basic/src/core/camera/camera_tracking.rs#21) )
+      (the Rust struct for this component for reference is [here](./examples/bevy_gltf_components/basic/src/core/camera/camera_tracking.rs#21) )
 
-        There is an other examples of using various Component types: Enums, Tupple structs,  strucs with fields etc [here](./examples/bevy_gltf_components/basic/src/test_components.rs),
-        even colors, Vecs (arrays), Vec2, Vec3 etc are all supported
+      There is an other examples of using various Component types: Enums, Tupple structs, strucs with fields etc [here](./examples/bevy_gltf_components/basic/src/test_components.rs),
+      even colors, Vecs (arrays), Vec2, Vec3 etc are all supported
 
-        ![complex components in Blender](./docs/components_blender_parameters2.png)
+      ![complex components in Blender](./docs/components_blender_parameters2.png)
 
 - for collections & their instances:
 
