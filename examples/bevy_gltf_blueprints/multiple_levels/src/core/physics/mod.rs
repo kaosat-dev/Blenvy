@@ -24,14 +24,14 @@ impl Plugin for PhysicsPlugin {
         ))
         .register_type::<AutoAABBCollider>()
         .register_type::<physics_replace_proxies::Collider>()
-        // find a way to make serde's stuff serializable
-        // .register_type::<bevy_rapier3d::dynamics::CoefficientCombineRule>()
-        //bevy_rapier3d::dynamics::CoefficientCombineRule
         .add_systems(
             Update,
             physics_replace_proxies.after(GltfBlueprintsSet::AfterSpawn),
         )
+        // physics controls
         .add_systems(OnEnter(GameState::InGame), resume_physics)
-        .add_systems(OnExit(GameState::InGame), pause_physics);
+        .add_systems(OnExit(GameState::InGame), pause_physics)
+        .add_systems(Update, toggle_physics_debug)
+        ;
     }
 }

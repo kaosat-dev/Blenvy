@@ -36,6 +36,29 @@ impl CameraTrackingOffset {
 /// Add this component to an entity if you want it to be tracked by a Camera
 pub struct CameraTrackable;
 
+// this system ensures that the camera is at the correct position immediatly after spawning
+pub fn init_camera_track(
+    mut tracking_cameras: Query<
+    (&mut Transform, &CameraTrackingOffset),
+    (
+        With<Camera>,
+        With<CameraTrackingOffset>,
+        Without<CameraTrackable>,
+        Added<Camera>
+    ),
+>,
+camera_tracked: Query<&Transform, With<CameraTrackable>>,
+){
+    for (mut camera_transform, tracking_offset) in tracking_cameras.iter_mut() {
+        println!("added tracking camera");
+        for tracked_transform in camera_tracked.iter() {
+            let target_position = tracked_transform.translation + tracking_offset.0;
+            camera_transform.translation = target_position;
+            *camera_transform = camera_transform.looking_at(tracked_transform.translation, Vec3::Y);
+        }
+    }
+}
+
 pub fn camera_track(
     mut tracking_cameras: Query<
         (&mut Transform, &CameraTrackingOffset),

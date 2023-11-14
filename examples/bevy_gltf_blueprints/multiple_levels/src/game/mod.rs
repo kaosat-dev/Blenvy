@@ -97,6 +97,7 @@ pub struct LevelTransition{
 pub fn trigger_level_transition(
     mut collision_events: EventReader<CollisionEvent>,
     level_transition_triggers: Query<&LevelTransition>,
+    parents: Query<&Parent>,
 
     mut commands: Commands,
     game_assets: Res<GameAssets>,
@@ -108,16 +109,31 @@ pub fn trigger_level_transition(
         println!("collision");
         match collision_event {
             CollisionEvent::Started(entity1, entity2, _) => {
-                if level_transition_triggers.get(*entity1).is_ok() ||  level_transition_triggers.get(*entity2).is_ok() {
+                // we need to accomodate for the fact that the collider may be a child of the level transition (FIXME: is this a missunderstanding on my part about rapier child colliders ?)
+                let entity1_parent = parents.get(*entity1).unwrap();
+                let entity2_parent = parents.get(*entity2).unwrap();
+                if 
+                    level_transition_triggers.get(*entity1).is_ok() ||  
+                    level_transition_triggers.get(*entity2).is_ok() ||  
+                    level_transition_triggers.get(entity1_parent.get()).is_ok() || 
+                    level_transition_triggers.get(entity2_parent.get()).is_ok()
+                {
                     println!("collision started, we can transition to level");
                     let transition_trigger;
                     if level_transition_triggers.get(*entity1).is_ok() {
                         transition_trigger = level_transition_triggers.get(*entity1).unwrap();
-                    }else {
+                    }else if  level_transition_triggers.get(*entity2).is_ok() {
                         transition_trigger = level_transition_triggers.get(*entity2).unwrap();
+                    }else if level_transition_triggers.get(entity1_parent.get()).is_ok(){
+                        transition_trigger = level_transition_triggers.get(entity1_parent.get()).unwrap();
+                    }
+                    else {
+                        transition_trigger = level_transition_triggers.get(entity2_parent.get()).unwrap();
                     }
                     let current_game_world = game_world.single();
+
                     // remove current level/world
+                    info!("despawning current level");
                     commands.entity(current_game_world.0).despawn_recursive();
 
                     let target_level = &transition_trigger.target;
@@ -128,7 +144,7 @@ pub fn trigger_level_transition(
                     }else {
                         level = &game_assets.world;
                     }
-
+                    info!("spawning new level");
                     commands.spawn((
                         SceneBundle {
                             // note: because of this issue https://github.com/bevyengine/bevy/issues/10436, "world" is now a gltf file instead of a scene
@@ -171,7 +187,7 @@ impl Plugin for GamePlugin {
                 (
                     // insert_dependant_component::<Player, ShouldBeWithPlayer>,
                     player_move_demo, //.run_if(in_state(AppState::Running)),
-                    test_collision_events,
+                    // test_collision_events,
                     spawn_test,
                     trigger_level_transition,
                 )

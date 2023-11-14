@@ -17,6 +17,7 @@ impl Plugin for CameraPlugin {
                 Update,
                 (
                     camera_replace_proxies.after(GltfBlueprintsSet::AfterSpawn),
+                    init_camera_track,
                     camera_track,
                 ),
             );
