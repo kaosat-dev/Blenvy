@@ -180,7 +180,7 @@ Typically , the order of systems should be
 
 ***bevy_gltf_components (GltfComponentsSet::Injection)*** => ***bevy_gltf_blueprints (GltfBlueprintsSet::Spawn, GltfBlueprintsSet::AfterSpawn)*** => ***replace_proxies***
 
-see https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/advanced for how to set it up correctly
+see https://github.com/kaosat-dev/Blender_bevy_components_workflow/blob/main/examples/bevy_gltf_blueprints/basic/src/core/camera/mod.rs#L19 for how to set it up correctly
 
 
 
@@ -234,16 +234,15 @@ pub fn animation_change_on_proximity_foxes(
 }
 ```
 
-see https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/animation for how to set it up correctly
+see https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/animation for how to set it up correctly
 
-particularly from https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/animation/game/in_game.rs#86
-onward 
+particularly from https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/animation/src/game/in_game.rs#L166 onward
 
 
 ## Examples
 
-https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/advanced
-https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/animation
+https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints
+https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/animation
 
 
 ## Compatible Bevy versions
