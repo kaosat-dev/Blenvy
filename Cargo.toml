@@ -5,8 +5,8 @@ members = [
     "examples/bevy_gltf_components/basic/",
     "examples/bevy_gltf_blueprints/basic/",
     "examples/bevy_gltf_blueprints/basic_xpbd_physics/",
-    "examples/bevy_gltf_blueprints/animation/"
-
+    "examples/bevy_gltf_blueprints/animation/",
+    "examples/bevy_gltf_blueprints/multiple_levels/"
 ]
 resolver = "2"
 
