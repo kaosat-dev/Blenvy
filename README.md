@@ -79,7 +79,7 @@ The workflow goes as follows (once you got your Bevy code setup)
 
       ![unit struct components in Bevy](./docs/demo_simple_components.png)
 
-      (the Rust struct for these components for reference is [here](./examples/bevy_gltf_components/basic/src/main.rs#32) )
+      (the Rust struct for these components for reference is [here](./examples/bevy_gltf_components/basic/src/main.rs#L32) )
 
       ![complex components in Blender](./docs/components_blender_parameters.png)
 
@@ -87,7 +87,7 @@ The workflow goes as follows (once you got your Bevy code setup)
 
       ![complex components in Blender](./docs/camera_tracking_component.png)
 
-      (the Rust struct for this component for reference is [here](./examples/bevy_gltf_components/basic/src/core/camera/camera_tracking.rs#21) )
+      (the Rust struct for this component for reference is [here](./examples/bevy_gltf_components/basic/src/core/camera/camera_tracking.rs#L21) )
 
       There is an other examples of using various Component types: Enums, Tupple structs, strucs with fields etc [here](./examples/bevy_gltf_components/basic/src/test_components.rs),
       even colors, Vecs (arrays), Vec2, Vec3 etc are all supported
