@@ -292,7 +292,6 @@ def generate_hollow_scene(scene, library_collections):
 
     found = find_layer_collection_recursive(copy_root_collection, bpy.context.view_layer.layer_collection)
     if found:
-        print("FOUND COLLECTION")
         # once it's found, set the active layer collection to the one we found
         bpy.context.view_layer.active_layer_collection = found
 
@@ -305,10 +304,6 @@ def generate_hollow_scene(scene, library_collections):
             if object.instance_type == 'COLLECTION' and (object.instance_collection.name in library_collections):
                 collection_name = object.instance_collection.name
 
-                #original_names[object.name] = object.name# + "____bak"
-                #print("custom properties", object, object.keys(), object.items())
-                #for k, e in object.items():
-                #    print("custom properties ", k, e)
                 print("object location", object.location)
                 original_name = object.name
                 original_names.append(original_name)
@@ -332,8 +327,6 @@ def generate_hollow_scene(scene, library_collections):
 
     copy_hollowed_collection_into(root_collection, copy_root_collection)
     
-
-    # bpy.data.scenes.remove(temp_scene)
     # objs = bpy.data.objects
     #objs.remove(objs["Cube"], do_unlink=True)
     return (temp_scene, original_names)
@@ -660,7 +653,7 @@ def auto_export(changes_per_scene, changed_export_parameters):
 
             collections_per_scene = get_collections_per_scene(collections_to_export, library_scenes)
 
-            # collections that do not come from a library should not be exported
+            # collections that do not come from a library should not be exported as seperate blueprints
             library_collections = [name for sublist in collections_per_scene.values() for name in sublist]
             collections_to_export = list(set(collections_to_export).intersection(set(library_collections)))
 
@@ -682,7 +675,7 @@ def auto_export(changes_per_scene, changed_export_parameters):
                 do_export_main_scene =  changed_export_parameters or (scene_name in changes_per_scene.keys() and len(changes_per_scene[scene_name].keys()) > 0) or not check_if_level_on_disk(scene_name, export_levels_path, gltf_extension)
                 if do_export_main_scene:
                     print("     exporting scene:", scene_name)
-                    export_main_scene(bpy.data.scenes[scene_name], folder_path, addon_prefs, collections_to_export)
+                    export_main_scene(bpy.data.scenes[scene_name], folder_path, addon_prefs, collections)
 
 
             # now deal with blueprints/collections
@@ -705,7 +698,6 @@ def auto_export(changes_per_scene, changed_export_parameters):
 
 
         else:
-            print("dsfsfsdf")
             for scene_name in main_scene_names:
                 export_main_scene(bpy.data.scenes[scene_name], folder_path, addon_prefs)
 
