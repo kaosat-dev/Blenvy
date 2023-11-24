@@ -37,7 +37,7 @@ use bevy_gltf_blueprints::*;
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_plugin(BlueprintsPlugin)
+        .add_plugins(BlueprintsPlugin)
 
         .run();
 }
@@ -100,7 +100,8 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugin(
              BlueprintsPlugin{
-              library_folder: "advanced/models/library".into() // replace this with your blueprints library path , relative to the assets folder
+                library_folder: "advanced/models/library".into() // replace this with your blueprints library path , relative to the assets folder,
+                format: GltfFormat::GLB,// optional, use either  format: GltfFormat::GLB, or  format: GltfFormat::GLTF, or  ..Default::default() if you want to keep the default .glb extension, this sets what extensions/ gltf files will be looked for by the library
             }
         )
         .run();
@@ -180,7 +181,7 @@ Typically , the order of systems should be
 
 ***bevy_gltf_components (GltfComponentsSet::Injection)*** => ***bevy_gltf_blueprints (GltfBlueprintsSet::Spawn, GltfBlueprintsSet::AfterSpawn)*** => ***replace_proxies***
 
-see https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/advanced for how to set it up correctly
+see https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/basic for how to set it up correctly
 
 
 
@@ -242,8 +243,10 @@ onward
 
 ## Examples
 
-https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/advanced
+https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/basic
+https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/basic_xpbd_physics
 https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/animation
+https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/multiple_levels
 
 
 ## Compatible Bevy versions

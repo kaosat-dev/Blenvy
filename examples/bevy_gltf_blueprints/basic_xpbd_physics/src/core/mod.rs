@@ -22,6 +22,7 @@ impl Plugin for CorePlugin {
             PhysicsPlugin,
             BlueprintsPlugin {
                 library_folder: "models/library".into(),
+                ..Default::default()
             },
         ));
     }

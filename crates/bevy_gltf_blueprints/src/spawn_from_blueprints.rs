@@ -53,7 +53,7 @@ pub(crate) fn spawn_from_blueprints(
     for (entity, name, blupeprint_name, transform) in spawn_placeholders.iter() {
         debug!("need to spawn {:?}", blupeprint_name.0);
         let what = &blupeprint_name.0;
-        let model_file_name = format!("{}.glb", &what);
+        let model_file_name = format!("{}.{}", &what, &blueprints_config.format);
         let model_path =
             Path::new(&blueprints_config.library_folder).join(Path::new(model_file_name.as_str()));
 
