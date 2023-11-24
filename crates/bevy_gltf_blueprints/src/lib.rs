@@ -10,6 +10,7 @@ pub use animation::*;
 pub mod clone_entity;
 pub use clone_entity::*;
 
+use core::fmt;
 use std::path::PathBuf;
 
 use bevy::prelude::*;
@@ -40,11 +41,34 @@ impl Default for BluePrintBundle {
 
 #[derive(Clone, Resource)]
 pub(crate) struct BluePrintsConfig {
+    pub(crate) format: GltfFormat,
     pub(crate) library_folder: PathBuf,
 }
 
+#[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Default)]
+pub enum GltfFormat {
+    #[default]
+    GLB,
+    GLTF
+}
+
+impl fmt::Display for GltfFormat {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            GltfFormat::GLB => {
+                write!(f, "glb", )
+            }
+            GltfFormat::GLTF  => {
+                write!(f, "gltf")
+            }
+        }
+    }
+}
+
+
 #[derive(Debug, Clone)]
 pub struct BlueprintsPlugin {
+    pub format: GltfFormat,
     /// The base folder where library/blueprints assets are loaded from, relative to the executable.
     pub library_folder: PathBuf,
 }
@@ -52,6 +76,7 @@ pub struct BlueprintsPlugin {
 impl Default for BlueprintsPlugin {
     fn default() -> Self {
         Self {
+            format: GltfFormat::GLB,
             library_folder: PathBuf::from("models/library"),
         }
     }
@@ -64,6 +89,7 @@ impl Plugin for BlueprintsPlugin {
             .register_type::<SpawnHere>()
             .register_type::<Animations>()
             .insert_resource(BluePrintsConfig {
+                format: self.format.clone(),
                 library_folder: self.library_folder.clone(),
             })
             .configure_sets(
