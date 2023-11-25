@@ -21,10 +21,15 @@ pub fn compute_scene_aabbs(
         let root_entity = root_entity.2.first().unwrap();
 
         // only recompute aabb if it has not already been done before
-        if !blueprints_config.aabb_cache.contains_key(&name.to_string()) {
+        if blueprints_config.aabb_cache.contains_key(&name.to_string()) {
+            let aabb = blueprints_config
+                .aabb_cache
+                .get(&name.to_string())
+                .expect("we should have the aabb available");
+            commands.entity(*root_entity).insert(*aabb);
+        } else {
             let aabb = compute_descendant_aabb(*root_entity, &children, &existing_aabbs);
             commands.entity(*root_entity).insert(aabb);
-
             blueprints_config.aabb_cache.insert(name.to_string(), aabb);
         }
     }
