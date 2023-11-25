@@ -27,6 +27,7 @@ impl Plugin for CorePlugin {
             BlueprintsPlugin {
                 library_folder: "models/library".into(),
                 format: GltfFormat::GLB,
+                aabbs: true,
                 ..Default::default()
             },
         ));
