@@ -1,20 +1,30 @@
 use bevy::{math::Vec3A, prelude::*, render::primitives::Aabb};
 
-use crate::SpawnedRoot;
+use crate::{SpawnedRoot, BluePrintsConfig, BlueprintName};
 
 /// helper system that computes the compound aabbs of the scenes/blueprints
 pub fn compute_scene_aabbs(
-    root_entities: Query<(Entity, &Name, &Children), (With<SpawnedRoot>, Without<Aabb>)>,
+    root_entities: Query<(Entity, &Name, &Children, &BlueprintName), (With<SpawnedRoot>, Without<Aabb>)>,
     children: Query<&Children>,
     existing_aabbs: Query<&Aabb>,
 
+    mut blueprints_config: ResMut<BluePrintsConfig>,
     mut commands: Commands,
 ) {
     // compute compound aabb
     for root_entity in root_entities.iter() {
+        let name = &root_entity.3.0;
+
         let root_entity = root_entity.2.first().unwrap();
-        let aabb = compute_descendant_aabb(*root_entity, &children, &existing_aabbs);
-        commands.entity(*root_entity).insert(aabb);
+
+        // only recompute aabb if it has not already been done before
+        if !blueprints_config.aabb_cache.contains_key(&name.to_string()) {
+            let aabb = compute_descendant_aabb(*root_entity, &children, &existing_aabbs);
+            commands.entity(*root_entity).insert(aabb);
+
+            blueprints_config.aabb_cache.insert(name.to_string(), aabb);
+        }
+       
     }
 }
 

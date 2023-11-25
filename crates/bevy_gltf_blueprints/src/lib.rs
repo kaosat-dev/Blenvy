@@ -16,7 +16,7 @@ pub use clone_entity::*;
 use core::fmt;
 use std::path::PathBuf;
 
-use bevy::prelude::*;
+use bevy::{prelude::*, utils::HashMap, render::primitives::Aabb};
 use bevy_gltf_components::{ComponentsFromGltfPlugin, GltfComponentsSet};
 
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
@@ -43,10 +43,12 @@ impl Default for BluePrintBundle {
 }
 
 #[derive(Clone, Resource)]
-pub(crate) struct BluePrintsConfig {
+pub struct BluePrintsConfig {
     pub(crate) format: GltfFormat,
     pub(crate) library_folder: PathBuf,
     pub(crate) aabbs: bool,
+
+    pub(crate) aabb_cache: HashMap<String, Aabb>// cache for aabbs
 }
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Default)]
@@ -102,6 +104,7 @@ impl Plugin for BlueprintsPlugin {
                 format: self.format.clone(),
                 library_folder: self.library_folder.clone(),
                 aabbs: self.aabbs,
+                aabb_cache: HashMap::new()
             })
             .configure_sets(
                 Update,
