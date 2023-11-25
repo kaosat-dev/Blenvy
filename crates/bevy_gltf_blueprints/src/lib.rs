@@ -7,13 +7,16 @@ pub(crate) use spawn_post_process::*;
 pub mod animation;
 pub use animation::*;
 
+pub mod aabb;
+pub use aabb::*;
+
 pub mod clone_entity;
 pub use clone_entity::*;
 
 use core::fmt;
 use std::path::PathBuf;
 
-use bevy::prelude::*;
+use bevy::{prelude::*, render::primitives::Aabb, utils::HashMap};
 use bevy_gltf_components::{ComponentsFromGltfPlugin, GltfComponentsSet};
 
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
@@ -40,37 +43,41 @@ impl Default for BluePrintBundle {
 }
 
 #[derive(Clone, Resource)]
-pub(crate) struct BluePrintsConfig {
+pub struct BluePrintsConfig {
     pub(crate) format: GltfFormat,
     pub(crate) library_folder: PathBuf,
+    pub(crate) aabbs: bool,
+
+    pub(crate) aabb_cache: HashMap<String, Aabb>, // cache for aabbs
 }
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Default)]
 pub enum GltfFormat {
     #[default]
     GLB,
-    GLTF
+    GLTF,
 }
 
 impl fmt::Display for GltfFormat {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             GltfFormat::GLB => {
-                write!(f, "glb", )
+                write!(f, "glb",)
             }
-            GltfFormat::GLTF  => {
+            GltfFormat::GLTF => {
                 write!(f, "gltf")
             }
         }
     }
 }
 
-
 #[derive(Debug, Clone)]
+/// Plugin for gltf blueprints
 pub struct BlueprintsPlugin {
     pub format: GltfFormat,
     /// The base folder where library/blueprints assets are loaded from, relative to the executable.
     pub library_folder: PathBuf,
+    pub aabbs: bool,
 }
 
 impl Default for BlueprintsPlugin {
@@ -78,8 +85,13 @@ impl Default for BlueprintsPlugin {
         Self {
             format: GltfFormat::GLB,
             library_folder: PathBuf::from("models/library"),
+            aabbs: false,
         }
     }
+}
+
+fn aabbs_enabled(blueprints_config: Res<BluePrintsConfig>) -> bool {
+    blueprints_config.aabbs
 }
 
 impl Plugin for BlueprintsPlugin {
@@ -91,6 +103,8 @@ impl Plugin for BlueprintsPlugin {
             .insert_resource(BluePrintsConfig {
                 format: self.format.clone(),
                 library_folder: self.library_folder.clone(),
+                aabbs: self.aabbs,
+                aabb_cache: HashMap::new(),
             })
             .configure_sets(
                 Update,
@@ -100,21 +114,23 @@ impl Plugin for BlueprintsPlugin {
             )
             .add_systems(
                 Update,
-                (spawn_from_blueprints)
-                    // .run_if(in_state(AppState::AppRunning).or_else(in_state(AppState::LoadingGame))) // FIXME: how to replace this with a crate compatible version ?
+                (
+                    spawn_from_blueprints,
+                    compute_scene_aabbs.run_if(aabbs_enabled),
+                    apply_deferred.run_if(aabbs_enabled),
+                )
+                    .chain()
                     .in_set(GltfBlueprintsSet::Spawn),
             )
             .add_systems(
                 Update,
                 (
-                    // spawn_entities,
                     update_spawned_root_first_child,
                     apply_deferred,
                     cleanup_scene_instances,
                     apply_deferred,
                 )
                     .chain()
-                    // .run_if(in_state(AppState::LoadingGame).or_else(in_state(AppState::AppRunning))) // FIXME: how to replace this with a crate compatible version ?
                     .in_set(GltfBlueprintsSet::AfterSpawn),
             );
     }

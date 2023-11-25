@@ -102,6 +102,8 @@ fn main() {
              BlueprintsPlugin{
                 library_folder: "advanced/models/library".into() // replace this with your blueprints library path , relative to the assets folder,
                 format: GltfFormat::GLB,// optional, use either  format: GltfFormat::GLB, or  format: GltfFormat::GLTF, or  ..Default::default() if you want to keep the default .glb extension, this sets what extensions/ gltf files will be looked for by the library
+                aabbs: true, // defaults to false, enable this to automatically calculate aabb for the scene/blueprint
+                ..Default::default()
             }
         )
         .run();

@@ -82,9 +82,10 @@ pub(crate) fn spawn_from_blueprints(
                     transform: transform.clone(),
                     ..Default::default()
                 },
-                bevy::prelude::Name::from(["scene_wrapper", &name.clone()].join("_")),
+                bevy::prelude::Name::from(["scene_wrapper", &name.clone()].join("_")), //TODO: remove this convoluted bit
                 // Parent(world) // FIXME/ would be good if this worked directly
                 SpawnedRoot,
+                BlueprintName(blupeprint_name.0.clone()),
                 Original(entity),
                 Animations {
                     named_animations: gltf.named_animations.clone(),
