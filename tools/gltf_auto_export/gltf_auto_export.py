@@ -270,6 +270,7 @@ def make_empty2(name, location, collection):
     collection.objects.link( empty_obj )
     return empty_obj
 
+# this is the one that works correctly, the other ones generate empties with issues
 def make_empty3(name, location, rotation, scale, collection): 
     original_active_object = bpy.context.active_object
     bpy.ops.object.empty_add(type='PLAIN_AXES', location=location, rotation=rotation, scale=scale)
@@ -303,8 +304,6 @@ def generate_hollow_scene(scene, library_collections):
         for object in source_collection.objects:
             if object.instance_type == 'COLLECTION' and (object.instance_collection.name in library_collections):
                 collection_name = object.instance_collection.name
-
-                print("object location", object.location)
                 original_name = object.name
                 original_names.append(original_name)
 
@@ -368,7 +367,7 @@ def get_used_collections(scene):
     collection_names = set()
     used_collections = []
     for object in scene_objects:
-        #print("object ", object)
+        #print("object ", object.name)
         if object.instance_type == 'COLLECTION':
             #print("THIS OBJECT IS A COLLECTION")
             # print("instance_type" ,object.instance_type)
@@ -454,6 +453,21 @@ def get_exportable_collections(main_scenes, library_scenes):
     for library_scene in library_scenes:
         marked_collections = get_marked_collections(library_scene)
         all_collections = all_collections + marked_collections[0]
+
+        print("checking collection instances inside library collections")
+        nested_collections = []
+        root_collection = library_scene.collection
+        for cur_collection in traverse_tree(root_collection):
+            print("coll", cur_collection.name)   
+            for object in cur_collection.objects:
+                is_collection =  object.instance_type == 'COLLECTION'
+                if is_collection:
+                    collection_name = object.instance_collection.name
+                    nested_collections.append(collection_name)
+                print("obj in collection ", object.name, "collection instance ?", is_collection)
+        all_collections = all_collections + nested_collections
+
+
     return all_collections
 
 def check_if_blueprints_exist(collections, folder_path, extension):
@@ -513,6 +527,7 @@ def export_collections(collections, folder_path, library_scene, addon_prefs, glt
 
     for collection_name in collections:
         print("exporting collection", collection_name)
+        # backup current active collection
         layer_collection = bpy.context.view_layer.layer_collection
         layerColl = recurLayerCollection(layer_collection, collection_name)
         # set active collection to the collection
@@ -520,7 +535,7 @@ def export_collections(collections, folder_path, library_scene, addon_prefs, glt
 
         gltf_output_path = os.path.join(folder_path, collection_name)
 
-        export_settings = { **gltf_export_preferences, 'use_active_scene': True, 'use_active_collection': True, 'use_active_collection_with_nested':True} #'use_visible': False,
+        export_settings = { **gltf_export_preferences, 'use_active_scene': True, 'use_active_collection': True, 'use_active_collection_with_nested':True}
         export_gltf(gltf_output_path, export_settings)
     
     # reset active collection to the one we save before
