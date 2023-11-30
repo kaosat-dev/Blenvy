@@ -109,7 +109,7 @@ impl Plugin for GamePlugin {
             )
             .add_systems(OnEnter(AppState::MenuRunning), setup_main_menu)
             .add_systems(OnExit(AppState::MenuRunning), teardown_main_menu)
-            .add_systems(Update, (main_menu))
+            .add_systems(Update, main_menu.run_if(in_state(AppState::MenuRunning)))
             .add_systems(OnEnter(AppState::AppRunning), setup_game);
     }
 }
