@@ -1,6 +1,6 @@
 # gltf_auto_export
 
-This [Blender addon](./gltf_auto_export.py)  
+This [Blender addon](./)  
 - automatically exports your level/world from Blender to gltf whenever you save your Blend file.
 - in Blueprints mode (highly recommended !) : 
     - supports automatic exports of used collections as [Gltf blueprints](../../crates/bevy_gltf_blueprints/README.md)
@@ -18,7 +18,7 @@ This [Blender addon](./gltf_auto_export.py)
 
 ![blender addon install](../../docs/blender_addon_install.png)
 
-* choose the path where ```gltf_auto_export/gltf_auto_export.py``` is stored
+* choose the path where ```gltf_auto_export/gltf_auto_export.zip``` is stored
 
 ![blender addon install](../../docs/blender_addon_install2.png)
 
@@ -73,11 +73,11 @@ You can enable this option to automatically replace all the **collection instanc
 - this means you will have 
     * one small main gltf file (your level/world)
     * as many gltf files as you have used collections in the main scene , in the library path you specified :
-    for the included [advanced](../../examples/advanced/) example's [assets](../../assets/advanced/models/), it looks something like this: 
+    for the included [basic](../../examples/bevy_gltf_blueprints/basic/) example's [assets](../../examples/bevy_gltf_blueprints/basic/assets/), it looks something like this: 
 
     ![library](../../docs/exported_library_files.png)
     
-    the .blend file that they are generated from can be found [here](../../assets/advanced/advanced.blend)
+    the .blend file that they are generated from can be found [here](../../examples/bevy_gltf_blueprints/basic/assets/advanced.blend)
 
 - the above only applies to collections that have **instances** in your main scene!
     if you want a specific collection in your library to always get exported regardless of its use, you need to add 
@@ -107,6 +107,15 @@ and what actually gets exported for the main scene/world/level
 ![](../../docs/workflow_empties.jpg)
 
 all collections instances replaced with empties, and all those collections exported to gltf files as seen above
+
+
+## Development 
+
+- since the code has now been split up into multiple modules, to make your life easier, I highly recomend (if you are using vscode like me) to use 
+[this](https://marketplace.visualstudio.com/items?itemName=JacquesLucke.blender-development) excellent extension , works easilly and fast , even for the latest 
+versions of Blender (v4.0 as of this writing)
+- this [article](https://polynook.com/learn/set-up-blender-addon-development-environment-in-windows) might also help out 
+(easy enough to get it working on linux too)
 
 ## License
 
