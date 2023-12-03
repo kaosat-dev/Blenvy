@@ -2,7 +2,7 @@
 import bpy
 from bpy.types import Operator
 
-class CUSTOM_OT_actions(Operator):
+class SCENES_LIST_OT_actions(Operator):
     """Move items up and down, add and remove"""
     bl_idname = "scene_list.list_action"
     bl_label = "List Actions"

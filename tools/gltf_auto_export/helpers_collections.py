@@ -77,9 +77,9 @@ def get_collection_hierarchy(root_col, levels=1):
 # the active collection is a View Layer concept, so you actually have to find the active LayerCollection
 # which must be done recursively
 def find_layer_collection_recursive(find, col):
-    print("root collection", col)
+    # print("root collection", col)
     for c in col.children:
-        print("child collection", c)
+        # print("child collection", c)
         if c.collection == find:
             return c
     return None

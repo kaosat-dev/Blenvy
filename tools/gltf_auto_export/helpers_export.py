@@ -111,7 +111,6 @@ def export_main_scenes(scenes, folder_path, addon_prefs):
 def export_main_scene(scene, folder_path, addon_prefs, library_collections): 
     export_output_folder = getattr(addon_prefs,"export_output_folder")
     gltf_export_preferences = generate_gltf_export_preferences(addon_prefs)
-    print("exporting to", folder_path, export_output_folder)
 
     export_blueprints = getattr(addon_prefs,"export_blueprints")
   
@@ -124,6 +123,8 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
         bpy.context.window.scene = hollow_scene
 
     gltf_output_path = os.path.join(folder_path, export_output_folder, scene.name)
+    print("       exporting gltf to", gltf_output_path, ".gltf/glb")
+
 
     export_settings = { **gltf_export_preferences, 
                        'use_active_scene': True, 

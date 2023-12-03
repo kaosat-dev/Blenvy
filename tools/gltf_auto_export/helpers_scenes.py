@@ -27,7 +27,6 @@ def generate_hollow_scene(scene, library_collections):
             if object.instance_type == 'COLLECTION' and (object.instance_collection.name in library_collections):
                 collection_name = object.instance_collection.name
 
-                print("object location", object.location)
                 original_name = object.name
                 original_names.append(original_name)
 

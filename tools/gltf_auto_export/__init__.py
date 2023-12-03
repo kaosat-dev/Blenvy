@@ -6,20 +6,15 @@ bl_info = {
     "location": "File > Import-Export",
     "description": "glTF/glb auto-export",
     "warning": "",
-    "wiki_url": "",
-    "tracker_url": "",
+    "wiki_url": "https://github.com/kaosat-dev/Blender_bevy_components_workflow",
+    "tracker_url": "https://github.com/kaosat-dev/Blender_bevy_components_workflow/issues/new",
     "category": "Import-Export"
 }
 import bpy
 import os
 
 from bpy.app.handlers import persistent
-from bpy.props import (BoolProperty,
-                       IntProperty,
-                       StringProperty,
-                       EnumProperty,
-                       CollectionProperty
-                       )
+from bpy.props import (IntProperty)
 
 
 from . import helpers
@@ -38,10 +33,10 @@ from .ui.main import (GLTF_PT_auto_export_main,
                       GLTF_PT_auto_export_blueprints,
                       GLTF_PT_auto_export_collections_list,
                       GLTF_PT_auto_export_gltf,
-                      GLTF_auto_export_UL_SCENES,
+                      SCENE_UL_GLTF_auto_export,
                       AutoExportGLTF
                       )
-from .ui.various import (CUSTOM_OT_actions)
+from .ui.various import (SCENES_LIST_OT_actions)
 from .helpers_scenes import (is_scene_ok)
 
 bpy.context.window_manager['changed_objects_per_scene'] = {}
@@ -49,23 +44,12 @@ bpy.context.window_manager['previous_params'] = {}
 bpy.context.window_manager['__gltf_auto_export_initialized'] = False
 bpy.context.window_manager['__gltf_auto_export_gltf_params_changed'] = False
 
-class TESTADDON_PT_TestPanel(bpy.types.Panel):
-    bl_idname = "TESTADDON_PT_TestPanel"
-    bl_label = "Test Addon"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'UI'
-    bl_category = "Test Addon"
-    bl_context = "objectmode"
-
-    def draw(self, context):
-
-        layout = self.layout
-
-        row = layout.row()
-        row.label(text="How cool is this!AUTO_export"  )
-
 ######################################################
-
+""" there are two places where we load settings for auto_export from:
+- in ui/main AutoExportGLTF -> invoke
+- in auto_export.py -> auto_export
+This is a workaround needed because of the way the settings are stored , perhaps there is a better way to deal with it ? ie by calling the AutoExportGLTF operator from the auto_export function ?
+"""
 
 
 #see here for original gltf exporter infos https://github.com/KhronosGroup/glTF-Blender-IO/blob/main/addons/io_scene_gltf2/__init__.py
@@ -139,8 +123,8 @@ classes = [
     SceneLink,
     SceneLinks,
     CUSTOM_PG_sceneName,
-    GLTF_auto_export_UL_SCENES,
-    CUSTOM_OT_actions,
+    SCENE_UL_GLTF_auto_export,
+    SCENES_LIST_OT_actions,
 
     AutoExportGLTF, 
     AutoExportGltfAddonPreferences,
@@ -159,7 +143,6 @@ def menu_func_import(self, context):
     self.layout.operator(AutoExportGLTF.bl_idname, text="glTF auto Export (.glb/gltf)")
 
 def register():
-    bpy.utils.register_class(TESTADDON_PT_TestPanel)
     for cls in classes:
         bpy.utils.register_class(cls)
 
@@ -180,24 +163,23 @@ def register():
     bpy.types.Scene.main_scenes_list_index = IntProperty(name = "Index for main scenes list", default = 0)
     bpy.types.Scene.library_scenes_list_index = IntProperty(name = "Index for library scenes list", default = 0)
 
-    
-    mock_main_scenes = []#["World", "level2"]
+    """
+    mock_main_scenes = []
     main_scenes = bpy.context.preferences.addons["gltf_auto_export"].preferences.main_scenes
     for item_name in mock_main_scenes:
         item = main_scenes.add()
         item.name = item_name
     
-    mock_library_scenes = [] #["Library", "Library2"]
+    mock_library_scenes = []
     library_scenes = bpy.context.preferences.addons["gltf_auto_export"].preferences.library_scenes
     for item_name in mock_library_scenes:
         item = library_scenes.add()
-        item.name = item_name
+        item.name = item_name"""
 
     bpy.context.preferences.addons["gltf_auto_export"].preferences.main_scenes_index = 0
     bpy.context.preferences.addons["gltf_auto_export"].preferences.library_scenes_index = 0
 
 def unregister():
-    bpy.utils.unregister_class(TESTADDON_PT_TestPanel)
     for cls in classes:
         bpy.utils.unregister_class(cls)
 
