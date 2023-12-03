@@ -18,7 +18,7 @@ This [Blender addon](./)
 
 ![blender addon install](../../docs/blender_addon_install.png)
 
-* choose the path where ```gltf_auto_export/gltf_auto_export.zip``` is stored
+* choose the path where ```gltf_auto_export.zip``` is stored
 
 ![blender addon install](../../docs/blender_addon_install2.png)
 
