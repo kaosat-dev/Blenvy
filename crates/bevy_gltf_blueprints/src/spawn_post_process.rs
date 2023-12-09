@@ -22,9 +22,10 @@ pub(crate) fn update_spawned_root_first_child(
     >,
     mut commands: Commands,
 
-    // FIXME: not sure , but might be better if done at a more generic gltf level
     animations: Query<&Animations>,
     added_animation_players: Query<(Entity, &Parent), Added<AnimationPlayer>>,
+
+    materials: Query<&Handle<StandardMaterial>>
 ) {
     /*
       currently we have
