@@ -6,6 +6,7 @@ from .helpers_scenes import (get_scenes, )
 from .helpers_collections import (get_exportable_collections, get_collections_per_scene)
 from .helpers_export import (export_main_scene, export_blueprints_from_collections)
 from .helpers import (check_if_blueprints_exist, check_if_blueprint_on_disk)
+from .materials import get_all_materials
 from .config import scene_key
 
 """Main function"""
@@ -96,6 +97,8 @@ def auto_export(changes_per_scene, changed_export_parameters):
             collections_to_export = collections if changed_export_parameters else collections_to_export
 
             collections_per_scene = get_collections_per_scene(collections_to_export, library_scenes)
+            used_material_names = get_all_materials(collections_to_export, library_scenes)
+            print("materials", list(set(used_material_names)))
 
             # collections that do not come from a library should not be exported as seperate blueprints
             library_collections = [name for sublist in collections_per_scene.values() for name in sublist]
