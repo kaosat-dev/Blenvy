@@ -25,7 +25,7 @@ impl Plugin for CorePlugin {
             PhysicsPlugin,
             // SaveLoadPlugin,
             BlueprintsPlugin {
-                library_folder: "models/library".into(),
+                library: BlueprintsLibrary::Folder("models/library".into()),
                 format: GltfFormat::GLB,
                 aabbs: true,
                 ..Default::default()

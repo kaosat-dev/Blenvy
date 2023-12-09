@@ -45,7 +45,7 @@ impl Default for BluePrintBundle {
 #[derive(Clone, Resource)]
 pub struct BluePrintsConfig {
     pub(crate) format: GltfFormat,
-    pub(crate) library_folder: PathBuf,
+    pub(crate) library: BlueprintsLibrary,
     pub(crate) aabbs: bool,
 
     pub(crate) aabb_cache: HashMap<String, Aabb>, // cache for aabbs
@@ -75,16 +75,24 @@ impl fmt::Display for GltfFormat {
 /// Plugin for gltf blueprints
 pub struct BlueprintsPlugin {
     pub format: GltfFormat,
-    /// The base folder where library/blueprints assets are loaded from, relative to the executable.
-    pub library_folder: PathBuf,
+    /// The base folder or files where library/blueprints assets are loaded from, relative to the executable.
+    pub library: BlueprintsLibrary,
     pub aabbs: bool,
+}
+
+/// Specifies whether to load a `Folder` or list of `Files`. Note that in WASM
+/// environments, using a `Folder` will result in an error.
+#[derive(Debug, Clone)]
+pub enum BlueprintsLibrary {
+    Folder(PathBuf),
+    Files(Vec<PathBuf>),
 }
 
 impl Default for BlueprintsPlugin {
     fn default() -> Self {
         Self {
             format: GltfFormat::GLB,
-            library_folder: PathBuf::from("models/library"),
+            library: BlueprintsLibrary::Folder(PathBuf::from("models/library")),
             aabbs: false,
         }
     }
@@ -102,7 +110,7 @@ impl Plugin for BlueprintsPlugin {
             .register_type::<Animations>()
             .insert_resource(BluePrintsConfig {
                 format: self.format.clone(),
-                library_folder: self.library_folder.clone(),
+                library: self.library.clone(),
                 aabbs: self.aabbs,
                 aabb_cache: HashMap::new(),
             })

@@ -21,7 +21,7 @@ impl Plugin for CorePlugin {
             CameraPlugin,
             PhysicsPlugin,
             BlueprintsPlugin {
-                library_folder: "models/library".into(),
+                library: BlueprintsLibrary::Folder("models/library".into()),
                 ..Default::default()
             },
         ));

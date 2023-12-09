@@ -54,8 +54,18 @@ pub(crate) fn spawn_from_blueprints(
         debug!("need to spawn {:?}", blupeprint_name.0);
         let what = &blupeprint_name.0;
         let model_file_name = format!("{}.{}", &what, &blueprints_config.format);
-        let model_path =
-            Path::new(&blueprints_config.library_folder).join(Path::new(model_file_name.as_str()));
+        let model_path = {
+            match &blueprints_config.library {
+                crate::BlueprintsLibrary::Folder(folder) => {
+                    folder.join(Path::new(model_file_name.as_str()))
+                }
+                crate::BlueprintsLibrary::Files(files) => files
+                    .iter()
+                    .find(|x| x.file_name().unwrap().to_str().unwrap() == model_file_name)
+                    .cloned()
+                    .unwrap(),
+            }
+        };
 
         debug!("attempting to spawn {:?}", model_path);
         let model_handle: Handle<Gltf> = asset_server.load(model_path);
