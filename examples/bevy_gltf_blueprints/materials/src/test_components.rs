@@ -1,9 +1,5 @@
 use bevy::prelude::*;
 
-#[derive(Component, Reflect, Default, Debug)]
-#[reflect(Component)]
-struct MaterialInfo(String);
-
 #[derive(Component, Reflect, Default, Debug, Deref, DerefMut)]
 #[reflect(Component)]
 struct TuppleTestF32(f32);
@@ -64,7 +60,6 @@ pub struct ComponentsTestPlugin;
 impl Plugin for ComponentsTestPlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<BasicTest>()
-            .register_type::<MaterialInfo>()
             .register_type::<TuppleTestF32>()
             .register_type::<TuppleTestU64>()
             .register_type::<TuppleTestStr>()

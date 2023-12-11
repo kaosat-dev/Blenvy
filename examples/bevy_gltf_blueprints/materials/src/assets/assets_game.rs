@@ -10,4 +10,7 @@ pub struct GameAssets {
 
     #[asset(key = "models", collection(typed, mapped))]
     pub models: HashMap<String, Handle<Gltf>>,
+
+    #[asset(key = "materials", collection(typed, mapped))]
+    pub materials: HashMap<String, Handle<Gltf>>,
 }

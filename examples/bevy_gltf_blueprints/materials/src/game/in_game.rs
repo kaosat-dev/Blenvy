@@ -27,6 +27,11 @@ pub fn setup_game(
     });
     // here we actually spawn our game world/level
 
+    println!("materials {:?}", game_assets.materials);
+    let foo = models
+    .get(game_assets.materials.get("materials/materials_materials_library.glb").unwrap().id()).unwrap();
+
+
     commands.spawn((
         SceneBundle {
             // note: because of this issue https://github.com/bevyengine/bevy/issues/10436, "world" is now a gltf file instead of a scene
@@ -41,6 +46,20 @@ pub fn setup_game(
         GameWorldTag,
         InAppRunning,
     ));
+
+
+    commands.spawn((
+        SceneBundle {
+            // note: because of this issue https://github.com/bevyengine/bevy/issues/10436, "world" is now a gltf file instead of a scene
+            scene: foo
+                .scenes[0]
+                .clone(),
+            ..default()
+        },
+        bevy::prelude::Name::from("test"),
+        InAppRunning,
+    ));
+
 
     next_game_state.set(GameState::InGame)
 }
