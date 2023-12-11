@@ -27,11 +27,6 @@ pub fn setup_game(
     });
     // here we actually spawn our game world/level
 
-    println!("materials {:?}", game_assets.materials);
-    let foo = models
-    .get(game_assets.materials.get("materials/materials_materials_library.glb").unwrap().id()).unwrap();
-
-
     commands.spawn((
         SceneBundle {
             // note: because of this issue https://github.com/bevyengine/bevy/issues/10436, "world" is now a gltf file instead of a scene
@@ -46,20 +41,6 @@ pub fn setup_game(
         GameWorldTag,
         InAppRunning,
     ));
-
-
-    commands.spawn((
-        SceneBundle {
-            // note: because of this issue https://github.com/bevyengine/bevy/issues/10436, "world" is now a gltf file instead of a scene
-            scene: foo
-                .scenes[0]
-                .clone(),
-            ..default()
-        },
-        bevy::prelude::Name::from("test"),
-        InAppRunning,
-    ));
-
 
     next_game_state.set(GameState::InGame)
 }
@@ -90,11 +71,11 @@ pub fn spawn_test(
         let new_entity = commands
             .spawn((
                 BluePrintBundle {
-                    blueprint: BlueprintName("Fox".to_string()),
-                    transform: TransformBundle::from_transform(Transform::from_xyz(x, 0.0, y)),
+                    blueprint: BlueprintName("Watermelon2".to_string()),
+                    transform: TransformBundle::from_transform(Transform::from_xyz(x, 3.0, y)),
                     ..Default::default()
                 },
-                bevy::prelude::Name::from(format!("Spawned{}", name_index)),
+                bevy::prelude::Name::from(format!("Watermelon{}", name_index)),
                 // BlueprintName("Health_Pickup".to_string()),
                 // SpawnHere,
                 // TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
