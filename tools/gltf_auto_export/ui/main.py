@@ -285,6 +285,11 @@ class GLTF_PT_auto_export_blueprints(bpy.types.Panel):
         layout.prop(operator, "export_blueprints")
         layout.prop(operator, "export_blueprints_path")
 
+        # materials
+        layout.prop(operator, "export_materials_library")
+        layout.prop(operator, "export_materials_path")
+
+
 class GLTF_PT_auto_export_collections_list(bpy.types.Panel):
     bl_space_type = 'FILE_BROWSER'
     bl_region_type = 'TOOL_PROPS'

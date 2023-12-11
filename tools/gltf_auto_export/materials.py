@@ -5,7 +5,7 @@ import bpy
 import os
 from pathlib import Path
 
-
+# get materials per object, and injects the materialInfo component
 def get_materials(object):
     material_slots = object.material_slots
     used_materials_names = []
@@ -16,13 +16,21 @@ def get_materials(object):
 
     for m in material_slots:
         material = m.material
-        print("    slot", m, "material", material)
+        # print("    slot", m, "material", material)
         used_materials_names.append(material.name)
         # meh, also respect slots ! 
-        object["MaterialInfo"] = '(name: "'+material.name+'", source: "'+current_project_name + '")' 
+        object['MaterialInfo'] = '(name: "'+material.name+'", source: "'+current_project_name + '")' 
         # del object["material_info"]
     return used_materials_names
 
+def clear_material_info(collection_names, library_scenes):
+    for scene in library_scenes:
+        root_collection = scene.collection
+        for cur_collection in traverse_tree(root_collection):
+            if cur_collection.name in collection_names:
+                for object in cur_collection.all_objects:
+                    if 'MaterialInfo' in dict(object): # FIXME: hasattr does not work ????
+                        del object["MaterialInfo"]
 
 def get_all_materials(collection_names, library_scenes): 
     #print("collecton", layerColl, "otot", layerColl.all_objects) #all_objects
@@ -85,14 +93,12 @@ def export_materials(used_material_names, folder_path, addon_prefs):
     export_output_folder = getattr(addon_prefs,"export_output_folder")
     gltf_export_preferences = generate_gltf_export_preferences(addon_prefs)
     current_project_name = Path(bpy.context.blend_data.filepath).stem
-
-    export_blueprints = getattr(addon_prefs,"export_blueprints")
-    materials_folder = "materials"
+    export_materials_path = getattr(addon_prefs,"export_materials_path")
     print("materials", used_material_names)
     current_scene = bpy.context.window.scene
     mat_scene = generate_materials_scenes(used_material_names,)
 
-    gltf_output_path = os.path.join(folder_path, materials_folder, current_project_name + "_materials_library")
+    gltf_output_path = os.path.join(folder_path, export_materials_path, current_project_name + "_materials_library")
     print("       exporting Materials to", gltf_output_path, ".gltf/glb")
     export_settings = { **gltf_export_preferences, 
                     'use_active_scene': True, 

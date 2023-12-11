@@ -6,7 +6,7 @@ from .helpers_scenes import (get_scenes, )
 from .helpers_collections import (get_exportable_collections, get_collections_per_scene)
 from .helpers_export import (export_main_scene, export_blueprints_from_collections)
 from .helpers import (check_if_blueprints_exist, check_if_blueprint_on_disk)
-from .materials import clear_materials_scene, export_materials, generate_materials_scenes, get_all_materials
+from .materials import clear_material_info, clear_materials_scene, export_materials, generate_materials_scenes, get_all_materials
 from .config import scene_key
 
 """Main function"""
@@ -57,6 +57,8 @@ def auto_export(changes_per_scene, changed_export_parameters):
         export_blueprints = getattr(addon_prefs,"export_blueprints")
         export_output_folder = getattr(addon_prefs,"export_output_folder")
 
+        export_materials_library = getattr(addon_prefs,"export_materials_library")
+
         [main_scene_names, level_scenes, library_scene_names, library_scenes] = get_scenes(addon_prefs)
 
         print("main scenes", main_scene_names, "library_scenes", library_scene_names)
@@ -95,11 +97,9 @@ def auto_export(changes_per_scene, changed_export_parameters):
 
             # we need to re_export everything if the export parameters have been changed
             collections_to_export = collections if changed_export_parameters else collections_to_export
-
             collections_per_scene = get_collections_per_scene(collections_to_export, library_scenes)
-            used_material_names = get_all_materials(collections_to_export, library_scenes)
-            export_materials(used_material_names, folder_path, addon_prefs)
 
+          
             # collections that do not come from a library should not be exported as seperate blueprints
             library_collections = [name for sublist in collections_per_scene.values() for name in sublist]
             collections_to_export = list(set(collections_to_export).intersection(set(library_collections)))
@@ -136,13 +136,18 @@ def auto_export(changes_per_scene, changed_export_parameters):
                     library_scene = bpy.data.scenes[scene_name]
                     export_blueprints_from_collections(collections_to_export, library_scene, folder_path, addon_prefs)
 
-
             # reset current scene from backup
             bpy.context.window.scene = old_current_scene
 
             # reset selections
             for obj in old_selections:
                 obj.select_set(True)
+
+            if export_materials_library:
+                used_material_names = get_all_materials(collections, library_scenes)
+                export_materials(used_material_names, folder_path, addon_prefs)
+                clear_material_info(collections, library_scenes)
+
         else:
             for scene_name in main_scene_names:
                 export_main_scene(bpy.data.scenes[scene_name], folder_path, addon_prefs)
