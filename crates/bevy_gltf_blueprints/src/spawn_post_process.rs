@@ -65,7 +65,7 @@ pub(crate) fn update_spawned_root_first_child(
         // also this is not something we want every time, this should be a settable parameter when requesting a spawn
 
         // add missing name of entity, based on the wrapper's name
-        let name = name.clone().replace("scene_wrapper_", "");
+        let name = name.clone();
 
         // this is our new actual entity
         commands.entity(*root_entity).insert((
