@@ -19,7 +19,7 @@ pub use clone_entity::*;
 use core::fmt;
 use std::path::PathBuf;
 
-use bevy::{gltf::Gltf, prelude::*, render::primitives::Aabb, utils::HashMap};
+use bevy::{prelude::*, render::primitives::Aabb, utils::HashMap};
 use bevy_gltf_components::{ComponentsFromGltfPlugin, GltfComponentsSet};
 
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]

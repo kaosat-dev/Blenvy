@@ -24,8 +24,6 @@ pub(crate) fn update_spawned_root_first_child(
 
     animations: Query<&Animations>,
     added_animation_players: Query<(Entity, &Parent), Added<AnimationPlayer>>,
-
-    materials: Query<&Handle<StandardMaterial>>,
 ) {
     /*
       currently we have
