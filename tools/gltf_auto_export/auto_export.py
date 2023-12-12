@@ -6,7 +6,7 @@ from .helpers_scenes import (get_scenes, )
 from .helpers_collections import (get_exportable_collections, get_collections_per_scene)
 from .helpers_export import (export_main_scene, export_blueprints_from_collections)
 from .helpers import (check_if_blueprints_exist, check_if_blueprint_on_disk)
-from .materials import clear_material_info, clear_materials_scene, export_materials, generate_materials_scenes, get_all_materials
+from .materials import cleanup_materials, clear_material_info, clear_materials_scene, export_materials, generate_materials_scenes, get_all_materials
 from .config import scene_key
 
 """Main function"""
@@ -104,6 +104,12 @@ def auto_export(changes_per_scene, changed_export_parameters):
             library_collections = [name for sublist in collections_per_scene.values() for name in sublist]
             collections_to_export = list(set(collections_to_export).intersection(set(library_collections)))
 
+            # since materials export adds components we need to call this before blueprints are exported
+            # export materials & inject materials components into relevant objects
+            if export_materials_library:
+                export_materials(collections, library_scenes, folder_path, addon_prefs)
+
+
             print("--------------")
             print("collections:               all:", collections)
             print("collections:           changed:", changed_collections)
@@ -144,9 +150,7 @@ def auto_export(changes_per_scene, changed_export_parameters):
                 obj.select_set(True)
 
             if export_materials_library:
-                used_material_names = get_all_materials(collections, library_scenes)
-                export_materials(used_material_names, folder_path, addon_prefs)
-                clear_material_info(collections, library_scenes)
+                cleanup_materials(collections, library_scenes)
 
         else:
             for scene_name in main_scene_names:

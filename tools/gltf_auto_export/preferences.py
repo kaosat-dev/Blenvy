@@ -69,11 +69,11 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
     export_materials_library: BoolProperty(
         name='Export materials library',
         description='remove materials from blueprints and use the material library instead',
-        default=True
+        default=False
     )
     export_materials_path: StringProperty(
         name='Materials path',
-        description='path to export the materials libraries to (relative to the Export folder)',
+        description='path to export the materials libraries to (relative to the root folder)',
         default='materials'
     )
 

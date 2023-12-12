@@ -37,7 +37,7 @@ This [Blender addon](./)
     ![blender addon use3](./docs/blender_addon_use3.png)
 
 
-    - export folder
+    - export folder: root folder to export models too
     - pick your main (level) scenes and library scenes (see the chapter about Blueprints below)   
         - click in the scene picker & select your scene
 
@@ -51,7 +51,15 @@ This [Blender addon](./)
         
         ![select scene3](./docs/blender_addon_add_scene3.png) 
 
+    - export blueprints: check this if you want to automatically export blueprints (default: True)
+    - blueprints path: the path to export blueprints to , relative to the main **export folder** (default: library)
 
+    - export materials library: check this if you want to automatically export material libraries (default: False)
+    please read the dedicated section below for more information
+
+        > This only works together with blueprints !
+
+    - materials path: where to export materials to
 
 * and your standard gltf export parameters in the **gltf** panel
 
@@ -91,6 +99,25 @@ You can enable this option to automatically replace all the **collection instanc
 - you can also get an overview of all the exported collections in the export menu
 
     ![exported collections](./docs/exported_collections.png)
+
+### Materials
+
+You can enable this option to automatically generate a **material library** file that combines all the materials in use in your blueprints.
+
+![material_library](./docs/blender_addon_materials2.png)
+
+Since each blueprint is normally a completely independant gltf file, without this option, if you have a material with a large texture for example, 
+**ALL** of your blueprints using that material will embed that large texture, leading to **significant bloat & memory use**.
+
+
+- When this option is enabled, you get a single material library per Blender project, and a **MaterialInfo** component is inserted into each object using a material.
+- The correct material will then be inserted on the Bevy side (that loads any number of material libraries that you need) into the correct mesh (see the configuration
+options in **bevy_gltf_blueprints** for more information on that)
+
+![material_library](./docs/blender_addon_materials.png)
+
+TLDR: Use this option to make sure that each blueprint file does not contain a copy of the same materials 
+
 
 #### Process
 
