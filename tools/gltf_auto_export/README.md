@@ -14,6 +14,12 @@ This [Blender addon](./)
 
 ## Installation: 
 
+
+* grab the latest release zip file
+
+![blender addon install](./docs/blender_addon_install_zip.png)
+
+
 * in Blender go to edit =>  preferences => install
 
 ![blender addon install](./docs/blender_addon_install.png)
