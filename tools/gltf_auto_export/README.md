@@ -113,6 +113,7 @@ Since each blueprint is normally a completely independant gltf file, without thi
 - When this option is enabled, you get a single material library per Blender project, and a **MaterialInfo** component is inserted into each object using a material.
 - The correct material will then be inserted on the Bevy side (that loads any number of material libraries that you need) into the correct mesh (see the configuration
 options in **bevy_gltf_blueprints** for more information on that)
+- Only one material per object is supported at this stage, ie the last material slot's material is the one that is going to be used
 
 ![material_library](./docs/blender_addon_materials.png)
 
