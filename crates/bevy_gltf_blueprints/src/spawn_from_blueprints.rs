@@ -67,9 +67,6 @@ pub(crate) fn spawn_from_blueprints(
             .get(&model_handle)
             .expect("this gltf should have been loaded");
 
-        let foo = gltf.named_materials.clone();
-        println!("Materials {:?}", foo);
-
         // WARNING we work under the assumtion that there is ONLY ONE named scene, and that the first one is the right one
         let main_scene_name = gltf
             .named_scenes

@@ -54,7 +54,8 @@ pub struct BluePrintsConfig {
     pub(crate) aabb_cache: HashMap<String, Aabb>, // cache for aabbs
 
     pub(crate) material_library:bool,
-    pub(crate) material_library_folder:PathBuf
+    pub(crate) material_library_folder:PathBuf,
+    pub(crate) material_library_cache: HashMap<String, Handle<StandardMaterial>>
 }
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Default)]
@@ -126,7 +127,8 @@ impl Plugin for BlueprintsPlugin {
                 aabb_cache: HashMap::new(),
 
                 material_library: self.material_library,
-                material_library_folder: self.material_library_folder.clone()
+                material_library_folder: self.material_library_folder.clone(),
+                material_library_cache:  HashMap::new(),
             })
             .configure_sets(
                 Update,

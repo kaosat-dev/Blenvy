@@ -1,24 +1,23 @@
 use std::path::Path;
 
-use bevy::{ecs::{query::{Added, With}, system::{Query, Commands, Res}, component::Component, reflect::ReflectComponent}, reflect::Reflect, hierarchy::{Children, Parent}, asset::{Handle, AssetServer, Assets}, pbr::StandardMaterial, render::mesh::Mesh, gltf::Gltf};
+use bevy::{ecs::{query::{Added, With}, system::{Query, Commands, Res, ResMut}, component::Component, reflect::ReflectComponent}, reflect::Reflect, hierarchy::{Children, Parent}, asset::{Handle, AssetServer, Assets}, pbr::StandardMaterial, render::mesh::Mesh, gltf::Gltf, log::debug};
 
 use crate::BluePrintsConfig;
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-/// struct containing the name of the material to apply
+/// struct containing the name & source of the material to apply
 pub struct MaterialInfo{
     pub name: String,
     pub source: String
 }
 
-
+/// system that injects / replaces materials from material library
 pub(crate) fn materials_inject(
-    blueprints_config: Res<BluePrintsConfig>,
+    mut blueprints_config: ResMut<BluePrintsConfig>,
     material_infos: Query<(&MaterialInfo, &Children), Added<MaterialInfo>>,
     with_materials_and_meshes: Query<(With<Parent>, With<Handle<StandardMaterial>>, With<Handle<Mesh>>)>,
     models: Res<Assets<bevy::gltf::Gltf>>,
-
 
     asset_server: Res<AssetServer>,
     mut commands: Commands,
@@ -27,22 +26,40 @@ pub(crate) fn materials_inject(
     for (material_info, children) in material_infos.iter() {
         let model_file_name = format!("{}_materials_library.{}", &material_info.source, &blueprints_config.format);
         let materials_path = Path::new(&blueprints_config.material_library_folder).join(Path::new(model_file_name.as_str()));
-        let my_gltf:Handle<Gltf> = asset_server.load(materials_path.clone());
-        let mat_gltf = models.get(my_gltf.id()).expect("material should have been preloaded");
-        let materials_list = mat_gltf.named_materials.clone();
-
         let material_name = &material_info.name;
-        println!("need to inject material for {}, path: {:?}", material_name, materials_path.clone());
-        for child in children.iter() {
-            if with_materials_and_meshes.contains(*child) {
-                if materials_list.contains_key(material_name) {
-                    println!("material found");
-                    let material = materials_list.get(material_name).expect("this material should have been loaded");
-                    commands
-                        .entity(*child)
-                        .insert(material.clone());
+
+        let material_full_path = materials_path.to_str().unwrap().to_string() + "#" + material_name; // TODO: yikes, cleanup
+        let mut material_found:Option<&Handle<StandardMaterial>> = None;
+
+        if blueprints_config.material_library_cache.contains_key(&material_full_path) {
+            debug!("material is cached, retrieving");
+            let material = blueprints_config
+                .material_library_cache
+                .get(&material_full_path)
+                .expect("we should have the material available");
+            material_found = Some(material);
+        }
+        else {
+            let my_gltf:Handle<Gltf> = asset_server.load(materials_path.clone());
+            let mat_gltf = models.get(my_gltf.id()).expect("material should have been preloaded");
+            if mat_gltf.named_materials.contains_key(material_name) {
+                let material = mat_gltf.named_materials.get(material_name).expect("this material should have been loaded");
+                blueprints_config.material_library_cache.insert(material_full_path, material.clone());
+                material_found = Some(material);
+            }
+        }
+
+        if let Some(material) = material_found {
+            for child in children.iter() {
+                if with_materials_and_meshes.contains(*child) {   
+                    debug!("injecting material {}, path: {:?}", material_name, materials_path.clone());
+ 
+                        commands
+                            .entity(*child)
+                            .insert(material.clone());
                 }
             }
         }
+        
     }
 }
