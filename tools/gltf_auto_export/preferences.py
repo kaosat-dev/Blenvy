@@ -18,6 +18,10 @@ AutoExportGltfPreferenceNames = [
     'export_blueprints',
     'export_blueprints_path',
 
+    'export_materials_library',
+    'export_materials_path',
+
+
     'main_scenes',
     'library_scenes',
     'main_scenes_index',
@@ -60,6 +64,17 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         name='Blueprints path',
         description='path to export the blueprints to (relative to the Export folder)',
         default='library'
+    )
+
+    export_materials_library: BoolProperty(
+        name='Export materials library',
+        description='remove materials from blueprints and use the material library instead',
+        default=False
+    )
+    export_materials_path: StringProperty(
+        name='Materials path',
+        description='path to export the materials libraries to (relative to the root folder)',
+        default='materials'
     )
 
     main_scenes: CollectionProperty(name="main scenes", type=CUSTOM_PG_sceneName)

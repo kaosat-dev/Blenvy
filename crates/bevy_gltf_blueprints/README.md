@@ -26,7 +26,7 @@ Here's a minimal usage example:
 # Cargo.toml
 [dependencies]
 bevy="0.12"
-bevy_gltf_blueprints = { version = "0.3"} 
+bevy_gltf_blueprints = { version = "0.4"} 
 
 ```
 
@@ -64,7 +64,7 @@ fn spawn_blueprint(
 Add the following to your `[dependencies]` section in `Cargo.toml`:
 
 ```toml
-bevy_gltf_blueprints = "0.3"
+bevy_gltf_blueprints = "0.4"
 ```
 
 Or use `cargo add`:
@@ -89,7 +89,7 @@ fn main() {
 
 ```
 
-you may want to configure your "library"/"blueprints" path: (defaults to ```assets/models/library```) so the plugin know where to look for the blueprint files
+you may want to configure your "library"/"blueprints" settings:
 
 ```rust no_run
 use bevy::prelude::*;
@@ -103,6 +103,8 @@ fn main() {
                 library_folder: "advanced/models/library".into() // replace this with your blueprints library path , relative to the assets folder,
                 format: GltfFormat::GLB,// optional, use either  format: GltfFormat::GLB, or  format: GltfFormat::GLTF, or  ..Default::default() if you want to keep the default .glb extension, this sets what extensions/ gltf files will be looked for by the library
                 aabbs: true, // defaults to false, enable this to automatically calculate aabb for the scene/blueprint
+                material_library: true,  // defaults to false, enable this to enable automatic injection of materials from material library files
+                material_library_folder: "materials".into() //defaults to "materials" the folder to look for for the material files
                 ..Default::default()
             }
         )
@@ -243,12 +245,39 @@ particularly from https://github.com/kaosat-dev/Blender_bevy_components_workflow
 onward 
 
 
+## Materials
+
+You have the option of using "material libraries" to share common textures/materials between blueprints, in order to avoid asset & memory bloat:
+
+Ie for example without this option, 56 different blueprints using the same material with a large texture would lead to the material/texture being embeded
+56 times !!
+
+
+you can configure this with the settings:
+```rust
+material_library: true  // defaults to false, enable this to enable automatic injection of materials from material library files
+material_library_folder: "materials".into() //defaults to "materials" the folder to look for for the material files
+```
+
+> Important! you must take care of preloading your material librairy gltf files in advance, using for example ```bevy_asset_loader```since 
+```bevy_gltf_blueprints``` currently does NOT take care of loading those at runtime
+
+
+see https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/materials for how to set it up correctly
+
+Generating optimised blueprints and material libraries can be automated using the latests version of the [Blender plugin](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/gltf_auto_export)
+
 ## Examples
 
 https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/basic
+
 https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/basic_xpbd_physics
+
 https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/animation
+
 https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/multiple_levels
+
+https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/materials
 
 
 ## Compatible Bevy versions
@@ -258,8 +287,8 @@ The main branch is compatible with the latest Bevy release, while the branch `be
 Compatibility of `bevy_gltf_blueprints` versions:
 | `bevy_gltf_blueprints` | `bevy` |
 | :--                 | :--    |
-| `0.3`               | `0.12` |
-| `0.1 -0.2`          | `0.11` |
+| `0.3 - 0.4`         | `0.12` |
+| `0.1 - 0.2`         | `0.11` |
 | branch `main`       | `0.12` |
 | branch `bevy_main`  | `main` |
 

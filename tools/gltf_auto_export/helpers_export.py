@@ -78,10 +78,15 @@ def export_collections(collections, folder_path, library_scene, addon_prefs, glt
         layerColl = recurLayerCollection(layer_collection, collection_name)
         # set active collection to the collection
         bpy.context.view_layer.active_layer_collection = layerColl
-
         gltf_output_path = os.path.join(folder_path, collection_name)
 
-        export_settings = { **gltf_export_preferences, 'use_active_scene': True, 'use_active_collection': True, 'use_active_collection_with_nested':True} #'use_visible': False,
+        export_settings = { **gltf_export_preferences, 'use_active_scene': True, 'use_active_collection': True, 'use_active_collection_with_nested':True}
+        
+        # if we are using the material library option, do not export materials, use placeholder instead
+        export_materials_library = getattr(addon_prefs,"export_materials_library")
+        if export_materials_library:
+            export_settings['export_materials'] = 'PLACEHOLDER'
+
         export_gltf(gltf_output_path, export_settings)
     
     # reset active collection to the one we save before

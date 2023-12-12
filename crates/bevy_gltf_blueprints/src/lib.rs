@@ -10,6 +10,9 @@ pub use animation::*;
 pub mod aabb;
 pub use aabb::*;
 
+pub mod materials;
+pub use materials::*;
+
 pub mod clone_entity;
 pub use clone_entity::*;
 
@@ -47,8 +50,11 @@ pub struct BluePrintsConfig {
     pub(crate) format: GltfFormat,
     pub(crate) library_folder: PathBuf,
     pub(crate) aabbs: bool,
-
     pub(crate) aabb_cache: HashMap<String, Aabb>, // cache for aabbs
+
+    pub(crate) material_library: bool,
+    pub(crate) material_library_folder: PathBuf,
+    pub(crate) material_library_cache: HashMap<String, Handle<StandardMaterial>>,
 }
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Default)]
@@ -77,7 +83,11 @@ pub struct BlueprintsPlugin {
     pub format: GltfFormat,
     /// The base folder where library/blueprints assets are loaded from, relative to the executable.
     pub library_folder: PathBuf,
+    /// Automatically generate aabbs for the blueprints root objects
     pub aabbs: bool,
+    ///
+    pub material_library: bool,
+    pub material_library_folder: PathBuf,
 }
 
 impl Default for BlueprintsPlugin {
@@ -86,6 +96,8 @@ impl Default for BlueprintsPlugin {
             format: GltfFormat::GLB,
             library_folder: PathBuf::from("models/library"),
             aabbs: false,
+            material_library: false,
+            material_library_folder: PathBuf::from("materials"),
         }
     }
 }
@@ -94,17 +106,27 @@ fn aabbs_enabled(blueprints_config: Res<BluePrintsConfig>) -> bool {
     blueprints_config.aabbs
 }
 
+fn materials_library_enabled(blueprints_config: Res<BluePrintsConfig>) -> bool {
+    blueprints_config.material_library
+}
+
 impl Plugin for BlueprintsPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(ComponentsFromGltfPlugin)
             .register_type::<BlueprintName>()
+            .register_type::<MaterialInfo>()
             .register_type::<SpawnHere>()
             .register_type::<Animations>()
             .insert_resource(BluePrintsConfig {
                 format: self.format.clone(),
                 library_folder: self.library_folder.clone(),
+
                 aabbs: self.aabbs,
                 aabb_cache: HashMap::new(),
+
+                material_library: self.material_library,
+                material_library_folder: self.material_library_folder.clone(),
+                material_library_cache: HashMap::new(),
             })
             .configure_sets(
                 Update,
@@ -118,6 +140,7 @@ impl Plugin for BlueprintsPlugin {
                     spawn_from_blueprints,
                     compute_scene_aabbs.run_if(aabbs_enabled),
                     apply_deferred.run_if(aabbs_enabled),
+                    materials_inject.run_if(materials_library_enabled),
                 )
                     .chain()
                     .in_set(GltfBlueprintsSet::Spawn),
