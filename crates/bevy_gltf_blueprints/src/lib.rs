@@ -19,7 +19,7 @@ pub use clone_entity::*;
 use core::fmt;
 use std::path::PathBuf;
 
-use bevy::{prelude::*, render::primitives::Aabb, utils::HashMap, gltf::Gltf};
+use bevy::{gltf::Gltf, prelude::*, render::primitives::Aabb, utils::HashMap};
 use bevy_gltf_components::{ComponentsFromGltfPlugin, GltfComponentsSet};
 
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
@@ -45,7 +45,6 @@ impl Default for BluePrintBundle {
     }
 }
 
-
 #[derive(Clone, Resource)]
 pub struct BluePrintsConfig {
     pub(crate) format: GltfFormat,
@@ -53,9 +52,9 @@ pub struct BluePrintsConfig {
     pub(crate) aabbs: bool,
     pub(crate) aabb_cache: HashMap<String, Aabb>, // cache for aabbs
 
-    pub(crate) material_library:bool,
-    pub(crate) material_library_folder:PathBuf,
-    pub(crate) material_library_cache: HashMap<String, Handle<StandardMaterial>>
+    pub(crate) material_library: bool,
+    pub(crate) material_library_folder: PathBuf,
+    pub(crate) material_library_cache: HashMap<String, Handle<StandardMaterial>>,
 }
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Default)]
@@ -88,7 +87,7 @@ pub struct BlueprintsPlugin {
     pub aabbs: bool,
     ///
     pub material_library: bool,
-    pub material_library_folder: PathBuf
+    pub material_library_folder: PathBuf,
 }
 
 impl Default for BlueprintsPlugin {
@@ -116,7 +115,6 @@ impl Plugin for BlueprintsPlugin {
         app.add_plugins(ComponentsFromGltfPlugin)
             .register_type::<BlueprintName>()
             .register_type::<MaterialInfo>()
-
             .register_type::<SpawnHere>()
             .register_type::<Animations>()
             .insert_resource(BluePrintsConfig {
@@ -128,7 +126,7 @@ impl Plugin for BlueprintsPlugin {
 
                 material_library: self.material_library,
                 material_library_folder: self.material_library_folder.clone(),
-                material_library_cache:  HashMap::new(),
+                material_library_cache: HashMap::new(),
             })
             .configure_sets(
                 Update,
@@ -142,7 +140,7 @@ impl Plugin for BlueprintsPlugin {
                     spawn_from_blueprints,
                     compute_scene_aabbs.run_if(aabbs_enabled),
                     apply_deferred.run_if(aabbs_enabled),
-                    materials_inject.run_if(materials_library_enabled)
+                    materials_inject.run_if(materials_library_enabled),
                 )
                     .chain()
                     .in_set(GltfBlueprintsSet::Spawn),

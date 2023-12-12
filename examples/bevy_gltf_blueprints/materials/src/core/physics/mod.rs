@@ -6,13 +6,13 @@ pub mod utils;
 pub mod controls;
 pub use controls::*;
 
+use crate::state::GameState;
+use bevy::prelude::*;
+use bevy_gltf_blueprints::GltfBlueprintsSet;
 use bevy_rapier3d::{
     prelude::{NoUserData, RapierPhysicsPlugin},
     render::RapierDebugRenderPlugin,
 };
-use bevy::prelude::*;
-use bevy_gltf_blueprints::GltfBlueprintsSet;
-use crate::state::GameState;
 
 pub struct PhysicsPlugin;
 impl Plugin for PhysicsPlugin {

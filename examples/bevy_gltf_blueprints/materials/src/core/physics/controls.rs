@@ -1,4 +1,8 @@
-use bevy::{prelude::{info, ResMut}, input::{keyboard::KeyCode, Input}, ecs::system::Res};
+use bevy::{
+    ecs::system::Res,
+    input::{keyboard::KeyCode, Input},
+    prelude::{info, ResMut},
+};
 use bevy_rapier3d::{prelude::RapierConfiguration, render::DebugRenderContext};
 
 pub fn pause_physics(mut physics_config: ResMut<RapierConfiguration>) {
