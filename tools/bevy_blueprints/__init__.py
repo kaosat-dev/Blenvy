@@ -12,8 +12,12 @@ bl_info = {
 }
 import bpy
 from bpy_types import Operator
-from bpy.props import (StringProperty, EnumProperty)
+from bpy.props import (StringProperty, EnumProperty, PointerProperty)
 from .helpers import make_empty3
+
+
+stored_component = None
+bla = PointerProperty()
 
 class CreateBlueprintOperator(Operator):
     """Print object name in Console"""
@@ -62,14 +66,30 @@ class AddComponentToBlueprintOperator(Operator):
 
         return {'FINISHED'}
 
+import ast
+
 class CopyComponentOperator(Operator):
     """Copy component from blueprint"""
     bl_idname = "object.copy_component"
     bl_label = "Copy component from blueprint Operator"
 
+
+    target_property: StringProperty(
+        name="component_name",
+        description="component to copy",
+    )
+
+    target_property_value: StringProperty(
+        name="component_value",
+        description="component value to copy",
+    )
+
     def execute(self, context):
         print("copying component to blueprint")
-        print (context.object)
+        print ("infos", self.target_property, self.target_property_value)
+        print("recast", ast.literal_eval(self.target_property_value))
+
+        #stored_component
 
         return {'FINISHED'}
     
@@ -77,6 +97,7 @@ class DeleteComponentOperator(Operator):
     """Delete component from blueprint"""
     bl_idname = "object.delete_component"
     bl_label = "Delete component from blueprint Operator"
+    bl_options = {"REGISTER", "UNDO"}
 
     target_property: StringProperty(
         name="component_name",
@@ -97,7 +118,7 @@ class DeleteComponentOperator(Operator):
             del current_components_container[self.target_property]
 
         return {'FINISHED'}
-    
+
 class PasteComponentOperator(Operator):
     """Paste component to blueprint"""
     bl_idname = "object.paste_component"
@@ -106,6 +127,7 @@ class PasteComponentOperator(Operator):
     def execute(self, context):
         print("pasting component to blueprint")
         print (context.object)
+        
 
         return {'FINISHED'}
 
@@ -198,9 +220,14 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
 
                 row.prop(current_components_container, '["'+ component_name +'"]', text="")
                 op = row.operator(CopyComponentOperator.bl_idname, text="", icon="SETTINGS")
+               
+
                 op = row.operator(DeleteComponentOperator.bl_idname, text="", icon="X")
                 op.target_property = component_name
-                row.operator(CopyComponentOperator.bl_idname, text="", icon="COPYDOWN")
+                
+                op =row.operator(CopyComponentOperator.bl_idname, text="", icon="COPYDOWN")
+                op.target_property = component_name
+                op.target_property_value = str(component_value)
                 #layout.prop(obj,'["boolean"]',text='test')
 
                 # bpy.ops.wm.properties_remove
