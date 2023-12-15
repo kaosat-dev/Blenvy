@@ -7,6 +7,8 @@ from .helpers_collections import (get_exportable_collections, get_collections_pe
 from .helpers_export import (export_main_scene, export_blueprints_from_collections)
 from .helpers import (check_if_blueprints_exist, check_if_blueprint_on_disk)
 from .materials import cleanup_materials, clear_material_info, clear_materials_scene, export_materials, generate_materials_scenes, get_all_materials
+from .scene_components import upsert_scene_components
+
 from .config import scene_key
 
 """Main function"""
@@ -45,6 +47,27 @@ def auto_export(changes_per_scene, changed_export_parameters):
             except Exception as error:
                 print("error setting preferences from saved settings", error)
         bpy.context.window_manager['__gltf_auto_export_initialized'] = True
+
+
+    world = bpy.context.scene.world
+    if world is None:
+        pass
+        # create a new world
+        #new_world = bpy.data.worlds.new("New World")
+        # new_world.use_sky_paper = True
+        #scene.world = new_world
+    else: 
+        print("world", world.color, world.light_settings, world.node_tree.nodes['Background'], world.node_tree.nodes['Background'].inputs[0].default_value,  world.node_tree.nodes['Background'].inputs[1] )
+        color = world.node_tree.nodes['Background'].inputs[0].default_value
+        strength = world.node_tree.nodes['Background'].inputs[1].default_value
+
+        print("color", color[0], color[1], color[2], color[3])
+        print("strength", strength)
+
+
+        upsert_scene_components(bpy.context.scene, world)
+
+    # .outputs[0].default_value
 
     # have the export parameters (not auto export, just gltf export) have changed: if yes (for example switch from glb to gltf, compression or not, animations or not etc), we need to re-export everything
     print ("changed_export_parameters", changed_export_parameters)
