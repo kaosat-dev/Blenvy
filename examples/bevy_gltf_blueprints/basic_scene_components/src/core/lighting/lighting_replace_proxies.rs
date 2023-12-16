@@ -33,5 +33,9 @@ pub fn lighting_replace_proxies(
             color: ambient.color,
             brightness: ambient.brightness,
         });
+
+        // FIXME: does this belong here ?
+        commands.insert_resource(ClearColor(ambient.color * ambient.brightness));
+
     }
 }
