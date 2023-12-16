@@ -36,3 +36,7 @@ def ambient_color_to_component(world):
         print("component", component)
         return component
     return None
+
+def rendering(render):
+    bpy.context.scene.render
+    bpy.context.scene.eevee.use_bloom = True
