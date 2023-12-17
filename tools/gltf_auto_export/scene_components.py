@@ -13,7 +13,22 @@ def upsert_scene_components(scene, world):
     if lighting_components is None:
         lighting_components = make_empty3('lighting_components', [0,0,0], [0,0,0], [0,0,0], None)
 
-    lighting_components['AmbientLightP'] = ambient_color_to_component(world)
+    if world is not None:
+        lighting_components['AmbientLightSettings'] = ambient_color_to_component(world)
+
+    lighting_components['ShadowmapSettings'] = scene_shadows_to_component(scene)
+
+
+    if scene.eevee.use_bloom:
+        lighting_components['BloomSettings'] = scene_bloom_to_component(scene)
+    elif 'BloomSettings' in lighting_components:
+        del lighting_components['BloomSettings']
+
+    if scene.eevee.use_gtao: 
+        lighting_components['SSAOSettings'] = scene_ao_to_component(scene)
+    elif 'SSAOSettings' in lighting_components:
+        del lighting_components['SSAOSettings']
+
 
 def ambient_color_to_component(world):
     color = None
@@ -37,6 +52,16 @@ def ambient_color_to_component(world):
         return component
     return None
 
-def rendering(render):
-    bpy.context.scene.render
-    bpy.context.scene.eevee.use_bloom = True
+def scene_shadows_to_component(scene):
+    cascade_resolution = scene.eevee.shadow_cascade_size
+    component = "(size: "+ cascade_resolution +")"
+    return component
+
+def scene_bloom_to_component(scene):
+    component = "BloomSettings(intensity: "+ str(scene.eevee.bloom_intensity) +")"
+    return component
+
+def scene_ao_to_component(scene):
+    ssao = scene.eevee.use_gtao
+    component= "SSAOSettings()"
+    return component
