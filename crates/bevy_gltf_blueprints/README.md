@@ -273,6 +273,8 @@ https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/example
 
 https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/basic_xpbd_physics
 
+https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/basic_scene_components
+
 https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/animation
 
 https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/multiple_levels
