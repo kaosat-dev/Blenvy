@@ -48,8 +48,7 @@ def auto_export(changes_per_scene, changed_export_parameters):
                 print("error setting preferences from saved settings", error)
         bpy.context.window_manager['__gltf_auto_export_initialized'] = True
 
-    # inject/ update scene components
-    upsert_scene_components(bpy.context.scene, world = bpy.context.scene.world)
+
 
     # have the export parameters (not auto export, just gltf export) have changed: if yes (for example switch from glb to gltf, compression or not, animations or not etc), we need to re-export everything
     print ("changed_export_parameters", changed_export_parameters)
@@ -63,11 +62,17 @@ def auto_export(changes_per_scene, changed_export_parameters):
         export_output_folder = getattr(addon_prefs,"export_output_folder")
 
         export_materials_library = getattr(addon_prefs,"export_materials_library")
+        export_scene_settings = getattr(addon_prefs,"export_scene_settings")
+
 
         [main_scene_names, level_scenes, library_scene_names, library_scenes] = get_scenes(addon_prefs)
 
         print("main scenes", main_scene_names, "library_scenes", library_scene_names)
         print("export_output_folder", export_output_folder)
+
+        if export_scene_settings:
+            # inject/ update scene components
+            upsert_scene_components(bpy.context.scene, world = bpy.context.scene.world)
 
         # export everything everytime
         if export_blueprints:
