@@ -54,6 +54,13 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         description='The name of the library scene to auto export',
         default='Library'
     )
+    # scene components
+    export_scene_settings: BoolProperty(
+        name='Export scene settings',
+        description='Export scene settings ie AmbientLighting, Bloom, AO etc',
+        default=True
+    )
+
     # blueprint settings
     export_blueprints: BoolProperty(
         name='Export Blueprints',

@@ -7,6 +7,8 @@ from .helpers_collections import (get_exportable_collections, get_collections_pe
 from .helpers_export import (export_main_scene, export_blueprints_from_collections)
 from .helpers import (check_if_blueprints_exist, check_if_blueprint_on_disk)
 from .materials import cleanup_materials, clear_material_info, clear_materials_scene, export_materials, generate_materials_scenes, get_all_materials
+from .scene_components import upsert_scene_components
+
 from .config import scene_key
 
 """Main function"""
@@ -46,6 +48,8 @@ def auto_export(changes_per_scene, changed_export_parameters):
                 print("error setting preferences from saved settings", error)
         bpy.context.window_manager['__gltf_auto_export_initialized'] = True
 
+
+
     # have the export parameters (not auto export, just gltf export) have changed: if yes (for example switch from glb to gltf, compression or not, animations or not etc), we need to re-export everything
     print ("changed_export_parameters", changed_export_parameters)
     try:
@@ -58,11 +62,17 @@ def auto_export(changes_per_scene, changed_export_parameters):
         export_output_folder = getattr(addon_prefs,"export_output_folder")
 
         export_materials_library = getattr(addon_prefs,"export_materials_library")
+        export_scene_settings = getattr(addon_prefs,"export_scene_settings")
+
 
         [main_scene_names, level_scenes, library_scene_names, library_scenes] = get_scenes(addon_prefs)
 
         print("main scenes", main_scene_names, "library_scenes", library_scene_names)
         print("export_output_folder", export_output_folder)
+
+        if export_scene_settings:
+            # inject/ update scene components
+            upsert_scene_components(bpy.context.scene, world = bpy.context.scene.world)
 
         # export everything everytime
         if export_blueprints:
@@ -125,7 +135,8 @@ def auto_export(changes_per_scene, changed_export_parameters):
             # first export any main/level/world scenes
             print("export MAIN scenes")
             for scene_name in main_scene_names:
-                do_export_main_scene =  changed_export_parameters or (scene_name in changes_per_scene.keys() and len(changes_per_scene[scene_name].keys()) > 0) or not check_if_blueprint_on_disk(scene_name, export_levels_path, gltf_extension)
+                # we have more relaxed rules to determine if the main scenes have changed : any change is ok, (allows easier handling of changes, render settings etc)
+                do_export_main_scene =  changed_export_parameters or scene_name in changes_per_scene.keys() or not check_if_blueprint_on_disk(scene_name, export_levels_path, gltf_extension)
                 if do_export_main_scene:
                     print("     exporting scene:", scene_name)
                     export_main_scene(bpy.data.scenes[scene_name], folder_path, addon_prefs, collections)

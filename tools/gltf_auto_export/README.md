@@ -44,6 +44,9 @@ This [Blender addon](./)
 
 
     - export folder: root folder to export models too
+    - export scene settings: exports "global"/scene settings like ambient color, bloom, ao, etc 
+        
+        This automatically generates additional components at the scene level 
     - pick your main (level) scenes and library scenes (see the chapter about Blueprints below)   
         - click in the scene picker & select your scene
 
