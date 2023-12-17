@@ -18,6 +18,8 @@ AutoExportGltfPreferenceNames = [
     'export_blueprints',
     'export_blueprints_path',
 
+    'export_scene_settings',
+
     'export_materials_library',
     'export_materials_path',
 
