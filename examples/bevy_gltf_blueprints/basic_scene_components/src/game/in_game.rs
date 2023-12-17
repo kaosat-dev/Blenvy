@@ -16,10 +16,6 @@ pub fn setup_game(
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     println!("setting up all stuff");
-    /*commands.insert_resource(AmbientLight {
-        color: Color::WHITE,
-        brightness: 0.2,
-    });*/
     // here we actually spawn our game world/level
 
     commands.spawn((

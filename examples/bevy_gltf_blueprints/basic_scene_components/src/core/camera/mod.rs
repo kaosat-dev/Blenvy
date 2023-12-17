@@ -13,6 +13,7 @@ impl Plugin for CameraPlugin {
         app.register_type::<CameraTrackable>()
             .register_type::<CameraTracking>()
             .register_type::<CameraTrackingOffset>()
+            .register_type::<SSAOSettings>()
             .add_systems(
                 Update,
                 (
