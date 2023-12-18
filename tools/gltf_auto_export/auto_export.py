@@ -151,7 +151,7 @@ def auto_export(changes_per_scene, changed_export_parameters):
                     print("     exporting collections from scene:", scene_name)
                     print("     collections to export", collections_to_export)
                     library_scene = bpy.data.scenes[scene_name]
-                    export_blueprints_from_collections(collections_to_export, library_scene, folder_path, addon_prefs, blueprint_hierarchy)
+                    export_blueprints_from_collections(collections_to_export, library_scene, folder_path, addon_prefs, blueprint_hierarchy, library_collections)
 
             # reset current scene from backup
             bpy.context.window.scene = old_current_scene

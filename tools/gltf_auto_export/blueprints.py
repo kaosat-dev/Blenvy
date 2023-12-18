@@ -20,7 +20,8 @@ def generate_blueprint_hollow_scene(blueprint_collection, library_collections):
     # copies the contents of a collection into another one while replacing blueprint instances with empties
     def copy_hollowed_collection_into(source_collection, destination_collection):
         for object in source_collection.objects:
-            if object.instance_type == 'COLLECTION' : #and (object.instance_collection.name in library_collections):
+            if object.instance_type == 'COLLECTION' and (object.instance_collection.name in library_collections):
+                print("creating a collection instance empty", object.name)
                 collection_name = object.instance_collection.name
 
                 original_name = object.name
@@ -36,6 +37,11 @@ def generate_blueprint_hollow_scene(blueprint_collection, library_collections):
                     empty_obj[k] = v
             else:
                 destination_collection.objects.link(object)
+        # for every sub-collection of the source, copy its content into a new sub-collection of the destination
+        for collection in source_collection.children:
+            copy_collection = bpy.data.collections.new(collection.name + "____collection_export")
+            copy_hollowed_collection_into(collection, copy_collection)
+            destination_collection.children.link(copy_collection)
 
     copy_hollowed_collection_into(blueprint_collection, temp_scene_root_collection)
 
