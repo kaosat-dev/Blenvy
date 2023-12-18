@@ -1,0 +1,6 @@
+({
+    "world":File (path: "models/World.glb"),
+    "models": Folder (
+        path: "models/library",
+    ),
+})

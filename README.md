@@ -4,7 +4,7 @@
 
 # Blender_bevy_components_workflow
 
-![demo](./docs/blender_gltf_components.png)
+![demo](./docs/blender_bevy.png)
 
 Crates & tools for adding components from gltf files in the [Bevy](https://bevyengine.org/) game engine.
 

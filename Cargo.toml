@@ -4,10 +4,13 @@ members = [
     "crates/bevy_gltf_blueprints",
     "examples/bevy_gltf_components/basic/",
     "examples/bevy_gltf_blueprints/basic/",
+    "examples/bevy_gltf_blueprints/basic_scene_components/",
     "examples/bevy_gltf_blueprints/basic_xpbd_physics/",
     "examples/bevy_gltf_blueprints/nested_blueprints/",
     "examples/bevy_gltf_blueprints/animation/",
-    "examples/bevy_gltf_blueprints/multiple_levels/"
+    "examples/bevy_gltf_blueprints/multiple_levels/",
+    "examples/bevy_gltf_blueprints/materials/"
+
 ]
 resolver = "2"
 
