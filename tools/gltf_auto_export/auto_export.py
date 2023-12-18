@@ -78,7 +78,7 @@ def auto_export(changes_per_scene, changed_export_parameters):
         if export_blueprints:
             print("EXPORTING")
             # get a list of all collections actually in use
-            collections = get_exportable_collections(level_scenes, library_scenes)
+            (collections, blueprint_hierarchy) = get_exportable_collections(level_scenes, library_scenes)
             # first check if all collections have already been exported before (if this is the first time the exporter is run
             # in your current Blender session for example)
             export_blueprints_path = os.path.join(folder_path, export_output_folder, getattr(addon_prefs,"export_blueprints_path")) if getattr(addon_prefs,"export_blueprints_path") != '' else folder_path
@@ -151,7 +151,7 @@ def auto_export(changes_per_scene, changed_export_parameters):
                     print("     exporting collections from scene:", scene_name)
                     print("     collections to export", collections_to_export)
                     library_scene = bpy.data.scenes[scene_name]
-                    export_blueprints_from_collections(collections_to_export, library_scene, folder_path, addon_prefs)
+                    export_blueprints_from_collections(collections_to_export, library_scene, folder_path, addon_prefs, blueprint_hierarchy)
 
             # reset current scene from backup
             bpy.context.window.scene = old_current_scene

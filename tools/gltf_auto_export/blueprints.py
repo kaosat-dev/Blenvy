@@ -6,6 +6,7 @@ from .helpers import (make_empty3)
 def generate_blueprint_hollow_scene(blueprint_collection, library_collections):
     temp_scene = bpy.data.scenes.new(name="temp_scene_"+blueprint_collection.name)
     temp_scene_root_collection = temp_scene.collection
+    print("creating temp scene", temp_scene.name)
 
     # we set our active scene to be this one : this is needed otherwise the stand-in empties get generated in the wrong scene
     bpy.context.window.scene = temp_scene
@@ -19,7 +20,7 @@ def generate_blueprint_hollow_scene(blueprint_collection, library_collections):
     # copies the contents of a collection into another one while replacing blueprint instances with empties
     def copy_hollowed_collection_into(source_collection, destination_collection):
         for object in source_collection.objects:
-            if object.instance_type == 'COLLECTION' and (object.instance_collection.name in library_collections):
+            if object.instance_type == 'COLLECTION' : #and (object.instance_collection.name in library_collections):
                 collection_name = object.instance_collection.name
 
                 original_name = object.name

@@ -37,7 +37,7 @@ def make_empty3(name, location, rotation, scale, collection):
     bpy.context.view_layer.objects.active = original_active_object
     return empty_obj
 
-
+# traverse all collections
 def traverse_tree(t):
     yield t
     for child in t.children:

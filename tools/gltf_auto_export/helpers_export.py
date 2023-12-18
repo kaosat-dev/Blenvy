@@ -1,9 +1,12 @@
 import os
 import bpy
+
 from .preferences import (AutoExportGltfPreferenceNames)
 from .helpers_scenes import (generate_hollow_scene, clear_hollow_scene)
 from .helpers_collections import (recurLayerCollection)
+from .blueprints import clear_blueprint_hollow_scene, generate_blueprint_hollow_scene
 from .helpers import (traverse_tree)
+
 ######################################################
 #### Export logic #####
 
@@ -66,7 +69,7 @@ def get_source_scene(collection_name, library_scenes):
     return match
 
 # export collections: all the collections that have an instance in the main scene AND any marked collections, even if they do not have instances
-def export_collections(collections, folder_path, library_scene, addon_prefs, gltf_export_preferences): 
+def export_collections(collections, folder_path, library_scene, addon_prefs, gltf_export_preferences, blueprint_hierarchy): 
     # set active scene to be the library scene (hack for now)
     bpy.context.window.scene = library_scene
     # save current active collection
@@ -87,13 +90,28 @@ def export_collections(collections, folder_path, library_scene, addon_prefs, glt
         if export_materials_library:
             export_settings['export_materials'] = 'PLACEHOLDER'
 
-        export_gltf(gltf_output_path, export_settings)
+        #if relevant we replace sub collections instances with placeholders too
+        # TODO: add data structure to filter this out like a tree: this is not needed if a collection/blueprint does not have sub blueprints
+        if len(blueprint_hierarchy[collection_name]) > 0 :
+            backup = bpy.context.window.scene
+            collection = bpy.data.collections[collection_name]
+            print("transforming collection", collection.name)
+            (hollow_scene, object_names) = generate_blueprint_hollow_scene(collection, [])
+
+            export_gltf(gltf_output_path, export_settings)
+
+            clear_blueprint_hollow_scene(hollow_scene, collection, object_names)
+            bpy.context.window.scene = backup
+        else:
+            print("NO CHILDREN, keeping as it is")
+            export_gltf(gltf_output_path, export_settings)
+
     
     # reset active collection to the one we save before
     bpy.context.view_layer.active_layer_collection = active_collection
 
 
-def export_blueprints_from_collections(collections, library_scene, folder_path, addon_prefs):
+def export_blueprints_from_collections(collections, library_scene, folder_path, addon_prefs, blueprint_hierarchy):
     export_output_folder = getattr(addon_prefs,"export_output_folder")
     gltf_export_preferences = generate_gltf_export_preferences(addon_prefs)
     export_blueprints_path = os.path.join(folder_path, export_output_folder, getattr(addon_prefs,"export_blueprints_path")) if getattr(addon_prefs,"export_blueprints_path") != '' else folder_path
@@ -102,7 +120,7 @@ def export_blueprints_from_collections(collections, library_scene, folder_path, 
     #print("LIBRARY EXPORT", export_blueprints_path )
 
     try:
-        export_collections(collections, export_blueprints_path, library_scene, addon_prefs, gltf_export_preferences)
+        export_collections(collections, export_blueprints_path, library_scene, addon_prefs, gltf_export_preferences, blueprint_hierarchy)
     except Exception as error:
         print("failed to export collections to gltf: ", error)
         # TODO : rethrow

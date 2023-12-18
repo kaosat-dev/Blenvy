@@ -130,7 +130,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
       
 
         [main_scene_names, level_scenes, library_scene_names, library_scenes]=get_scenes(addon_prefs)
-        collections = get_exportable_collections(level_scenes, library_scenes)
+        (collections, _) = get_exportable_collections(level_scenes, library_scenes)
 
         try:
             # we save this list of collections in the context
