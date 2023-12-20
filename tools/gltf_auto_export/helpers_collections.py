@@ -39,52 +39,53 @@ def get_sub_collections(collections, parent, children_per_collection):
     
 
     for root_collection in collections:
-        node = Node()
-        node.name = root_collection.name
+        node = Node(name=root_collection.name, parent=parent)
         parent.children.append(node)
 
       
-        print("root collection", root_collection.name)
-        for collection in traverse_tree(root_collection):
+        #print("root collection", root_collection.name)
+        for collection in traverse_tree(root_collection): # TODO: filter out COLLECTIONS that have the flatten flag (unlike the flatten flag on colleciton instances themselves)
             node_name = collection.name
             children_per_collection[node_name] = []
-            print("  scanning", collection.name)
+            #print("  scanning", collection.name)
             for object in collection.objects:
-                if object.instance_type == 'COLLECTION':
+                #print("FLATTEN", object.name, 'Flatten' in object)
+                if object.instance_type == 'COLLECTION' : # and not 'Flatten' in object: 
                     collection_name = object.instance_collection.name
                     (sub_names, sub_collections) = get_sub_collections([object.instance_collection], node, children_per_collection)
                     if len(list(sub_names)) > 0:
                         children_per_collection[node_name]  += (list(sub_names))
-                    print("   found sub collection in use", object.name, object.instance_collection)
+                    #print("   found sub collection in use", object.name, object.instance_collection)
 
 
                     if not collection_name in collection_names: 
                         collection_names.add(collection_name)
                         used_collections.append(object.instance_collection)
-                      
                         collection_names.update(sub_names)
 
         #for sub in traverse_tree(root_collection):
     return (collection_names, used_collections)
 
 # FIXME: get rid of this, ugh
-def foo(node, children_per_collection):
+def flatten_collection_tree(node, children_per_collection):
     children_per_collection[node.name] = []
     for child in node.children:
         if not node.name in children_per_collection[node.name]:
             children_per_collection[node.name].append(child.name)
-        foo(child, children_per_collection)
+        flatten_collection_tree(child, children_per_collection)
     children_per_collection[node.name] = list(set( children_per_collection[node.name]))
        
 
 class Node :
-    def __init__(self):
-      self.name = ""
+    def __init__(self, name="", parent=None):
+      self.name = name
       self.children = []
+      self.changed = False
+      self.parent = parent
       return
     def __str__(self):
-        bla = list(map(lambda child: str(child), self.children))
-        return "name: " +self.name + ", children:" + str(bla)
+        children = list(map(lambda child: str(child), self.children))
+        return "name: " +self.name + ", children:" + str(children)
     
 # get exportable collections from lists of mains scenes and lists of library scenes
 def get_exportable_collections(main_scenes, library_scenes): 
@@ -109,7 +110,7 @@ def get_exportable_collections(main_scenes, library_scenes):
     all_collection_names = all_collection_names + list(collection_names)
 
     children_per_collection = {}
-    foo(root_node, children_per_collection)
+    flatten_collection_tree(root_node, children_per_collection)
 
     print("ROOT NODE", children_per_collection) #
    

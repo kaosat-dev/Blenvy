@@ -74,6 +74,8 @@ def export_collections(collections, folder_path, library_scene, addon_prefs, glt
     bpy.context.window.scene = library_scene
     # save current active collection
     active_collection =  bpy.context.view_layer.active_layer_collection
+    export_nested_blueprints = getattr(addon_prefs,"export_nested_blueprints")
+    export_materials_library = getattr(addon_prefs,"export_materials_library")
 
     for collection_name in collections:
         print("exporting collection", collection_name)
@@ -86,16 +88,16 @@ def export_collections(collections, folder_path, library_scene, addon_prefs, glt
         export_settings = { **gltf_export_preferences, 'use_active_scene': True, 'use_active_collection': True, 'use_active_collection_with_nested':True}
         
         # if we are using the material library option, do not export materials, use placeholder instead
-        export_materials_library = getattr(addon_prefs,"export_materials_library")
         if export_materials_library:
             export_settings['export_materials'] = 'PLACEHOLDER'
 
         #if relevant we replace sub collections instances with placeholders too
-        # TODO: add data structure to filter this out like a tree: this is not needed if a collection/blueprint does not have sub blueprints
-        if len(blueprint_hierarchy[collection_name]) > 0 :
+        # this is not needed if a collection/blueprint does not have sub blueprints
+        print("BLAAAAA", len(blueprint_hierarchy[collection_name]))
+        if len(blueprint_hierarchy[collection_name]) > 0 and export_nested_blueprints :
+            print("TOTO")
             backup = bpy.context.window.scene
             collection = bpy.data.collections[collection_name]
-            print("transforming collection", collection.name)
             (hollow_scene, object_names) = generate_blueprint_hollow_scene(collection, library_collections)
 
             export_gltf(gltf_output_path, export_settings)
@@ -103,7 +105,7 @@ def export_collections(collections, folder_path, library_scene, addon_prefs, glt
             clear_blueprint_hollow_scene(hollow_scene, collection, object_names)
             bpy.context.window.scene = backup
         else:
-            print("NO CHILDREN, keeping as it is")
+            print("NORMAL")
             export_gltf(gltf_output_path, export_settings)
 
     

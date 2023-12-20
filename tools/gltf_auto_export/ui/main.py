@@ -275,6 +275,15 @@ class GLTF_PT_auto_export_blueprints(bpy.types.Panel):
 
         return operator.bl_idname == "EXPORT_SCENES_OT_auto_gltf" #"EXPORT_SCENE_OT_gltf"
 
+
+    def draw_header(self, context):
+        layout = self.layout
+        sfile = context.space_data
+        operator = sfile.active_operator
+        layout.prop(operator, "export_blueprints", text="")
+
+        #self.layout.prop(operator, "auto_export", text="")
+
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
@@ -283,8 +292,10 @@ class GLTF_PT_auto_export_blueprints(bpy.types.Panel):
         sfile = context.space_data
         operator = sfile.active_operator
 
-        layout.prop(operator, "export_blueprints")
+        layout.active = operator.export_blueprints
+        
         layout.prop(operator, "export_blueprints_path")
+        layout.prop(operator, "export_nested_blueprints")
 
         # materials
         layout.prop(operator, "export_materials_library")

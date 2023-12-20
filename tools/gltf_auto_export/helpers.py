@@ -48,7 +48,7 @@ def check_if_blueprints_exist(collections, folder_path, extension):
     not_found_blueprints = []
     for collection_name in collections:
         gltf_output_path = os.path.join(folder_path, collection_name + extension)
-        print("gltf_output_path", gltf_output_path)
+        # print("gltf_output_path", gltf_output_path)
         found = os.path.exists(gltf_output_path) and os.path.isfile(gltf_output_path)
         if not found:
             not_found_blueprints.append(collection_name)
