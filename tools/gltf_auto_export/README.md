@@ -62,6 +62,9 @@ This [Blender addon](./)
 
     - export blueprints: check this if you want to automatically export blueprints (default: True)
     - blueprints path: the path to export blueprints to , relative to the main **export folder** (default: library)
+    - export nested blueprints: check this if you want to automatically export nested blueprints (collection instances inside blueprint collections)
+    as seperate blueprints  (default: True)
+    please read dedicate section below for more information
 
     - export materials library: check this if you want to automatically export material libraries (default: False)
     please read the dedicated section below for more information
@@ -108,6 +111,40 @@ You can enable this option to automatically replace all the **collection instanc
 - you can also get an overview of all the exported collections in the export menu
 
     ![exported collections](./docs/exported_collections.png)
+
+
+#### Nested blueprints
+
+To maximise reuse of meshes/components etc, you can also nest ***collections instances*** inside collections (as normally in Blender), but also export each nested Blueprint as a seperate blueprints.
+
+> Don't forget to toggle the option in the exporter settings 
+
+- To make things clearer: 
+
+    ![nested-blueprints](./docs/nested_blueprints.png)
+
+    - **Player2** & **Enemy** both use the **Humanoid_cactus** nested collection/blueprint, so **Humanoid_cactus** gets exported as a Blueprint for re-use ...but
+    - **Humanoid_cactus** is also made up of a main mesh & two instances of **Hand** , so **Hand** gets exported as a Blueprint for re-use ...but
+    - **Hand** is also made up of a main mesh & three instances of **Finger**, so **Finger** gets exported as a Blueprint for re-use
+
+- The exported models in this case end up being:
+
+    ![nested_blueprints2](./docs/nested_blueprints2.png)
+
+    - Note how **Player2.glb** is tiny, because most of its data is actually sotred in **Humanoid_cactus.glb**
+    - **Enemy.glb** is slightly bigger because that blueprints contains additional meshes
+    - All the intermediary blueprints got exported automatically, and all instances have been replaced with "empties" (see explanation in the **Process section** ) to minimize file size
+
+- Compare this to the output **WITHOUT** the nested export option:
+
+    ![nested_blueprints3](./docs/nested_blueprints3.png)
+
+    - less blueprints as the sub collections that are not in use somewhere directly are not exported
+    - **Player2.glb** & **Enemy.glb** are significantly larger
+
+
+TLDR: smaller, more reuseable blueprints which can share sub-parts with other entities !
+
 
 ### Materials
 
