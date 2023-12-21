@@ -20,9 +20,18 @@ def generate_blueprint_hollow_scene(blueprint_collection, library_collections):
     # copies the contents of a collection into another one while replacing blueprint instances with empties
     def copy_hollowed_collection_into(source_collection, destination_collection):
         for object in source_collection.objects:
-            flatten = 'Flatten' in object and object['Flatten'] == True # if the object has the "flatten" flag set to true, treat it as an embeded object and do not replace it with an empty
+            #FIXME: enum would be better
+            """ combine mode can be 
+              - 'Split' (default): replace with an empty, creating links to sub blueprints 
+              - 'Embed' : treat it as an embeded object and do not replace it with an empty
+              - 'Inject': inject components from sub collection instances into the curent object
+            """
+            combineMode = 'Split' if not 'Combine' in object else object['Combine']
+            # TODO: implement
+            # print("COMBINE MODE", combineMode)
+            # embed = 'Embed' in object and object['Embed'] == True # if the object has the "embed" flag set to true, treat it as an embeded object and do not replace it with an empty
             # merge = 'Merge' in object and object['Merge'] == True 
-            if object.instance_type == 'COLLECTION' and (object.instance_collection.name in library_collections) and not flatten:
+            if object.instance_type == 'COLLECTION' and (object.instance_collection.name in library_collections):
                 # if we have combine_mode set to "merge", we take all the custom attributed of the nested (1 level only ! unless we use 'deepMerge') custom attributes and copy them to this level 
                 """TODO: implement later
                 if merge:

@@ -91,11 +91,11 @@ def export_collections(collections, folder_path, library_scene, addon_prefs, glt
         if export_materials_library:
             export_settings['export_materials'] = 'PLACEHOLDER'
 
+
         #if relevant we replace sub collections instances with placeholders too
         # this is not needed if a collection/blueprint does not have sub blueprints
-        print("BLAAAAA", len(blueprint_hierarchy[collection_name]))
-        if len(blueprint_hierarchy[collection_name]) > 0 and export_nested_blueprints :
-            print("TOTO")
+        if collection_name in blueprint_hierarchy and len(blueprint_hierarchy[collection_name]) > 0 and export_nested_blueprints :
+            print("generate hollow scene for nested blueprints", library_collections)
             backup = bpy.context.window.scene
             collection = bpy.data.collections[collection_name]
             (hollow_scene, object_names) = generate_blueprint_hollow_scene(collection, library_collections)

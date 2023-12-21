@@ -88,7 +88,7 @@ class Node :
         return "name: " +self.name + ", children:" + str(children)
     
 # get exportable collections from lists of mains scenes and lists of library scenes
-def get_exportable_collections(main_scenes, library_scenes): 
+def get_exportable_collections(main_scenes, library_scenes, scan_nested_collections): 
     all_collections = []
     all_collection_names = []
     root_node = Node()
@@ -105,15 +105,12 @@ def get_exportable_collections(main_scenes, library_scenes):
         all_collection_names = all_collection_names + marked_collections[0]
         all_collections = all_collections + marked_collections[1]
 
-
-    (collection_names, collections) = get_sub_collections(all_collections, root_node, children_per_collection)
-    all_collection_names = all_collection_names + list(collection_names)
-
-    children_per_collection = {}
-    flatten_collection_tree(root_node, children_per_collection)
-
-    print("ROOT NODE", children_per_collection) #
-   
+    if scan_nested_collections:
+        (collection_names, collections) = get_sub_collections(all_collections, root_node, children_per_collection)
+        all_collection_names = all_collection_names + list(collection_names)
+        children_per_collection = {}
+        flatten_collection_tree(root_node, children_per_collection)
+        #print("ROOT NODE", children_per_collection) #
 
     return (all_collection_names, children_per_collection)
 

@@ -48,8 +48,6 @@ def auto_export(changes_per_scene, changed_export_parameters):
                 print("error setting preferences from saved settings", error)
         bpy.context.window_manager['__gltf_auto_export_initialized'] = True
 
-
-
     # have the export parameters (not auto export, just gltf export) have changed: if yes (for example switch from glb to gltf, compression or not, animations or not etc), we need to re-export everything
     print ("changed_export_parameters", changed_export_parameters)
     try:
@@ -63,6 +61,7 @@ def auto_export(changes_per_scene, changed_export_parameters):
 
         export_materials_library = getattr(addon_prefs,"export_materials_library")
         export_scene_settings = getattr(addon_prefs,"export_scene_settings")
+        export_nested_blueprints = getattr(addon_prefs,"export_nested_blueprints")
 
 
         [main_scene_names, level_scenes, library_scene_names, library_scenes] = get_scenes(addon_prefs)
@@ -74,11 +73,12 @@ def auto_export(changes_per_scene, changed_export_parameters):
             # inject/ update scene components
             upsert_scene_components(bpy.context.scene, world = bpy.context.scene.world)
 
-        # export everything everytime
+        # export
         if export_blueprints:
             print("EXPORTING")
             # get a list of all collections actually in use
-            (collections, blueprint_hierarchy) = get_exportable_collections(level_scenes, library_scenes)
+            scan_nested_collections = export_nested_blueprints
+            (collections, blueprint_hierarchy) = get_exportable_collections(level_scenes, library_scenes, scan_nested_collections)
             # first check if all collections have already been exported before (if this is the first time the exporter is run
             # in your current Blender session for example)
             export_blueprints_path = os.path.join(folder_path, export_output_folder, getattr(addon_prefs,"export_blueprints_path")) if getattr(addon_prefs,"export_blueprints_path") != '' else folder_path
@@ -96,10 +96,10 @@ def auto_export(changes_per_scene, changed_export_parameters):
                     object_collections = list(obj.users_collection)
                     object_collection_names = list(map(lambda collection: collection.name, object_collections))
                     if len(object_collection_names) > 1:
-                        print("ERRROR, objects in multiple collections not supported")
+                        print("ERRROR for",obj_name,"objects in multiple collections not supported")
                     else:
                         object_collection_name =  object_collection_names[0] if len(object_collection_names) > 0 else None
-                        print("      object ", obj, object_collection_name)
+                        #print("      object ", obj, object_collection_name)
                         if object_collection_name in collections:
                             changed_collections.append(object_collection_name)
 
@@ -111,6 +111,7 @@ def auto_export(changes_per_scene, changed_export_parameters):
 
           
             # collections that do not come from a library should not be exported as seperate blueprints
+            # FIMXE: logic is erroneous, needs to be changed
             library_collections = [name for sublist in collections_per_scene.values() for name in sublist]
             collections_to_export = list(set(collections_to_export).intersection(set(library_collections)))
 
@@ -151,7 +152,7 @@ def auto_export(changes_per_scene, changed_export_parameters):
                     print("     exporting collections from scene:", scene_name)
                     print("     collections to export", collections_to_export)
                     library_scene = bpy.data.scenes[scene_name]
-                    export_blueprints_from_collections(collections_to_export, library_scene, folder_path, addon_prefs, blueprint_hierarchy, library_collections)
+                    export_blueprints_from_collections(collections_to_export, library_scene, folder_path, addon_prefs, blueprint_hierarchy, collections)
 
             # reset current scene from backup
             bpy.context.window.scene = old_current_scene
