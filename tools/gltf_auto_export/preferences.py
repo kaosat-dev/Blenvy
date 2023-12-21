@@ -15,14 +15,15 @@ AutoExportGltfPreferenceNames = [
     'export_main_scene_name',
     'export_output_folder',
     'export_library_scene_name',
+
     'export_blueprints',
     'export_blueprints_path',
-
-    'export_scene_settings',
+    'export_nested_blueprints',
 
     'export_materials_library',
     'export_materials_path',
 
+    'export_scene_settings',
 
     'main_scenes',
     'library_scenes',
@@ -73,6 +74,12 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         name='Blueprints path',
         description='path to export the blueprints to (relative to the Export folder)',
         default='library'
+    )
+
+    export_nested_blueprints: BoolProperty(
+        name='Export nested Blueprints',
+        description='Collection instances within Collections are turned into blueprint instances',
+        default=True
     )
 
     export_materials_library: BoolProperty(

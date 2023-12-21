@@ -1,7 +1,7 @@
 bl_info = {
     "name": "gltf_auto_export",
     "author": "kaosigh",
-    "version": (0, 7, 1),
+    "version": (0, 8, 0),
     "blender": (3, 4, 0),
     "location": "File > Import-Export",
     "description": "glTF/glb auto-export",
@@ -43,6 +43,7 @@ bpy.context.window_manager['changed_objects_per_scene'] = {}
 bpy.context.window_manager['previous_params'] = {}
 bpy.context.window_manager['__gltf_auto_export_initialized'] = False
 bpy.context.window_manager['__gltf_auto_export_gltf_params_changed'] = False
+bpy.context.window_manager['__gltf_auto_export_saving'] = False
 
 ######################################################
 """ there are two places where we load settings for auto_export from:
@@ -60,6 +61,9 @@ def deps_update_handler(scene, depsgraph):
         print("-------------")
         changed = scene.name or ""
 
+        # only deal with changes if we are no in the mids of saving/exporting
+        #if not bpy.context.window_manager['__gltf_auto_export_saving']:
+
         # depsgraph = bpy.context.evaluated_depsgraph_get()
         if not 'changed_objects_per_scene' in bpy.context.window_manager:
             bpy.context.window_manager['changed_objects_per_scene'] = {}
@@ -71,6 +75,7 @@ def deps_update_handler(scene, depsgraph):
             if isinstance(obj.id, bpy.types.Object):
                 # get the actual object
                 object = bpy.data.objects[obj.id.name]
+                print("changed object", obj.id.name)
                 bpy.context.window_manager['changed_objects_per_scene'][scene.name][obj.id.name] = object
         
         bpy.context.window_manager.changedScene = changed
@@ -79,10 +84,16 @@ def deps_update_handler(scene, depsgraph):
 def save_handler(dummy): 
     print("-------------")
     print("saved", bpy.data.filepath)
+    # mark saving as in progress, this is needed to ignore any changes from the depsgraph done during saving
+    # bpy.context.window_manager['__gltf_auto_export_saving'] = True
+
     if not 'changed_objects_per_scene' in bpy.context.window_manager:
         bpy.context.window_manager['changed_objects_per_scene'] = {}
     changes_per_scene =  bpy.context.window_manager['changed_objects_per_scene']
 
+    if not 'previous_params' in bpy.context.window_manager: 
+        bpy.context.window_manager['previous_params'] = {}
+    
     #determine changed parameters
     addon_prefs = bpy.context.preferences.addons["gltf_auto_export"].preferences
 
@@ -112,6 +123,11 @@ def save_handler(dummy):
     bpy.context.window_manager['__gltf_auto_export_gltf_params_changed'] = False
     # reset whether there have been changed objects since the last save 
     bpy.context.window_manager['changed_objects_per_scene'] = {}
+
+    # all our logic is done, mark this as done
+    #bpy.context.window_manager['__gltf_auto_export_saving'] = False
+    print("EXPORT DONE")
+
 
 def get_changedScene(self):
     return self["changedScene"]
@@ -152,6 +168,7 @@ def register():
     # setup handlers for updates & saving
     bpy.app.handlers.depsgraph_update_post.append(deps_update_handler)
     bpy.app.handlers.save_post.append(save_handler)
+
 
     bpy.types.WindowManager.changedScene = bpy.props.StringProperty(get=get_changedScene, set=set_changedScene)
     bpy.types.WindowManager.exportedCollections = bpy.props.CollectionProperty(type=CollectionsToExport)

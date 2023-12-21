@@ -34,7 +34,7 @@ pub struct SpawnedRoot;
 /// * also takes into account the already exisiting "override" components, ie "override components" > components from blueprint
 pub(crate) fn spawn_from_blueprints(
     spawn_placeholders: Query<
-        (Entity, &Name, &BlueprintName, &Transform),
+        (Entity, &Name, &BlueprintName, &Transform, Option<&Parent>),
         (
             Added<BlueprintName>,
             Added<SpawnHere>,
@@ -49,9 +49,12 @@ pub(crate) fn spawn_from_blueprints(
     assets_gltf: Res<Assets<Gltf>>,
     asset_server: Res<AssetServer>,
     blueprints_config: Res<BluePrintsConfig>,
+
 ) {
-    for (entity, name, blupeprint_name, transform) in spawn_placeholders.iter() {
-        debug!("need to spawn {:?}", blupeprint_name.0);
+    for (entity, name, blupeprint_name, transform, original_parent) in spawn_placeholders.iter() {
+        debug!("need to spawn {:?}, id: {:?}", blupeprint_name.0, entity);
+
+
         let what = &blupeprint_name.0;
         let model_file_name = format!("{}.{}", &what, &blueprints_config.format);
         let model_path =
@@ -60,8 +63,7 @@ pub(crate) fn spawn_from_blueprints(
         debug!("attempting to spawn {:?}", model_path);
         let model_handle: Handle<Gltf> = asset_server.load(model_path);
 
-        let world = game_world.single_mut();
-        let world = world.1[0]; // FIXME: dangerous hack because our gltf data have a single child like this, but might not always be the case
+     
 
         let gltf = assets_gltf
             .get(&model_handle)
@@ -92,6 +94,15 @@ pub(crate) fn spawn_from_blueprints(
                 },
             ))
             .id();
-        commands.entity(world).add_child(child_scene);
+
+        let world = game_world.single_mut();
+        let mut parent = world.1[0]; // FIXME: dangerous hack because our gltf data have a single child like this, but might not always be the case
+    
+        // ideally, insert the newly created entity as a child of the original parent, if any, the world otherwise
+        if let Some(original_parent) = original_parent {
+            parent = original_parent.get();
+        }
+     
+        commands.entity(parent).add_child(child_scene);    
     }
 }

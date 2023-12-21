@@ -2,6 +2,7 @@ import bpy
 from .helpers import traverse_tree
 
 # returns the list of the collections in use for a given scene
+# FIXME: this should also look into sub collections
 def get_used_collections(scene): 
     root_collection = scene.collection 
 
@@ -11,13 +12,7 @@ def get_used_collections(scene):
     for object in scene_objects:
         #print("object ", object)
         if object.instance_type == 'COLLECTION':
-            #print("THIS OBJECT IS A COLLECTION")
-            # print("instance_type" ,object.instance_type)
             collection_name = object.instance_collection.name
-            #print("instance collection", object.instance_collection.name)
-            #object.instance_collection.users_scene
-            # del object['blueprint']
-            # object['BlueprintName'] = '"'+collection_name+'"'
             if not collection_name in collection_names: 
                 collection_names.add(collection_name)
                 used_collections.append(object.instance_collection)
@@ -37,16 +32,87 @@ def get_marked_collections(scene):
             collection_names.append(collection.name)
     return (collection_names, marked_collections)
 
+# gets all collections within collections that might also be relevant
+def get_sub_collections(collections, parent, children_per_collection):
+    collection_names = set()
+    used_collections = []
+    
+
+    for root_collection in collections:
+        node = Node(name=root_collection.name, parent=parent)
+        parent.children.append(node)
+
+      
+        #print("root collection", root_collection.name)
+        for collection in traverse_tree(root_collection): # TODO: filter out COLLECTIONS that have the flatten flag (unlike the flatten flag on colleciton instances themselves)
+            node_name = collection.name
+            children_per_collection[node_name] = []
+            #print("  scanning", collection.name)
+            for object in collection.objects:
+                #print("FLATTEN", object.name, 'Flatten' in object)
+                if object.instance_type == 'COLLECTION' : # and not 'Flatten' in object: 
+                    collection_name = object.instance_collection.name
+                    (sub_names, sub_collections) = get_sub_collections([object.instance_collection], node, children_per_collection)
+                    if len(list(sub_names)) > 0:
+                        children_per_collection[node_name]  += (list(sub_names))
+                    #print("   found sub collection in use", object.name, object.instance_collection)
+
+
+                    if not collection_name in collection_names: 
+                        collection_names.add(collection_name)
+                        used_collections.append(object.instance_collection)
+                        collection_names.update(sub_names)
+
+        #for sub in traverse_tree(root_collection):
+    return (collection_names, used_collections)
+
+# FIXME: get rid of this, ugh
+def flatten_collection_tree(node, children_per_collection):
+    children_per_collection[node.name] = []
+    for child in node.children:
+        if not node.name in children_per_collection[node.name]:
+            children_per_collection[node.name].append(child.name)
+        flatten_collection_tree(child, children_per_collection)
+    children_per_collection[node.name] = list(set( children_per_collection[node.name]))
+       
+
+class Node :
+    def __init__(self, name="", parent=None):
+      self.name = name
+      self.children = []
+      self.changed = False
+      self.parent = parent
+      return
+    def __str__(self):
+        children = list(map(lambda child: str(child), self.children))
+        return "name: " +self.name + ", children:" + str(children)
+    
 # get exportable collections from lists of mains scenes and lists of library scenes
-def get_exportable_collections(main_scenes, library_scenes): 
+def get_exportable_collections(main_scenes, library_scenes, scan_nested_collections): 
     all_collections = []
+    all_collection_names = []
+    root_node = Node()
+    root_node.name = "root"
+    children_per_collection = {}
+
+
     for main_scene in main_scenes:
-        (collection_names, _) = get_used_collections(main_scene)
-        all_collections = all_collections + list(collection_names)
+        (collection_names, collections) = get_used_collections(main_scene)
+        all_collection_names = all_collection_names + list(collection_names)
+        all_collections = all_collections + collections
     for library_scene in library_scenes:
         marked_collections = get_marked_collections(library_scene)
-        all_collections = all_collections + marked_collections[0]
-    return all_collections
+        all_collection_names = all_collection_names + marked_collections[0]
+        all_collections = all_collections + marked_collections[1]
+
+    if scan_nested_collections:
+        (collection_names, collections) = get_sub_collections(all_collections, root_node, children_per_collection)
+        all_collection_names = all_collection_names + list(collection_names)
+        children_per_collection = {}
+        flatten_collection_tree(root_node, children_per_collection)
+        #print("ROOT NODE", children_per_collection) #
+
+    return (all_collection_names, children_per_collection)
 
 def get_collections_per_scene(collection_names, library_scenes): 
     collections_per_scene = {}
@@ -83,7 +149,6 @@ def find_layer_collection_recursive(find, col):
         if c.collection == find:
             return c
     return None
-
 
 #Recursivly transverse layer_collection for a particular name
 def recurLayerCollection(layerColl, collName):

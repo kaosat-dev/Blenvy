@@ -130,7 +130,8 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
       
 
         [main_scene_names, level_scenes, library_scene_names, library_scenes]=get_scenes(addon_prefs)
-        collections = get_exportable_collections(level_scenes, library_scenes)
+        scan_nested_collections = bpy.context.preferences.addons["gltf_auto_export"].preferences.export_nested_blueprints
+        (collections, _) = get_exportable_collections(level_scenes, library_scenes, scan_nested_collections)
 
         try:
             # we save this list of collections in the context
@@ -275,6 +276,15 @@ class GLTF_PT_auto_export_blueprints(bpy.types.Panel):
 
         return operator.bl_idname == "EXPORT_SCENES_OT_auto_gltf" #"EXPORT_SCENE_OT_gltf"
 
+
+    def draw_header(self, context):
+        layout = self.layout
+        sfile = context.space_data
+        operator = sfile.active_operator
+        layout.prop(operator, "export_blueprints", text="")
+
+        #self.layout.prop(operator, "auto_export", text="")
+
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
@@ -283,8 +293,10 @@ class GLTF_PT_auto_export_blueprints(bpy.types.Panel):
         sfile = context.space_data
         operator = sfile.active_operator
 
-        layout.prop(operator, "export_blueprints")
+        layout.active = operator.export_blueprints
+        
         layout.prop(operator, "export_blueprints_path")
+        layout.prop(operator, "export_nested_blueprints")
 
         # materials
         layout.prop(operator, "export_materials_library")
