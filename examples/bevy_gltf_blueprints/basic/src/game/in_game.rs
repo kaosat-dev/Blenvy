@@ -40,7 +40,6 @@ pub fn setup_game(
     next_game_state.set(GameState::InGame)
 }
 
-
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
 struct UnregisteredComponent;
@@ -89,7 +88,6 @@ pub fn spawn_test(
     }
 }
 
-
 pub fn spawn_test_failing(
     keycode: Res<Input<KeyCode>>,
     mut commands: Commands,
@@ -128,7 +126,7 @@ pub fn spawn_test_failing(
                     linvel: Vec3::new(vel_x, vel_y, vel_z),
                     angvel: Vec3::new(0.0, 0.0, 0.0),
                 },
-                UnregisteredComponent
+                UnregisteredComponent,
             ))
             .id();
         commands.entity(world).add_child(new_entity);

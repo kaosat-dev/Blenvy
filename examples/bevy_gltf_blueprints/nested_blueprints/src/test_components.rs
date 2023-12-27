@@ -4,7 +4,6 @@ use bevy::prelude::*;
 #[reflect(Component)]
 struct Marker;
 
-
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
 struct Enemy;
@@ -12,7 +11,6 @@ struct Enemy;
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
 struct NestingTest;
-
 
 #[derive(Component, Reflect, Default, Debug, Deref, DerefMut)]
 #[reflect(Component)]
@@ -77,7 +75,6 @@ impl Plugin for ComponentsTestPlugin {
             .register_type::<Marker>()
             .register_type::<Enemy>()
             .register_type::<NestingTest>()
-
             .register_type::<TuppleTestF32>()
             .register_type::<TuppleTestU64>()
             .register_type::<TuppleTestStr>()

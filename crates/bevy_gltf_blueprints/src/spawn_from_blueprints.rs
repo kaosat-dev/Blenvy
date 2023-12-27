@@ -49,11 +49,9 @@ pub(crate) fn spawn_from_blueprints(
     assets_gltf: Res<Assets<Gltf>>,
     asset_server: Res<AssetServer>,
     blueprints_config: Res<BluePrintsConfig>,
-
 ) {
     for (entity, name, blupeprint_name, transform, original_parent) in spawn_placeholders.iter() {
         debug!("need to spawn {:?}, id: {:?}", blupeprint_name.0, entity);
-
 
         let what = &blupeprint_name.0;
         let model_file_name = format!("{}.{}", &what, &blueprints_config.format);
@@ -62,8 +60,6 @@ pub(crate) fn spawn_from_blueprints(
 
         debug!("attempting to spawn {:?}", model_path);
         let model_handle: Handle<Gltf> = asset_server.load(model_path);
-
-     
 
         let gltf = assets_gltf
             .get(&model_handle)
@@ -97,12 +93,12 @@ pub(crate) fn spawn_from_blueprints(
 
         let world = game_world.single_mut();
         let mut parent = world.1[0]; // FIXME: dangerous hack because our gltf data have a single child like this, but might not always be the case
-    
+
         // ideally, insert the newly created entity as a child of the original parent, if any, the world otherwise
         if let Some(original_parent) = original_parent {
             parent = original_parent.get();
         }
-     
-        commands.entity(parent).add_child(child_scene);    
+
+        commands.entity(parent).add_child(child_scene);
     }
 }
