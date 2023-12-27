@@ -18,29 +18,31 @@ impl CloneEntity {
     // - the source or destination entity do not exist
     fn clone_entity(self, world: &mut World) {
         let components = {
-            let registry = world.get_resource::<AppTypeRegistry>().unwrap().read();
+            let registry = world
+                .get_resource::<AppTypeRegistry>()
+                .expect("the world should have a type registry")
+                .read();
 
             world
                 .get_entity(self.source)
-                .unwrap()
+                .expect("source entity should exist")
                 .archetype()
                 .components()
                 .map(|component_id| {
-                    world
+                    let component_info = world
                         .components()
                         .get_info(component_id)
-                        .unwrap()
-                        .type_id()
-                        .unwrap()
-                })
-                .map(|type_id| {
-                    // println!("type_id {:?}", type_id);
-                    registry
-                        .get(type_id)
-                        .unwrap()
-                        .data::<ReflectComponent>()
-                        .unwrap()
-                        .clone()
+                        .expect("component info should be available");
+
+                    let type_id = component_info.type_id().unwrap();
+                    let type_id = registry.get(type_id).expect(
+                        format!(
+                            "cannot clone entity: component: {:?} is not registered",
+                            component_info.name()
+                        )
+                        .as_str(),
+                    );
+                    return type_id.data::<ReflectComponent>().unwrap().clone();
                 })
                 .collect::<Vec<_>>()
         };
@@ -51,7 +53,9 @@ impl CloneEntity {
                 .unwrap()
                 .clone_value();
 
-            let mut destination = world.get_entity_mut(self.destination).unwrap();
+            let mut destination = world
+                .get_entity_mut(self.destination)
+                .expect("destination entity should exist");
 
             component.apply_or_insert(&mut destination, &*source);
         }
