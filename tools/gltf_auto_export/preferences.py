@@ -20,6 +20,8 @@ AutoExportGltfPreferenceNames = [
     'export_blueprints_path',
     'export_nested_blueprints',
 
+    'collection_instances_combine_mode',
+
     'export_materials_library',
     'export_materials_path',
 
@@ -91,6 +93,22 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         name='Materials path',
         description='path to export the materials libraries to (relative to the root folder)',
         default='materials'
+    )
+    """ combine mode can be 
+              - 'Split' (default): replace with an empty, creating links to sub blueprints 
+              - 'Embed' : treat it as an embeded object and do not replace it with an empty
+              - 'Inject': inject components from sub collection instances into the curent object
+            """
+
+
+    collection_instances_combine_mode : EnumProperty(
+        name='Combine mode',
+        items=(
+           ('Split', 'Split', 'replace with an empty, creating links to sub blueprints '),
+           ('Embed', 'Embed', 'treat it as an embeded object and do not replace it with an empty'),
+           ('Inject', 'Inject', 'inject components from sub collection instances into the curent object')
+        ),
+        default='Split'
     )
 
     main_scenes: CollectionProperty(name="main scenes", type=CUSTOM_PG_sceneName)

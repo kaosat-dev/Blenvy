@@ -30,6 +30,11 @@ def get_marked_collections(scene):
         if 'AutoExport' in collection and collection['AutoExport'] == True:
             marked_collections.append(collection)
             collection_names.append(collection.name)
+        # if you have marked collections as assets you can auto export them too
+        if collection.asset_data is not None: # TODO: add a setting for this
+            print("is it an asset ?", collection.asset_data is not None)
+            marked_collections.append(collection)
+            collection_names.append(collection.name)
     return (collection_names, marked_collections)
 
 # gets all collections within collections that might also be relevant

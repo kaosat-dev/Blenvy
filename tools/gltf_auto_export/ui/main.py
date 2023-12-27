@@ -302,6 +302,10 @@ class GLTF_PT_auto_export_blueprints(bpy.types.Panel):
         layout.prop(operator, "export_materials_library")
         layout.prop(operator, "export_materials_path")
 
+        layout.prop(operator, "collection_instances_combine_mode")
+
+
+
 
 class GLTF_PT_auto_export_collections_list(bpy.types.Panel):
     bl_space_type = 'FILE_BROWSER'
