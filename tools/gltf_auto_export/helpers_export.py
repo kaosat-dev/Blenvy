@@ -134,13 +134,14 @@ def export_main_scenes(scenes, folder_path, addon_prefs):
         export_main_scene(scene, folder_path, addon_prefs)
 
 def export_main_scene(scene, folder_path, addon_prefs, library_collections): 
-    export_output_folder = getattr(addon_prefs,"export_output_folder")
     gltf_export_preferences = generate_gltf_export_preferences(addon_prefs)
-
+    export_output_folder = getattr(addon_prefs,"export_output_folder")
     export_blueprints = getattr(addon_prefs,"export_blueprints")
+
+    #collection_instances_combine_mode
   
     if export_blueprints : 
-        (hollow_scene, object_names) = generate_hollow_scene(scene, library_collections)
+        (hollow_scene, object_names) = generate_hollow_scene(scene, library_collections, addon_prefs)
         #except Exception:
         #    print("failed to create hollow scene")
 

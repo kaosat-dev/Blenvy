@@ -20,6 +20,7 @@ AutoExportGltfPreferenceNames = [
     'export_blueprints_path',
     'export_nested_blueprints',
 
+    'marked_assets_as_always_export',
     'collection_instances_combine_mode',
 
     'export_materials_library',
@@ -102,13 +103,19 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
 
 
     collection_instances_combine_mode : EnumProperty(
-        name='Combine mode',
+        name='Collection instances',
         items=(
-           ('Split', 'Split', 'replace with an empty, creating links to sub blueprints '),
-           ('Embed', 'Embed', 'treat it as an embeded object and do not replace it with an empty'),
+           ('Split', 'Split', 'replace collection instances with an empty + blueprint, creating links to sub blueprints '), # TODO: we might need a "conditional split: ie split internal (ie replace with empties ONLY for collections that are not in the blend file)"
+           ('Embed', 'Embed', 'treat collection instances as embeded objects and do not replace them with an empty'),
            ('Inject', 'Inject', 'inject components from sub collection instances into the curent object')
         ),
         default='Split'
+    )
+
+    marked_assets_as_always_export: BoolProperty(
+        name='Treat marked assets as auto-export',
+        description='Collections that have been marked as assets will be treated the same way as those with the "autoExport" property set to true ',
+        default=True
     )
 
     main_scenes: CollectionProperty(name="main scenes", type=CUSTOM_PG_sceneName)

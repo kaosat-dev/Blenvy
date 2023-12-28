@@ -131,7 +131,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
 
         [main_scene_names, level_scenes, library_scene_names, library_scenes]=get_scenes(addon_prefs)
         scan_nested_collections = bpy.context.preferences.addons["gltf_auto_export"].preferences.export_nested_blueprints
-        (collections, _) = get_exportable_collections(level_scenes, library_scenes, scan_nested_collections)
+        (collections, _) = get_exportable_collections(level_scenes, library_scenes, scan_nested_collections, addon_prefs)
 
         try:
             # we save this list of collections in the context
@@ -295,15 +295,17 @@ class GLTF_PT_auto_export_blueprints(bpy.types.Panel):
 
         layout.active = operator.export_blueprints
         
+         # collections/blueprints 
         layout.prop(operator, "export_blueprints_path")
         layout.prop(operator, "export_nested_blueprints")
-
+        layout.prop(operator, "collection_instances_combine_mode")
+        layout.prop(operator, "marked_assets_as_always_export")
+        layout.separator()
         # materials
         layout.prop(operator, "export_materials_library")
         layout.prop(operator, "export_materials_path")
 
-        layout.prop(operator, "collection_instances_combine_mode")
-
+       
 
 
 

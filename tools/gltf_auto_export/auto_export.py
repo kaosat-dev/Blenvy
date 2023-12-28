@@ -78,7 +78,7 @@ def auto_export(changes_per_scene, changed_export_parameters):
             print("EXPORTING")
             # get a list of all collections actually in use
             scan_nested_collections = export_nested_blueprints
-            (collections, blueprint_hierarchy) = get_exportable_collections(level_scenes, library_scenes, scan_nested_collections)
+            (collections, blueprint_hierarchy) = get_exportable_collections(level_scenes, library_scenes, scan_nested_collections, addon_prefs)
             # first check if all collections have already been exported before (if this is the first time the exporter is run
             # in your current Blender session for example)
             export_blueprints_path = os.path.join(folder_path, export_output_folder, getattr(addon_prefs,"export_blueprints_path")) if getattr(addon_prefs,"export_blueprints_path") != '' else folder_path

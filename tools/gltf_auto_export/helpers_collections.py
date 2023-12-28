@@ -21,7 +21,9 @@ def get_used_collections(scene):
     return (collection_names, used_collections)
 
 # gets all collections that should ALWAYS be exported to their respective gltf files, even if they are not used in the main scene/level
-def get_marked_collections(scene):
+def get_marked_collections(scene, addon_prefs):
+    marked_assets_as_always_export = getattr(addon_prefs,"marked_assets_as_always_export")
+
     # print("checking library for marked collections")
     root_collection = scene.collection
     marked_collections = []
@@ -31,8 +33,7 @@ def get_marked_collections(scene):
             marked_collections.append(collection)
             collection_names.append(collection.name)
         # if you have marked collections as assets you can auto export them too
-        if collection.asset_data is not None: # TODO: add a setting for this
-            print("is it an asset ?", collection.asset_data is not None)
+        if marked_assets_as_always_export and collection.asset_data is not None: 
             marked_collections.append(collection)
             collection_names.append(collection.name)
     return (collection_names, marked_collections)
@@ -93,7 +94,7 @@ class Node :
         return "name: " +self.name + ", children:" + str(children)
     
 # get exportable collections from lists of mains scenes and lists of library scenes
-def get_exportable_collections(main_scenes, library_scenes, scan_nested_collections): 
+def get_exportable_collections(main_scenes, library_scenes, scan_nested_collections, addon_prefs): 
     all_collections = []
     all_collection_names = []
     root_node = Node()
@@ -106,7 +107,7 @@ def get_exportable_collections(main_scenes, library_scenes, scan_nested_collecti
         all_collection_names = all_collection_names + list(collection_names)
         all_collections = all_collections + collections
     for library_scene in library_scenes:
-        marked_collections = get_marked_collections(library_scene)
+        marked_collections = get_marked_collections(library_scene, addon_prefs)
         all_collection_names = all_collection_names + marked_collections[0]
         all_collections = all_collections + marked_collections[1]
 

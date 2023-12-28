@@ -3,9 +3,10 @@ from .helpers_collections import (find_layer_collection_recursive)
 from .helpers import (make_empty3)
 
 # generate a copy of a scene that replaces collection instances with empties
-# alternative: copy original names before creating a new scene, & reset them
-# or create empties, hide original ones, and do the same renaming trick
-def generate_hollow_scene(scene, library_collections): 
+# copy original names before creating a new scene, & reset them
+def generate_hollow_scene(scene, library_collections, addon_prefs): 
+    collection_instances_combine_mode = getattr(addon_prefs, "collection_instances_combine_mode")
+
     root_collection = scene.collection 
     temp_scene = bpy.data.scenes.new(name="temp_scene")
     copy_root_collection = temp_scene.collection
@@ -24,7 +25,12 @@ def generate_hollow_scene(scene, library_collections):
     # copies the contents of a collection into another one while replacing library instances with empties
     def copy_hollowed_collection_into(source_collection, destination_collection):
         for object in source_collection.objects:
-            if object.instance_type == 'COLLECTION' and (object.instance_collection.name in library_collections):
+            # TODO: also check if a specific collection instance does not have an ovveride for combine_mode
+            combine_mode = object['Combine'] if 'Combine' in object else collection_instances_combine_mode
+
+            if object.instance_type == 'COLLECTION' and (object.instance_collection.name in library_collections) and combine_mode == 'Split': #FIXME: innacurate , for a 'SPLIT', we should not care if an object is in the library collection
+                print("creating empty for", object.name, object.instance_collection.name, library_collections, combine_mode)
+
                 collection_name = object.instance_collection.name
 
                 original_name = object.name
