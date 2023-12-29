@@ -44,7 +44,6 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
             'main_scenes',
             'library_scenes',
             'collection_instances_combine_mode',
-            'marked_assets_as_always_export'
         ]
         all_props = self.properties
         export_props = {
@@ -69,7 +68,6 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
             'main_scenes',
             'library_scenes',
             'collection_instances_combine_mode',
-            'marked_assets_as_always_export'
         ]
         all_props = self.properties
         export_props = {
@@ -304,7 +302,7 @@ class GLTF_PT_auto_export_blueprints(bpy.types.Panel):
         layout.prop(operator, "export_blueprints_path")
         layout.prop(operator, "export_nested_blueprints")
         layout.prop(operator, "collection_instances_combine_mode")
-        layout.prop(operator, "marked_assets_as_always_export")
+        layout.prop(operator, "export_marked_assets")
         layout.separator()
         # materials
         layout.prop(operator, "export_materials_library")

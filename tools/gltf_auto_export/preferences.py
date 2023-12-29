@@ -20,7 +20,7 @@ AutoExportGltfPreferenceNames = [
     'export_blueprints_path',
     'export_nested_blueprints',
 
-    'marked_assets_as_always_export', # TODO: renamed to 'export marked assets'
+    'export_marked_assets',
     'collection_instances_combine_mode',
 
     'export_materials_library',
@@ -114,7 +114,7 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         default='Split'
     )
 
-    marked_assets_as_always_export: BoolProperty(
+    export_marked_assets: BoolProperty(
         name='Treat marked assets as auto-export',
         description='Collections that have been marked as assets will be treated the same way as those with the "autoExport" property set to true ',
         default=True

@@ -22,7 +22,7 @@ def get_used_collections(scene):
 
 # gets all collections that should ALWAYS be exported to their respective gltf files, even if they are not used in the main scene/level
 def get_marked_collections(scene, addon_prefs):
-    marked_assets_as_always_export = getattr(addon_prefs,"marked_assets_as_always_export")
+    export_marked_assets = getattr(addon_prefs,"export_marked_assets")
 
     # print("checking library for marked collections")
     root_collection = scene.collection
@@ -33,7 +33,7 @@ def get_marked_collections(scene, addon_prefs):
             marked_collections.append(collection)
             collection_names.append(collection.name)
         # if you have marked collections as assets you can auto export them too
-        if marked_assets_as_always_export and collection.asset_data is not None: 
+        if export_marked_assets and collection.asset_data is not None: 
             marked_collections.append(collection)
             collection_names.append(collection.name)
     return (collection_names, marked_collections)
