@@ -64,6 +64,10 @@ def auto_export(changes_per_scene, changed_export_parameters):
         export_nested_blueprints = getattr(addon_prefs,"export_nested_blueprints")
 
 
+        Instances = getattr(addon_prefs, "collection_instances_combine_mode")
+        print("MIEAAAAARDAAA", Instances)
+
+
         [main_scene_names, level_scenes, library_scene_names, library_scenes] = get_scenes(addon_prefs)
 
         print("main scenes", main_scene_names, "library_scenes", library_scene_names)
@@ -95,6 +99,10 @@ def auto_export(changes_per_scene, changed_export_parameters):
                 for obj_name, obj in bla.items():
                     object_collections = list(obj.users_collection)
                     object_collection_names = list(map(lambda collection: collection.name, object_collections))
+
+                    for coll in object_collection_names:
+                        print("parent collection of ", obj_name, coll)
+
                     if len(object_collection_names) > 1:
                         print("ERRROR for",obj_name,"objects in multiple collections not supported")
                     else:

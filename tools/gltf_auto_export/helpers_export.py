@@ -137,11 +137,9 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
     gltf_export_preferences = generate_gltf_export_preferences(addon_prefs)
     export_output_folder = getattr(addon_prefs,"export_output_folder")
     export_blueprints = getattr(addon_prefs,"export_blueprints")
-
-    #collection_instances_combine_mode
   
     if export_blueprints : 
-        (hollow_scene, object_names) = generate_hollow_scene(scene, library_collections, addon_prefs)
+        (hollow_scene, temporary_collections) = generate_hollow_scene(scene, library_collections, addon_prefs)
         #except Exception:
         #    print("failed to create hollow scene")
 
@@ -163,7 +161,7 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
     export_gltf(gltf_output_path, export_settings)
 
     if export_blueprints : 
-        clear_hollow_scene(hollow_scene, scene, object_names)
+        clear_hollow_scene(hollow_scene, scene, temporary_collections)
 
 
 #https://docs.blender.org/api/current/bpy.ops.export_scene.html#bpy.ops.export_scene.gltf

@@ -21,6 +21,7 @@ def generate_hollow_scene(scene, library_collections, addon_prefs):
 
     #original_names = {}
     original_names = []
+    temporary_collections = []
 
     # copies the contents of a collection into another one while replacing library instances with empties
     def copy_hollowed_collection_into(source_collection, destination_collection):
@@ -28,7 +29,21 @@ def generate_hollow_scene(scene, library_collections, addon_prefs):
             # TODO: also check if a specific collection instance does not have an ovveride for combine_mode
             combine_mode = object['Combine'] if 'Combine' in object else collection_instances_combine_mode
 
-            if object.instance_type == 'COLLECTION' and (object.instance_collection.name in library_collections) and combine_mode == 'Split': #FIXME: innacurate , for a 'SPLIT', we should not care if an object is in the library collection
+            print("COMBINE MODE", combine_mode)
+
+            """
+                - instance's original collection in local collections + combine_mode == 'Split' => split
+                - instance's original collection NOT local collections + combine_mode == 'Split' => split
+
+                - instance's original collection in local collections + combine_mode == 'Merge' => Merge
+                - instance's original collection NOT local collections + combine_mode == 'Merge' => Merge
+
+                - split local ? ie
+                    - instance's original collection NOT local collections + combine_mode == 'SplitLocal' => Merge 
+                    - perhaps mergeExternal instead ?
+            """
+
+            if object.instance_type == 'COLLECTION' and (combine_mode == 'Split' or (combine_mode == 'EmbedExternal' and (object.instance_collection.name in library_collections)) ): 
                 print("creating empty for", object.name, object.instance_collection.name, library_collections, combine_mode)
 
                 collection_name = object.instance_collection.name
@@ -50,6 +65,10 @@ def generate_hollow_scene(scene, library_collections, addon_prefs):
         # for every sub-collection of the source, copy its content into a new sub-collection of the destination
         for collection in source_collection.children:
             copy_collection = bpy.data.collections.new(collection.name + "____collection_export")
+            # save the newly created collection for later reuse
+            temporary_collections.append(copy_collection)
+
+            # copy & link objects
             copy_hollowed_collection_into(collection, copy_collection)
             destination_collection.children.link(copy_collection)
 
@@ -57,10 +76,10 @@ def generate_hollow_scene(scene, library_collections, addon_prefs):
     
     # objs = bpy.data.objects
     #objs.remove(objs["Cube"], do_unlink=True)
-    return (temp_scene, original_names)
+    return (temp_scene, temporary_collections)
 
 # clear & remove "hollow scene"
-def clear_hollow_scene(temp_scene, original_scene, original_names):
+def clear_hollow_scene(temp_scene, original_scene, temporary_collections):
     # reset original names
     root_collection = original_scene.collection
 
@@ -84,6 +103,12 @@ def clear_hollow_scene(temp_scene, original_scene, original_names):
             else: 
                 bpy.context.scene.collection.objects.unlink(object)
             #bpy.data.objects.remove(object, do_unlink=True)
+
+    # remove temporary collections
+    for collection in temporary_collections:
+        print("collection to remove", collection.name)
+        bpy.data.collections.remove(collection)
+
 
     bpy.data.scenes.remove(temp_scene)
 

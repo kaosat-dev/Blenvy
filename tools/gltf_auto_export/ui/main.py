@@ -42,7 +42,9 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         exceptional = [
             # options that don't start with 'export_'  
             'main_scenes',
-            'library_scenes'
+            'library_scenes',
+            'collection_instances_combine_mode',
+            'marked_assets_as_always_export'
         ]
         all_props = self.properties
         export_props = {
@@ -65,7 +67,9 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         exceptional = [
             # options that don't start with 'export_'  
             'main_scenes',
-            'library_scenes'
+            'library_scenes',
+            'collection_instances_combine_mode',
+            'marked_assets_as_always_export'
         ]
         all_props = self.properties
         export_props = {
@@ -117,6 +121,11 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
                         item = library_scenes.add()
                         item.name = item_name
 
+                if hasattr(self, 'collection_instances_combine_mode'):
+                    print("MIERRADAAAA")
+                    bpy.context.preferences.addons["gltf_auto_export"].preferences.collection_instances_combine_mode = self.collection_instances_combine_mode
+
+
             except (AttributeError, TypeError):
                 self.report({"ERROR"}, "Loading export settings failed. Removed corrupted settings")
                 del context.scene[self.scene_key]
@@ -126,8 +135,6 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
             print("PROPERTIES", k, v)
 
         addon_prefs = bpy.context.preferences.addons["gltf_auto_export"].preferences
-
-      
 
         [main_scene_names, level_scenes, library_scene_names, library_scenes]=get_scenes(addon_prefs)
         scan_nested_collections = bpy.context.preferences.addons["gltf_auto_export"].preferences.export_nested_blueprints

@@ -98,6 +98,7 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
     """ combine mode can be 
               - 'Split' (default): replace with an empty, creating links to sub blueprints 
               - 'Embed' : treat it as an embeded object and do not replace it with an empty
+              - 'EmbedExternal': embed any instance of a non local collection (ie external assets)
               - 'Inject': inject components from sub collection instances into the curent object
             """
 
@@ -105,8 +106,9 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
     collection_instances_combine_mode : EnumProperty(
         name='Collection instances',
         items=(
-           ('Split', 'Split', 'replace collection instances with an empty + blueprint, creating links to sub blueprints '), # TODO: we might need a "conditional split: ie split internal (ie replace with empties ONLY for collections that are not in the blend file)"
+           ('Split', 'Split', 'replace collection instances with an empty + blueprint, creating links to sub blueprints '),
            ('Embed', 'Embed', 'treat collection instances as embeded objects and do not replace them with an empty'),
+           ('EmbedExternal', 'EmbedExternal', 'treat external (not specifified in the current blend file) collection instances as embeded objects and do not replace them with an empty'),
            ('Inject', 'Inject', 'inject components from sub collection instances into the curent object')
         ),
         default='Split'
@@ -127,7 +129,8 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
     #####
     export_format: EnumProperty(
         name='Format',
-        items=(('GLB', 'glTF Binary (.glb)',
+        items=(
+            ('GLB', 'glTF Binary (.glb)',
                 'Exports a single file, with all data packed in binary form. '
                 'Most efficient and portable, but more difficult to edit later'),
                ('GLTF_EMBEDDED', 'glTF Embedded (.gltf)',
@@ -135,7 +138,8 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
                 'Less efficient than binary, but easier to edit later'),
                ('GLTF_SEPARATE', 'glTF Separate (.gltf + .bin + textures)',
                 'Exports multiple files, with separate JSON, binary and texture data. '
-                'Easiest to edit later')),
+                'Easiest to edit later')
+                ),
         description=(
             'Output format and embedding options. Binary is most efficient, '
             'but JSON (embedded or separate) may be easier to edit later'
