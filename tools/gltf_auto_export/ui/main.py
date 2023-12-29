@@ -122,7 +122,6 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
                         item.name = item_name
 
                 if hasattr(self, 'collection_instances_combine_mode'):
-                    print("MIERRADAAAA")
                     bpy.context.preferences.addons["gltf_auto_export"].preferences.collection_instances_combine_mode = self.collection_instances_combine_mode
 
 
@@ -137,8 +136,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         addon_prefs = bpy.context.preferences.addons["gltf_auto_export"].preferences
 
         [main_scene_names, level_scenes, library_scene_names, library_scenes]=get_scenes(addon_prefs)
-        scan_nested_collections = bpy.context.preferences.addons["gltf_auto_export"].preferences.export_nested_blueprints
-        (collections, _) = get_exportable_collections(level_scenes, library_scenes, scan_nested_collections, addon_prefs)
+        (collections, _) = get_exportable_collections(level_scenes, library_scenes, addon_prefs)
 
         try:
             # we save this list of collections in the context

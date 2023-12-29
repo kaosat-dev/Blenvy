@@ -3,7 +3,7 @@ import bpy
 import traceback
 
 from .helpers_scenes import (get_scenes, )
-from .helpers_collections import (get_exportable_collections, get_collections_per_scene)
+from .helpers_collections import (get_collections_in_library, get_exportable_collections, get_collections_per_scene)
 from .helpers_export import (export_main_scene, export_blueprints_from_collections)
 from .helpers import (check_if_blueprints_exist, check_if_blueprint_on_disk)
 from .materials import cleanup_materials, clear_material_info, clear_materials_scene, export_materials, generate_materials_scenes, get_all_materials
@@ -61,12 +61,6 @@ def auto_export(changes_per_scene, changed_export_parameters):
 
         export_materials_library = getattr(addon_prefs,"export_materials_library")
         export_scene_settings = getattr(addon_prefs,"export_scene_settings")
-        export_nested_blueprints = getattr(addon_prefs,"export_nested_blueprints")
-
-
-        Instances = getattr(addon_prefs, "collection_instances_combine_mode")
-        print("MIEAAAAARDAAA", Instances)
-
 
         [main_scene_names, level_scenes, library_scene_names, library_scenes] = get_scenes(addon_prefs)
 
@@ -81,8 +75,8 @@ def auto_export(changes_per_scene, changed_export_parameters):
         if export_blueprints:
             print("EXPORTING")
             # get a list of all collections actually in use
-            scan_nested_collections = export_nested_blueprints
-            (collections, blueprint_hierarchy) = get_exportable_collections(level_scenes, library_scenes, scan_nested_collections, addon_prefs)
+            (collections, blueprint_hierarchy) = get_exportable_collections(level_scenes, library_scenes, addon_prefs)
+
             # first check if all collections have already been exported before (if this is the first time the exporter is run
             # in your current Blender session for example)
             export_blueprints_path = os.path.join(folder_path, export_output_folder, getattr(addon_prefs,"export_blueprints_path")) if getattr(addon_prefs,"export_blueprints_path") != '' else folder_path
@@ -93,15 +87,15 @@ def auto_export(changes_per_scene, changed_export_parameters):
             collections_not_on_disk = check_if_blueprints_exist(collections, export_blueprints_path, gltf_extension)
             changed_collections = []
 
-            print('changes_per_scene', changes_per_scene.items(), changes_per_scene.keys())
+            #print('changes_per_scene', changes_per_scene.items(), changes_per_scene.keys())
             for scene, bla in changes_per_scene.items():
                 print("  changed scene", scene)
                 for obj_name, obj in bla.items():
                     object_collections = list(obj.users_collection)
                     object_collection_names = list(map(lambda collection: collection.name, object_collections))
 
-                    for coll in object_collection_names:
-                        print("parent collection of ", obj_name, coll)
+                    #for coll in object_collection_names:
+                    #    print("parent collection of ", obj_name, coll)
 
                     if len(object_collection_names) > 1:
                         print("ERRROR for",obj_name,"objects in multiple collections not supported")
@@ -120,7 +114,7 @@ def auto_export(changes_per_scene, changed_export_parameters):
           
             # collections that do not come from a library should not be exported as seperate blueprints
             # FIMXE: logic is erroneous, needs to be changed
-            library_collections = [name for sublist in collections_per_scene.values() for name in sublist]
+            library_collections = get_collections_in_library(library_scenes)
             collections_to_export = list(set(collections_to_export).intersection(set(library_collections)))
 
             # since materials export adds components we need to call this before blueprints are exported
@@ -133,6 +127,7 @@ def auto_export(changes_per_scene, changed_export_parameters):
             print("collections:               all:", collections)
             print("collections:           changed:", changed_collections)
             print("collections: not found on disk:", collections_not_on_disk)
+            print("collections:        in library:", library_collections)
             print("collections:         to export:", collections_to_export)
             print("collections:         per_scene:", collections_per_scene)
 
@@ -148,7 +143,7 @@ def auto_export(changes_per_scene, changed_export_parameters):
                 do_export_main_scene =  changed_export_parameters or scene_name in changes_per_scene.keys() or not check_if_blueprint_on_disk(scene_name, export_levels_path, gltf_extension)
                 if do_export_main_scene:
                     print("     exporting scene:", scene_name)
-                    export_main_scene(bpy.data.scenes[scene_name], folder_path, addon_prefs, collections)
+                    export_main_scene(bpy.data.scenes[scene_name], folder_path, addon_prefs, library_collections)
 
 
             # now deal with blueprints/collections

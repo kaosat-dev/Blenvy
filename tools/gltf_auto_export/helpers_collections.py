@@ -94,7 +94,9 @@ class Node :
         return "name: " +self.name + ", children:" + str(children)
     
 # get exportable collections from lists of mains scenes and lists of library scenes
-def get_exportable_collections(main_scenes, library_scenes, scan_nested_collections, addon_prefs): 
+def get_exportable_collections(main_scenes, library_scenes, addon_prefs): 
+    export_nested_blueprints = getattr(addon_prefs,"export_nested_blueprints")
+
     all_collections = []
     all_collection_names = []
     root_node = Node()
@@ -111,7 +113,7 @@ def get_exportable_collections(main_scenes, library_scenes, scan_nested_collecti
         all_collection_names = all_collection_names + marked_collections[0]
         all_collections = all_collections + marked_collections[1]
 
-    if scan_nested_collections:
+    if export_nested_blueprints:
         (collection_names, collections) = get_sub_collections(all_collections, root_node, children_per_collection)
         all_collection_names = all_collection_names + list(collection_names)
         children_per_collection = {}
@@ -131,6 +133,25 @@ def get_collections_per_scene(collection_names, library_scenes):
                 collections_per_scene[scene.name].append(cur_collection.name)
                 
     return collections_per_scene
+
+def get_collections_in_library(library_scenes):
+    """all_collections = []
+    all_collection_names = []
+    for main_scene in main_scenes:
+        (collection_names, collections) = get_used_collections(main_scene)
+        all_collection_names = all_collection_names + list(collection_names)
+        all_collections = all_collections + collections"""
+
+    # now that we have the collections that are in use by collection instances, check if those collections are actully present in the library scenes
+    collections = []
+    collection_names = []
+    for library_scene in library_scenes:
+        root_collection = library_scene.collection
+     
+        for collection in traverse_tree(root_collection):
+            collections.append(collection)
+            collection_names.append(collection.name)
+    return collection_names
 
 
 def get_collection_hierarchy(root_col, levels=1):

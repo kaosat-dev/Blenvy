@@ -20,7 +20,7 @@ AutoExportGltfPreferenceNames = [
     'export_blueprints_path',
     'export_nested_blueprints',
 
-    'marked_assets_as_always_export',
+    'marked_assets_as_always_export', # TODO: renamed to 'export marked assets'
     'collection_instances_combine_mode',
 
     'export_materials_library',
