@@ -23,7 +23,7 @@ def generate_hollow_scene(scene, library_collections, addon_prefs):
     temporary_collections = []
 
     # copies the contents of a collection into another one while replacing library instances with empties
-    def copy_hollowed_collection_into(source_collection, destination_collection):
+    def copy_hollowed_collection_into(source_collection, destination_collection, parent_empty=None):
         for object in source_collection.objects:
             # TODO: also check if a specific collection instance does not have an ovveride for combine_mode
             combine_mode = object['Combine'] if 'Combine' in object else collection_instances_combine_mode
@@ -56,11 +56,30 @@ def generate_hollow_scene(scene, library_collections, addon_prefs):
 
                 for k, v in object.items():
                     empty_obj[k] = v
+                if parent_empty is not None:
+                    empty_obj.parent = parent_empty
             else:
-                destination_collection.objects.link(object)
+                print("FOOOOO", object.name, parent_empty)
+                if parent_empty is not None:
+                    print("setting parent")
+                    object.parent = parent_empty
+                    destination_collection.objects.link(object)
+
+                else:
+                    destination_collection.objects.link(object)
 
         # for every sub-collection of the source, copy its content into a new sub-collection of the destination
         for collection in source_collection.children:
+            collection_placeholder_name = collection.name + "____collection_export"
+            collection_placeholder = make_empty3(collection_placeholder_name, [0,0,0], [0,0,0], [1,1,1], destination_collection)
+
+            if parent_empty is not None:
+                collection_placeholder.parent = parent_empty
+
+            copy_hollowed_collection_into(collection, destination_collection, collection_placeholder)
+            
+            
+            """
             copy_collection = bpy.data.collections.new(collection.name + "____collection_export")
             # save the newly created collection for later reuse
             temporary_collections.append(copy_collection)
@@ -68,6 +87,7 @@ def generate_hollow_scene(scene, library_collections, addon_prefs):
             # copy & link objects
             copy_hollowed_collection_into(collection, copy_collection)
             destination_collection.children.link(copy_collection)
+            """
 
     copy_hollowed_collection_into(root_collection, copy_root_collection)
     
