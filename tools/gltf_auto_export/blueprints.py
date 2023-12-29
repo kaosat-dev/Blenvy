@@ -3,7 +3,9 @@ from .helpers_collections import (find_layer_collection_recursive)
 from .helpers import (make_empty3, traverse_tree)
 
 
-def generate_blueprint_hollow_scene(blueprint_collection, library_collections):
+def generate_blueprint_hollow_scene(blueprint_collection, library_collections, addon_prefs):
+    collection_instances_combine_mode = getattr(addon_prefs, "collection_instances_combine_mode")
+
     temp_scene = bpy.data.scenes.new(name="temp_scene_"+blueprint_collection.name)
     temp_scene_root_collection = temp_scene.collection
 
@@ -15,26 +17,19 @@ def generate_blueprint_hollow_scene(blueprint_collection, library_collections):
         bpy.context.view_layer.active_layer_collection = found
 
     original_names = []
+    temporary_collections = []
 
     # TODO also add the handling for "template" flags, so that instead of creating empties we link the data from the sub collection INTO the parent collection
     # copies the contents of a collection into another one while replacing blueprint instances with empties
+    # if we have combine_mode set to "Inject", we take all the custom attributed of the nested (1 level only ! unless we use 'deepMerge') custom attributes and copy them to this level 
     def copy_hollowed_collection_into(source_collection, destination_collection):
         for object in source_collection.objects:
-            #FIXME: enum would be better
-            """ combine mode can be 
-              - 'Split' (default): replace with an empty, creating links to sub blueprints 
-              - 'Embed' : treat it as an embeded object and do not replace it with an empty
-              - 'Inject': inject components from sub collection instances into the curent object
-            """
-            combineMode = 'Split' if not 'Combine' in object else object['Combine']
-            # TODO: implement
-            # print("COMBINE MODE", combineMode)
-            # embed = 'Embed' in object and object['Embed'] == True # if the object has the "embed" flag set to true, treat it as an embeded object and do not replace it with an empty
-            # merge = 'Merge' in object and object['Merge'] == True 
-            if object.instance_type == 'COLLECTION' and (object.instance_collection.name in library_collections):
-                # if we have combine_mode set to "merge", we take all the custom attributed of the nested (1 level only ! unless we use 'deepMerge') custom attributes and copy them to this level 
+            combine_mode = object['Combine'] if 'Combine' in object else collection_instances_combine_mode
+
+            if object.instance_type == 'COLLECTION' and (combine_mode == 'Split' or (combine_mode == 'EmbedExternal' and (object.instance_collection.name in library_collections)) ): 
+
                 """TODO: implement later
-                if merge:
+                if Inject:
                     foo = get_nested_components(object)
                     print("nested components", foo)
                     pass
@@ -59,19 +54,22 @@ def generate_blueprint_hollow_scene(blueprint_collection, library_collections):
         # for every sub-collection of the source, copy its content into a new sub-collection of the destination
         for collection in source_collection.children:
             copy_collection = bpy.data.collections.new(collection.name + "____collection_export")
+            # save the newly created collection for later reuse
+            temporary_collections.append(copy_collection)
+
+            # copy & link objects
             copy_hollowed_collection_into(collection, copy_collection)
             destination_collection.children.link(copy_collection)
 
     copy_hollowed_collection_into(blueprint_collection, temp_scene_root_collection)
 
-
-    return (temp_scene, original_names)
+    return (temp_scene, temporary_collections)
 
 
 
 
 # clear & remove "hollow scene"
-def clear_blueprint_hollow_scene(temp_scene, original_collection, original_names):
+def clear_blueprint_hollow_scene(temp_scene, original_collection, temporary_collections):
 
     def restore_original_names(collection):
         for object in collection.objects:
@@ -94,7 +92,12 @@ def clear_blueprint_hollow_scene(temp_scene, original_collection, original_names
                 bpy.context.scene.collection.objects.unlink(object)
             #bpy.data.objects.remove(object, do_unlink=True)
 
+    # remove temporary collections
+    for collection in temporary_collections:
+        bpy.data.collections.remove(collection)
+
     bpy.data.scenes.remove(temp_scene)
+
 
 # TODO : add a flag to also search of deeply nested components
 def get_nested_components(object):

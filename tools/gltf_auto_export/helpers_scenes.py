@@ -19,7 +19,6 @@ def generate_hollow_scene(scene, library_collections, addon_prefs):
         # once it's found, set the active layer collection to the one we found
         bpy.context.view_layer.active_layer_collection = found
 
-    #original_names = {}
     original_names = []
     temporary_collections = []
 
@@ -28,8 +27,6 @@ def generate_hollow_scene(scene, library_collections, addon_prefs):
         for object in source_collection.objects:
             # TODO: also check if a specific collection instance does not have an ovveride for combine_mode
             combine_mode = object['Combine'] if 'Combine' in object else collection_instances_combine_mode
-
-            print("COMBINE MODE", combine_mode)
 
             """
                 - instance's original collection in local collections + combine_mode == 'Split' => split
@@ -44,7 +41,7 @@ def generate_hollow_scene(scene, library_collections, addon_prefs):
             """
 
             if object.instance_type == 'COLLECTION' and (combine_mode == 'Split' or (combine_mode == 'EmbedExternal' and (object.instance_collection.name in library_collections)) ): 
-                print("creating empty for", object.name, object.instance_collection.name, library_collections, combine_mode)
+                #print("creating empty for", object.name, object.instance_collection.name, library_collections, combine_mode)
 
                 collection_name = object.instance_collection.name
 
@@ -74,14 +71,10 @@ def generate_hollow_scene(scene, library_collections, addon_prefs):
 
     copy_hollowed_collection_into(root_collection, copy_root_collection)
     
-    # objs = bpy.data.objects
-    #objs.remove(objs["Cube"], do_unlink=True)
     return (temp_scene, temporary_collections)
 
 # clear & remove "hollow scene"
 def clear_hollow_scene(temp_scene, original_scene, temporary_collections):
-    # reset original names
-    root_collection = original_scene.collection
 
     def restore_original_names(collection):
         for object in collection.objects:
@@ -91,6 +84,9 @@ def clear_hollow_scene(temp_scene, original_scene, temporary_collections):
         for child_collection in collection.children:
             restore_original_names(child_collection)
     
+    # reset original names
+    root_collection = original_scene.collection
+
     restore_original_names(root_collection)
 
     # remove empties (only needed when we go via ops ????)
@@ -106,10 +102,9 @@ def clear_hollow_scene(temp_scene, original_scene, temporary_collections):
 
     # remove temporary collections
     for collection in temporary_collections:
-        print("collection to remove", collection.name)
         bpy.data.collections.remove(collection)
 
-
+    # remove the temporary scene
     bpy.data.scenes.remove(temp_scene)
 
 

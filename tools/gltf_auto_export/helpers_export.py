@@ -98,11 +98,11 @@ def export_collections(collections, folder_path, library_scene, addon_prefs, glt
             print("generate hollow scene for nested blueprints", library_collections)
             backup = bpy.context.window.scene
             collection = bpy.data.collections[collection_name]
-            (hollow_scene, object_names) = generate_blueprint_hollow_scene(collection, library_collections)
+            (hollow_scene, temporary_collections) = generate_blueprint_hollow_scene(collection, library_collections, addon_prefs)
 
             export_gltf(gltf_output_path, export_settings)
 
-            clear_blueprint_hollow_scene(hollow_scene, collection, object_names)
+            clear_blueprint_hollow_scene(hollow_scene, collection, temporary_collections)
             bpy.context.window.scene = backup
         else:
             print("NORMAL")

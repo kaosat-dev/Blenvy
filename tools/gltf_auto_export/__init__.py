@@ -84,7 +84,6 @@ def deps_update_handler(scene, depsgraph):
                 for obj in bpy.data.objects:
                     for slot in obj.material_slots:
                         if slot.material == material:
-                            print("used by", obj.name)
                             bpy.context.window_manager['changed_objects_per_scene'][scene.name][obj.name] = obj
         
         bpy.context.window_manager.changedScene = changed

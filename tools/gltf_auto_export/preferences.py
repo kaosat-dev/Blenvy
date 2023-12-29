@@ -64,7 +64,7 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
     export_scene_settings: BoolProperty(
         name='Export scene settings',
         description='Export scene settings ie AmbientLighting, Bloom, AO etc',
-        default=True
+        default=False
     )
 
     # blueprint settings
@@ -115,7 +115,7 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
     )
 
     export_marked_assets: BoolProperty(
-        name='Treat marked assets as auto-export',
+        name='Always export marked assets',
         description='Collections that have been marked as assets will be treated the same way as those with the "autoExport" property set to true ',
         default=True
     )
