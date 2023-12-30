@@ -59,19 +59,18 @@ def generate_hollow_scene(scene, library_collections, addon_prefs):
                 if parent_empty is not None:
                     empty_obj.parent = parent_empty
             else:
-                print("FOOOOO", object.name, parent_empty)
                 if parent_empty is not None:
-                    print("setting parent")
                     object.parent = parent_empty
                     destination_collection.objects.link(object)
-
                 else:
+                    object['___linked'] = True
                     destination_collection.objects.link(object)
 
         # for every sub-collection of the source, copy its content into a new sub-collection of the destination
         for collection in source_collection.children:
-            collection_placeholder_name = collection.name + "____collection_export"
-            collection_placeholder = make_empty3(collection_placeholder_name, [0,0,0], [0,0,0], [1,1,1], destination_collection)
+            original_name = collection.name
+            collection.name = original_name + "____bak"
+            collection_placeholder = make_empty3(original_name, [0,0,0], [0,0,0], [1,1,1], destination_collection)
 
             if parent_empty is not None:
                 collection_placeholder.parent = parent_empty
@@ -97,6 +96,8 @@ def generate_hollow_scene(scene, library_collections, addon_prefs):
 def clear_hollow_scene(temp_scene, original_scene, temporary_collections):
 
     def restore_original_names(collection):
+        if collection.name.endswith("____bak"):
+            collection.name = collection.name.replace("____bak", "")
         for object in collection.objects:
             if object.instance_type == 'COLLECTION':
                 if object.name.endswith("____bak"):
@@ -106,19 +107,23 @@ def clear_hollow_scene(temp_scene, original_scene, temporary_collections):
     
     # reset original names
     root_collection = original_scene.collection
-
     restore_original_names(root_collection)
 
     # remove empties (only needed when we go via ops ????)
-    root_collection = temp_scene.collection 
-    scene_objects = [o for o in root_collection.objects]
-    for object in scene_objects:
+    temp_root_collection = temp_scene.collection 
+    temp_scene_objects = [o for o in temp_root_collection.objects]
+    for object in temp_scene_objects:
         if object.type == 'EMPTY':
             if hasattr(object, "SpawnHere"):
                 bpy.data.objects.remove(object, do_unlink=True)
             else: 
                 bpy.context.scene.collection.objects.unlink(object)
-            #bpy.data.objects.remove(object, do_unlink=True)
+                if '___linked' in object:
+                    del object['___linked']
+                else:
+                    bpy.data.objects.remove(object, do_unlink=True)
+        else: 
+            bpy.context.scene.collection.objects.unlink(object)
 
     # remove temporary collections
     for collection in temporary_collections:
