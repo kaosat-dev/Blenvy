@@ -3,7 +3,7 @@ import bpy
 import traceback
 
 from .helpers_scenes import (get_scenes, )
-from .helpers_collections import (get_collections_in_library, get_exportable_collections, get_collections_per_scene)
+from .helpers_collections import (get_collections_in_library, get_exportable_collections, get_collections_per_scene, find_collection_ascendant_target_collection)
 from .helpers_export import (export_main_scene, export_blueprints_from_collections)
 from .helpers import (check_if_blueprints_exist, check_if_blueprint_on_disk)
 from .materials import cleanup_materials, clear_material_info, clear_materials_scene, export_materials, generate_materials_scenes, get_all_materials
@@ -74,6 +74,13 @@ def auto_export(changes_per_scene, changed_export_parameters):
         # export
         if export_blueprints:
             print("EXPORTING")
+            # create parent relations for all collections
+            collection_parents = dict()
+            for collection in bpy.data.collections:
+                for ch in collection.children:
+                    collection_parents[ch.name] = collection.name
+
+
             # get a list of all collections actually in use
             (collections, blueprint_hierarchy) = get_exportable_collections(level_scenes, library_scenes, addon_prefs)
 
@@ -87,23 +94,21 @@ def auto_export(changes_per_scene, changed_export_parameters):
             collections_not_on_disk = check_if_blueprints_exist(collections, export_blueprints_path, gltf_extension)
             changed_collections = []
 
-            #print('changes_per_scene', changes_per_scene.items(), changes_per_scene.keys())
-            for scene, bla in changes_per_scene.items():
+            for scene, objects in changes_per_scene.items():
                 print("  changed scene", scene)
-                for obj_name, obj in bla.items():
+                for obj_name, obj in objects.items():
                     object_collections = list(obj.users_collection)
                     object_collection_names = list(map(lambda collection: collection.name, object_collections))
-
-                    #for coll in object_collection_names:
-                    #    print("parent collection of ", obj_name, coll)
 
                     if len(object_collection_names) > 1:
                         print("ERRROR for",obj_name,"objects in multiple collections not supported")
                     else:
                         object_collection_name =  object_collection_names[0] if len(object_collection_names) > 0 else None
                         #print("      object ", obj, object_collection_name)
-                        if object_collection_name in collections:
-                            changed_collections.append(object_collection_name)
+                        #recurse updwards until we find one of our collections (or not)
+                        matching_collection = find_collection_ascendant_target_collection(collection_parents, collections, object_collection_name)
+                        if matching_collection is not None:
+                            changed_collections.append(matching_collection)
 
             collections_to_export = list(set(changed_collections + collections_not_on_disk))
 

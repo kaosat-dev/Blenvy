@@ -187,3 +187,11 @@ def recurLayerCollection(layerColl, collName):
         if found:
             return found
 
+def find_collection_ascendant_target_collection(collection_parents, target_collections, collection):
+    if collection == None:
+        return None
+    if collection in target_collections:
+        return collection
+    parent = collection_parents[collection]
+    return find_collection_ascendant_target_collection(collection_parents, target_collections, parent)
+   

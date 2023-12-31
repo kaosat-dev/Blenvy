@@ -19,6 +19,9 @@ def generate_blueprint_hollow_scene(blueprint_collection, library_collections, a
     original_names = []
     temporary_collections = []
 
+    # original_components = {}
+    print("HELLO")
+
     # TODO also add the handling for "template" flags, so that instead of creating empties we link the data from the sub collection INTO the parent collection
     # copies the contents of a collection into another one while replacing blueprint instances with empties
     # if we have combine_mode set to "Inject", we take all the custom attributed of the nested (1 level only ! unless we use 'deepMerge') custom attributes and copy them to this level 
@@ -28,14 +31,33 @@ def generate_blueprint_hollow_scene(blueprint_collection, library_collections, a
 
             if object.instance_type == 'COLLECTION' and (combine_mode == 'Split' or (combine_mode == 'EmbedExternal' and (object.instance_collection.name in library_collections)) ): 
 
-                """TODO: implement later
-                if Inject:
-                    foo = get_nested_components(object)
-                    print("nested components", foo)
-                    pass
-                else: 
-                """
+                # get the name of the collection this is an instance of
                 collection_name = object.instance_collection.name
+                """
+                blueprint_template = object['Template'] if 'Template' in object else False
+                if blueprint_template and parent_empty is None: # ONLY WORKS AT ROOT LEVEL
+                    print("BLUEPRINT TEMPLATE", blueprint_template, destination_collection, parent_empty)
+                    for object in source_collection.objects:
+                        if object.type == 'EMPTY' and object.name.endswith("components"):
+                            original_collection = bpy.data.collections[collection_name]
+                            components_holder = object
+                            print("WE CAN INJECT into", object, "data from", original_collection)
+
+                            # now we look for components inside the collection
+                            components = {}
+                            for object in original_collection.objects:
+                                if object.type == 'EMPTY' and object.name.endswith("components"):
+                                    for component_name in object.keys():
+                                        if component_name not in '_RNA_UI':
+                                            print( component_name , "-" , object[component_name] )
+                                            components[component_name] = object[component_name]
+
+                            # copy template components into target object
+                            for key in components:
+                                print("copying ", key,"to", components_holder)
+                                if not key in components_holder:
+                                    components_holder[key] = components[key]                            
+                """
 
                 original_name = object.name
                 original_names.append(original_name)
@@ -49,8 +71,10 @@ def generate_blueprint_hollow_scene(blueprint_collection, library_collections, a
                 for k, v in object.items():
                     empty_obj[k] = v
                 if parent_empty is not None:
+                    print('adding to parent empty', parent_empty)
                     empty_obj.parent = parent_empty
             else:
+                print('adding to parent empty', parent_empty)
                 if parent_empty is not None:
                     object.parent = parent_empty
                     destination_collection.objects.link(object)
@@ -61,6 +85,7 @@ def generate_blueprint_hollow_scene(blueprint_collection, library_collections, a
         # for every sub-collection of the source, copy its content into a new sub-collection of the destination
         for collection in source_collection.children:
             original_name = collection.name
+            print("creating empty for", original_name)
             collection.name = original_name + "____bak"
             collection_placeholder = make_empty3(original_name, [0,0,0], [0,0,0], [1,1,1], destination_collection)
 
@@ -89,6 +114,8 @@ def generate_blueprint_hollow_scene(blueprint_collection, library_collections, a
 def clear_blueprint_hollow_scene(temp_scene, original_collection, temporary_collections):
 
     def restore_original_names(collection):
+        if collection.name.endswith("____bak"):
+            collection.name = collection.name.replace("____bak", "")
         for object in collection.objects:
             if object.instance_type == 'COLLECTION':
                 if object.name.endswith("____bak"):

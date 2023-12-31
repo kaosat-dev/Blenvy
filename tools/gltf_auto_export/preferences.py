@@ -95,13 +95,15 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         description='path to export the materials libraries to (relative to the root folder)',
         default='materials'
     )
+
+
     """ combine mode can be 
               - 'Split' (default): replace with an empty, creating links to sub blueprints 
               - 'Embed' : treat it as an embeded object and do not replace it with an empty
               - 'EmbedExternal': embed any instance of a non local collection (ie external assets)
-              - 'Inject': inject components from sub collection instances into the curent object
-            """
 
+              - 'Inject': inject components from sub collection instances into the curent object => this is now a seperate custom property that you can apply to a collecion instance
+            """
 
     collection_instances_combine_mode : EnumProperty(
         name='Collection instances',
@@ -109,7 +111,7 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
            ('Split', 'Split', 'replace collection instances with an empty + blueprint, creating links to sub blueprints '),
            ('Embed', 'Embed', 'treat collection instances as embeded objects and do not replace them with an empty'),
            ('EmbedExternal', 'EmbedExternal', 'treat external (not specifified in the current blend file) collection instances as embeded objects and do not replace them with an empty'),
-           ('Inject', 'Inject', 'inject components from sub collection instances into the curent object')
+           #('Inject', 'Inject', 'inject components from sub collection instances into the curent object')
         ),
         default='Split'
     )

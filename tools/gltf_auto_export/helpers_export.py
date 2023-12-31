@@ -105,6 +105,7 @@ def export_collections(collections, folder_path, library_scene, addon_prefs, glt
             clear_blueprint_hollow_scene(hollow_scene, collection, temporary_collections)
             bpy.context.window.scene = backup
         else:
+            print("standard export")
             export_gltf(gltf_output_path, export_settings)
 
     
