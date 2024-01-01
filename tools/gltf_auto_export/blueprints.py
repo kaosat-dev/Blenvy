@@ -19,15 +19,16 @@ def generate_blueprint_hollow_scene(blueprint_collection, library_collections, a
     original_names = []
     temporary_collections = []
     root_objects = []
-
-    # original_components = {}
+    special_properties= { # to be able to reset any special property afterwards
+        "combine": [],
+    }
 
     # TODO also add the handling for "template" flags, so that instead of creating empties we link the data from the sub collection INTO the parent collection
     # copies the contents of a collection into another one while replacing blueprint instances with empties
     # if we have combine_mode set to "Inject", we take all the custom attributed of the nested (1 level only ! unless we use 'deepMerge') custom attributes and copy them to this level 
     def copy_hollowed_collection_into(source_collection, destination_collection, parent_empty=None):
         for object in source_collection.objects:
-            combine_mode = object['Combine'] if 'Combine' in object else collection_instances_combine_mode
+            combine_mode = object['_combine'] if '_combine' in object else collection_instances_combine_mode
 
             if object.instance_type == 'COLLECTION' and (combine_mode == 'Split' or (combine_mode == 'EmbedExternal' and (object.instance_collection.name in library_collections)) ): 
 
@@ -68,12 +69,19 @@ def generate_blueprint_hollow_scene(blueprint_collection, library_collections, a
                 empty_obj['BlueprintName'] = '"'+collection_name+'"'
                 empty_obj['SpawnHere'] = ''
 
+                
                 for k, v in object.items():
-                    empty_obj[k] = v
+                    if k != 'template' or k != '_combine': # do not copy these properties
+                        empty_obj[k] = v
+
                 if parent_empty is not None:
                     empty_obj.parent = parent_empty
             else:
-                print('adding to parent empty', parent_empty)
+                # we backup special properties that we do not want to export, and remove them
+                if '_combine' in object:
+                    special_properties["combine"].append((object, object['_combine']))
+                    del object['_combine']
+
                 if parent_empty is not None:
                     object.parent = parent_empty
                     destination_collection.objects.link(object)
@@ -103,13 +111,13 @@ def generate_blueprint_hollow_scene(blueprint_collection, library_collections, a
 
     copy_hollowed_collection_into(blueprint_collection, temp_scene_root_collection)
 
-    return (temp_scene, temporary_collections, root_objects)
+    return (temp_scene, temporary_collections, root_objects, special_properties)
 
 
 
 
 # clear & remove "hollow scene"
-def clear_blueprint_hollow_scene(temp_scene, original_collection, temporary_collections, root_objects):
+def clear_blueprint_hollow_scene(temp_scene, original_collection, temporary_collections, root_objects, special_properties):
 
     def restore_original_names(collection):
         if collection.name.endswith("____bak"):
@@ -138,6 +146,10 @@ def clear_blueprint_hollow_scene(temp_scene, original_collection, temporary_coll
                     bpy.data.objects.remove(object, do_unlink=True)
         else: 
             bpy.context.scene.collection.objects.unlink(object)
+
+    # put back special properties
+    for (object, value) in special_properties["combine"]:
+        object['_combine'] = value
 
     # remove temporary collections
     for collection in temporary_collections:

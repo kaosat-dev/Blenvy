@@ -99,11 +99,11 @@ def export_collections(collections, folder_path, library_scene, addon_prefs, glt
             #print("generate hollow scene for nested blueprints", library_collections)
             backup = bpy.context.window.scene
             collection = bpy.data.collections[collection_name]
-            (hollow_scene, temporary_collections, root_objects) = generate_blueprint_hollow_scene(collection, library_collections, addon_prefs)
+            (hollow_scene, temporary_collections, root_objects, special_properties) = generate_blueprint_hollow_scene(collection, library_collections, addon_prefs)
 
             export_gltf(gltf_output_path, export_settings)
 
-            clear_blueprint_hollow_scene(hollow_scene, collection, temporary_collections, root_objects)
+            clear_blueprint_hollow_scene(hollow_scene, collection, temporary_collections, root_objects, special_properties)
             bpy.context.window.scene = backup
         else:
             #print("standard export")
@@ -140,7 +140,7 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
     export_blueprints = getattr(addon_prefs,"export_blueprints")
   
     if export_blueprints : 
-        (hollow_scene, temporary_collections, root_objects) = generate_hollow_scene(scene, library_collections, addon_prefs)
+        (hollow_scene, temporary_collections, root_objects, special_properties) = generate_hollow_scene(scene, library_collections, addon_prefs)
         #except Exception:
         #    print("failed to create hollow scene")
 
@@ -162,7 +162,7 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
     export_gltf(gltf_output_path, export_settings)
 
     if export_blueprints : 
-        clear_hollow_scene(hollow_scene, scene, temporary_collections, root_objects)
+        clear_hollow_scene(hollow_scene, scene, temporary_collections, root_objects, special_properties)
 
 
 #https://docs.blender.org/api/current/bpy.ops.export_scene.html#bpy.ops.export_scene.gltf
