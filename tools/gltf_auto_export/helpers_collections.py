@@ -95,7 +95,6 @@ class Node :
     
 # get exportable collections from lists of mains scenes and lists of library scenes
 def get_exportable_collections(main_scenes, library_scenes, addon_prefs): 
-    export_nested_blueprints = getattr(addon_prefs,"export_nested_blueprints")
 
     all_collections = []
     all_collection_names = []
@@ -113,12 +112,11 @@ def get_exportable_collections(main_scenes, library_scenes, addon_prefs):
         all_collection_names = all_collection_names + marked_collections[0]
         all_collections = all_collections + marked_collections[1]
 
-    if export_nested_blueprints:
-        (collection_names, collections) = get_sub_collections(all_collections, root_node, children_per_collection)
-        all_collection_names = all_collection_names + list(collection_names)
-        children_per_collection = {}
-        flatten_collection_tree(root_node, children_per_collection)
-        #print("ROOT NODE", children_per_collection) #
+    (collection_names, collections) = get_sub_collections(all_collections, root_node, children_per_collection)
+    all_collection_names = all_collection_names + list(collection_names)
+    children_per_collection = {}
+    flatten_collection_tree(root_node, children_per_collection)
+    #print("ROOT NODE", children_per_collection) #
 
     return (all_collection_names, children_per_collection)
 
@@ -186,12 +184,15 @@ def recurLayerCollection(layerColl, collName):
         found = recurLayerCollection(layer, collName)
         if found:
             return found
-
+# traverse the collection hierarchy updward until you find one collection inside target_collections
 def find_collection_ascendant_target_collection(collection_parents, target_collections, collection):
     if collection == None:
         return None
     if collection in target_collections:
         return collection
-    parent = collection_parents[collection]
+    if collection in collection_parents:
+        parent = collection_parents[collection]
+    else:
+        return None
     return find_collection_ascendant_target_collection(collection_parents, target_collections, parent)
    

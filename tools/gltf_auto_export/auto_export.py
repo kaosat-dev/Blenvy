@@ -77,9 +77,10 @@ def auto_export(changes_per_scene, changed_export_parameters):
             # create parent relations for all collections
             collection_parents = dict()
             for collection in bpy.data.collections:
+                collection_parents[collection.name] = None
+            for collection in bpy.data.collections:
                 for ch in collection.children:
                     collection_parents[ch.name] = collection.name
-
 
             # get a list of all collections actually in use
             (collections, blueprint_hierarchy) = get_exportable_collections(level_scenes, library_scenes, addon_prefs)
@@ -97,14 +98,13 @@ def auto_export(changes_per_scene, changed_export_parameters):
             for scene, objects in changes_per_scene.items():
                 print("  changed scene", scene)
                 for obj_name, obj in objects.items():
-                    object_collections = list(obj.users_collection)
+                    object_collections = list(obj.users_collection) if hasattr(obj, 'users_collection') else []
                     object_collection_names = list(map(lambda collection: collection.name, object_collections))
 
                     if len(object_collection_names) > 1:
                         print("ERRROR for",obj_name,"objects in multiple collections not supported")
                     else:
                         object_collection_name =  object_collection_names[0] if len(object_collection_names) > 0 else None
-                        #print("      object ", obj, object_collection_name)
                         #recurse updwards until we find one of our collections (or not)
                         matching_collection = find_collection_ascendant_target_collection(collection_parents, collections, object_collection_name)
                         if matching_collection is not None:
@@ -177,7 +177,8 @@ def auto_export(changes_per_scene, changed_export_parameters):
                 export_main_scene(bpy.data.scenes[scene_name], folder_path, addon_prefs)
 
     except Exception as error:
-        traceback.print_stack()
+        print(traceback.format_exc())
+
         def error_message(self, context):
             self.layout.label(text="Failure during auto_export: Error: "+ str(error))
 

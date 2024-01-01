@@ -18,9 +18,9 @@ def generate_blueprint_hollow_scene(blueprint_collection, library_collections, a
 
     original_names = []
     temporary_collections = []
+    root_objects = []
 
     # original_components = {}
-    print("HELLO")
 
     # TODO also add the handling for "template" flags, so that instead of creating empties we link the data from the sub collection INTO the parent collection
     # copies the contents of a collection into another one while replacing blueprint instances with empties
@@ -71,7 +71,6 @@ def generate_blueprint_hollow_scene(blueprint_collection, library_collections, a
                 for k, v in object.items():
                     empty_obj[k] = v
                 if parent_empty is not None:
-                    print('adding to parent empty', parent_empty)
                     empty_obj.parent = parent_empty
             else:
                 print('adding to parent empty', parent_empty)
@@ -79,13 +78,12 @@ def generate_blueprint_hollow_scene(blueprint_collection, library_collections, a
                     object.parent = parent_empty
                     destination_collection.objects.link(object)
                 else:
-                    object['___linked'] = True
+                    root_objects.append(object)
                     destination_collection.objects.link(object)
 
         # for every sub-collection of the source, copy its content into a new sub-collection of the destination
         for collection in source_collection.children:
             original_name = collection.name
-            print("creating empty for", original_name)
             collection.name = original_name + "____bak"
             collection_placeholder = make_empty3(original_name, [0,0,0], [0,0,0], [1,1,1], destination_collection)
 
@@ -105,13 +103,13 @@ def generate_blueprint_hollow_scene(blueprint_collection, library_collections, a
 
     copy_hollowed_collection_into(blueprint_collection, temp_scene_root_collection)
 
-    return (temp_scene, temporary_collections)
+    return (temp_scene, temporary_collections, root_objects)
 
 
 
 
 # clear & remove "hollow scene"
-def clear_blueprint_hollow_scene(temp_scene, original_collection, temporary_collections):
+def clear_blueprint_hollow_scene(temp_scene, original_collection, temporary_collections, root_objects):
 
     def restore_original_names(collection):
         if collection.name.endswith("____bak"):
@@ -134,8 +132,8 @@ def clear_blueprint_hollow_scene(temp_scene, original_collection, temporary_coll
                 bpy.data.objects.remove(object, do_unlink=True)
             else: 
                 bpy.context.scene.collection.objects.unlink(object)
-                if '___linked' in object:
-                    del object['___linked']
+                if object in root_objects:
+                    pass
                 else:
                     bpy.data.objects.remove(object, do_unlink=True)
         else: 

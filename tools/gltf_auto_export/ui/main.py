@@ -300,7 +300,6 @@ class GLTF_PT_auto_export_blueprints(bpy.types.Panel):
         
          # collections/blueprints 
         layout.prop(operator, "export_blueprints_path")
-        layout.prop(operator, "export_nested_blueprints")
         layout.prop(operator, "collection_instances_combine_mode")
         layout.prop(operator, "export_marked_assets")
         layout.separator()

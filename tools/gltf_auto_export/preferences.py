@@ -18,7 +18,6 @@ AutoExportGltfPreferenceNames = [
 
     'export_blueprints',
     'export_blueprints_path',
-    'export_nested_blueprints',
 
     'export_marked_assets',
     'collection_instances_combine_mode',
@@ -79,12 +78,6 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         default='library'
     )
 
-    export_nested_blueprints: BoolProperty(
-        name='Export nested Blueprints',
-        description='Collection instances within Collections are turned into blueprint instances',
-        default=True
-    )
-
     export_materials_library: BoolProperty(
         name='Export materials library',
         description='remove materials from blueprints and use the material library instead',
@@ -108,17 +101,17 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
     collection_instances_combine_mode : EnumProperty(
         name='Collection instances',
         items=(
-           ('Split', 'Split', 'replace collection instances with an empty + blueprint, creating links to sub blueprints '),
+           ('Split', 'Split', 'replace collection instances with an empty + blueprint, creating links to sub blueprints (Default, Recomended)'),
            ('Embed', 'Embed', 'treat collection instances as embeded objects and do not replace them with an empty'),
-           ('EmbedExternal', 'EmbedExternal', 'treat external (not specifified in the current blend file) collection instances as embeded objects and do not replace them with an empty'),
+           ('EmbedExternal', 'EmbedExternal', 'treat instances of external (not specifified in the current blend file) collections (aka assets etc) as embeded objects and do not replace them with empties'),
            #('Inject', 'Inject', 'inject components from sub collection instances into the curent object')
         ),
         default='Split'
     )
 
     export_marked_assets: BoolProperty(
-        name='Always export marked assets',
-        description='Collections that have been marked as assets will be treated the same way as those with the "autoExport" property set to true ',
+        name='Auto export marked assets',
+        description='Collections that have been marked as assets will be systematically exported, even if not in use in another scene',
         default=True
     )
 

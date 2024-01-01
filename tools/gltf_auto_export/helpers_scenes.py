@@ -21,6 +21,7 @@ def generate_hollow_scene(scene, library_collections, addon_prefs):
 
     original_names = []
     temporary_collections = []
+    root_objects = []
 
     # copies the contents of a collection into another one while replacing library instances with empties
     def copy_hollowed_collection_into(source_collection, destination_collection, parent_empty=None):
@@ -63,7 +64,7 @@ def generate_hollow_scene(scene, library_collections, addon_prefs):
                     object.parent = parent_empty
                     destination_collection.objects.link(object)
                 else:
-                    object['___linked'] = True
+                    root_objects.append(object)
                     destination_collection.objects.link(object)
 
         # for every sub-collection of the source, copy its content into a new sub-collection of the destination
@@ -90,10 +91,10 @@ def generate_hollow_scene(scene, library_collections, addon_prefs):
 
     copy_hollowed_collection_into(root_collection, copy_root_collection)
     
-    return (temp_scene, temporary_collections)
+    return (temp_scene, temporary_collections, root_objects)
 
 # clear & remove "hollow scene"
-def clear_hollow_scene(temp_scene, original_scene, temporary_collections):
+def clear_hollow_scene(temp_scene, original_scene, temporary_collections, root_objects):
 
     def restore_original_names(collection):
         if collection.name.endswith("____bak"):
@@ -118,8 +119,8 @@ def clear_hollow_scene(temp_scene, original_scene, temporary_collections):
                 bpy.data.objects.remove(object, do_unlink=True)
             else: 
                 bpy.context.scene.collection.objects.unlink(object)
-                if '___linked' in object:
-                    del object['___linked']
+                if object in root_objects:
+                    pass
                 else:
                     bpy.data.objects.remove(object, do_unlink=True)
         else: 
