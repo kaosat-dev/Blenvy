@@ -1,0 +1,1159 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25)"
+   sodipodi:docname="options.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.0242632"
+     inkscape:cx="432.50601"
+     inkscape:cy="382.22597"
+     inkscape:window-width="2560"
+     inkscape:window-height="1011"
+     inkscape:window-x="0"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <marker
+       style="overflow:visible"
+       id="RoundedArrow"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Rounded arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.7)"
+         d="m -0.21114562,-4.1055728 6.42229122,3.21114561 a 1,1 90 0 1 0,1.78885438 L -0.21114562,4.1055728 A 1.236068,1.236068 31.717474 0 1 -2,3 v -6 a 1.236068,1.236068 148.28253 0 1 1.78885438,-1.1055728 z"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+         id="path8" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="ArrowWide"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Wide arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:butt"
+         d="M 3,-3 0,0 3,3"
+         transform="rotate(180,0.125,0)"
+         sodipodi:nodetypes="ccc"
+         id="path1" />
+    </marker>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect77"
+       width="220.61754"
+       height="312.25241"
+       x="245.88316"
+       y="7.5052738"
+       ry="4.6700392" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.309086;stroke-dasharray:none"
+       id="rect1"
+       width="201.30733"
+       height="72.947769"
+       x="255.44287"
+       y="14.587015"
+       ry="2.5855451" />
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;fill:none;stroke:#000000;stroke-width:0.264583"
+       x="353.36789"
+       y="22.71768"
+       id="text1"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="353.36789"
+         y="22.71768">Original</tspan></text>
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.294902;stroke-dasharray:none"
+       id="rect6"
+       width="82.234131"
+       height="56.321247"
+       x="365.54532"
+       y="26.96299"
+       ry="5.4638991" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.307482;stroke-dasharray:none"
+       id="rect5"
+       width="89.355553"
+       height="56.348793"
+       x="264.04141"
+       y="26.796972"
+       ry="5.4665713" />
+    <g
+       id="g15"
+       transform="translate(25.680128,-40.065369)"
+       style="fill:#efff81;fill-opacity:1">
+      <rect
+         style="fill:#efff81;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+         id="rect7"
+         width="64.578476"
+         height="11.09465"
+         x="78.483658"
+         y="92.749634"
+         ry="1.0620492" />
+      <text
+         xml:space="preserve"
+         style="font-size:3.175px;fill:#efff81;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+         x="82.964272"
+         y="97.640045"
+         id="text7"><tspan
+           sodipodi:role="line"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+           x="82.964272"
+           y="97.640045"
+           id="tspan72">* Auto exports to gltf file on every save</tspan><tspan
+           sodipodi:role="line"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+           x="82.964272"
+           y="101.76033"
+           id="tspan4">* Everything is embeded in the gltf file</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;fill:none;stroke:#000000;stroke-width:0.264583"
+       x="286.13794"
+       y="32.174229"
+       id="text8"><tspan
+         sodipodi:role="line"
+         id="tspan8"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="286.13794"
+         y="32.174229">Main Scene (world/level)</tspan></text>
+    <g
+       id="g14"
+       transform="translate(-76.338845,-65.367793)"
+       style="fill:#81ffc7;fill-opacity:1">
+      <rect
+         style="fill:#81ffc7;fill-opacity:1;stroke:#000000;stroke-width:0.355848;stroke-dasharray:none"
+         id="rect8"
+         width="38.74361"
+         height="10.856215"
+         x="157.82838"
+         y="84.181671"
+         ry="1.0531952" />
+      <text
+         xml:space="preserve"
+         style="font-size:3.175px;fill:#81ffc7;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+         x="164.38"
+         y="90.613953"
+         id="text9"><tspan
+           sodipodi:role="line"
+           id="tspan9"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+           x="164.38"
+           y="90.613953">Blueprints Mode</tspan></text>
+    </g>
+    <g
+       id="g13"
+       transform="translate(147.91136,-53.000456)">
+      <rect
+         style="fill:#81ffc7;fill-opacity:1;stroke:#000000;stroke-width:0.358688;stroke-dasharray:none"
+         id="rect9"
+         width="39.374626"
+         height="10.853376"
+         x="153.73479"
+         y="107.09112"
+         ry="1.0529197" />
+      <text
+         xml:space="preserve"
+         style="font-size:3.175px;fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+         x="158.16835"
+         y="113.52198"
+         id="text10"><tspan
+           sodipodi:role="line"
+           id="tspan10"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+           x="158.16835"
+           y="113.52198">Object C0 (instance)</tspan></text>
+    </g>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:2.11666, 0.264583;stroke-dashoffset:0;marker-end:url(#ArrowWide)"
+       d="M 386.07311,42.758097 H 342.90076"
+       id="path16" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:2.11666, 0.264583;stroke-dashoffset:0;marker-end:url(#ArrowWide)"
+       d="M 386.07311,59.483538 H 342.90076"
+       id="path17" />
+    <g
+       id="g17"
+       transform="translate(147.91136,-39.202808)">
+      <rect
+         style="fill:#81ffc7;fill-opacity:1;stroke:#000000;stroke-width:0.358688;stroke-dasharray:none"
+         id="rect17"
+         width="39.374626"
+         height="10.853376"
+         x="153.73479"
+         y="107.09112"
+         ry="1.0529197" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.175px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-dasharray:none"
+         x="158.16835"
+         y="113.52198"
+         id="text17"><tspan
+           sodipodi:role="line"
+           id="tspan17"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+           x="158.16835"
+           y="113.52198">Object C1 (instance)</tspan></text>
+    </g>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:2.11666, 0.264583;stroke-dashoffset:0;marker-end:url(#ArrowWide)"
+       d="m 386.07311,59.483538 -42.64565,15.18405"
+       id="path18"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;fill:none;stroke:#000000;stroke-width:0.264583"
+       x="396.38916"
+       y="33.05262"
+       id="text11"><tspan
+         sodipodi:role="line"
+         id="tspan11"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="396.38916"
+         y="33.05262">Library Scene</tspan></text>
+    <rect
+       style="fill:#ff9342;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+       id="rect11"
+       width="56.246941"
+       height="10.784719"
+       x="388.66153"
+       y="36.993004"
+       ry="1.046259" />
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+       x="393.06079"
+       y="43.389534"
+       id="text12"><tspan
+         sodipodi:role="line"
+         id="tspan12"
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="393.06079"
+         y="43.389534">Object B: collection/ blueprint</tspan></text>
+    <g
+       id="g69"
+       transform="translate(250.46345,5.8715444)">
+      <rect
+         style="fill:#ff9342;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+         id="rect12"
+         width="56.246941"
+         height="10.784719"
+         x="138.19809"
+         y="46.759216"
+         ry="1.046259" />
+      <text
+         xml:space="preserve"
+         style="font-size:3.175px;fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+         x="142.59734"
+         y="53.155746"
+         id="text13"><tspan
+           sodipodi:role="line"
+           id="tspan13"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+           x="142.59734"
+           y="53.155746">Object C: collection/ blueprint</tspan></text>
+    </g>
+    <path
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-dasharray:none;stroke-dashoffset:0;marker-end:url(#RoundedArrow)"
+       d="m 359.16341,87.228569 v 9.304509"
+       id="path28"
+       sodipodi:nodetypes="cc" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.336158;stroke-dasharray:none"
+       id="rect28"
+       width="201.28026"
+       height="86.298004"
+       x="255.45641"
+       y="102.36787"
+       ry="3.0587275" />
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="348.27875"
+       y="110.87145"
+       id="text28"><tspan
+         sodipodi:role="line"
+         id="tspan28"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="348.27875"
+         y="110.87145">Transform Step</tspan></text>
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.320846;stroke-dasharray:none"
+       id="rect29"
+       width="82.208183"
+       height="66.687843"
+       x="365.55829"
+       y="117.38914"
+       ry="6.4695954" />
+    <g
+       id="g36"
+       transform="translate(159.80381,107.88582)">
+      <rect
+         style="fill:none;stroke:#000000;stroke-width:0.336001;stroke-dasharray:none"
+         id="rect30"
+         width="89.327034"
+         height="67.307678"
+         x="104.25188"
+         y="9.3385649"
+         ry="6.5297275" />
+      <g
+         id="g31"
+         transform="translate(-8.7898623,-68.268248)"
+         style="fill:#efff81;fill-opacity:1">
+        <rect
+           style="fill:#efff81;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+           id="rect31"
+           width="21.240173"
+           height="10.947481"
+           x="120.16953"
+           y="92.749634"
+           ry="1.0620492" />
+        <text
+           xml:space="preserve"
+           style="font-size:3.175px;fill:#efff81;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+           x="124.65015"
+           y="97.640045"
+           id="text31"><tspan
+             sodipodi:role="line"
+             id="tspan31"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-opacity:1"
+             x="124.65015"
+             y="97.640045">Object A</tspan><tspan
+             sodipodi:role="line"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-opacity:1"
+             x="124.65015"
+             y="101.76033"
+             id="tspan73">(unique)</tspan></text>
+      </g>
+      <text
+         xml:space="preserve"
+         style="font-size:3.175px;fill:none;stroke:#000000;stroke-width:0.264583"
+         x="126.33414"
+         y="14.70156"
+         id="text32"><tspan
+           sodipodi:role="line"
+           id="tspan32"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+           x="126.33414"
+           y="14.70156">Temporary Scene (world/level)</tspan></text>
+      <g
+         id="g33"
+         transform="translate(-19.939658,-65.832448)"
+         style="fill:#81ffc7;fill-opacity:1">
+        <rect
+           style="fill:#81ffc7;fill-opacity:1;stroke:#000000;stroke-width:0.505434;stroke-dasharray:none"
+           id="rect32"
+           width="52.860485"
+           height="16.052649"
+           x="157.90318"
+           y="84.256462"
+           ry="1.5573175" />
+        <text
+           xml:space="preserve"
+           style="font-size:3.175px;fill:#81ffc7;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+           x="162.26337"
+           y="90.613953"
+           id="text33"><tspan
+             sodipodi:role="line"
+             id="tspan33"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+             x="162.26337"
+             y="90.613953">Object B1 (Empty)</tspan><tspan
+             sodipodi:role="line"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+             x="162.26337"
+             y="94.734238"
+             id="tspan44">+ blueprintName(&quot;ObjectB&quot;)</tspan><tspan
+             sodipodi:role="line"
+             style="fill:#81ffc7;fill-opacity:1;stroke-width:0.264583"
+             x="162.26337"
+             y="98.854515"
+             id="tspan47"><tspan
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none"
+   id="tspan78">+ spawnHere</tspan> </tspan></text>
+      </g>
+      <g
+         id="g34"
+         transform="translate(-15.528392,-70.796885)">
+        <rect
+           style="fill:#81ffc7;fill-opacity:1;stroke:#000000;stroke-width:0.528181;stroke-dasharray:none"
+           id="rect33"
+           width="51.925056"
+           height="17.845793"
+           x="153.81953"
+           y="107.17587"
+           ry="1.7312757" />
+        <text
+           xml:space="preserve"
+           style="font-size:3.175px;fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+           x="158.16835"
+           y="113.52198"
+           id="text34"><tspan
+             sodipodi:role="line"
+             id="tspan34"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+             x="158.16835"
+             y="113.52198">Object C0 (Empty)</tspan><tspan
+             sodipodi:role="line"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+             x="158.16835"
+             y="117.64227"
+             id="tspan45">+ blueprintName(&quot;ObjectC&quot;)</tspan><tspan
+             sodipodi:role="line"
+             style="stroke-width:0.264583"
+             x="158.16835"
+             y="121.76254"
+             id="tspan48"><tspan
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none"
+   id="tspan79">+ spawnHere</tspan> </tspan></text>
+      </g>
+      <path
+         style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:2.11666, 0.264583;stroke-dashoffset:0;marker-end:url(#ArrowWide)"
+         d="M 226.2693,25.28543 H 183.09695"
+         id="path34" />
+      <path
+         style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:2.11666, 0.264583;stroke-dashoffset:0;marker-end:url(#ArrowWide)"
+         d="M 226.2693,42.010871 H 183.09695"
+         id="path35" />
+      <g
+         id="g35"
+         transform="translate(-15.952034,-50.670754)">
+        <rect
+           style="fill:#81ffc7;fill-opacity:1;stroke:#000000;stroke-width:0.526025;stroke-dasharray:none"
+           id="rect35"
+           width="52.478481"
+           height="17.513748"
+           x="153.81845"
+           y="107.17479"
+           ry="1.6990631" />
+        <text
+           xml:space="preserve"
+           style="font-size:3.175px;fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+           x="158.16835"
+           y="113.52198"
+           id="text35"><tspan
+             sodipodi:role="line"
+             id="tspan35"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+             x="158.16835"
+             y="113.52198">Object C1 (Empty)</tspan><tspan
+             sodipodi:role="line"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+             x="158.16835"
+             y="117.64227"
+             id="tspan46">+ blueprintName(&quot;ObjectC&quot;)</tspan><tspan
+             sodipodi:role="line"
+             style="stroke-width:0.264583"
+             x="158.16835"
+             y="121.76254"
+             id="tspan49"><tspan
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none"
+   id="tspan80">+ spawnHere</tspan> </tspan></text>
+      </g>
+      <path
+         style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:2.11666, 0.264583;stroke-dashoffset:0;marker-end:url(#ArrowWide)"
+         d="m 226.2693,42.010871 -42.64565,15.18405"
+         id="path36"
+         sodipodi:nodetypes="cc" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="375.362"
+       y="123.45695"
+       id="text36"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="375.362"
+         y="123.45695"
+         id="tspan39">Determine used Collections to export</tspan></text>
+    <rect
+       style="fill:#ff9342;fill-opacity:1;stroke:#000000;stroke-width:0.32101;stroke-dasharray:none"
+       id="rect36"
+       width="56.190514"
+       height="15.891233"
+       x="388.68976"
+       y="127.43439"
+       ry="1.5416578" />
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+       x="393.06079"
+       y="133.8027"
+       id="text37"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="393.06079"
+         y="133.8027"
+         id="tspan40">Object B</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="393.06079"
+         y="137.77145"
+         id="tspan41" /></text>
+    <rect
+       style="fill:#ff9342;fill-opacity:1;stroke:#000000;stroke-width:0.321404;stroke-dasharray:none"
+       id="rect37"
+       width="56.190121"
+       height="15.930397"
+       x="388.68994"
+       y="145.48325"
+       ry="1.5454572" />
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+       x="393.06079"
+       y="151.85136"
+       id="text38"><tspan
+         sodipodi:role="line"
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="393.06079"
+         y="151.85136"
+         id="tspan42">Object C</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="393.06079"
+         y="155.82011"
+         id="tspan43" /></text>
+    <path
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-dasharray:none;stroke-dashoffset:0;marker-end:url(#RoundedArrow)"
+       d="m 359.16341,188.87388 v 9.30451"
+       id="path49"
+       sodipodi:nodetypes="cc" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.336158;stroke-dasharray:none"
+       id="rect49"
+       width="201.28026"
+       height="86.298004"
+       x="255.45641"
+       y="204.01318"
+       ry="3.0587275" />
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="357.07205"
+       y="212.13031"
+       id="text50"><tspan
+         sodipodi:role="line"
+         id="tspan50"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="357.07205"
+         y="212.13031">Result</tspan></text>
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.272675;stroke-dasharray:none"
+       id="rect50"
+       width="82.256355"
+       height="48.138226"
+       x="365.53421"
+       y="218.48119"
+       ry="4.6700392" />
+    <g
+       id="g63"
+       transform="translate(159.80381,209.53113)">
+      <g
+         id="g52"
+         transform="translate(-8.7898623,-68.268248)"
+         style="fill:#efff81;fill-opacity:1">
+        <rect
+           style="fill:#efff81;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+           id="rect52"
+           width="21.240173"
+           height="10.947481"
+           x="120.16953"
+           y="92.749634"
+           ry="1.0620492" />
+        <text
+           xml:space="preserve"
+           style="font-size:3.175px;fill:#efff81;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+           x="124.65015"
+           y="97.110878"
+           id="text52"><tspan
+             sodipodi:role="line"
+             id="tspan52"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+             x="124.65015"
+             y="97.110878">Entity A</tspan><tspan
+             sodipodi:role="line"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+             x="124.65015"
+             y="101.23116"
+             id="tspan74">(unique)</tspan></text>
+      </g>
+      <rect
+         style="fill:none;stroke:#000000;stroke-width:0.336001;stroke-dasharray:none"
+         id="rect51"
+         width="89.327034"
+         height="67.307678"
+         x="104.25188"
+         y="9.3385649"
+         ry="6.5297275" />
+      <text
+         xml:space="preserve"
+         style="font-size:3.175px;fill:#0090ff;fill-opacity:1;stroke:#0090ff;stroke-width:0.264583;stroke-opacity:1"
+         x="135.33"
+         y="14.70156"
+         id="text53"><tspan
+           sodipodi:role="line"
+           id="tspan53"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';fill:#0090ff;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-opacity:1"
+           x="135.33"
+           y="14.70156">world/level.gltf</tspan></text>
+      <g
+         id="g56"
+         transform="translate(-19.939658,-65.832448)"
+         style="fill:#81ffc7;fill-opacity:1">
+        <rect
+           style="fill:#81ffc7;fill-opacity:1;stroke:#000000;stroke-width:0.505434;stroke-dasharray:none"
+           id="rect53"
+           width="52.860485"
+           height="16.052649"
+           x="157.90318"
+           y="84.256462"
+           ry="1.5573175" />
+        <text
+           xml:space="preserve"
+           style="font-size:3.175px;fill:#81ffc7;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+           x="162.26337"
+           y="90.613953"
+           id="text56"><tspan
+             sodipodi:role="line"
+             id="tspan54"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+             x="162.26337"
+             y="90.613953">Entity B1</tspan><tspan
+             sodipodi:role="line"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+             x="162.26337"
+             y="94.734238"
+             id="tspan55">+ blueprintName(&quot;ObjectB&quot;)</tspan><tspan
+             sodipodi:role="line"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+             x="162.26337"
+             y="98.854515"
+             id="tspan56">+ spawnHere </tspan></text>
+      </g>
+      <g
+         id="g59"
+         transform="translate(-15.528392,-70.796885)">
+        <rect
+           style="fill:#81ffc7;fill-opacity:1;stroke:#000000;stroke-width:0.528181;stroke-dasharray:none"
+           id="rect56"
+           width="51.925056"
+           height="17.845793"
+           x="153.81953"
+           y="107.17587"
+           ry="1.7312757" />
+        <text
+           xml:space="preserve"
+           style="font-size:3.175px;fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+           x="158.16835"
+           y="113.52198"
+           id="text59"><tspan
+             sodipodi:role="line"
+             id="tspan57"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+             x="158.16835"
+             y="113.52198">Entity C0</tspan><tspan
+             sodipodi:role="line"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+             x="158.16835"
+             y="117.64227"
+             id="tspan58">+ blueprintName(&quot;ObjectC&quot;)</tspan><tspan
+             sodipodi:role="line"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+             x="158.16835"
+             y="121.76254"
+             id="tspan59">+ spawnHere </tspan></text>
+      </g>
+      <path
+         style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:2.11666, 0.264583;stroke-dashoffset:0;marker-end:url(#ArrowWide)"
+         d="M 226.2693,25.28543 H 183.09695"
+         id="path59" />
+      <path
+         style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:2.11666, 0.264583;stroke-dashoffset:0;marker-end:url(#ArrowWide)"
+         d="M 226.2693,42.010871 H 183.09695"
+         id="path60" />
+      <g
+         id="g62"
+         transform="translate(-15.952034,-50.670754)">
+        <rect
+           style="fill:#81ffc7;fill-opacity:1;stroke:#000000;stroke-width:0.526025;stroke-dasharray:none"
+           id="rect60"
+           width="52.478481"
+           height="17.513748"
+           x="153.81845"
+           y="107.17479"
+           ry="1.6990631" />
+        <text
+           xml:space="preserve"
+           style="font-size:3.175px;fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+           x="158.16835"
+           y="113.52198"
+           id="text62"><tspan
+             sodipodi:role="line"
+             id="tspan60"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+             x="158.16835"
+             y="113.52198">Entity C1</tspan><tspan
+             sodipodi:role="line"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+             x="158.16835"
+             y="117.64227"
+             id="tspan61">+ blueprintName(&quot;ObjectC&quot;)</tspan><tspan
+             sodipodi:role="line"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+             x="158.16835"
+             y="121.76254"
+             id="tspan62">+ spawnHere </tspan></text>
+      </g>
+      <path
+         style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:2.11666, 0.264583;stroke-dashoffset:0;marker-end:url(#ArrowWide)"
+         d="m 226.2693,42.010871 -42.64565,15.18405"
+         id="path62"
+         sodipodi:nodetypes="cc" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;fill:#0090ff;fill-opacity:1;stroke:#0090ff;stroke-width:0.264583;stroke-opacity:1"
+       x="368.34332"
+       y="225.1111"
+       id="text63"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';fill:#0090ff;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-opacity:1"
+         x="368.34332"
+         y="225.1111"
+         id="tspan63">Library of gltf files (one per Collection/Blueprint)</tspan></text>
+    <rect
+       style="fill:#ff9342;fill-opacity:1;stroke:#000000;stroke-width:0.32101;stroke-dasharray:none"
+       id="rect63"
+       width="56.190514"
+       height="15.891233"
+       x="388.68976"
+       y="229.0797"
+       ry="1.5416578" />
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+       x="393.06079"
+       y="235.44801"
+       id="text66"><tspan
+         sodipodi:role="line"
+         id="tspan64"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="393.06079"
+         y="235.44801">Object B.gltf </tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="393.06079"
+         y="239.5683"
+         id="tspan65">  + blueprintName(&quot;ObjectB&quot;)</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="393.06079"
+         y="243.53705"
+         id="tspan66" /></text>
+    <rect
+       style="fill:#ff9342;fill-opacity:1;stroke:#000000;stroke-width:0.321404;stroke-dasharray:none"
+       id="rect66"
+       width="56.190121"
+       height="15.930397"
+       x="388.68994"
+       y="247.12856"
+       ry="1.5454572" />
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+       x="393.06079"
+       y="253.49667"
+       id="text69"><tspan
+         sodipodi:role="line"
+         id="tspan67"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="393.06079"
+         y="253.49667">Object C:.gltf</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="393.06079"
+         y="257.61694"
+         id="tspan68">  + blueprintName(&quot;ObjectC&quot;)</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="393.06079"
+         y="261.58569"
+         id="tspan69" /></text>
+    <g
+       id="g70"
+       transform="translate(250.46345,22.703508)">
+      <rect
+         style="fill:#ff9342;fill-opacity:1;stroke:#000000;stroke-width:0.27923;stroke-dasharray:none"
+         id="rect69"
+         width="56.232292"
+         height="12.014979"
+         x="138.20541"
+         y="46.766541"
+         ry="1.1656103" />
+      <text
+         xml:space="preserve"
+         style="font-size:3.175px;fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+         x="142.59734"
+         y="52.097412"
+         id="text70"><tspan
+           sodipodi:role="line"
+           id="tspan70"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+           x="142.59734"
+           y="52.097412">Object D: unused collection/ </tspan><tspan
+           sodipodi:role="line"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+           x="142.59734"
+           y="56.217693"
+           id="tspan71">blueprint</tspan></text>
+    </g>
+    <path
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-dasharray:none;stroke-dashoffset:0;marker-end:url(#RoundedArrow)"
+       d="M 307.22485,83.214138 V 112.84481"
+       id="path74"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-dasharray:none;stroke-dashoffset:0;marker-end:url(#RoundedArrow)"
+       d="m 307.22485,184.58276 v 29.63068"
+       id="path75"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-dasharray:none;stroke-dashoffset:0;marker-end:url(#RoundedArrow)"
+       d="M 408.25814,83.214138 V 112.84481"
+       id="path76"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-dasharray:none;stroke-dashoffset:0;marker-end:url(#RoundedArrow)"
+       d="m 408.25814,184.33771 v 29.63068"
+       id="path77"
+       sodipodi:nodetypes="cc" />
+    <g
+       id="g5"
+       transform="translate(-105.69759,-33.153089)"
+       style="fill:#81ffc7;fill-opacity:1">
+      <rect
+         style="fill:#81ffc7;fill-opacity:1;stroke:#000000;stroke-width:0.355848;stroke-dasharray:none"
+         id="rect4"
+         width="29.145191"
+         height="8.7952929"
+         x="162.06181"
+         y="85.240005"
+         ry="1.0531952" />
+      <text
+         xml:space="preserve"
+         style="font-size:3.175px;fill:#81ffc7;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+         x="164.38"
+         y="90.613953"
+         id="text5"><tspan
+           sodipodi:role="line"
+           id="tspan5"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+           x="164.38"
+           y="90.613953">Single blend file</tspan></text>
+    </g>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:2.11666, 0.264583;stroke-dashoffset:0;marker-end:url(#ArrowWide)"
+       d="M 70.50286,62.907123 44.33421,82.810065"
+       id="path5"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:3.175px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';opacity:0.977463;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.264999;stroke-opacity:1"
+       x="86.077255"
+       y="71.684563"
+       id="text6"><tspan
+         sodipodi:role="line"
+         id="tspan6"
+         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.265;stroke-opacity:1"
+         x="86.077255"
+         y="71.684563">NO</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:2.11666, 0.264583;stroke-dashoffset:0;marker-end:url(#ArrowWide)"
+       d="M 70.69424,62.907123 96.86289,82.810065"
+       id="path6"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:3.175px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';opacity:0.977463;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.264999;stroke-opacity:1"
+       x="49.869728"
+       y="71.684563"
+       id="text14"><tspan
+         sodipodi:role="line"
+         id="tspan7"
+         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.265;stroke-opacity:1"
+         x="49.869728"
+         y="71.684563">YES</tspan></text>
+    <g
+       id="g16"
+       transform="translate(-73.764391,21.948459)"
+       style="fill:#81ffc7;fill-opacity:1">
+      <rect
+         style="fill:#81ffc7;fill-opacity:1;stroke:#000000;stroke-width:0.355848;stroke-dasharray:none"
+         id="rect14"
+         width="25.216259"
+         height="8.5995064"
+         x="164.70769"
+         y="85.240005"
+         ry="1.0531952" />
+      <text
+         xml:space="preserve"
+         style="font-size:3.175px;fill:#81ffc7;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+         x="167.0258"
+         y="88.497292"
+         id="text15"><tspan
+           sodipodi:role="line"
+           id="tspan14"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+           x="167.0258"
+           y="88.497292">Export nested </tspan><tspan
+           sodipodi:role="line"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+           x="167.0258"
+           y="92.617577"
+           id="tspan16">blueprints</tspan></text>
+    </g>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:2.11666, 0.264583;stroke-dashoffset:0;marker-end:url(#ArrowWide)"
+       d="M 101.20643,117.0167 75.037782,136.91964"
+       id="path19"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:3.175px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';opacity:0.977463;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.264999;stroke-opacity:1"
+       x="116.78082"
+       y="125.79414"
+       id="text19"><tspan
+         sodipodi:role="line"
+         id="tspan19"
+         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.265;stroke-opacity:1"
+         x="116.78082"
+         y="125.79414">NO</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:2.11666, 0.264583;stroke-dashoffset:0;marker-end:url(#ArrowWide)"
+       d="m 101.39781,117.0167 26.16865,19.90294"
+       id="path20"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:3.175px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';opacity:0.977463;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.264999;stroke-opacity:1"
+       x="80.573296"
+       y="125.79414"
+       id="text20"><tspan
+         sodipodi:role="line"
+         id="tspan20"
+         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.265;stroke-opacity:1"
+         x="80.573296"
+         y="125.79414">YES</tspan></text>
+    <g
+       id="g22"
+       transform="translate(-140.54786,21.948459)"
+       style="fill:#81ffc7;fill-opacity:1">
+      <rect
+         style="fill:#81ffc7;fill-opacity:1;stroke:#000000;stroke-width:0.355848;stroke-dasharray:none"
+         id="rect20"
+         width="25.216259"
+         height="8.5995064"
+         x="164.70769"
+         y="85.240005"
+         ry="1.0531952" />
+      <text
+         xml:space="preserve"
+         style="font-size:3.175px;fill:#81ffc7;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+         x="165.43832"
+         y="88.497292"
+         id="text22"><tspan
+           sodipodi:role="line"
+           id="tspan21"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+           x="165.43832"
+           y="88.497292">Export materials </tspan><tspan
+           sodipodi:role="line"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+           x="165.43832"
+           y="92.617577"
+           id="tspan22">library</tspan></text>
+    </g>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:2.11666, 0.264583;stroke-dashoffset:0;marker-end:url(#ArrowWide)"
+       d="M 34.422961,117.0167 8.2543129,136.91964"
+       id="path22"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:3.175px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';opacity:0.977463;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.264999;stroke-opacity:1"
+       x="49.997353"
+       y="125.79414"
+       id="text23"><tspan
+         sodipodi:role="line"
+         id="tspan23"
+         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.265;stroke-opacity:1"
+         x="49.997353"
+         y="125.79414">NO</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:2.11666, 0.264583;stroke-dashoffset:0;marker-end:url(#ArrowWide)"
+       d="m 34.614341,117.0167 26.16865,19.90294"
+       id="path23"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:3.175px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';opacity:0.977463;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.264999;stroke-opacity:1"
+       x="13.789826"
+       y="125.79414"
+       id="text24"><tspan
+         sodipodi:role="line"
+         id="tspan24"
+         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.265;stroke-opacity:1"
+         x="13.789826"
+         y="125.79414">YES</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:2.11666, 0.264583;stroke-dashoffset:0;marker-end:url(#ArrowWide)"
+       d="M 98.652482,31.03472 72.483832,50.937662"
+       id="path24"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:3.175px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';opacity:0.977463;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.264999;stroke-opacity:1"
+       x="114.22688"
+       y="39.81216"
+       id="text25"><tspan
+         sodipodi:role="line"
+         id="tspan25"
+         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.265;stroke-opacity:1"
+         x="114.22688"
+         y="39.81216">NO</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:2.11666, 0.264583;stroke-dashoffset:0;marker-end:url(#ArrowWide)"
+       d="M 98.843862,31.03472 125.01251,50.937662"
+       id="path25"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:3.175px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';opacity:0.977463;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.264999;stroke-opacity:1"
+       x="78.019348"
+       y="39.81216"
+       id="text26"><tspan
+         sodipodi:role="line"
+         id="tspan26"
+         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.265;stroke-opacity:1"
+         x="78.019348"
+         y="39.81216">YES</tspan></text>
+    <g
+       id="g29"
+       transform="translate(-8.6724455,21.948459)"
+       style="fill:#81ffc7;fill-opacity:1">
+      <rect
+         style="fill:#81ffc7;fill-opacity:1;stroke:#000000;stroke-width:0.355848;stroke-dasharray:none"
+         id="rect26"
+         width="25.216259"
+         height="8.5995064"
+         x="164.70769"
+         y="85.240005"
+         ry="1.0531952" />
+      <text
+         xml:space="preserve"
+         style="font-size:3.175px;fill:#81ffc7;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none"
+         x="166.49664"
+         y="89.026459"
+         id="text29"><tspan
+           sodipodi:role="line"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+           x="166.49664"
+           y="89.026459"
+           id="tspan29">Combine mode</tspan></text>
+    </g>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:2.11666, 0.264583;stroke-dashoffset:0;marker-end:url(#ArrowWide)"
+       d="m 166.29838,117.0167 -26.16865,19.90294"
+       id="path29"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:3.175px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';opacity:0.977463;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.264999;stroke-opacity:1"
+       x="181.87277"
+       y="125.79414"
+       id="text30"><tspan
+         sodipodi:role="line"
+         id="tspan30"
+         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.265;stroke-opacity:1"
+         x="181.87277"
+         y="125.79414">EMBED</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:2.11666, 0.264583;stroke-dashoffset:0;marker-end:url(#ArrowWide)"
+       d="m 166.48976,117.0167 26.16865,19.90294"
+       id="path30"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:3.175px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';opacity:0.977463;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.264999;stroke-opacity:1"
+       x="145.66524"
+       y="125.79414"
+       id="text39"><tspan
+         sodipodi:role="line"
+         id="tspan36"
+         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.265;stroke-opacity:1"
+         x="145.66524"
+         y="125.79414">SPLIT</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-dasharray:2.11666, 0.264583;stroke-dashoffset:0;marker-end:url(#ArrowWide)"
+       d="m 166.48976,117.0167 0.0758,19.90294"
+       id="path51"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:3.175px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';opacity:0.977463;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.264999;stroke-opacity:1"
+       x="161.58406"
+       y="129.93071"
+       id="text51"><tspan
+         sodipodi:role="line"
+         id="tspan51"
+         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.265;stroke-opacity:1"
+         x="161.58406"
+         y="129.93071">INJECT</tspan></text>
+  </g>
+</svg>

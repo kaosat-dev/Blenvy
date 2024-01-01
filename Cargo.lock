@@ -858,6 +858,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "bevy_gltf_blueprints_multiple_levels_multiple_blendfiles"
+version = "0.3.0"
+dependencies = [
+ "bevy",
+ "bevy_asset_loader",
+ "bevy_editor_pls",
+ "bevy_gltf_blueprints",
+ "bevy_rapier3d",
+ "rand",
+]
+
+[[package]]
 name = "bevy_gltf_blueprints_nested_blueprints_example"
 version = "0.3.0"
 dependencies = [

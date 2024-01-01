@@ -1,7 +1,7 @@
 bl_info = {
     "name": "gltf_auto_export",
     "author": "kaosigh",
-    "version": (0, 8, 0),
+    "version": (0, 9, 0),
     "blender": (3, 4, 0),
     "location": "File > Import-Export",
     "description": "glTF/glb auto-export",
@@ -77,6 +77,14 @@ def deps_update_handler(scene, depsgraph):
                 object = bpy.data.objects[obj.id.name]
                 print("changed object", obj.id.name)
                 bpy.context.window_manager['changed_objects_per_scene'][scene.name][obj.id.name] = object
+            elif isinstance(obj.id, bpy.types.Material): # or isinstance(obj.id, bpy.types.ShaderNodeTree):
+                print("changed material", obj.id, "scene", scene.name,)
+                material = bpy.data.materials[obj.id.name]
+                #now find which objects are using the material
+                for obj in bpy.data.objects:
+                    for slot in obj.material_slots:
+                        if slot.material == material:
+                            bpy.context.window_manager['changed_objects_per_scene'][scene.name][obj.name] = obj
         
         bpy.context.window_manager.changedScene = changed
 

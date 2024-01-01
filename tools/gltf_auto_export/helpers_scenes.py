@@ -3,9 +3,10 @@ from .helpers_collections import (find_layer_collection_recursive)
 from .helpers import (make_empty3)
 
 # generate a copy of a scene that replaces collection instances with empties
-# alternative: copy original names before creating a new scene, & reset them
-# or create empties, hide original ones, and do the same renaming trick
-def generate_hollow_scene(scene, library_collections): 
+# copy original names before creating a new scene, & reset them
+def generate_hollow_scene(scene, library_collections, addon_prefs): 
+    collection_instances_combine_mode = getattr(addon_prefs, "collection_instances_combine_mode")
+
     root_collection = scene.collection 
     temp_scene = bpy.data.scenes.new(name="temp_scene")
     copy_root_collection = temp_scene.collection
@@ -18,13 +19,22 @@ def generate_hollow_scene(scene, library_collections):
         # once it's found, set the active layer collection to the one we found
         bpy.context.view_layer.active_layer_collection = found
 
-    #original_names = {}
     original_names = []
+    temporary_collections = []
+    root_objects = []
+    special_properties= { # to be able to reset any special property afterwards
+        "combine": [],
+    }
 
     # copies the contents of a collection into another one while replacing library instances with empties
-    def copy_hollowed_collection_into(source_collection, destination_collection):
+    def copy_hollowed_collection_into(source_collection, destination_collection, parent_empty=None):
         for object in source_collection.objects:
-            if object.instance_type == 'COLLECTION' and (object.instance_collection.name in library_collections):
+            #check if a specific collection instance does not have an ovveride for combine_mode
+            combine_mode = object['_combine'] if '_combine' in object else collection_instances_combine_mode
+
+            if object.instance_type == 'COLLECTION' and (combine_mode == 'Split' or (combine_mode == 'EmbedExternal' and (object.instance_collection.name in library_collections)) ): 
+                #print("creating empty for", object.name, object.instance_collection.name, library_collections, combine_mode)
+
                 collection_name = object.instance_collection.name
 
                 original_name = object.name
@@ -37,28 +47,55 @@ def generate_hollow_scene(scene, library_collections):
                 empty_obj['SpawnHere'] = ''
 
                 for k, v in object.items():
-                    empty_obj[k] = v
+                    if k != 'template' or k != '_combine': # do not copy these properties
+                        empty_obj[k] = v
+                if parent_empty is not None:
+                    empty_obj.parent = parent_empty
             else:
-                destination_collection.objects.link(object)
+                # we backup special properties that we do not want to export, and remove them
+                if '_combine' in object:
+                    special_properties["combine"].append((object, object['_combine']))
+                    del object['_combine']
+
+                if parent_empty is not None:
+                    object.parent = parent_empty
+                    destination_collection.objects.link(object)
+                else:
+                    root_objects.append(object)
+                    destination_collection.objects.link(object)
 
         # for every sub-collection of the source, copy its content into a new sub-collection of the destination
         for collection in source_collection.children:
+            original_name = collection.name
+            collection.name = original_name + "____bak"
+            collection_placeholder = make_empty3(original_name, [0,0,0], [0,0,0], [1,1,1], destination_collection)
+
+            if parent_empty is not None:
+                collection_placeholder.parent = parent_empty
+
+            copy_hollowed_collection_into(collection, destination_collection, collection_placeholder)
+            
+            
+            """
             copy_collection = bpy.data.collections.new(collection.name + "____collection_export")
+            # save the newly created collection for later reuse
+            temporary_collections.append(copy_collection)
+
+            # copy & link objects
             copy_hollowed_collection_into(collection, copy_collection)
             destination_collection.children.link(copy_collection)
+            """
 
     copy_hollowed_collection_into(root_collection, copy_root_collection)
     
-    # objs = bpy.data.objects
-    #objs.remove(objs["Cube"], do_unlink=True)
-    return (temp_scene, original_names)
+    return (temp_scene, temporary_collections, root_objects, special_properties)
 
 # clear & remove "hollow scene"
-def clear_hollow_scene(temp_scene, original_scene, original_names):
-    # reset original names
-    root_collection = original_scene.collection
+def clear_hollow_scene(temp_scene, original_scene, temporary_collections, root_objects, special_properties):
 
     def restore_original_names(collection):
+        if collection.name.endswith("____bak"):
+            collection.name = collection.name.replace("____bak", "")
         for object in collection.objects:
             if object.instance_type == 'COLLECTION':
                 if object.name.endswith("____bak"):
@@ -66,19 +103,35 @@ def clear_hollow_scene(temp_scene, original_scene, original_names):
         for child_collection in collection.children:
             restore_original_names(child_collection)
     
+    # reset original names
+    root_collection = original_scene.collection
     restore_original_names(root_collection)
 
     # remove empties (only needed when we go via ops ????)
-    root_collection = temp_scene.collection 
-    scene_objects = [o for o in root_collection.objects]
-    for object in scene_objects:
+    temp_root_collection = temp_scene.collection 
+    temp_scene_objects = [o for o in temp_root_collection.objects]
+    for object in temp_scene_objects:
         if object.type == 'EMPTY':
             if hasattr(object, "SpawnHere"):
                 bpy.data.objects.remove(object, do_unlink=True)
             else: 
                 bpy.context.scene.collection.objects.unlink(object)
-            #bpy.data.objects.remove(object, do_unlink=True)
+                if object in root_objects:
+                    pass
+                else:
+                    bpy.data.objects.remove(object, do_unlink=True)
+        else: 
+            bpy.context.scene.collection.objects.unlink(object)
 
+    # remove temporary collections
+    for collection in temporary_collections:
+        bpy.data.collections.remove(collection)
+
+    # put back special properties
+    for (object, value) in special_properties["combine"]:
+        object['_combine'] = value
+
+    # remove the temporary scene
     bpy.data.scenes.remove(temp_scene)
 
 

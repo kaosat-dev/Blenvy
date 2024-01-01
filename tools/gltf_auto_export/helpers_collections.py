@@ -21,13 +21,19 @@ def get_used_collections(scene):
     return (collection_names, used_collections)
 
 # gets all collections that should ALWAYS be exported to their respective gltf files, even if they are not used in the main scene/level
-def get_marked_collections(scene):
+def get_marked_collections(scene, addon_prefs):
+    export_marked_assets = getattr(addon_prefs,"export_marked_assets")
+
     # print("checking library for marked collections")
     root_collection = scene.collection
     marked_collections = []
     collection_names = []
     for collection in traverse_tree(root_collection):
         if 'AutoExport' in collection and collection['AutoExport'] == True:
+            marked_collections.append(collection)
+            collection_names.append(collection.name)
+        # if you have marked collections as assets you can auto export them too
+        if export_marked_assets and collection.asset_data is not None: 
             marked_collections.append(collection)
             collection_names.append(collection.name)
     return (collection_names, marked_collections)
@@ -88,7 +94,8 @@ class Node :
         return "name: " +self.name + ", children:" + str(children)
     
 # get exportable collections from lists of mains scenes and lists of library scenes
-def get_exportable_collections(main_scenes, library_scenes, scan_nested_collections): 
+def get_exportable_collections(main_scenes, library_scenes, addon_prefs): 
+
     all_collections = []
     all_collection_names = []
     root_node = Node()
@@ -101,16 +108,15 @@ def get_exportable_collections(main_scenes, library_scenes, scan_nested_collecti
         all_collection_names = all_collection_names + list(collection_names)
         all_collections = all_collections + collections
     for library_scene in library_scenes:
-        marked_collections = get_marked_collections(library_scene)
+        marked_collections = get_marked_collections(library_scene, addon_prefs)
         all_collection_names = all_collection_names + marked_collections[0]
         all_collections = all_collections + marked_collections[1]
 
-    if scan_nested_collections:
-        (collection_names, collections) = get_sub_collections(all_collections, root_node, children_per_collection)
-        all_collection_names = all_collection_names + list(collection_names)
-        children_per_collection = {}
-        flatten_collection_tree(root_node, children_per_collection)
-        #print("ROOT NODE", children_per_collection) #
+    (collection_names, collections) = get_sub_collections(all_collections, root_node, children_per_collection)
+    all_collection_names = all_collection_names + list(collection_names)
+    children_per_collection = {}
+    flatten_collection_tree(root_node, children_per_collection)
+    #print("ROOT NODE", children_per_collection) #
 
     return (all_collection_names, children_per_collection)
 
@@ -125,6 +131,25 @@ def get_collections_per_scene(collection_names, library_scenes):
                 collections_per_scene[scene.name].append(cur_collection.name)
                 
     return collections_per_scene
+
+def get_collections_in_library(library_scenes):
+    """all_collections = []
+    all_collection_names = []
+    for main_scene in main_scenes:
+        (collection_names, collections) = get_used_collections(main_scene)
+        all_collection_names = all_collection_names + list(collection_names)
+        all_collections = all_collections + collections"""
+
+    # now that we have the collections that are in use by collection instances, check if those collections are actully present in the library scenes
+    collections = []
+    collection_names = []
+    for library_scene in library_scenes:
+        root_collection = library_scene.collection
+     
+        for collection in traverse_tree(root_collection):
+            collections.append(collection)
+            collection_names.append(collection.name)
+    return collection_names
 
 
 def get_collection_hierarchy(root_col, levels=1):
@@ -159,4 +184,15 @@ def recurLayerCollection(layerColl, collName):
         found = recurLayerCollection(layer, collName)
         if found:
             return found
-
+# traverse the collection hierarchy updward until you find one collection inside target_collections
+def find_collection_ascendant_target_collection(collection_parents, target_collections, collection):
+    if collection == None:
+        return None
+    if collection in target_collections:
+        return collection
+    if collection in collection_parents:
+        parent = collection_parents[collection]
+    else:
+        return None
+    return find_collection_ascendant_target_collection(collection_parents, target_collections, parent)
+   

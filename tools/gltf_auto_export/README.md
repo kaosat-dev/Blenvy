@@ -28,7 +28,31 @@ This [Blender addon](./)
 
 ![blender addon install](./docs/blender_addon_install2.png)
 
+
+
+
 ## Usage: 
+
+> ***IMPORTANT***
+
+if you have used a version of this add-on prior to v0.9, there was an issue that kept generating orphan (junk) data on every save !
+You can easilly clean up that data 
+
+- go to orphan data:
+
+![purge orphan data](./docs/purge_orphan1_data1.png)
+
+- click on purge
+
+![purge orphan data](./docs/purge_orphan1_data2.png)
+
+- validate
+
+![purge orphan data](./docs/purge_orphan1_data3.png)
+
+
+
+This issue has been resolved in v0.9.
 
 
 ### Basics
@@ -47,7 +71,8 @@ This [Blender addon](./)
     - export scene settings: exports "global"/scene settings like ambient color, bloom, ao, etc 
         
         This automatically generates additional components at the scene level 
-    - pick your main (level) scenes and library scenes (see the chapter about Blueprints below)   
+
+    - pick your main (level) scenes and/or library scenes (see the chapter about [Blueprints](#blueprints) and [multiple Blend filles workflow](#multiple-blend-file-workflow) below)   
         - click in the scene picker & select your scene
 
         ![select scene](./docs/blender_addon_add_scene.png)
@@ -62,12 +87,23 @@ This [Blender addon](./)
 
     - export blueprints: check this if you want to automatically export blueprints (default: True)
     - blueprints path: the path to export blueprints to , relative to the main **export folder** (default: library)
-    - export nested blueprints: check this if you want to automatically export nested blueprints (collection instances inside blueprint collections)
-    as seperate blueprints  (default: True)
-    please read dedicate section below for more information
+    - collection instances: select which option you want to use to deal with collection instances (aka combine mode) (both inside blueprint collections & main collections)
+
+        * split (default, highly recomended) : the addon will 'split out' any nested collections/ blueprints & export them
+        * embed: choose this option if you want to keep everything inside a gltf file (less efficient, not recomended)
+        * embedExternal: this will embed ONLY collection instances whose collections have not been found inside the current blend file
+
+        These options can also be **overridden** on a per collection instance basis: (if you want to split out most collection instances, but keep a few specific ones embeded
+        inside your gltf file)
+            
+        ![combine override](./docs/combine_override.png) 
+
+        - simply add a custom property called **_combine** to the collection instance, and set it to one of the options above
+
+        please read the dedicated [section](#collection-instances--nested-blueprints) below for more information
 
     - export materials library: check this if you want to automatically export material libraries (default: False)
-    please read the dedicated section below for more information
+    please read the dedicated [section](#materials) below for more information
 
         > This only works together with blueprints !
 
@@ -75,7 +111,7 @@ This [Blender addon](./)
 
 * and your standard gltf export parameters in the **gltf** panel
 
-![blender addon use2](./docs/blender_addon_use2.png)
+    ![blender addon use2](./docs/blender_addon_use2.png)
 
 
 * click on "apply settings"
@@ -112,12 +148,19 @@ You can enable this option to automatically replace all the **collection instanc
 
     ![exported collections](./docs/exported_collections.png)
 
+- there are some workflow specificities for multi blend file [workflows](#multiple-blend-file-workflow)
 
-#### Nested blueprints
+#### Collection instances & Nested blueprints
 
 To maximise reuse of meshes/components etc, you can also nest ***collections instances*** inside collections (as normally in Blender), but also export each nested Blueprint as a seperate blueprints.
 
-> Don't forget to toggle the option in the exporter settings 
+> Don't forget to choose the relevant option in the exporter settings (aka **"split"**)
+
+> This replaces the previous "export nested blueprints" checkbox/ option
+
+![instance combine mode](./docs/blender_addon_use4.png)
+
+
 
 - To make things clearer: 
 
@@ -145,7 +188,6 @@ To maximise reuse of meshes/components etc, you can also nest ***collections ins
 
 TLDR: smaller, more reuseable blueprints which can share sub-parts with other entities !
 
-
 ### Materials
 
 You can enable this option to automatically generate a **material library** file that combines all the materials in use in your blueprints.
@@ -166,9 +208,34 @@ options in **bevy_gltf_blueprints** for more information on that)
 TLDR: Use this option to make sure that each blueprint file does not contain a copy of the same materials 
 
 
-#### Process
+### Multiple blend file workflow
 
-This is the internal logic of the export process with blueprints 
+If you want to use multiple blend files, use Blender's asset library etc, we got you coverred too !
+There are only a few things to keep in mind 
+
+#### Assets/library/blueprints files
+- mark your library scenes as specified above, but **do NOT** specify a **main** scene
+- mark any collection in your scenes as "assets" (more convenient) or add the "AutoExport" custom property to the collection
+- choose "split" for the combine mode (as you want your gltf blueprints to be saved for external use)
+- do your Blender things as normal
+- anytime you save your file, it will automatically export any relevant collections/blueprints
+- (optional) activate the **material library** option, so you only have one set of material per asset library (recomended)
+
+#### Level/world files
+- mark your main scenes as specified above, but **do NOT** specify a **library** scene
+- configure your asset libraries as you would usually do , I recomend using the "link" mode so that any changes to asset files are reflected correctly
+- drag & drop any assets from the blueprints library (as you would normally do in Blender as well)
+- choose "split" for the combine mode (as you want your gltf blueprints to be external usually & use the gltf files generated from your assets library)
+- do your Blender things as normal
+- anytime you save your file, it will automatically export your level(s)
+
+
+Take a look at the [relevant](../../examples/bevy_gltf_blueprints/multiple_levels_multiple_blendfiles/) example for more [details](../../examples/bevy_gltf_blueprints/multiple_levels_multiple_blendfiles/art/) 
+
+
+### Process
+
+This is the internal logic of the export process with blueprints (simplified)
 
 ![process](./docs/process.svg)
 

@@ -283,6 +283,8 @@ https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/example
 
 https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/nested_blueprints
 
+https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/multiple_levels_multiple_blendfiles
+
 
 ## Compatible Bevy versions
 
