@@ -146,7 +146,7 @@ To maximise reuse of meshes/components etc, you can also nest ***collections ins
 TLDR: smaller, more reuseable blueprints which can share sub-parts with other entities !
 
 
-### Materials
+#### Materials
 
 You can enable this option to automatically generate a **material library** file that combines all the materials in use in your blueprints.
 
@@ -166,9 +166,34 @@ options in **bevy_gltf_blueprints** for more information on that)
 TLDR: Use this option to make sure that each blueprint file does not contain a copy of the same materials 
 
 
+#### Multiple blend file workflow
+
+If you want to use multiple blend files, use Blender's asset library etc, we got you coverred too !
+There are only a few things to keep in mind 
+
+##### Assets/library/blueprints files
+- mark your library scenes as specified above, but **do NOT** specify a **main** scene
+- mark any collection in your scenes as "assets" (more convenient) or add the "AutoExport" custom property to the collection
+- choose "split" for the combine mode (as you want your gltf blueprints to be saved for external use)
+- do your Blender things as normal
+- anytime you save your file, it will automatically export any relevant collections/blueprints
+- (optional) activate the **material library** option, so you only have one set of material per asset library (recomended)
+
+##### Level/world files
+- mark your main scenes as specified above, but **do NOT** specify a **library** scene
+- configure your asset libraries as you would usually do , I recomend using the "link" mode so that any changes to asset files are reflected correctly
+- drag & drop any assets from the blueprints library (as you would normally do in Blender as well)
+- choose "split" for the combine mode (as you want your gltf blueprints to be external usually & use the gltf files generated from your assets library)
+- do your Blender things as normal
+- anytime you save your file, it will automatically export your level(s)
+
+
+Take a look at the [relevant](../../examples/bevy_gltf_blueprints/multiple_levels_multiple_blendfiles/) example for more [details](../../examples/bevy_gltf_blueprints/multiple_levels_multiple_blendfiles/art/) 
+
+
 #### Process
 
-This is the internal logic of the export process with blueprints 
+This is the internal logic of the export process with blueprints (simplified)
 
 ![process](./docs/process.svg)
 
