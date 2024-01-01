@@ -26,6 +26,7 @@ impl Plugin for CorePlugin {
             // SaveLoadPlugin,
             BlueprintsPlugin {
                 library_folder: "models/library".into(),
+                material_library: true,
                 ..Default::default()
             },
         ));

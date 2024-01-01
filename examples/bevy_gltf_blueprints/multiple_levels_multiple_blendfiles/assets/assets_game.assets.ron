@@ -6,4 +6,7 @@
     "models": Folder (
         path: "models/library",
     ),
+    "materials": Folder (
+        path: "materials",
+    ),
 })
