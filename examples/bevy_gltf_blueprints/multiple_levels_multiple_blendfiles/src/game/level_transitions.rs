@@ -3,6 +3,8 @@ use bevy::prelude::*;
 use bevy_gltf_blueprints::GameWorldTag;
 use bevy_rapier3d::prelude::*;
 
+use super::Player;
+
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
 pub struct LevelTransition {
@@ -14,11 +16,12 @@ pub fn trigger_level_transition(
     mut collision_events: EventReader<CollisionEvent>,
     level_transition_triggers: Query<&LevelTransition>,
     parents: Query<&Parent>,
+    players: Query<&Player>,
 
     mut commands: Commands,
+
     game_assets: Res<GameAssets>,
     models: Res<Assets<bevy::gltf::Gltf>>,
-
     game_world: Query<(Entity, &GameWorldTag)>,
 ) {
     for collision_event in collision_events.read() {
@@ -27,6 +30,8 @@ pub fn trigger_level_transition(
                 // we need to accomodate for the fact that the collider may be a child of the level transition (FIXME: is this a missunderstanding on my part about rapier child colliders ?)
                 let entity1_parent = parents.get(*entity1).unwrap();
                 let entity2_parent = parents.get(*entity2).unwrap();
+               
+
                 if level_transition_triggers.get(*entity1).is_ok()
                     || level_transition_triggers.get(*entity2).is_ok()
                     || level_transition_triggers.get(entity1_parent.get()).is_ok()
@@ -45,6 +50,15 @@ pub fn trigger_level_transition(
                         transition_trigger =
                             level_transition_triggers.get(entity2_parent.get()).unwrap();
                     }
+
+                    if players.get(*entity1).is_ok() || players.get(entity1_parent.get()).is_ok() || players.get(*entity2).is_ok() || players.get(entity2_parent.get()).is_ok() {
+                        println!("one entity is the player, we can enter")
+                    }
+                    else {
+                        // if none of our entities is a player, bail out, as only entities with player components should trigger a transition
+                        return;
+                    }
+
                     let current_game_world = game_world.single();
 
                     // remove current level/world
