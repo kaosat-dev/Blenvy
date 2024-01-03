@@ -57,7 +57,7 @@ This is a workaround needed because of the way the settings are stored , perhaps
 @persistent
 def deps_update_handler(scene, depsgraph):
     if scene.name != "temp_scene": # actually do we care about anything else than the main scene(s) ?
-        print("depsgraph_update_post", scene.name)
+        #print("depsgraph_update_post", scene.name)
         print("-------------")
         changed = scene.name or ""
 

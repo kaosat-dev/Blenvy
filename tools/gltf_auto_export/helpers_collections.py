@@ -2,11 +2,10 @@ import bpy
 from .helpers import traverse_tree
 
 # returns the list of the collections in use for a given scene
-# FIXME: this should also look into sub collections
 def get_used_collections(scene): 
     root_collection = scene.collection 
 
-    scene_objects = [o for o in root_collection.objects]
+    scene_objects = [o for o in root_collection.all_objects]
     collection_names = set()
     used_collections = []
     for object in scene_objects:
@@ -117,7 +116,7 @@ def get_exportable_collections(main_scenes, library_scenes, addon_prefs):
     children_per_collection = {}
     flatten_collection_tree(root_node, children_per_collection)
     #print("ROOT NODE", children_per_collection) #
-
+    
     return (all_collection_names, children_per_collection)
 
 def get_collections_per_scene(collection_names, library_scenes): 
