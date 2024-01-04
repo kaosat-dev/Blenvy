@@ -3,9 +3,10 @@ use bevy::reflect::TypeRegistryArc;
 use bevy::render::camera::CameraRenderGraph;
 use bevy::render::view::VisibleEntities;
 use bevy::tasks::IoTaskPool;
+use bevy::transform::commands;
 use bevy::utils::HashSet;
 use bevy::{gltf::GltfExtras, prelude::*};
-use bevy_gltf_blueprints::{BlueprintName, SpawnHere};
+use bevy_gltf_blueprints::{BlueprintName, SpawnHere, Save};
 use bevy_rapier3d::dynamics::Velocity;
 use bevy_rapier3d::prelude::RigidBody;
 use json::camera::Type;
@@ -15,9 +16,8 @@ use std::fs::{File, self};
 use std::io::Write;
 
 use crate::core::physics::Collider;
+use crate::core::save_load::Dynamic;
 use crate::game::{Pickable, Player};
-
-use super::Saveable;
 
 const NEW_SCENE_FILE_PATH: &str = "save.scn.ron";
 
@@ -70,7 +70,15 @@ pub fn serialize_gltf(scene:&DynamicScene, registry: &TypeRegistryArc) {
 
 }
 
-
+pub fn prepare_save_game(
+    saveables: Query<(Entity), With<Dynamic>>,
+    mut commands: Commands,
+){
+    for entity in saveables.iter(){
+        println!("PREPARING SAVE");
+        commands.entity(entity).insert(SpawnHere);
+    }
+}
 pub fn save_game(
     world: &mut World,
     // save_requested_events: EventReader<SaveRequest>,
@@ -82,7 +90,7 @@ pub fn save_game(
     }*/
 
     let saveable_entities: Vec<Entity> = world
-        .query_filtered::<Entity, With<Saveable>>()
+        .query_filtered::<Entity, With<Dynamic>>()
         .iter(world)
         .collect();
 
@@ -91,10 +99,11 @@ pub fn save_game(
     .iter(world)
     .collect();*/
     println!("saveable entities {}", saveable_entities.len());
+    for ent in saveable_entities.iter() {
+        // ent.apply(value)
+    }
 
-
-    let mut foo = DynamicSceneBuilder::from_world(world);
-    let bla = vec!["Transform", "Velocity"];
+    // we need         "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere": (),
 
     let components = HashSet::from([
         TypeId::of::<Name>(),

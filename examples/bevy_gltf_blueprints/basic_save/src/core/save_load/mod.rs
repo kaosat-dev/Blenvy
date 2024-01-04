@@ -4,8 +4,8 @@ pub use saveable::*;
 pub mod saving;
 pub use saving::*;
 
-// pub mod loading;
-// pub use loading::*;
+pub mod loading;
+pub use loading::*;
 
 use bevy::prelude::*;
 use bevy::prelude::{App, IntoSystemConfigs, Plugin};
@@ -28,6 +28,7 @@ impl Plugin for SaveLoadPlugin {
         app
         .register_type::<Uuid>()
         .register_type::<Saveable>()
+        .register_type::<Dynamic>()
         .add_event::<SaveRequest>()
         //.add_event::<LoadRequest>()
 
@@ -39,21 +40,27 @@ impl Plugin for SaveLoadPlugin {
             //.before(GltfComponentsSet::Injection)
         )
 
-        .add_systems(PreUpdate, save_game.run_if(should_save))
+        .add_systems(PreUpdate, 
+            (
+                prepare_save_game,
+                apply_deferred,
+                save_game
+            )
+            .chain()
+            .run_if(should_save))
 
-        /* .add_systems(Update,
+        .add_systems(Update,
             (
                 load_prepare,
                 unload_world,
-                load_world,
-                load_saved_scene,
-                // process_loaded_scene
+                load_game,
+                //load_saved_scene,
             )
             .chain()
             .run_if(should_load) // .run_if(in_state(AppState::AppRunning))
             .in_set(LoadingSet::Load)
         )
-        .add_systems(Update,
+        /* .add_systems(Update,
             (
                 process_loaded_scene,
                 apply_deferred,

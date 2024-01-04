@@ -12,3 +12,8 @@ impl Default for Saveable {
         Saveable { id: Uuid::new_v4() }
     }
 }
+
+
+#[derive(Component, Reflect, Debug, Default)]
+#[reflect(Component)]
+pub struct Dynamic(pub bool);

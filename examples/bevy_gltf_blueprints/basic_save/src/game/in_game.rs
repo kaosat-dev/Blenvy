@@ -15,14 +15,13 @@ pub fn setup_game(
     models: Res<Assets<bevy::gltf::Gltf>>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
-    println!("setting up all stuff");
+    println!("INITIAL setting up all stuff");
     commands.insert_resource(AmbientLight {
         color: Color::WHITE,
         brightness: 0.2,
     });
     // here we actually spawn our game world/level
-
-    commands.spawn((
+    let world = commands.spawn((
         SceneBundle {
             // note: because of this issue https://github.com/bevyengine/bevy/issues/10436, "world" is now a gltf file instead of a scene
             scene: models
@@ -35,7 +34,26 @@ pub fn setup_game(
         bevy::prelude::Name::from("world"),
         GameWorldTag,
         InAppRunning,
-    ));
+    )).id();
+
+    // and we fill it with dynamic data
+    let dynamic_data = commands.spawn((
+        SceneBundle {
+            scene: models
+                .get(game_assets.world_dynamic.id())
+                .expect("main level CONTENT should have been loaded")
+                .scenes[0]
+                .clone(),
+            ..default()
+        },
+        bevy::prelude::Name::from("world_content"),
+        // GameWorldTag,
+        InAppRunning,
+    ))
+    .id();
+    commands.entity(world).add_child(dynamic_data);
+
+    
 
     next_game_state.set(GameState::InGame)
 }

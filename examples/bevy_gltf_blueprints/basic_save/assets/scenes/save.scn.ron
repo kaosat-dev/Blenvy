@@ -1,92 +1,12 @@
 (
   resources: {},
   entities: {
-    21: (
-      components: {
-        "bevy_transform::components::transform::Transform": (
-          translation: (
-            x: 25.999992,
-            y: 49.024857,
-            z: -25.999992,
-          ),
-          rotation: (
-            x: -0.1693965,
-            y: 0.82843566,
-            z: 0.40895936,
-            w: 0.34314924,
-          ),
-          scale: (
-            x: 1.0,
-            y: 1.0,
-            z: 1.0,
-          ),
-        ),
-        "bevy_core::name::Name": (
-          hash: 16577451452170915735,
-          name: "Camera",
-        ),
-      },
-    ),
-    59: (
-      components: {
-        "bevy_transform::components::transform::Transform": (
-          translation: (
-            x: 0.0,
-            y: 1.02484,
-            z: 0.0,
-          ),
-          rotation: (
-            x: 0.0,
-            y: 0.0,
-            z: 0.0,
-            w: 1.0,
-          ),
-          scale: (
-            x: 1.0,
-            y: 1.0,
-            z: 1.0,
-          ),
-        ),
-        "bevy_core::name::Name": (
-          hash: 8546983786769310281,
-          name: "Player",
-        ),
-        "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Player"),
-      },
-    ),
-    83: (
-      components: {
-        "bevy_transform::components::transform::Transform": (
-          translation: (
-            x: 3.6351967,
-            y: 1.3587193,
-            z: -7.313273,
-          ),
-          rotation: (
-            x: 0.0,
-            y: 0.0,
-            z: 0.0,
-            w: 1.0,
-          ),
-          scale: (
-            x: 1.0,
-            y: 1.0,
-            z: 1.0,
-          ),
-        ),
-        "bevy_core::name::Name": (
-          hash: 14313619845854715414,
-          name: "MagicTeapot.001",
-        ),
-        "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("MagicTeapot"),
-      },
-    ),
-    87: (
+    4294967328: (
       components: {
         "bevy_transform::components::transform::Transform": (
           translation: (
             x: -1.2373765,
-            y: 1.5983329,
+            y: 1.5983207,
             z: -14.737572,
           ),
           rotation: (
@@ -102,52 +22,26 @@
           ),
         ),
         "bevy_core::name::Name": (
-          hash: 7118464131155105142,
-          name: "Health_Pickup.002",
-        ),
-        "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Health_Pickup"),
-      },
-    ),
-    97: (
-      components: {
-        "bevy_transform::components::transform::Transform": (
-          translation: (
-            x: 4.6975913,
-            y: 1.5983217,
-            z: 8.96221,
-          ),
-          rotation: (
-            x: -0.000021271779,
-            y: -0.000000000014217204,
-            z: -0.000023019455,
-            w: 1.0,
-          ),
-          scale: (
-            x: 1.0,
-            y: 1.0,
-            z: 1.0,
-          ),
-        ),
-        "bevy_core::name::Name": (
-          hash: 1406527361547968779,
+          hash: 16417715962023093077,
           name: "Health_Pickup.001",
         ),
         "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Health_Pickup"),
+        "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere": (),
       },
     ),
-    12884901986: (
+    8589934686: (
       components: {
         "bevy_transform::components::transform::Transform": (
           translation: (
-            x: -21.397858,
-            y: 0.3833189,
-            z: -0.32418346,
+            x: 4.698598,
+            y: 1.5983201,
+            z: 8.961404,
           ),
           rotation: (
-            x: 0.0,
-            y: 0.0,
-            z: 0.0,
-            w: 1.0,
+            x: -0.00027395066,
+            y: 0.000000006135496,
+            z: -0.00033744468,
+            w: 0.9999999,
           ),
           scale: (
             x: 1.0,
@@ -156,37 +50,11 @@
           ),
         ),
         "bevy_core::name::Name": (
-          hash: 205228223218549796,
-          name: "Container.002",
+          hash: 9345697004844942222,
+          name: "Health_Pickup",
         ),
-        "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Container"),
-      },
-    ),
-    12884901994: (
-      components: {
-        "bevy_transform::components::transform::Transform": (
-          translation: (
-            x: -14.346199,
-            y: 0.6536037,
-            z: 6.4440823,
-          ),
-          rotation: (
-            x: 0.0,
-            y: 0.0,
-            z: 0.0,
-            w: 1.0,
-          ),
-          scale: (
-            x: 1.0,
-            y: 1.0,
-            z: 1.0,
-          ),
-        ),
-        "bevy_core::name::Name": (
-          hash: 4519389148810073255,
-          name: "Container.001",
-        ),
-        "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Container"),
+        "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Health_Pickup"),
+        "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere": (),
       },
     ),
   },
