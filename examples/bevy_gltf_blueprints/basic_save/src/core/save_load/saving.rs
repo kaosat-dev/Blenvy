@@ -110,7 +110,9 @@ pub fn save_game(
         TypeId::of::<Transform>(), 
         TypeId::of::<Velocity>() , 
         TypeId::of::<BlueprintName>(),
-        TypeId::of::<SpawnHere>()
+        TypeId::of::<SpawnHere>(),
+        TypeId::of::<Dynamic>()
+
         ]);
 
     let filter = SceneFilter::Allowlist(components);
