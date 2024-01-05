@@ -119,6 +119,7 @@ impl Plugin for GamePlugin {
             .register_type::<Interactible>()
             .register_type::<SoundMaterial>()
             .register_type::<Player>()
+
             // little helper utility, to automatically inject components that are dependant on an other component
             // ie, here an Entity with a Player component should also always have a ShouldBeWithPlayer component
             // you get a warning if you use this, as I consider this to be stop-gap solution (usually you should have either a bundle, or directly define all needed components)

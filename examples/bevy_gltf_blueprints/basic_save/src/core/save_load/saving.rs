@@ -74,8 +74,8 @@ pub fn save_game(
         TypeId::of::<SpawnHere>(),
         TypeId::of::<Dynamic>(),
 
-        TypeId::of::<Parent>(),
-        TypeId::of::<Children>(),
+        // TypeId::of::<Parent>(),
+        // TypeId::of::<Children>(),
         TypeId::of::<InheritedVisibility>(),
 
         

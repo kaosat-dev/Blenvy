@@ -225,6 +225,7 @@ pub fn spawn_test_parenting(
 
     mut game_world: Query<(Entity, &Children), With<GameWorldTag>>,
 
+    mut names : Query<(Entity, &Name)>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
@@ -253,9 +254,6 @@ pub fn spawn_test_parenting(
             },
             bevy::prelude::Name::from(format!("SubParentingTest")),
             Dynamic(true),
-            // BlueprintName("Health_Pickup".to_string()),
-            // SpawnHere,
-            // TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
         ))
         .id();
 
@@ -271,7 +269,7 @@ pub fn spawn_test_parenting(
         .id()
         ;*/
 
-        let new_entity = commands
+        let parenting_test_entity = commands
             .spawn((
                 BluePrintBundle {
                     blueprint: BlueprintName("Container".to_string()),
@@ -286,11 +284,17 @@ pub fn spawn_test_parenting(
             ))
             .id();
 
-        commands.entity(new_entity).add_child(child_test);
+        commands.entity(parenting_test_entity).add_child(child_test);
 
 
         for player in players.iter() {
-            commands.entity(player).add_child(new_entity);
+            commands.entity(player).add_child(parenting_test_entity);
+        }
+        for (e, name) in names.iter(){
+            if name.to_string() == "Player"{
+                commands.entity(e).add_child(parenting_test_entity);
+
+            }
         }
     }
 }
