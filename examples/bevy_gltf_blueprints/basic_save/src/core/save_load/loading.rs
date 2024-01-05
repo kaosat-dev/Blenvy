@@ -1,21 +1,45 @@
 
 use bevy::prelude::*;
-use bevy_gltf_blueprints::{clone_entity::CloneEntity, GameWorldTag, SpawnHere};
+use bevy_gltf_blueprints::{GameWorldTag};
 use crate::{
     assets::GameAssets,
     state::{AppState, GameState, InAppRunning},
 };
 
-const SCENE_FILE_PATH: &str = "scenes/save.scn.ron";
 
+#[derive(Event)]
+pub struct LoadRequest {
+    pub path: String,
+}
+
+#[derive(Resource, Default)]
+pub struct LoadRequested{
+    pub path: String
+}
 
 pub fn should_load(
-    keycode: Res<Input<KeyCode>>,
-   //save_requested_events: EventReader<SaveRequest>,
+    mut load_requests: EventReader<LoadRequest>,
 ) -> bool {
-   //return save_requested_events.len() > 0;
+    // return load_requests.len() > 0;
+    let mut valid = false;
+    for load_request in load_requests.read(){
+        if load_request.path != ""{
+            valid = true;
+            break;
+        }
+    }
+    return valid
+}
+pub fn foo(
+    mut load_requests: EventReader<LoadRequest>,
+    mut commands: Commands,
 
-   return keycode.just_pressed(KeyCode::L)
+){
+    for load_request in load_requests.read(){
+        if load_request.path != ""{
+            commands.insert_resource(LoadRequested { path: load_request.path.clone() });
+        }
+    }
 }
 
 pub fn load_prepare(
@@ -39,13 +63,27 @@ pub fn load_game(
     mut commands: Commands,
     game_assets: Res<GameAssets>,
     models: Res<Assets<bevy::gltf::Gltf>>,
-    mut next_game_state: ResMut<NextState<GameState>>,
     asset_server: Res<AssetServer>,
+    // load_request: Res<LoadRequested>,
+    mut load_requests: EventReader<LoadRequest>,
 
+    mut next_app_state: ResMut<NextState<AppState>>,
+    mut next_game_state: ResMut<NextState<GameState>>,
 )
 {
+    
+    info!("--loading: load static & dynamic data");
+    //let save_path = load_request.path.clone();
+    let mut save_path:String = "".into();
+    for load_request in load_requests.read(){
+        if load_request.path != ""{
+            save_path = load_request.path.clone();
+        }
+    }
 
-    println!("LOADING setting up all stuff");
+    println!("LOADING FROM {}", save_path);
+
+
     commands.insert_resource(AmbientLight {
         color: Color::WHITE,
         brightness: 0.2,
@@ -67,10 +105,11 @@ pub fn load_game(
     )).id();
 
     // and we fill it with dynamic data
+    let scene_data = asset_server.load(format!("scenes/{save_path}"));
     let dynamic_data = commands.spawn((
         DynamicSceneBundle {
             // Scenes are loaded just like any other asset.
-            scene: asset_server.load(SCENE_FILE_PATH),
+            scene: scene_data,
             ..default()
         },
         bevy::prelude::Name::from("world_content"),
@@ -79,8 +118,9 @@ pub fn load_game(
     ))
     .id();
     commands.entity(world).add_child(dynamic_data);
+    // asset_server.reload(save_path);
 
-    next_game_state.set(GameState::InGame)
-
+    next_app_state.set(AppState::AppRunning);
+    next_game_state.set(GameState::InGame);
     //info!("--loading: loaded saved scene");
 }

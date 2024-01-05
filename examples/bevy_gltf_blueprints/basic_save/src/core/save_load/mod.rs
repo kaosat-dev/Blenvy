@@ -1,4 +1,5 @@
 pub mod saveable;
+use bevy::core_pipeline::core_3d::{Camera3dDepthTextureUsage, ScreenSpaceTransmissionQuality};
 pub use saveable::*;
 
 pub mod saving;
@@ -16,6 +17,8 @@ use bevy::utils::Uuid;
 
 use bevy_gltf_blueprints::GltfBlueprintsSet;
 
+use crate::state::AppState;
+
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
 pub enum LoadingSet {
     Load,
@@ -29,8 +32,15 @@ impl Plugin for SaveLoadPlugin {
         .register_type::<Uuid>()
         .register_type::<Saveable>()
         .register_type::<Dynamic>()
+
+        // TODO: remove these in bevy 0.13, as these are now registered by default
+        .register_type::<Camera3dDepthTextureUsage>()
+        .register_type::<ScreenSpaceTransmissionQuality>()
+
         .add_event::<SaveRequest>()
-        //.add_event::<LoadRequest>()
+        .add_event::<LoadRequest>()
+
+        .init_resource::<LoadRequested>()
 
         .configure_sets(
             Update,
@@ -51,28 +61,20 @@ impl Plugin for SaveLoadPlugin {
 
         .add_systems(Update,
             (
+                //foo,
+                // apply_deferred,
+
                 load_prepare,
                 unload_world,
+                // apply_deferred,
                 load_game,
                 //load_saved_scene,
             )
             .chain()
-            .run_if(should_load) // .run_if(in_state(AppState::AppRunning))
+            .run_if(should_load)
+            .run_if(in_state(AppState::AppRunning))
             .in_set(LoadingSet::Load)
         )
-        /* .add_systems(Update,
-            (
-                process_loaded_scene,
-                apply_deferred,
-                final_cleanup,
-                apply_deferred,
-                free_unused_assets_system
-            )
-                .chain()
-                .in_set(LoadingSet::PostLoad)
-            )*/
-
-        // .add_systems(Update, bla)
       ;
     }
 }

@@ -12,7 +12,7 @@ pub use save::*;
 
 use crate::{
     insert_dependant_component,
-    state::{AppState, GameState},
+    state::{AppState, GameState}, core::save_load::{SaveRequest, LoadRequest},
 };
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
@@ -90,6 +90,28 @@ pub fn test_collision_events(
     }
 }
 
+pub fn request_save(
+    mut save_requests: EventWriter<SaveRequest>,
+    keycode: Res<Input<KeyCode>>,
+)
+{
+    if keycode.just_pressed(KeyCode::S) {
+        save_requests.send(SaveRequest { path: "save.scn.ron".into() })
+    }
+}
+
+pub fn request_load(
+    mut load_requests: EventWriter<LoadRequest>,
+    keycode: Res<Input<KeyCode>>,
+)
+{
+    if keycode.just_pressed(KeyCode::L) {
+        println!("request to load");
+        load_requests.send(LoadRequest { path: "save.scn.ron".into() })
+    }
+}
+
+
 pub struct GamePlugin;
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
@@ -108,9 +130,22 @@ impl Plugin for GamePlugin {
                     // test_collision_events
                     spawn_test,
                     spawn_test_failing,
+                    spawn_test_parenting
                 )
                     .run_if(in_state(GameState::InGame)),
             )
+            .add_systems(Update, 
+                (
+                    unload_world,
+                    new_game,
+                )
+                .chain()
+                .run_if(should_reset)
+                .run_if(in_state(AppState::AppRunning))
+            )
+
+            .add_systems(Update, (request_save, request_load))
+
             .add_systems(OnEnter(AppState::MenuRunning), setup_main_menu)
             .add_systems(OnExit(AppState::MenuRunning), teardown_main_menu)
             .add_systems(Update, main_menu.run_if(in_state(AppState::MenuRunning)))

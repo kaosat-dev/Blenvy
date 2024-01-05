@@ -2,7 +2,7 @@ use std::path::Path;
 
 use bevy::{gltf::Gltf, prelude::*};
 
-use crate::{Animations, BluePrintsConfig};
+use crate::{Animations, BluePrintsConfig, EntityMapper};
 
 /// this is a flag component for our levels/game world
 #[derive(Component)]
@@ -25,6 +25,11 @@ pub struct Spawned;
 #[derive(Component)]
 /// helper component, just to transfer some data
 pub(crate) struct Original(pub Entity);
+
+
+#[derive(Component)]
+/// helper component, just to transfer child data
+pub(crate) struct OriginalChildren(pub Vec<Entity>);
 
 #[derive(Component)]
 /// FlagComponent for dynamically spawned scenes
@@ -49,9 +54,22 @@ pub(crate) fn spawn_from_blueprints(
     assets_gltf: Res<Assets<Gltf>>,
     asset_server: Res<AssetServer>,
     blueprints_config: Res<BluePrintsConfig>,
+
+    children: Query<(&Children)>,
+    names: Query<&Name>,
+    mut mappings: ResMut<EntityMapper>
+
 ) {
     for (entity, name, blupeprint_name, transform, original_parent) in spawn_placeholders.iter() {
-        debug!("need to spawn {:?}, id: {:?}", blupeprint_name.0, entity);
+        info!("need to spawn {:?} for entity {:?}, id: {:?}", blupeprint_name.0, name, entity);
+
+        let mut original_children: Vec<Entity> = vec![];
+        if let Ok(c) = children.get(entity) {
+            for child in c.iter() {
+                info!("--child {:?} {:?} of {:?}", names.get(*child), child, name);
+                original_children.push(*child);
+            }
+        }
 
         let what = &blupeprint_name.0;
         let model_file_name = format!("{}.{}", &what, &blueprints_config.format);
@@ -85,6 +103,7 @@ pub(crate) fn spawn_from_blueprints(
                 SpawnedRoot,
                 BlueprintName(blupeprint_name.0.clone()),
                 Original(entity),
+                OriginalChildren(original_children),
                 Animations {
                     named_animations: gltf.named_animations.clone(),
                 },
@@ -96,6 +115,12 @@ pub(crate) fn spawn_from_blueprints(
 
         // ideally, insert the newly created entity as a child of the original parent, if any, the world otherwise
         if let Some(original_parent) = original_parent {
+            // println!("here");
+            /*let mut real_parent = original_parent.get();
+            if let Some(p) = mappings.map.get(&original_parent.get()) {
+                real_parent = p;
+                println!("MAPPING")
+            } */
             parent = original_parent.get();
         }
 

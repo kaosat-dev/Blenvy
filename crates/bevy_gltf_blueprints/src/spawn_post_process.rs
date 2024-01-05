@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 
+use crate::{InBlueprint, OriginalChildren, EntityMapper};
+
 use super::{AnimationPlayerLink, Animations};
 use super::{CloneEntity, SpawnHere};
 use super::{Original, SpawnedRoot};
@@ -17,13 +19,17 @@ pub(crate) struct SpawnedRootProcessed;
 pub(crate) fn update_spawned_root_first_child(
     //
     unprocessed_entities: Query<
-        (Entity, &Children, &Name, &Parent, &Original),
+        (Entity, &Children, &Name, &Parent, &Original, &OriginalChildren),
         (With<SpawnedRoot>, Without<SpawnedRootProcessed>),
     >,
     mut commands: Commands,
+    all_children: Query<&Children>,
+    names: Query<&Name>,
 
     animations: Query<&Animations>,
     added_animation_players: Query<(Entity, &Parent), Added<AnimationPlayer>>,
+
+    mut mappings: ResMut<EntityMapper>
 ) {
     /*
       currently we have
@@ -47,8 +53,9 @@ pub(crate) fn update_spawned_root_first_child(
       FIME: this is all highly dependent on the hierachy ;..
     */
 
-    for (scene_instance, children, name, parent, original) in unprocessed_entities.iter() {
-        //
+    for (scene_instance, children, name, parent, original, original_children) in unprocessed_entities.iter() {
+        // what is the final resulting entity
+        let final_entity = original.0;
         if children.len() == 0 {
             warn!("timing issue ! no children found, please restart your bevy app (bug being investigated)");
             // println!("children of scene {:?}", children);
@@ -58,9 +65,32 @@ pub(crate) fn update_spawned_root_first_child(
         let root_entity = children.first().unwrap(); //FIXME: and what about childless ones ?? => should not be possible normally
                                                      // let root_entity_data = all_children.get(*root_entity).unwrap();
 
-        // fixme : randomization should be controlled via parameters, perhaps even the seed could be specified ?
-        // use this https://rust-random.github.io/book/guide-seeding.html#a-simple-number, blenders seeds are also uInts
-        // also this is not something we want every time, this should be a settable parameter when requesting a spawn
+        mappings.map.insert(original.0, *root_entity);
+        //
+        println!("--------{:?}---------{:?}->{:?} parent({:?})", name, original.0, root_entity, parent.get());
+        for child in all_children.iter_descendants(*root_entity) {
+            commands.entity(child).insert(InBlueprint);
+            println!("name in root{:?} {:?}", names.get(child), child);
+        }
+
+        for child in original_children.0.iter() {
+            println!("name of child in original to copy {:?} {:?}", names.get(*child), child);
+            //println!("mapping {:?} ", mappings.map);
+
+            let mut real_parent = root_entity;
+            let mut real_child = child;
+            if let Some(p) = mappings.map.get(root_entity) {
+                real_parent = p;
+                println!("mapped {:?} to {:?}", root_entity, p)
+            }
+            if let Some(c) = mappings.map.get(child) {
+                real_child = c;
+                println!("mapped {:?} to {:?}", child, c)
+            }
+            println!("inserting {:?} into {:?}", real_child, real_parent);
+
+            commands.entity(*real_parent).add_child(*real_child);
+        }
 
         // add missing name of entity, based on the wrapper's name
         let name = name.clone();
@@ -97,7 +127,8 @@ pub(crate) fn update_spawned_root_first_child(
             }
         }
 
-        commands.add(CloneEntity {
+        // transfer data into from original to root entity
+         commands.add(CloneEntity {
             source: original.0,
             destination: *root_entity,
         });
@@ -105,6 +136,17 @@ pub(crate) fn update_spawned_root_first_child(
         // remove the original entity, now that we have cloned it into the spawned scenes first child
         commands.entity(original.0).despawn_recursive();
         commands.entity(*root_entity).remove::<SpawnHere>();
+
+
+        // transfer data into from original to root entity
+        /*commands.add(CloneEntity {
+            source: *root_entity ,
+            destination: original.0,
+        });
+
+        // remove the original entity, now that we have cloned it into the spawned scenes first child
+        commands.entity(*root_entity).despawn_recursive();
+        commands.entity(original.0).remove::<SpawnHere>();*/
     }
 }
 

@@ -1,19 +1,35 @@
 (
   resources: {},
   entities: {
-    122: (
+    11: (
       components: {
+        "bevy_render::camera::camera::Camera": (
+          viewport: None,
+          order: 0,
+          is_active: true,
+          hdr: true,
+          msaa_writeback: true,
+        ),
+        "bevy_render::camera::camera::CameraRenderGraph": ("core_3d"),
+        "bevy_render::camera::projection::Projection": Perspective((
+          fov: 0.3995965,
+          aspect_ratio: 1.7777778,
+          near: 0.1,
+          far: 100.0,
+        )),
+        "bevy_render::view::visibility::VisibleEntities": (),
+        "bevy_render::primitives::Frustum": (),
         "bevy_transform::components::transform::Transform": (
           translation: (
-            x: 4.490524,
-            y: 1.1527776,
-            z: 5.895128,
+            x: 26.539474,
+            y: 49.6988,
+            z: -24.500801,
           ),
           rotation: (
-            x: 0.37830752,
-            y: 0.0000035916455,
-            z: -0.24410647,
-            w: 0.892914,
+            x: -0.16939653,
+            y: 0.82843566,
+            z: 0.4089594,
+            w: 0.34314927,
           ),
           scale: (
             x: 1.0,
@@ -21,40 +37,64 @@
             z: 1.0,
           ),
         ),
+        "bevy_transform::components::global_transform::GlobalTransform": ((
+          matrix3: (
+            x_axis: (
+              x: -0.7071068,
+              y: -0.000000029802322,
+              z: -0.70710677,
+            ),
+            y_axis: (
+              x: -0.5613365,
+              y: 0.60811406,
+              z: 0.56133646,
+            ),
+            z_axis: (
+              x: 0.43000156,
+              y: 0.79384965,
+              z: -0.43000162,
+            ),
+          ),
+          translation: (
+            x: 26.539474,
+            y: 49.6988,
+            z: -24.500801,
+          ),
+        )),
+        "bevy_core_pipeline::core_3d::camera_3d::Camera3d": (
+          clear_color: Default,
+          depth_load_op: Clear(0.0),
+          depth_texture_usages: (16),
+          screen_space_specular_transmission_steps: 1,
+          screen_space_specular_transmission_quality: Medium,
+        ),
+        "bevy_core_pipeline::tonemapping::Tonemapping": BlenderFilmic,
         "bevy_core::name::Name": (
-          hash: 15263776768387902278,
-          name: "test8259698458876098193",
+          hash: 3943484586568834143,
+          name: "Camera",
         ),
         "bevy_gltf_blueprints_basic_save_example::core::save_load::saveable::Dynamic": (true),
-        "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Health_Pickup"),
-        "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere": (),
-        "bevy_rapier3d::dynamics::rigid_body::Velocity": (
-          linvel: (
-            x: 1.1206254,
-            y: -1.5215625,
-            z: 1.7366912,
-          ),
-          angvel: (
-            x: 1.4732062,
-            y: 0.0000069126727,
-            z: -0.95060176,
-          ),
-        ),
+        "bevy_gltf_blueprints_basic_save_example::core::camera::camera_tracking::CameraTrackingOffset": ((
+          x: 26.0,
+          y: 48.0,
+          z: -26.0,
+        )),
+        "bevy_render::view::visibility::InheritedVisibility": (true),
       },
     ),
-    126: (
+    44: (
       components: {
         "bevy_transform::components::transform::Transform": (
           translation: (
-            x: 1.1593078,
-            y: 1.4264612,
-            z: 3.1548426,
+            x: 4.697598,
+            y: 1.598322,
+            z: 8.96225,
           ),
           rotation: (
-            x: 0.25673035,
-            y: 0.018319571,
-            z: -0.11053433,
-            w: 0.9599667,
+            x: -0.000010295967,
+            y: 0.0000000005392837,
+            z: -0.000025804165,
+            w: 1.0,
           ),
           scale: (
             x: 1.0,
@@ -62,368 +102,54 @@
             z: 1.0,
           ),
         ),
+        "bevy_transform::components::global_transform::GlobalTransform": ((
+          matrix3: (
+            x_axis: (
+              x: 1.0,
+              y: -0.00005160833,
+              z: -0.0000000005472097,
+            ),
+            y_axis: (
+              x: 0.00005160833,
+              y: 1.0,
+              z: -0.000020591933,
+            ),
+            z_axis: (
+              x: 0.000000001609925,
+              y: 0.000020591933,
+              z: 1.0,
+            ),
+          ),
+          translation: (
+            x: 4.697598,
+            y: 1.598322,
+            z: 8.96225,
+          ),
+        )),
         "bevy_core::name::Name": (
-          hash: 9507092582440887789,
-          name: "test9720006846246129805",
+          hash: 6804733873084597986,
+          name: "Health_Pickup",
         ),
         "bevy_gltf_blueprints_basic_save_example::core::save_load::saveable::Dynamic": (true),
         "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Health_Pickup"),
         "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere": (),
-        "bevy_rapier3d::dynamics::rigid_body::Velocity": (
-          linvel: (
-            x: 0.25334796,
-            y: -0.49985626,
-            z: 1.2489343,
-          ),
-          angvel: (
-            x: 0.86743045,
-            y: -0.014896219,
-            z: -0.18190634,
-          ),
-        ),
+        "bevy_gltf_blueprints_basic_save_example::game::picking::Pickable": (),
+        "bevy_render::view::visibility::InheritedVisibility": (true),
       },
     ),
-    130: (
+    48: (
       components: {
         "bevy_transform::components::transform::Transform": (
           translation: (
-            x: -1.3846223,
-            y: 1.538054,
-            z: 2.8954563,
+            x: -1.2373765,
+            y: 1.5983284,
+            z: -14.737572,
           ),
           rotation: (
-            x: -0.1602292,
-            y: -0.001538428,
-            z: -0.04164586,
-            w: 0.9861997,
-          ),
-          scale: (
-            x: 1.0,
-            y: 1.0,
-            z: 1.0,
-          ),
-        ),
-        "bevy_core::name::Name": (
-          hash: 17996822262059681349,
-          name: "test4334239045130183885",
-        ),
-        "bevy_gltf_blueprints_basic_save_example::core::save_load::saveable::Dynamic": (true),
-        "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Health_Pickup"),
-        "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere": (),
-        "bevy_rapier3d::dynamics::rigid_body::Velocity": (
-          linvel: (
-            x: 0.13152047,
-            y: -0.20925513,
-            z: -0.92143756,
-          ),
-          angvel: (
-            x: -0.5947712,
-            y: 0.04536926,
-            z: -0.0952079,
-          ),
-        ),
-      },
-    ),
-    134: (
-      components: {
-        "bevy_transform::components::transform::Transform": (
-          translation: (
-            x: 3.3732572,
-            y: 1.5831827,
-            z: -5.6078835,
-          ),
-          rotation: (
-            x: -0.078439206,
-            y: -0.009917534,
-            z: -0.027084885,
-            w: 0.99650156,
-          ),
-          scale: (
-            x: 1.0,
-            y: 1.0,
-            z: 1.0,
-          ),
-        ),
-        "bevy_core::name::Name": (
-          hash: 11562285821579455541,
-          name: "test7111355174051715753",
-        ),
-        "bevy_gltf_blueprints_basic_save_example::core::save_load::saveable::Dynamic": (true),
-        "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Health_Pickup"),
-        "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere": (),
-        "bevy_rapier3d::dynamics::rigid_body::Velocity": (
-          linvel: (
-            x: 0.036070183,
-            y: -0.0052428753,
-            z: -0.03565106,
-          ),
-          angvel: (
-            x: -0.02568439,
-            y: -0.08309055,
-            z: -0.013801035,
-          ),
-        ),
-      },
-    ),
-    138: (
-      components: {
-        "bevy_transform::components::transform::Transform": (
-          translation: (
-            x: 4.169336,
-            y: 1.5840083,
-            z: 0.8505823,
-          ),
-          rotation: (
-            x: 0.046346426,
-            y: 0.00000030240338,
-            z: 0.06618997,
-            w: 0.99673015,
-          ),
-          scale: (
-            x: 1.0,
-            y: 1.0,
-            z: 1.0,
-          ),
-        ),
-        "bevy_core::name::Name": (
-          hash: 17907589864225828034,
-          name: "test15559578308860609201",
-        ),
-        "bevy_gltf_blueprints_basic_save_example::core::save_load::saveable::Dynamic": (true),
-        "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Health_Pickup"),
-        "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere": (),
-        "bevy_rapier3d::dynamics::rigid_body::Velocity": (
-          linvel: (
-            x: -0.62946624,
-            y: -0.08165501,
-            z: 0.4407545,
-          ),
-          angvel: (
-            x: 0.27786583,
-            y: 0.0000015879099,
-            z: 0.3968361,
-          ),
-        ),
-      },
-    ),
-    142: (
-      components: {
-        "bevy_transform::components::transform::Transform": (
-          translation: (
-            x: -2.5527031,
-            y: 1.592765,
-            z: 4.0380964,
-          ),
-          rotation: (
-            x: 0.041769158,
-            y: -0.0000005032562,
-            z: -0.028468912,
-            w: 0.99872166,
-          ),
-          scale: (
-            x: 1.0,
-            y: 1.0,
-            z: 1.0,
-          ),
-        ),
-        "bevy_core::name::Name": (
-          hash: 6891685193889802325,
-          name: "test1817128411851527285",
-        ),
-        "bevy_gltf_blueprints_basic_save_example::core::save_load::saveable::Dynamic": (true),
-        "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Health_Pickup"),
-        "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere": (),
-        "bevy_rapier3d::dynamics::rigid_body::Velocity": (
-          linvel: (
-            x: 0.43901074,
-            y: -0.049969546,
-            z: 0.6441095,
-          ),
-          angvel: (
-            x: 0.40397272,
-            y: -0.0000048767597,
-            z: -0.27533925,
-          ),
-        ),
-      },
-    ),
-    146: (
-      components: {
-        "bevy_transform::components::transform::Transform": (
-          translation: (
-            x: -3.6226027,
-            y: 5.41312,
-            z: -4.0310736,
-          ),
-          rotation: (
-            x: 0.22238372,
-            y: -0.021899583,
-            z: -0.020644493,
-            w: 0.9744945,
-          ),
-          scale: (
-            x: 1.0,
-            y: 1.0,
-            z: 1.0,
-          ),
-        ),
-        "bevy_core::name::Name": (
-          hash: 10812460331254758646,
-          name: "test10205491111689424689",
-        ),
-        "bevy_gltf_blueprints_basic_save_example::core::save_load::saveable::Dynamic": (true),
-        "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Health_Pickup"),
-        "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere": (),
-        "bevy_rapier3d::dynamics::rigid_body::Velocity": (
-          linvel: (
-            x: 0.0046793222,
-            y: 2.5333166,
-            z: -0.48371184,
-          ),
-          angvel: (
-            x: 0.73215014,
-            y: -0.07308691,
-            z: -0.08766221,
-          ),
-        ),
-      },
-    ),
-    150: (
-      components: {
-        "bevy_transform::components::transform::Transform": (
-          translation: (
-            x: 2.6889215,
-            y: 1.8620636,
-            z: 3.33959,
-          ),
-          rotation: (
-            x: 0.037293173,
-            y: 0.045150742,
-            z: -0.083380334,
-            w: 0.9947956,
-          ),
-          scale: (
-            x: 1.0,
-            y: 1.0,
-            z: 1.0,
-          ),
-        ),
-        "bevy_core::name::Name": (
-          hash: 2405416715466385738,
-          name: "test8604034527566457808",
-        ),
-        "bevy_gltf_blueprints_basic_save_example::core::save_load::saveable::Dynamic": (true),
-        "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Health_Pickup"),
-        "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere": (),
-        "bevy_rapier3d::dynamics::rigid_body::Velocity": (
-          linvel: (
-            x: 1.164673,
-            y: -2.218576,
-            z: -0.13958243,
-          ),
-          angvel: (
-            x: 0.13312256,
-            y: 0.13756362,
-            z: -0.3186981,
-          ),
-        ),
-      },
-    ),
-    154: (
-      components: {
-        "bevy_transform::components::transform::Transform": (
-          translation: (
-            x: -0.36223587,
-            y: 2.1597471,
-            z: 2.2651641,
-          ),
-          rotation: (
-            x: -0.01474968,
-            y: -0.0058753625,
-            z: -0.030230796,
-            w: 0.9994168,
-          ),
-          scale: (
-            x: 1.0,
-            y: 1.0,
-            z: 1.0,
-          ),
-        ),
-        "bevy_core::name::Name": (
-          hash: 6621601752775722725,
-          name: "test13237111302194317929",
-        ),
-        "bevy_gltf_blueprints_basic_save_example::core::save_load::saveable::Dynamic": (true),
-        "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Health_Pickup"),
-        "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere": (),
-        "bevy_rapier3d::dynamics::rigid_body::Velocity": (
-          linvel: (
-            x: 0.42825213,
-            y: -0.03348264,
-            z: -0.76634514,
-          ),
-          angvel: (
-            x: -0.068582915,
-            y: -0.01083481,
-            z: -0.15453316,
-          ),
-        ),
-      },
-    ),
-    4294967304: (
-      components: {
-        "bevy_transform::components::transform::Transform": (
-          translation: (
-            x: -1.9182353,
-            y: 0.49811718,
-            z: 5.197297,
-          ),
-          rotation: (
-            x: -0.015155906,
-            y: -0.028898753,
-            z: 0.7069401,
-            w: 0.70652026,
-          ),
-          scale: (
-            x: 1.0,
-            y: 1.0,
-            z: 1.0,
-          ),
-        ),
-        "bevy_core::name::Name": (
-          hash: 16243368243910189444,
-          name: "test3336188716901303584",
-        ),
-        "bevy_gltf_blueprints_basic_save_example::core::save_load::saveable::Dynamic": (true),
-        "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Health_Pickup"),
-        "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere": (),
-        "bevy_rapier3d::dynamics::rigid_body::Velocity": (
-          linvel: (
             x: 0.0,
             y: 0.0,
             z: 0.0,
-          ),
-          angvel: (
-            x: 0.0,
-            y: 0.0,
-            z: 0.0,
-          ),
-        ),
-      },
-    ),
-    4294967311: (
-      components: {
-        "bevy_transform::components::transform::Transform": (
-          translation: (
-            x: 2.556181,
-            y: 0.49853173,
-            z: -2.9550688,
-          ),
-          rotation: (
-            x: -0.6528411,
-            y: 0.1250245,
-            z: -0.27150455,
-            w: 0.6960263,
+            w: 1.0,
           ),
           scale: (
             x: 1.0,
@@ -431,73 +157,46 @@
             z: 1.0,
           ),
         ),
+        "bevy_transform::components::global_transform::GlobalTransform": ((
+          matrix3: (
+            x_axis: (
+              x: 1.0,
+              y: 0.0,
+              z: 0.0,
+            ),
+            y_axis: (
+              x: 0.0,
+              y: 1.0,
+              z: 0.0,
+            ),
+            z_axis: (
+              x: 0.0,
+              y: 0.0,
+              z: 1.0,
+            ),
+          ),
+          translation: (
+            x: -1.2373765,
+            y: 1.5983284,
+            z: -14.737572,
+          ),
+        )),
         "bevy_core::name::Name": (
-          hash: 10191919952329466861,
-          name: "test5270261372152284037",
+          hash: 9624994042293979758,
+          name: "Health_Pickup.001",
         ),
         "bevy_gltf_blueprints_basic_save_example::core::save_load::saveable::Dynamic": (true),
         "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Health_Pickup"),
         "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere": (),
-        "bevy_rapier3d::dynamics::rigid_body::Velocity": (
-          linvel: (
-            x: 0.21812472,
-            y: -0.0074705584,
-            z: 0.056861963,
-          ),
-          angvel: (
-            x: 0.11620194,
-            y: 0.009855084,
-            z: -0.44691506,
-          ),
-        ),
+        "bevy_gltf_blueprints_basic_save_example::game::picking::Pickable": (),
+        "bevy_render::view::visibility::InheritedVisibility": (true),
       },
     ),
-    4294967315: (
+    120: (
       components: {
         "bevy_transform::components::transform::Transform": (
           translation: (
-            x: -3.2722173,
-            y: 0.49797317,
-            z: -3.2000153,
-          ),
-          rotation: (
-            x: 0.6541657,
-            y: 0.50807744,
-            z: -0.26844668,
-            w: 0.49179363,
-          ),
-          scale: (
-            x: 1.0,
-            y: 1.0,
-            z: 1.0,
-          ),
-        ),
-        "bevy_core::name::Name": (
-          hash: 9168685982168294338,
-          name: "test4693515393874292803",
-        ),
-        "bevy_gltf_blueprints_basic_save_example::core::save_load::saveable::Dynamic": (true),
-        "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Health_Pickup"),
-        "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere": (),
-        "bevy_rapier3d::dynamics::rigid_body::Velocity": (
-          linvel: (
-            x: -0.16501358,
-            y: -0.0062717223,
-            z: 0.41374546,
-          ),
-          angvel: (
-            x: 0.8292918,
-            y: -0.000051657586,
-            z: 0.33073965,
-          ),
-        ),
-      },
-    ),
-    4294967322: (
-      components: {
-        "bevy_transform::components::transform::Transform": (
-          translation: (
-            x: -8.860513,
+            x: 0.5394836,
             y: 1.6987833,
             z: 1.4991902,
           ),
@@ -513,174 +212,51 @@
             z: 1.0,
           ),
         ),
+        "bevy_transform::components::global_transform::GlobalTransform": ((
+          matrix3: (
+            x_axis: (
+              x: 1.0,
+              y: 0.0,
+              z: 0.0,
+            ),
+            y_axis: (
+              x: 0.0,
+              y: 1.0,
+              z: 0.0,
+            ),
+            z_axis: (
+              x: 0.0,
+              y: 0.0,
+              z: 1.0,
+            ),
+          ),
+          translation: (
+            x: 0.5394836,
+            y: 1.6987833,
+            z: 1.4991902,
+          ),
+        )),
         "bevy_core::name::Name": (
-          hash: 13600655134507756096,
+          hash: 1500300801704042324,
           name: "Player",
         ),
+        // "bevy_hierarchy::components::parent::Parent": (4294967302),
+        "bevy_hierarchy::components::children::Children": ([
+          17179869217,
+        ]),
         "bevy_gltf_blueprints_basic_save_example::core::save_load::saveable::Dynamic": (true),
         "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Player"),
         "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere": (),
+        "bevy_render::view::visibility::InheritedVisibility": (true),
       },
     ),
-    8589934633: (
+    4294967332: (
       components: {
         "bevy_transform::components::transform::Transform": (
           translation: (
-            x: -1.355644,
-            y: 0.49812055,
-            z: -5.645693,
-          ),
-          rotation: (
-            x: -0.63822526,
-            y: 0.09909982,
-            z: 0.30441323,
-            w: -0.70012873,
-          ),
-          scale: (
-            x: 1.0,
-            y: 1.0,
-            z: 1.0,
-          ),
-        ),
-        "bevy_core::name::Name": (
-          hash: 6106672767391471003,
-          name: "test2181174460982230376",
-        ),
-        "bevy_gltf_blueprints_basic_save_example::core::save_load::saveable::Dynamic": (true),
-        "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Health_Pickup"),
-        "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere": (),
-        "bevy_rapier3d::dynamics::rigid_body::Velocity": (
-          linvel: (
-            x: 1.9881124,
-            y: 0.000012026856,
-            z: -0.62467813,
-          ),
-          angvel: (
-            x: -1.2517111,
-            y: -0.00000462772,
-            z: -3.9837205,
-          ),
-        ),
-      },
-    ),
-    8589934677: (
-      components: {
-        "bevy_transform::components::transform::Transform": (
-          translation: (
-            x: 6.587787,
-            y: 0.49812046,
-            z: -2.9165733,
-          ),
-          rotation: (
-            x: 0.6087638,
-            y: 0.000017490704,
-            z: -0.3597298,
-            w: 0.7071075,
-          ),
-          scale: (
-            x: 1.0,
-            y: 1.0,
-            z: 1.0,
-          ),
-        ),
-        "bevy_core::name::Name": (
-          hash: 15673683857596385902,
-          name: "test11821955568945028029",
-        ),
-        "bevy_gltf_blueprints_basic_save_example::core::save_load::saveable::Dynamic": (true),
-        "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Health_Pickup"),
-        "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere": (),
-        "bevy_rapier3d::dynamics::rigid_body::Velocity": (
-          linvel: (
-            x: 0.00005141912,
-            y: 0.000016183456,
-            z: -0.00002422998,
-          ),
-          angvel: (
-            x: -0.00004888743,
-            y: 0.00000034236675,
-            z: -0.00010370479,
-          ),
-        ),
-      },
-    ),
-    8589934686: (
-      components: {
-        "bevy_transform::components::transform::Transform": (
-          translation: (
-            x: 1.277926,
-            y: 0.9406085,
-            z: -2.591764,
-          ),
-          rotation: (
-            x: 0.48364812,
-            y: 0.7364873,
-            z: 0.24666606,
-            w: 0.40351802,
-          ),
-          scale: (
-            x: 1.0,
-            y: 1.0,
-            z: 1.0,
-          ),
-        ),
-        "bevy_core::name::Name": (
-          hash: 4485297990446733469,
-          name: "test16172984960018325040",
-        ),
-        "bevy_gltf_blueprints_basic_save_example::core::save_load::saveable::Dynamic": (true),
-        "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Health_Pickup"),
-        "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere": (),
-        "bevy_rapier3d::dynamics::rigid_body::Velocity": (
-          linvel: (
-            x: -1.3495208,
-            y: -0.55032814,
-            z: 1.5174737,
-          ),
-          angvel: (
-            x: 2.6771922,
-            y: 1.8548286,
-            z: 2.994572,
-          ),
-        ),
-      },
-    ),
-    8589934706: (
-      components: {
-        "bevy_transform::components::transform::Transform": (
-          translation: (
-            x: 4.750176,
-            y: 1.5973159,
-            z: 8.919025,
-          ),
-          rotation: (
-            x: -0.0135258,
-            y: 0.0000001307908,
-            z: -0.016467081,
-            w: 0.9997729,
-          ),
-          scale: (
-            x: 1.0,
-            y: 1.0,
-            z: 1.0,
-          ),
-        ),
-        "bevy_core::name::Name": (
-          hash: 14516338467865287902,
-          name: "Health_Pickup",
-        ),
-        "bevy_gltf_blueprints_basic_save_example::core::save_load::saveable::Dynamic": (true),
-        "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Health_Pickup"),
-        "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere": (),
-      },
-    ),
-    21474836576: (
-      components: {
-        "bevy_transform::components::transform::Transform": (
-          translation: (
-            x: -1.2373765,
-            y: 1.5983212,
-            z: -14.737572,
+            x: -1.2871127,
+            y: 2.0,
+            z: 4.9062996,
           ),
           rotation: (
             x: 0.0,
@@ -694,16 +270,97 @@
             z: 1.0,
           ),
         ),
+        "bevy_transform::components::global_transform::GlobalTransform": ((
+          matrix3: (
+            x_axis: (
+              x: 1.0,
+              y: 0.0,
+              z: 0.0,
+            ),
+            y_axis: (
+              x: 0.0,
+              y: 1.0,
+              z: 0.0,
+            ),
+            z_axis: (
+              x: 0.0,
+              y: 0.0,
+              z: 1.0,
+            ),
+          ),
+          translation: (
+            x: -2.0347419,
+            y: 5.6987834,
+            z: 11.3117895,
+          ),
+        )),
         "bevy_core::name::Name": (
-          hash: 2463399376447520187,
-          name: "Health_Pickup.001",
+          hash: 12594745501525674369,
+          name: "SubParentingTest",
         ),
+        "bevy_hierarchy::components::parent::Parent": (17179869217),
         "bevy_gltf_blueprints_basic_save_example::core::save_load::saveable::Dynamic": (true),
-        "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Health_Pickup"),
+        "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Sphero"),
         "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere": (),
+        "bevy_render::view::visibility::InheritedVisibility": (true),
       },
     ),
-    21474836580: (
+    12884901985: (
+      components: {
+        "bevy_transform::components::transform::Transform": (
+          translation: (
+            x: -21.397858,
+            y: 0.3833189,
+            z: -0.32418346,
+          ),
+          rotation: (
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+            w: 1.0,
+          ),
+          scale: (
+            x: 1.0,
+            y: 1.0,
+            z: 1.0,
+          ),
+        ),
+        "bevy_transform::components::global_transform::GlobalTransform": ((
+          matrix3: (
+            x_axis: (
+              x: 1.0,
+              y: 0.0,
+              z: 0.0,
+            ),
+            y_axis: (
+              x: 0.0,
+              y: 1.0,
+              z: 0.0,
+            ),
+            z_axis: (
+              x: 0.0,
+              y: 0.0,
+              z: 1.0,
+            ),
+          ),
+          translation: (
+            x: -21.397858,
+            y: 0.3833189,
+            z: -0.32418346,
+          ),
+        )),
+        "bevy_core::name::Name": (
+          hash: 11846269812632255284,
+          name: "Container.001",
+        ),
+        "bevy_gltf_blueprints_basic_save_example::core::save_load::saveable::Dynamic": (true),
+        "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Container"),
+        "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere": (),
+        "bevy_gltf_blueprints_basic_save_example::game::picking::Pickable": (),
+        "bevy_render::view::visibility::InheritedVisibility": (true),
+      },
+    ),
+    12884901993: (
       components: {
         "bevy_transform::components::transform::Transform": (
           translation: (
@@ -723,13 +380,97 @@
             z: 1.0,
           ),
         ),
+        "bevy_transform::components::global_transform::GlobalTransform": ((
+          matrix3: (
+            x_axis: (
+              x: 1.0,
+              y: 0.0,
+              z: 0.0,
+            ),
+            y_axis: (
+              x: 0.0,
+              y: 1.0,
+              z: 0.0,
+            ),
+            z_axis: (
+              x: 0.0,
+              y: 0.0,
+              z: 1.0,
+            ),
+          ),
+          translation: (
+            x: -14.511728,
+            y: 0.9817718,
+            z: 6.685008,
+          ),
+        )),
         "bevy_core::name::Name": (
-          hash: 11143697211127260924,
+          hash: 6594070907224526361,
           name: "Container",
         ),
         "bevy_gltf_blueprints_basic_save_example::core::save_load::saveable::Dynamic": (true),
         "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Container"),
         "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere": (),
+        "bevy_gltf_blueprints_basic_save_example::game::picking::Pickable": (),
+        "bevy_render::view::visibility::InheritedVisibility": (true),
+      },
+    ),
+    17179869217: (
+      components: {
+        "bevy_transform::components::transform::Transform": (
+          translation: (
+            x: -1.2871127,
+            y: 2.0,
+            z: 4.9062996,
+          ),
+          rotation: (
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+            w: 1.0,
+          ),
+          scale: (
+            x: 1.0,
+            y: 1.0,
+            z: 1.0,
+          ),
+        ),
+        "bevy_transform::components::global_transform::GlobalTransform": ((
+          matrix3: (
+            x_axis: (
+              x: 1.0,
+              y: 0.0,
+              z: 0.0,
+            ),
+            y_axis: (
+              x: 0.0,
+              y: 1.0,
+              z: 0.0,
+            ),
+            z_axis: (
+              x: 0.0,
+              y: 0.0,
+              z: 1.0,
+            ),
+          ),
+          translation: (
+            x: -0.7476291,
+            y: 3.6987834,
+            z: 6.40549,
+          ),
+        )),
+        "bevy_core::name::Name": (
+          hash: 8474131073401555526,
+          name: "ParentingTest",
+        ),
+        "bevy_hierarchy::components::parent::Parent": (120),
+        "bevy_hierarchy::components::children::Children": ([
+          4294967332,
+        ]),
+        "bevy_gltf_blueprints_basic_save_example::core::save_load::saveable::Dynamic": (true),
+        "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName": ("Container"),
+        "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere": (),
+        "bevy_render::view::visibility::InheritedVisibility": (true),
       },
     ),
   },
