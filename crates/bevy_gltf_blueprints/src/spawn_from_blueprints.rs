@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use bevy::{gltf::Gltf, prelude::*};
+use bevy::{gltf::Gltf, prelude::*, core_pipeline::blit};
 
 use crate::{Animations, BluePrintsConfig, EntityMapper};
 
@@ -23,11 +23,6 @@ pub struct SpawnHere;
 pub struct Spawned;
 
 #[derive(Component)]
-/// helper component, just to transfer some data
-pub(crate) struct Original(pub Entity);
-
-
-#[derive(Component)]
 /// helper component, just to transfer child data
 pub(crate) struct OriginalChildren(pub Vec<Entity>);
 
@@ -39,7 +34,7 @@ pub struct SpawnedRoot;
 /// * also takes into account the already exisiting "override" components, ie "override components" > components from blueprint
 pub(crate) fn spawn_from_blueprints(
     spawn_placeholders: Query<
-        (Entity, &Name, &BlueprintName, &Transform, Option<&Parent>),
+        (Entity, Option<&Name>, &BlueprintName, &Transform, Option<&Parent>),
         (
             Added<BlueprintName>,
             Added<SpawnHere>,
@@ -56,17 +51,15 @@ pub(crate) fn spawn_from_blueprints(
     blueprints_config: Res<BluePrintsConfig>,
 
     children: Query<(&Children)>,
-    names: Query<&Name>,
-    mut mappings: ResMut<EntityMapper>
-
 ) {
+   
     for (entity, name, blupeprint_name, transform, original_parent) in spawn_placeholders.iter() {
-        info!("need to spawn {:?} for entity {:?}, id: {:?}", blupeprint_name.0, name, entity);
+        info!("need to spawn {:?} for entity {:?}, id: {:?}, parent:{:?}", blupeprint_name.0, name, entity, original_parent);
 
         let mut original_children: Vec<Entity> = vec![];
+        // let bla: Vec<Entity> = children.get(entity).unwrap().iter().collect();
         if let Ok(c) = children.get(entity) {
             for child in c.iter() {
-                info!("--child {:?} {:?} of {:?}", names.get(*child), child, name);
                 original_children.push(*child);
             }
         }
@@ -91,39 +84,41 @@ pub(crate) fn spawn_from_blueprints(
             .expect("there should be at least one named scene in the gltf file to spawn");
         let scene = &gltf.named_scenes[main_scene_name];
 
-        let child_scene = commands
-            .spawn((
-                SceneBundle {
-                    scene: scene.clone(),
-                    transform: transform.clone(),
-                    ..Default::default()
-                },
-                name.clone(),
-                // Parent(world) // FIXME/ would be good if this worked directly
-                SpawnedRoot,
-                BlueprintName(blupeprint_name.0.clone()),
-                Original(entity),
-                OriginalChildren(original_children),
-                Animations {
-                    named_animations: gltf.named_animations.clone(),
-                },
-            ))
-            .id();
+        /*let spawned_blueprint = commands
+        .spawn((
+            SceneBundle {
+                scene: scene.clone(),
+                transform: transform.clone(),
+                ..Default::default()
+            },
+            SpawnedRoot,
+            BlueprintName(blupeprint_name.0.clone()),
+        ))
+        .id();*/
+
+
+        commands.entity(entity).insert((
+            SceneBundle {
+                scene: scene.clone(),
+                transform: transform.clone(),
+                ..Default::default()
+            },
+            Animations {
+                named_animations: gltf.named_animations.clone(),
+            },
+            SpawnedRoot,
+            OriginalChildren(original_children)
+        ));
+
 
         let world = game_world.single_mut();
         let mut parent = world.1[0]; // FIXME: dangerous hack because our gltf data have a single child like this, but might not always be the case
 
         // ideally, insert the newly created entity as a child of the original parent, if any, the world otherwise
         if let Some(original_parent) = original_parent {
-            // println!("here");
-            /*let mut real_parent = original_parent.get();
-            if let Some(p) = mappings.map.get(&original_parent.get()) {
-                real_parent = p;
-                println!("MAPPING")
-            } */
             parent = original_parent.get();
         }
 
-        commands.entity(parent).add_child(child_scene);
+        // commands.entity(parent).add_child(entity);
     }
 }

@@ -132,7 +132,10 @@ impl Plugin for BlueprintsPlugin {
             .register_type::<MaterialInfo>()
             .register_type::<SpawnHere>()
             .register_type::<Animations>()
+
             .insert_resource(EntityMapper{map: HashMap::new()})
+
+
             .insert_resource(BluePrintsConfig {
                 format: self.format.clone(),
                 library_folder: self.library_folder.clone(),
@@ -156,6 +159,7 @@ impl Plugin for BlueprintsPlugin {
                     spawn_from_blueprints,
                     compute_scene_aabbs.run_if(aabbs_enabled),
                     apply_deferred.run_if(aabbs_enabled),
+                    apply_deferred,
                     materials_inject.run_if(materials_library_enabled),
                 )
                     .chain()
@@ -165,8 +169,6 @@ impl Plugin for BlueprintsPlugin {
                 Update,
                 (
                     update_spawned_root_first_child,
-                    apply_deferred,
-                    cleanup_scene_instances,
                     apply_deferred,
                 )
                     .chain()
