@@ -57,7 +57,6 @@ pub(crate) fn spawn_from_blueprints(
         info!("need to spawn {:?} for entity {:?}, id: {:?}, parent:{:?}", blupeprint_name.0, name, entity, original_parent);
 
         let mut original_children: Vec<Entity> = vec![];
-        // let bla: Vec<Entity> = children.get(entity).unwrap().iter().collect();
         if let Ok(c) = children.get(entity) {
             for child in c.iter() {
                 original_children.push(*child);
@@ -83,19 +82,6 @@ pub(crate) fn spawn_from_blueprints(
             .nth(0)
             .expect("there should be at least one named scene in the gltf file to spawn");
         let scene = &gltf.named_scenes[main_scene_name];
-
-        /*let spawned_blueprint = commands
-        .spawn((
-            SceneBundle {
-                scene: scene.clone(),
-                transform: transform.clone(),
-                ..Default::default()
-            },
-            SpawnedRoot,
-            BlueprintName(blupeprint_name.0.clone()),
-        ))
-        .id();*/
-
 
         commands.entity(entity).insert((
             SceneBundle {

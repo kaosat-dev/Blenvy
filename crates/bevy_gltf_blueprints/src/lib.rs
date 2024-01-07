@@ -16,6 +16,9 @@ pub use materials::*;
 pub mod clone_entity;
 pub use clone_entity::*;
 
+pub mod copy_components;
+pub use copy_components::*;
+
 use core::fmt;
 use std::path::PathBuf;
 
@@ -168,7 +171,7 @@ impl Plugin for BlueprintsPlugin {
             .add_systems(
                 Update,
                 (
-                    update_spawned_root_first_child,
+                    spawned_blueprint_post_process,
                     apply_deferred,
                 )
                     .chain()

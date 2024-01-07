@@ -1,40 +1,33 @@
+use std::any::TypeId;
+
 use bevy::prelude::*;
 use bevy::scene::SceneInstance;
-use bevy::utils::hashbrown::HashSet;
+// use bevy::utils::hashbrown::HashSet;
 
-use crate::{InBlueprint, OriginalChildren};
-
+use crate::{InBlueprint, OriginalChildren, CopyComponents};
 use super::{AnimationPlayerLink, Animations};
-use super::{CloneEntity, SpawnHere};
-use super::{SpawnedRoot};
-
-#[derive(Component)]
-/// FlagComponent for dynamically spawned scenes
-pub(crate) struct SpawnedRootProcessed;
+use super::{SpawnHere, SpawnedRoot};
 
 
-
-/// this system updates the first (and normally only) child of a scene flaged SpawnedRoot
-/// - adds a name based on parent component (spawned scene) which is named on the scene name/prefab to be instanciated
-// FIXME: updating hierarchy does not work in all cases ! this is sadly dependant on the structure of the exported blend data
-// - blender root-> object with properties => WORKS
-// - scene instance -> does not work
-// it might be due to how we add components to the PARENT item in gltf to components
-
-pub(crate) fn update_spawned_root_first_child(
+/// this system is in charge of doing any necessary post processing after a blueprint scene has been spawned
+/// - it removes one level of useless nesting
+/// - it copies the blueprint's root components to the entity it was spawned on (original entity)
+/// - it copies the children of the blueprint scene into the original entity
+/// - it add AnimationLink components so that animations can be controlled from the original entity
+/// - it cleans up/ removes a few , by then uneeded components 
+pub(crate) fn spawned_blueprint_post_process(
     unprocessed_entities: Query<
         (Entity, &Children, Option<&Name>, &OriginalChildren, &Animations),
-        (With<SpawnHere>, With<SpawnedRoot>, With<SceneInstance>, Without<SpawnedRootProcessed>),
+        (With<SpawnHere>, With<SceneInstance>),
     >,
     added_animation_players: Query<(Entity, &Parent), Added<AnimationPlayer>>,
     all_children: Query<&Children>,
 
     mut commands: Commands,
-
 ) {
 
     for (original, children, name, original_children, animations) in unprocessed_entities.iter() {
-        info!("this ones needs work {:?}", name);
+        info!("post processing blueprint for entity {:?}", name);
        
         if children.len() == 0 {
             warn!("timing issue ! no children found, please restart your bevy app (bug being investigated)");
@@ -57,10 +50,12 @@ pub(crate) fn update_spawned_root_first_child(
             commands.entity(child).insert(InBlueprint);
         }
 
-        // transfer data into from blueprint instance's root_entity to original entity
-        commands.add(CloneEntity {
+        // copy components into from blueprint instance's root_entity to original entity
+        commands.add(CopyComponents {
             source: root_entity ,
-            destination: original
+            destination: original,
+            exclude: vec![TypeId::of::<Parent>(), TypeId::of::<Children>(),],
+            stringent: false
         });
 
         // we move all of children of the blueprint instance one level to the original entity
@@ -84,28 +79,8 @@ pub(crate) fn update_spawned_root_first_child(
             }
         }
 
-        info!("cleanup {:?}", name);
         commands.entity(original).remove::<SpawnHere>();
         commands.entity(original).remove::<Handle<Scene>>();
         commands.entity(root_entity).despawn_recursive();
-    }
-}
-
-/// cleans up dynamically spawned scenes so that they get despawned if they have no more children
-pub(crate) fn cleanup_scene_instances(
-    scene_instances: Query<(Entity, &Children), With<SpawnedRootProcessed>>,
-    without_children: Query<Entity, (With<SpawnedRootProcessed>, Without<Children>)>, // if there are not children left, bevy removes Children ?
-    mut commands: Commands,
-) {
-    for (entity, children) in scene_instances.iter() {
-        if children.len() == 0 {
-            // it seems this does not happen ?
-            debug!("cleaning up emptied spawned scene instance");
-            commands.entity(entity).despawn_recursive();
-        }
-    }
-    for entity in without_children.iter() {
-        debug!("cleaning up emptied spawned scene instance");
-        commands.entity(entity).despawn_recursive();
     }
 }
