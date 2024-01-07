@@ -19,16 +19,12 @@ pub struct BlueprintName(pub String);
 pub struct SpawnHere;
 
 #[derive(Component)]
-/// FlagComponent for spawned entity
-pub struct Spawned;
-
-#[derive(Component)]
 /// helper component, just to transfer child data
 pub(crate) struct OriginalChildren(pub Vec<Entity>);
 
 #[derive(Component)]
 /// FlagComponent for dynamically spawned scenes
-pub struct SpawnedRoot;
+pub struct Spawned;
 
 /// main spawning functions,
 /// * also takes into account the already exisiting "override" components, ie "override components" > components from blueprint
@@ -39,7 +35,6 @@ pub(crate) fn spawn_from_blueprints(
             Added<BlueprintName>,
             Added<SpawnHere>,
             Without<Spawned>,
-            Without<SpawnedRoot>,
         ),
     >,
 
@@ -92,7 +87,7 @@ pub(crate) fn spawn_from_blueprints(
             Animations {
                 named_animations: gltf.named_animations.clone(),
             },
-            SpawnedRoot,
+            Spawned,
             OriginalChildren(original_children)
         ));
 

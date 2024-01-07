@@ -6,7 +6,7 @@ use bevy::scene::SceneInstance;
 
 use crate::{InBlueprint, OriginalChildren, CopyComponents};
 use super::{AnimationPlayerLink, Animations};
-use super::{SpawnHere, SpawnedRoot};
+use super::{SpawnHere, Spawned};
 
 
 /// this system is in charge of doing any necessary post processing after a blueprint scene has been spawned
@@ -18,7 +18,7 @@ use super::{SpawnHere, SpawnedRoot};
 pub(crate) fn spawned_blueprint_post_process(
     unprocessed_entities: Query<
         (Entity, &Children, Option<&Name>, &OriginalChildren, &Animations),
-        (With<SpawnHere>, With<SceneInstance>),
+        (With<SpawnHere>, With<SceneInstance>,  With<Spawned>),
     >,
     added_animation_players: Query<(Entity, &Parent), Added<AnimationPlayer>>,
     all_children: Query<&Children>,
@@ -80,6 +80,7 @@ pub(crate) fn spawned_blueprint_post_process(
         }
 
         commands.entity(original).remove::<SpawnHere>();
+        commands.entity(original).remove::<Spawned>();
         commands.entity(original).remove::<Handle<Scene>>();
         commands.entity(root_entity).despawn_recursive();
     }
