@@ -14,7 +14,7 @@ use std::io::Write;
 
 use crate::core::camera_tracking::CameraTrackingOffset;
 use crate::core::save_load::Dynamic;
-use crate::game::{Pickable, Player};
+use crate::game::{Pickable, Player, DynamicEntitiesRoot};
 
 
 #[derive(Event, Debug)]
@@ -28,14 +28,27 @@ pub fn should_save(
     return save_requests.len() > 0;
 }
 
+#[derive(Component, Reflect, Debug, Default)]
+#[reflect(Component)]
+pub struct RootEntity;
+
 pub fn prepare_save_game(
     saveables: Query<(Entity), (With<Dynamic>, With<BlueprintName>)>,
+    dynamic_entities: Query<Entity, With<DynamicEntitiesRoot>>,
+    children_of_world: Query<(Entity, &Parent),With<Dynamic> >,
     mut commands: Commands,
 ){
     for entity in saveables.iter(){
         println!("PREPARING SAVE");
         // TODO: only do this for entities with blueprints
         commands.entity(entity).insert(SpawnHere);
+    }
+
+    for (child, parent) in children_of_world.iter(){
+        let parent = parent.get();
+        if dynamic_entities.contains(parent) {
+            commands.entity(child).insert(RootEntity);//.remove_parent_in_place();
+        }
     }
 }
 pub fn save_game(
@@ -54,19 +67,21 @@ pub fn save_game(
     events.clear(); 
 
     let saveable_entities: Vec<Entity> = world
-        .query_filtered::<Entity, (With<Dynamic>, Without<InBlueprint>)>()
+        .query_filtered::<Entity, (With<Dynamic>, Without<InBlueprint>, Without<RootEntity>)>()
         .iter(world)
         .collect();
 
 
     println!("saveable entities {}", saveable_entities.len());
 
-    let foo = world
-    .query_filtered::<Entity, (With<Dynamic>, Without<InBlueprint>)>()
-    .iter(world);
+    let saveable_root_entities: Vec<Entity>  = world
+    .query_filtered::<Entity, (With<Dynamic>, Without<InBlueprint>, With<RootEntity>)>()
+    .iter(world)
+    .collect();
+    println!("saveable root entities {}", saveable_root_entities.len());
 
    
-    let components = HashSet::from([
+    let allowed_components = HashSet::from([
         TypeId::of::<Name>(),
         TypeId::of::<Transform>(), 
         TypeId::of::<Velocity>() , 
@@ -74,12 +89,9 @@ pub fn save_game(
         TypeId::of::<SpawnHere>(),
         TypeId::of::<Dynamic>(),
 
-        // TypeId::of::<Parent>(),
-        // TypeId::of::<Children>(),
+        TypeId::of::<Parent>(),
+        TypeId::of::<Children>(),
         TypeId::of::<InheritedVisibility>(),
-
-        
-
 
         TypeId::of::<Camera>(),
         TypeId::of::<Camera3d>(),
@@ -92,43 +104,53 @@ pub fn save_game(
         TypeId::of::<VisibleEntities>(),
 
         TypeId::of::<Pickable>(),
-
-
-
         ]);
 
-    let filter = SceneFilter::Allowlist(components);
-        
 
-    let mut scene_builder = DynamicSceneBuilder::from_world(world).with_filter(filter.clone());
+    let allowed_components_root = HashSet::from([
+            TypeId::of::<Name>(),
+            TypeId::of::<Transform>(), 
+            TypeId::of::<Velocity>() , 
+            TypeId::of::<BlueprintName>(),
+            TypeId::of::<SpawnHere>(),
+            TypeId::of::<Dynamic>(),
+    
+            // do not save parent
+            TypeId::of::<Children>(),
+            TypeId::of::<InheritedVisibility>(),
+    
+            TypeId::of::<Camera>(),
+            TypeId::of::<Camera3d>(),
+            TypeId::of::<Tonemapping>(),
+            TypeId::of::<CameraTrackingOffset>(),
+            TypeId::of::<Projection>(),
+            TypeId::of::<CameraRenderGraph>(),
+            TypeId::of::<Frustum>(),
+            TypeId::of::<GlobalTransform>(),
+            TypeId::of::<VisibleEntities>(),
+    
+            TypeId::of::<Pickable>(),
+            ]);
+    let filter = SceneFilter::Allowlist(allowed_components);
+    let filter_root = SceneFilter::Allowlist(allowed_components_root);
 
+    // for default stuff
+    let scene_builder = DynamicSceneBuilder::from_world(world).with_filter(filter.clone());
 
-    let dyn_scene = scene_builder
-        
-        /* .allow::<Transform>()
-        .allow::<Velocity>()
-        .allow::<BlueprintName>()*/
-
-        /* .deny::<Children>()
-        .deny::<Parent>()
-        .deny::<InheritedVisibility>()
-        .deny::<Visibility>()
-        .deny::<GltfExtras>()
-        .deny::<GlobalTransform>()
-        .deny::<Collider>()
-        .deny::<RigidBody>()
-        .deny::<Saveable>()
-        // camera stuff
-        .deny::<Camera>()
-        .deny::<CameraRenderGraph>()
-        .deny::<Camera3d>()
-        .deny::<Clusters>()
-        .deny::<VisibleEntities>()
-        .deny::<VisiblePointLights>()
-        //.deny::<HasGizmoMarker>()
-        */
-        .extract_entities(saveable_entities.into_iter())
+    let mut dyn_scene = scene_builder
+        .extract_entities(saveable_entities.clone().into_iter() )
+        .remove_empty_entities()
         .build();
+
+    // for root entities
+    let scene_builder_root = DynamicSceneBuilder::from_world(world).with_filter(filter_root.clone());
+
+    let mut dyn_scene_root = scene_builder_root
+        .extract_entities(saveable_root_entities.clone().into_iter() )
+        .remove_empty_entities()
+        .build();
+    
+    dyn_scene.entities.append(&mut dyn_scene_root.entities);
 
     let serialized_scene = dyn_scene
         .serialize_ron(world.resource::<AppTypeRegistry>())

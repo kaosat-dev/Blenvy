@@ -1,9 +1,9 @@
 
-use bevy::prelude::*;
+use bevy::{prelude::*, scene::SceneInstance};
 use bevy_gltf_blueprints::{GameWorldTag};
 use crate::{
     assets::GameAssets,
-    state::{AppState, GameState, InAppRunning},
+    state::{AppState, GameState, InAppRunning}, game::{DynamicEntitiesRoot, Flatten}, core::save_load::Dynamic,
 };
 
 
@@ -16,6 +16,10 @@ pub struct LoadRequest {
 pub struct LoadRequested{
     pub path: String
 }
+
+#[derive(Component, Reflect, Debug, Default)]
+#[reflect(Component)]
+pub struct CleanupScene;
 
 pub fn should_load(
     mut load_requests: EventReader<LoadRequest>,
@@ -30,17 +34,6 @@ pub fn should_load(
     }
     return valid
 }
-pub fn foo(
-    mut load_requests: EventReader<LoadRequest>,
-    mut commands: Commands,
-
-){
-    for load_request in load_requests.read(){
-        if load_request.path != ""{
-            commands.insert_resource(LoadRequested { path: load_request.path.clone() });
-        }
-    }
-}
 
 pub fn load_prepare(
     mut next_app_state: ResMut<NextState<AppState>>,
@@ -52,8 +45,17 @@ pub fn load_prepare(
 }
 
 
-pub fn unload_world(mut commands: Commands, gameworlds: Query<Entity, With<GameWorldTag>>) {
+pub fn unload_world(mut commands: Commands, 
+    gameworlds: Query<Entity, With<GameWorldTag>>,
+    foo: Query<Entity, With<DynamicEntitiesRoot>>
+
+) {
     for e in gameworlds.iter() {
+        info!("--loading: despawn old world/level");
+        commands.entity(e).despawn_recursive();
+    }
+
+    for e in foo.iter() {
         info!("--loading: despawn old world/level");
         commands.entity(e).despawn_recursive();
     }
@@ -113,14 +115,30 @@ pub fn load_game(
             ..default()
         },
         bevy::prelude::Name::from("world_content"),
-        // GameWorldTag,
         InAppRunning,
+        // Flatten,
+        DynamicEntitiesRoot,
+        CleanupScene
     ))
     .id();
-    commands.entity(world).add_child(dynamic_data);
+    // commands.entity(world).add_child(dynamic_data);
     // asset_server.reload(save_path);
 
     next_app_state.set(AppState::AppRunning);
     next_game_state.set(GameState::InGame);
     //info!("--loading: loaded saved scene");
+}
+
+pub fn cleanup_loaded_scene(
+    loaded_scenes: Query<Entity, (With<CleanupScene>,  Added<SceneInstance>, With<DynamicEntitiesRoot>)>,
+    mut commands: Commands,
+){
+    for loaded_scene in loaded_scenes.iter(){
+        println!("REMOVING SCENE");
+        commands.entity(loaded_scene)
+            .remove::<Handle<DynamicScene>>()
+            .remove::<SceneInstance>()
+            .remove::<CleanupScene>()
+            ;
+    }
 }

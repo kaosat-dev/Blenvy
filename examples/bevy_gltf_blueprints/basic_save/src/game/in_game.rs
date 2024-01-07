@@ -4,12 +4,20 @@ use crate::{
     assets::GameAssets,
     state::{GameState, InAppRunning}, core::save_load::Dynamic,
 };
-use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, GameWorldTag};
+use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, GameWorldTag, SpawnHere};
 
 use bevy_rapier3d::prelude::Velocity;
 use rand::Rng;
 
 use super::Player;
+
+#[derive(Component, Reflect, Debug, Default)]
+#[reflect(Component)]
+pub struct DynamicEntitiesRoot;
+
+#[derive(Component, Reflect, Debug, Default)]
+#[reflect(Component)]
+pub struct Flatten;
 
 pub fn setup_game(
     mut commands: Commands,
@@ -24,7 +32,7 @@ pub fn setup_game(
     });
     // here we actually spawn our game world/level
     let world = commands.spawn((
-        SceneBundle {
+        /*SceneBundle {
             // note: because of this issue https://github.com/bevyengine/bevy/issues/10436, "world" is now a gltf file instead of a scene
             scene: models
                 .get(game_assets.world.id())
@@ -32,10 +40,17 @@ pub fn setup_game(
                 .scenes[0]
                 .clone(),
             ..default()
-        },
+        },*/
         bevy::prelude::Name::from("world"),
         GameWorldTag,
         InAppRunning,
+
+        BluePrintBundle {
+            blueprint: BlueprintName("World".to_string()),
+            transform: TransformBundle::from_transform(Transform::from_xyz(0.0, 0.0, 0.0)),
+            ..Default::default()
+        },
+
     )).id();
 
     // and we fill it with dynamic data
@@ -48,13 +63,44 @@ pub fn setup_game(
                 .clone(),
             ..default()
         },
+        /*BluePrintBundle {
+            blueprint: BlueprintName("World".to_string()),
+            transform: TransformBundle::from_transform(Transform::from_xyz(0.0, 0.0, 0.0)),
+            ..Default::default()
+        },*/
+
         bevy::prelude::Name::from("world_content"),
         // GameWorldTag,
         InAppRunning,
+
+        // Dynamic(true),
+        DynamicEntitiesRoot,
+        Flatten,
     ))
     .id();
-    commands.entity(world).add_child(dynamic_data);
+    // commands.entity(world).add_child(dynamic_data);
     next_game_state.set(GameState::InGame)
+}
+
+pub fn flatten_scene(
+    matches: Query<(Entity, &Children), With<Flatten>>,
+    all_children: Query<&Children>,
+    mut commands: Commands,
+
+){
+
+    for (original, children) in matches.iter(){
+        let root_entity = children.first().unwrap();
+
+        if let Ok(root_entity_children) = all_children.get(*root_entity) {
+            for child in root_entity_children.iter(){
+                // info!("copying child {:?} upward from {:?} to {:?}", names.get(*child), root_entity, original);
+                commands.entity(original).add_child(*child);
+                // commands.entity(*child).remove_parent_in_place();// .remove::<>();
+            }
+        }
+        // commands.entity(*root_entity).despawn();
+    }
 }
 
 
@@ -132,11 +178,11 @@ pub fn spawn_test(
     keycode: Res<Input<KeyCode>>,
     mut commands: Commands,
 
-    mut game_world: Query<(Entity, &Children), With<GameWorldTag>>,
+    mut game_world: Query<(Entity, &Children), With<DynamicEntitiesRoot>>,
 ) {
     if keycode.just_pressed(KeyCode::T) {
         let world = game_world.single_mut();
-        let world = world.1[0];
+        let world = world.0;//.1[0];
 
         let mut rng = rand::thread_rng();
         let range = 5.5;
@@ -172,7 +218,7 @@ pub fn spawn_test(
     }
 }
 
-pub fn spawn_test_failing(
+pub fn spawn_test_unregisted_components(
     keycode: Res<Input<KeyCode>>,
     mut commands: Commands,
 

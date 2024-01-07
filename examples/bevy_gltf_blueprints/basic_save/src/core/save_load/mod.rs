@@ -61,20 +61,27 @@ impl Plugin for SaveLoadPlugin {
 
         .add_systems(Update,
             (
-                //foo,
-                // apply_deferred,
-
                 load_prepare,
                 unload_world,
-                // apply_deferred,
                 load_game,
-                //load_saved_scene,
             )
             .chain()
             .run_if(should_load)
             .run_if(in_state(AppState::AppRunning))
             .in_set(LoadingSet::Load)
         )
+        .add_systems(Update,
+            (
+                cleanup_loaded_scene,
+            )
+            .chain()
+            //.run_if(should_load)
+            // .run_if(in_state(AppState::LoadingGame))
+            .in_set(LoadingSet::Load)
+        )
+
+
+        
       ;
     }
 }
