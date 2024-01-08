@@ -28,32 +28,30 @@ impl CloneEntity {
                 .expect("source entity should exist")
                 .archetype()
                 .components()
-
                 .filter_map(|component_id| {
                     let component_info = world
                         .components()
                         .get_info(component_id)
                         .expect("component info should be available");
-                    
+
                     // FIXME: do something cleaner
                     if component_info.name() == "bevy_hierarchy::components::parent::Parent" {
-                        return  None;
+                        return None;
                     }
 
                     if component_info.name() == "bevy_hierarchy::components::children::Children" {
-                        return  None;
+                        return None;
                     }
 
                     if component_info.name() == "bevy_transform::components::transform::Transform" {
-                        return  None;
-                    } 
-                    if component_info.name() == "bevy_transform::components::transform::GlobalTransform" {
-                        return  None;
-                    } 
-                     // println!("cloning: component: {:?}",component_info.name());
-                    
-
-
+                        return None;
+                    }
+                    if component_info.name()
+                        == "bevy_transform::components::transform::GlobalTransform"
+                    {
+                        return None;
+                    }
+                    // println!("cloning: component: {:?}",component_info.name());
 
                     let type_id = component_info.type_id().unwrap();
 
@@ -77,7 +75,6 @@ impl CloneEntity {
         };
 
         for component in components {
-
             let source = component
                 .reflect(world.get_entity(self.source).unwrap())
                 .unwrap()
@@ -85,14 +82,13 @@ impl CloneEntity {
 
             // println!("FOO {:?}", source);
 
-
             let mut destination = world
                 .get_entity_mut(self.destination)
                 .expect("destination entity should exist");
 
             //if destination.contains::comp
             //component.insert(&mut destination, &*source);
-            if !destination.contains_type_id(source.type_id()){
+            if !destination.contains_type_id(source.type_id()) {
                 // println!("copying {:?}", source);
                 component.apply_or_insert(&mut destination, &*source);
             }

@@ -14,7 +14,7 @@ pub struct CopyComponents {
     pub source: Entity,
     pub destination: Entity,
     pub exclude: Vec<TypeId>,
-    pub stringent: bool
+    pub stringent: bool,
 }
 
 impl CopyComponents {
@@ -36,49 +36,50 @@ impl CopyComponents {
                 .expect("source entity should exist")
                 .archetype()
                 .components()
-
                 .filter_map(|component_id| {
                     let component_info = world
                         .components()
                         .get_info(component_id)
                         .expect("component info should be available");
-                    
+
                     let type_id = component_info.type_id().unwrap();
-                    if self.exclude.contains(&type_id){
+                    if self.exclude.contains(&type_id) {
                         debug!("excluding component: {:?}", component_info.name());
-                        return None
-                    }else {
-                        debug!("cloning: component: {:?} {:?}",component_info.name(), type_id);
+                        return None;
+                    } else {
+                        debug!(
+                            "cloning: component: {:?} {:?}",
+                            component_info.name(),
+                            type_id
+                        );
 
                         if let Some(type_registration) = registry.get(type_id) {
                             return Some(type_registration);
-                        }
-                        else {
+                        } else {
                             if self.stringent {
-
                                 return Some(
                                     registry.get(type_id).expect(
-                                    format!(
+                                        format!(
                                         "cannot clone entity: component: {:?} is not registered",
                                         component_info.name()
                                     )
-                                    .as_str(),
-                                )
-                            )
+                                        .as_str(),
+                                    ),
+                                );
+                            } else {
+                                warn!(
+                                    "cannot clone component: component: {:?} is not registered",
+                                    component_info.name()
+                                );
+                                return None;
                             }
-                            else {
-                                warn!("cannot clone component: component: {:?} is not registered", component_info.name());
-                                return None
-                            }
-                           
                         }
                     }
-
                 })
                 .map(|type_id| {
                     return (
                         type_id.data::<ReflectComponent>().unwrap().clone(),
-                        type_id.type_info().type_id().clone() // we need the original type_id down the line
+                        type_id.type_info().type_id().clone(), // we need the original type_id down the line
                     );
                 })
                 .collect::<Vec<_>>()
@@ -93,10 +94,10 @@ impl CopyComponents {
             let mut destination = world
                 .get_entity_mut(self.destination)
                 .expect("destination entity should exist");
-            
+
             // println!("contains typeid {:?} {}", type_id, destination.contains_type_id(type_id));
             // we only want to copy components that are NOT already in the destination (ie no overwriting existing components)
-            if !destination.contains_type_id(type_id){
+            if !destination.contains_type_id(type_id) {
                 component.insert(&mut destination, &*source);
             }
         }

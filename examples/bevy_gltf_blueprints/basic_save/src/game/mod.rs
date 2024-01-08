@@ -1,5 +1,5 @@
 pub mod in_game;
-use bevy_gltf_save_load::{SaveRequest, LoadRequest, LoadingFinished};
+use bevy_gltf_save_load::{LoadRequest, LoadingFinished, SaveRequest};
 pub use in_game::*;
 
 pub mod in_main_menu;
@@ -7,7 +7,6 @@ pub use in_main_menu::*;
 
 pub mod picking;
 pub use picking::*;
-
 
 use crate::{
     insert_dependant_component,
@@ -89,13 +88,11 @@ pub fn test_collision_events(
     }
 }
 
-pub fn request_save(
-    mut save_requests: EventWriter<SaveRequest>,
-    keycode: Res<Input<KeyCode>>,
-)
-{
+pub fn request_save(mut save_requests: EventWriter<SaveRequest>, keycode: Res<Input<KeyCode>>) {
     if keycode.just_pressed(KeyCode::S) {
-        save_requests.send(SaveRequest { path: "save.scn.ron".into() })
+        save_requests.send(SaveRequest {
+            path: "save.scn.ron".into(),
+        })
     }
 }
 
@@ -105,13 +102,14 @@ pub fn request_load(
 
     mut next_app_state: ResMut<NextState<AppState>>,
     mut next_game_state: ResMut<NextState<GameState>>,
-)
-{
+) {
     if keycode.just_pressed(KeyCode::L) {
         println!("request to load");
         // next_app_state.set(AppState::LoadingGame);
         next_game_state.set(GameState::None);
-        load_requests.send(LoadRequest { path: "save.scn.ron".into() })
+        load_requests.send(LoadRequest {
+            path: "save.scn.ron".into(),
+        })
     }
 }
 
@@ -119,14 +117,13 @@ pub fn on_loading_finished(
     mut loading_finished: EventReader<LoadingFinished>,
     mut next_app_state: ResMut<NextState<AppState>>,
     mut next_game_state: ResMut<NextState<GameState>>,
-){
+) {
     for _ in loading_finished.read() {
         println!("loading finished, changing state");
         //next_app_state.set(AppState::AppRunning);
         next_game_state.set(GameState::InGame);
     }
 }
-
 
 pub struct GamePlugin;
 impl Plugin for GamePlugin {
@@ -135,7 +132,6 @@ impl Plugin for GamePlugin {
             .register_type::<Interactible>()
             .register_type::<SoundMaterial>()
             .register_type::<Player>()
-
             // little helper utility, to automatically inject components that are dependant on an other component
             // ie, here an Entity with a Player component should also always have a ShouldBeWithPlayer component
             // you get a warning if you use this, as I consider this to be stop-gap solution (usually you should have either a bundle, or directly define all needed components)
@@ -148,24 +144,18 @@ impl Plugin for GamePlugin {
                     spawn_test,
                     spawn_test_unregisted_components,
                     spawn_test_parenting,
-
-                    flatten_scene
+                    flatten_scene,
                 )
                     .run_if(in_state(GameState::InGame)),
             )
-            .add_systems(Update, 
-                (
-                    unload_world,
-                    apply_deferred,
-                    setup_game,
-                )
-                .chain()
-                .run_if(should_reset)
-                .run_if(in_state(AppState::AppRunning))
+            .add_systems(
+                Update,
+                (unload_world, apply_deferred, setup_game)
+                    .chain()
+                    .run_if(should_reset)
+                    .run_if(in_state(AppState::AppRunning)),
             )
-
             .add_systems(Update, (request_save, request_load, on_loading_finished))
-
             .add_systems(OnEnter(AppState::MenuRunning), setup_main_menu)
             .add_systems(OnExit(AppState::MenuRunning), teardown_main_menu)
             .add_systems(Update, main_menu.run_if(in_state(AppState::MenuRunning)))

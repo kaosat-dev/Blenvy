@@ -30,12 +30,14 @@ pub struct Spawned;
 /// * also takes into account the already exisiting "override" components, ie "override components" > components from blueprint
 pub(crate) fn spawn_from_blueprints(
     spawn_placeholders: Query<
-        (Entity, Option<&Name>, &BlueprintName, &Transform, Option<&Parent>),
         (
-            Added<BlueprintName>,
-            Added<SpawnHere>,
-            Without<Spawned>,
+            Entity,
+            Option<&Name>,
+            &BlueprintName,
+            &Transform,
+            Option<&Parent>,
         ),
+        (Added<BlueprintName>, Added<SpawnHere>, Without<Spawned>),
     >,
 
     mut commands: Commands,
@@ -47,9 +49,11 @@ pub(crate) fn spawn_from_blueprints(
 
     children: Query<(&Children)>,
 ) {
-   
     for (entity, name, blupeprint_name, transform, original_parent) in spawn_placeholders.iter() {
-        info!("need to spawn {:?} for entity {:?}, id: {:?}, parent:{:?}", blupeprint_name.0, name, entity, original_parent);
+        info!(
+            "need to spawn {:?} for entity {:?}, id: {:?}, parent:{:?}",
+            blupeprint_name.0, name, entity, original_parent
+        );
 
         let mut original_children: Vec<Entity> = vec![];
         if let Ok(c) = children.get(entity) {
@@ -88,9 +92,8 @@ pub(crate) fn spawn_from_blueprints(
                 named_animations: gltf.named_animations.clone(),
             },
             Spawned,
-            OriginalChildren(original_children)
+            OriginalChildren(original_children),
         ));
-
 
         // let world = game_world.single_mut();
         // let mut parent = world.1[0]; // FIXME: dangerous hack because our gltf data have a single child like this, but might not always be the case

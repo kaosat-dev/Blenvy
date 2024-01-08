@@ -4,10 +4,7 @@ use crate::{BluePrintsConfig, BlueprintName, Spawned};
 
 /// helper system that computes the compound aabbs of the scenes/blueprints
 pub fn compute_scene_aabbs(
-    root_entities: Query<
-        (Entity, &Name, &Children),
-        (With<Spawned>, Without<Aabb>),
-    >,
+    root_entities: Query<(Entity, &Name, &Children), (With<Spawned>, Without<Aabb>)>,
     children: Query<&Children>,
     existing_aabbs: Query<&Aabb>,
 
