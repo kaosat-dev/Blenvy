@@ -1,6 +1,4 @@
 pub mod camera;
-
-use bevy_rapier3d::dynamics::Velocity;
 pub use camera::*;
 
 pub mod lighting;
@@ -12,16 +10,14 @@ pub use relationships::*;
 pub mod physics;
 pub use physics::*;
 
-pub mod save_load;
-pub use save_load::*;
-
 use std::any::TypeId;
 use bevy::{prelude::*, utils::HashSet, core_pipeline::tonemapping::Tonemapping, render::{camera::CameraRenderGraph, primitives::Frustum, view::VisibleEntities}};
+use bevy_rapier3d::dynamics::Velocity;
+
 use bevy_gltf_blueprints::*;
+use bevy_gltf_save_load::*;
 
 use crate::game::Pickable;
-
-
 
 
 pub struct CorePlugin;

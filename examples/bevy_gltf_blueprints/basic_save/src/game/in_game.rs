@@ -1,8 +1,9 @@
 use bevy::prelude::*;
+use bevy_gltf_save_load::{StaticWorldMarker, DynamicEntitiesRoot, Dynamic};
 
 use crate::{
     assets::GameAssets,
-    state::{GameState, InAppRunning}, core::save_load::Dynamic,
+    state::{GameState, InAppRunning},
 };
 use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, GameWorldTag, SpawnHere};
 
@@ -11,13 +12,24 @@ use rand::Rng;
 
 use super::Player;
 
-#[derive(Component, Reflect, Debug, Default)]
-#[reflect(Component)]
-pub struct DynamicEntitiesRoot;
+
 
 #[derive(Component, Reflect, Debug, Default)]
 #[reflect(Component)]
 pub struct Flatten;
+
+/* 
+commands.spawn((
+    StaticStuff("world".into()),
+    DynamicStuff("World_dynamic".into()),
+
+    GameWorldTag,
+    InAppRunning,
+
+    TransformBundle::default()
+));*/
+
+
 
 pub fn setup_game(
     mut commands: Commands,
@@ -50,15 +62,15 @@ pub fn setup_game(
 
         BluePrintBundle {
             blueprint: BlueprintName("World".to_string()),
-            transform: TransformBundle::from_transform(Transform::from_xyz(0.0, 0.0, 0.0)),
             ..Default::default()
         },
+        StaticWorldMarker("World".to_string())
 
     )).id();
 
     // and we fill it with dynamic data
     let dynamic_data = commands.spawn((
-        bevy::prelude::Name::from("Dynamic"),
+        bevy::prelude::Name::from("dynamic"),
 
         SceneBundle {
             scene: models
@@ -69,7 +81,7 @@ pub fn setup_game(
             ..default()
         },
         /*BluePrintBundle {
-            blueprint: BlueprintName("World".to_string()),
+            blueprint: BlueprintName("World_dynamic".to_string()),
             transform: TransformBundle::from_transform(Transform::from_xyz(0.0, 0.0, 0.0)),
             ..Default::default()
         },*/

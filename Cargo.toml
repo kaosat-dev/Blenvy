@@ -2,6 +2,7 @@
 members = [
     "crates/bevy_gltf_components",
     "crates/bevy_gltf_blueprints",
+    "crates/bevy_gltf_save_load",
     "examples/bevy_gltf_components/basic/",
     "examples/bevy_gltf_components/basic_wasm/",
     "examples/bevy_gltf_blueprints/basic/",

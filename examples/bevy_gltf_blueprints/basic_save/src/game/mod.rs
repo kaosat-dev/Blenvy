@@ -1,4 +1,5 @@
 pub mod in_game;
+use bevy_gltf_save_load::{SaveRequest, LoadRequest, LoadingFinished};
 pub use in_game::*;
 
 pub mod in_main_menu;
@@ -7,12 +8,10 @@ pub use in_main_menu::*;
 pub mod picking;
 pub use picking::*;
 
-pub mod save;
-pub use save::*;
 
 use crate::{
     insert_dependant_component,
-    state::{AppState, GameState}, core::save_load::{SaveRequest, LoadRequest},
+    state::{AppState, GameState},
 };
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
@@ -103,11 +102,28 @@ pub fn request_save(
 pub fn request_load(
     mut load_requests: EventWriter<LoadRequest>,
     keycode: Res<Input<KeyCode>>,
+
+    mut next_app_state: ResMut<NextState<AppState>>,
+    mut next_game_state: ResMut<NextState<GameState>>,
 )
 {
     if keycode.just_pressed(KeyCode::L) {
         println!("request to load");
+        // next_app_state.set(AppState::LoadingGame);
+        next_game_state.set(GameState::None);
         load_requests.send(LoadRequest { path: "save.scn.ron".into() })
+    }
+}
+
+pub fn on_loading_finished(
+    mut loading_finished: EventReader<LoadingFinished>,
+    mut next_app_state: ResMut<NextState<AppState>>,
+    mut next_game_state: ResMut<NextState<GameState>>,
+){
+    for _ in loading_finished.read() {
+        println!("loading finished, changing state");
+        //next_app_state.set(AppState::AppRunning);
+        next_game_state.set(GameState::InGame);
     }
 }
 
@@ -148,7 +164,7 @@ impl Plugin for GamePlugin {
                 .run_if(in_state(AppState::AppRunning))
             )
 
-            .add_systems(Update, (request_save, request_load))
+            .add_systems(Update, (request_save, request_load, on_loading_finished))
 
             .add_systems(OnEnter(AppState::MenuRunning), setup_main_menu)
             .add_systems(OnExit(AppState::MenuRunning), teardown_main_menu)

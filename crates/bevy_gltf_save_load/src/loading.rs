@@ -3,18 +3,21 @@ use std::path::Path;
 
 use bevy::{prelude::*, scene::SceneInstance};
 use bevy_gltf_blueprints::{GameWorldTag, BluePrintBundle, BlueprintName};
-use crate::{
-    assets::GameAssets,
-    state::{AppState, GameState, InAppRunning}, game::{DynamicEntitiesRoot, Flatten},
-};
 
-use super::SaveLoadConfig;
+use crate::{DynamicEntitiesRoot, StaticWorldMarker};
+
+use super::{SaveLoadConfig, Dynamic};
 
 
 #[derive(Event)]
 pub struct LoadRequest {
     pub path: String,
 }
+
+
+#[derive(Event)]
+pub struct LoadingFinished;
+
 
 #[derive(Resource, Default)]
 pub struct LoadRequested{
@@ -39,27 +42,10 @@ pub fn should_load(
     return valid
 }
 
-pub fn load_prepare(
-    mut next_app_state: ResMut<NextState<AppState>>,
-    mut next_game_state: ResMut<NextState<GameState>>,
-) {
-    next_app_state.set(AppState::LoadingGame);
-    next_game_state.set(GameState::None);
-    info!("--loading: prepare")
-}
-
-
 pub fn unload_world(mut commands: Commands, 
     gameworlds: Query<Entity, With<GameWorldTag>>,
-    foo: Query<Entity, With<DynamicEntitiesRoot>>
-
 ) {
     for e in gameworlds.iter() {
-        info!("--loading: despawn old world/level");
-        commands.entity(e).despawn_recursive();
-    }
-
-    for e in foo.iter() {
         info!("--loading: despawn old world/level");
         commands.entity(e).despawn_recursive();
     }
@@ -67,19 +53,15 @@ pub fn unload_world(mut commands: Commands,
 
 pub fn load_game(
     mut commands: Commands,
-    game_assets: Res<GameAssets>,
     models: Res<Assets<bevy::gltf::Gltf>>,
     asset_server: Res<AssetServer>,
     // load_request: Res<LoadRequested>,
     mut load_requests: EventReader<LoadRequest>,
     save_load_config: Res<SaveLoadConfig>,
-
-    mut next_app_state: ResMut<NextState<AppState>>,
-    mut next_game_state: ResMut<NextState<GameState>>,
 )
 {
     
-    info!("--loading: load static & dynamic data");
+    info!("--loading: load dynamic data");
     //let save_path = load_request.path.clone();
     let mut save_path:String = "".into();
     for load_request in load_requests.read(){
@@ -95,24 +77,12 @@ pub fn load_game(
     let world_root = commands.spawn((
         bevy::prelude::Name::from("world"),
         GameWorldTag,
-        InAppRunning,
-
         TransformBundle::default(),
         InheritedVisibility::default()
 
     )).id();
 
-    let static_data = commands.spawn((
-        bevy::prelude::Name::from("static"),
-
-        BluePrintBundle {
-            blueprint: BlueprintName("World".to_string()),
-            transform: TransformBundle::from_transform(Transform::from_xyz(0.0, 0.0, 0.0)),
-            ..Default::default()
-        },
-
-    )).id();
-
+  
     // and we fill it with dynamic data
     let scene_data = asset_server.load(save_path);
     // let input = std::fs::read(&path)?;
@@ -124,20 +94,65 @@ pub fn load_game(
             ..default()
         },
         bevy::prelude::Name::from("dynamic"),
-        InAppRunning,
         DynamicEntitiesRoot,
-
         CleanupScene // we mark this scene as needing a cleanup
     ))
     .id();
 
-    commands.entity(world_root).add_child(static_data);
+    // commands.entity(world_root).add_child(static_data);
     commands.entity(world_root).add_child(dynamic_data);
 
-    next_app_state.set(AppState::AppRunning);
-    next_game_state.set(GameState::InGame);
-    //info!("--loading: loaded saved scene");
+  
+    info!("--loading: loaded saved scene");
 }
+
+
+#[derive(Component, Reflect, Debug, Default)]
+#[reflect(Component)]
+pub struct TestMarker;
+
+pub fn load_static(
+    foo: Query<(Entity, &StaticWorldMarker), (Added<StaticWorldMarker>)>,
+    world_root: Query<(Entity), With<GameWorldTag>>,
+    mut commands: Commands,
+    mut loading_finished: EventWriter<LoadingFinished>
+)
+{
+    for (entity, marker) in foo.iter(){
+        println!("gna gna gna {:?}", marker.0);
+
+
+        let static_data = commands.spawn((
+            bevy::prelude::Name::from("static"),
+    
+            BluePrintBundle {
+                blueprint: BlueprintName(marker.0.clone()),
+                ..Default::default()
+            },
+        )).id();
+        
+        let world_root = world_root.get_single().unwrap();
+        println!("root {:?}", world_root);
+        commands.entity(world_root).add_child(static_data);
+        info!("load static");
+        loading_finished.send(LoadingFinished);
+        break;
+    }
+   
+}
+/* 
+pub fn re_create_hierarchies(
+    with_parents: Query<(Entity, &Parent), (Added<Parent>, With<Dynamic>)>,
+    all_children: Query<(Entity, &Children)>,
+    mut commands: Commands,
+) {
+    for (e, parent) in with_parents.iter(){
+        println!("re-create hierarchy");
+        if !all_children.contains(parent.get()){
+            commands.entity(parent.get()).add_child(e);
+        }
+    }
+}*/
 
 pub fn cleanup_loaded_scene(
     loaded_scenes: Query<Entity, (With<CleanupScene>,  Added<SceneInstance>, With<DynamicEntitiesRoot>)>,

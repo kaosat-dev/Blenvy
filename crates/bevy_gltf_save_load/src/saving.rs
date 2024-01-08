@@ -1,23 +1,13 @@
-use bevy::core_pipeline::tonemapping::Tonemapping;
-use bevy::ecs::component::ComponentIdFor;
-use bevy::ecs::storage::Table;
-use bevy::render::camera::CameraRenderGraph;
-use bevy::render::primitives::Frustum;
-use bevy::render::view::VisibleEntities;
+
 use bevy::tasks::IoTaskPool;
-use bevy::utils::HashSet;
 use bevy::prelude::*;
 use bevy_gltf_blueprints::{BlueprintName, SpawnHere, InBlueprint};
-use bevy_rapier3d::dynamics::Velocity;
 
-use std::any::{TypeId};
 use std::fs::{File, self};
 use std::io::Write;
 use std::path::Path;
 
-use crate::core::camera_tracking::CameraTrackingOffset;
-use crate::core::save_load::{Dynamic, SaveLoadConfig};
-use crate::game::{Pickable, Player, DynamicEntitiesRoot};
+use crate::{Dynamic, DynamicEntitiesRoot, StaticWorldMarker, SaveLoadConfig};
 
 
 #[derive(Event, Debug)]
@@ -33,21 +23,23 @@ pub fn should_save(
 
 #[derive(Component, Reflect, Debug, Default)]
 #[reflect(Component)]
-pub struct RootEntity;
+/// marker component for entities that do not have parents, or whose parents should be ignored when serializing
+pub(crate) struct RootEntity;
+
 
 pub fn prepare_save_game(
     saveables: Query<(Entity), (With<Dynamic>, With<BlueprintName>)>,
-    dynamic_entities: Query<Entity, Or<(With<DynamicEntitiesRoot>, Without<Parent>)>>, //  With<DynamicEntitiesRoot>  
-    children_of_world: Query<(Entity, &Parent), With<Dynamic> >,
+    root_entities: Query<Entity, Or<(With<DynamicEntitiesRoot>, Without<Parent>)>>, //  With<DynamicEntitiesRoot>  
+    dynamic_entities: Query<(Entity, &Parent), With<Dynamic> >,
     mut commands: Commands,
 ){
     for entity in saveables.iter(){
         commands.entity(entity).insert(SpawnHere);
     }
 
-    for (child, parent) in children_of_world.iter(){
+    for (child, parent) in dynamic_entities.iter(){
         let parent = parent.get();
-        if dynamic_entities.contains(parent) {
+        if root_entities.contains(parent) {
             commands.entity(child).insert(RootEntity);
         }
     }
@@ -73,14 +65,19 @@ pub fn save_game(
         .iter(world)
         .collect();
 
+    let saveable_root_entities: Vec<Entity>  = world
+        .query_filtered::<Entity, (With<Dynamic>, Without<InBlueprint>, With<RootEntity>)>()
+        .iter(world)
+        .collect();
+
+    let static_world_markers:Vec<Entity> =  world
+        .query_filtered::<Entity, (With<StaticWorldMarker>)>()
+        .iter(world)
+        .collect();
 
     println!("saveable entities {}", saveable_entities.len());
-
-    let saveable_root_entities: Vec<Entity>  = world
-    .query_filtered::<Entity, (With<Dynamic>, Without<InBlueprint>, With<RootEntity>)>()
-    .iter(world)
-    .collect();
     println!("saveable root entities {}", saveable_root_entities.len());
+    println!("saveable static_world_markers {}", static_world_markers.len());
 
    
     let save_load_config = world.get_resource::<SaveLoadConfig>().expect("SaveLoadConfig should exist at this stage");
@@ -92,6 +89,9 @@ pub fn save_game(
         .allow::<BlueprintName>()
         .allow::<SpawnHere>()
         .allow::<Dynamic>()
+
+        .allow::<StaticWorldMarker>()
+
     ;
 
     // for root entities, it is the same EXCEPT we make sure parents are not included
@@ -111,7 +111,7 @@ pub fn save_game(
     let scene_builder_root = DynamicSceneBuilder::from_world(world).with_filter(filter_root.clone());
 
     let mut dyn_scene_root = scene_builder_root
-        .extract_entities(saveable_root_entities.clone().into_iter() )
+        .extract_entities(saveable_root_entities.clone().into_iter().chain(static_world_markers.into_iter()) )
         .remove_empty_entities()
         .build();
     

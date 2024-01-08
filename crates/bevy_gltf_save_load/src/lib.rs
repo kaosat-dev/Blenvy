@@ -12,14 +12,11 @@ pub use loading::*;
 
 use bevy::prelude::*;
 use bevy::prelude::{App, IntoSystemConfigs, Plugin};
-use bevy::utils::Uuid;
 
 //use bevy::asset::free_unused_assets_system;
 //use bevy_gltf_components::GltfComponentsSet;
 
 use bevy_gltf_blueprints::GltfBlueprintsSet;
-
-use crate::state::AppState;
 
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
 pub enum LoadingSet {
@@ -51,12 +48,19 @@ impl Default for SaveLoadPlugin {
     }
 }
 
+#[derive(Component, Reflect, Debug, Default)]
+#[reflect(Component)]
+pub struct StaticWorldMarker(pub String);
 
+#[derive(Component, Reflect, Debug, Default)]
+#[reflect(Component)]
+pub struct DynamicEntitiesRoot;
 
 impl Plugin for SaveLoadPlugin {
     fn build(&self, app: &mut App) {
         app
         .register_type::<Dynamic>()
+        .register_type::<StaticWorldMarker>()
 
         // TODO: remove these in bevy 0.13, as these are now registered by default
         .register_type::<Camera3dDepthTextureUsage>()
@@ -64,6 +68,8 @@ impl Plugin for SaveLoadPlugin {
 
         .add_event::<SaveRequest>()
         .add_event::<LoadRequest>()
+        .add_event::<LoadingFinished>()
+
 
         .insert_resource(SaveLoadConfig { 
             save_path: self.save_path.clone(),
@@ -91,17 +97,18 @@ impl Plugin for SaveLoadPlugin {
 
         .add_systems(Update,
             (
-                load_prepare,
                 unload_world,
+                apply_deferred,
                 load_game,
             )
             .chain()
             .run_if(should_load)
-            .run_if(in_state(AppState::AppRunning))
             .in_set(LoadingSet::Load)
         )
         .add_systems(Update,
             (
+                load_static,
+                apply_deferred,
                 cleanup_loaded_scene,
             )
             .chain()
