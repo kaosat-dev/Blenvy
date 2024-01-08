@@ -121,12 +121,6 @@ fn materials_library_enabled(blueprints_config: Res<BluePrintsConfig>) -> bool {
     blueprints_config.material_library
 }
 
-#[derive(Resource, Default)]
-pub struct EntityMapper{
-    pub map: HashMap<Entity, Entity>
-}
-
-
 
 impl Plugin for BlueprintsPlugin {
     fn build(&self, app: &mut App) {
@@ -135,9 +129,6 @@ impl Plugin for BlueprintsPlugin {
             .register_type::<MaterialInfo>()
             .register_type::<SpawnHere>()
             .register_type::<Animations>()
-
-            .insert_resource(EntityMapper{map: HashMap::new()})
-
 
             .insert_resource(BluePrintsConfig {
                 format: self.format.clone(),

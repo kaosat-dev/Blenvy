@@ -1,8 +1,8 @@
 use std::path::Path;
 
-use bevy::{gltf::Gltf, prelude::*, core_pipeline::blit};
+use bevy::{gltf::Gltf, prelude::*};
 
-use crate::{Animations, BluePrintsConfig, EntityMapper};
+use crate::{Animations, BluePrintsConfig};
 
 /// this is a flag component for our levels/game world
 #[derive(Component)]
@@ -92,12 +92,12 @@ pub(crate) fn spawn_from_blueprints(
         ));
 
 
-        let world = game_world.single_mut();
-        let mut parent = world.1[0]; // FIXME: dangerous hack because our gltf data have a single child like this, but might not always be the case
+        // let world = game_world.single_mut();
+        // let mut parent = world.1[0]; // FIXME: dangerous hack because our gltf data have a single child like this, but might not always be the case
 
         // ideally, insert the newly created entity as a child of the original parent, if any, the world otherwise
         if let Some(original_parent) = original_parent {
-            parent = original_parent.get();
+            // parent = original_parent.get();
         }
 
         // commands.entity(parent).add_child(entity);
