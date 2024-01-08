@@ -66,6 +66,8 @@ impl Plugin for SaveLoadPlugin {
             .add_event::<SaveRequest>()
             .add_event::<LoadRequest>()
             .add_event::<LoadingFinished>()
+            .add_event::<SavingFinished>()
+
             .insert_resource(SaveLoadConfig {
                 save_path: self.save_path.clone(),
                 entity_filter: self.entity_filter.clone(),
@@ -79,7 +81,7 @@ impl Plugin for SaveLoadPlugin {
             )
             .add_systems(
                 PreUpdate,
-                (prepare_save_game, apply_deferred, save_game)
+                (prepare_save_game, apply_deferred, save_game, cleanup_save)
                     .chain()
                     .run_if(should_save),
             )

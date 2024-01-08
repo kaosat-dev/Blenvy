@@ -13,6 +13,9 @@ pub struct SaveRequest {
     pub path: String,
 }
 
+#[derive(Event)]
+pub struct SavingFinished;
+
 pub fn should_save(save_requests: EventReader<SaveRequest>) -> bool {
     return save_requests.len() > 0;
 }
@@ -22,20 +25,37 @@ pub fn should_save(save_requests: EventReader<SaveRequest>) -> bool {
 /// marker component for entities that do not have parents, or whose parents should be ignored when serializing
 pub(crate) struct RootEntity;
 
+#[derive(Component, Debug)]
+pub(crate) struct OriginalParent(pub(crate) Entity);
+
+// any child of dynamic/ saveable entities that is not saveable itself should be removed from the list of children
 pub fn prepare_save_game(
     saveables: Query<(Entity), (With<Dynamic>, With<BlueprintName>)>,
     root_entities: Query<Entity, Or<(With<DynamicEntitiesRoot>, Without<Parent>)>>, //  With<DynamicEntitiesRoot>
-    dynamic_entities: Query<(Entity, &Parent), With<Dynamic>>,
+    dynamic_entities: Query<(Entity, &Parent, Option<&Children>), With<Dynamic>>,
     mut commands: Commands,
+
+    names: Query<&Name>
+
 ) {
     for entity in saveables.iter() {
         commands.entity(entity).insert(SpawnHere);
     }
 
-    for (child, parent) in dynamic_entities.iter() {
+    for (entity, parent, children) in dynamic_entities.iter() {
         let parent = parent.get();
         if root_entities.contains(parent) {
-            commands.entity(child).insert(RootEntity);
+            commands.entity(entity).insert(RootEntity);
+        }
+
+        if let Some(children) = children {
+            for sub_child in children.iter(){
+                if !dynamic_entities.contains(*sub_child){
+                    println!("uh OH {:?}", names.get(*sub_child));
+                    commands.entity(*sub_child).insert(OriginalParent(entity));
+                    commands.entity(entity).remove_children(&[*sub_child]);
+                }
+            }
         }
     }
 }
@@ -124,8 +144,10 @@ pub fn save_game(world: &mut World) {
         .join(Path::new(save_path.as_str())); // Path::new(&save_load_config.save_path).join(Path::new(save_path.as_str()));
     println!("SAVING TO {:?}", save_path);
 
+    // world.send_event(SavingFinished);
+
     #[cfg(not(target_arch = "wasm32"))]
-    IoTaskPool::get()
+    let foo = IoTaskPool::get()
         .spawn(async move {
             // Write the scene RON data to file
             File::create(save_path)
@@ -133,4 +155,23 @@ pub fn save_game(world: &mut World) {
                 .expect("Error while writing save to file");
         })
         .detach();
+    println!("foo , {:?}", foo);
+
+    /*let mut query = world.query::<(Entity, &OriginalParent)>();
+    for (entity, original_parent) in query.iter(world) {
+        world.entity_mut(original_parent.0).add_child(entity);
+    }*/
+}
+
+
+pub(crate) fn cleanup_save(
+    needs_parent_reset: Query<(Entity, &OriginalParent)>,
+    mut saving_finished: EventWriter<SavingFinished>,
+    mut commands: Commands,
+){
+    for (entity, original_parent) in needs_parent_reset.iter(){
+        println!("resetting parent");
+        commands.entity(original_parent.0).add_child(entity);
+    }
+    saving_finished.send(SavingFinished);
 }

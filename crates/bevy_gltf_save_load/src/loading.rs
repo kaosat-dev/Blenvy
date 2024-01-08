@@ -107,7 +107,7 @@ pub fn load_static(
     mut loading_finished: EventWriter<LoadingFinished>,
 ) {
     for (entity, marker) in foo.iter() {
-        println!("gna gna gna {:?}", marker.0);
+        info!("--loading static data{:?}", marker.0);
 
         let static_data = commands
             .spawn((
