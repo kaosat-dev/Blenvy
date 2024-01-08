@@ -26,13 +26,8 @@ pub fn setup_game(
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     println!("INITIAL setting up all stuff");
-    commands.insert_resource(AmbientLight {
-        color: Color::WHITE,
-        brightness: 0.2,
-    });
     // here we actually spawn our game world/level
-    let world = commands.spawn((
-        /*SceneBundle {
+     /*SceneBundle {
             // note: because of this issue https://github.com/bevyengine/bevy/issues/10436, "world" is now a gltf file instead of a scene
             scene: models
                 .get(game_assets.world.id())
@@ -41,9 +36,17 @@ pub fn setup_game(
                 .clone(),
             ..default()
         },*/
+    let world_root = commands.spawn((
         bevy::prelude::Name::from("world"),
         GameWorldTag,
         InAppRunning,
+
+        TransformBundle::default()
+
+    )).id();
+
+    let static_data = commands.spawn((
+        bevy::prelude::Name::from("static"),
 
         BluePrintBundle {
             blueprint: BlueprintName("World".to_string()),
@@ -55,6 +58,8 @@ pub fn setup_game(
 
     // and we fill it with dynamic data
     let dynamic_data = commands.spawn((
+        bevy::prelude::Name::from("Dynamic"),
+
         SceneBundle {
             scene: models
                 .get(game_assets.world_dynamic.id())
@@ -69,16 +74,15 @@ pub fn setup_game(
             ..Default::default()
         },*/
 
-        bevy::prelude::Name::from("world_content"),
-        // GameWorldTag,
         InAppRunning,
 
-        // Dynamic(true),
         DynamicEntitiesRoot,
         Flatten,
     ))
     .id();
-    // commands.entity(world).add_child(dynamic_data);
+    commands.entity(world_root).add_child(static_data);
+    commands.entity(world_root).add_child(dynamic_data);
+
     next_game_state.set(GameState::InGame)
 }
 
@@ -86,7 +90,7 @@ pub fn flatten_scene(
     matches: Query<(Entity, &Children), With<Flatten>>,
     all_children: Query<&Children>,
     mut commands: Commands,
-
+    gameworld: Query<Entity, With<GameWorldTag>>
 ){
 
     for (original, children) in matches.iter(){
@@ -95,23 +99,18 @@ pub fn flatten_scene(
         if let Ok(root_entity_children) = all_children.get(*root_entity) {
             for child in root_entity_children.iter(){
                 // info!("copying child {:?} upward from {:?} to {:?}", names.get(*child), root_entity, original);
-                commands.entity(original).add_child(*child);
+                // commands.entity(gameworld.get_single().unwrap()).add_child(*child);
                 // commands.entity(*child).remove_parent_in_place();// .remove::<>();
+                commands.entity(original).add_child(*child);
+
+                // commands.entity(*root_entity).add_child(*child);
+
             }
         }
-        // commands.entity(*root_entity).despawn();
+        // commands.entity(original).despawn();
+        commands.entity(original).remove::<Flatten>();
+        commands.entity(*root_entity).despawn();
     }
-}
-
-
-
-pub fn should_reset(
-    keycode: Res<Input<KeyCode>>,
-   //save_requested_events: EventReader<SaveRequest>,
-) -> bool {
-   //return save_requested_events.len() > 0;
-
-   return keycode.just_pressed(KeyCode::N)
 }
 
 // TODO: Same as in load, reuse
@@ -122,51 +121,14 @@ pub fn unload_world(mut commands: Commands, gameworlds: Query<Entity, With<GameW
     }
 }
 
-pub fn new_game(
-    mut commands: Commands,
-    game_assets: Res<GameAssets>,
-    models: Res<Assets<bevy::gltf::Gltf>>,
-    mut next_game_state: ResMut<NextState<GameState>>,
-) {
 
-    println!("RESET setting up all stuff");
-    commands.insert_resource(AmbientLight {
-        color: Color::WHITE,
-        brightness: 0.2,
-    });
-    // here we actually spawn our game world/level
-    let world = commands.spawn((
-        SceneBundle {
-            // note: because of this issue https://github.com/bevyengine/bevy/issues/10436, "world" is now a gltf file instead of a scene
-            scene: models
-                .get(game_assets.world.id())
-                .expect("main level should have been loaded")
-                .scenes[0]
-                .clone(),
-            ..default()
-        },
-        bevy::prelude::Name::from("world"),
-        GameWorldTag,
-        InAppRunning,
-    )).id();
+pub fn should_reset(
+    keycode: Res<Input<KeyCode>>,
+   //save_requested_events: EventReader<SaveRequest>,
+) -> bool {
+   //return save_requested_events.len() > 0;
 
-    // and we fill it with dynamic data
-    let dynamic_data = commands.spawn((
-        SceneBundle {
-            scene: models
-                .get(game_assets.world_dynamic.id())
-                .expect("main level CONTENT should have been loaded")
-                .scenes[0]
-                .clone(),
-            ..default()
-        },
-        bevy::prelude::Name::from("world_content"),
-        // GameWorldTag,
-        InAppRunning,
-    ))
-    .id();
-    commands.entity(world).add_child(dynamic_data);
-    next_game_state.set(GameState::InGame)
+   return keycode.just_pressed(KeyCode::N)
 }
 
 

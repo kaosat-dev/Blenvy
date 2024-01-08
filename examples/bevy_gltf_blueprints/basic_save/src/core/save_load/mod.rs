@@ -1,4 +1,6 @@
 pub mod saveable;
+use std::path::PathBuf;
+
 use bevy::core_pipeline::core_3d::{Camera3dDepthTextureUsage, ScreenSpaceTransmissionQuality};
 pub use saveable::*;
 
@@ -25,12 +27,35 @@ pub enum LoadingSet {
     PostLoad,
 }
 
-pub struct SaveLoadPlugin;
+// Plugin configuration
+
+#[derive(Clone, Resource)]
+pub struct SaveLoadConfig {
+    pub(crate) save_path: PathBuf,
+    pub(crate) filter: SceneFilter,
+}
+
+// define the plugin
+
+pub struct SaveLoadPlugin{
+    pub filter: SceneFilter,
+    pub save_path: PathBuf
+}
+
+impl Default for SaveLoadPlugin {
+    fn default() -> Self {
+        Self {
+          filter: SceneFilter::default(),
+          save_path: PathBuf::from("models/library")
+        }
+    }
+}
+
+
+
 impl Plugin for SaveLoadPlugin {
     fn build(&self, app: &mut App) {
         app
-        .register_type::<Uuid>()
-        .register_type::<Saveable>()
         .register_type::<Dynamic>()
 
         // TODO: remove these in bevy 0.13, as these are now registered by default
@@ -39,6 +64,11 @@ impl Plugin for SaveLoadPlugin {
 
         .add_event::<SaveRequest>()
         .add_event::<LoadRequest>()
+
+        .insert_resource(SaveLoadConfig { 
+            save_path: self.save_path.clone(),
+            filter: self.filter.clone()
+        })
 
         .init_resource::<LoadRequested>()
 

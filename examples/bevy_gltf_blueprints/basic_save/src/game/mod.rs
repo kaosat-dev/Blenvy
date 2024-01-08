@@ -140,7 +140,8 @@ impl Plugin for GamePlugin {
             .add_systems(Update, 
                 (
                     unload_world,
-                    new_game,
+                    apply_deferred,
+                    setup_game,
                 )
                 .chain()
                 .run_if(should_reset)

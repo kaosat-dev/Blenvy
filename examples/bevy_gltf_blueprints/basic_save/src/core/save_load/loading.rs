@@ -1,10 +1,14 @@
 
+use std::path::Path;
+
 use bevy::{prelude::*, scene::SceneInstance};
-use bevy_gltf_blueprints::{GameWorldTag};
+use bevy_gltf_blueprints::{GameWorldTag, BluePrintBundle, BlueprintName};
 use crate::{
     assets::GameAssets,
-    state::{AppState, GameState, InAppRunning}, game::{DynamicEntitiesRoot, Flatten}, core::save_load::Dynamic,
+    state::{AppState, GameState, InAppRunning}, game::{DynamicEntitiesRoot, Flatten},
 };
+
+use super::SaveLoadConfig;
 
 
 #[derive(Event)]
@@ -68,6 +72,7 @@ pub fn load_game(
     asset_server: Res<AssetServer>,
     // load_request: Res<LoadRequested>,
     mut load_requests: EventReader<LoadRequest>,
+    save_load_config: Res<SaveLoadConfig>,
 
     mut next_app_state: ResMut<NextState<AppState>>,
     mut next_game_state: ResMut<NextState<GameState>>,
@@ -83,46 +88,49 @@ pub fn load_game(
         }
     }
 
-    println!("LOADING FROM {}", save_path);
+    let save_path = Path::new(&save_load_config.save_path).join(Path::new(save_path.as_str()));
 
+    info!("LOADING FROM {:?}", save_path);
 
-    commands.insert_resource(AmbientLight {
-        color: Color::WHITE,
-        brightness: 0.2,
-    });
-    // here we actually spawn our game world/level
-    let world = commands.spawn((
-        SceneBundle {
-            // note: because of this issue https://github.com/bevyengine/bevy/issues/10436, "world" is now a gltf file instead of a scene
-            scene: models
-                .get(game_assets.world.id())
-                .expect("main level should have been loaded")
-                .scenes[0]
-                .clone(),
-            ..default()
-        },
+    let world_root = commands.spawn((
         bevy::prelude::Name::from("world"),
         GameWorldTag,
         InAppRunning,
+
+        TransformBundle::default(),
+        InheritedVisibility::default()
+
+    )).id();
+
+    let static_data = commands.spawn((
+        bevy::prelude::Name::from("static"),
+
+        BluePrintBundle {
+            blueprint: BlueprintName("World".to_string()),
+            transform: TransformBundle::from_transform(Transform::from_xyz(0.0, 0.0, 0.0)),
+            ..Default::default()
+        },
+
     )).id();
 
     // and we fill it with dynamic data
-    let scene_data = asset_server.load(format!("scenes/{save_path}"));
+    let scene_data = asset_server.load({save_path});
     let dynamic_data = commands.spawn((
         DynamicSceneBundle {
             // Scenes are loaded just like any other asset.
             scene: scene_data,
             ..default()
         },
-        bevy::prelude::Name::from("world_content"),
+        bevy::prelude::Name::from("dynamic"),
         InAppRunning,
-        // Flatten,
         DynamicEntitiesRoot,
-        CleanupScene
+
+        CleanupScene // we mark this scene as needing a cleanup
     ))
     .id();
-    // commands.entity(world).add_child(dynamic_data);
-    // asset_server.reload(save_path);
+
+    commands.entity(world_root).add_child(static_data);
+    commands.entity(world_root).add_child(dynamic_data);
 
     next_app_state.set(AppState::AppRunning);
     next_game_state.set(GameState::InGame);
@@ -134,7 +142,7 @@ pub fn cleanup_loaded_scene(
     mut commands: Commands,
 ){
     for loaded_scene in loaded_scenes.iter(){
-        println!("REMOVING SCENE");
+        info!("REMOVING SCENE");
         commands.entity(loaded_scene)
             .remove::<Handle<DynamicScene>>()
             .remove::<SceneInstance>()
