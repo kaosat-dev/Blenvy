@@ -32,20 +32,20 @@ pub enum LoadingSet {
 #[derive(Clone, Resource)]
 pub struct SaveLoadConfig {
     pub(crate) save_path: PathBuf,
-    pub(crate) filter: SceneFilter,
+    pub(crate) entity_filter: SceneFilter,
 }
 
 // define the plugin
 
 pub struct SaveLoadPlugin{
-    pub filter: SceneFilter,
+    pub entity_filter: SceneFilter,
     pub save_path: PathBuf
 }
 
 impl Default for SaveLoadPlugin {
     fn default() -> Self {
         Self {
-          filter: SceneFilter::default(),
+          entity_filter: SceneFilter::default(),
           save_path: PathBuf::from("models/library")
         }
     }
@@ -67,7 +67,7 @@ impl Plugin for SaveLoadPlugin {
 
         .insert_resource(SaveLoadConfig { 
             save_path: self.save_path.clone(),
-            filter: self.filter.clone()
+            entity_filter: self.entity_filter.clone()
         })
 
         .init_resource::<LoadRequested>()

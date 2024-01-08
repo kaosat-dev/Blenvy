@@ -86,7 +86,9 @@ pub fn save_game(
     let save_load_config = world.get_resource::<SaveLoadConfig>().expect("SaveLoadConfig should exist at this stage");
 
     // we hardcode some of the always allowed types
-    let filter = save_load_config.filter.clone()//SceneFilter::Allowlist(allowed_components)
+    let filter = save_load_config.entity_filter.clone()
+        .allow::<Parent>()
+        .allow::<Children>()
         .allow::<BlueprintName>()
         .allow::<SpawnHere>()
         .allow::<Dynamic>()

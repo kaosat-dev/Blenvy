@@ -33,7 +33,7 @@ impl Plugin for CorePlugin {
             PhysicsPlugin,
             SaveLoadPlugin {
                 save_path: "scenes".into(),
-                filter: SceneFilter::Allowlist(
+                entity_filter: SceneFilter::Allowlist(
                     HashSet::from([
                         TypeId::of::<Name>(),
                         TypeId::of::<Transform>(), 
@@ -42,8 +42,6 @@ impl Plugin for CorePlugin {
                         TypeId::of::<SpawnHere>(),
                         TypeId::of::<Dynamic>(),
                     
-                        TypeId::of::<Parent>(),
-                        TypeId::of::<Children>(),
                         TypeId::of::<InheritedVisibility>(),
                     
                         TypeId::of::<Camera>(),
