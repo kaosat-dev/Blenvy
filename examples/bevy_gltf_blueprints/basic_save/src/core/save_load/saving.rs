@@ -120,7 +120,7 @@ pub fn save_game(
         .unwrap();
 
 
-    let save_path = Path::new(&save_load_config.save_path).join(Path::new(save_path.as_str()));
+    let save_path =  Path::new("assets").join(&save_load_config.save_path).join(Path::new(save_path.as_str())); // Path::new(&save_load_config.save_path).join(Path::new(save_path.as_str()));
     println!("SAVING TO {:?}", save_path);
 
     #[cfg(not(target_arch = "wasm32"))]

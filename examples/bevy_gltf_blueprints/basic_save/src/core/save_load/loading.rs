@@ -114,7 +114,9 @@ pub fn load_game(
     )).id();
 
     // and we fill it with dynamic data
-    let scene_data = asset_server.load({save_path});
+    let scene_data = asset_server.load(save_path);
+    // let input = std::fs::read(&path)?;
+
     let dynamic_data = commands.spawn((
         DynamicSceneBundle {
             // Scenes are loaded just like any other asset.

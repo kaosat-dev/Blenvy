@@ -32,7 +32,7 @@ impl Plugin for CorePlugin {
             CameraPlugin,
             PhysicsPlugin,
             SaveLoadPlugin {
-                save_path: "assets/scenes".into(),
+                save_path: "scenes".into(),
                 filter: SceneFilter::Allowlist(
                     HashSet::from([
                         TypeId::of::<Name>(),
