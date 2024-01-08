@@ -1,9 +1,15 @@
 pub mod in_game;
-use bevy_gltf_save_load::{LoadRequest, LoadingFinished, SaveRequest};
 pub use in_game::*;
 
 pub mod in_main_menu;
 pub use in_main_menu::*;
+
+pub mod in_game_loading;
+pub use in_game_loading::*;
+
+pub mod in_game_saving;
+pub use in_game_saving::*;
+
 
 pub mod picking;
 pub use picking::*;
@@ -14,6 +20,7 @@ use crate::{
 };
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
+use bevy_gltf_save_load::{LoadRequest, LoadingFinished, SaveRequest, SavingFinished};
 
 // this file is just for demo purposes, contains various types of components, systems etc
 
@@ -66,47 +73,46 @@ fn player_move_demo(
     }
 }
 
-// collision tests/debug
-pub fn test_collision_events(
-    mut collision_events: EventReader<CollisionEvent>,
-    mut contact_force_events: EventReader<ContactForceEvent>,
-) {
-    for collision_event in collision_events.read() {
-        println!("collision");
-        match collision_event {
-            CollisionEvent::Started(_entity1, _entity2, _) => {
-                println!("collision started")
-            }
-            CollisionEvent::Stopped(_entity1, _entity2, _) => {
-                println!("collision ended")
-            }
-        }
-    }
 
-    for contact_force_event in contact_force_events.read() {
-        println!("Received contact force event: {:?}", contact_force_event);
-    }
-}
+pub fn request_save(
+    mut save_requests: EventWriter<SaveRequest>,
+    keycode: Res<Input<KeyCode>>,
 
-pub fn request_save(mut save_requests: EventWriter<SaveRequest>, keycode: Res<Input<KeyCode>>) {
-    if keycode.just_pressed(KeyCode::S) {
+    current_state: Res<State<GameState>>,
+    mut next_game_state: ResMut<NextState<GameState>>,
+)
+{
+    if keycode.just_pressed(KeyCode::S)  && (current_state.get() != &GameState::InLoading) && (current_state.get() != &GameState::InSaving)  {
+        println!("request to load");
+        next_game_state.set(GameState::InSaving);
+
         save_requests.send(SaveRequest {
             path: "save.scn.ron".into(),
         })
     }
 }
 
+pub fn on_saving_finished(
+    mut saving_finished: EventReader<SavingFinished>,
+    mut next_game_state: ResMut<NextState<GameState>>,
+) {
+    for _ in saving_finished.read() {
+        println!("saving finished, changing state");
+        next_game_state.set(GameState::InGame);
+    }
+}
+
+
+
 pub fn request_load(
     mut load_requests: EventWriter<LoadRequest>,
     keycode: Res<Input<KeyCode>>,
-
-    mut next_app_state: ResMut<NextState<AppState>>,
+    current_state: Res<State<GameState>>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
-    if keycode.just_pressed(KeyCode::L) {
+    if keycode.just_pressed(KeyCode::L) && (current_state.get() != &GameState::InLoading) && (current_state.get() != &GameState::InSaving)  {
         println!("request to load");
-        // next_app_state.set(AppState::LoadingGame);
-        next_game_state.set(GameState::None);
+        next_game_state.set(GameState::InLoading);
         load_requests.send(LoadRequest {
             path: "save.scn.ron".into(),
         })
@@ -115,12 +121,10 @@ pub fn request_load(
 
 pub fn on_loading_finished(
     mut loading_finished: EventReader<LoadingFinished>,
-    mut next_app_state: ResMut<NextState<AppState>>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     for _ in loading_finished.read() {
         println!("loading finished, changing state");
-        //next_app_state.set(AppState::AppRunning);
         next_game_state.set(GameState::InGame);
     }
 }
@@ -132,15 +136,15 @@ impl Plugin for GamePlugin {
             .register_type::<Interactible>()
             .register_type::<SoundMaterial>()
             .register_type::<Player>()
-            // little helper utility, to automatically inject components that are dependant on an other component
-            // ie, here an Entity with a Player component should also always have a ShouldBeWithPlayer component
-            // you get a warning if you use this, as I consider this to be stop-gap solution (usually you should have either a bundle, or directly define all needed components)
-            .add_systems(
+              .add_systems(
                 Update,
-                (
+                (      
+                    // little helper utility, to automatically inject components that are dependant on an other component
+                    // ie, here an Entity with a Player component should also always have a ShouldBeWithPlayer component
+                    // you get a warning if you use this, as I consider this to be stop-gap solution (usually you should have either a bundle, or directly define all needed components)
+    
                     // insert_dependant_component::<Player, ShouldBeWithPlayer>,
                     player_move_demo, //.run_if(in_state(AppState::Running)),
-                    // test_collision_events
                     spawn_test,
                     spawn_test_unregisted_components,
                     spawn_test_parenting,
@@ -155,10 +159,18 @@ impl Plugin for GamePlugin {
                     .run_if(should_reset)
                     .run_if(in_state(AppState::AppRunning)),
             )
-            .add_systems(Update, (request_save, request_load, on_loading_finished))
+            .add_systems(Update, (request_save, request_load, on_saving_finished, on_loading_finished))
+
             .add_systems(OnEnter(AppState::MenuRunning), setup_main_menu)
             .add_systems(OnExit(AppState::MenuRunning), teardown_main_menu)
             .add_systems(Update, main_menu.run_if(in_state(AppState::MenuRunning)))
+
+            .add_systems(OnEnter(GameState::InLoading), setup_loading_screen)
+            .add_systems(OnExit(GameState::InLoading), teardown_loading_screen)
+
+            .add_systems(OnEnter(GameState::InSaving), setup_saving_screen)
+            .add_systems(OnExit(GameState::InSaving), teardown_saving_screen)
+
             .add_systems(OnEnter(AppState::AppRunning), setup_game);
     }
 }

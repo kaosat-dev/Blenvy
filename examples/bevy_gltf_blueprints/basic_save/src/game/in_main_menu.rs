@@ -83,9 +83,9 @@ pub fn setup_main_menu(mut commands: Commands) {
     ));*/
 }
 
-pub fn teardown_main_menu(bla: Query<Entity, With<InMainMenu>>, mut commands: Commands) {
-    for bli in bla.iter() {
-        commands.entity(bli).despawn_recursive();
+pub fn teardown_main_menu(in_main_menu: Query<Entity, With<InMainMenu>>, mut commands: Commands) {
+    for entity in in_main_menu.iter() {
+        commands.entity(entity).despawn_recursive();
     }
 }
 

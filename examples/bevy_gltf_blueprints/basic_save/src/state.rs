@@ -9,9 +9,6 @@ pub enum AppState {
     AppLoading,
     AppRunning,
     AppEnding,
-
-    // FIXME: not sure
-    LoadingGame,
 }
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Default, States)]
@@ -34,17 +31,24 @@ pub struct InCoreLoading;
 #[derive(Component, Default)]
 pub struct InMenuRunning;
 #[derive(Component)]
-pub struct InAppLoading;
-#[derive(Component)]
+
 pub struct InAppRunning;
 
 // components for tagging in game vs in game menu stuff
 #[derive(Component, Default)]
 pub struct InMainMenu;
+
 #[derive(Component, Default)]
 pub struct InMenu;
+
 #[derive(Component, Default)]
 pub struct InGame;
+
+#[derive(Component, Default)]
+pub struct InGameSaving;
+
+#[derive(Component, Default)]
+pub struct InGameLoading;
 
 pub struct StatePlugin;
 impl Plugin for StatePlugin {
