@@ -6,7 +6,7 @@ use bevy::scene::SceneInstance;
 
 use super::{AnimationPlayerLink, Animations};
 use super::{SpawnHere, Spawned};
-use crate::{CopyComponents, InBlueprint, OriginalChildren, NoInBlueprint, Library};
+use crate::{CopyComponents, InBlueprint, OriginalChildren, NoInBlueprint};
 
 /// this system is in charge of doing any necessary post processing after a blueprint scene has been spawned
 /// - it removes one level of useless nesting

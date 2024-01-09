@@ -64,7 +64,7 @@ pub(crate) fn spawn_from_blueprints(
     asset_server: Res<AssetServer>,
     blueprints_config: Res<BluePrintsConfig>,
 
-    children: Query<(&Children)>,
+    children: Query<&Children>,
 ) {
     for (entity, blupeprint_name, transform, original_parent, library_override, name) in spawn_placeholders.iter() {
         info!(
@@ -82,9 +82,8 @@ pub(crate) fn spawn_from_blueprints(
         let what = &blupeprint_name.0;
         let model_file_name = format!("{}.{}", &what, &blueprints_config.format);
 
+        // library path is either defined at the plugin level or overriden by optional Library components
         let library_path = library_override.map_or_else(|| &blueprints_config.library_folder, |l| &l.0 );
-        println!("LIBRARY PATH {:?}", library_path);
-        // 
         let model_path =
             Path::new(&library_path).join(Path::new(model_file_name.as_str()));
 

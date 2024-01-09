@@ -13,9 +13,6 @@ pub use aabb::*;
 pub mod materials;
 pub use materials::*;
 
-pub mod clone_entity;
-pub use clone_entity::*;
-
 pub mod copy_components;
 pub use copy_components::*;
 
@@ -36,14 +33,12 @@ pub enum GltfBlueprintsSet {
 pub struct BluePrintBundle {
     pub blueprint: BlueprintName,
     pub spawn_here: SpawnHere,
-    pub transform: TransformBundle,
 }
 impl Default for BluePrintBundle {
     fn default() -> Self {
         BluePrintBundle {
             blueprint: BlueprintName("default".into()),
             spawn_here: SpawnHere,
-            transform: TransformBundle::default(),
         }
     }
 }
