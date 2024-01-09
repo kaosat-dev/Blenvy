@@ -1,11 +1,8 @@
 use std::path::Path;
-
 use bevy::{prelude::*, scene::SceneInstance};
-use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, GameWorldTag};
+use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, GameWorldTag, Library};
 
-use crate::{DynamicEntitiesRoot, StaticEntitiesRoot};
-
-use super::{Dynamic, SaveLoadConfig};
+use crate::{DynamicEntitiesRoot, StaticEntitiesRoot, StaticEntitiesStorage, SaveLoadConfig};
 
 #[derive(Event)]
 pub struct LoadRequest {
@@ -14,8 +11,6 @@ pub struct LoadRequest {
 
 #[derive(Event)]
 pub struct LoadingFinished;
-
-
 
 #[derive(Resource, Default)]
 pub struct LoadRequested {
@@ -27,13 +22,9 @@ pub(crate) struct LoadFirstStageDone;
 
 #[derive(Component, Reflect, Debug, Default)]
 #[reflect(Component)]
-pub struct CleanupScene;
+pub(crate) struct CleanupScene;
 
-pub(crate) fn should_load() -> bool {
-  
-    return true
-}
-
+/// helper system that "converts" loadRequest events to LoadRequested resources
 pub(crate) fn mark_load_requested(
     mut load_requests: EventReader<LoadRequest>,
     mut commands: Commands
@@ -57,9 +48,8 @@ pub(crate) fn unload_world(mut commands: Commands, gameworlds: Query<Entity, Wit
     }
 }
 
-pub fn load_game(
+pub(crate) fn load_game(
     mut commands: Commands,
-    models: Res<Assets<bevy::gltf::Gltf>>,
     asset_server: Res<AssetServer>,
     load_request: Res<LoadRequested>,
     save_load_config: Res<SaveLoadConfig>,
@@ -84,7 +74,6 @@ pub fn load_game(
     let dynamic_data = commands
         .spawn((
             DynamicSceneBundle {
-                // Scenes are loaded just like any other asset.
                 scene: asset_server.load(save_path),
                 ..default()
             },
@@ -101,49 +90,44 @@ pub fn load_game(
     info!("--loading: loaded dynamic data");
 }
 
-#[derive(Component, Reflect, Debug, Default)]
-#[reflect(Component)]
-pub struct TestMarker;
-
-pub fn load_static(
+pub(crate) fn load_static(
     dynamic_worlds: Query<Entity, With<SceneInstance>>,
-    static_worlds: Query<(Entity, &StaticEntitiesRoot), (Added<StaticEntitiesRoot>)>,
     world_root: Query<(Entity), With<GameWorldTag>>,
     mut commands: Commands,
     mut loading_finished: EventWriter<LoadingFinished>,
-) {
- 
-    for (entity, marker) in static_worlds.iter() {
-        info!("--loading static data {:?}", marker.0);
 
+    static_entities: Option<Res<StaticEntitiesStorage>>
+) {
+    if let Some(info) = static_entities {
+        info!("--loading static data {:?}", info.name);
         let static_data = commands
             .spawn((
-                bevy::prelude::Name::from("static"),
+                Name::from("static"),
                 BluePrintBundle {
-                    blueprint: BlueprintName(marker.0.clone()),
+                    blueprint: BlueprintName(info.name.clone()),
                     ..Default::default()
                 },
+                StaticEntitiesRoot,
+                Library(info.library_path.clone().into())
             ))
             .id();
 
         let world_root = world_root.get_single().unwrap();
         println!("root {:?}", world_root);
         commands.entity(world_root).add_child(static_data);
-        
+
         info!("--loading: loaded static data");
-        for (entity) in dynamic_worlds.iter() {
+        for entity in dynamic_worlds.iter() {
             commands.entity(entity).insert(
                 CleanupScene, // we mark this scene as needing a cleanup
             );
         }
 
         loading_finished.send(LoadingFinished);
-        break;
     }
-   
 }
 
-pub fn cleanup_loaded_scene(
+pub(crate) fn cleanup_loaded_scene(
     loaded_scenes: Query<
         Entity,
         (

@@ -1,12 +1,13 @@
 use bevy::prelude::*;
 use bevy::tasks::IoTaskPool;
-use bevy_gltf_blueprints::{BlueprintName, InBlueprint, SpawnHere};
+use bevy::utils::Instant;
+use bevy_gltf_blueprints::{BlueprintName, InBlueprint, SpawnHere, Library};
 
 use std::fs::{self, File};
 use std::io::Write;
 use std::path::Path;
 
-use crate::{Dynamic, DynamicEntitiesRoot, SaveLoadConfig, StaticEntitiesRoot};
+use crate::{SaveLoadConfig, Dynamic, DynamicEntitiesRoot, StaticEntitiesRoot,};
 
 #[derive(Event, Debug)]
 pub struct SaveRequest {
@@ -20,23 +21,31 @@ pub fn should_save(save_requests: EventReader<SaveRequest>) -> bool {
     return save_requests.len() > 0;
 }
 
+
+#[derive(Resource, Clone, Debug, Default, Reflect)]
+#[reflect(Resource)]
+pub struct StaticEntitiesStorage {
+    pub name: String,
+    pub library_path: String
+}
+
 #[derive(Component, Reflect, Debug, Default)]
 #[reflect(Component)]
 /// marker component for entities that do not have parents, or whose parents should be ignored when serializing
 pub(crate) struct RootEntity;
 
 #[derive(Component, Debug)]
+/// internal helper component to store parents before resetting them
 pub(crate) struct OriginalParent(pub(crate) Entity);
 
 // any child of dynamic/ saveable entities that is not saveable itself should be removed from the list of children
-pub fn prepare_save_game(
-    saveables: Query<(Entity), (With<Dynamic>, With<BlueprintName>)>,
+pub(crate) fn prepare_save_game(
+    saveables: Query<Entity, (With<Dynamic>, With<BlueprintName>)>,
     root_entities: Query<Entity, Or<(With<DynamicEntitiesRoot>, Without<Parent>)>>, //  With<DynamicEntitiesRoot>
     dynamic_entities: Query<(Entity, &Parent, Option<&Children>), With<Dynamic>>,
+    static_entities: Query<(Entity, &BlueprintName, &Library), With<StaticEntitiesRoot>>,
+    
     mut commands: Commands,
-
-    names: Query<&Name>
-
 ) {
     for entity in saveables.iter() {
         commands.entity(entity).insert(SpawnHere);
@@ -58,8 +67,15 @@ pub fn prepare_save_game(
             }
         }
     }
+    for (_, blueprint_name, library) in static_entities.iter(){
+        commands.insert_resource(StaticEntitiesStorage {
+            name: blueprint_name.0.clone(),
+            library_path: library.0.to_str().unwrap().into()
+        });
+    }
+
 }
-pub fn save_game(world: &mut World) {
+pub(crate) fn save_game(world: &mut World) {
     info!("saving");
 
     let mut save_path: String = "".into();
@@ -81,17 +97,8 @@ pub fn save_game(world: &mut World) {
         .iter(world)
         .collect();
 
-    let static_world_markers: Vec<Entity> = world
-        .query_filtered::<Entity, (With<StaticEntitiesRoot>)>()
-        .iter(world)
-        .collect();
-
-    println!("saveable entities {}", saveable_entities.len());
-    println!("saveable root entities {}", saveable_root_entities.len());
-    println!(
-        "saveable static_world_markers {}",
-        static_world_markers.len()
-    );
+    info!("saveable entities {}", saveable_entities.len());
+    info!("saveable root entities {}", saveable_root_entities.len());
 
     let save_load_config = world
         .get_resource::<SaveLoadConfig>()
@@ -99,41 +106,56 @@ pub fn save_game(world: &mut World) {
 
     // we hardcode some of the always allowed types
     let filter = save_load_config
-        .entity_filter
+        .component_filter
         .clone()
         .allow::<Parent>()
         .allow::<Children>()
         .allow::<BlueprintName>()
         .allow::<SpawnHere>()
         .allow::<Dynamic>()
-        .allow::<StaticEntitiesRoot>();
+        ;
 
     // for root entities, it is the same EXCEPT we make sure parents are not included
     let filter_root = filter.clone().deny::<Parent>();
 
+    let filter_resources =save_load_config
+        .resource_filter
+        .clone()
+        .allow::<StaticEntitiesStorage>()
+        ;
+
     // for default stuff
-    let scene_builder = DynamicSceneBuilder::from_world(world).with_filter(filter.clone());
+    let scene_builder = DynamicSceneBuilder::from_world(world)
+        .with_filter(filter.clone())
+        .with_resource_filter(filter_resources.clone())
+        ;
 
     let mut dyn_scene = scene_builder
+        .extract_resources()
         .extract_entities(saveable_entities.clone().into_iter())
         .remove_empty_entities()
         .build();
 
     // for root entities
     let scene_builder_root =
-        DynamicSceneBuilder::from_world(world).with_filter(filter_root.clone());
+        DynamicSceneBuilder::from_world(world)
+        .with_filter(filter_root.clone())
+        .with_resource_filter(filter_resources.clone())
+        ;
 
     let mut dyn_scene_root = scene_builder_root
+        .extract_resources()
         .extract_entities(
             saveable_root_entities
                 .clone()
                 .into_iter()
-                .chain(static_world_markers.into_iter()),
+                // .chain(static_world_markers.into_iter()),
         )
         .remove_empty_entities()
         .build();
 
     dyn_scene.entities.append(&mut dyn_scene_root.entities);
+    // dyn_scene.resources.append(&mut dyn_scene_root.resources);
 
     let serialized_scene = dyn_scene
         .serialize_ron(world.resource::<AppTypeRegistry>())
@@ -142,12 +164,12 @@ pub fn save_game(world: &mut World) {
     let save_path = Path::new("assets")
         .join(&save_load_config.save_path)
         .join(Path::new(save_path.as_str())); // Path::new(&save_load_config.save_path).join(Path::new(save_path.as_str()));
-    println!("SAVING TO {:?}", save_path);
+    info!("saving game to {:?}", save_path);
 
     // world.send_event(SavingFinished);
 
     #[cfg(not(target_arch = "wasm32"))]
-    let foo = IoTaskPool::get()
+    IoTaskPool::get()
         .spawn(async move {
             // Write the scene RON data to file
             File::create(save_path)
@@ -155,9 +177,6 @@ pub fn save_game(world: &mut World) {
                 .expect("Error while writing save to file");
         })
         .detach();
-    println!("foo , {:?}", foo);
-
-    /**/
 }
 
 
@@ -169,6 +188,7 @@ pub(crate) fn cleanup_save(
     for (entity, original_parent) in needs_parent_reset.iter(){
         commands.entity(original_parent.0).add_child(entity);
     }
+    commands.remove_resource::<StaticEntitiesStorage>();
     saving_finished.send(SavingFinished);
 }
 /* 

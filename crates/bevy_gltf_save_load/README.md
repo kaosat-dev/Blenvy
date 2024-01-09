@@ -1,0 +1,246 @@
+[![Crates.io](https://img.shields.io/crates/v/bevy_gltf_save_load)](https://crates.io/crates/bevy_gltf_save_load)
+[![Docs](https://img.shields.io/docsrs/bevy_gltf_save_load)](https://docs.rs/bevy_gltf_save_load/latest/bevy_gltf_save_load/)
+[![License](https://img.shields.io/crates/l/bevy_gltf_save_load)](https://github.com/kaosat-dev/Blender_bevy_components_workflow/blob/main/crates/bevy_gltf_save_load/License.md)
+[![Bevy tracking](https://img.shields.io/badge/Bevy%20tracking-released%20version-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
+
+# bevy_gltf_save_load
+
+Built upon [bevy_gltf_blueprints](https://crates.io/crates/bevy_gltf_blueprints) this crate adds the ability to easilly **save** and **load** your game worlds for [Bevy](https://bevyengine.org/) .
+
+* leverages blueprints & seperation between 
+    * **dynamic** entities : entities that can change during the lifetime of your app/game
+    * **static** entities : entities that do NOT change (typically, a part of your levels/ environements)
+* to allow for :
+    * a simple save/load workflow
+    * ability to specify **which entities** to save or to exclude
+    * ability to specify **which components** to save or to exclude
+    * small(er) save files (only a portion of the entities is saved)
+
+Particularly useful when using [Blender](https://www.blender.org/) as an editor for the [Bevy](https://bevyengine.org/) game engine, combined with the [Blender plugin](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/gltf_auto_export) that does a lot of the work for you (including spliting generating seperate gltf files for your static vs dynamic assets)
+
+
+A bit of heads up:
+
+* very opinionated !
+* still in the early stages & not 100% feature complete
+
+
+## Usage
+
+Here's a minimal usage example:
+
+```toml
+# Cargo.toml
+[dependencies]
+bevy="0.12"
+bevy_gltf_save_load = { version = "0.1"} 
+
+```
+
+```rust no_run
+use bevy::prelude::*;
+use bevy_gltf_save_load::*;
+
+fn main() {
+    App::new()
+        .add_plugins((
+            DefaultPlugins,
+            SaveLoadPlugin::default()
+        ))
+        .run();
+}
+
+// not shown here: any other setup that is not specific to save/load
+
+pub fn setup_game(
+    mut commands: Commands,
+    mut next_game_state: ResMut<NextState<GameState>>,
+) {
+    info!("setting up game world");
+    // here we actually spawn our game world/level
+    let world_root = commands
+        .spawn((
+            Name::from("world"),
+            GameWorldTag,
+            InAppRunning,
+            TransformBundle::default(),
+            InheritedVisibility::default(),
+        ))
+        .id();
+
+    // and we fill it with static entities
+    let static_data = commands
+        .spawn((
+            Name::from("static"),
+            BluePrintBundle {
+                blueprint: BlueprintName("World".to_string()),
+                ..Default::default()
+            },
+            StaticEntitiesRoot,
+            Library("models".into())
+        ))
+        .id();
+
+    // and we fill it with dynamic entities
+    let dynamic_data = commands
+        .spawn((
+            Name::from("dynamic"),
+            BluePrintBundle {
+                blueprint: BlueprintName("World_dynamic".to_string()),
+                ..Default::default()
+            },
+            DynamicEntitiesRoot,
+            NoInBlueprint,
+            Library("models".into())
+        ))
+        .id();
+    commands.entity(world_root).add_child(static_data);
+    commands.entity(world_root).add_child(dynamic_data);
+
+    next_game_state.set(GameState::InGame)
+}
+
+
+// add a system to trigger saving
+pub fn request_save(
+    mut save_requests: EventWriter<SaveRequest>,
+    keycode: Res<Input<KeyCode>>,
+)
+{
+    if keycode.just_pressed(KeyCode::S) {
+        save_requests.send(SaveRequest {
+            path: "save.scn.ron".into(),
+        })
+    }
+}
+
+// add a system to trigger loading
+pub fn request_load(
+    mut load_requests: EventWriter<LoadRequest>,
+    keycode: Res<Input<KeyCode>>,
+)
+{
+    if keycode.just_pressed(KeyCode::L) {
+        save_requests.send(LoadRequest {
+            path: "save.scn.ron".into(),
+        })
+    }
+}
+
+
+```
+
+##  Installation
+
+Add the following to your `[dependencies]` section in `Cargo.toml`:
+
+```toml
+bevy_gltf_save_load = "0.1"
+```
+
+Or use `cargo add`:
+
+```toml
+cargo add bevy_gltf_save_load
+```
+
+## Setup
+
+```rust no_run
+use bevy::prelude::*;
+use bevy_gltf_save_load::*;
+
+fn main() {
+    App::new()
+        .add_plugins((
+            DefaultPlugins
+            SaveLoadPlugin::default()
+        ))
+        .run();
+}
+
+```
+
+you likely need to configure your settings (otherwise, not much will be saved)
+
+```rust no_run
+use bevy::prelude::*;
+use bevy_gltf_save_load::*;
+
+fn main() {
+    App::new()
+        .add_plugins((
+            DefaultPlugins,
+            SaveLoadPlugin {
+                save_path: "scenes".into(), // where do we save files to (under assets for now) defaults to "scenes"
+                component_filter: SceneFilter::Allowlist(HashSet::from([ // this is using Bevy's build in SceneFilter, you can compose what components you want to allow/deny
+                    TypeId::of::<Name>(),
+                    TypeId::of::<Transform>(),
+                    TypeId::of::<Velocity>(),
+                    // and any other commponent you want to include/exclude
+                ])),
+                ..Default::default()
+            },
+        ))
+        .run();
+}
+
+```
+### How to make sure your entites will be saved
+
+- only entites that have a **Dynamic** component will be saved ! (the component is provided as part of the crate)
+
+
+### Component Filter:
+ 
+- by default only the following components are going to be saved 
+    - **Parent**
+    - **Children**
+    - **BlueprintName** : part of bevy_gltf_blueprints, used under the hood
+    - **SpawnHere** :part of bevy_gltf_blueprints, used under the hood
+    - **Dynamic** : included in this crate, allows you to tag components as dynamic aka saveable ! Use this to make sure your entities are saved !
+
+- you **CANNOT** remove these as they are part of the boilerplate
+- you **CAN** add however many other components you want, allow them all etc as you see fit
+- you can find more information about the SceneFilter object [here](https://bevyengine.org/news/bevy-0-11/#scene-filtering) and [here](https://docs.rs/bevy/latest/bevy/scene/enum.SceneFilter.html)
+
+
+## SystemSet
+
+For convenience ```bevy_gltf_save_load``` provides two **SystemSets** 
+ - [```LoadingSet```](./src/lib.rs#19)
+ - [```SavingSet```](./src/lib.rs#24)
+
+
+## Examples
+
+Highly advised to get a better understanding of how things work !
+To get started I recomend looking at 
+
+- [world setup]('https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_save_load/basic/src/game/in_game.rs#13')
+- [here]
+
+
+All examples are here:
+
+- https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_save_load/basic
+
+
+## Compatible Bevy versions
+
+The main branch is compatible with the latest Bevy release, while the branch `bevy_main` tries to track the `main` branch of Bevy (PRs updating the tracked commit are welcome).
+
+Compatibility of `bevy_gltf_save_load` versions:
+| `bevy_gltf_save_load` | `bevy` |
+| :--                 | :--    |
+| `0.1 `              | `0.12` |
+| branch `main`       | `0.12` |
+| branch `bevy_main`  | `main` |
+
+
+## License
+
+This crate, all its code, contents & assets is Dual-licensed under either of
+
+- Apache License, Version 2.0, ([LICENSE-APACHE](./LICENSE_APACHE.md) or https://www.apache.org/licenses/LICENSE-2.0)
+- MIT license ([LICENSE-MIT](./LICENSE_MIT.md) or https://opensource.org/licenses/MIT)

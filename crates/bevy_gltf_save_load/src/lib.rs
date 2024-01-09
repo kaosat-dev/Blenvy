@@ -13,49 +13,48 @@ pub use loading::*;
 use bevy::prelude::*;
 use bevy::prelude::{App, IntoSystemConfigs, Plugin};
 
-//use bevy::asset::free_unused_assets_system;
-//use bevy_gltf_components::GltfComponentsSet;
-
 use bevy_gltf_blueprints::GltfBlueprintsSet;
-
-#[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
-pub enum LoadingSet {
-    Load,
-}
 
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
 pub enum SavingSet {
     Save,
 }
 
+#[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
+pub enum LoadingSet {
+    Load,
+}
 
 // Plugin configuration
 
 #[derive(Clone, Resource)]
 pub struct SaveLoadConfig {
     pub(crate) save_path: PathBuf,
-    pub(crate) entity_filter: SceneFilter,
+    pub(crate) component_filter: SceneFilter,
+    pub(crate) resource_filter: SceneFilter,
 }
 
 // define the plugin
 
 pub struct SaveLoadPlugin {
-    pub entity_filter: SceneFilter,
+    pub component_filter: SceneFilter,
+    pub resource_filter: SceneFilter,
     pub save_path: PathBuf,
 }
 
 impl Default for SaveLoadPlugin {
     fn default() -> Self {
         Self {
-            entity_filter: SceneFilter::default(),
-            save_path: PathBuf::from("models/library"),
+            component_filter: SceneFilter::default(),
+            resource_filter: SceneFilter::default(),
+            save_path: PathBuf::from("scenes"),
         }
     }
 }
 
 #[derive(Component, Reflect, Debug, Default)]
 #[reflect(Component)]
-pub struct StaticEntitiesRoot(pub String);
+pub struct StaticEntitiesRoot;
 
 #[derive(Component, Reflect, Debug, Default)]
 #[reflect(Component)]
@@ -68,6 +67,8 @@ impl Plugin for SaveLoadPlugin {
             // TODO: remove these in bevy 0.13, as these are now registered by default
             .register_type::<Camera3dDepthTextureUsage>()
             .register_type::<ScreenSpaceTransmissionQuality>()
+            .register_type::<StaticEntitiesStorage>()
+
             .add_event::<SaveRequest>()
             .add_event::<LoadRequest>()
             .add_event::<LoadingFinished>()
@@ -75,9 +76,10 @@ impl Plugin for SaveLoadPlugin {
 
             .insert_resource(SaveLoadConfig {
                 save_path: self.save_path.clone(),
-                entity_filter: self.entity_filter.clone(),
+
+                component_filter: self.component_filter.clone(),
+                resource_filter: self.resource_filter.clone(),
             })
-            // .init_resource::<LoadRequested>()
             .configure_sets(
                 Update,
                 (LoadingSet::Load)

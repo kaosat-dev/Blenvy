@@ -1,6 +1,6 @@
 [package]
 name = "bevy_gltf_save_load"
-version = "0.0.1"
+version = "0.1.0"
 authors = ["Mark 'kaosat-dev' Moissette"]
 description = "Save & load your bevy games"
 homepage = "https://github.com/kaosat-dev/Blender_bevy_components_workflow"
