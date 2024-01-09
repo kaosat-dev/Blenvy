@@ -48,7 +48,7 @@ pub fn setup_main_menu(mut commands: Commands) {
         InMainMenu,
     ));
 
-    /* 
+    /*
     commands.spawn((
         TextBundle::from_section(
             "Load Game",

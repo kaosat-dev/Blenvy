@@ -6,7 +6,7 @@ use bevy::scene::SceneInstance;
 
 use super::{AnimationPlayerLink, Animations};
 use super::{SpawnHere, Spawned};
-use crate::{CopyComponents, InBlueprint, OriginalChildren, NoInBlueprint};
+use crate::{CopyComponents, InBlueprint, NoInBlueprint, OriginalChildren};
 
 /// this system is in charge of doing any necessary post processing after a blueprint scene has been spawned
 /// - it removes one level of useless nesting
@@ -31,7 +31,9 @@ pub(crate) fn spawned_blueprint_post_process(
 
     mut commands: Commands,
 ) {
-    for (original, children, original_children, animations, no_inblueprint, name ) in unprocessed_entities.iter() {
+    for (original, children, original_children, animations, no_inblueprint, name) in
+        unprocessed_entities.iter()
+    {
         debug!("post processing blueprint for entity {:?}", name);
 
         if children.len() == 0 {
@@ -51,12 +53,11 @@ pub(crate) fn spawned_blueprint_post_process(
 
         // we flag all children of the blueprint instance with 'InBlueprint'
         // can be usefull to filter out anything that came from blueprints vs normal children
-        if no_inblueprint.is_none(){
+        if no_inblueprint.is_none() {
             for child in all_children.iter_descendants(root_entity) {
                 commands.entity(child).insert(InBlueprint);
             }
         }
-       
 
         // copy components into from blueprint instance's root_entity to original entity
         commands.add(CopyComponents {

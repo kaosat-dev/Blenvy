@@ -1,8 +1,8 @@
-use std::path::Path;
 use bevy::{prelude::*, scene::SceneInstance};
 use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, GameWorldTag, Library};
+use std::path::Path;
 
-use crate::{DynamicEntitiesRoot, StaticEntitiesRoot, StaticEntitiesStorage, SaveLoadConfig};
+use crate::{DynamicEntitiesRoot, SaveLoadConfig, StaticEntitiesRoot, StaticEntitiesStorage};
 
 #[derive(Event)]
 pub struct LoadRequest {
@@ -27,16 +27,16 @@ pub(crate) struct CleanupScene;
 /// helper system that "converts" loadRequest events to LoadRequested resources
 pub(crate) fn mark_load_requested(
     mut load_requests: EventReader<LoadRequest>,
-    mut commands: Commands
-){
+    mut commands: Commands,
+) {
     let mut save_path: String = "".into();
     for load_request in load_requests.read() {
         if load_request.path != "" {
             save_path = load_request.path.clone();
         }
     }
-    if save_path!= "" {
-        commands.insert_resource(LoadRequested{path: save_path});
+    if save_path != "" {
+        commands.insert_resource(LoadRequested { path: save_path });
     }
 }
 
@@ -96,7 +96,7 @@ pub(crate) fn load_static(
     mut commands: Commands,
     mut loading_finished: EventWriter<LoadingFinished>,
 
-    static_entities: Option<Res<StaticEntitiesStorage>>
+    static_entities: Option<Res<StaticEntitiesStorage>>,
 ) {
     if let Some(info) = static_entities {
         info!("--loading static data {:?}", info.name);
@@ -112,7 +112,9 @@ pub(crate) fn load_static(
             .id();
 
         if info.library_path != "" {
-            commands.entity(static_data).insert(Library(info.library_path.clone().into()));
+            commands
+                .entity(static_data)
+                .insert(Library(info.library_path.clone().into()));
         }
 
         let world_root = world_root.get_single().unwrap();
@@ -150,6 +152,5 @@ pub(crate) fn cleanup_loaded_scene(
 
         commands.remove_resource::<LoadRequested>();
         commands.remove_resource::<LoadFirstStageDone>();
-
     }
 }

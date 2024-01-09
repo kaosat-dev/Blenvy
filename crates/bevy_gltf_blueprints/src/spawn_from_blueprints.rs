@@ -46,7 +46,6 @@ pub struct AddToGameWorld;
 /// helper component, just to transfer child data
 pub(crate) struct OriginalChildren(pub Vec<Entity>);
 
-
 /// main spawning functions,
 /// * also takes into account the already exisiting "override" components, ie "override components" > components from blueprint
 pub(crate) fn spawn_from_blueprints(
@@ -72,7 +71,16 @@ pub(crate) fn spawn_from_blueprints(
 
     children: Query<&Children>,
 ) {
-    for (entity, blupeprint_name, transform, original_parent, library_override, add_to_world, name) in spawn_placeholders.iter() {
+    for (
+        entity,
+        blupeprint_name,
+        transform,
+        original_parent,
+        library_override,
+        add_to_world,
+        name,
+    ) in spawn_placeholders.iter()
+    {
         debug!(
             "need to spawn {:?} for entity {:?}, id: {:?}, parent:{:?}",
             blupeprint_name.0, name, entity, original_parent
@@ -89,9 +97,9 @@ pub(crate) fn spawn_from_blueprints(
         let model_file_name = format!("{}.{}", &what, &blueprints_config.format);
 
         // library path is either defined at the plugin level or overriden by optional Library components
-        let library_path = library_override.map_or_else(|| &blueprints_config.library_folder, |l| &l.0 );
-        let model_path =
-            Path::new(&library_path).join(Path::new(model_file_name.as_str()));
+        let library_path =
+            library_override.map_or_else(|| &blueprints_config.library_folder, |l| &l.0);
+        let model_path = Path::new(&library_path).join(Path::new(model_file_name.as_str()));
 
         debug!("attempting to spawn {:?}", model_path);
         let model_handle: Handle<Gltf> = asset_server.load(model_path);
@@ -128,12 +136,10 @@ pub(crate) fn spawn_from_blueprints(
         ));
 
         if add_to_world.is_some() {
-            let world = game_world.get_single_mut().expect("there should be a game world present");
-            //let parent = children.first().expect("there should be at least one child"); // FIXME: dangerous hack because our gltf data have a single child like this, but might not always be the case
+            let world = game_world
+                .get_single_mut()
+                .expect("there should be a game world present");
             commands.entity(world).add_child(entity);
         }
-
-
-        
     }
 }

@@ -1,15 +1,12 @@
+use super::Player;
+use crate::state::{GameState, InAppRunning};
 use bevy::prelude::*;
+use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, GameWorldTag, Library, NoInBlueprint};
+use bevy_gltf_save_load::{Dynamic, DynamicEntitiesRoot, StaticEntitiesRoot};
 use bevy_rapier3d::prelude::Velocity;
 use rand::Rng;
-use bevy_gltf_save_load::{Dynamic, DynamicEntitiesRoot, StaticEntitiesRoot};
-use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, GameWorldTag, NoInBlueprint, Library};
-use crate::state::{GameState, InAppRunning};
-use super::Player;
 
-pub fn setup_game(
-    mut commands: Commands,
-    mut next_game_state: ResMut<NextState<GameState>>,
-) {
+pub fn setup_game(mut commands: Commands, mut next_game_state: ResMut<NextState<GameState>>) {
     info!("setting up game world");
     // here we actually spawn our game world/level
     let world_root = commands
@@ -33,7 +30,7 @@ pub fn setup_game(
                 ..Default::default()
             },
             StaticEntitiesRoot,
-            Library("models".into())
+            Library("models".into()),
         ))
         .id();
 
@@ -47,7 +44,7 @@ pub fn setup_game(
             },
             DynamicEntitiesRoot,
             NoInBlueprint, // we do not want the descendants of this entity to be filtered out when saving
-            Library("models".into())
+            Library("models".into()),
         ))
         .id();
     commands.entity(world_root).add_child(static_data);
@@ -64,13 +61,9 @@ pub fn unload_world(mut commands: Commands, gameworlds: Query<Entity, With<GameW
     }
 }
 
-pub fn should_reset(
-    keycode: Res<Input<KeyCode>>,
-) -> bool {
+pub fn should_reset(keycode: Res<Input<KeyCode>>) -> bool {
     return keycode.just_pressed(KeyCode::N);
 }
-
-
 
 pub fn spawn_test(
     keycode: Res<Input<KeyCode>>,
@@ -106,11 +99,11 @@ pub fn spawn_test(
                     linvel: Vec3::new(vel_x, vel_y, vel_z),
                     angvel: Vec3::new(0.0, 0.0, 0.0),
                 },
-            )).id();
-            commands.entity(world).add_child(new_entity);
+            ))
+            .id();
+        commands.entity(world).add_child(new_entity);
     }
 }
-
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
@@ -167,7 +160,6 @@ pub fn spawn_test_parenting(
     mut dynamic_entities_world: Query<Entity, With<DynamicEntitiesRoot>>,
 
     names: Query<(Entity, &Name)>,
-
 ) {
     if keycode.just_pressed(KeyCode::P) {
         let world = dynamic_entities_world.single_mut();

@@ -1,6 +1,6 @@
-use std::any::TypeId;
 use bevy::ecs::system::Command;
 use bevy::prelude::*;
+use std::any::TypeId;
 
 // originally based  https://github.com/bevyengine/bevy/issues/1515,
 // more specifically https://gist.github.com/nwtnni/85d6b87ae75337a522166c500c9a8418

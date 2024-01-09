@@ -68,12 +68,10 @@ impl Plugin for SaveLoadPlugin {
             .register_type::<Camera3dDepthTextureUsage>()
             .register_type::<ScreenSpaceTransmissionQuality>()
             .register_type::<StaticEntitiesStorage>()
-
             .add_event::<SaveRequest>()
             .add_event::<LoadRequest>()
             .add_event::<LoadingFinished>()
             .add_event::<SavingFinished>()
-
             .insert_resource(SaveLoadConfig {
                 save_path: self.save_path.clone(),
 
@@ -82,9 +80,7 @@ impl Plugin for SaveLoadPlugin {
             })
             .configure_sets(
                 Update,
-                (LoadingSet::Load)
-                    .chain()
-                    .before(GltfBlueprintsSet::Spawn), //.before(GltfComponentsSet::Injection)
+                (LoadingSet::Load).chain().before(GltfBlueprintsSet::Spawn), //.before(GltfComponentsSet::Injection)
             )
             .add_systems(
                 PreUpdate,
@@ -92,8 +88,6 @@ impl Plugin for SaveLoadPlugin {
                     .chain()
                     .run_if(should_save),
             )
-
-
             .add_systems(Update, mark_load_requested)
             .add_systems(
                 Update,
@@ -101,7 +95,6 @@ impl Plugin for SaveLoadPlugin {
                     .chain()
                     .run_if(resource_exists::<LoadRequested>())
                     .run_if(not(resource_exists::<LoadFirstStageDone>()))
-
                     .in_set(LoadingSet::Load),
             )
             .add_systems(

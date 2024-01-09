@@ -1,12 +1,12 @@
-use bevy::{prelude::*, core_pipeline::clear_color::ClearColorConfig};
+use bevy::{core_pipeline::clear_color::ClearColorConfig, prelude::*};
 
 use crate::state::InGameLoading;
 
 pub fn setup_loading_screen(mut commands: Commands) {
     commands.spawn((
-        Camera2dBundle{ 
-            camera_2d: Camera2d{
-                clear_color: ClearColorConfig::Custom(Color::BLACK)
+        Camera2dBundle {
+            camera_2d: Camera2d {
+                clear_color: ClearColorConfig::Custom(Color::BLACK),
             },
             camera: Camera {
                 // renders after / on top of the main camera
@@ -14,8 +14,8 @@ pub fn setup_loading_screen(mut commands: Commands) {
                 ..default()
             },
             ..Default::default()
-        }, 
-        InGameLoading
+        },
+        InGameLoading,
     ));
 
     commands.spawn((
@@ -37,7 +37,10 @@ pub fn setup_loading_screen(mut commands: Commands) {
     ));
 }
 
-pub fn teardown_loading_screen(in_main_menu: Query<Entity, With<InGameLoading>>, mut commands: Commands) {
+pub fn teardown_loading_screen(
+    in_main_menu: Query<Entity, With<InGameLoading>>,
+    mut commands: Commands,
+) {
     for entity in in_main_menu.iter() {
         commands.entity(entity).despawn_recursive();
     }
