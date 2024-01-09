@@ -31,7 +31,7 @@ pub fn setup_main_menu(mut commands: Commands) {
                 - press L to load (once the game is started)
                 - press T for demo spawning (once the game is started)
                 - press U to spawn entities with unregistered components (once the game is started)
-            
+                - press P to spawn entities attached to the player (once the game is started)
             ",
             TextStyle {
                 font_size: 18.0,

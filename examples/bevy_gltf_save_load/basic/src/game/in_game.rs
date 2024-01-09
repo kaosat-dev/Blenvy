@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use bevy_rapier3d::prelude::Velocity;
 use rand::Rng;
 use bevy_gltf_save_load::{Dynamic, DynamicEntitiesRoot, StaticEntitiesRoot};
-use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, GameWorldTag, SpawnHere, NoInBlueprint, Library};
+use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, GameWorldTag, NoInBlueprint, Library};
 use crate::state::{GameState, InAppRunning};
 use super::Player;
 
@@ -70,19 +70,15 @@ pub fn should_reset(
     return keycode.just_pressed(KeyCode::N);
 }
 
-#[derive(Component, Reflect, Default, Debug)]
-#[reflect(Component)]
-struct UnregisteredComponent;
+
 
 pub fn spawn_test(
     keycode: Res<Input<KeyCode>>,
+    mut dynamic_entities_world: Query<Entity, With<DynamicEntitiesRoot>>,
     mut commands: Commands,
-
-    mut game_world: Query<(Entity, &Children), With<DynamicEntitiesRoot>>,
 ) {
     if keycode.just_pressed(KeyCode::T) {
-        let world = game_world.single_mut();
-        let world = world.0; //.1[0];
+        let world = dynamic_entities_world.single_mut();
 
         let mut rng = rand::thread_rng();
         let range = 5.5;
@@ -103,29 +99,31 @@ pub fn spawn_test(
                     blueprint: BlueprintName("Health_Pickup".to_string()),
                     ..Default::default()
                 },
+                // AddToGameWorld, // automatically added to entity (should be only one) that has the GameWorldTag
                 bevy::prelude::Name::from(format!("test{}", name_index)),
-                // BlueprintName("Health_Pickup".to_string()),
-                // SpawnHere,
                 TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
                 Velocity {
                     linvel: Vec3::new(vel_x, vel_y, vel_z),
                     angvel: Vec3::new(0.0, 0.0, 0.0),
                 },
-            ))
-            .id();
-        commands.entity(world).add_child(new_entity);
+            )).id();
+            commands.entity(world).add_child(new_entity);
     }
 }
+
+
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+struct UnregisteredComponent;
 
 pub fn spawn_test_unregisted_components(
     keycode: Res<Input<KeyCode>>,
     mut commands: Commands,
 
-    mut game_world: Query<(Entity, &Children), With<GameWorldTag>>,
+    mut dynamic_entities_world: Query<Entity, With<DynamicEntitiesRoot>>,
 ) {
     if keycode.just_pressed(KeyCode::U) {
-        let world = game_world.single_mut();
-        let world = world.1[0];
+        let world = dynamic_entities_world.single_mut();
 
         let mut rng = rand::thread_rng();
         let range = 5.5;
@@ -166,15 +164,13 @@ pub fn spawn_test_parenting(
     players: Query<Entity, With<Player>>,
     mut commands: Commands,
 
-    mut game_world: Query<(Entity, &Children), With<GameWorldTag>>,
+    mut dynamic_entities_world: Query<Entity, With<DynamicEntitiesRoot>>,
 
-    mut names: Query<(Entity, &Name)>,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
+    names: Query<(Entity, &Name)>,
+
 ) {
     if keycode.just_pressed(KeyCode::P) {
-        let world = game_world.single_mut();
-        let world = world.1[0];
+        let world = dynamic_entities_world.single_mut();
 
         let mut rng = rand::thread_rng();
         let range = 5.5;
@@ -183,11 +179,6 @@ pub fn spawn_test_parenting(
 
         let mut rng = rand::thread_rng();
         let range = 0.8;
-        let vel_x: f32 = rng.gen_range(-range..range);
-        let vel_y: f32 = rng.gen_range(2.0..2.5);
-        let vel_z: f32 = rng.gen_range(-range..range);
-
-        let name_index: u64 = rng.gen();
 
         let child_test = commands
             .spawn((
@@ -201,18 +192,6 @@ pub fn spawn_test_parenting(
             ))
             .id();
 
-        /*let child_test = commands.spawn((
-            PbrBundle {
-                mesh: meshes.add(Mesh::from(shape::Cube { size: 1.0 })),
-                material: materials.add(Color::rgb_u8(124, 144, 255).into()),
-                transform: Transform::from_xyz(2.0, 0.0, 0.0),
-                ..default()
-            },
-            bevy::prelude::Name::from(format!("SubParentingTest")),
-        ))
-        .id()
-        ;*/
-
         let parenting_test_entity = commands
             .spawn((
                 BluePrintBundle {
@@ -221,8 +200,6 @@ pub fn spawn_test_parenting(
                 },
                 bevy::prelude::Name::from(format!("ParentingTest")),
                 Dynamic(true),
-                // BlueprintName("Container".to_string()),
-                // SpawnHere,
                 TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
             ))
             .id();

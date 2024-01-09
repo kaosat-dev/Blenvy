@@ -120,7 +120,6 @@ pub fn on_loading_finished(
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     for _ in loading_finished.read() {
-        println!("loading finished, changing state");
         next_game_state.set(GameState::InGame);
     }
 }
