@@ -810,22 +810,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "bevy_gltf_blueprints_basic_save_example"
-version = "0.3.0"
-dependencies = [
- "bevy",
- "bevy_asset_loader",
- "bevy_editor_pls",
- "bevy_gltf_blueprints",
- "bevy_gltf_save_load",
- "bevy_rapier3d",
- "gltf-json",
- "rand",
- "serde",
- "serde_json",
-]
-
-[[package]]
 name = "bevy_gltf_blueprints_basic_scene_components_example"
 version = "0.3.0"
 dependencies = [
@@ -951,10 +935,25 @@ dependencies = [
 
 [[package]]
 name = "bevy_gltf_save_load"
-version = "0.0.1"
+version = "0.1.0"
 dependencies = [
  "bevy",
  "bevy_gltf_blueprints",
+]
+
+[[package]]
+name = "bevy_gltf_save_load_basic_example"
+version = "0.3.0"
+dependencies = [
+ "bevy",
+ "bevy_asset_loader",
+ "bevy_editor_pls",
+ "bevy_gltf_blueprints",
+ "bevy_gltf_save_load",
+ "bevy_rapier3d",
+ "rand",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
