@@ -1,9 +1,8 @@
 use bevy::prelude::*;
 use bevy::tasks::IoTaskPool;
-use bevy::utils::Instant;
 use bevy_gltf_blueprints::{BlueprintName, InBlueprint, SpawnHere, Library};
 
-use std::fs::{self, File};
+use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 
@@ -60,7 +59,6 @@ pub(crate) fn prepare_save_game(
         if let Some(children) = children {
             for sub_child in children.iter(){
                 if !dynamic_entities.contains(*sub_child){
-                    // println!("uh OH {:?}", names.get(*sub_child));
                     commands.entity(*sub_child).insert(OriginalParent(entity));
                     commands.entity(entity).remove_children(&[*sub_child]);
                 }

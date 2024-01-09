@@ -40,7 +40,6 @@ pub fn serialize_gltf(scene:&DynamicScene, registry: &TypeRegistryArc) {
 pub fn save_game(
     world: &mut World,
 ) {
-    info!("saving");
 
     let mut save_path:String = "".into();
     let mut events = world
@@ -49,7 +48,7 @@ pub fn save_game(
         info!("SAVE EVENT !! {:?}", event);
         save_path = event.path.clone();
     }
-    println!("SAVING TO {}", save_path);
+    info!("SAVING TO {}", save_path);
     events.clear(); 
 
     let saveable_entities: Vec<Entity> = world
@@ -57,11 +56,7 @@ pub fn save_game(
         .iter(world)
         .collect();
 
-    /*let static_entities: Vec<Entity> = world
-    .query_filtered::<Entity, Without<Saveable>>()
-    .iter(world)
-    .collect();*/
-    println!("saveable entities {}", saveable_entities.len());
+    debug!("saveable entities {}", saveable_entities.len());
    
     let components = HashSet::from([
         TypeId::of::<Name>(),

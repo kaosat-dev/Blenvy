@@ -10,10 +10,11 @@ Built upon [bevy_gltf_blueprints](https://crates.io/crates/bevy_gltf_blueprints)
 * leverages blueprints & seperation between 
     * **dynamic** entities : entities that can change during the lifetime of your app/game
     * **static** entities : entities that do NOT change (typically, a part of your levels/ environements)
-* to allow for :
-    * a simple save/load workflow
+* and allows allow for :
+    * a simple save/load workflow thanks to the above
     * ability to specify **which entities** to save or to exclude
     * ability to specify **which components** to save or to exclude
+    * ability to specify **which resources** to save or to exclude
     * small(er) save files (only a portion of the entities is saved)
 
 Particularly useful when using [Blender](https://www.blender.org/) as an editor for the [Bevy](https://bevyengine.org/) game engine, combined with the [Blender plugin](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/gltf_auto_export) that does a lot of the work for you (including spliting generating seperate gltf files for your static vs dynamic assets)
@@ -23,6 +24,7 @@ A bit of heads up:
 
 * very opinionated !
 * still in the early stages & not 100% feature complete
+* fun fact: as the static level structure is stored seperatly, you can change your level layout & **still** reload an existing save file
 
 
 ## Usage
@@ -50,8 +52,36 @@ fn main() {
         .run();
 }
 
-// not shown here: any other setup that is not specific to save/load
 
+
+// add a system to trigger saving
+pub fn request_save(
+    mut save_requests: EventWriter<SaveRequest>,
+    keycode: Res<Input<KeyCode>>,
+)
+{
+    if keycode.just_pressed(KeyCode::S) {
+        save_requests.send(SaveRequest {
+            path: "save.scn.ron".into(),
+        })
+    }
+}
+
+// add a system to trigger loading
+pub fn request_load(
+    mut load_requests: EventWriter<LoadRequest>,
+    keycode: Res<Input<KeyCode>>,
+)
+{
+    if keycode.just_pressed(KeyCode::L) {
+        save_requests.send(LoadRequest {
+            path: "save.scn.ron".into(),
+        })
+    }
+}
+
+// setting up your world
+// on initial setup, the static entities & the dynamic entities are kept seperate for clarity & loaded as blueprints from 2 seperate files
 pub fn setup_game(
     mut commands: Commands,
     mut next_game_state: ResMut<NextState<GameState>>,
@@ -101,34 +131,10 @@ pub fn setup_game(
 }
 
 
-// add a system to trigger saving
-pub fn request_save(
-    mut save_requests: EventWriter<SaveRequest>,
-    keycode: Res<Input<KeyCode>>,
-)
-{
-    if keycode.just_pressed(KeyCode::S) {
-        save_requests.send(SaveRequest {
-            path: "save.scn.ron".into(),
-        })
-    }
-}
-
-// add a system to trigger loading
-pub fn request_load(
-    mut load_requests: EventWriter<LoadRequest>,
-    keycode: Res<Input<KeyCode>>,
-)
-{
-    if keycode.just_pressed(KeyCode::L) {
-        save_requests.send(LoadRequest {
-            path: "save.scn.ron".into(),
-        })
-    }
-}
-
-
 ```
+
+take a look at the [example]('https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_save_load/basic/src/game/mod.rs) for more clarity
+
 
 ##  Installation
 
@@ -179,6 +185,14 @@ fn main() {
                     TypeId::of::<Velocity>(),
                     // and any other commponent you want to include/exclude
                 ])),
+                resource_filter: SceneFilter::deny_all(), // same logic as above, but for resources : also be careful & remember to register your resources !
+                ..Default::default()
+            },
+            // you need to configure the blueprints plugin as well (might be pre_configured in the future, but for now you need to do it manually)
+            BlueprintsPlugin {
+                library_folder: "models/library".into(),
+                format: GltfFormat::GLB,
+                aabbs: true,
                 ..Default::default()
             },
         ))
@@ -189,7 +203,7 @@ fn main() {
 ### How to make sure your entites will be saved
 
 - only entites that have a **Dynamic** component will be saved ! (the component is provided as part of the crate)
-
+- you can either add that component at runtime or have it baked-in in the Blueprint
 
 ### Component Filter:
  
@@ -205,6 +219,51 @@ fn main() {
 - you can find more information about the SceneFilter object [here](https://bevyengine.org/news/bevy-0-11/#scene-filtering) and [here](https://docs.rs/bevy/latest/bevy/scene/enum.SceneFilter.html)
 
 
+## Events
+
+
+- to trigger **saving** use the ```SaveRequest``` event 
+```rust no_run
+// add a system to trigger saving
+pub fn request_save(
+    mut save_requests: EventWriter<SaveRequest>,
+    keycode: Res<Input<KeyCode>>,
+)
+{
+    if keycode.just_pressed(KeyCode::S) {
+        save_requests.send(SaveRequest {
+            path: "save.scn.ron".into(),
+        })
+    }
+}
+
+```
+
+
+- to trigger **loading** use the ```LoadRequest``` event 
+
+```rust no_run
+// add a system to trigger saving
+pub fn request_load(
+    mut load_requests: EventWriter<LoadRequest>,
+    keycode: Res<Input<KeyCode>>,
+)
+{
+    if keycode.just_pressed(KeyCode::L) {
+        save_requests.send(LoadRequest {
+            path: "save.scn.ron".into(),
+        })
+    }
+}
+```
+
+- you also notified when saving / loading is done 
+    - ```SavingFinished``` for saving
+    - ```LoadingFinished``` for loading
+
+> Note: I **highly** recomend you change states when you start/finish saving & loading, otherwise things **will** get unpredictable
+Please see [the example]('https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_save_load/basic/src/game/mod.rs#77') for this.
+
 ## SystemSet
 
 For convenience ```bevy_gltf_save_load``` provides two **SystemSets** 
@@ -218,7 +277,7 @@ Highly advised to get a better understanding of how things work !
 To get started I recomend looking at 
 
 - [world setup]('https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_save_load/basic/src/game/in_game.rs#13')
-- [here]
+- [various events & co]('https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_save_load/basic/src/game/mod.rs#77')
 
 
 All examples are here:

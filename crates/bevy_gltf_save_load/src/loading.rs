@@ -113,7 +113,6 @@ pub(crate) fn load_static(
             .id();
 
         let world_root = world_root.get_single().unwrap();
-        println!("root {:?}", world_root);
         commands.entity(world_root).add_child(static_data);
 
         info!("--loading: loaded static data");
