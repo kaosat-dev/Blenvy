@@ -51,7 +51,7 @@ pub fn prepare_save_game(
         if let Some(children) = children {
             for sub_child in children.iter(){
                 if !dynamic_entities.contains(*sub_child){
-                    println!("uh OH {:?}", names.get(*sub_child));
+                    // println!("uh OH {:?}", names.get(*sub_child));
                     commands.entity(*sub_child).insert(OriginalParent(entity));
                     commands.entity(entity).remove_children(&[*sub_child]);
                 }
@@ -170,7 +170,6 @@ pub(crate) fn cleanup_save(
     mut commands: Commands,
 ){
     for (entity, original_parent) in needs_parent_reset.iter(){
-        println!("resetting parent");
         commands.entity(original_parent.0).add_child(entity);
     }
     saving_finished.send(SavingFinished);
