@@ -108,9 +108,12 @@ pub(crate) fn load_static(
                     ..Default::default()
                 },
                 StaticEntitiesRoot,
-                Library(info.library_path.clone().into())
             ))
             .id();
+
+        if info.library_path != "" {
+            commands.entity(static_data).insert(Library(info.library_path.clone().into()));
+        }
 
         let world_root = world_root.get_single().unwrap();
         commands.entity(world_root).add_child(static_data);

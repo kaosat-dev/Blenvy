@@ -42,7 +42,7 @@ pub(crate) fn prepare_save_game(
     saveables: Query<Entity, (With<Dynamic>, With<BlueprintName>)>,
     root_entities: Query<Entity, Or<(With<DynamicEntitiesRoot>, Without<Parent>)>>, //  With<DynamicEntitiesRoot>
     dynamic_entities: Query<(Entity, &Parent, Option<&Children>), With<Dynamic>>,
-    static_entities: Query<(Entity, &BlueprintName, &Library), With<StaticEntitiesRoot>>,
+    static_entities: Query<(Entity, &BlueprintName, Option<&Library>), With<StaticEntitiesRoot>>,
     
     mut commands: Commands,
 ) {
@@ -66,9 +66,10 @@ pub(crate) fn prepare_save_game(
         }
     }
     for (_, blueprint_name, library) in static_entities.iter(){
+        let library_path: String = library.map_or_else(|| "", |l| &l.0.to_str().unwrap() ).into(); 
         commands.insert_resource(StaticEntitiesStorage {
             name: blueprint_name.0.clone(),
-            library_path: library.0.to_str().unwrap().into()
+            library_path
         });
     }
 
