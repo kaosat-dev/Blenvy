@@ -37,6 +37,11 @@ pub struct NoInBlueprint;
 // this allows overriding the default library path for a given entity/blueprint
 pub struct Library(pub PathBuf);
 
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+/// flag component to force adding newly spawned entity as child of game world
+pub struct AddToGameWorld;
+
 #[derive(Component)]
 /// helper component, just to transfer child data
 pub(crate) struct OriginalChildren(pub Vec<Entity>);
@@ -52,13 +57,14 @@ pub(crate) fn spawn_from_blueprints(
             Option<&Transform>,
             Option<&Parent>,
             Option<&Library>,
+            Option<&AddToGameWorld>,
             Option<&Name>,
         ),
         (Added<BlueprintName>, Added<SpawnHere>, Without<Spawned>),
     >,
 
     mut commands: Commands,
-    mut game_world: Query<(Entity, &Children), With<GameWorldTag>>,
+    mut game_world: Query<Entity, With<GameWorldTag>>,
 
     assets_gltf: Res<Assets<Gltf>>,
     asset_server: Res<AssetServer>,
@@ -66,8 +72,8 @@ pub(crate) fn spawn_from_blueprints(
 
     children: Query<&Children>,
 ) {
-    for (entity, blupeprint_name, transform, original_parent, library_override, name) in spawn_placeholders.iter() {
-        info!(
+    for (entity, blupeprint_name, transform, original_parent, library_override, add_to_world, name) in spawn_placeholders.iter() {
+        debug!(
             "need to spawn {:?} for entity {:?}, id: {:?}, parent:{:?}",
             blupeprint_name.0, name, entity, original_parent
         );
@@ -121,14 +127,13 @@ pub(crate) fn spawn_from_blueprints(
             OriginalChildren(original_children),
         ));
 
-        // let world = game_world.single_mut();
-        // let mut parent = world.1[0]; // FIXME: dangerous hack because our gltf data have a single child like this, but might not always be the case
-
-        // ideally, insert the newly created entity as a child of the original parent, if any, the world otherwise
-        if let Some(original_parent) = original_parent {
-            // parent = original_parent.get();
+        if add_to_world.is_some() {
+            let world = game_world.get_single_mut().expect("there should be a game world present");
+            //let parent = children.first().expect("there should be at least one child"); // FIXME: dangerous hack because our gltf data have a single child like this, but might not always be the case
+            commands.entity(world).add_child(entity);
         }
 
-        // commands.entity(parent).add_child(entity);
+
+        
     }
 }

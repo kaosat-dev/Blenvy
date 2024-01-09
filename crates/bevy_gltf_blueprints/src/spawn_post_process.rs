@@ -32,7 +32,7 @@ pub(crate) fn spawned_blueprint_post_process(
     mut commands: Commands,
 ) {
     for (original, children, original_children, animations, no_inblueprint, name ) in unprocessed_entities.iter() {
-        info!("post processing blueprint for entity {:?}", name);
+        debug!("post processing blueprint for entity {:?}", name);
 
         if children.len() == 0 {
             warn!("timing issue ! no children found, please restart your bevy app (bug being investigated)");
