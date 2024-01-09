@@ -1,4 +1,4 @@
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use bevy::{gltf::Gltf, prelude::*};
 
@@ -29,8 +29,13 @@ pub struct InBlueprint;
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-// flag component marking any spwaned child of blueprints ..unless the original entity was marked with the 'NoInBlueprint' marker component
+/// flag component preventing any spwaned child of blueprints to be marked with the InBlueprint component
 pub struct NoInBlueprint;
+
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+// this allows overriding the default library path for a given entity/blueprint
+pub struct Library(pub PathBuf);
 
 #[derive(Component)]
 /// helper component, just to transfer child data
@@ -43,10 +48,11 @@ pub(crate) fn spawn_from_blueprints(
     spawn_placeholders: Query<
         (
             Entity,
-            Option<&Name>,
             &BlueprintName,
-            &Transform,
+            Option<&Transform>,
             Option<&Parent>,
+            Option<&Library>,
+            Option<&Name>,
         ),
         (Added<BlueprintName>, Added<SpawnHere>, Without<Spawned>),
     >,
@@ -60,7 +66,7 @@ pub(crate) fn spawn_from_blueprints(
 
     children: Query<(&Children)>,
 ) {
-    for (entity, name, blupeprint_name, transform, original_parent) in spawn_placeholders.iter() {
+    for (entity, blupeprint_name, transform, original_parent, library_override, name) in spawn_placeholders.iter() {
         info!(
             "need to spawn {:?} for entity {:?}, id: {:?}, parent:{:?}",
             blupeprint_name.0, name, entity, original_parent
@@ -75,8 +81,12 @@ pub(crate) fn spawn_from_blueprints(
 
         let what = &blupeprint_name.0;
         let model_file_name = format!("{}.{}", &what, &blueprints_config.format);
+
+        let library_path = library_override.map_or_else(|| &blueprints_config.library_folder, |l| &l.0 );
+        println!("LIBRARY PATH {:?}", library_path);
+        // 
         let model_path =
-            Path::new(&blueprints_config.library_folder).join(Path::new(model_file_name.as_str()));
+            Path::new(&library_path).join(Path::new(model_file_name.as_str()));
 
         debug!("attempting to spawn {:?}", model_path);
         let model_handle: Handle<Gltf> = asset_server.load(model_path);
@@ -93,10 +103,16 @@ pub(crate) fn spawn_from_blueprints(
             .expect("there should be at least one named scene in the gltf file to spawn");
         let scene = &gltf.named_scenes[main_scene_name];
 
+        // transforms are optional, but still deal with them correctly
+        let mut transforms: Transform = Transform::default();
+        if transform.is_some() {
+            transforms = transform.unwrap().clone();
+        }
+
         commands.entity(entity).insert((
             SceneBundle {
                 scene: scene.clone(),
-                transform: transform.clone(),
+                transform: transforms,
                 ..Default::default()
             },
             Animations {
