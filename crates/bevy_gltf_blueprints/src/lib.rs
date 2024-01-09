@@ -32,10 +32,6 @@ pub enum GltfBlueprintsSet {
     AfterSpawn,
 }
 
-#[derive(Component, Reflect, Default, Debug)]
-#[reflect(Component)]
-pub struct InBlueprint;
-
 #[derive(Bundle)]
 pub struct BluePrintBundle {
     pub blueprint: BlueprintName,

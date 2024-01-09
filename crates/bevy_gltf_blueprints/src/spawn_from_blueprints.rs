@@ -19,12 +19,23 @@ pub struct BlueprintName(pub String);
 pub struct SpawnHere;
 
 #[derive(Component)]
+/// FlagComponent for dynamically spawned scenes
+pub struct Spawned;
+
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+/// flag component marking any spwaned child of blueprints ..unless the original entity was marked with the 'NoInBlueprint' marker component
+pub struct InBlueprint;
+
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+// flag component marking any spwaned child of blueprints ..unless the original entity was marked with the 'NoInBlueprint' marker component
+pub struct NoInBlueprint;
+
+#[derive(Component)]
 /// helper component, just to transfer child data
 pub(crate) struct OriginalChildren(pub Vec<Entity>);
 
-#[derive(Component)]
-/// FlagComponent for dynamically spawned scenes
-pub struct Spawned;
 
 /// main spawning functions,
 /// * also takes into account the already exisiting "override" components, ie "override components" > components from blueprint
