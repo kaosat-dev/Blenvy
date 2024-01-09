@@ -264,6 +264,11 @@ pub fn request_load(
 > Note: I **highly** recomend you change states when you start/finish saving & loading, otherwise things **will** get unpredictable
 Please see [the example]('https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_save_load/basic/src/game/mod.rs#77') for this.
 
+## Additional notes
+
+- the name + path of the **static** level blueprint/gltf file will be saved as part of the save file, and reused to dynamically
+load the correct static assets, which is necessary when you have multiple levels, and thus all required information to reload a save is contained within the save
+
 ## SystemSet
 
 For convenience ```bevy_gltf_save_load``` provides two **SystemSets** 

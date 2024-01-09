@@ -172,7 +172,7 @@ There is also a bundle for convenience , which just has
 [```BluePrintBundle```](./src/lib.rs#22)
 
 
-### Other informations
+## Additional information
 
 - When a blueprint is spawned, all its children entities (and nested children etc) also have an ```InBlueprint``` component that gets insert
 - In cases where that is undesirable, you can add a ```NoInBlueprint``` component on the entity you spawn the blueprint with, and the components above will not be add
@@ -189,6 +189,27 @@ commands
         },
         Library("models".into()) // now the path to the blueprint above will be /assets/models/TestBlueprint.glb
     ))
+```
+- this crate also provides a special optional ```GameWorldTag``` component: this is useful when you want to keep all your spawned entities inside a root entity
+
+You can use it in your queries to add your entities as children of this "world"
+This way all your levels, your dynamic entities etc, are kept seperated from UI nodes & other entities that are not relevant to the game world
+
+> Note: you should only have a SINGLE entity tagged with that component !
+
+```rust no_run
+    commands.spawn((
+        SceneBundle {
+            scene: models
+                .get(game_assets.world.id())
+                .expect("main level should have been loaded")
+                .scenes[0]
+                .clone(),
+            ..default()
+        },
+        bevy::prelude::Name::from("world"),
+        GameWorldTag, // here it is
+    ));
 ```
 
 
