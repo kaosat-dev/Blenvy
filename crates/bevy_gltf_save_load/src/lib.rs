@@ -21,8 +21,13 @@ use bevy_gltf_blueprints::GltfBlueprintsSet;
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
 pub enum LoadingSet {
     Load,
-    PostLoad,
 }
+
+#[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
+pub enum SavingSet {
+    Save,
+}
+
 
 // Plugin configuration
 
@@ -50,7 +55,7 @@ impl Default for SaveLoadPlugin {
 
 #[derive(Component, Reflect, Debug, Default)]
 #[reflect(Component)]
-pub struct StaticWorldMarker(pub String);
+pub struct StaticEntitiesRoot(pub String);
 
 #[derive(Component, Reflect, Debug, Default)]
 #[reflect(Component)]
@@ -59,7 +64,7 @@ pub struct DynamicEntitiesRoot;
 impl Plugin for SaveLoadPlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<Dynamic>()
-            .register_type::<StaticWorldMarker>()
+            .register_type::<StaticEntitiesRoot>()
             // TODO: remove these in bevy 0.13, as these are now registered by default
             .register_type::<Camera3dDepthTextureUsage>()
             .register_type::<ScreenSpaceTransmissionQuality>()
@@ -72,10 +77,10 @@ impl Plugin for SaveLoadPlugin {
                 save_path: self.save_path.clone(),
                 entity_filter: self.entity_filter.clone(),
             })
-            .init_resource::<LoadRequested>()
+            // .init_resource::<LoadRequested>()
             .configure_sets(
                 Update,
-                (LoadingSet::Load, LoadingSet::PostLoad)
+                (LoadingSet::Load)
                     .chain()
                     .before(GltfBlueprintsSet::Spawn), //.before(GltfComponentsSet::Injection)
             )
@@ -85,18 +90,23 @@ impl Plugin for SaveLoadPlugin {
                     .chain()
                     .run_if(should_save),
             )
+
+
+            .add_systems(Update, mark_load_requested)
             .add_systems(
                 Update,
                 (unload_world, apply_deferred, load_game)
                     .chain()
-                    .run_if(should_load)
+                    .run_if(resource_exists::<LoadRequested>())
+                    .run_if(not(resource_exists::<LoadFirstStageDone>()))
+
                     .in_set(LoadingSet::Load),
             )
             .add_systems(
                 Update,
                 (load_static, apply_deferred, cleanup_loaded_scene)
                     .chain()
-                    //.run_if(should_load)
+                    .run_if(resource_exists::<LoadFirstStageDone>())
                     // .run_if(in_state(AppState::LoadingGame))
                     .in_set(LoadingSet::Load),
             );

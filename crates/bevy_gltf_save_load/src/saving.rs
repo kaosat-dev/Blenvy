@@ -6,7 +6,7 @@ use std::fs::{self, File};
 use std::io::Write;
 use std::path::Path;
 
-use crate::{Dynamic, DynamicEntitiesRoot, SaveLoadConfig, StaticWorldMarker};
+use crate::{Dynamic, DynamicEntitiesRoot, SaveLoadConfig, StaticEntitiesRoot};
 
 #[derive(Event, Debug)]
 pub struct SaveRequest {
@@ -82,7 +82,7 @@ pub fn save_game(world: &mut World) {
         .collect();
 
     let static_world_markers: Vec<Entity> = world
-        .query_filtered::<Entity, (With<StaticWorldMarker>)>()
+        .query_filtered::<Entity, (With<StaticEntitiesRoot>)>()
         .iter(world)
         .collect();
 
@@ -106,7 +106,7 @@ pub fn save_game(world: &mut World) {
         .allow::<BlueprintName>()
         .allow::<SpawnHere>()
         .allow::<Dynamic>()
-        .allow::<StaticWorldMarker>();
+        .allow::<StaticEntitiesRoot>();
 
     // for root entities, it is the same EXCEPT we make sure parents are not included
     let filter_root = filter.clone().deny::<Parent>();
@@ -157,10 +157,7 @@ pub fn save_game(world: &mut World) {
         .detach();
     println!("foo , {:?}", foo);
 
-    /*let mut query = world.query::<(Entity, &OriginalParent)>();
-    for (entity, original_parent) in query.iter(world) {
-        world.entity_mut(original_parent.0).add_child(entity);
-    }*/
+    /**/
 }
 
 
@@ -174,3 +171,12 @@ pub(crate) fn cleanup_save(
     }
     saving_finished.send(SavingFinished);
 }
+/* 
+pub(crate) fn cleanup_save(mut world: &mut World) {
+
+    let mut query = world.query::<(Entity, &OriginalParent)>();
+    for (mut entity, original_parent) in query.iter_mut(&mut world) {
+        let e = world.entity_mut(original_parent.0);
+        // .add_child(entity);
+    }
+}*/
