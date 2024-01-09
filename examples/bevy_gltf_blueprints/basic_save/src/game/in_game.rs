@@ -1,11 +1,11 @@
 use bevy::prelude::*;
-use bevy_gltf_save_load::{Dynamic, DynamicEntitiesRoot, StaticWorldMarker};
+use bevy_gltf_save_load::{Dynamic, DynamicEntitiesRoot, StaticEntitiesRoot};
 
 use crate::{
     assets::GameAssets,
     state::{GameState, InAppRunning},
 };
-use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, GameWorldTag, SpawnHere};
+use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, GameWorldTag, SpawnHere, NoInBlueprint};
 
 use bevy_rapier3d::prelude::Velocity;
 use rand::Rng;
@@ -50,9 +50,11 @@ pub fn setup_game(
             GameWorldTag,
             InAppRunning,
             TransformBundle::default(),
+            InheritedVisibility::default(),
         ))
         .id();
 
+    // and we fill it with static entities
     let static_data = commands
         .spawn((
             bevy::prelude::Name::from("static"),
@@ -60,30 +62,21 @@ pub fn setup_game(
                 blueprint: BlueprintName("World".to_string()),
                 ..Default::default()
             },
-            StaticWorldMarker("World".to_string()),
+            StaticEntitiesRoot("World".to_string()),
         ))
         .id();
 
-    // and we fill it with dynamic data
+    // and we fill it with dynamic entities
     let dynamic_data = commands
         .spawn((
             bevy::prelude::Name::from("dynamic"),
-            SceneBundle {
-                scene: models
-                    .get(game_assets.world_dynamic.id())
-                    .expect("main level CONTENT should have been loaded")
-                    .scenes[0]
-                    .clone(),
-                ..default()
-            },
-            /*BluePrintBundle {
+            BluePrintBundle {
                 blueprint: BlueprintName("World_dynamic".to_string()),
                 transform: TransformBundle::from_transform(Transform::from_xyz(0.0, 0.0, 0.0)),
                 ..Default::default()
-            },*/
-            InAppRunning,
+            },
+            NoInBlueprint,
             DynamicEntitiesRoot,
-            Flatten,
         ))
         .id();
     commands.entity(world_root).add_child(static_data);
