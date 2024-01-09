@@ -71,13 +71,12 @@ pub fn spawn_test(
             .spawn((
                 BluePrintBundle {
                     blueprint: BlueprintName("Health_Pickup".to_string()),
-                    transform: TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
                     ..Default::default()
                 },
                 bevy::prelude::Name::from(format!("test{}", name_index)),
                 // BlueprintName("Health_Pickup".to_string()),
                 // SpawnHere,
-                // TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
+                TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
                 Velocity {
                     linvel: Vec3::new(vel_x, vel_y, vel_z),
                     angvel: Vec3::new(0.0, 0.0, 0.0),
@@ -115,13 +114,10 @@ pub fn spawn_test_unregisted_components(
             .spawn((
                 BluePrintBundle {
                     blueprint: BlueprintName("Health_Pickup".to_string()),
-                    transform: TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
                     ..Default::default()
                 },
                 bevy::prelude::Name::from(format!("test{}", name_index)),
-                // BlueprintName("Health_Pickup".to_string()),
-                // SpawnHere,
-                // TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
+                TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
                 Velocity {
                     linvel: Vec3::new(vel_x, vel_y, vel_z),
                     angvel: Vec3::new(0.0, 0.0, 0.0),

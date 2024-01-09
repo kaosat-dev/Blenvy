@@ -9,7 +9,6 @@ pub fn setup_main_menu(mut commands: Commands) {
         TextBundle::from_section(
             "SOME GAME TITLE !!",
             TextStyle {
-                //font: asset_server.load("fonts/FiraMono-Medium.ttf"),
                 font_size: 18.0,
                 color: Color::WHITE,
                 ..Default::default()
@@ -26,9 +25,15 @@ pub fn setup_main_menu(mut commands: Commands) {
 
     commands.spawn((
         TextBundle::from_section(
-            "New Game (press Enter to start, press T once the game is started for demo spawning)",
+            "New Game (press Enter to start)
+                - press N to restart (once the game is started)
+                - press S to save (once the game is started)
+                - press L to load (once the game is started)
+                - press T for demo spawning (once the game is started)
+                - press U to spawn entities with unregistered components (once the game is started)
+            
+            ",
             TextStyle {
-                //font: asset_server.load("fonts/FiraMono-Medium.ttf"),
                 font_size: 18.0,
                 color: Color::WHITE,
                 ..Default::default()
@@ -43,12 +48,11 @@ pub fn setup_main_menu(mut commands: Commands) {
         InMainMenu,
     ));
 
-    /*
+    /* 
     commands.spawn((
         TextBundle::from_section(
             "Load Game",
             TextStyle {
-                //font: asset_server.load("fonts/FiraMono-Medium.ttf"),
                 font_size: 18.0,
                 color: Color::WHITE,
                 ..Default::default()
@@ -67,7 +71,6 @@ pub fn setup_main_menu(mut commands: Commands) {
         TextBundle::from_section(
             "Exit Game",
             TextStyle {
-                //font: asset_server.load("fonts/FiraMono-Medium.ttf"),
                 font_size: 18.0,
                 color: Color::WHITE,
                 ..Default::default()

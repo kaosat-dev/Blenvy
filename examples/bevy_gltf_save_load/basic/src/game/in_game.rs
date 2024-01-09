@@ -1,113 +1,59 @@
 use bevy::prelude::*;
-use bevy_gltf_save_load::{Dynamic, DynamicEntitiesRoot, StaticEntitiesRoot};
-
-use crate::{
-    assets::GameAssets,
-    state::{GameState, InAppRunning},
-};
-use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, GameWorldTag, SpawnHere, NoInBlueprint};
-
 use bevy_rapier3d::prelude::Velocity;
 use rand::Rng;
-
+use bevy_gltf_save_load::{Dynamic, DynamicEntitiesRoot, StaticEntitiesRoot};
+use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, GameWorldTag, SpawnHere, NoInBlueprint, Library};
+use crate::state::{GameState, InAppRunning};
 use super::Player;
-
-#[derive(Component, Reflect, Debug, Default)]
-#[reflect(Component)]
-pub struct Flatten;
-
-/*
-commands.spawn((
-    StaticStuff("world".into()),
-    DynamicStuff("World_dynamic".into()),
-
-    GameWorldTag,
-    InAppRunning,
-
-    TransformBundle::default()
-));*/
 
 pub fn setup_game(
     mut commands: Commands,
-    game_assets: Res<GameAssets>,
-    models: Res<Assets<bevy::gltf::Gltf>>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
-    println!("INITIAL setting up all stuff");
+    info!("setting up game world");
     // here we actually spawn our game world/level
-    /*SceneBundle {
-        // note: because of this issue https://github.com/bevyengine/bevy/issues/10436, "world" is now a gltf file instead of a scene
-        scene: models
-            .get(game_assets.world.id())
-            .expect("main level should have been loaded")
-            .scenes[0]
-            .clone(),
-        ..default()
-    },*/
     let world_root = commands
         .spawn((
-            bevy::prelude::Name::from("world"),
+            Name::from("world"),
             GameWorldTag,
             InAppRunning,
             TransformBundle::default(),
             InheritedVisibility::default(),
+            //StaticEntities("World"),
+            //DynamicEntities("World_dynamic")
         ))
         .id();
 
     // and we fill it with static entities
     let static_data = commands
         .spawn((
-            bevy::prelude::Name::from("static"),
+            Name::from("static"),
             BluePrintBundle {
                 blueprint: BlueprintName("World".to_string()),
                 ..Default::default()
             },
-            StaticEntitiesRoot("World".to_string()),
+            StaticEntitiesRoot,
+            Library("models".into())
         ))
         .id();
 
     // and we fill it with dynamic entities
     let dynamic_data = commands
         .spawn((
-            bevy::prelude::Name::from("dynamic"),
+            Name::from("dynamic"),
             BluePrintBundle {
                 blueprint: BlueprintName("World_dynamic".to_string()),
-                transform: TransformBundle::from_transform(Transform::from_xyz(0.0, 0.0, 0.0)),
                 ..Default::default()
             },
-            NoInBlueprint,
             DynamicEntitiesRoot,
+            NoInBlueprint, // we do not want the descendants of this entity to be filtered out when saving
+            Library("models".into())
         ))
         .id();
     commands.entity(world_root).add_child(static_data);
     commands.entity(world_root).add_child(dynamic_data);
 
     next_game_state.set(GameState::InGame)
-}
-
-pub fn flatten_scene(
-    matches: Query<(Entity, &Children), With<Flatten>>,
-    all_children: Query<&Children>,
-    mut commands: Commands,
-    gameworld: Query<Entity, With<GameWorldTag>>,
-) {
-    for (original, children) in matches.iter() {
-        let root_entity = children.first().unwrap();
-
-        if let Ok(root_entity_children) = all_children.get(*root_entity) {
-            for child in root_entity_children.iter() {
-                // info!("copying child {:?} upward from {:?} to {:?}", names.get(*child), root_entity, original);
-                // commands.entity(gameworld.get_single().unwrap()).add_child(*child);
-                // commands.entity(*child).remove_parent_in_place();// .remove::<>();
-                commands.entity(original).add_child(*child);
-
-                // commands.entity(*root_entity).add_child(*child);
-            }
-        }
-        // commands.entity(original).despawn();
-        commands.entity(original).remove::<Flatten>();
-        commands.entity(*root_entity).despawn();
-    }
 }
 
 // TODO: Same as in load, reuse
@@ -120,10 +66,7 @@ pub fn unload_world(mut commands: Commands, gameworlds: Query<Entity, With<GameW
 
 pub fn should_reset(
     keycode: Res<Input<KeyCode>>,
-    //save_requested_events: EventReader<SaveRequest>,
 ) -> bool {
-    //return save_requested_events.len() > 0;
-
     return keycode.just_pressed(KeyCode::N);
 }
 
@@ -158,13 +101,12 @@ pub fn spawn_test(
             .spawn((
                 BluePrintBundle {
                     blueprint: BlueprintName("Health_Pickup".to_string()),
-                    transform: TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
                     ..Default::default()
                 },
                 bevy::prelude::Name::from(format!("test{}", name_index)),
                 // BlueprintName("Health_Pickup".to_string()),
                 // SpawnHere,
-                // TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
+                TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
                 Velocity {
                     linvel: Vec3::new(vel_x, vel_y, vel_z),
                     angvel: Vec3::new(0.0, 0.0, 0.0),
@@ -202,13 +144,12 @@ pub fn spawn_test_unregisted_components(
             .spawn((
                 BluePrintBundle {
                     blueprint: BlueprintName("Health_Pickup".to_string()),
-                    transform: TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
                     ..Default::default()
                 },
                 bevy::prelude::Name::from(format!("test{}", name_index)),
                 // BlueprintName("Health_Pickup".to_string()),
                 // SpawnHere,
-                // TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
+                TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
                 Velocity {
                     linvel: Vec3::new(vel_x, vel_y, vel_z),
                     angvel: Vec3::new(0.0, 0.0, 0.0),
@@ -252,10 +193,10 @@ pub fn spawn_test_parenting(
             .spawn((
                 BluePrintBundle {
                     blueprint: BlueprintName("Sphero".to_string()),
-                    transform: TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
                     ..Default::default()
                 },
                 bevy::prelude::Name::from(format!("SubParentingTest")),
+                TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
                 Dynamic(true),
             ))
             .id();
@@ -275,15 +216,14 @@ pub fn spawn_test_parenting(
         let parenting_test_entity = commands
             .spawn((
                 BluePrintBundle {
-                    blueprint: BlueprintName("Container".to_string()),
-                    transform: TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
+                    blueprint: BlueprintName("Container".into()),
                     ..Default::default()
                 },
                 bevy::prelude::Name::from(format!("ParentingTest")),
                 Dynamic(true),
-                // BlueprintName("Health_Pickup".to_string()),
+                // BlueprintName("Container".to_string()),
                 // SpawnHere,
-                // TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
+                TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
             ))
             .id();
 

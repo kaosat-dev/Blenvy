@@ -22,7 +22,6 @@ pub fn setup_loading_screen(mut commands: Commands) {
         TextBundle::from_section(
             "Loading...",
             TextStyle {
-                //font: asset_server.load("fonts/FiraMono-Medium.ttf"),
                 font_size: 28.0,
                 color: Color::WHITE,
                 ..Default::default()

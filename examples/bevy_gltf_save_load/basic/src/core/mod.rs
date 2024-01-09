@@ -33,13 +33,10 @@ impl Plugin for CorePlugin {
             PhysicsPlugin,
             SaveLoadPlugin {
                 save_path: "scenes".into(),
-                entity_filter: SceneFilter::Allowlist(HashSet::from([
+                component_filter: SceneFilter::Allowlist(HashSet::from([
                     TypeId::of::<Name>(),
                     TypeId::of::<Transform>(),
                     TypeId::of::<Velocity>(),
-                    TypeId::of::<BlueprintName>(),
-                    TypeId::of::<SpawnHere>(),
-                    TypeId::of::<Dynamic>(),
                     TypeId::of::<InheritedVisibility>(),
                     TypeId::of::<Camera>(),
                     TypeId::of::<Camera3d>(),
@@ -52,6 +49,7 @@ impl Plugin for CorePlugin {
                     TypeId::of::<VisibleEntities>(),
                     TypeId::of::<Pickable>(),
                 ])),
+                ..Default::default()
             },
             BlueprintsPlugin {
                 library_folder: "models/library".into(),

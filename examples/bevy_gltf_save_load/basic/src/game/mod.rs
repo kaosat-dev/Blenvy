@@ -83,9 +83,7 @@ pub fn request_save(
 )
 {
     if keycode.just_pressed(KeyCode::S)  && (current_state.get() != &GameState::InLoading) && (current_state.get() != &GameState::InSaving)  {
-        println!("request to load");
         next_game_state.set(GameState::InSaving);
-
         save_requests.send(SaveRequest {
             path: "save.scn.ron".into(),
         })
@@ -97,7 +95,6 @@ pub fn on_saving_finished(
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     for _ in saving_finished.read() {
-        println!("saving finished, changing state");
         next_game_state.set(GameState::InGame);
     }
 }
@@ -111,7 +108,6 @@ pub fn request_load(
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     if keycode.just_pressed(KeyCode::L) && (current_state.get() != &GameState::InLoading) && (current_state.get() != &GameState::InSaving)  {
-        println!("request to load");
         next_game_state.set(GameState::InLoading);
         load_requests.send(LoadRequest {
             path: "save.scn.ron".into(),
@@ -148,7 +144,6 @@ impl Plugin for GamePlugin {
                     spawn_test,
                     spawn_test_unregisted_components,
                     spawn_test_parenting,
-                    flatten_scene,
                 )
                     .run_if(in_state(GameState::InGame)),
             )
