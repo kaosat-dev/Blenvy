@@ -10,7 +10,7 @@ use bevy::reflect::{Reflect, TypeInfo, TypeRegistry};
 use bevy::scene::Scene;
 use bevy::utils::HashMap;
 use bevy::{
-    log::{debug, info, warn},
+    log::{debug, warn},
     prelude::{Assets, Name, Parent, ResMut},
 };
 
