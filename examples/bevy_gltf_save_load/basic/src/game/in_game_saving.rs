@@ -1,28 +1,13 @@
-use bevy::{core_pipeline::clear_color::ClearColorConfig, prelude::*};
+use bevy::prelude::*;
 
 use crate::state::InGameSaving;
 
 pub fn setup_saving_screen(mut commands: Commands) {
-    /*commands.spawn((
-        Camera2dBundle{
-            /*camera_2d: Camera2d{
-                clear_color: ClearColorConfig::Custom(Color::BLACK)
-            },*/
-            camera: Camera {
-                // renders after / on top of the main camera
-                order: 1,
-                ..default()
-            },
-            ..Default::default()
-        },
-        InGameSaving
-    ));*/
 
     commands.spawn((
         TextBundle::from_section(
             "Saving...",
             TextStyle {
-                //font: asset_server.load("fonts/FiraMono-Medium.ttf"),
                 font_size: 28.0,
                 color: Color::WHITE,
                 ..Default::default()

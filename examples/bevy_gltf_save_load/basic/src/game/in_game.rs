@@ -157,20 +157,14 @@ pub fn spawn_test_parenting(
     players: Query<Entity, With<Player>>,
     mut commands: Commands,
 
-    mut dynamic_entities_world: Query<Entity, With<DynamicEntitiesRoot>>,
-
     names: Query<(Entity, &Name)>,
 ) {
     if keycode.just_pressed(KeyCode::P) {
-        let world = dynamic_entities_world.single_mut();
 
         let mut rng = rand::thread_rng();
         let range = 5.5;
         let x: f32 = rng.gen_range(-range..range);
         let y: f32 = rng.gen_range(-range..range);
-
-        let mut rng = rand::thread_rng();
-        let range = 0.8;
 
         let child_test = commands
             .spawn((

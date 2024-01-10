@@ -13,13 +13,9 @@ pub use in_game_saving::*;
 pub mod picking;
 pub use picking::*;
 
-use crate::{
-    insert_dependant_component,
-    state::{AppState, GameState},
-};
+use crate::state::{AppState, GameState};
 use bevy::prelude::*;
 use bevy_gltf_save_load::{LoadRequest, LoadingFinished, SaveRequest, SavingFinished};
-use bevy_rapier3d::prelude::*;
 
 // this file is just for demo purposes, contains various types of components, systems etc
 

@@ -1,4 +1,3 @@
-use bevy::app::AppExit;
 use bevy::prelude::*;
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Default, States)]
