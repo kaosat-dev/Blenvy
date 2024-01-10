@@ -252,5 +252,5 @@ pub fn gltf_extras_to_components(
             }
         }
     }
-    info!("done injecting components from gltf_extras /n");
+    debug!("done injecting components from gltf_extras");
 }
