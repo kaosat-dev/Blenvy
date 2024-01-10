@@ -160,7 +160,6 @@ pub fn spawn_test_parenting(
     names: Query<(Entity, &Name)>,
 ) {
     if keycode.just_pressed(KeyCode::P) {
-
         let mut rng = rand::thread_rng();
         let range = 5.5;
         let x: f32 = rng.gen_range(-range..range);

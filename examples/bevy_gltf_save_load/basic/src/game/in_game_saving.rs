@@ -3,7 +3,6 @@ use bevy::prelude::*;
 use crate::state::InGameSaving;
 
 pub fn setup_saving_screen(mut commands: Commands) {
-
     commands.spawn((
         TextBundle::from_section(
             "Saving...",

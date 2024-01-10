@@ -1,7 +1,8 @@
 use bevy::{
     ecs::system::Res,
     input::{keyboard::KeyCode, Input},
-    prelude::{ResMut}, log::info,
+    log::info,
+    prelude::ResMut,
 };
 use bevy_rapier3d::{prelude::RapierConfiguration, render::DebugRenderContext};
 
