@@ -102,6 +102,17 @@ This issue has been resolved in v0.9.
 
         please read the dedicated [section](#collection-instances--nested-blueprints) below for more information
 
+
+    - Export dynamic and static objects seperatly : For MAIN scenes only (aka levels), toggle this to generate 2 files per level: 
+
+        - one with all dynamic data: collection or instances marked as dynamic (aka saveable)
+        - one with all static data: anything else that is NOT marked as dynamic, the file name will have the suffix **_dynamic**
+
+        Ie if you add a "Dynamic" custom property/ component to either your collection instances or your blueprint, you get a clean seperation between 
+
+        - your static level data (anything that will never change during the lifetime of your Bevy app)
+        - your dynamic objects (anything that will change during the lifetime of your Bevy app, that can be saved & reloaded in save files for example)
+
     - export materials library: check this if you want to automatically export material libraries (default: False)
     please read the dedicated [section](#materials) below for more information
 
@@ -233,7 +244,7 @@ There are only a few things to keep in mind
 Take a look at the [relevant](../../examples/bevy_gltf_blueprints/multiple_levels_multiple_blendfiles/) example for more [details](../../examples/bevy_gltf_blueprints/multiple_levels_multiple_blendfiles/art/) 
 
 
-### Process
+### Internal Process overview
 
 This is the internal logic of the export process with blueprints (simplified)
 

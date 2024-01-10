@@ -21,7 +21,7 @@ AutoExportGltfPreferenceNames = [
 
     'export_marked_assets',
     'collection_instances_combine_mode',
-    'split_out_dynamic_collections',
+    'export_separate_dynamic_and_static_objects',
 
     'export_materials_library',
     'export_materials_path',
@@ -115,9 +115,11 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         default=True
     )
 
-    split_out_dynamic_collections: BoolProperty(
-        name='Split out dynamic collections',
-        description='For MAIN scenes only (aka levels), toggle this to extract & export any collection or instance marked as dynamic (aka saveable aka mutable)',
+    export_separate_dynamic_and_static_objects: BoolProperty(
+        name='Export dynamic and static objects seperatly',
+        description="""For MAIN scenes only (aka levels), toggle this to generate 2 files per level: 
+            - one with all dynamic data: collection or instances marked as dynamic/ saveable
+            - one with all static data: anything else that is NOT marked as dynamic""",
         default=True
     )
 

@@ -140,7 +140,7 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
     gltf_export_preferences = generate_gltf_export_preferences(addon_prefs)
     export_output_folder = getattr(addon_prefs,"export_output_folder")
     export_blueprints = getattr(addon_prefs,"export_blueprints")
-    split_out_dynamic_collections = getattr(addon_prefs, "split_out_dynamic_collections")
+    export_separate_dynamic_and_static_objects = getattr(addon_prefs, "export_separate_dynamic_and_static_objects")
     
     gltf_output_path = os.path.join(folder_path, export_output_folder, scene.name)
     export_settings = { **gltf_export_preferences, 
@@ -153,7 +153,7 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
                        }
 
     if export_blueprints : 
-        if split_out_dynamic_collections:
+        if export_separate_dynamic_and_static_objects:
             # first export all dynamic objects
             (hollow_scene, temporary_collections, root_objects, special_properties) = generate_hollow_scene(scene, library_collections, addon_prefs, is_object_dynamic) 
             gltf_output_path = os.path.join(folder_path, export_output_folder, scene.name+ "_dynamic")
@@ -173,6 +173,7 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
             clear_hollow_scene(hollow_scene, scene, temporary_collections, root_objects, special_properties)
 
         else:
+            print("NO SPLIT")
             # todo: add exception handling
             (hollow_scene, temporary_collections, root_objects, special_properties) = generate_hollow_scene(scene, library_collections, addon_prefs) 
             # set active scene to be the given scene
