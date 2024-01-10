@@ -35,8 +35,8 @@ Here's a minimal usage example:
 # Cargo.toml
 [dependencies]
 bevy="0.12"
-bevy_gltf_save_load = { version = "0.1"} 
-
+bevy_gltf_save_load = "0.1"
+bevy_gltf_blueprints = "0.6" // also needed
 ```
 
 ```rust no_run
@@ -142,6 +142,8 @@ Add the following to your `[dependencies]` section in `Cargo.toml`:
 
 ```toml
 bevy_gltf_save_load = "0.1"
+bevy_gltf_blueprints = "0.6" // also needed, as bevy_gltf_save_load does not re-export it at this time
+
 ```
 
 Or use `cargo add`:
