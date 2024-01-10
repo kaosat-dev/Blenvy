@@ -37,6 +37,10 @@ There is a [video tutorial/explanation](https://youtu.be/CgyNtwgYwdM) for this o
 The examples for the crate are [here](./examples/bevy_gltf_blueprints/)
 > Note: this is the recomended crate to use and uses ```bevy_gltf_components``` under the hood
 
+- [bevy_gltf_save_load](./crates/bevy_gltf_save_load/) This crate adds the ability to save & load your game state in a relatively simple way, by leveraging the blueprint functionality of 
+bevy_gltf_blueprints to only save a minimal subset of dynamic data, seperating dynamic & static parts of levels etc.
+The examples for the crate are [here](./examples/bevy_gltf_save_load/)
+> Note: this uses ```bevy_gltf_blueprints``` under the hood
 
 ## Tools
 
