@@ -92,7 +92,7 @@ pub(crate) fn load_game(
 
 pub(crate) fn load_static(
     dynamic_worlds: Query<Entity, With<SceneInstance>>,
-    world_root: Query<(Entity), With<GameWorldTag>>,
+    world_root: Query<Entity, With<GameWorldTag>>,
     mut commands: Commands,
     mut loading_finished: EventWriter<LoadingFinished>,
 
