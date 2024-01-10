@@ -13,8 +13,8 @@ pub use aabb::*;
 pub mod materials;
 pub use materials::*;
 
-pub mod clone_entity;
-pub use clone_entity::*;
+pub mod copy_components;
+pub use copy_components::*;
 
 use core::fmt;
 use std::path::PathBuf;
@@ -33,14 +33,12 @@ pub enum GltfBlueprintsSet {
 pub struct BluePrintBundle {
     pub blueprint: BlueprintName,
     pub spawn_here: SpawnHere,
-    pub transform: TransformBundle,
 }
 impl Default for BluePrintBundle {
     fn default() -> Self {
         BluePrintBundle {
             blueprint: BlueprintName("default".into()),
             spawn_here: SpawnHere,
-            transform: TransformBundle::default(),
         }
     }
 }
@@ -140,6 +138,7 @@ impl Plugin for BlueprintsPlugin {
                     spawn_from_blueprints,
                     compute_scene_aabbs.run_if(aabbs_enabled),
                     apply_deferred.run_if(aabbs_enabled),
+                    apply_deferred,
                     materials_inject.run_if(materials_library_enabled),
                 )
                     .chain()
@@ -147,12 +146,7 @@ impl Plugin for BlueprintsPlugin {
             )
             .add_systems(
                 Update,
-                (
-                    update_spawned_root_first_child,
-                    apply_deferred,
-                    cleanup_scene_instances,
-                    apply_deferred,
-                )
+                (spawned_blueprint_post_process, apply_deferred)
                     .chain()
                     .in_set(GltfBlueprintsSet::AfterSpawn),
             );

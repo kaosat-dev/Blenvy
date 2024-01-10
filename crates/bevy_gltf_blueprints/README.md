@@ -26,7 +26,7 @@ Here's a minimal usage example:
 # Cargo.toml
 [dependencies]
 bevy="0.12"
-bevy_gltf_blueprints = { version = "0.5"} 
+bevy_gltf_blueprints = { version = "0.6"} 
 
 ```
 
@@ -64,7 +64,7 @@ fn spawn_blueprint(
 Add the following to your `[dependencies]` section in `Cargo.toml`:
 
 ```toml
-bevy_gltf_blueprints = "0.5"
+bevy_gltf_blueprints = "0.6"
 ```
 
 Or use `cargo add`:
@@ -97,8 +97,7 @@ use bevy_gltf_blueprints::*;
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
-        .add_plugin(
+        .add_plugins((
              BlueprintsPlugin{
                 library_folder: "advanced/models/library".into() // replace this with your blueprints library path , relative to the assets folder,
                 format: GltfFormat::GLB,// optional, use either  format: GltfFormat::GLB, or  format: GltfFormat::GLTF, or  ..Default::default() if you want to keep the default .glb extension, this sets what extensions/ gltf files will be looked for by the library
@@ -107,7 +106,7 @@ fn main() {
                 material_library_folder: "materials".into() //defaults to "materials" the folder to look for for the material files
                 ..Default::default()
             }
-        )
+        ))
         .run();
 }
 
@@ -120,7 +119,8 @@ You can spawn entities from blueprints like this:
 commands.spawn((
     BlueprintName("Health_Pickup".to_string()), // mandatory !!
     SpawnHere, // mandatory !!
-    TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)), // VERY important !!
+    
+    TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)), // optional
     // any other component you want to insert
 ))
 
@@ -168,9 +168,49 @@ commands.spawn((
 There is also a bundle for convenience , which just has 
  * a ```BlueprintName``` component
  * a ```SpawnHere``` component
- * a ```TransformBundle``` sub-bundle (so we know where to spawn)
 
 [```BluePrintBundle```](./src/lib.rs#22)
+
+
+## Additional information
+
+- When a blueprint is spawned, all its children entities (and nested children etc) also have an ```InBlueprint``` component that gets insert
+- In cases where that is undesirable, you can add a ```NoInBlueprint``` component on the entity you spawn the blueprint with, and the components above will not be add
+- if you want to overwrite the **path** where this crate looks for blueprints (gltf files) , you can add a ```Library``` component , and that will be used instead of the default path
+ie :
+
+```rust no_run
+commands
+    .spawn((
+        Name::from("test"),
+        BluePrintBundle {
+            blueprint: BlueprintName("TestBlueprint".to_string()),
+            ..Default::default()
+        },
+        Library("models".into()) // now the path to the blueprint above will be /assets/models/TestBlueprint.glb
+    ))
+```
+- this crate also provides a special optional ```GameWorldTag``` component: this is useful when you want to keep all your spawned entities inside a root entity
+
+You can use it in your queries to add your entities as children of this "world"
+This way all your levels, your dynamic entities etc, are kept seperated from UI nodes & other entities that are not relevant to the game world
+
+> Note: you should only have a SINGLE entity tagged with that component !
+
+```rust no_run
+    commands.spawn((
+        SceneBundle {
+            scene: models
+                .get(game_assets.world.id())
+                .expect("main level should have been loaded")
+                .scenes[0]
+                .clone(),
+            ..default()
+        },
+        bevy::prelude::Name::from("world"),
+        GameWorldTag, // here it is
+    ));
+```
 
 
 ## SystemSet
@@ -239,9 +279,9 @@ pub fn animation_change_on_proximity_foxes(
 }
 ```
 
-see https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/animation for how to set it up correctly
+see https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/animation for how to set it up correctly
 
-particularly from https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/animation/game/in_game.rs#86
+particularly from https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/animation/game/in_game.rs#86
 onward 
 
 
@@ -263,27 +303,27 @@ material_library_folder: "materials".into() //defaults to "materials" the folder
 ```bevy_gltf_blueprints``` currently does NOT take care of loading those at runtime
 
 
-see https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/materials for how to set it up correctly
+see https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/materials for how to set it up correctly
 
 Generating optimised blueprints and material libraries can be automated using the latests version of the [Blender plugin](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/gltf_auto_export)
 
 ## Examples
 
-https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/basic
+https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/basic
 
-https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/basic_xpbd_physics
+https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/basic_xpbd_physics
 
-https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/basic_scene_components
+https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/basic_scene_components
 
-https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/animation
+https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/animation
 
-https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/multiple_levels
+https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/multiple_levels
 
-https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/materials
+https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/materials
 
-https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/nested_blueprints
+https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/nested_blueprints
 
-https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/multiple_levels_multiple_blendfiles
+https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/multiple_levels_multiple_blendfiles
 
 
 ## Compatible Bevy versions
@@ -293,7 +333,7 @@ The main branch is compatible with the latest Bevy release, while the branch `be
 Compatibility of `bevy_gltf_blueprints` versions:
 | `bevy_gltf_blueprints` | `bevy` |
 | :--                 | :--    |
-| `0.3 - 0.5`         | `0.12` |
+| `0.3 - 0.6`         | `0.12` |
 | `0.1 - 0.2`         | `0.11` |
 | branch `main`       | `0.12` |
 | branch `bevy_main`  | `main` |

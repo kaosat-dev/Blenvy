@@ -21,6 +21,7 @@ AutoExportGltfPreferenceNames = [
 
     'export_marked_assets',
     'collection_instances_combine_mode',
+    'export_separate_dynamic_and_static_objects',
 
     'export_materials_library',
     'export_materials_path',
@@ -89,7 +90,6 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         default='materials'
     )
 
-
     """ combine mode can be 
               - 'Split' (default): replace with an empty, creating links to sub blueprints 
               - 'Embed' : treat it as an embeded object and do not replace it with an empty
@@ -114,6 +114,15 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         description='Collections that have been marked as assets will be systematically exported, even if not in use in another scene',
         default=True
     )
+
+    export_separate_dynamic_and_static_objects: BoolProperty(
+        name='Export dynamic and static objects seperatly',
+        description="""For MAIN scenes only (aka levels), toggle this to generate 2 files per level: 
+            - one with all dynamic data: collection or instances marked as dynamic/ saveable
+            - one with all static data: anything else that is NOT marked as dynamic""",
+        default=True
+    )
+
 
     main_scenes: CollectionProperty(name="main scenes", type=CUSTOM_PG_sceneName)
     main_scenes_index: IntProperty(name = "Index for main scenes list", default = 0)

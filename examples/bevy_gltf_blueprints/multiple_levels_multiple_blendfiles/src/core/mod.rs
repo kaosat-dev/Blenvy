@@ -10,9 +10,6 @@ pub use relationships::*;
 pub mod physics;
 pub use physics::*;
 
-// pub mod save_load;
-// pub use save_load::*;
-
 use bevy::prelude::*;
 use bevy_gltf_blueprints::*;
 
@@ -23,7 +20,6 @@ impl Plugin for CorePlugin {
             LightingPlugin,
             CameraPlugin,
             PhysicsPlugin,
-            // SaveLoadPlugin,
             BlueprintsPlugin {
                 library_folder: "models/library".into(),
                 material_library: true,

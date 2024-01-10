@@ -10,7 +10,7 @@ use bevy::reflect::{Reflect, TypeInfo, TypeRegistry};
 use bevy::scene::Scene;
 use bevy::utils::HashMap;
 use bevy::{
-    log::{debug, info, warn},
+    log::{debug, warn},
     prelude::{Assets, Name, Parent, ResMut},
 };
 
@@ -252,5 +252,5 @@ pub fn gltf_extras_to_components(
             }
         }
     }
-    info!("done injecting components from gltf_extras /n");
+    debug!("done injecting components from gltf_extras");
 }
