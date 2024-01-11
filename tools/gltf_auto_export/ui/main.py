@@ -42,7 +42,8 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         exceptional = [
             # options that don't start with 'export_'  
             'main_scenes',
-            'library_scenes'
+            'library_scenes',
+            'collection_instances_combine_mode',
         ]
         all_props = self.properties
         export_props = {
@@ -65,7 +66,8 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         exceptional = [
             # options that don't start with 'export_'  
             'main_scenes',
-            'library_scenes'
+            'library_scenes',
+            'collection_instances_combine_mode',
         ]
         all_props = self.properties
         export_props = {
@@ -117,6 +119,10 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
                         item = library_scenes.add()
                         item.name = item_name
 
+                if hasattr(self, 'collection_instances_combine_mode'):
+                    bpy.context.preferences.addons["gltf_auto_export"].preferences.collection_instances_combine_mode = self.collection_instances_combine_mode
+
+
             except (AttributeError, TypeError):
                 self.report({"ERROR"}, "Loading export settings failed. Removed corrupted settings")
                 del context.scene[self.scene_key]
@@ -127,10 +133,8 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
 
         addon_prefs = bpy.context.preferences.addons["gltf_auto_export"].preferences
 
-      
-
         [main_scene_names, level_scenes, library_scene_names, library_scenes]=get_scenes(addon_prefs)
-        collections = get_exportable_collections(level_scenes, library_scenes)
+        (collections, _) = get_exportable_collections(level_scenes, library_scenes, addon_prefs)
 
         try:
             # we save this list of collections in the context
@@ -203,6 +207,7 @@ class GLTF_PT_auto_export_root(bpy.types.Panel):
         layout.active = operator.auto_export
         layout.prop(operator, 'will_save_settings')
         layout.prop(operator, "export_output_folder")
+        layout.prop(operator, "export_scene_settings")
 
         # scene selectors
         row = layout.row()
@@ -274,6 +279,15 @@ class GLTF_PT_auto_export_blueprints(bpy.types.Panel):
 
         return operator.bl_idname == "EXPORT_SCENES_OT_auto_gltf" #"EXPORT_SCENE_OT_gltf"
 
+
+    def draw_header(self, context):
+        layout = self.layout
+        sfile = context.space_data
+        operator = sfile.active_operator
+        layout.prop(operator, "export_blueprints", text="")
+
+        #self.layout.prop(operator, "auto_export", text="")
+
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
@@ -282,12 +296,20 @@ class GLTF_PT_auto_export_blueprints(bpy.types.Panel):
         sfile = context.space_data
         operator = sfile.active_operator
 
-        layout.prop(operator, "export_blueprints")
+        layout.active = operator.export_blueprints
+        
+         # collections/blueprints 
         layout.prop(operator, "export_blueprints_path")
-
+        layout.prop(operator, "collection_instances_combine_mode")
+        layout.prop(operator, "export_marked_assets")
+        layout.prop(operator, "export_separate_dynamic_and_static_objects")
+        layout.separator()
         # materials
         layout.prop(operator, "export_materials_library")
         layout.prop(operator, "export_materials_path")
+
+       
+
 
 
 class GLTF_PT_auto_export_collections_list(bpy.types.Panel):

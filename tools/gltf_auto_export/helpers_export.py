@@ -1,9 +1,14 @@
 import os
 import bpy
+
+
 from .preferences import (AutoExportGltfPreferenceNames)
 from .helpers_scenes import (generate_hollow_scene, clear_hollow_scene)
 from .helpers_collections import (recurLayerCollection)
+from .blueprints import clear_blueprint_hollow_scene, generate_blueprint_hollow_scene
 from .helpers import (traverse_tree)
+from .dynamic import (is_object_dynamic, is_object_static)
+
 ######################################################
 #### Export logic #####
 
@@ -66,11 +71,12 @@ def get_source_scene(collection_name, library_scenes):
     return match
 
 # export collections: all the collections that have an instance in the main scene AND any marked collections, even if they do not have instances
-def export_collections(collections, folder_path, library_scene, addon_prefs, gltf_export_preferences): 
+def export_collections(collections, folder_path, library_scene, addon_prefs, gltf_export_preferences, blueprint_hierarchy, library_collections): 
     # set active scene to be the library scene (hack for now)
     bpy.context.window.scene = library_scene
     # save current active collection
     active_collection =  bpy.context.view_layer.active_layer_collection
+    export_materials_library = getattr(addon_prefs,"export_materials_library")
 
     for collection_name in collections:
         print("exporting collection", collection_name)
@@ -83,17 +89,34 @@ def export_collections(collections, folder_path, library_scene, addon_prefs, glt
         export_settings = { **gltf_export_preferences, 'use_active_scene': True, 'use_active_collection': True, 'use_active_collection_with_nested':True}
         
         # if we are using the material library option, do not export materials, use placeholder instead
-        export_materials_library = getattr(addon_prefs,"export_materials_library")
         if export_materials_library:
             export_settings['export_materials'] = 'PLACEHOLDER'
 
-        export_gltf(gltf_output_path, export_settings)
+
+        #if relevant we replace sub collections instances with placeholders too
+        # this is not needed if a collection/blueprint does not have sub blueprints or sub collections
+        collection_in_blueprint_hierarchy = collection_name in blueprint_hierarchy and len(blueprint_hierarchy[collection_name]) > 0
+        collection_has_child_collections = len(bpy.data.collections[collection_name].children) > 0
+        if collection_in_blueprint_hierarchy or collection_has_child_collections:
+            #print("generate hollow scene for nested blueprints", library_collections)
+            backup = bpy.context.window.scene
+            collection = bpy.data.collections[collection_name]
+            (hollow_scene, temporary_collections, root_objects, special_properties) = generate_blueprint_hollow_scene(collection, library_collections, addon_prefs)
+
+            export_gltf(gltf_output_path, export_settings)
+
+            clear_blueprint_hollow_scene(hollow_scene, collection, temporary_collections, root_objects, special_properties)
+            bpy.context.window.scene = backup
+        else:
+            #print("standard export")
+            export_gltf(gltf_output_path, export_settings)
+
     
     # reset active collection to the one we save before
     bpy.context.view_layer.active_layer_collection = active_collection
 
 
-def export_blueprints_from_collections(collections, library_scene, folder_path, addon_prefs):
+def export_blueprints_from_collections(collections, library_scene, folder_path, addon_prefs, blueprint_hierarchy, library_collections):
     export_output_folder = getattr(addon_prefs,"export_output_folder")
     gltf_export_preferences = generate_gltf_export_preferences(addon_prefs)
     export_blueprints_path = os.path.join(folder_path, export_output_folder, getattr(addon_prefs,"export_blueprints_path")) if getattr(addon_prefs,"export_blueprints_path") != '' else folder_path
@@ -102,7 +125,7 @@ def export_blueprints_from_collections(collections, library_scene, folder_path, 
     #print("LIBRARY EXPORT", export_blueprints_path )
 
     try:
-        export_collections(collections, export_blueprints_path, library_scene, addon_prefs, gltf_export_preferences)
+        export_collections(collections, export_blueprints_path, library_scene, addon_prefs, gltf_export_preferences, blueprint_hierarchy, library_collections)
     except Exception as error:
         print("failed to export collections to gltf: ", error)
         # TODO : rethrow
@@ -114,23 +137,12 @@ def export_main_scenes(scenes, folder_path, addon_prefs):
         export_main_scene(scene, folder_path, addon_prefs)
 
 def export_main_scene(scene, folder_path, addon_prefs, library_collections): 
-    export_output_folder = getattr(addon_prefs,"export_output_folder")
     gltf_export_preferences = generate_gltf_export_preferences(addon_prefs)
-
+    export_output_folder = getattr(addon_prefs,"export_output_folder")
     export_blueprints = getattr(addon_prefs,"export_blueprints")
-  
-    if export_blueprints : 
-        (hollow_scene, object_names) = generate_hollow_scene(scene, library_collections)
-        #except Exception:
-        #    print("failed to create hollow scene")
-
-        # set active scene to be the given scene
-        bpy.context.window.scene = hollow_scene
-
+    export_separate_dynamic_and_static_objects = getattr(addon_prefs, "export_separate_dynamic_and_static_objects")
+    
     gltf_output_path = os.path.join(folder_path, export_output_folder, scene.name)
-    print("       exporting gltf to", gltf_output_path, ".gltf/glb")
-
-
     export_settings = { **gltf_export_preferences, 
                        'use_active_scene': True, 
                        'use_active_collection':True, 
@@ -139,10 +151,40 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
                        'use_renderable': False,
                        'export_apply':True
                        }
-    export_gltf(gltf_output_path, export_settings)
 
     if export_blueprints : 
-        clear_hollow_scene(hollow_scene, scene, object_names)
+        if export_separate_dynamic_and_static_objects:
+            # first export all dynamic objects
+            (hollow_scene, temporary_collections, root_objects, special_properties) = generate_hollow_scene(scene, library_collections, addon_prefs, is_object_dynamic) 
+            gltf_output_path = os.path.join(folder_path, export_output_folder, scene.name+ "_dynamic")
+            # set active scene to be the given scene
+            bpy.context.window.scene = hollow_scene
+            print("       exporting gltf to", gltf_output_path, ".gltf/glb")
+            export_gltf(gltf_output_path, export_settings)
+            clear_hollow_scene(hollow_scene, scene, temporary_collections, root_objects, special_properties)
+
+            # now export static objects
+            (hollow_scene, temporary_collections, root_objects, special_properties) = generate_hollow_scene(scene, library_collections, addon_prefs, is_object_static) 
+            gltf_output_path = os.path.join(folder_path, export_output_folder, scene.name)
+            # set active scene to be the given scene
+            bpy.context.window.scene = hollow_scene
+            print("       exporting gltf to", gltf_output_path, ".gltf/glb")
+            export_gltf(gltf_output_path, export_settings)
+            clear_hollow_scene(hollow_scene, scene, temporary_collections, root_objects, special_properties)
+
+        else:
+            print("NO SPLIT")
+            # todo: add exception handling
+            (hollow_scene, temporary_collections, root_objects, special_properties) = generate_hollow_scene(scene, library_collections, addon_prefs) 
+            # set active scene to be the given scene
+            bpy.context.window.scene = hollow_scene
+            print("       exporting gltf to", gltf_output_path, ".gltf/glb")
+            export_gltf(gltf_output_path, export_settings)
+
+            clear_hollow_scene(hollow_scene, scene, temporary_collections, root_objects, special_properties)
+    else:
+        print("       exporting gltf to", gltf_output_path, ".gltf/glb")
+        export_gltf(gltf_output_path, export_settings)
 
 
 #https://docs.blender.org/api/current/bpy.ops.export_scene.html#bpy.ops.export_scene.gltf

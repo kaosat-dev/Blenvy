@@ -15,12 +15,18 @@ AutoExportGltfPreferenceNames = [
     'export_main_scene_name',
     'export_output_folder',
     'export_library_scene_name',
+
     'export_blueprints',
     'export_blueprints_path',
+
+    'export_marked_assets',
+    'collection_instances_combine_mode',
+    'export_separate_dynamic_and_static_objects',
 
     'export_materials_library',
     'export_materials_path',
 
+    'export_scene_settings',
 
     'main_scenes',
     'library_scenes',
@@ -54,6 +60,13 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         description='The name of the library scene to auto export',
         default='Library'
     )
+    # scene components
+    export_scene_settings: BoolProperty(
+        name='Export scene settings',
+        description='Export scene settings ie AmbientLighting, Bloom, AO etc',
+        default=False
+    )
+
     # blueprint settings
     export_blueprints: BoolProperty(
         name='Export Blueprints',
@@ -77,6 +90,40 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         default='materials'
     )
 
+    """ combine mode can be 
+              - 'Split' (default): replace with an empty, creating links to sub blueprints 
+              - 'Embed' : treat it as an embeded object and do not replace it with an empty
+              - 'EmbedExternal': embed any instance of a non local collection (ie external assets)
+
+              - 'Inject': inject components from sub collection instances into the curent object => this is now a seperate custom property that you can apply to a collecion instance
+            """
+
+    collection_instances_combine_mode : EnumProperty(
+        name='Collection instances',
+        items=(
+           ('Split', 'Split', 'replace collection instances with an empty + blueprint, creating links to sub blueprints (Default, Recomended)'),
+           ('Embed', 'Embed', 'treat collection instances as embeded objects and do not replace them with an empty'),
+           ('EmbedExternal', 'EmbedExternal', 'treat instances of external (not specifified in the current blend file) collections (aka assets etc) as embeded objects and do not replace them with empties'),
+           #('Inject', 'Inject', 'inject components from sub collection instances into the curent object')
+        ),
+        default='Split'
+    )
+
+    export_marked_assets: BoolProperty(
+        name='Auto export marked assets',
+        description='Collections that have been marked as assets will be systematically exported, even if not in use in another scene',
+        default=True
+    )
+
+    export_separate_dynamic_and_static_objects: BoolProperty(
+        name='Export dynamic and static objects seperatly',
+        description="""For MAIN scenes only (aka levels), toggle this to generate 2 files per level: 
+            - one with all dynamic data: collection or instances marked as dynamic/ saveable
+            - one with all static data: anything else that is NOT marked as dynamic""",
+        default=True
+    )
+
+
     main_scenes: CollectionProperty(name="main scenes", type=CUSTOM_PG_sceneName)
     main_scenes_index: IntProperty(name = "Index for main scenes list", default = 0)
 
@@ -86,15 +133,14 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
     #####
     export_format: EnumProperty(
         name='Format',
-        items=(('GLB', 'glTF Binary (.glb)',
+        items=(
+            ('GLB', 'glTF Binary (.glb)',
                 'Exports a single file, with all data packed in binary form. '
                 'Most efficient and portable, but more difficult to edit later'),
-               ('GLTF_EMBEDDED', 'glTF Embedded (.gltf)',
-                'Exports a single file, with all data packed in JSON. '
-                'Less efficient than binary, but easier to edit later'),
                ('GLTF_SEPARATE', 'glTF Separate (.gltf + .bin + textures)',
                 'Exports multiple files, with separate JSON, binary and texture data. '
-                'Easiest to edit later')),
+                'Easiest to edit later')
+                ),
         description=(
             'Output format and embedding options. Binary is most efficient, '
             'but JSON (embedded or separate) may be easier to edit later'

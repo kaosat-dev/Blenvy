@@ -1,0 +1,14 @@
+({
+    "world":File (path: "models/World.glb"),
+    /*"models": Files (
+        paths: [
+            "models/library/Container.glb", 
+            "models/library/Health_Pickup.glb",
+            "models/library/MagicTeapot.glb", 
+            "models/library/Pillar.glb",
+            "models/library/Player.glb",
+            "models/library/Unused_in_level_test.glb"
+        ],
+    )*/
+    
+})
