@@ -10,11 +10,15 @@ bl_info = {
     "tracker_url": "https://github.com/kaosat-dev/Blender_bevy_components_workflow/issues/new",
     "category": "User Interface"
 }
+import os
 import bpy
-from bpy_types import Operator
-from bpy.props import (StringProperty, EnumProperty, PointerProperty)
-from .helpers import make_empty3
+import json
 
+from bpy_types import Operator
+from bpy.props import (StringProperty, EnumProperty, PointerProperty, FloatVectorProperty)
+from .helpers import make_empty3
+from .components import (ComponentDefinition, ComponentDefinitions, AddComponentDefinitions, ClearComponentDefinitions)
+from pathlib import Path
 
 stored_component = None
 bla = PointerProperty()
@@ -41,6 +45,8 @@ class CreateBlueprintOperator(Operator):
 
         collection.objects.link(components_empty)
 
+        init_components()
+
 
         return {'FINISHED'}
     
@@ -49,8 +55,13 @@ class AddComponentToBlueprintOperator(Operator):
     bl_idname = "object.addblueprint_to_component"
     bl_label = "Add component to blueprint Operator"
 
+    component_type: StringProperty(
+        name="component_type",
+        description="component type to add",
+    )
+
     def execute(self, context):
-        print("adding component to blueprint")
+        print("adding component to blueprint", self.component_type)
         original_active_object = bpy.context.active_object
 
         # fixme: refactor, do this better
@@ -60,8 +71,62 @@ class AddComponentToBlueprintOperator(Operator):
             if child.name == collection.name + "_components":
                 current_components_container= child
 
-        if current_components_container is not None:
-            current_components_container["foo"] = 42
+        if current_components_container is not None and self.component_type != "":
+            value = ""
+            # Struct + empty properties => Struct with no fields => str (for now)
+            component_infos = bpy.context.collection.component_definitions[int(self.component_type)]
+            data = json.loads(component_infos.toto)
+
+            print("component infos", component_infos, component_infos.type_name)
+            type_name = component_infos.type_name
+            default_value = data["value"]
+
+  
+            def make_bool():
+                current_components_container[component_infos.name] = default_value
+
+            def make_string():
+                current_components_container[component_infos.name] = default_value
+
+            def make_color():
+                current_components_container[component_infos.name] = default_value
+                property_manager = current_components_container.id_properties_ui(component_infos.name)
+                property_manager.update(subtype='COLOR')
+
+            def make_enum():
+                current_components_container[component_infos.name] = component_infos.values
+
+            component_prop_makers = {
+                "Bool": make_bool,
+                "Color": make_color,
+                "String":make_string,
+                "Enum":make_enum
+            }
+
+            if type_name in component_prop_makers:
+                component_prop_makers[type_name]()
+            else :
+                current_components_container[component_infos.name] = default_value
+            """
+            current_components_container[component_infos.name] = 0.5
+            property_manager = current_components_container.id_properties_ui(component_infos.name)
+            property_manager.update(min=-10, max=10, soft_min=-5, soft_max=5)
+
+            print("property_manager", property_manager)
+
+            current_components_container[component_infos.name] = [0.8,0.2,1.0]
+            property_manager = current_components_container.id_properties_ui(component_infos.name)
+            property_manager.update(subtype='COLOR')"""
+
+            #IDPropertyUIManager
+            #rna_ui = current_components_container[component_infos.name].get('_RNA_UI')
+            #print("RNA", rna_ui)
+
+            
+            #current_components_container[component_infos.name] = FloatVectorProperty(name="Hex Value", 
+            #                            subtype='COLOR', 
+            #                            default=[0.0,0.0,0.0])
+            #lookup[component_infos.type_name] if component_infos.type_name in lookup else  ""
 
 
         return {'FINISHED'}
@@ -139,29 +204,8 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
     bl_category = "Bevy Components"
     bl_context = "objectmode"
 
+
     def draw(self, context):
-
-
-
-        component_types =  EnumProperty(
-            name='ComponentType',
-            items=(('GLB', 'glTF Binary (.glb)',
-                    'Exports a single file, with all data packed in binary form. '
-                    'Most efficient and portable, but more difficult to edit later'),
-                ('GLTF_EMBEDDED', 'glTF Embedded (.gltf)',
-                    'Exports a single file, with all data packed in JSON. '
-                    'Less efficient than binary, but easier to edit later'),
-                ('GLTF_SEPARATE', 'glTF Separate (.gltf + .bin + textures)',
-                    'Exports multiple files, with separate JSON, binary and texture data. '
-                    'Easiest to edit later')),
-            description=(
-                'Component types'
-            ),
-            default='GLB'
-        )
-
-
-
         layout = self.layout
         obj = context.object
         collection = context.collection
@@ -176,21 +220,41 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
         col.operator(CreateBlueprintOperator.bl_idname, text="Create blueprint", icon="CONSOLE")
         layout.separator()
 
-     
         #layout.label(text =obj.name)
         # layout.label(text =context.collection.name)
         # and hasattr(collection, 'AutoExport')
         current_components_container = None
         has_components = False
         for child in collection.objects:
-            if child.name == collection.name + "_components":
+            if child.name.endswith("_components"):
                 has_components = True
                 current_components_container= child
 
         # layout.label(text= "has_components" + str(has_components))
         if collection is not None and has_components:
             layout.label(text="Edit blueprint: "+ collection.name)
-            layout.operator(AddComponentToBlueprintOperator.bl_idname, text="Add component", icon="CONSOLE")
+            col = layout.column(align=True)
+            row = col.row(align=True)
+
+            # display list of available components
+            #row.prop(collection,"my_enum",text="Component")
+
+            row.operator(ClearComponentDefinitions.bl_idname, text="clear")
+
+            row.prop(collection.components, "list", text="Component")
+
+            # the button to add them
+            op = row.operator(AddComponentToBlueprintOperator.bl_idname, text="Add", icon="CONSOLE")
+            op.component_type = collection.components.list
+            """print("collection.components.list", collection.components.list)
+
+            foo = list(
+                map(lambda x: print("name:", x.name, ", type:", x.type_name, ", values: ", x.values), collection.component_definitions.values())
+            )"""
+            #print("component_definitions", foo)
+
+            
+
             layout.operator(PasteComponentOperator.bl_idname, text="Paste component", icon="PASTEDOWN")
 
             #layout.prop(component_types, "")
@@ -201,11 +265,7 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
             
          
             for component_name in dict(current_components_container):
-                #current_components_container["enableds"][component_name] = False
-                #bla = Bool
                 #bla["enabled"] = False
-                #layout.label(text= component)
-                #layout.prop_enum
                 col = layout.column(align=True)
                 row = col.row(align=True)
 
@@ -217,8 +277,10 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
 
                 # add a "disabled" pseudo property for all of the components
                 #row.prop(current_components_container.enableds, "enabled", text="")
-
-                row.prop(current_components_container, '["'+ component_name +'"]', text="")
+                if current_components_container[component_name] != '' :
+                    row.prop(current_components_container, '["'+ component_name +'"]', text="")
+                else :
+                    row.label(text="------------")
                 op = row.operator(CopyComponentOperator.bl_idname, text="", icon="SETTINGS")
                
 
@@ -243,12 +305,140 @@ classes = [
     CopyComponentOperator,
     PasteComponentOperator,
     DeleteComponentOperator,
+
+    ComponentDefinition,
+    ComponentDefinitions,
+    AddComponentDefinitions, 
+    ClearComponentDefinitions,
     BEVY_BLUEPRINTS_PT_TestPanel,
 ]
 
+def getList(scene, context):
+    print("context, definitions:", len(context.collection.component_definitions))
+    for i in context.collection.component_definitions:
+        print("aa", i)
+    items = []
+    """if context.object.type == "MESH":
+        items += [("1","Mesh Item 1","This is a mesh list."),
+                  ("2","Mesh Item 2","This is a mesh list.")]
+    else:"""
+    items.append(("Collider","Collider","This is a non-mesh list."))
+    items.append(("Rigidbody","Rigidbody","This is a non-mesh list."))
+    items.append(("Dynamic","Dynamic","This is a non-mesh list."))
+    items.append(("Pickable","Pickable","This is a non-mesh list."))
+    items.append(("Healer","Healer","This is a non-mesh list."))
+
+    return items
+
+
+#_register, _unregister = bpy.utils.register_classes_factory(classes)
+
+def init_components():
+    file_path = bpy.data.filepath
+    # Get the folder
+    folder_path = os.path.dirname(file_path)
+    path =  os.path.join(folder_path, "../schema.json")
+    print("path to defs", path)
+    f = Path(bpy.path.abspath(path)) # make a path object of abs path
+
+    if f.exists():
+        print("COMPONENT DEFINITIONS")
+
+        with open(path) as f: 
+            data = json.load(f) 
+            defs = data["$defs"]
+            # print ("DEFS", defs) 
+            for name in defs:
+                definition = data["$defs"][name]
+                if definition['isComponent'] and name.startswith("bevy_bevy_blender_editor_basic_example::"):
+                    #print("definition:", name, definition, definition['isComponent'])
+
+                    type_info = definition["typeInfo"] if "typeInfo" in definition else None
+                    properties = definition["properties"] if "properties" in definition else {}
+                    prefixItems = definition["prefixItems"] if "prefixItems" in definition else []
+                    default_value = ''
+                    values = definition["enum"] if "enum" in definition else [None]
+
+                    short_name = name
+                    if "::" in name:
+                        short_name = name.rsplit('::', 1)[-1]
+
+
+                    print("definition", name, "type_info", type_info, "values", values)
+
+                    type = type_info
+                    if type_info == "Struct" and len(properties.keys()) > 0:
+                        type = "Struct"
+                    if type_info == "TupleStruct" and len(prefixItems) == 1:
+                        if prefixItems[0]["type"]["$ref"] == "#/$defs/bool":
+                            type = "Bool"
+                            default_value = True
+
+                        elif prefixItems[0]["type"]["$ref"] == "#/$defs/bevy_render::color::Color":
+                            type = "Color"
+                            default_value = [0.8,0.2,1.0]
+
+                        elif prefixItems[0]["type"]["$ref"] == "#/$defs/alloc::string::String":
+                            type = "String"
+                            default_value = ' '
+
+                        elif prefixItems[0]["type"]["$ref"] == "#/$defs/f32":
+                            type = "Float"
+                            default_value = 0.0
+
+                        elif prefixItems[0]["type"]["$ref"] == "#/$defs/u64":
+                            type = "UInt"
+                            default_value = 0
+
+                        elif prefixItems[0]["type"]["$ref"] == "#/$defs/glam::Vec2":
+                            type = "Vec2"
+                            default_value = [0.0, 0.0]
+                        elif prefixItems[0]["type"]["$ref"] == "#/$defs/glam::Vec3":
+                            type = "Vec3"
+                            default_value = [0.0, 0.0, 0.0]
+                            
+                    if type_info == "TupleStruct" and len(prefixItems) > 1:
+                        for item in prefixItems:
+                            ref = item["type"]["$ref"].replace("#/$defs/", "")
+                            original = data["$defs"][ref]
+                            print("ORIGINAL", original)
+                        
+                    if type_info == "Enum":
+                        type = "Enum"
+
+                    if type_info is not None:
+                        item = bpy.context.collection.component_definitions.add()
+                        item.name = short_name
+                        item.long_name = name
+                        item.type_name = type
+                        item.value = str(default_value)
+                        item.values = str(values[0])
+
+                        new_item = {
+                                "name": short_name,
+                                "long_name": name,
+                                "type_name": type,
+                                "value": default_value,
+                                "values": values
+                        }
+                        item.toto = json.dumps(new_item)
+                        print("new _item", new_item)
+
+
+                        
+
+                
+        #print(f.read_text())
+
 def register():
+    print("register")
+    bpy.types.Collection.my_enum = bpy.props.EnumProperty(name="myEnum",description="a dynamic list",items=getList)
+
     for cls in classes:
         bpy.utils.register_class(cls)
+
+    #bpy.app.handlers.load_post.append(init_components)
+    #bpy.app.handlers.version_update
 
 def unregister():
     for cls in classes:
