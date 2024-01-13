@@ -56,7 +56,7 @@ class ComponentDefinition(bpy.types.PropertyGroup):
         default = "[]"
     )
 
-    toto: bpy.props.StringProperty(
+    data: bpy.props.StringProperty(
         name = "Toto",
         default = "[]"
     )
