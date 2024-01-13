@@ -333,6 +333,98 @@ def getList(scene, context):
 
 #_register, _unregister = bpy.utils.register_classes_factory(classes)
 
+def add_component_to_mapped(mapped, name, definitions):
+    if name in mapped:
+        print("already present")
+        return mapped[name]
+    print("computing", name)
+    short_name = str(name)
+    long_name = str(name)
+    if "::" in name:
+        short_name = short_name.rsplit('::', 1)[-1]
+
+    if not name in definitions:
+        mapped[name] = {
+            "name": short_name,
+            "long_name": long_name,
+            "type_info": None,
+            "type": None,
+            "value": None,
+            "values": []
+        }
+        return mapped[name]
+    definition = definitions[name]
+    is_component = definition['isComponent']  if "isComponent" in definition else False
+    is_resource = definition['is_resource']  if "is_resource" in definition else False
+
+    type_info = definition["typeInfo"] if "typeInfo" in definition else None
+    type = definition["type"] if "type" in definition else None
+    properties = definition["properties"] if "properties" in definition else {}
+    prefixItems = definition["prefixItems"] if "prefixItems" in definition else []
+    values = definition["enum"] if "enum" in definition else [None]
+    default_value = ''
+
+   
+
+    # TODO: add overrides for various vec2s & vec3s
+    base_type_map = {
+        "string":" ",
+        "boolean": True,
+        "float": 0.0,
+        "uint": 0,
+        "int":0
+    }
+    default_value = base_type_map[type] if type in base_type_map else ""
+
+    if len(properties.keys()) > 0:
+        default_value = {}
+        for property_name in properties.keys():
+            ref_name = properties[property_name]["type"]["$ref"].replace("#/$defs/", "")
+            #print("ref_name", ref_name, "property_name", property_name)
+            if ref_name in mapped:
+                original = mapped[ref_name]
+                default_value[property_name] = original["value"]
+                #print("ORIGINAL PROP", original)
+            else: 
+                #print("need to compute", ref_name)
+                original = add_component_to_mapped(mapped=mapped, name=ref_name, definitions=definitions)
+                #print("original", original)
+                default_value[property_name] = original["value"]
+                
+
+    if len(prefixItems) > 0:
+        default_value = []
+        for index, item in enumerate(prefixItems):
+            ref_name = item["type"]["$ref"].replace("#/$defs/", "")
+            if ref_name in mapped:
+                original = mapped[ref_name]
+                default_value.append(original["value"])
+                print("ORIGINAL prefix item", original)
+            else:
+                print("need to compute", ref_name)
+                original = add_component_to_mapped(mapped=mapped, name=ref_name, definitions=definitions)
+                print("original", original)
+                default_value.append(original["value"])
+        print("DEFAULT", default_value)
+        if len(default_value) == 1:
+            print("single value, using only that one")
+            default_value = default_value[0]
+
+    remapped_data = {
+        "name": short_name,
+        "long_name": long_name,
+        "type_info": type_info,
+        "type": type,
+        "value": default_value,
+        "values": values
+    }   
+
+    print("adding", name)
+    mapped[name] = remapped_data
+    return remapped_data
+
+
+
 def init_components():
     file_path = bpy.data.filepath
     # Get the folder
@@ -343,6 +435,7 @@ def init_components():
 
     if f.exists():
         print("COMPONENT DEFINITIONS")
+        mapped = {}
 
         with open(path) as f: 
             data = json.load(f) 
@@ -350,25 +443,31 @@ def init_components():
             # print ("DEFS", defs) 
             for name in defs:
                 definition = data["$defs"][name]
-                if definition['isComponent'] and name.startswith("bevy_bevy_blender_editor_basic_example::"):
-                    #print("definition:", name, definition, definition['isComponent'])
+                is_component = definition['isComponent']  if "isComponent" in definition else False
+                is_resource = definition['is_resource']  if "is_resource" in definition else False
 
-                    type_info = definition["typeInfo"] if "typeInfo" in definition else None
-                    properties = definition["properties"] if "properties" in definition else {}
-                    prefixItems = definition["prefixItems"] if "prefixItems" in definition else []
-                    default_value = ''
-                    values = definition["enum"] if "enum" in definition else [None]
+                # base types
+                #if not is_component and not is_resource:
+                add_component_to_mapped(mapped=mapped, name=name, definitions=defs)
 
-                    short_name = name
-                    if "::" in name:
-                        short_name = name.rsplit('::', 1)[-1]
+                
+                if is_component and name.startswith("bevy_bevy_blender_editor_basic_example::"):
+                    print("definition:", name, definition, definition['isComponent'])
 
+                   
+                    """print("definition", name, "type_info", type_info, "values", values)
 
-                    print("definition", name, "type_info", type_info, "values", values)
-
-                    type = type_info
                     if type_info == "Struct" and len(properties.keys()) > 0:
                         type = "Struct"
+                        inner = {}
+                        for name in properties.keys():
+                            ref = properties[name]["type"]["$ref"].replace("#/$defs/", "")
+                            original = data["$defs"][ref]
+                            #print("ORIGINAL PROP", original)
+                            #inner[name] = 
+
+                        default_value = '{}'
+
                     if type_info == "TupleStruct" and len(prefixItems) == 1:
                         if prefixItems[0]["type"]["$ref"] == "#/$defs/bool":
                             type = "Bool"
@@ -417,13 +516,14 @@ def init_components():
                         new_item = {
                                 "name": short_name,
                                 "long_name": name,
-                                "type_name": type,
+                                "type": type,
                                 "value": default_value,
                                 "values": values
                         }
                         item.toto = json.dumps(new_item)
-                        print("new _item", new_item)
+                        print("new _item", new_item)"""
 
+        print("mappedyo", json.dumps(mapped))
 
                         
 
