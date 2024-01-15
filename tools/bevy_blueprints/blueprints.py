@@ -18,9 +18,9 @@ class CreateBlueprintOperator(Operator):
         blueprint_name = "NewBlueprint"
         collection = bpy.data.collections.new(blueprint_name)
         bpy.context.scene.collection.children.link(collection)
-
         collection['AutoExport'] = True
 
+        # this is in order to deal with automatic naming
         blueprint_name = collection.name
 
         components_empty = make_empty3(blueprint_name + "_components", [0,0,0], [0,0,0], [0,0,0])
@@ -29,10 +29,12 @@ class CreateBlueprintOperator(Operator):
         collection.objects.link(components_empty)
 
 
+
         #bpy.context.window_manager.components_registry.registry.clear()
         bpy.context.window_manager.components_registry.registry = json.dumps(read_components())
         
-
+        components_empty.select_set(True)
+        bpy.context.view_layer.objects.active = components_empty
 
         return {'FINISHED'}
     

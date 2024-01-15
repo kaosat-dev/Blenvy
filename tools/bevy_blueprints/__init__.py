@@ -17,21 +17,12 @@ import json
 from bpy_types import Operator
 from bpy.props import (StringProperty, EnumProperty, PointerProperty, FloatVectorProperty)
 
-
-
 from .blueprints import CreateBlueprintOperator
-from .components.operators import CopyComponentOperator, DeleteComponentOperator, PasteComponentOperator, AddComponentToBlueprintOperator
-from .components.helpers import (ComponentDefinition, ComponentDefinitions, ClearComponentDefinitions, ComponentEnums, ComponentMeta, FooBar, Foos)
+from .components.operators import CopyComponentOperator, DeleteComponentOperator, PasteComponentOperator, AddComponentOperator
+from .components.definitions import (ComponentDefinition)
 from .components.registry import ComponentsRegistry
-
-stored_component = None
-bla = PointerProperty()
-current_toto = None
-
-    
-
-
-
+from .components.metadata import (ComponentInfos, ComponentsMeta)
+from .components.ui import (ComponentDefinitionsList, ClearComponentDefinitionsList)
 
 class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
     bl_idname = "BEVY_BLUEPRINTS_PT_TestPanel"
@@ -44,13 +35,18 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        obj = context.object
+        object = context.object
         collection = context.collection
 
-        layout.label(text="Create blueprint:")
+        # we get & load our component registry
+        registry = bpy.context.window_manager.components_registry.registry 
+        registry = json.loads(registry) if registry != '' else ''
+        available_components = bpy.context.window_manager.components_list
+        print("available_components", available_components)
 
         col = layout.column(align=True)
         row = col.row(align=True)
+        
 
         col.operator(CreateBlueprintOperator.bl_idname, text="Create blueprint", icon="CONSOLE")
         layout.separator()
@@ -62,66 +58,64 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
                 has_components = True
                 current_components_container= child
 
+
+
         if collection is not None and has_components:
             layout.label(text="Edit blueprint: "+ collection.name)
+        if object is not None:
+            
             col = layout.column(align=True)
             row = col.row(align=True)
 
-            row.operator(ClearComponentDefinitions.bl_idname, text="clear")
-            row.prop(collection.components, "list", text="Component")
+            row.operator(ClearComponentDefinitionsList.bl_idname, text="clear")
+            row.prop(available_components, "list", text="Component")
+            row.prop(available_components, "filter",text="Filter")
 
             # the button to add them
-            op = row.operator(AddComponentToBlueprintOperator.bl_idname, text="Add", icon="CONSOLE")
-            op.component_type = collection.components.list
-            """print("collection.components.list", collection.components.list)
+            op = row.operator(AddComponentOperator.bl_idname, text="Add", icon="CONSOLE")
+            op.component_type = available_components.list
 
-            foo = list(
-                map(lambda x: print("name:", x.name, ", type:", x.type_name, ", values: ", x.values), collection.component_definitions.values())
-            )"""
-
+            # past components
             layout.operator(PasteComponentOperator.bl_idname, text="Paste component", icon="PASTEDOWN")
             
-            # we get & load our component registry
-            registry = bpy.context.window_manager.components_registry.registry 
-            registry = json.loads(registry)
-            components_in_object = current_components_container.components_meta.components
+            components_in_object = object.components_meta.components
+            #def by_name(c)
 
-
-            for component_name in dict(current_components_container):
+            for component_name in sorted(dict(object)) : # sorted by component name, practical
                 if component_name == "components_meta":
                     continue
                 col = layout.column(align=True)
                 row = col.row(align=True)
 
-                component_value = current_components_container[component_name]
+                component_value = object[component_name]
                 component_meta =  next(filter(lambda component: component["name"] == component_name, components_in_object), None)
                 if component_meta == None: 
                     continue
                 component_type = component_meta.type_name
+                component_enabled = component_meta.enabled
 
                 #print("component_meta", component_meta)
                 #component_data = json.loads(component_meta.data)
                 print("component_type", component_type)
-                
+                # row.enabled = component_enabled
+
                 row.prop(component_meta, "enabled", text="")
                 row.label(text=component_name)
 
                 if component_type == "string": 
-                    row.prop(current_components_container, '["'+ component_name +'"]', text="")#, placeholder="placeholder")
+                    row.prop(object, '["'+ component_name +'"]', text="")#, placeholder="placeholder")
                 elif component_type == "Enum":
                     pass
                     #component_enums = collection.component_enums
-                    #row.prop(current_components_container, "toto", text="")
+                    #row.prop(object, "toto", text="")
                 elif component_type == "object":
                     row.label(text="------------")
                 else :
-                    row.prop(current_components_container, '["'+ component_name +'"]', text="")
+                    row.prop(object, '["'+ component_name +'"]', text="")
                     
 
 
                 op = row.operator(CopyComponentOperator.bl_idname, text="", icon="SETTINGS")
-               
-
                 op = row.operator(DeleteComponentOperator.bl_idname, text="", icon="X")
                 op.target_property = component_name
                 
@@ -142,17 +136,17 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
 
 classes = [
     CreateBlueprintOperator,
-    AddComponentToBlueprintOperator,  
+    AddComponentOperator,  
     CopyComponentOperator,
     PasteComponentOperator,
     DeleteComponentOperator,
 
     ComponentDefinition,
-    ComponentDefinitions,
-    ClearComponentDefinitions,
+    ComponentDefinitionsList,
+    ClearComponentDefinitionsList,
     
-    ComponentEnums,
-    ComponentMeta,
+    ComponentInfos,
+    ComponentsMeta,
     ComponentsRegistry,
 
     BEVY_BLUEPRINTS_PT_TestPanel,
@@ -167,8 +161,7 @@ def register():
         bpy.utils.register_class(cls)
 
 
-    bpy.types.Object.components_meta = PointerProperty(type=ComponentMeta)
-    bpy.types.Collection.component_enums = PointerProperty(type=ComponentEnums)
+    bpy.types.Object.components_meta = PointerProperty(type=ComponentsMeta)
     bpy.types.WindowManager.components_registry = PointerProperty(type=ComponentsRegistry)
 
 
@@ -176,7 +169,6 @@ def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
 
-    del bpy.types.Collection.component_enums
     del bpy.types.Object.components_meta
     del bpy.types.WindowManager.components_registry
 

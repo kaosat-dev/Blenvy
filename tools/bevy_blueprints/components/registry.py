@@ -24,7 +24,7 @@ def read_components():
 
     if f.exists():
         print("COMPONENT DEFINITIONS")
-        bpy.context.collection.component_definitions.clear()
+        bpy.context.window_manager.component_definitions.clear()
 
         with open(path) as f: 
             data = json.load(f) 
@@ -42,7 +42,7 @@ def read_components():
                 
                 if is_component and name.startswith("bevy_bevy_blender_editor_basic_example::"):
                     print("definition:", name, definition, definition['isComponent'])
-                    item = bpy.context.collection.component_definitions.add()
+                    item = bpy.context.window_manager.component_definitions.add()
                     item.name = component_data["name"]
                     item.long_name = name
                     item.type_name = component_data["type"]
