@@ -120,11 +120,8 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
                 
                 op =row.operator(CopyComponentOperator.bl_idname, text="", icon="COPYDOWN")
                 op.target_property = component_name
-                op.target_property_value = str(component_value)
-                #layout.prop(obj,'["boolean"]',text='test')
+                op.source_object_name = object.name
 
-                # bpy.ops.wm.properties_remove
-                #bpy.ops.wm.properties_add()
 
         else: 
             layout.label(text ="Select a collection/blueprint to edit it")
@@ -163,15 +160,19 @@ def register():
     bpy.types.Object.components_meta = PointerProperty(type=ComponentsMeta)
     bpy.types.WindowManager.components_registry = PointerProperty(type=ComponentsRegistry)
 
+    bpy.types.WindowManager.copied_source_component_name = StringProperty()
+    bpy.types.WindowManager.copied_source_object = StringProperty()
+
+
 
 def unregister():
+    print("unregister")
     for cls in classes:
         bpy.utils.unregister_class(cls)
 
+    del bpy.types.WindowManager.blueprint_name
     del bpy.types.Object.components_meta
     del bpy.types.WindowManager.components_registry
 
-    #del bpy.types.Object.toto
-
-    #del bpy.types.Collection.my_enum
-    
+    del bpy.types.WindowManager.copied_source_component_name
+    del bpy.types.WindowManager.copied_source_object

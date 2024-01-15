@@ -51,6 +51,8 @@ class ComponentsMeta(PropertyGroup):
 
 # We need a collection property of components PER object
 def get_component_metadata_by_short_name(object, short_name):
+    if not "components_meta" in object:
+        return None
     return next(filter(lambda component: component["name"] == short_name, object.components_meta.components), None)
 
 def cleanup_invalid_metadata(object):
@@ -63,3 +65,103 @@ def cleanup_invalid_metadata(object):
             to_remove.append(index)
     for index in to_remove:
         components_in_object.remove(index)
+
+
+# returns a componentDefinition with matching short name or None if nothing has been found
+def find_component_definition_from_short_name(short_name):
+    component_definitions = bpy.context.window_manager.component_definitions
+    for component_definition in component_definitions:
+        if component_definition.name == short_name:
+            return component_definition
+    return None
+
+# adds a component to an object (including metadata) using the provided componentDefinition & optional value
+def add_component_to_object(object, component_definition, value=None):
+    cleanup_invalid_metadata(object)
+    if object is not None:
+        long_name = component_definition.long_name
+        short_name = component_definition.name
+        
+        data = json.loads(component_definition.data)
+
+        print("component infos", data, "long_name", component_definition.long_name)
+        type_name = data["type"]
+        default_value = data["value"]
+
+        def make_bool():
+            object[component_definition.name] = default_value
+
+        def make_string():
+            object[component_definition.name] = default_value
+
+        def make_color():
+            object[component_definition.name] = default_value
+            property_manager = object.id_properties_ui(component_definition.name)
+            property_manager.update(subtype='COLOR')
+
+        def make_enum():
+            object[component_definition.name] = component_definition.values
+
+        component_prop_makers = {
+            "Bool": make_bool,
+            "Color": make_color,
+            "String":make_string,
+            "Enum":make_enum
+        }
+
+        if type_name in component_prop_makers:
+            component_prop_makers[type_name]()
+        else :
+            object[component_definition.name] = default_value
+
+        if value is not None:
+            object[component_definition.name] = value
+
+
+        data["enabled"] = True
+
+
+        registry = bpy.context.window_manager.components_registry.registry 
+        registry = json.loads(registry)
+        registry_entry = registry[long_name] if long_name in registry else None
+        print("registry_entry", registry_entry)
+
+
+        #object.components_meta.components.clear()
+        components_in_object = object.components_meta.components
+
+        matching_component = next(filter(lambda component: component["name"] == short_name, components_in_object), None)
+        print("matching", matching_component)
+        # matching component means we already have this type of component 
+        if matching_component:
+            return False
+        
+        component_meta = components_in_object.add()
+        component_meta.name = short_name
+        component_meta.long_name = long_name
+        component_meta.data = component_definition.data
+        component_meta.type_name = data["type"]
+
+        """
+        object[component_definition.name] = 0.5
+        property_manager = object.id_properties_ui(component_definition.name)
+        property_manager.update(min=-10, max=10, soft_min=-5, soft_max=5)
+
+        print("property_manager", property_manager)
+
+        object[component_definition.name] = [0.8,0.2,1.0]
+        property_manager = object.id_properties_ui(component_definition.name)
+        property_manager.update(subtype='COLOR')"""
+
+        #IDPropertyUIManager
+        #rna_ui = object[component_definition.name].get('_RNA_UI')
+        #print("RNA", rna_ui)
+
+        
+        #object[component_definition.name] = FloatVectorProperty(name="Hex Value", 
+        #                            subtype='COLOR', 
+        #                            default=[0.0,0.0,0.0])
+        #lookup[component_definition.type_name] if component_definition.type_name in lookup else  ""
+
+
+        #my_enum = object.titi.add()
