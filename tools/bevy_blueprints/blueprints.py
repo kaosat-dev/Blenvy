@@ -2,20 +2,27 @@
 import json
 import bpy
 from bpy_types import Operator
+from bpy.props import (StringProperty)
 
 from .components.registry import read_components
 from .helpers import make_empty3
 
 class CreateBlueprintOperator(Operator):
-    """Print object name in Console"""
+    """Creates blueprint"""
     bl_idname = "object.simple_operator"
     bl_label = "Simple Object Operator"
 
-    def execute(self, context):
-        print("calling operator")
-        print (context.object)
+    blueprint_name: StringProperty(
+        name="blueprint name",
+        description="blueprint name to add",
+        default="NewBlueprint"
+    )
 
-        blueprint_name = "NewBlueprint"
+
+    def execute(self, context):
+        blueprint_name = self.blueprint_name
+        if blueprint_name == '':
+            blueprint_name = "NewBlueprint"
         collection = bpy.data.collections.new(blueprint_name)
         bpy.context.scene.collection.children.link(collection)
         collection['AutoExport'] = True

@@ -47,8 +47,9 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
         col = layout.column(align=True)
         row = col.row(align=True)
         
-
-        col.operator(CreateBlueprintOperator.bl_idname, text="Create blueprint", icon="CONSOLE")
+        row.prop(bpy.context.window_manager, "blueprint_name")
+        op = row.operator(CreateBlueprintOperator.bl_idname, text="Create blueprint", icon="CONSOLE")
+        op.blueprint_name = bpy.context.window_manager.blueprint_name
         layout.separator()
 
         current_components_container = None
@@ -113,9 +114,7 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
                 else :
                     row.prop(object, '["'+ component_name +'"]', text="")
                     
-
-
-                op = row.operator(CopyComponentOperator.bl_idname, text="", icon="SETTINGS")
+                #op = row.operator(CopyComponentOperator.bl_idname, text="", icon="SETTINGS")
                 op = row.operator(DeleteComponentOperator.bl_idname, text="", icon="X")
                 op.target_property = component_name
                 
@@ -160,7 +159,7 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-
+    bpy.types.WindowManager.blueprint_name = StringProperty()
     bpy.types.Object.components_meta = PointerProperty(type=ComponentsMeta)
     bpy.types.WindowManager.components_registry = PointerProperty(type=ComponentsRegistry)
 
