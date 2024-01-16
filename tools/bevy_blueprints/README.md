@@ -8,10 +8,12 @@ bpy.context.window_manager
 
 
 UI:
- filterable list of components to DISPLAY for selection : ComponentDefinitionsList
+ - [x] filterable list of components to DISPLAY for selection : ComponentDefinitionsList
 
 - Filter out invalid objects for components that have no _components suffix
-- How to deal with pre-existing custom properties that have NO metadata
+- -[ ] How to deal with pre-existing custom properties that have NO metadata
     * if there is one without metadata: find if there is an available component with the same name & type ?
     * if there is , insert metadata
     * otherwise, mark it in some way visually ?
+
+- [ ]

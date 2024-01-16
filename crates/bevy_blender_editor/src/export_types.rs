@@ -3,7 +3,7 @@ use std::{io::Write, fs::File};
 use bevy::{scene::DynamicSceneBuilder, utils::HashMap};
 use bevy_app::App;
 use bevy_ecs::{reflect::{AppTypeRegistry, ReflectComponent, ReflectResource}, world::World};
-use bevy_reflect::{TypeInfo, TypePath, TypeRegistration, VariantInfo};
+use bevy_reflect::{TypeInfo, TypePath, TypeRegistration, VariantInfo, DynamicTypePath};
 use serde_json::{json, Map, Value};
 
 use crate::ExportComponentsConfig;
@@ -90,10 +90,11 @@ impl ExportTypesExt for App {
         let mut target_world = filtered_world; // self.world
 
         let types = self.world.resource_mut::<AppTypeRegistry>();
-
         let types = types.read();
-        let mut schemas = types.iter().map(export_type).collect::<Map<_, _>>();
-
+        let bla = types.get_with_short_type_path("sdf".into()).unwrap();
+        
+        let mut schemas = types.iter().map(|reg: &TypeRegistration| export_type(reg) ).collect::<Map<_, _>>();
+        // type_registry.get_with_short_type_path
         serde_json::to_writer_pretty(
             writer,
             &json!({
@@ -110,6 +111,8 @@ impl ExportTypesExt for App {
 
 pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
     let t = reg.type_info();
+    let binding = t.type_path_table();
+    let short_name = binding.short_path();
     let mut schema = match t {
         TypeInfo::Struct(info) => {
             let properties = info
@@ -252,6 +255,12 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
         "isResource".to_owned(),
         reg.data::<ReflectResource>().is_some().into(),
     );
+
+    schema.as_object_mut().unwrap().insert(
+        "short_name".to_owned(),
+        short_name.into(),
+    );
+
     (t.type_path().to_owned(), schema)
 }
 

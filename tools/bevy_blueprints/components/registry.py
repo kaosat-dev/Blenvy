@@ -40,12 +40,12 @@ def read_components():
                 component_data = add_component_to_mapped(mapped=mapped, name=name, definitions=defs)
 
                 
-                if is_component and name.startswith("bevy_bevy_blender_editor_basic_example::"):
-                    print("definition:", name, definition, definition['isComponent'])
+                if is_component: #and name.startswith("bevy_bevy_blender_editor_basic_example::"):
+                    print("definition:", name, definition, definition['isComponent'], component_data["type"])
                     item = bpy.context.window_manager.component_definitions.add()
                     item.name = component_data["name"]
                     item.long_name = name
-                    item.type_name = component_data["type"]
+                    item.type_name = component_data["type"] or "None"
                     item.data = json.dumps(component_data)
     return mapped
 
@@ -57,8 +57,6 @@ def add_component_to_mapped(mapped, name, definitions):
     print("computing", name)
     short_name = str(name)
     long_name = str(name)
-    if "::" in name:
-        short_name = short_name.rsplit('::', 1)[-1]
 
     if not name in definitions:
         mapped[name] = {
@@ -74,6 +72,7 @@ def add_component_to_mapped(mapped, name, definitions):
     is_component = definition['isComponent']  if "isComponent" in definition else False
     is_resource = definition['is_resource']  if "is_resource" in definition else False
 
+    short_name = definition["short_name"]
     type_info = definition["typeInfo"] if "typeInfo" in definition else None
     type = definition["type"] if "type" in definition else None
     properties = definition["properties"] if "properties" in definition else {}

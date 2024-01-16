@@ -5,19 +5,18 @@ from bpy_types import (PropertyGroup)
 from bpy.types import (CollectionProperty)
 from .definitions import ComponentDefinition
 
+# FIXME: not sure, hard coded exclude list, feels wrong
+exclude = ['Parent', 'Children']
 
 # this one is for UI only, and its inner list contains a useable list of shortnames of components
 class ComponentDefinitionsList(bpy.types.PropertyGroup):
-
-    def update(self, v):
-        print("updating filter", v)
-
     def add_component_to_ui_list(self, context):
         items = []
         wm = context.window_manager
         for index, item in enumerate(wm.component_definitions.values()):
             if self.filter in item.name:
-                items.append((str(index), item.name, item.long_name))
+                if not 'Handle' in item.name and item.name not in exclude: # FIXME: hard coded, seems wrong
+                    items.append((str(index), item.name, item.long_name))
         return items
 
     @classmethod
@@ -37,7 +36,6 @@ class ComponentDefinitionsList(bpy.types.PropertyGroup):
     filter: StringProperty(
         name="component filter",
         description="filter for the components list",
-        update = update,
         options={'TEXTEDIT_UPDATE'}
     )
 
@@ -75,11 +73,6 @@ def generate_enum_properties():
             attributes["enum"] = EnumProperty(
                 items=items,
                 name="enum"
-            )
-
-            attributes["yikes"] = StringProperty(
-                name="yikes",
-                description="foo"
             )
 
             propertyGroupClass = type(groupName, (PropertyGroup,), { '__annotations__': attributes })

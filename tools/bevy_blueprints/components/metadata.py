@@ -75,13 +75,44 @@ def find_component_definition_from_short_name(short_name):
             return component_definition
     return None
 
+# FIXME: feels a bit heavy duty, should only be done
+# if the components panel is active ?
+def ensure_metadata_for_all_objects():
+    for object in bpy.data.objects:
+        add_metadata_to_components_without_metadata(object)
+
+def add_metadata_to_components_without_metadata(object):
+    components_in_object = object.components_meta.components # TODO: should we check for this
+
+    for component_name in dict(object) :
+        if component_name == "components_meta":
+            continue
+        component_meta =  next(filter(lambda component: component["name"] == component_name, components_in_object), None)
+        if component_meta == None: 
+            print("adding metadata")
+            component_definition = find_component_definition_from_short_name(component_name)
+            if component_definition == None:
+                print("There is no component definition for component:", component_name)
+            else:
+                long_name = component_definition.long_name
+                short_name = component_definition.name
+                data = json.loads(component_definition.data)
+
+                component_meta = components_in_object.add()
+                component_meta.name = short_name
+                component_meta.long_name = long_name
+                component_meta.data = component_definition.data
+                component_meta.type_name = data["type"]
+                print("added metadata for component: ", component_name)
+
+
+
 # adds a component to an object (including metadata) using the provided componentDefinition & optional value
 def add_component_to_object(object, component_definition, value=None):
     cleanup_invalid_metadata(object)
     if object is not None:
         long_name = component_definition.long_name
         short_name = component_definition.name
-        
         data = json.loads(component_definition.data)
 
         print("component infos", data, "long_name", component_definition.long_name)
@@ -118,9 +149,6 @@ def add_component_to_object(object, component_definition, value=None):
             object[component_definition.name] = value
 
 
-        data["enabled"] = True
-
-
         registry = bpy.context.window_manager.components_registry.registry 
         registry = json.loads(registry)
         registry_entry = registry[long_name] if long_name in registry else None
@@ -155,13 +183,9 @@ def add_component_to_object(object, component_definition, value=None):
 
         #IDPropertyUIManager
         #rna_ui = object[component_definition.name].get('_RNA_UI')
-        #print("RNA", rna_ui)
 
-        
         #object[component_definition.name] = FloatVectorProperty(name="Hex Value", 
         #                            subtype='COLOR', 
         #                            default=[0.0,0.0,0.0])
         #lookup[component_definition.type_name] if component_definition.type_name in lookup else  ""
 
-
-        #my_enum = object.titi.add()

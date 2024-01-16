@@ -20,8 +20,8 @@ from bpy.props import (StringProperty, EnumProperty, PointerProperty, FloatVecto
 from .blueprints import CreateBlueprintOperator
 from .components.operators import CopyComponentOperator, DeleteComponentOperator, PasteComponentOperator, AddComponentOperator
 from .components.definitions import (ComponentDefinition)
-from .components.registry import ComponentsRegistry
-from .components.metadata import (ComponentInfos, ComponentsMeta)
+from .components.registry import ComponentsRegistry, read_components
+from .components.metadata import (ComponentInfos, ComponentsMeta, ensure_metadata_for_all_objects)
 from .components.ui import (ComponentDefinitionsList, ClearComponentDefinitionsList, generate_enum_properties, unregister_stuff)
 
 class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
@@ -98,8 +98,6 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
                 component_type = component_meta.type_name
                 component_enabled = component_meta.enabled
 
-
-
                 # for testing, remove later
                 foo_data = json.loads(component_meta.data)
                 component_type = foo_data["type_info"]
@@ -107,7 +105,7 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
 
                 #print("component_meta", component_meta)
                 #component_data = json.loads(component_meta.data)
-                print("component_type", component_type)
+                #print("component_type", component_type)
                 # row.enabled = component_enabled
                 #row.prop(object.reusable_enum, "list")
 
@@ -167,7 +165,13 @@ from bpy.app.handlers import persistent
 @persistent
 def post_load(file_name):
     print("post load", file_name)
+    read_components()
     generate_enum_properties()
+    ensure_metadata_for_all_objects()
+
+@persistent
+def init_data_if_needed(self):
+    ensure_metadata_for_all_objects()
 
 def register():
     print("register")
@@ -183,6 +187,8 @@ def register():
     bpy.types.WindowManager.copied_source_object = StringProperty()
 
     bpy.app.handlers.load_post.append(post_load)
+    bpy.app.handlers.depsgraph_update_post.append(init_data_if_needed)
+
 
 def unregister():
     print("unregister")
@@ -197,5 +203,6 @@ def unregister():
     del bpy.types.WindowManager.copied_source_object
 
     bpy.app.handlers.load_post.remove(post_load)
+    bpy.app.handlers.depsgraph_update_post.remove(init_data_if_needed)
 
     unregister_stuff()
