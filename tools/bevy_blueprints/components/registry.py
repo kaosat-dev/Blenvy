@@ -11,6 +11,10 @@ class ComponentsRegistry(PropertyGroup):
         name="registry",
         description="component registry"
     )
+    raw_registry: bpy.props. StringProperty(# experimental
+        name="raw registry",
+        description="component registry"
+    )
 
     
 def read_components():
@@ -29,6 +33,9 @@ def read_components():
         with open(path) as f: 
             data = json.load(f) 
             defs = data["$defs"]
+
+            bpy.context.window_manager.components_registry.raw_registry = json.dumps(defs) # FIXME:eeek !
+
             # print ("DEFS", defs) 
             for name in defs:
                 definition = data["$defs"][name]

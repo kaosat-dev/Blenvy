@@ -7,6 +7,9 @@ bpy.context.window_manager
     .components_list =>  refined, pythonified list of available components
 
 
+- perhaps directly export default values within the schema.json ?
+        - for most types , it is straighforward, but others, not so muc: like the default color in Bevy , etc
+
 UI:
  - [x] filterable list of components to DISPLAY for selection : ComponentDefinitionsList
 

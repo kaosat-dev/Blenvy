@@ -89,7 +89,6 @@ def add_metadata_to_components_without_metadata(object):
             continue
         component_meta =  next(filter(lambda component: component["name"] == component_name, components_in_object), None)
         if component_meta == None: 
-            print("adding metadata")
             component_definition = find_component_definition_from_short_name(component_name)
             if component_definition == None:
                 print("There is no component definition for component:", component_name)

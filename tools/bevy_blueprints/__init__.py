@@ -22,7 +22,7 @@ from .components.operators import CopyComponentOperator, DeleteComponentOperator
 from .components.definitions import (ComponentDefinition)
 from .components.registry import ComponentsRegistry, read_components
 from .components.metadata import (ComponentInfos, ComponentsMeta, ensure_metadata_for_all_objects)
-from .components.ui import (ComponentDefinitionsList, ClearComponentDefinitionsList, generate_enum_properties, unregister_stuff)
+from .components.ui import (ComponentDefinitionsList, ClearComponentDefinitionsList, dynamic_properties_ui, generate_enum_properties, unregister_stuff)
 
 class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
     bl_idname = "BEVY_BLUEPRINTS_PT_TestPanel"
@@ -37,6 +37,8 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
         layout = self.layout
         object = context.object
         collection = context.collection
+        registry_raw = bpy.context.window_manager.components_registry.raw_registry
+        registry_raw = json.loads(registry_raw)
 
         # we get & load our component registry
         registry = bpy.context.window_manager.components_registry.registry 
@@ -134,7 +136,18 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
                 op.target_property = component_name
                 op.source_object_name = object.name
 
-
+            for truc in bpy.testcomponents:
+                print("truc", truc)
+                row = col.row(align=True)
+                ui_thingy_name = truc
+                propertyGroup = getattr(object, ui_thingy_name)
+                print("propgroup", propertyGroup, dict(propertyGroup), propertyGroup.single_item)
+                row.label(text=truc)
+                for fname in propertyGroup.field_names:
+                    display_name = fname if propertyGroup.tupple_or_struct == "struct" else ""
+                    row.prop(propertyGroup, fname, text=display_name)
+                #registry_raw
+                #
         else: 
             layout.label(text ="Select a collection/blueprint to edit it")
 
@@ -168,6 +181,8 @@ def post_load(file_name):
     read_components()
     generate_enum_properties()
     ensure_metadata_for_all_objects()
+
+    dynamic_properties_ui()
 
 @persistent
 def init_data_if_needed(self):
@@ -205,4 +220,4 @@ def unregister():
     bpy.app.handlers.load_post.remove(post_load)
     bpy.app.handlers.depsgraph_update_post.remove(init_data_if_needed)
 
-    unregister_stuff()
+    #unregister_stuff()
