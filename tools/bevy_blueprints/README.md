@@ -19,4 +19,4 @@ UI:
     * if there is , insert metadata
     * otherwise, mark it in some way visually ?
 
-- [ ]
+- [ ] vecs => (not vec2, vec3 etc) more complex UI to add items in a list

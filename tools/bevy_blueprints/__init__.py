@@ -137,11 +137,11 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
                 op.source_object_name = object.name
 
             for truc in bpy.testcomponents:
-                print("truc", truc)
+                #print("truc", truc)
                 row = col.row(align=True)
                 ui_thingy_name = truc
                 propertyGroup = getattr(object, ui_thingy_name)
-                print("propgroup", propertyGroup, dict(propertyGroup), propertyGroup.single_item)
+                #print("propgroup", propertyGroup, dict(propertyGroup), propertyGroup.single_item)
                 row.label(text=truc)
                 for fname in propertyGroup.field_names:
                     display_name = fname if propertyGroup.tupple_or_struct == "struct" else ""

@@ -121,7 +121,9 @@ def dynamic_properties_ui():
 
         "char": StringProperty,
         "str": StringProperty,
-        "alloc::string::String": StringProperty
+        "alloc::string::String": StringProperty,
+
+        "enum":EnumProperty
     }
 
 
@@ -169,26 +171,22 @@ def dynamic_properties_ui():
 
         short_name = definition["short_name"]
         type_info = definition["typeInfo"] if "typeInfo" in definition else None
-        full_name = definition["type"] if "type" in definition else None
+        type_def = definition["type"] if "type" in definition else None
         properties = definition["properties"] if "properties" in definition else {}
         prefixItems = definition["prefixItems"] if "prefixItems" in definition else []
-        values = definition["enum"] if "enum" in definition else []
 
         has_properties = len(properties.keys()) > 0
         has_prefixItems = len(prefixItems) > 0
+        is_enum = type_info == "Enum"
 
-        if is_component and type_info != "Value" and type_info != "List" :
-            print("entry", component_name, full_name, type_info)# definition)
+        if is_component and type_info != "Value" and type_info != "List" and "bevy_bevy_blender_editor_basic_example" in component_name:
+            print("entry", component_name, type_def, type_info)# definition)
 
             __annotations__ = {
             }
 
-            attributes = {
-                "single_item": True, # single item is default, for tupple structs with single types, or structs with no params,
-                "items": {}
-            }
             field_names = []
-            single_item = True
+            single_item = True# single item is default, for tupple structs with single types, or structs with no params,
             tupple_or_struct = None
           
             if has_properties:
@@ -235,20 +233,36 @@ def dynamic_properties_ui():
                         property_name = str(index)# we cheat a bit, property names are numbers here, as we do not have a real property name
                         if is_value_type and original_type_name in blender_property_mapping:
                             blender_property = blender_property_mapping[original_type_name](name = property_name, default=value)
+                            if original_type_name == "bevy_render::color::Color":
+                                blender_property = blender_property_mapping[original_type_name](name = property_name, default=value, subtype='COLOR')
+                                #FloatVectorProperty()
+                                # TODO: use FloatVectorProperty(size= xxx) to define the dimensions of the property
+
                             __annotations__[property_name] = blender_property
                             field_names.append(property_name)
-
 
                 if len(default_values) == 1:
                     default_value = default_values[0]
                     infos = prefix_infos[0]
-                    full_name = original["title"]
-                    print("tupple with a single value", default_value, full_name)
+                    type_def = original["title"]
+                    print("tupple with a single value", default_value, type_def)
                 else: 
                     single_item = False
 
+            if is_enum:
+                print("ENUM")
+                values = definition["oneOf"]
+                if type_def == "object":
+                    print("OBBJKEEECT")
+                    single_item = False
+                else:
+                    items = tuple((e, e, "") for e in values)
+                    property_name = "0"
+                    blender_property = blender_property_mapping["enum"](name = property_name, items=items)
+                    __annotations__[property_name] = blender_property
+                    field_names.append(property_name)
 
-            print("DONE: __annotations__", __annotations__, 'attributes', attributes)
+            print("DONE: __annotations__", __annotations__)
             print("")
             property_group_name = short_name+"_ui"
             # print("creating property group", property_group_name)
