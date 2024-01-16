@@ -22,7 +22,7 @@ from .components.operators import CopyComponentOperator, DeleteComponentOperator
 from .components.definitions import (ComponentDefinition)
 from .components.registry import ComponentsRegistry
 from .components.metadata import (ComponentInfos, ComponentsMeta)
-from .components.ui import (ComponentDefinitionsList, ClearComponentDefinitionsList)
+from .components.ui import (ComponentDefinitionsList, ClearComponentDefinitionsList, EnumWorkaround, ReusableEnum)
 
 class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
     bl_idname = "BEVY_BLUEPRINTS_PT_TestPanel"
@@ -68,19 +68,22 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
             col = layout.column(align=True)
             row = col.row(align=True)
 
-            row.operator(ClearComponentDefinitionsList.bl_idname, text="clear")
+            #row.operator(ClearComponentDefinitionsList.bl_idname, text="clear")
             row.prop(available_components, "list", text="Component")
             row.prop(available_components, "filter",text="Filter")
 
             # the button to add them
             op = row.operator(AddComponentOperator.bl_idname, text="Add", icon="CONSOLE")
             op.component_type = available_components.list
+            col.separator()
 
             # past components
-            layout.operator(PasteComponentOperator.bl_idname, text="Paste component", icon="PASTEDOWN")
-            
+            row = col.row(align=True)
+            row.operator(PasteComponentOperator.bl_idname, text="Paste component ("+bpy.context.window_manager.copied_source_component_name+")", icon="PASTEDOWN")
+            col.separator()
+            col.enabled = bpy.context.window_manager.copied_source_object != ''
+
             components_in_object = object.components_meta.components
-            #def by_name(c)
 
             for component_name in sorted(dict(object)) : # sorted by component name, practical
                 if component_name == "components_meta":
@@ -99,6 +102,8 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
                 #component_data = json.loads(component_meta.data)
                 print("component_type", component_type)
                 # row.enabled = component_enabled
+                #row.prop(object.reusable_enum, "list")
+                row.operator(EnumWorkaround.bl_idname)
 
                 row.prop(component_meta, "enabled", text="")
                 row.label(text=component_name)
@@ -145,6 +150,9 @@ classes = [
     ComponentsMeta,
     ComponentsRegistry,
 
+    ReusableEnum,
+    EnumWorkaround,
+
     BEVY_BLUEPRINTS_PT_TestPanel,
 
 ]
@@ -162,7 +170,6 @@ def register():
 
     bpy.types.WindowManager.copied_source_component_name = StringProperty()
     bpy.types.WindowManager.copied_source_object = StringProperty()
-
 
 
 def unregister():

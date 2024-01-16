@@ -6,9 +6,6 @@ from bpy.types import (CollectionProperty)
 from .definitions import ComponentDefinition
 
 
-
-
-
 # this one is for UI only, and its inner list contains a useable list of shortnames of components
 class ComponentDefinitionsList(bpy.types.PropertyGroup):
 
@@ -55,3 +52,84 @@ class ClearComponentDefinitionsList(bpy.types.Operator):
         bpy.context.collection.component_definitions.clear()
         
         return {'FINISHED'}
+    
+
+class ReusableEnum(bpy.types.PropertyGroup):
+
+    def set_foo(self, value):
+        print("setting stuff")
+        self.foo = value
+
+    def update(self, v):
+        print("updating filter", v)
+
+    def add_component_to_ui_list(self, context):
+        items = []
+        wm = context.window_manager
+        for index, item in enumerate(wm.component_definitions.values()):
+            if self.filter in item.name:
+                items.append((str(index), item.name, item.long_name))
+        return items
+
+    @classmethod
+    def register(cls):
+        bpy.types.Object.reusable_enum = bpy.props.PointerProperty(type=ReusableEnum)
+
+    @classmethod
+    def unregister(cls):
+        del bpy.types.Object.reusable_enum
+
+    list : bpy.props.EnumProperty(
+        name="list",
+        description="list",
+        # items argument required to initialize, just filled with empty values
+        items = add_component_to_ui_list,
+    )
+    filter: StringProperty(
+        name="component filter",
+        description="filter for the components list",
+        update = update,
+        options={'TEXTEDIT_UPDATE'}
+    )
+
+from bpy_types import Operator
+class EnumWorkaround(Operator):
+    """Delete component from blueprint"""
+    bl_idname = "object.enum_workaround"
+    bl_label = "Delete component from blueprint Operator"
+    bl_options = {"REGISTER", "UNDO"}
+
+    target_property: StringProperty(
+        name="component_name",
+        description="component to delete",
+    )
+
+
+    def add_component_to_ui_list(self, context):
+        items = []
+        wm = context.window_manager
+        for index, item in enumerate(wm.component_definitions.values()):
+            items.append((str(index), item.name, item.long_name))
+        return items
+
+    list : bpy.props.EnumProperty(
+        name="list",
+        description="list",
+        # items argument required to initialize, just filled with empty values
+        items = add_component_to_ui_list,
+    )
+
+    def execute(self, context):
+        print (context.object)
+
+        return {'FINISHED'}
+    def draw(self, context):
+        layout = self.layout
+        col = layout.column()
+        col.label(text="Custom Interface!")
+
+        row = col.row()
+        row.prop(self, "my_float")
+        row.prop(self, "my_bool")
+
+        col.prop(self, "my_string")
