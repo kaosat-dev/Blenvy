@@ -54,82 +54,45 @@ class ClearComponentDefinitionsList(bpy.types.Operator):
         return {'FINISHED'}
     
 
-class ReusableEnum(bpy.types.PropertyGroup):
+bpy.samplePropertyGroups = {}
 
-    def set_foo(self, value):
-        print("setting stuff")
-        self.foo = value
+def generate_enum_properties():
+    print("generate_enum_properties")
+    for component_definition in bpy.context.window_manager.component_definitions:
+        # FIXME: horrible, use registry instead of bpy.context.window_manager.component_definitions
+        data = json.loads(component_definition.data)
+        real_type = data["type_info"]
+        values = data["values"]
+        # print("component definition", component_definition.name, component_definition.type_name, real_type, values)
+        if real_type == "Enum":
+            items = tuple((e, e, "") for e in values)
+            type_name = "enum_"+component_definition.name
+          
+            #enumClass = type(type_name, (bpy.types.EnumProperty,), attributes)
+            groupName = type_name
+            attributes = {
+            }
+            attributes["enum"] = EnumProperty(
+                items=items,
+                name="enum"
+            )
 
-    def update(self, v):
-        print("updating filter", v)
+            attributes["yikes"] = StringProperty(
+                name="yikes",
+                description="foo"
+            )
 
-    def add_component_to_ui_list(self, context):
-        items = []
-        wm = context.window_manager
-        for index, item in enumerate(wm.component_definitions.values()):
-            if self.filter in item.name:
-                items.append((str(index), item.name, item.long_name))
-        return items
+            propertyGroupClass = type(groupName, (PropertyGroup,), { '__annotations__': attributes })
+            # register our custom propertyGroup
+            bpy.utils.register_class(propertyGroupClass)
+            # add it to the needed type
+            setattr(bpy.types.Object, type_name, PointerProperty(type=propertyGroupClass))
+            bpy.samplePropertyGroups[type_name] = propertyGroupClass
 
-    @classmethod
-    def register(cls):
-        bpy.types.Object.reusable_enum = bpy.props.PointerProperty(type=ReusableEnum)
-
-    @classmethod
-    def unregister(cls):
-        del bpy.types.Object.reusable_enum
-
-    list : bpy.props.EnumProperty(
-        name="list",
-        description="list",
-        # items argument required to initialize, just filled with empty values
-        items = add_component_to_ui_list,
-    )
-    filter: StringProperty(
-        name="component filter",
-        description="filter for the components list",
-        update = update,
-        options={'TEXTEDIT_UPDATE'}
-    )
-
-from bpy_types import Operator
-class EnumWorkaround(Operator):
-    """Delete component from blueprint"""
-    bl_idname = "object.enum_workaround"
-    bl_label = "Delete component from blueprint Operator"
-    bl_options = {"REGISTER", "UNDO"}
-
-    target_property: StringProperty(
-        name="component_name",
-        description="component to delete",
-    )
-
-
-    def add_component_to_ui_list(self, context):
-        items = []
-        wm = context.window_manager
-        for index, item in enumerate(wm.component_definitions.values()):
-            items.append((str(index), item.name, item.long_name))
-        return items
-
-    list : bpy.props.EnumProperty(
-        name="list",
-        description="list",
-        # items argument required to initialize, just filled with empty values
-        items = add_component_to_ui_list,
-    )
-
-    def execute(self, context):
-        print (context.object)
-
-        return {'FINISHED'}
-    def draw(self, context):
-        layout = self.layout
-        col = layout.column()
-        col.label(text="Custom Interface!")
-
-        row = col.row()
-        row.prop(self, "my_float")
-        row.prop(self, "my_bool")
-
-        col.prop(self, "my_string")
+def unregister_stuff():
+    try:
+        for key, value in bpy.samplePropertyGroups.items():
+            delattr(bpy.types.Object, key)
+            bpy.utils.unregister_class(value)
+    except Exception:#UnboundLocalError:
+        pass

@@ -22,7 +22,7 @@ from .components.operators import CopyComponentOperator, DeleteComponentOperator
 from .components.definitions import (ComponentDefinition)
 from .components.registry import ComponentsRegistry
 from .components.metadata import (ComponentInfos, ComponentsMeta)
-from .components.ui import (ComponentDefinitionsList, ClearComponentDefinitionsList, EnumWorkaround, ReusableEnum)
+from .components.ui import (ComponentDefinitionsList, ClearComponentDefinitionsList, generate_enum_properties, unregister_stuff)
 
 class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
     bl_idname = "BEVY_BLUEPRINTS_PT_TestPanel"
@@ -42,7 +42,6 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
         registry = bpy.context.window_manager.components_registry.registry 
         registry = json.loads(registry) if registry != '' else ''
         available_components = bpy.context.window_manager.components_list
-        print("available_components", available_components)
 
         col = layout.column(align=True)
         row = col.row(align=True)
@@ -80,8 +79,9 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
             # past components
             row = col.row(align=True)
             row.operator(PasteComponentOperator.bl_idname, text="Paste component ("+bpy.context.window_manager.copied_source_component_name+")", icon="PASTEDOWN")
+            row.enabled = bpy.context.window_manager.copied_source_object != ''
+
             col.separator()
-            col.enabled = bpy.context.window_manager.copied_source_object != ''
 
             components_in_object = object.components_meta.components
 
@@ -98,12 +98,18 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
                 component_type = component_meta.type_name
                 component_enabled = component_meta.enabled
 
+
+
+                # for testing, remove later
+                foo_data = json.loads(component_meta.data)
+                component_type = foo_data["type_info"]
+
+
                 #print("component_meta", component_meta)
                 #component_data = json.loads(component_meta.data)
                 print("component_type", component_type)
                 # row.enabled = component_enabled
                 #row.prop(object.reusable_enum, "list")
-                row.operator(EnumWorkaround.bl_idname)
 
                 row.prop(component_meta, "enabled", text="")
                 row.label(text=component_name)
@@ -111,9 +117,12 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
                 if component_type == "string": 
                     row.prop(object, '["'+ component_name +'"]', text="")#, placeholder="placeholder")
                 elif component_type == "Enum":
-                    pass
-                    #component_enums = collection.component_enums
-                    #row.prop(object, "toto", text="")
+                    #custom_enum = getattr(object, groupName)
+                    enum_name = "enum_"+component_name
+                    propertyGroup = getattr(object, enum_name)
+                    row.prop(propertyGroup, "enum", text="")
+
+                    # row.prop(object, enum_name, text="")
                 elif component_type == "object":
                     row.label(text="------------")
                 else :
@@ -150,13 +159,15 @@ classes = [
     ComponentsMeta,
     ComponentsRegistry,
 
-    ReusableEnum,
-    EnumWorkaround,
-
     BEVY_BLUEPRINTS_PT_TestPanel,
-
 ]
 
+from bpy.app.handlers import persistent
+
+@persistent
+def post_load(file_name):
+    print("post load", file_name)
+    generate_enum_properties()
 
 def register():
     print("register")
@@ -171,6 +182,7 @@ def register():
     bpy.types.WindowManager.copied_source_component_name = StringProperty()
     bpy.types.WindowManager.copied_source_object = StringProperty()
 
+    bpy.app.handlers.load_post.append(post_load)
 
 def unregister():
     print("unregister")
@@ -183,3 +195,7 @@ def unregister():
 
     del bpy.types.WindowManager.copied_source_component_name
     del bpy.types.WindowManager.copied_source_object
+
+    bpy.app.handlers.load_post.remove(post_load)
+
+    unregister_stuff()

@@ -4,6 +4,8 @@ import bpy
 from bpy_types import Operator
 from bpy.props import (StringProperty)
 
+from .components.ui import generate_enum_properties
+
 from .components.registry import read_components
 from .helpers import make_empty3
 
@@ -39,6 +41,9 @@ class CreateBlueprintOperator(Operator):
 
         #bpy.context.window_manager.components_registry.registry.clear()
         bpy.context.window_manager.components_registry.registry = json.dumps(read_components())
+        # generate enum components stuff on the fly
+        generate_enum_properties()
+
         
         components_empty.select_set(True)
         bpy.context.view_layer.objects.active = components_empty
