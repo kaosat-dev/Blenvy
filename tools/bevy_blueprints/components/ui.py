@@ -92,6 +92,77 @@ def unregister_stuff():
 
 
 bpy.testcomponents = {}
+
+
+def process_prefixItems(registry, value_types_defaults, blender_property_mapping, prefixItems):
+    field_names = []
+    __annotations__ = {}
+    tupple_or_struct = "tupple"
+
+    default_values = []
+    prefix_infos = []
+    for index, item in enumerate(prefixItems):
+        ref_name = item["type"]["$ref"].replace("#/$defs/", "")
+        if ref_name in registry:
+            original = registry[ref_name]
+            original_type_name = original["title"]
+            is_value_type = original_type_name in value_types_defaults
+
+            value = value_types_defaults[original_type_name] if is_value_type else None
+            default_values.append(value)
+            prefix_infos.append(original)
+            print("ORIGINAL PROP", original)
+
+            property_name = str(index)# we cheat a bit, property names are numbers here, as we do not have a real property name
+            if is_value_type and original_type_name in blender_property_mapping:
+                blender_property = blender_property_mapping[original_type_name](name = property_name, default=value)
+                if original_type_name == "bevy_render::color::Color":
+                    blender_property = blender_property_mapping[original_type_name](name = property_name, default=value, subtype='COLOR')
+                    #FloatVectorProperty()
+                    # TODO: use FloatVectorProperty(size= xxx) to define the dimensions of the property
+
+                __annotations__[property_name] = blender_property
+                field_names.append(property_name)
+
+    if len(default_values) == 1:
+        default_value = default_values[0]
+        infos = prefix_infos[0]
+        type_def = original["title"]
+        print("tupple with a single value", default_value, type_def)
+    else: 
+        single_item = False
+    return __annotations__
+
+def process_properties(registry, value_types_defaults, blender_property_mapping, properties): 
+    __annotations__ = {}
+
+    default_values = {}
+    for property_name in properties.keys():
+        ref_name = properties[property_name]["type"]["$ref"].replace("#/$defs/", "")
+        #print("ref_name", ref_name, "property_name", property_name)
+
+        if ref_name in registry:
+            original = registry[ref_name]
+            original_type_name = original["title"]
+            is_value_type = original_type_name in value_types_defaults
+            value = value_types_defaults[original_type_name] if is_value_type else None
+            default_values[property_name] = value
+            print("ORIGINAL PROP for", property_name, original)
+
+            if is_value_type and original_type_name in blender_property_mapping:
+                blender_property = blender_property_mapping[original_type_name](name = property_name, default=value)
+                if original_type_name == "bevy_render::color::Color":
+                    blender_property = blender_property_mapping[original_type_name](name = property_name, default=value, subtype='COLOR')
+                    #FloatVectorProperty()
+                    # TODO: use FloatVectorProperty(size= xxx) to define the dimensions of the property
+                __annotations__[property_name] = blender_property
+                #field_names.append(property_name)
+
+        # if there are sub fields, add an attribute "sub_fields" possibly a pointer property ? or add a standard field to the type , that is stored under "attributes" and not __annotations (better)
+    if len(default_values.keys()) > 1:
+        single_item = False
+    return __annotations__
+
 def dynamic_properties_ui():
     registry = bpy.context.window_manager.components_registry.raw_registry
     registry = json.loads(registry)
@@ -187,95 +258,54 @@ def dynamic_properties_ui():
             field_names = []
             single_item = True# single item is default, for tupple structs with single types, or structs with no params,
             tupple_or_struct = None
+
+            item_to_display = None # FIXME: this is for enums only , move around
           
             if has_properties:
                 tupple_or_struct = "struct"
-                default_values = {}
-                for property_name in properties.keys():
-                    ref_name = properties[property_name]["type"]["$ref"].replace("#/$defs/", "")
-                    #print("ref_name", ref_name, "property_name", property_name)
-    
-                    if ref_name in registry:
-                        original = registry[ref_name]
-                        original_type_name = original["title"]
-                        is_value_type = original_type_name in value_types_defaults
-                        value = value_types_defaults[original_type_name] if is_value_type else None
-                        default_values[property_name] = value
-                        print("ORIGINAL PROP for", property_name, original)
-
-                        if is_value_type and original_type_name in blender_property_mapping:
-                            blender_property = blender_property_mapping[original_type_name](name = property_name, default=value)
-                            if original_type_name == "bevy_render::color::Color":
-                                blender_property = blender_property_mapping[original_type_name](name = property_name, default=value, subtype='COLOR')
-                                #FloatVectorProperty()
-                                # TODO: use FloatVectorProperty(size= xxx) to define the dimensions of the property
-                            __annotations__[property_name] = blender_property
-                            field_names.append(property_name)
-
-                    # if there are sub fields, add an attribute "sub_fields" possibly a pointer property ? or add a standard field to the type , that is stored under "attributes" and not __annotations (better)
-                if len(default_values.keys()) > 1:
-                    single_item = False
+                additional_annotations = process_properties(registry, value_types_defaults, blender_property_mapping, properties=properties)
+                for a in additional_annotations:
+                    __annotations__[a] = additional_annotations[a]
+                    field_names.append(a)
 
             if has_prefixItems:
                 tupple_or_struct = "tupple"
-
-                default_values = []
-                prefix_infos = []
-                for index, item in enumerate(prefixItems):
-                    ref_name = item["type"]["$ref"].replace("#/$defs/", "")
-                    if ref_name in registry:
-                        original = registry[ref_name]
-                        original_type_name = original["title"]
-                        is_value_type = original_type_name in value_types_defaults
-
-                        value = value_types_defaults[original_type_name] if is_value_type else None
-                        default_values.append(value)
-                        prefix_infos.append(original)
-                        print("ORIGINAL PROP", original)
-
-                        property_name = str(index)# we cheat a bit, property names are numbers here, as we do not have a real property name
-                        if is_value_type and original_type_name in blender_property_mapping:
-                            blender_property = blender_property_mapping[original_type_name](name = property_name, default=value)
-                            if original_type_name == "bevy_render::color::Color":
-                                blender_property = blender_property_mapping[original_type_name](name = property_name, default=value, subtype='COLOR')
-                                #FloatVectorProperty()
-                                # TODO: use FloatVectorProperty(size= xxx) to define the dimensions of the property
-
-                            __annotations__[property_name] = blender_property
-                            field_names.append(property_name)
-
-                if len(default_values) == 1:
-                    default_value = default_values[0]
-                    infos = prefix_infos[0]
-                    type_def = original["title"]
-                    print("tupple with a single value", default_value, type_def)
-                else: 
-                    single_item = False
+                additional_annotations = process_prefixItems(registry, value_types_defaults, blender_property_mapping, prefixItems=prefixItems)
+                for a in additional_annotations:
+                    __annotations__[a] = additional_annotations[a]
+                    field_names.append(a)
+                
 
             if is_enum:
-                print("ENUM")
                 values = definition["oneOf"]
                 if type_def == "object":
-                    print("OBBJKEEECT")
                     labels = []
                     for item in values:
                         print("item", item)
                         # TODO: refactor & reuse the rest of our code above 
                         labels.append(item["title"])
                         if "prefixItems" in item:
-                            """prefix_items = item["prefixItems"]
-                            ref_name = prefix_items[0]["type"]["$ref"].replace("#/$defs/", "")
-                            original = registry[ref_name]
-                            original_type_name = original["title"]
-                            is_value_type = original_type_name in value_types_defaults"""
-                            
+                            additional_annotations = process_prefixItems(registry, value_types_defaults, blender_property_mapping, prefixItems=item["prefixItems"])
+                            for a in additional_annotations:
+                                print("ADDDDINNNNG",a)
+                                __annotations__[a] = additional_annotations[a]
+                                field_names.append(a)
+                           
+                    items = tuple((e, e, e) for e in labels)
+                    property_name = "-1"
 
-                    items = tuple((e, e, "") for e in labels)
-                    property_name = "0"
-                    blender_property = blender_property_mapping["enum"](name = property_name, items=items)
+                    def update_test(self, context):
+                        print("UPDATING TEST", self, context)
+                        return None
+                
+                    blender_property = blender_property_mapping["enum"](name = property_name, items=items, update=update_test)
                     __annotations__[property_name] = blender_property
                     field_names.append(property_name)
+                    
+                    # enum_value => what field to display
+                    # TODO: add a second field + property for the "content" of the enum : already done above, move them around
 
+                   
 
                     single_item = False
                 else:
