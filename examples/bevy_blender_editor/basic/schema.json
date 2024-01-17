@@ -3,6 +3,7 @@
     "alloc::borrow::Cow<std::path::Path>": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "Cow<Path>",
       "title": "alloc::borrow::Cow<std::path::Path>",
       "type": "object",
       "typeInfo": "Value"
@@ -10,6 +11,7 @@
     "alloc::borrow::Cow<str>": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "Cow<str>",
       "title": "alloc::borrow::Cow<str>",
       "type": "object",
       "typeInfo": "Value"
@@ -17,6 +19,7 @@
     "alloc::string::String": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "String",
       "title": "alloc::string::String",
       "type": "string",
       "typeInfo": "Value"
@@ -29,6 +32,7 @@
           "$ref": "#/$defs/alloc::string::String"
         }
       },
+      "short_name": "Vec<String>",
       "title": "alloc::vec::Vec<alloc::string::String>",
       "type": "array",
       "typeInfo": "List"
@@ -41,6 +45,7 @@
           "$ref": "#/$defs/bevy_ecs::Entity"
         }
       },
+      "short_name": "Vec<Entity>",
       "title": "alloc::vec::Vec<bevy_ecs::Entity>",
       "type": "array",
       "typeInfo": "List"
@@ -53,6 +58,7 @@
           "$ref": "#/$defs/bevy_text::text::TextSection"
         }
       },
+      "short_name": "Vec<TextSection>",
       "title": "alloc::vec::Vec<bevy_text::text::TextSection>",
       "type": "array",
       "typeInfo": "List"
@@ -83,6 +89,7 @@
         "paths",
         "duration"
       ],
+      "short_name": "AnimationClip",
       "title": "bevy_animation::AnimationClip",
       "type": "object",
       "typeInfo": "Struct"
@@ -107,6 +114,7 @@
         "paused",
         "animation"
       ],
+      "short_name": "AnimationPlayer",
       "title": "bevy_animation::AnimationPlayer",
       "type": "object",
       "typeInfo": "Struct"
@@ -124,6 +132,7 @@
               }
             }
           ],
+          "title": "Strong",
           "type": "array"
         },
         {
@@ -135,9 +144,11 @@
               }
             }
           ],
+          "title": "Weak",
           "type": "array"
         }
       ],
+      "short_name": "Handle<()>",
       "title": "bevy_asset::handle::Handle<()>",
       "type": "object",
       "typeInfo": "Enum"
@@ -155,6 +166,7 @@
               }
             }
           ],
+          "title": "Strong",
           "type": "array"
         },
         {
@@ -166,9 +178,11 @@
               }
             }
           ],
+          "title": "Weak",
           "type": "array"
         }
       ],
+      "short_name": "Handle<AnimationClip>",
       "title": "bevy_asset::handle::Handle<bevy_animation::AnimationClip>",
       "type": "object",
       "typeInfo": "Enum"
@@ -186,6 +200,7 @@
               }
             }
           ],
+          "title": "Strong",
           "type": "array"
         },
         {
@@ -197,9 +212,11 @@
               }
             }
           ],
+          "title": "Weak",
           "type": "array"
         }
       ],
+      "short_name": "Handle<LoadedUntypedAsset>",
       "title": "bevy_asset::handle::Handle<bevy_asset::assets::LoadedUntypedAsset>",
       "type": "object",
       "typeInfo": "Enum"
@@ -217,6 +234,7 @@
               }
             }
           ],
+          "title": "Strong",
           "type": "array"
         },
         {
@@ -228,9 +246,11 @@
               }
             }
           ],
+          "title": "Weak",
           "type": "array"
         }
       ],
+      "short_name": "Handle<LoadedFolder>",
       "title": "bevy_asset::handle::Handle<bevy_asset::folder::LoadedFolder>",
       "type": "object",
       "typeInfo": "Enum"
@@ -248,6 +268,7 @@
               }
             }
           ],
+          "title": "Strong",
           "type": "array"
         },
         {
@@ -259,9 +280,11 @@
               }
             }
           ],
+          "title": "Weak",
           "type": "array"
         }
       ],
+      "short_name": "Handle<StandardDynamicAssetCollection>",
       "title": "bevy_asset::handle::Handle<bevy_asset_loader::standard_dynamic_asset::StandardDynamicAssetCollection>",
       "type": "object",
       "typeInfo": "Enum"
@@ -279,6 +302,7 @@
               }
             }
           ],
+          "title": "Strong",
           "type": "array"
         },
         {
@@ -290,9 +314,11 @@
               }
             }
           ],
+          "title": "Weak",
           "type": "array"
         }
       ],
+      "short_name": "Handle<AudioSource>",
       "title": "bevy_asset::handle::Handle<bevy_audio::audio_source::AudioSource>",
       "type": "object",
       "typeInfo": "Enum"
@@ -310,6 +336,7 @@
               }
             }
           ],
+          "title": "Strong",
           "type": "array"
         },
         {
@@ -321,9 +348,11 @@
               }
             }
           ],
+          "title": "Weak",
           "type": "array"
         }
       ],
+      "short_name": "Handle<Pitch>",
       "title": "bevy_asset::handle::Handle<bevy_audio::pitch::Pitch>",
       "type": "object",
       "typeInfo": "Enum"
@@ -341,6 +370,7 @@
               }
             }
           ],
+          "title": "Strong",
           "type": "array"
         },
         {
@@ -352,9 +382,11 @@
               }
             }
           ],
+          "title": "Weak",
           "type": "array"
         }
       ],
+      "short_name": "Handle<LineGizmo>",
       "title": "bevy_asset::handle::Handle<bevy_gizmos::LineGizmo>",
       "type": "object",
       "typeInfo": "Enum"
@@ -372,6 +404,7 @@
               }
             }
           ],
+          "title": "Strong",
           "type": "array"
         },
         {
@@ -383,9 +416,11 @@
               }
             }
           ],
+          "title": "Weak",
           "type": "array"
         }
       ],
+      "short_name": "Handle<Gltf>",
       "title": "bevy_asset::handle::Handle<bevy_gltf::Gltf>",
       "type": "object",
       "typeInfo": "Enum"
@@ -403,6 +438,7 @@
               }
             }
           ],
+          "title": "Strong",
           "type": "array"
         },
         {
@@ -414,9 +450,11 @@
               }
             }
           ],
+          "title": "Weak",
           "type": "array"
         }
       ],
+      "short_name": "Handle<GltfMesh>",
       "title": "bevy_asset::handle::Handle<bevy_gltf::GltfMesh>",
       "type": "object",
       "typeInfo": "Enum"
@@ -434,6 +472,7 @@
               }
             }
           ],
+          "title": "Strong",
           "type": "array"
         },
         {
@@ -445,9 +484,11 @@
               }
             }
           ],
+          "title": "Weak",
           "type": "array"
         }
       ],
+      "short_name": "Handle<GltfNode>",
       "title": "bevy_asset::handle::Handle<bevy_gltf::GltfNode>",
       "type": "object",
       "typeInfo": "Enum"
@@ -465,6 +506,7 @@
               }
             }
           ],
+          "title": "Strong",
           "type": "array"
         },
         {
@@ -476,9 +518,11 @@
               }
             }
           ],
+          "title": "Weak",
           "type": "array"
         }
       ],
+      "short_name": "Handle<GltfPrimitive>",
       "title": "bevy_asset::handle::Handle<bevy_gltf::GltfPrimitive>",
       "type": "object",
       "typeInfo": "Enum"
@@ -496,6 +540,7 @@
               }
             }
           ],
+          "title": "Strong",
           "type": "array"
         },
         {
@@ -507,9 +552,11 @@
               }
             }
           ],
+          "title": "Weak",
           "type": "array"
         }
       ],
+      "short_name": "Handle<StandardMaterial>",
       "title": "bevy_asset::handle::Handle<bevy_pbr::pbr_material::StandardMaterial>",
       "type": "object",
       "typeInfo": "Enum"
@@ -527,6 +574,7 @@
               }
             }
           ],
+          "title": "Strong",
           "type": "array"
         },
         {
@@ -538,9 +586,11 @@
               }
             }
           ],
+          "title": "Weak",
           "type": "array"
         }
       ],
+      "short_name": "Handle<WireframeMaterial>",
       "title": "bevy_asset::handle::Handle<bevy_pbr::wireframe::WireframeMaterial>",
       "type": "object",
       "typeInfo": "Enum"
@@ -558,6 +608,7 @@
               }
             }
           ],
+          "title": "Strong",
           "type": "array"
         },
         {
@@ -569,9 +620,11 @@
               }
             }
           ],
+          "title": "Weak",
           "type": "array"
         }
       ],
+      "short_name": "Handle<Mesh>",
       "title": "bevy_asset::handle::Handle<bevy_render::mesh::mesh::Mesh>",
       "type": "object",
       "typeInfo": "Enum"
@@ -589,6 +642,7 @@
               }
             }
           ],
+          "title": "Strong",
           "type": "array"
         },
         {
@@ -600,9 +654,11 @@
               }
             }
           ],
+          "title": "Weak",
           "type": "array"
         }
       ],
+      "short_name": "Handle<SkinnedMeshInverseBindposes>",
       "title": "bevy_asset::handle::Handle<bevy_render::mesh::mesh::skinning::SkinnedMeshInverseBindposes>",
       "type": "object",
       "typeInfo": "Enum"
@@ -620,6 +676,7 @@
               }
             }
           ],
+          "title": "Strong",
           "type": "array"
         },
         {
@@ -631,9 +688,11 @@
               }
             }
           ],
+          "title": "Weak",
           "type": "array"
         }
       ],
+      "short_name": "Handle<Shader>",
       "title": "bevy_asset::handle::Handle<bevy_render::render_resource::shader::Shader>",
       "type": "object",
       "typeInfo": "Enum"
@@ -651,6 +710,7 @@
               }
             }
           ],
+          "title": "Strong",
           "type": "array"
         },
         {
@@ -662,9 +722,11 @@
               }
             }
           ],
+          "title": "Weak",
           "type": "array"
         }
       ],
+      "short_name": "Handle<Image>",
       "title": "bevy_asset::handle::Handle<bevy_render::texture::image::Image>",
       "type": "object",
       "typeInfo": "Enum"
@@ -682,6 +744,7 @@
               }
             }
           ],
+          "title": "Strong",
           "type": "array"
         },
         {
@@ -693,9 +756,11 @@
               }
             }
           ],
+          "title": "Weak",
           "type": "array"
         }
       ],
+      "short_name": "Handle<DynamicScene>",
       "title": "bevy_asset::handle::Handle<bevy_scene::dynamic_scene::DynamicScene>",
       "type": "object",
       "typeInfo": "Enum"
@@ -713,6 +778,7 @@
               }
             }
           ],
+          "title": "Strong",
           "type": "array"
         },
         {
@@ -724,9 +790,11 @@
               }
             }
           ],
+          "title": "Weak",
           "type": "array"
         }
       ],
+      "short_name": "Handle<Scene>",
       "title": "bevy_asset::handle::Handle<bevy_scene::scene::Scene>",
       "type": "object",
       "typeInfo": "Enum"
@@ -744,6 +812,7 @@
               }
             }
           ],
+          "title": "Strong",
           "type": "array"
         },
         {
@@ -755,9 +824,11 @@
               }
             }
           ],
+          "title": "Weak",
           "type": "array"
         }
       ],
+      "short_name": "Handle<ColorMaterial>",
       "title": "bevy_asset::handle::Handle<bevy_sprite::mesh2d::color_material::ColorMaterial>",
       "type": "object",
       "typeInfo": "Enum"
@@ -775,6 +846,7 @@
               }
             }
           ],
+          "title": "Strong",
           "type": "array"
         },
         {
@@ -786,9 +858,11 @@
               }
             }
           ],
+          "title": "Weak",
           "type": "array"
         }
       ],
+      "short_name": "Handle<TextureAtlas>",
       "title": "bevy_asset::handle::Handle<bevy_sprite::texture_atlas::TextureAtlas>",
       "type": "object",
       "typeInfo": "Enum"
@@ -806,6 +880,7 @@
               }
             }
           ],
+          "title": "Strong",
           "type": "array"
         },
         {
@@ -817,9 +892,11 @@
               }
             }
           ],
+          "title": "Weak",
           "type": "array"
         }
       ],
+      "short_name": "Handle<Font>",
       "title": "bevy_asset::handle::Handle<bevy_text::font::Font>",
       "type": "object",
       "typeInfo": "Enum"
@@ -861,6 +938,7 @@
           "type": "object"
         }
       ],
+      "short_name": "AssetId<()>",
       "title": "bevy_asset::id::AssetId<()>",
       "type": "object",
       "typeInfo": "Enum"
@@ -902,6 +980,7 @@
           "type": "object"
         }
       ],
+      "short_name": "AssetId<AnimationClip>",
       "title": "bevy_asset::id::AssetId<bevy_animation::AnimationClip>",
       "type": "object",
       "typeInfo": "Enum"
@@ -943,6 +1022,7 @@
           "type": "object"
         }
       ],
+      "short_name": "AssetId<LoadedUntypedAsset>",
       "title": "bevy_asset::id::AssetId<bevy_asset::assets::LoadedUntypedAsset>",
       "type": "object",
       "typeInfo": "Enum"
@@ -984,6 +1064,7 @@
           "type": "object"
         }
       ],
+      "short_name": "AssetId<LoadedFolder>",
       "title": "bevy_asset::id::AssetId<bevy_asset::folder::LoadedFolder>",
       "type": "object",
       "typeInfo": "Enum"
@@ -1025,6 +1106,7 @@
           "type": "object"
         }
       ],
+      "short_name": "AssetId<StandardDynamicAssetCollection>",
       "title": "bevy_asset::id::AssetId<bevy_asset_loader::standard_dynamic_asset::StandardDynamicAssetCollection>",
       "type": "object",
       "typeInfo": "Enum"
@@ -1066,6 +1148,7 @@
           "type": "object"
         }
       ],
+      "short_name": "AssetId<AudioSource>",
       "title": "bevy_asset::id::AssetId<bevy_audio::audio_source::AudioSource>",
       "type": "object",
       "typeInfo": "Enum"
@@ -1107,6 +1190,7 @@
           "type": "object"
         }
       ],
+      "short_name": "AssetId<Pitch>",
       "title": "bevy_asset::id::AssetId<bevy_audio::pitch::Pitch>",
       "type": "object",
       "typeInfo": "Enum"
@@ -1148,6 +1232,7 @@
           "type": "object"
         }
       ],
+      "short_name": "AssetId<LineGizmo>",
       "title": "bevy_asset::id::AssetId<bevy_gizmos::LineGizmo>",
       "type": "object",
       "typeInfo": "Enum"
@@ -1189,6 +1274,7 @@
           "type": "object"
         }
       ],
+      "short_name": "AssetId<Gltf>",
       "title": "bevy_asset::id::AssetId<bevy_gltf::Gltf>",
       "type": "object",
       "typeInfo": "Enum"
@@ -1230,6 +1316,7 @@
           "type": "object"
         }
       ],
+      "short_name": "AssetId<GltfMesh>",
       "title": "bevy_asset::id::AssetId<bevy_gltf::GltfMesh>",
       "type": "object",
       "typeInfo": "Enum"
@@ -1271,6 +1358,7 @@
           "type": "object"
         }
       ],
+      "short_name": "AssetId<GltfNode>",
       "title": "bevy_asset::id::AssetId<bevy_gltf::GltfNode>",
       "type": "object",
       "typeInfo": "Enum"
@@ -1312,6 +1400,7 @@
           "type": "object"
         }
       ],
+      "short_name": "AssetId<GltfPrimitive>",
       "title": "bevy_asset::id::AssetId<bevy_gltf::GltfPrimitive>",
       "type": "object",
       "typeInfo": "Enum"
@@ -1353,6 +1442,7 @@
           "type": "object"
         }
       ],
+      "short_name": "AssetId<StandardMaterial>",
       "title": "bevy_asset::id::AssetId<bevy_pbr::pbr_material::StandardMaterial>",
       "type": "object",
       "typeInfo": "Enum"
@@ -1394,6 +1484,7 @@
           "type": "object"
         }
       ],
+      "short_name": "AssetId<WireframeMaterial>",
       "title": "bevy_asset::id::AssetId<bevy_pbr::wireframe::WireframeMaterial>",
       "type": "object",
       "typeInfo": "Enum"
@@ -1435,6 +1526,7 @@
           "type": "object"
         }
       ],
+      "short_name": "AssetId<Mesh>",
       "title": "bevy_asset::id::AssetId<bevy_render::mesh::mesh::Mesh>",
       "type": "object",
       "typeInfo": "Enum"
@@ -1476,6 +1568,7 @@
           "type": "object"
         }
       ],
+      "short_name": "AssetId<SkinnedMeshInverseBindposes>",
       "title": "bevy_asset::id::AssetId<bevy_render::mesh::mesh::skinning::SkinnedMeshInverseBindposes>",
       "type": "object",
       "typeInfo": "Enum"
@@ -1517,6 +1610,7 @@
           "type": "object"
         }
       ],
+      "short_name": "AssetId<Shader>",
       "title": "bevy_asset::id::AssetId<bevy_render::render_resource::shader::Shader>",
       "type": "object",
       "typeInfo": "Enum"
@@ -1558,6 +1652,7 @@
           "type": "object"
         }
       ],
+      "short_name": "AssetId<Image>",
       "title": "bevy_asset::id::AssetId<bevy_render::texture::image::Image>",
       "type": "object",
       "typeInfo": "Enum"
@@ -1599,6 +1694,7 @@
           "type": "object"
         }
       ],
+      "short_name": "AssetId<DynamicScene>",
       "title": "bevy_asset::id::AssetId<bevy_scene::dynamic_scene::DynamicScene>",
       "type": "object",
       "typeInfo": "Enum"
@@ -1640,6 +1736,7 @@
           "type": "object"
         }
       ],
+      "short_name": "AssetId<Scene>",
       "title": "bevy_asset::id::AssetId<bevy_scene::scene::Scene>",
       "type": "object",
       "typeInfo": "Enum"
@@ -1681,6 +1778,7 @@
           "type": "object"
         }
       ],
+      "short_name": "AssetId<ColorMaterial>",
       "title": "bevy_asset::id::AssetId<bevy_sprite::mesh2d::color_material::ColorMaterial>",
       "type": "object",
       "typeInfo": "Enum"
@@ -1722,6 +1820,7 @@
           "type": "object"
         }
       ],
+      "short_name": "AssetId<TextureAtlas>",
       "title": "bevy_asset::id::AssetId<bevy_sprite::texture_atlas::TextureAtlas>",
       "type": "object",
       "typeInfo": "Enum"
@@ -1763,6 +1862,7 @@
           "type": "object"
         }
       ],
+      "short_name": "AssetId<Font>",
       "title": "bevy_asset::id::AssetId<bevy_text::font::Font>",
       "type": "object",
       "typeInfo": "Enum"
@@ -1773,6 +1873,7 @@
       "isResource": false,
       "properties": {},
       "required": [],
+      "short_name": "CameraTrackable",
       "title": "bevy_bevy_blender_editor_basic_example::core::camera::camera_tracking::CameraTrackable",
       "type": "object",
       "typeInfo": "Struct"
@@ -1791,6 +1892,7 @@
       "required": [
         "offset"
       ],
+      "short_name": "CameraTracking",
       "title": "bevy_bevy_blender_editor_basic_example::core::camera::camera_tracking::CameraTracking",
       "type": "object",
       "typeInfo": "Struct"
@@ -1806,18 +1908,20 @@
           }
         }
       ],
+      "short_name": "CameraTrackingOffset",
       "title": "bevy_bevy_blender_editor_basic_example::core::camera::camera_tracking::CameraTrackingOffset",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
     "bevy_bevy_blender_editor_basic_example::core::physics::physics_replace_proxies::AutoAABBCollider": {
-      "enum": [
+      "isComponent": true,
+      "isResource": false,
+      "oneOf": [
         "Cuboid",
         "Ball",
         "Capsule"
       ],
-      "isComponent": true,
-      "isResource": false,
+      "short_name": "AutoAABBCollider",
       "title": "bevy_bevy_blender_editor_basic_example::core::physics::physics_replace_proxies::AutoAABBCollider",
       "type": "string",
       "typeInfo": "Enum"
@@ -1835,6 +1939,7 @@
               }
             }
           ],
+          "title": "Ball",
           "type": "array"
         },
         {
@@ -1846,6 +1951,7 @@
               }
             }
           ],
+          "title": "Cuboid",
           "type": "array"
         },
         {
@@ -1867,12 +1973,14 @@
               }
             }
           ],
+          "title": "Capsule",
           "type": "array"
         },
         {
-          "const": "Mesh"
+          "title": "Mesh"
         }
       ],
+      "short_name": "Collider",
       "title": "bevy_bevy_blender_editor_basic_example::core::physics::physics_replace_proxies::Collider",
       "type": "object",
       "typeInfo": "Enum"
@@ -1883,6 +1991,7 @@
       "isResource": false,
       "properties": {},
       "required": [],
+      "short_name": "Interactible",
       "title": "bevy_bevy_blender_editor_basic_example::game::Interactible",
       "type": "object",
       "typeInfo": "Struct"
@@ -1893,12 +2002,15 @@
       "isResource": false,
       "properties": {},
       "required": [],
+      "short_name": "Player",
       "title": "bevy_bevy_blender_editor_basic_example::game::Player",
       "type": "object",
       "typeInfo": "Struct"
     },
     "bevy_bevy_blender_editor_basic_example::game::SoundMaterial": {
-      "enum": [
+      "isComponent": true,
+      "isResource": false,
+      "oneOf": [
         "Metal",
         "Wood",
         "Rock",
@@ -1906,8 +2018,7 @@
         "Squishy",
         "None"
       ],
-      "isComponent": true,
-      "isResource": false,
+      "short_name": "SoundMaterial",
       "title": "bevy_bevy_blender_editor_basic_example::game::SoundMaterial",
       "type": "string",
       "typeInfo": "Enum"
@@ -1918,6 +2029,7 @@
       "isResource": false,
       "properties": {},
       "required": [],
+      "short_name": "Pickable",
       "title": "bevy_bevy_blender_editor_basic_example::game::picking::Pickable",
       "type": "object",
       "typeInfo": "Struct"
@@ -1948,12 +2060,15 @@
         "b",
         "c"
       ],
+      "short_name": "BasicTest",
       "title": "bevy_bevy_blender_editor_basic_example::test_components::BasicTest",
       "type": "object",
       "typeInfo": "Struct"
     },
     "bevy_bevy_blender_editor_basic_example::test_components::EnumTest": {
-      "enum": [
+      "isComponent": true,
+      "isResource": false,
+      "oneOf": [
         "Metal",
         "Wood",
         "Rock",
@@ -1961,8 +2076,7 @@
         "Squishy",
         "None"
       ],
-      "isComponent": true,
-      "isResource": false,
+      "short_name": "EnumTest",
       "title": "bevy_bevy_blender_editor_basic_example::test_components::EnumTest",
       "type": "string",
       "typeInfo": "Enum"
@@ -1988,6 +2102,7 @@
           }
         }
       ],
+      "short_name": "TuppleTest2",
       "title": "bevy_bevy_blender_editor_basic_example::test_components::TuppleTest2",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -2003,6 +2118,7 @@
           }
         }
       ],
+      "short_name": "TuppleTestBool",
       "title": "bevy_bevy_blender_editor_basic_example::test_components::TuppleTestBool",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -2018,6 +2134,7 @@
           }
         }
       ],
+      "short_name": "TuppleTestColor",
       "title": "bevy_bevy_blender_editor_basic_example::test_components::TuppleTestColor",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -2033,6 +2150,7 @@
           }
         }
       ],
+      "short_name": "TuppleTestF32",
       "title": "bevy_bevy_blender_editor_basic_example::test_components::TuppleTestF32",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -2048,6 +2166,7 @@
           }
         }
       ],
+      "short_name": "TuppleTestStr",
       "title": "bevy_bevy_blender_editor_basic_example::test_components::TuppleTestStr",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -2063,6 +2182,7 @@
           }
         }
       ],
+      "short_name": "TuppleTestU64",
       "title": "bevy_bevy_blender_editor_basic_example::test_components::TuppleTestU64",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -2078,6 +2198,7 @@
           }
         }
       ],
+      "short_name": "TuppleVec",
       "title": "bevy_bevy_blender_editor_basic_example::test_components::TuppleVec",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -2093,6 +2214,7 @@
           }
         }
       ],
+      "short_name": "TuppleVec2",
       "title": "bevy_bevy_blender_editor_basic_example::test_components::TuppleVec2",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -2108,6 +2230,7 @@
           }
         }
       ],
+      "short_name": "TuppleVec3",
       "title": "bevy_bevy_blender_editor_basic_example::test_components::TuppleVec3",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -2118,6 +2241,7 @@
       "isResource": false,
       "properties": {},
       "required": [],
+      "short_name": "UnitTest",
       "title": "bevy_bevy_blender_editor_basic_example::test_components::UnitTest",
       "type": "object",
       "typeInfo": "Struct"
@@ -2142,17 +2266,19 @@
         "hash",
         "name"
       ],
+      "short_name": "Name",
       "title": "bevy_core::name::Name",
       "type": "object",
       "typeInfo": "Struct"
     },
     "bevy_core_pipeline::bloom::settings::BloomCompositeMode": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "EnergyConserving",
         "Additive"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "BloomCompositeMode",
       "title": "bevy_core_pipeline::bloom::settings::BloomCompositeMode",
       "type": "string",
       "typeInfo": "Enum"
@@ -2177,6 +2303,7 @@
         "threshold",
         "threshold_softness"
       ],
+      "short_name": "BloomPrefilterSettings",
       "title": "bevy_core_pipeline::bloom::settings::BloomPrefilterSettings",
       "type": "object",
       "typeInfo": "Struct"
@@ -2225,6 +2352,7 @@
         "prefilter_settings",
         "composite_mode"
       ],
+      "short_name": "BloomSettings",
       "title": "bevy_core_pipeline::bloom::settings::BloomSettings",
       "type": "object",
       "typeInfo": "Struct"
@@ -2240,6 +2368,7 @@
           }
         }
       ],
+      "short_name": "ClearColor",
       "title": "bevy_core_pipeline::clear_color::ClearColor",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -2249,7 +2378,7 @@
       "isResource": false,
       "oneOf": [
         {
-          "const": "Default"
+          "title": "Default"
         },
         {
           "items": false,
@@ -2260,12 +2389,14 @@
               }
             }
           ],
+          "title": "Custom",
           "type": "array"
         },
         {
-          "const": "None"
+          "title": "None"
         }
       ],
+      "short_name": "ClearColorConfig",
       "title": "bevy_core_pipeline::clear_color::ClearColorConfig",
       "type": "object",
       "typeInfo": "Enum"
@@ -2296,6 +2427,7 @@
         "sharpening_strength",
         "denoise"
       ],
+      "short_name": "ContrastAdaptiveSharpeningSettings",
       "title": "bevy_core_pipeline::contrast_adaptive_sharpening::ContrastAdaptiveSharpeningSettings",
       "type": "object",
       "typeInfo": "Struct"
@@ -2314,6 +2446,7 @@
       "required": [
         "clear_color"
       ],
+      "short_name": "Camera2d",
       "title": "bevy_core_pipeline::core_2d::camera_2d::Camera2d",
       "type": "object",
       "typeInfo": "Struct"
@@ -2356,6 +2489,7 @@
         "screen_space_specular_transmission_steps",
         "screen_space_specular_transmission_quality"
       ],
+      "short_name": "Camera3d",
       "title": "bevy_core_pipeline::core_3d::camera_3d::Camera3d",
       "type": "object",
       "typeInfo": "Struct"
@@ -2373,12 +2507,14 @@
               }
             }
           ],
+          "title": "Clear",
           "type": "array"
         },
         {
-          "const": "Load"
+          "title": "Load"
         }
       ],
+      "short_name": "Camera3dDepthLoadOp",
       "title": "bevy_core_pipeline::core_3d::camera_3d::Camera3dDepthLoadOp",
       "type": "object",
       "typeInfo": "Enum"
@@ -2409,6 +2545,7 @@
         "edge_threshold",
         "edge_threshold_min"
       ],
+      "short_name": "Fxaa",
       "title": "bevy_core_pipeline::fxaa::Fxaa",
       "type": "object",
       "typeInfo": "Struct"
@@ -2419,6 +2556,7 @@
       "isResource": false,
       "properties": {},
       "required": [],
+      "short_name": "DepthPrepass",
       "title": "bevy_core_pipeline::prepass::DepthPrepass",
       "type": "object",
       "typeInfo": "Struct"
@@ -2429,23 +2567,27 @@
       "isResource": false,
       "properties": {},
       "required": [],
+      "short_name": "NormalPrepass",
       "title": "bevy_core_pipeline::prepass::NormalPrepass",
       "type": "object",
       "typeInfo": "Struct"
     },
     "bevy_core_pipeline::tonemapping::DebandDither": {
-      "enum": [
+      "isComponent": true,
+      "isResource": false,
+      "oneOf": [
         "Disabled",
         "Enabled"
       ],
-      "isComponent": true,
-      "isResource": false,
+      "short_name": "DebandDither",
       "title": "bevy_core_pipeline::tonemapping::DebandDither",
       "type": "string",
       "typeInfo": "Enum"
     },
     "bevy_core_pipeline::tonemapping::Tonemapping": {
-      "enum": [
+      "isComponent": true,
+      "isResource": false,
+      "oneOf": [
         "None",
         "Reinhard",
         "ReinhardLuminance",
@@ -2455,8 +2597,7 @@
         "TonyMcMapface",
         "BlenderFilmic"
       ],
-      "isComponent": true,
-      "isResource": false,
+      "short_name": "Tonemapping",
       "title": "bevy_core_pipeline::tonemapping::Tonemapping",
       "type": "string",
       "typeInfo": "Enum"
@@ -2464,6 +2605,7 @@
     "bevy_ecs::Entity": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "Entity",
       "title": "bevy_ecs::Entity",
       "type": "object",
       "typeInfo": "Value"
@@ -2487,6 +2629,7 @@
       "required": [
         "scale_factor"
       ],
+      "short_name": "EguiSettings",
       "title": "bevy_egui::EguiSettings",
       "type": "object",
       "typeInfo": "Struct"
@@ -2505,6 +2648,7 @@
       "required": [
         "value"
       ],
+      "short_name": "GltfExtras",
       "title": "bevy_gltf::GltfExtras",
       "type": "object",
       "typeInfo": "Struct"
@@ -2523,6 +2667,7 @@
       "required": [
         "named_animations"
       ],
+      "short_name": "Animations",
       "title": "bevy_gltf_blueprints::animation::Animations",
       "type": "object",
       "typeInfo": "Struct"
@@ -2547,6 +2692,7 @@
         "name",
         "source"
       ],
+      "short_name": "MaterialInfo",
       "title": "bevy_gltf_blueprints::materials::MaterialInfo",
       "type": "object",
       "typeInfo": "Struct"
@@ -2562,6 +2708,7 @@
           }
         }
       ],
+      "short_name": "BlueprintName",
       "title": "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintName",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -2572,6 +2719,7 @@
       "isResource": false,
       "properties": {},
       "required": [],
+      "short_name": "SpawnHere",
       "title": "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere",
       "type": "object",
       "typeInfo": "Struct"
@@ -2587,6 +2735,7 @@
           }
         }
       ],
+      "short_name": "Children",
       "title": "bevy_hierarchy::components::children::Children",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -2602,17 +2751,19 @@
           }
         }
       ],
+      "short_name": "Parent",
       "title": "bevy_hierarchy::components::parent::Parent",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
     "bevy_input::ButtonState": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "Pressed",
         "Released"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "ButtonState",
       "title": "bevy_input::ButtonState",
       "type": "string",
       "typeInfo": "Enum"
@@ -2655,6 +2806,7 @@
         "livezone_lowerbound",
         "threshold"
       ],
+      "short_name": "AxisSettings",
       "title": "bevy_input::gamepad::AxisSettings",
       "type": "object",
       "typeInfo": "Struct"
@@ -2685,6 +2837,7 @@
         "low",
         "threshold"
       ],
+      "short_name": "ButtonAxisSettings",
       "title": "bevy_input::gamepad::ButtonAxisSettings",
       "type": "object",
       "typeInfo": "Struct"
@@ -2709,6 +2862,7 @@
         "press_threshold",
         "release_threshold"
       ],
+      "short_name": "ButtonSettings",
       "title": "bevy_input::gamepad::ButtonSettings",
       "type": "object",
       "typeInfo": "Struct"
@@ -2727,6 +2881,7 @@
       "required": [
         "id"
       ],
+      "short_name": "Gamepad",
       "title": "bevy_input::gamepad::Gamepad",
       "type": "object",
       "typeInfo": "Struct"
@@ -2751,6 +2906,7 @@
         "gamepad",
         "axis_type"
       ],
+      "short_name": "GamepadAxis",
       "title": "bevy_input::gamepad::GamepadAxis",
       "type": "object",
       "typeInfo": "Struct"
@@ -2760,22 +2916,22 @@
       "isResource": false,
       "oneOf": [
         {
-          "const": "LeftStickX"
+          "title": "LeftStickX"
         },
         {
-          "const": "LeftStickY"
+          "title": "LeftStickY"
         },
         {
-          "const": "LeftZ"
+          "title": "LeftZ"
         },
         {
-          "const": "RightStickX"
+          "title": "RightStickX"
         },
         {
-          "const": "RightStickY"
+          "title": "RightStickY"
         },
         {
-          "const": "RightZ"
+          "title": "RightZ"
         },
         {
           "items": false,
@@ -2786,9 +2942,11 @@
               }
             }
           ],
+          "title": "Other",
           "type": "array"
         }
       ],
+      "short_name": "GamepadAxisType",
       "title": "bevy_input::gamepad::GamepadAxisType",
       "type": "object",
       "typeInfo": "Enum"
@@ -2813,6 +2971,7 @@
         "gamepad",
         "button_type"
       ],
+      "short_name": "GamepadButton",
       "title": "bevy_input::gamepad::GamepadButton",
       "type": "object",
       "typeInfo": "Struct"
@@ -2837,6 +2996,7 @@
         "button",
         "state"
       ],
+      "short_name": "GamepadButtonInput",
       "title": "bevy_input::gamepad::GamepadButtonInput",
       "type": "object",
       "typeInfo": "Struct"
@@ -2846,61 +3006,61 @@
       "isResource": false,
       "oneOf": [
         {
-          "const": "South"
+          "title": "South"
         },
         {
-          "const": "East"
+          "title": "East"
         },
         {
-          "const": "North"
+          "title": "North"
         },
         {
-          "const": "West"
+          "title": "West"
         },
         {
-          "const": "C"
+          "title": "C"
         },
         {
-          "const": "Z"
+          "title": "Z"
         },
         {
-          "const": "LeftTrigger"
+          "title": "LeftTrigger"
         },
         {
-          "const": "LeftTrigger2"
+          "title": "LeftTrigger2"
         },
         {
-          "const": "RightTrigger"
+          "title": "RightTrigger"
         },
         {
-          "const": "RightTrigger2"
+          "title": "RightTrigger2"
         },
         {
-          "const": "Select"
+          "title": "Select"
         },
         {
-          "const": "Start"
+          "title": "Start"
         },
         {
-          "const": "Mode"
+          "title": "Mode"
         },
         {
-          "const": "LeftThumb"
+          "title": "LeftThumb"
         },
         {
-          "const": "RightThumb"
+          "title": "RightThumb"
         },
         {
-          "const": "DPadUp"
+          "title": "DPadUp"
         },
         {
-          "const": "DPadDown"
+          "title": "DPadDown"
         },
         {
-          "const": "DPadLeft"
+          "title": "DPadLeft"
         },
         {
-          "const": "DPadRight"
+          "title": "DPadRight"
         },
         {
           "items": false,
@@ -2911,9 +3071,11 @@
               }
             }
           ],
+          "title": "Other",
           "type": "array"
         }
       ],
+      "short_name": "GamepadButtonType",
       "title": "bevy_input::gamepad::GamepadButtonType",
       "type": "object",
       "typeInfo": "Enum"
@@ -2931,12 +3093,14 @@
               }
             }
           ],
+          "title": "Connected",
           "type": "array"
         },
         {
-          "const": "Disconnected"
+          "title": "Disconnected"
         }
       ],
+      "short_name": "GamepadConnection",
       "title": "bevy_input::gamepad::GamepadConnection",
       "type": "object",
       "typeInfo": "Enum"
@@ -2985,12 +3149,15 @@
         "axis_settings",
         "button_axis_settings"
       ],
+      "short_name": "GamepadSettings",
       "title": "bevy_input::gamepad::GamepadSettings",
       "type": "object",
       "typeInfo": "Struct"
     },
     "bevy_input::keyboard::KeyCode": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "Key1",
         "Key2",
         "Key3",
@@ -3155,8 +3322,7 @@
         "Paste",
         "Cut"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "KeyCode",
       "title": "bevy_input::keyboard::KeyCode",
       "type": "string",
       "typeInfo": "Enum"
@@ -3192,6 +3358,7 @@
         "state",
         "window"
       ],
+      "short_name": "KeyboardInput",
       "title": "bevy_input::keyboard::KeyboardInput",
       "type": "object",
       "typeInfo": "Struct"
@@ -3207,6 +3374,7 @@
           }
         }
       ],
+      "short_name": "ScanCode",
       "title": "bevy_input::keyboard::ScanCode",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -3216,13 +3384,13 @@
       "isResource": false,
       "oneOf": [
         {
-          "const": "Left"
+          "title": "Left"
         },
         {
-          "const": "Right"
+          "title": "Right"
         },
         {
-          "const": "Middle"
+          "title": "Middle"
         },
         {
           "items": false,
@@ -3233,9 +3401,11 @@
               }
             }
           ],
+          "title": "Other",
           "type": "array"
         }
       ],
+      "short_name": "MouseButton",
       "title": "bevy_input::mouse::MouseButton",
       "type": "object",
       "typeInfo": "Enum"
@@ -3266,6 +3436,7 @@
         "state",
         "window"
       ],
+      "short_name": "MouseButtonInput",
       "title": "bevy_input::mouse::MouseButtonInput",
       "type": "object",
       "typeInfo": "Struct"
@@ -3284,17 +3455,19 @@
       "required": [
         "delta"
       ],
+      "short_name": "MouseMotion",
       "title": "bevy_input::mouse::MouseMotion",
       "type": "object",
       "typeInfo": "Struct"
     },
     "bevy_input::mouse::MouseScrollUnit": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "Line",
         "Pixel"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "MouseScrollUnit",
       "title": "bevy_input::mouse::MouseScrollUnit",
       "type": "string",
       "typeInfo": "Enum"
@@ -3331,6 +3504,7 @@
         "y",
         "window"
       ],
+      "short_name": "MouseWheel",
       "title": "bevy_input::mouse::MouseWheel",
       "type": "object",
       "typeInfo": "Struct"
@@ -3377,9 +3551,11 @@
               }
             }
           ],
+          "title": "Normalized",
           "type": "array"
         }
       ],
+      "short_name": "ForceTouch",
       "title": "bevy_input::touch::ForceTouch",
       "type": "object",
       "typeInfo": "Enum"
@@ -3415,19 +3591,21 @@
         "position",
         "id"
       ],
+      "short_name": "TouchInput",
       "title": "bevy_input::touch::TouchInput",
       "type": "object",
       "typeInfo": "Struct"
     },
     "bevy_input::touch::TouchPhase": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "Started",
         "Moved",
         "Ended",
         "Canceled"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "TouchPhase",
       "title": "bevy_input::touch::TouchPhase",
       "type": "string",
       "typeInfo": "Enum"
@@ -3443,6 +3621,7 @@
           }
         }
       ],
+      "short_name": "TouchpadMagnify",
       "title": "bevy_input::touchpad::TouchpadMagnify",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -3458,6 +3637,7 @@
           }
         }
       ],
+      "short_name": "TouchpadRotate",
       "title": "bevy_input::touchpad::TouchpadRotate",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -3482,6 +3662,7 @@
         "min",
         "max"
       ],
+      "short_name": "Rect",
       "title": "bevy_math::Rect",
       "type": "object",
       "typeInfo": "Struct"
@@ -3491,7 +3672,7 @@
       "isResource": false,
       "oneOf": [
         {
-          "const": "Opaque"
+          "title": "Opaque"
         },
         {
           "items": false,
@@ -3502,21 +3683,23 @@
               }
             }
           ],
+          "title": "Mask",
           "type": "array"
         },
         {
-          "const": "Blend"
+          "title": "Blend"
         },
         {
-          "const": "Premultiplied"
+          "title": "Premultiplied"
         },
         {
-          "const": "Add"
+          "title": "Add"
         },
         {
-          "const": "Multiply"
+          "title": "Multiply"
         }
       ],
+      "short_name": "AlphaMode",
       "title": "bevy_pbr::alpha::AlphaMode",
       "type": "object",
       "typeInfo": "Enum"
@@ -3527,6 +3710,7 @@
       "isResource": false,
       "properties": {},
       "required": [],
+      "short_name": "CascadesVisibleEntities",
       "title": "bevy_pbr::bundle::CascadesVisibleEntities",
       "type": "object",
       "typeInfo": "Struct"
@@ -3537,6 +3721,7 @@
       "isResource": false,
       "properties": {},
       "required": [],
+      "short_name": "CubemapVisibleEntities",
       "title": "bevy_pbr::bundle::CubemapVisibleEntities",
       "type": "object",
       "typeInfo": "Struct"
@@ -3561,6 +3746,7 @@
         "diffuse_map",
         "specular_map"
       ],
+      "short_name": "EnvironmentMapLight",
       "title": "bevy_pbr::environment_map::EnvironmentMapLight",
       "type": "object",
       "typeInfo": "Struct"
@@ -3597,6 +3783,7 @@
         "directional_light_exponent",
         "falloff"
       ],
+      "short_name": "FogSettings",
       "title": "bevy_pbr::fog::FogSettings",
       "type": "object",
       "typeInfo": "Struct"
@@ -3621,6 +3808,7 @@
         "color",
         "brightness"
       ],
+      "short_name": "AmbientLight",
       "title": "bevy_pbr::light::AmbientLight",
       "type": "object",
       "typeInfo": "Struct"
@@ -3657,6 +3845,7 @@
         "view_projection",
         "texel_size"
       ],
+      "short_name": "Cascade",
       "title": "bevy_pbr::light::Cascade",
       "type": "object",
       "typeInfo": "Struct"
@@ -3687,6 +3876,7 @@
         "overlap_proportion",
         "minimum_distance"
       ],
+      "short_name": "CascadeShadowConfig",
       "title": "bevy_pbr::light::CascadeShadowConfig",
       "type": "object",
       "typeInfo": "Struct"
@@ -3705,6 +3895,7 @@
       "required": [
         "cascades"
       ],
+      "short_name": "Cascades",
       "title": "bevy_pbr::light::Cascades",
       "type": "object",
       "typeInfo": "Struct"
@@ -3714,10 +3905,10 @@
       "isResource": false,
       "oneOf": [
         {
-          "const": "None"
+          "title": "None"
         },
         {
-          "const": "Single"
+          "title": "Single"
         },
         {
           "additionalProperties": false,
@@ -3787,6 +3978,7 @@
           "type": "object"
         }
       ],
+      "short_name": "ClusterConfig",
       "title": "bevy_pbr::light::ClusterConfig",
       "type": "object",
       "typeInfo": "Enum"
@@ -3796,7 +3988,7 @@
       "isResource": false,
       "oneOf": [
         {
-          "const": "MaxLightRange"
+          "title": "MaxLightRange"
         },
         {
           "items": false,
@@ -3807,9 +3999,11 @@
               }
             }
           ],
+          "title": "Constant",
           "type": "array"
         }
       ],
+      "short_name": "ClusterFarZMode",
       "title": "bevy_pbr::light::ClusterFarZMode",
       "type": "object",
       "typeInfo": "Enum"
@@ -3834,6 +4028,7 @@
         "first_slice_depth",
         "far_z_mode"
       ],
+      "short_name": "ClusterZConfig",
       "title": "bevy_pbr::light::ClusterZConfig",
       "type": "object",
       "typeInfo": "Struct"
@@ -3876,6 +4071,7 @@
         "shadow_depth_bias",
         "shadow_normal_bias"
       ],
+      "short_name": "DirectionalLight",
       "title": "bevy_pbr::light::DirectionalLight",
       "type": "object",
       "typeInfo": "Struct"
@@ -3894,6 +4090,7 @@
       "required": [
         "size"
       ],
+      "short_name": "DirectionalLightShadowMap",
       "title": "bevy_pbr::light::DirectionalLightShadowMap",
       "type": "object",
       "typeInfo": "Struct"
@@ -3904,6 +4101,7 @@
       "isResource": false,
       "properties": {},
       "required": [],
+      "short_name": "NotShadowCaster",
       "title": "bevy_pbr::light::NotShadowCaster",
       "type": "object",
       "typeInfo": "Struct"
@@ -3914,6 +4112,7 @@
       "isResource": false,
       "properties": {},
       "required": [],
+      "short_name": "NotShadowReceiver",
       "title": "bevy_pbr::light::NotShadowReceiver",
       "type": "object",
       "typeInfo": "Struct"
@@ -3968,6 +4167,7 @@
         "shadow_depth_bias",
         "shadow_normal_bias"
       ],
+      "short_name": "PointLight",
       "title": "bevy_pbr::light::PointLight",
       "type": "object",
       "typeInfo": "Struct"
@@ -3986,18 +4186,20 @@
       "required": [
         "size"
       ],
+      "short_name": "PointLightShadowMap",
       "title": "bevy_pbr::light::PointLightShadowMap",
       "type": "object",
       "typeInfo": "Struct"
     },
     "bevy_pbr::light::ShadowFilteringMethod": {
-      "enum": [
+      "isComponent": true,
+      "isResource": false,
+      "oneOf": [
         "Hardware2x2",
         "Castano13",
         "Jimenez14"
       ],
-      "isComponent": true,
-      "isResource": false,
+      "short_name": "ShadowFilteringMethod",
       "title": "bevy_pbr::light::ShadowFilteringMethod",
       "type": "string",
       "typeInfo": "Enum"
@@ -4064,6 +4266,7 @@
         "outer_angle",
         "inner_angle"
       ],
+      "short_name": "SpotLight",
       "title": "bevy_pbr::light::SpotLight",
       "type": "object",
       "typeInfo": "Struct"
@@ -4079,6 +4282,7 @@
           }
         }
       ],
+      "short_name": "DefaultOpaqueRendererMethod",
       "title": "bevy_pbr::material::DefaultOpaqueRendererMethod",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -4253,6 +4457,7 @@
         "opaque_render_method",
         "deferred_lighting_pass_id"
       ],
+      "short_name": "StandardMaterial",
       "title": "bevy_pbr::pbr_material::StandardMaterial",
       "type": "object",
       "typeInfo": "Struct"
@@ -4271,6 +4476,7 @@
       "required": [
         "quality_level"
       ],
+      "short_name": "ScreenSpaceAmbientOcclusionSettings",
       "title": "bevy_pbr::ssao::ScreenSpaceAmbientOcclusionSettings",
       "type": "object",
       "typeInfo": "Struct"
@@ -4281,6 +4487,7 @@
       "isResource": false,
       "properties": {},
       "required": [],
+      "short_name": "NoWireframe",
       "title": "bevy_pbr::wireframe::NoWireframe",
       "type": "object",
       "typeInfo": "Struct"
@@ -4291,6 +4498,7 @@
       "isResource": false,
       "properties": {},
       "required": [],
+      "short_name": "Wireframe",
       "title": "bevy_pbr::wireframe::Wireframe",
       "type": "object",
       "typeInfo": "Struct"
@@ -4315,6 +4523,7 @@
         "global",
         "default_color"
       ],
+      "short_name": "WireframeConfig",
       "title": "bevy_pbr::wireframe::WireframeConfig",
       "type": "object",
       "typeInfo": "Struct"
@@ -4332,6 +4541,7 @@
               }
             }
           ],
+          "title": "Mass",
           "type": "array"
         },
         {
@@ -4343,9 +4553,11 @@
               }
             }
           ],
+          "title": "MassProperties",
           "type": "array"
         }
       ],
+      "short_name": "AdditionalMassProperties",
       "title": "bevy_rapier3d::dynamics::rigid_body::AdditionalMassProperties",
       "type": "object",
       "typeInfo": "Enum"
@@ -4364,6 +4576,7 @@
       "required": [
         "enabled"
       ],
+      "short_name": "Ccd",
       "title": "bevy_rapier3d::dynamics::rigid_body::Ccd",
       "type": "object",
       "typeInfo": "Struct"
@@ -4388,6 +4601,7 @@
         "linear_damping",
         "angular_damping"
       ],
+      "short_name": "Damping",
       "title": "bevy_rapier3d::dynamics::rigid_body::Damping",
       "type": "object",
       "typeInfo": "Struct"
@@ -4406,6 +4620,7 @@
       "required": [
         "groups"
       ],
+      "short_name": "Dominance",
       "title": "bevy_rapier3d::dynamics::rigid_body::Dominance",
       "type": "object",
       "typeInfo": "Struct"
@@ -4430,6 +4645,7 @@
         "force",
         "torque"
       ],
+      "short_name": "ExternalForce",
       "title": "bevy_rapier3d::dynamics::rigid_body::ExternalForce",
       "type": "object",
       "typeInfo": "Struct"
@@ -4454,6 +4670,7 @@
         "impulse",
         "torque_impulse"
       ],
+      "short_name": "ExternalImpulse",
       "title": "bevy_rapier3d::dynamics::rigid_body::ExternalImpulse",
       "type": "object",
       "typeInfo": "Struct"
@@ -4469,6 +4686,7 @@
           }
         }
       ],
+      "short_name": "GravityScale",
       "title": "bevy_rapier3d::dynamics::rigid_body::GravityScale",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -4484,6 +4702,7 @@
           }
         }
       ],
+      "short_name": "LockedAxes",
       "title": "bevy_rapier3d::dynamics::rigid_body::LockedAxes",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -4520,19 +4739,21 @@
         "principal_inertia_local_frame",
         "principal_inertia"
       ],
+      "short_name": "MassProperties",
       "title": "bevy_rapier3d::dynamics::rigid_body::MassProperties",
       "type": "object",
       "typeInfo": "Struct"
     },
     "bevy_rapier3d::dynamics::rigid_body::RigidBody": {
-      "enum": [
+      "isComponent": true,
+      "isResource": false,
+      "oneOf": [
         "Dynamic",
         "Fixed",
         "KinematicPositionBased",
         "KinematicVelocityBased"
       ],
-      "isComponent": true,
-      "isResource": false,
+      "short_name": "RigidBody",
       "title": "bevy_rapier3d::dynamics::rigid_body::RigidBody",
       "type": "string",
       "typeInfo": "Enum"
@@ -4563,6 +4784,7 @@
         "angular_threshold",
         "sleeping"
       ],
+      "short_name": "Sleeping",
       "title": "bevy_rapier3d::dynamics::rigid_body::Sleeping",
       "type": "object",
       "typeInfo": "Struct"
@@ -4587,6 +4809,7 @@
         "linvel",
         "angvel"
       ],
+      "short_name": "Velocity",
       "title": "bevy_rapier3d::dynamics::rigid_body::Velocity",
       "type": "object",
       "typeInfo": "Struct"
@@ -4602,6 +4825,7 @@
           }
         }
       ],
+      "short_name": "CollidingEntities",
       "title": "bevy_rapier3d::geometry::collider::CollidingEntities",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -4626,6 +4850,7 @@
         "memberships",
         "filters"
       ],
+      "short_name": "CollisionGroups",
       "title": "bevy_rapier3d::geometry::collider::CollisionGroups",
       "type": "object",
       "typeInfo": "Struct"
@@ -4641,6 +4866,7 @@
           }
         }
       ],
+      "short_name": "ContactForceEventThreshold",
       "title": "bevy_rapier3d::geometry::collider::ContactForceEventThreshold",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -4665,6 +4891,7 @@
         "coefficient",
         "combine_rule"
       ],
+      "short_name": "Friction",
       "title": "bevy_rapier3d::geometry::collider::Friction",
       "type": "object",
       "typeInfo": "Struct"
@@ -4680,6 +4907,7 @@
           }
         }
       ],
+      "short_name": "Group",
       "title": "bevy_rapier3d::geometry::collider::Group",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -4704,6 +4932,7 @@
         "coefficient",
         "combine_rule"
       ],
+      "short_name": "Restitution",
       "title": "bevy_rapier3d::geometry::collider::Restitution",
       "type": "object",
       "typeInfo": "Struct"
@@ -4714,6 +4943,7 @@
       "isResource": false,
       "properties": {},
       "required": [],
+      "short_name": "Sensor",
       "title": "bevy_rapier3d::geometry::collider::Sensor",
       "type": "object",
       "typeInfo": "Struct"
@@ -4738,6 +4968,7 @@
         "memberships",
         "filters"
       ],
+      "short_name": "SolverGroups",
       "title": "bevy_rapier3d::geometry::collider::SolverGroups",
       "type": "object",
       "typeInfo": "Struct"
@@ -4756,6 +4987,7 @@
       "required": [
         "enabled"
       ],
+      "short_name": "DebugRenderContext",
       "title": "bevy_rapier3d::render::DebugRenderContext",
       "type": "object",
       "typeInfo": "Struct"
@@ -4797,6 +5029,7 @@
         "hdr",
         "msaa_writeback"
       ],
+      "short_name": "Camera",
       "title": "bevy_render::camera::camera::Camera",
       "type": "object",
       "typeInfo": "Struct"
@@ -4812,6 +5045,7 @@
           }
         }
       ],
+      "short_name": "CameraRenderGraph",
       "title": "bevy_render::camera::camera::CameraRenderGraph",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -4829,6 +5063,7 @@
               }
             }
           ],
+          "title": "Window",
           "type": "array"
         },
         {
@@ -4840,6 +5075,7 @@
               }
             }
           ],
+          "title": "Image",
           "type": "array"
         },
         {
@@ -4851,9 +5087,11 @@
               }
             }
           ],
+          "title": "TextureView",
           "type": "array"
         }
       ],
+      "short_name": "RenderTarget",
       "title": "bevy_render::camera::camera::RenderTarget",
       "type": "object",
       "typeInfo": "Enum"
@@ -4884,6 +5122,7 @@
         "physical_size",
         "depth"
       ],
+      "short_name": "Viewport",
       "title": "bevy_render::camera::camera::Viewport",
       "type": "object",
       "typeInfo": "Struct"
@@ -4932,6 +5171,7 @@
         "scale",
         "area"
       ],
+      "short_name": "OrthographicProjection",
       "title": "bevy_render::camera::projection::OrthographicProjection",
       "type": "object",
       "typeInfo": "Struct"
@@ -4968,6 +5208,7 @@
         "near",
         "far"
       ],
+      "short_name": "PerspectiveProjection",
       "title": "bevy_render::camera::projection::PerspectiveProjection",
       "type": "object",
       "typeInfo": "Struct"
@@ -4985,6 +5226,7 @@
               }
             }
           ],
+          "title": "Perspective",
           "type": "array"
         },
         {
@@ -4996,9 +5238,11 @@
               }
             }
           ],
+          "title": "Orthographic",
           "type": "array"
         }
       ],
+      "short_name": "Projection",
       "title": "bevy_render::camera::projection::Projection",
       "type": "object",
       "typeInfo": "Enum"
@@ -5039,6 +5283,7 @@
               }
             }
           ],
+          "title": "WindowSize",
           "type": "array"
         },
         {
@@ -5096,6 +5341,7 @@
               }
             }
           ],
+          "title": "FixedVertical",
           "type": "array"
         },
         {
@@ -5107,9 +5353,11 @@
               }
             }
           ],
+          "title": "FixedHorizontal",
           "type": "array"
         }
       ],
+      "short_name": "ScalingMode",
       "title": "bevy_render::camera::projection::ScalingMode",
       "type": "object",
       "typeInfo": "Enum"
@@ -5267,6 +5515,7 @@
           "type": "object"
         }
       ],
+      "short_name": "Color",
       "title": "bevy_render::color::Color",
       "type": "object",
       "typeInfo": "Enum"
@@ -5297,6 +5546,7 @@
         "delta_time",
         "frame_count"
       ],
+      "short_name": "GlobalsUniform",
       "title": "bevy_render::globals::GlobalsUniform",
       "type": "object",
       "typeInfo": "Struct"
@@ -5314,6 +5564,7 @@
               }
             }
           ],
+          "title": "U16",
           "type": "array"
         },
         {
@@ -5325,9 +5576,11 @@
               }
             }
           ],
+          "title": "U32",
           "type": "array"
         }
       ],
+      "short_name": "Indices",
       "title": "bevy_render::mesh::mesh::Indices",
       "type": "object",
       "typeInfo": "Enum"
@@ -5354,6 +5607,7 @@
         }
       },
       "required": [],
+      "short_name": "Mesh",
       "title": "bevy_render::mesh::mesh::Mesh",
       "type": "object",
       "typeInfo": "Struct"
@@ -5378,6 +5632,7 @@
         "inverse_bindposes",
         "joints"
       ],
+      "short_name": "SkinnedMesh",
       "title": "bevy_render::mesh::mesh::skinning::SkinnedMesh",
       "type": "object",
       "typeInfo": "Struct"
@@ -5396,6 +5651,7 @@
       "required": [
         "weights"
       ],
+      "short_name": "MeshMorphWeights",
       "title": "bevy_render::mesh::morph::MeshMorphWeights",
       "type": "object",
       "typeInfo": "Struct"
@@ -5419,6 +5675,7 @@
       "required": [
         "weights"
       ],
+      "short_name": "MorphWeights",
       "title": "bevy_render::mesh::morph::MorphWeights",
       "type": "object",
       "typeInfo": "Struct"
@@ -5443,6 +5700,7 @@
         "center",
         "half_extents"
       ],
+      "short_name": "Aabb",
       "title": "bevy_render::primitives::Aabb",
       "type": "object",
       "typeInfo": "Struct"
@@ -5453,6 +5711,7 @@
       "isResource": false,
       "properties": {},
       "required": [],
+      "short_name": "CascadesFrusta",
       "title": "bevy_render::primitives::CascadesFrusta",
       "type": "object",
       "typeInfo": "Struct"
@@ -5463,6 +5722,7 @@
       "isResource": false,
       "properties": {},
       "required": [],
+      "short_name": "CubemapFrusta",
       "title": "bevy_render::primitives::CubemapFrusta",
       "type": "object",
       "typeInfo": "Struct"
@@ -5473,6 +5733,7 @@
       "isResource": false,
       "properties": {},
       "required": [],
+      "short_name": "Frustum",
       "title": "bevy_render::primitives::Frustum",
       "type": "object",
       "typeInfo": "Struct"
@@ -5480,6 +5741,7 @@
     "bevy_render::texture::image::Image": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "Image",
       "title": "bevy_render::texture::image::Image",
       "type": "object",
       "typeInfo": "Value"
@@ -5516,19 +5778,21 @@
         "pre_saturation",
         "post_saturation"
       ],
+      "short_name": "ColorGrading",
       "title": "bevy_render::view::ColorGrading",
       "type": "object",
       "typeInfo": "Struct"
     },
     "bevy_render::view::Msaa": {
-      "enum": [
+      "isComponent": false,
+      "isResource": true,
+      "oneOf": [
         "Off",
         "Sample2",
         "Sample4",
         "Sample8"
       ],
-      "isComponent": false,
-      "isResource": true,
+      "short_name": "Msaa",
       "title": "bevy_render::view::Msaa",
       "type": "string",
       "typeInfo": "Enum"
@@ -5544,6 +5808,7 @@
           }
         }
       ],
+      "short_name": "InheritedVisibility",
       "title": "bevy_render::view::visibility::InheritedVisibility",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -5554,6 +5819,7 @@
       "isResource": false,
       "properties": {},
       "required": [],
+      "short_name": "NoFrustumCulling",
       "title": "bevy_render::view::visibility::NoFrustumCulling",
       "type": "object",
       "typeInfo": "Struct"
@@ -5569,18 +5835,20 @@
           }
         }
       ],
+      "short_name": "ViewVisibility",
       "title": "bevy_render::view::visibility::ViewVisibility",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
     "bevy_render::view::visibility::Visibility": {
-      "enum": [
+      "isComponent": true,
+      "isResource": false,
+      "oneOf": [
         "Inherited",
         "Hidden",
         "Visible"
       ],
-      "isComponent": true,
-      "isResource": false,
+      "short_name": "Visibility",
       "title": "bevy_render::view::visibility::Visibility",
       "type": "string",
       "typeInfo": "Enum"
@@ -5591,6 +5859,7 @@
       "isResource": false,
       "properties": {},
       "required": [],
+      "short_name": "VisibleEntities",
       "title": "bevy_render::view::visibility::VisibleEntities",
       "type": "object",
       "typeInfo": "Struct"
@@ -5606,6 +5875,7 @@
           }
         }
       ],
+      "short_name": "RenderLayers",
       "title": "bevy_render::view::visibility::render_layers::RenderLayers",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -5629,6 +5899,7 @@
       "required": [
         "color"
       ],
+      "short_name": "ColorMaterial",
       "title": "bevy_sprite::mesh2d::color_material::ColorMaterial",
       "type": "object",
       "typeInfo": "Struct"
@@ -5644,6 +5915,7 @@
           }
         }
       ],
+      "short_name": "Mesh2dHandle",
       "title": "bevy_sprite::mesh2d::mesh::Mesh2dHandle",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -5653,31 +5925,31 @@
       "isResource": false,
       "oneOf": [
         {
-          "const": "Center"
+          "title": "Center"
         },
         {
-          "const": "BottomLeft"
+          "title": "BottomLeft"
         },
         {
-          "const": "BottomCenter"
+          "title": "BottomCenter"
         },
         {
-          "const": "BottomRight"
+          "title": "BottomRight"
         },
         {
-          "const": "CenterLeft"
+          "title": "CenterLeft"
         },
         {
-          "const": "CenterRight"
+          "title": "CenterRight"
         },
         {
-          "const": "TopLeft"
+          "title": "TopLeft"
         },
         {
-          "const": "TopCenter"
+          "title": "TopCenter"
         },
         {
-          "const": "TopRight"
+          "title": "TopRight"
         },
         {
           "items": false,
@@ -5688,9 +5960,11 @@
               }
             }
           ],
+          "title": "Custom",
           "type": "array"
         }
       ],
+      "short_name": "Anchor",
       "title": "bevy_sprite::sprite::Anchor",
       "type": "object",
       "typeInfo": "Enum"
@@ -5737,6 +6011,7 @@
         "flip_y",
         "anchor"
       ],
+      "short_name": "Sprite",
       "title": "bevy_sprite::sprite::Sprite",
       "type": "object",
       "typeInfo": "Struct"
@@ -5772,6 +6047,7 @@
         "size",
         "textures"
       ],
+      "short_name": "TextureAtlas",
       "title": "bevy_sprite::texture_atlas::TextureAtlas",
       "type": "object",
       "typeInfo": "Struct"
@@ -5819,6 +6095,7 @@
         "flip_y",
         "anchor"
       ],
+      "short_name": "TextureAtlasSprite",
       "title": "bevy_sprite::texture_atlas::TextureAtlasSprite",
       "type": "object",
       "typeInfo": "Struct"
@@ -5843,6 +6120,7 @@
         "glyphs",
         "logical_size"
       ],
+      "short_name": "TextLayoutInfo",
       "title": "bevy_text::pipeline::TextLayoutInfo",
       "type": "object",
       "typeInfo": "Struct"
@@ -5861,18 +6139,20 @@
       "required": [
         "size"
       ],
+      "short_name": "Text2dBounds",
       "title": "bevy_text::text2d::Text2dBounds",
       "type": "object",
       "typeInfo": "Struct"
     },
     "bevy_text::text::BreakLineOn": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "WordBoundary",
         "AnyCharacter",
         "NoWrap"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "BreakLineOn",
       "title": "bevy_text::text::BreakLineOn",
       "type": "string",
       "typeInfo": "Enum"
@@ -5903,18 +6183,20 @@
         "alignment",
         "linebreak_behavior"
       ],
+      "short_name": "Text",
       "title": "bevy_text::text::Text",
       "type": "object",
       "typeInfo": "Struct"
     },
     "bevy_text::text::TextAlignment": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "Left",
         "Center",
         "Right"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "TextAlignment",
       "title": "bevy_text::text::TextAlignment",
       "type": "string",
       "typeInfo": "Enum"
@@ -5939,6 +6221,7 @@
         "value",
         "style"
       ],
+      "short_name": "TextSection",
       "title": "bevy_text::text::TextSection",
       "type": "object",
       "typeInfo": "Struct"
@@ -5969,6 +6252,7 @@
         "font_size",
         "color"
       ],
+      "short_name": "TextStyle",
       "title": "bevy_text::text::TextStyle",
       "type": "object",
       "typeInfo": "Struct"
@@ -5993,6 +6277,7 @@
         "elapsed",
         "paused"
       ],
+      "short_name": "Stopwatch",
       "title": "bevy_time::stopwatch::Stopwatch",
       "type": "object",
       "typeInfo": "Struct"
@@ -6071,6 +6356,7 @@
         "elapsed_seconds_wrapped",
         "elapsed_seconds_wrapped_f64"
       ],
+      "short_name": "Time<()>",
       "title": "bevy_time::time::Time<()>",
       "type": "object",
       "typeInfo": "Struct"
@@ -6149,6 +6435,7 @@
         "elapsed_seconds_wrapped",
         "elapsed_seconds_wrapped_f64"
       ],
+      "short_name": "Time<Fixed>",
       "title": "bevy_time::time::Time<bevy_time::fixed::Fixed>",
       "type": "object",
       "typeInfo": "Struct"
@@ -6227,6 +6514,7 @@
         "elapsed_seconds_wrapped",
         "elapsed_seconds_wrapped_f64"
       ],
+      "short_name": "Time<Real>",
       "title": "bevy_time::time::Time<bevy_time::real::Real>",
       "type": "object",
       "typeInfo": "Struct"
@@ -6305,6 +6593,7 @@
         "elapsed_seconds_wrapped",
         "elapsed_seconds_wrapped_f64"
       ],
+      "short_name": "Time<Virtual>",
       "title": "bevy_time::time::Time<bevy_time::virt::Virtual>",
       "type": "object",
       "typeInfo": "Struct"
@@ -6347,6 +6636,7 @@
         "finished",
         "times_finished_this_tick"
       ],
+      "short_name": "Timer",
       "title": "bevy_time::timer::Timer",
       "type": "object",
       "typeInfo": "Struct"
@@ -6362,6 +6652,7 @@
           }
         }
       ],
+      "short_name": "GlobalTransform",
       "title": "bevy_transform::components::global_transform::GlobalTransform",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -6392,6 +6683,7 @@
         "rotation",
         "scale"
       ],
+      "short_name": "Transform",
       "title": "bevy_transform::components::transform::Transform",
       "type": "object",
       "typeInfo": "Struct"
@@ -6407,6 +6699,7 @@
           }
         }
       ],
+      "short_name": "UiScale",
       "title": "bevy_ui::UiScale",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -6425,29 +6718,32 @@
       "required": [
         "show_ui"
       ],
+      "short_name": "UiCameraConfig",
       "title": "bevy_ui::camera_config::UiCameraConfig",
       "type": "object",
       "typeInfo": "Struct"
     },
     "bevy_ui::focus::FocusPolicy": {
-      "enum": [
+      "isComponent": true,
+      "isResource": false,
+      "oneOf": [
         "Block",
         "Pass"
       ],
-      "isComponent": true,
-      "isResource": false,
+      "short_name": "FocusPolicy",
       "title": "bevy_ui::focus::FocusPolicy",
       "type": "string",
       "typeInfo": "Enum"
     },
     "bevy_ui::focus::Interaction": {
-      "enum": [
+      "isComponent": true,
+      "isResource": false,
+      "oneOf": [
         "Pressed",
         "Hovered",
         "None"
       ],
-      "isComponent": true,
-      "isResource": false,
+      "short_name": "Interaction",
       "title": "bevy_ui::focus::Interaction",
       "type": "string",
       "typeInfo": "Enum"
@@ -6471,6 +6767,7 @@
       "required": [
         "normalized_visible_node_rect"
       ],
+      "short_name": "RelativeCursorPosition",
       "title": "bevy_ui::focus::RelativeCursorPosition",
       "type": "object",
       "typeInfo": "Struct"
@@ -6507,6 +6804,7 @@
         "top",
         "bottom"
       ],
+      "short_name": "UiRect",
       "title": "bevy_ui::geometry::UiRect",
       "type": "object",
       "typeInfo": "Struct"
@@ -6516,7 +6814,7 @@
       "isResource": false,
       "oneOf": [
         {
-          "const": "Auto"
+          "title": "Auto"
         },
         {
           "items": false,
@@ -6527,6 +6825,7 @@
               }
             }
           ],
+          "title": "Px",
           "type": "array"
         },
         {
@@ -6538,6 +6837,7 @@
               }
             }
           ],
+          "title": "Percent",
           "type": "array"
         },
         {
@@ -6549,6 +6849,7 @@
               }
             }
           ],
+          "title": "Vw",
           "type": "array"
         },
         {
@@ -6560,6 +6861,7 @@
               }
             }
           ],
+          "title": "Vh",
           "type": "array"
         },
         {
@@ -6571,6 +6873,7 @@
               }
             }
           ],
+          "title": "VMin",
           "type": "array"
         },
         {
@@ -6582,9 +6885,11 @@
               }
             }
           ],
+          "title": "VMax",
           "type": "array"
         }
       ],
+      "short_name": "Val",
       "title": "bevy_ui::geometry::Val",
       "type": "object",
       "typeInfo": "Enum"
@@ -6595,12 +6900,15 @@
       "isResource": false,
       "properties": {},
       "required": [],
+      "short_name": "ContentSize",
       "title": "bevy_ui::measurement::ContentSize",
       "type": "object",
       "typeInfo": "Struct"
     },
     "bevy_ui::ui_node::AlignContent": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "Default",
         "Start",
         "End",
@@ -6612,14 +6920,15 @@
         "SpaceEvenly",
         "SpaceAround"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "AlignContent",
       "title": "bevy_ui::ui_node::AlignContent",
       "type": "string",
       "typeInfo": "Enum"
     },
     "bevy_ui::ui_node::AlignItems": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "Default",
         "Start",
         "End",
@@ -6629,14 +6938,15 @@
         "Baseline",
         "Stretch"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "AlignItems",
       "title": "bevy_ui::ui_node::AlignItems",
       "type": "string",
       "typeInfo": "Enum"
     },
     "bevy_ui::ui_node::AlignSelf": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "Auto",
         "Start",
         "End",
@@ -6646,8 +6956,7 @@
         "Baseline",
         "Stretch"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "AlignSelf",
       "title": "bevy_ui::ui_node::AlignSelf",
       "type": "string",
       "typeInfo": "Enum"
@@ -6663,6 +6972,7 @@
           }
         }
       ],
+      "short_name": "BackgroundColor",
       "title": "bevy_ui::ui_node::BackgroundColor",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -6678,6 +6988,7 @@
           }
         }
       ],
+      "short_name": "BorderColor",
       "title": "bevy_ui::ui_node::BorderColor",
       "type": "array",
       "typeInfo": "TupleStruct"
@@ -6696,68 +7007,74 @@
       "required": [
         "clip"
       ],
+      "short_name": "CalculatedClip",
       "title": "bevy_ui::ui_node::CalculatedClip",
       "type": "object",
       "typeInfo": "Struct"
     },
     "bevy_ui::ui_node::Direction": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "Inherit",
         "LeftToRight",
         "RightToLeft"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "Direction",
       "title": "bevy_ui::ui_node::Direction",
       "type": "string",
       "typeInfo": "Enum"
     },
     "bevy_ui::ui_node::Display": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "Flex",
         "Grid",
         "None"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "Display",
       "title": "bevy_ui::ui_node::Display",
       "type": "string",
       "typeInfo": "Enum"
     },
     "bevy_ui::ui_node::FlexDirection": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "Row",
         "Column",
         "RowReverse",
         "ColumnReverse"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "FlexDirection",
       "title": "bevy_ui::ui_node::FlexDirection",
       "type": "string",
       "typeInfo": "Enum"
     },
     "bevy_ui::ui_node::FlexWrap": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "NoWrap",
         "Wrap",
         "WrapReverse"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "FlexWrap",
       "title": "bevy_ui::ui_node::FlexWrap",
       "type": "string",
       "typeInfo": "Enum"
     },
     "bevy_ui::ui_node::GridAutoFlow": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "Row",
         "Column",
         "RowDense",
         "ColumnDense"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "GridAutoFlow",
       "title": "bevy_ui::ui_node::GridAutoFlow",
       "type": "string",
       "typeInfo": "Enum"
@@ -6784,6 +7101,7 @@
         }
       },
       "required": [],
+      "short_name": "GridPlacement",
       "title": "bevy_ui::ui_node::GridPlacement",
       "type": "object",
       "typeInfo": "Struct"
@@ -6808,12 +7126,15 @@
         "min_sizing_function",
         "max_sizing_function"
       ],
+      "short_name": "GridTrack",
       "title": "bevy_ui::ui_node::GridTrack",
       "type": "object",
       "typeInfo": "Struct"
     },
     "bevy_ui::ui_node::JustifyContent": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "Default",
         "Start",
         "End",
@@ -6825,14 +7146,15 @@
         "SpaceEvenly",
         "SpaceAround"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "JustifyContent",
       "title": "bevy_ui::ui_node::JustifyContent",
       "type": "string",
       "typeInfo": "Enum"
     },
     "bevy_ui::ui_node::JustifyItems": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "Default",
         "Start",
         "End",
@@ -6840,14 +7162,15 @@
         "Baseline",
         "Stretch"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "JustifyItems",
       "title": "bevy_ui::ui_node::JustifyItems",
       "type": "string",
       "typeInfo": "Enum"
     },
     "bevy_ui::ui_node::JustifySelf": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "Auto",
         "Start",
         "End",
@@ -6855,8 +7178,7 @@
         "Baseline",
         "Stretch"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "JustifySelf",
       "title": "bevy_ui::ui_node::JustifySelf",
       "type": "string",
       "typeInfo": "Enum"
@@ -6899,6 +7221,7 @@
         "outline_offset",
         "unrounded_size"
       ],
+      "short_name": "Node",
       "title": "bevy_ui::ui_node::Node",
       "type": "object",
       "typeInfo": "Struct"
@@ -6929,6 +7252,7 @@
         "offset",
         "color"
       ],
+      "short_name": "Outline",
       "title": "bevy_ui::ui_node::Outline",
       "type": "object",
       "typeInfo": "Struct"
@@ -6953,28 +7277,31 @@
         "x",
         "y"
       ],
+      "short_name": "Overflow",
       "title": "bevy_ui::ui_node::Overflow",
       "type": "object",
       "typeInfo": "Struct"
     },
     "bevy_ui::ui_node::OverflowAxis": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "Visible",
         "Clip"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "OverflowAxis",
       "title": "bevy_ui::ui_node::OverflowAxis",
       "type": "string",
       "typeInfo": "Enum"
     },
     "bevy_ui::ui_node::PositionType": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "Relative",
         "Absolute"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "PositionType",
       "title": "bevy_ui::ui_node::PositionType",
       "type": "string",
       "typeInfo": "Enum"
@@ -6999,6 +7326,7 @@
         "repetition",
         "tracks"
       ],
+      "short_name": "RepeatedGridTrack",
       "title": "bevy_ui::ui_node::RepeatedGridTrack",
       "type": "object",
       "typeInfo": "Struct"
@@ -7238,6 +7566,7 @@
         "grid_row",
         "grid_column"
       ],
+      "short_name": "Style",
       "title": "bevy_ui::ui_node::Style",
       "type": "object",
       "typeInfo": "Struct"
@@ -7268,6 +7597,7 @@
         "flip_x",
         "flip_y"
       ],
+      "short_name": "UiImage",
       "title": "bevy_ui::ui_node::UiImage",
       "type": "object",
       "typeInfo": "Struct"
@@ -7298,6 +7628,7 @@
         "flip_x",
         "flip_y"
       ],
+      "short_name": "UiTextureAtlasImage",
       "title": "bevy_ui::ui_node::UiTextureAtlasImage",
       "type": "object",
       "typeInfo": "Struct"
@@ -7315,6 +7646,7 @@
               }
             }
           ],
+          "title": "Local",
           "type": "array"
         },
         {
@@ -7326,9 +7658,11 @@
               }
             }
           ],
+          "title": "Global",
           "type": "array"
         }
       ],
+      "short_name": "ZIndex",
       "title": "bevy_ui::ui_node::ZIndex",
       "type": "object",
       "typeInfo": "Enum"
@@ -7339,6 +7673,7 @@
       "isResource": false,
       "properties": {},
       "required": [],
+      "short_name": "Button",
       "title": "bevy_ui::widget::button::Button",
       "type": "object",
       "typeInfo": "Struct"
@@ -7357,6 +7692,7 @@
       "required": [
         "size"
       ],
+      "short_name": "UiImageSize",
       "title": "bevy_ui::widget::image::UiImageSize",
       "type": "object",
       "typeInfo": "Struct"
@@ -7367,6 +7703,7 @@
       "isResource": false,
       "properties": {},
       "required": [],
+      "short_name": "Label",
       "title": "bevy_ui::widget::label::Label",
       "type": "object",
       "typeInfo": "Struct"
@@ -7391,6 +7728,7 @@
         "needs_new_measure_func",
         "needs_recompute"
       ],
+      "short_name": "TextFlags",
       "title": "bevy_ui::widget::text::TextFlags",
       "type": "object",
       "typeInfo": "Struct"
@@ -7398,6 +7736,7 @@
     "bevy_utils::Duration": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "Duration",
       "title": "bevy_utils::Duration",
       "type": "object",
       "typeInfo": "Value"
@@ -7405,6 +7744,7 @@
     "bevy_utils::HashSet<alloc::string::String>": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "HashSet<String>",
       "title": "bevy_utils::HashSet<alloc::string::String>",
       "type": "object",
       "typeInfo": "Value"
@@ -7412,6 +7752,7 @@
     "bevy_utils::Instant": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "Instant",
       "title": "bevy_utils::Instant",
       "type": "object",
       "typeInfo": "Value"
@@ -7419,12 +7760,15 @@
     "bevy_utils::Uuid": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "Uuid",
       "title": "bevy_utils::Uuid",
       "type": "object",
       "typeInfo": "Value"
     },
     "bevy_window::cursor::CursorIcon": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "Default",
         "Crosshair",
         "Hand",
@@ -7461,20 +7805,20 @@
         "ColResize",
         "RowResize"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "CursorIcon",
       "title": "bevy_window::cursor::CursorIcon",
       "type": "string",
       "typeInfo": "Enum"
     },
     "bevy_window::event::ApplicationLifetime": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "Started",
         "Suspended",
         "Resumed"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "ApplicationLifetime",
       "title": "bevy_window::event::ApplicationLifetime",
       "type": "string",
       "typeInfo": "Enum"
@@ -7493,6 +7837,7 @@
       "required": [
         "window"
       ],
+      "short_name": "CursorEntered",
       "title": "bevy_window::event::CursorEntered",
       "type": "object",
       "typeInfo": "Struct"
@@ -7511,6 +7856,7 @@
       "required": [
         "window"
       ],
+      "short_name": "CursorLeft",
       "title": "bevy_window::event::CursorLeft",
       "type": "object",
       "typeInfo": "Struct"
@@ -7535,6 +7881,7 @@
         "window",
         "position"
       ],
+      "short_name": "CursorMoved",
       "title": "bevy_window::event::CursorMoved",
       "type": "object",
       "typeInfo": "Struct"
@@ -7606,6 +7953,7 @@
           "type": "object"
         }
       ],
+      "short_name": "FileDragAndDrop",
       "title": "bevy_window::event::FileDragAndDrop",
       "type": "object",
       "typeInfo": "Enum"
@@ -7630,6 +7978,7 @@
         "window",
         "char"
       ],
+      "short_name": "ReceivedCharacter",
       "title": "bevy_window::event::ReceivedCharacter",
       "type": "object",
       "typeInfo": "Struct"
@@ -7640,6 +7989,7 @@
       "isResource": false,
       "properties": {},
       "required": [],
+      "short_name": "RequestRedraw",
       "title": "bevy_window::event::RequestRedraw",
       "type": "object",
       "typeInfo": "Struct"
@@ -7664,6 +8014,7 @@
         "window",
         "scale_factor"
       ],
+      "short_name": "WindowBackendScaleFactorChanged",
       "title": "bevy_window::event::WindowBackendScaleFactorChanged",
       "type": "object",
       "typeInfo": "Struct"
@@ -7682,6 +8033,7 @@
       "required": [
         "window"
       ],
+      "short_name": "WindowCloseRequested",
       "title": "bevy_window::event::WindowCloseRequested",
       "type": "object",
       "typeInfo": "Struct"
@@ -7700,6 +8052,7 @@
       "required": [
         "window"
       ],
+      "short_name": "WindowClosed",
       "title": "bevy_window::event::WindowClosed",
       "type": "object",
       "typeInfo": "Struct"
@@ -7718,6 +8071,7 @@
       "required": [
         "window"
       ],
+      "short_name": "WindowCreated",
       "title": "bevy_window::event::WindowCreated",
       "type": "object",
       "typeInfo": "Struct"
@@ -7742,6 +8096,7 @@
         "window",
         "focused"
       ],
+      "short_name": "WindowFocused",
       "title": "bevy_window::event::WindowFocused",
       "type": "object",
       "typeInfo": "Struct"
@@ -7766,6 +8121,7 @@
         "entity",
         "position"
       ],
+      "short_name": "WindowMoved",
       "title": "bevy_window::event::WindowMoved",
       "type": "object",
       "typeInfo": "Struct"
@@ -7796,6 +8152,7 @@
         "width",
         "height"
       ],
+      "short_name": "WindowResized",
       "title": "bevy_window::event::WindowResized",
       "type": "object",
       "typeInfo": "Struct"
@@ -7820,6 +8177,7 @@
         "window",
         "scale_factor"
       ],
+      "short_name": "WindowScaleFactorChanged",
       "title": "bevy_window::event::WindowScaleFactorChanged",
       "type": "object",
       "typeInfo": "Struct"
@@ -7844,20 +8202,22 @@
         "window",
         "theme"
       ],
+      "short_name": "WindowThemeChanged",
       "title": "bevy_window::event::WindowThemeChanged",
       "type": "object",
       "typeInfo": "Struct"
     },
     "bevy_window::window::CompositeAlphaMode": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "Auto",
         "Opaque",
         "PreMultiplied",
         "PostMultiplied",
         "Inherit"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "CompositeAlphaMode",
       "title": "bevy_window::window::CompositeAlphaMode",
       "type": "string",
       "typeInfo": "Enum"
@@ -7894,18 +8254,20 @@
         "grab_mode",
         "hit_test"
       ],
+      "short_name": "Cursor",
       "title": "bevy_window::window::Cursor",
       "type": "object",
       "typeInfo": "Struct"
     },
     "bevy_window::window::CursorGrabMode": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "None",
         "Confined",
         "Locked"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "CursorGrabMode",
       "title": "bevy_window::window::CursorGrabMode",
       "type": "string",
       "typeInfo": "Enum"
@@ -7936,6 +8298,7 @@
         "maximize",
         "close"
       ],
+      "short_name": "EnabledButtons",
       "title": "bevy_window::window::EnabledButtons",
       "type": "object",
       "typeInfo": "Struct"
@@ -7962,6 +8325,7 @@
         }
       },
       "required": [],
+      "short_name": "InternalWindowState",
       "title": "bevy_window::window::InternalWindowState",
       "type": "object",
       "typeInfo": "Struct"
@@ -7971,10 +8335,10 @@
       "isResource": false,
       "oneOf": [
         {
-          "const": "Current"
+          "title": "Current"
         },
         {
-          "const": "Primary"
+          "title": "Primary"
         },
         {
           "items": false,
@@ -7985,15 +8349,19 @@
               }
             }
           ],
+          "title": "Index",
           "type": "array"
         }
       ],
+      "short_name": "MonitorSelection",
       "title": "bevy_window::window::MonitorSelection",
       "type": "object",
       "typeInfo": "Enum"
     },
     "bevy_window::window::PresentMode": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "AutoVsync",
         "AutoNoVsync",
         "Fifo",
@@ -8001,8 +8369,7 @@
         "Immediate",
         "Mailbox"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "PresentMode",
       "title": "bevy_window::window::PresentMode",
       "type": "string",
       "typeInfo": "Enum"
@@ -8013,6 +8380,7 @@
       "isResource": false,
       "properties": {},
       "required": [],
+      "short_name": "PrimaryWindow",
       "title": "bevy_window::window::PrimaryWindow",
       "type": "object",
       "typeInfo": "Struct"
@@ -8155,31 +8523,34 @@
         "ime_position",
         "visible"
       ],
+      "short_name": "Window",
       "title": "bevy_window::window::Window",
       "type": "object",
       "typeInfo": "Struct"
     },
     "bevy_window::window::WindowLevel": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "AlwaysOnBottom",
         "Normal",
         "AlwaysOnTop"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "WindowLevel",
       "title": "bevy_window::window::WindowLevel",
       "type": "string",
       "typeInfo": "Enum"
     },
     "bevy_window::window::WindowMode": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "Windowed",
         "BorderlessFullscreen",
         "SizedFullscreen",
         "Fullscreen"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "WindowMode",
       "title": "bevy_window::window::WindowMode",
       "type": "string",
       "typeInfo": "Enum"
@@ -8189,7 +8560,7 @@
       "isResource": false,
       "oneOf": [
         {
-          "const": "Automatic"
+          "title": "Automatic"
         },
         {
           "items": false,
@@ -8200,6 +8571,7 @@
               }
             }
           ],
+          "title": "Centered",
           "type": "array"
         },
         {
@@ -8211,9 +8583,11 @@
               }
             }
           ],
+          "title": "At",
           "type": "array"
         }
       ],
+      "short_name": "WindowPosition",
       "title": "bevy_window::window::WindowPosition",
       "type": "object",
       "typeInfo": "Enum"
@@ -8250,6 +8624,7 @@
         "max_width",
         "max_height"
       ],
+      "short_name": "WindowResizeConstraints",
       "title": "bevy_window::window::WindowResizeConstraints",
       "type": "object",
       "typeInfo": "Struct"
@@ -8285,17 +8660,19 @@
         "physical_height",
         "scale_factor"
       ],
+      "short_name": "WindowResolution",
       "title": "bevy_window::window::WindowResolution",
       "type": "object",
       "typeInfo": "Struct"
     },
     "bevy_window::window::WindowTheme": {
-      "enum": [
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
         "Light",
         "Dark"
       ],
-      "isComponent": false,
-      "isResource": false,
+      "short_name": "WindowTheme",
       "title": "bevy_window::window::WindowTheme",
       "type": "string",
       "typeInfo": "Enum"
@@ -8303,6 +8680,7 @@
     "bool": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "bool",
       "title": "bool",
       "type": "boolean",
       "typeInfo": "Value"
@@ -8310,6 +8688,7 @@
     "char": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "char",
       "title": "char",
       "type": "string",
       "typeInfo": "Value"
@@ -8317,6 +8696,7 @@
     "core::ops::Range<f32>": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "Range<f32>",
       "title": "core::ops::Range<f32>",
       "type": "object",
       "typeInfo": "Value"
@@ -8326,7 +8706,7 @@
       "isResource": false,
       "oneOf": [
         {
-          "const": "None"
+          "title": "None"
         },
         {
           "items": false,
@@ -8337,9 +8717,11 @@
               }
             }
           ],
+          "title": "Some",
           "type": "array"
         }
       ],
+      "short_name": "Option<String>",
       "title": "core::option::Option<alloc::string::String>",
       "type": "object",
       "typeInfo": "Enum"
@@ -8349,7 +8731,7 @@
       "isResource": false,
       "oneOf": [
         {
-          "const": "None"
+          "title": "None"
         },
         {
           "items": false,
@@ -8360,9 +8742,11 @@
               }
             }
           ],
+          "title": "Some",
           "type": "array"
         }
       ],
+      "short_name": "Option<Vec<String>>",
       "title": "core::option::Option<alloc::vec::Vec<alloc::string::String>>",
       "type": "object",
       "typeInfo": "Enum"
@@ -8372,7 +8756,7 @@
       "isResource": false,
       "oneOf": [
         {
-          "const": "None"
+          "title": "None"
         },
         {
           "items": false,
@@ -8383,9 +8767,11 @@
               }
             }
           ],
+          "title": "Some",
           "type": "array"
         }
       ],
+      "short_name": "Option<Handle<Image>>",
       "title": "core::option::Option<bevy_asset::handle::Handle<bevy_render::texture::image::Image>>",
       "type": "object",
       "typeInfo": "Enum"
@@ -8395,7 +8781,7 @@
       "isResource": false,
       "oneOf": [
         {
-          "const": "None"
+          "title": "None"
         },
         {
           "items": false,
@@ -8406,9 +8792,11 @@
               }
             }
           ],
+          "title": "Some",
           "type": "array"
         }
       ],
+      "short_name": "Option<Viewport>",
       "title": "core::option::Option<bevy_render::camera::camera::Viewport>",
       "type": "object",
       "typeInfo": "Enum"
@@ -8418,7 +8806,7 @@
       "isResource": false,
       "oneOf": [
         {
-          "const": "None"
+          "title": "None"
         },
         {
           "items": false,
@@ -8429,9 +8817,11 @@
               }
             }
           ],
+          "title": "Some",
           "type": "array"
         }
       ],
+      "short_name": "Option<Indices>",
       "title": "core::option::Option<bevy_render::mesh::mesh::Indices>",
       "type": "object",
       "typeInfo": "Enum"
@@ -8441,7 +8831,7 @@
       "isResource": false,
       "oneOf": [
         {
-          "const": "None"
+          "title": "None"
         },
         {
           "items": false,
@@ -8452,9 +8842,11 @@
               }
             }
           ],
+          "title": "Some",
           "type": "array"
         }
       ],
+      "short_name": "Option<bool>",
       "title": "core::option::Option<bool>",
       "type": "object",
       "typeInfo": "Enum"
@@ -8464,7 +8856,7 @@
       "isResource": false,
       "oneOf": [
         {
-          "const": "None"
+          "title": "None"
         },
         {
           "items": false,
@@ -8475,9 +8867,11 @@
               }
             }
           ],
+          "title": "Some",
           "type": "array"
         }
       ],
+      "short_name": "Option<f32>",
       "title": "core::option::Option<f32>",
       "type": "object",
       "typeInfo": "Enum"
@@ -8487,7 +8881,7 @@
       "isResource": false,
       "oneOf": [
         {
-          "const": "None"
+          "title": "None"
         },
         {
           "items": false,
@@ -8498,9 +8892,11 @@
               }
             }
           ],
+          "title": "Some",
           "type": "array"
         }
       ],
+      "short_name": "Option<f64>",
       "title": "core::option::Option<f64>",
       "type": "object",
       "typeInfo": "Enum"
@@ -8510,7 +8906,7 @@
       "isResource": false,
       "oneOf": [
         {
-          "const": "None"
+          "title": "None"
         },
         {
           "items": false,
@@ -8521,9 +8917,11 @@
               }
             }
           ],
+          "title": "Some",
           "type": "array"
         }
       ],
+      "short_name": "Option<DVec2>",
       "title": "core::option::Option<glam::DVec2>",
       "type": "object",
       "typeInfo": "Enum"
@@ -8531,6 +8929,7 @@
     "f32": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "f32",
       "title": "f32",
       "type": "float",
       "typeInfo": "Value"
@@ -8538,6 +8937,7 @@
     "f64": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "f64",
       "title": "f64",
       "type": "float",
       "typeInfo": "Value"
@@ -8562,6 +8962,7 @@
         "matrix2",
         "translation"
       ],
+      "short_name": "Affine2",
       "title": "glam::Affine2",
       "type": "object",
       "typeInfo": "Struct"
@@ -8586,6 +8987,7 @@
         "matrix3",
         "translation"
       ],
+      "short_name": "Affine3A",
       "title": "glam::Affine3A",
       "type": "object",
       "typeInfo": "Struct"
@@ -8610,6 +9012,7 @@
         "x",
         "y"
       ],
+      "short_name": "BVec2",
       "title": "glam::BVec2",
       "type": "object",
       "typeInfo": "Struct"
@@ -8640,6 +9043,7 @@
         "y",
         "z"
       ],
+      "short_name": "BVec3",
       "title": "glam::BVec3",
       "type": "object",
       "typeInfo": "Struct"
@@ -8647,6 +9051,7 @@
     "glam::BVec3A": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "BVec3A",
       "title": "glam::BVec3A",
       "type": "object",
       "typeInfo": "Value"
@@ -8683,6 +9088,7 @@
         "z",
         "w"
       ],
+      "short_name": "BVec4",
       "title": "glam::BVec4",
       "type": "object",
       "typeInfo": "Struct"
@@ -8690,6 +9096,7 @@
     "glam::BVec4A": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "BVec4A",
       "title": "glam::BVec4A",
       "type": "object",
       "typeInfo": "Value"
@@ -8714,6 +9121,7 @@
         "matrix2",
         "translation"
       ],
+      "short_name": "DAffine2",
       "title": "glam::DAffine2",
       "type": "object",
       "typeInfo": "Struct"
@@ -8738,6 +9146,7 @@
         "matrix3",
         "translation"
       ],
+      "short_name": "DAffine3",
       "title": "glam::DAffine3",
       "type": "object",
       "typeInfo": "Struct"
@@ -8762,6 +9171,7 @@
         "x_axis",
         "y_axis"
       ],
+      "short_name": "DMat2",
       "title": "glam::DMat2",
       "type": "object",
       "typeInfo": "Struct"
@@ -8792,6 +9202,7 @@
         "y_axis",
         "z_axis"
       ],
+      "short_name": "DMat3",
       "title": "glam::DMat3",
       "type": "object",
       "typeInfo": "Struct"
@@ -8828,6 +9239,7 @@
         "z_axis",
         "w_axis"
       ],
+      "short_name": "DMat4",
       "title": "glam::DMat4",
       "type": "object",
       "typeInfo": "Struct"
@@ -8864,6 +9276,7 @@
         "z",
         "w"
       ],
+      "short_name": "DQuat",
       "title": "glam::DQuat",
       "type": "object",
       "typeInfo": "Struct"
@@ -8888,6 +9301,7 @@
         "x",
         "y"
       ],
+      "short_name": "DVec2",
       "title": "glam::DVec2",
       "type": "object",
       "typeInfo": "Struct"
@@ -8918,6 +9332,7 @@
         "y",
         "z"
       ],
+      "short_name": "DVec3",
       "title": "glam::DVec3",
       "type": "object",
       "typeInfo": "Struct"
@@ -8954,6 +9369,7 @@
         "z",
         "w"
       ],
+      "short_name": "DVec4",
       "title": "glam::DVec4",
       "type": "object",
       "typeInfo": "Struct"
@@ -8978,6 +9394,7 @@
         "x",
         "y"
       ],
+      "short_name": "IVec2",
       "title": "glam::IVec2",
       "type": "object",
       "typeInfo": "Struct"
@@ -9008,6 +9425,7 @@
         "y",
         "z"
       ],
+      "short_name": "IVec3",
       "title": "glam::IVec3",
       "type": "object",
       "typeInfo": "Struct"
@@ -9044,6 +9462,7 @@
         "z",
         "w"
       ],
+      "short_name": "IVec4",
       "title": "glam::IVec4",
       "type": "object",
       "typeInfo": "Struct"
@@ -9068,6 +9487,7 @@
         "x_axis",
         "y_axis"
       ],
+      "short_name": "Mat2",
       "title": "glam::Mat2",
       "type": "object",
       "typeInfo": "Struct"
@@ -9098,6 +9518,7 @@
         "y_axis",
         "z_axis"
       ],
+      "short_name": "Mat3",
       "title": "glam::Mat3",
       "type": "object",
       "typeInfo": "Struct"
@@ -9128,6 +9549,7 @@
         "y_axis",
         "z_axis"
       ],
+      "short_name": "Mat3A",
       "title": "glam::Mat3A",
       "type": "object",
       "typeInfo": "Struct"
@@ -9164,6 +9586,7 @@
         "z_axis",
         "w_axis"
       ],
+      "short_name": "Mat4",
       "title": "glam::Mat4",
       "type": "object",
       "typeInfo": "Struct"
@@ -9200,6 +9623,7 @@
         "z",
         "w"
       ],
+      "short_name": "Quat",
       "title": "glam::Quat",
       "type": "object",
       "typeInfo": "Struct"
@@ -9224,6 +9648,7 @@
         "x",
         "y"
       ],
+      "short_name": "UVec2",
       "title": "glam::UVec2",
       "type": "object",
       "typeInfo": "Struct"
@@ -9254,6 +9679,7 @@
         "y",
         "z"
       ],
+      "short_name": "UVec3",
       "title": "glam::UVec3",
       "type": "object",
       "typeInfo": "Struct"
@@ -9290,6 +9716,7 @@
         "z",
         "w"
       ],
+      "short_name": "UVec4",
       "title": "glam::UVec4",
       "type": "object",
       "typeInfo": "Struct"
@@ -9314,6 +9741,7 @@
         "x",
         "y"
       ],
+      "short_name": "Vec2",
       "title": "glam::Vec2",
       "type": "object",
       "typeInfo": "Struct"
@@ -9344,6 +9772,7 @@
         "y",
         "z"
       ],
+      "short_name": "Vec3",
       "title": "glam::Vec3",
       "type": "object",
       "typeInfo": "Struct"
@@ -9374,6 +9803,7 @@
         "y",
         "z"
       ],
+      "short_name": "Vec3A",
       "title": "glam::Vec3A",
       "type": "object",
       "typeInfo": "Struct"
@@ -9410,6 +9840,7 @@
         "z",
         "w"
       ],
+      "short_name": "Vec4",
       "title": "glam::Vec4",
       "type": "object",
       "typeInfo": "Struct"
@@ -9417,6 +9848,7 @@
     "i128": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "i128",
       "title": "i128",
       "type": "int",
       "typeInfo": "Value"
@@ -9424,6 +9856,7 @@
     "i16": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "i16",
       "title": "i16",
       "type": "int",
       "typeInfo": "Value"
@@ -9431,6 +9864,7 @@
     "i32": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "i32",
       "title": "i32",
       "type": "int",
       "typeInfo": "Value"
@@ -9438,6 +9872,7 @@
     "i64": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "i64",
       "title": "i64",
       "type": "int",
       "typeInfo": "Value"
@@ -9445,6 +9880,7 @@
     "i8": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "i8",
       "title": "i8",
       "type": "int",
       "typeInfo": "Value"
@@ -9452,6 +9888,7 @@
     "isize": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "isize",
       "title": "isize",
       "type": "int",
       "typeInfo": "Value"
@@ -9464,6 +9901,7 @@
           "$ref": "#/$defs/bevy_ecs::Entity"
         }
       },
+      "short_name": "SmallVec<[Entity; 8]>",
       "title": "smallvec::SmallVec<[bevy_ecs::Entity; 8]>",
       "type": "array",
       "typeInfo": "List"
@@ -9471,6 +9909,7 @@
     "std::ffi::OsString": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "OsString",
       "title": "std::ffi::OsString",
       "type": "object",
       "typeInfo": "Value"
@@ -9478,6 +9917,7 @@
     "std::path::PathBuf": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "PathBuf",
       "title": "std::path::PathBuf",
       "type": "object",
       "typeInfo": "Value"
@@ -9485,6 +9925,7 @@
     "u128": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "u128",
       "title": "u128",
       "type": "uint",
       "typeInfo": "Value"
@@ -9492,6 +9933,7 @@
     "u16": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "u16",
       "title": "u16",
       "type": "uint",
       "typeInfo": "Value"
@@ -9499,6 +9941,7 @@
     "u32": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "u32",
       "title": "u32",
       "type": "uint",
       "typeInfo": "Value"
@@ -9506,6 +9949,7 @@
     "u64": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "u64",
       "title": "u64",
       "type": "uint",
       "typeInfo": "Value"
@@ -9513,6 +9957,7 @@
     "u8": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "u8",
       "title": "u8",
       "type": "uint",
       "typeInfo": "Value"
@@ -9520,6 +9965,7 @@
     "usize": {
       "isComponent": false,
       "isResource": false,
+      "short_name": "usize",
       "title": "usize",
       "type": "uint",
       "typeInfo": "Value"
