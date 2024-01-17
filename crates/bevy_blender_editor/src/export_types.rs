@@ -148,7 +148,7 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
                     "type": "string",
                     "typeInfo": "Enum",
                     "title": t.type_path(),
-                    "enum": info
+                    "oneOf": info
                         .iter()
                         .map(|variant| match variant {
                             VariantInfo::Unit(v) => v.name(),
@@ -178,6 +178,7 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
                     }),
                     VariantInfo::Tuple(v) => json!({
                         "type": "array",
+                        "title": v.name(),
                         "prefixItems": v
                             .iter()
                             .enumerate()
@@ -186,7 +187,7 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
                         "items": false,
                     }),
                     VariantInfo::Unit(v) => json!({
-                        "const": v.name(),
+                        "title": v.name(),
                     }),
                 })
                 .collect::<Vec<_>>();
