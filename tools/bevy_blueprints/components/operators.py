@@ -81,11 +81,12 @@ class DeleteComponentOperator(Operator):
 
     def execute(self, context):
         print("delete component to blueprint")
-        print (context.object)
+        print (context.object.name)
 
         # fixme: refactor, do this better
         object = context.object      
         if object is not None: 
+            print("removing", self.target_property)
             del object[self.target_property]
 
         return {'FINISHED'}

@@ -99,16 +99,23 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
                 component_type = component_meta.type_name
                 component_enabled = component_meta.enabled
 
-                # for testing, remove later
+                # we fetch the matching ui property group
+                propertyGroup = getattr(object, component_name+"_ui")
+                row.prop(component_meta, "enabled", text="")
+                row.label(text=component_name)
+                col = row.column(align=True)
+                for fname in propertyGroup.field_names:
+                    subrow = col.row()
+                    #print("drawing", fname)
+                    #if fname == "SoundMaterial":
+                    #    propertyGroup.SoundMaterial = "totot"
+                    display_name = fname if propertyGroup.tupple_or_struct == "struct" else ""
+                    subrow.prop(propertyGroup, fname, text=display_name)
+                    subrow.separator()
+
+                """# for testing, remove later
                 foo_data = json.loads(component_meta.data)
                 component_type = foo_data["type_info"]
-
-
-                #print("component_meta", component_meta)
-                #component_data = json.loads(component_meta.data)
-                #print("component_type", component_type)
-                # row.enabled = component_enabled
-                #row.prop(object.reusable_enum, "list")
 
                 row.prop(component_meta, "enabled", text="")
                 row.label(text=component_name)
@@ -126,6 +133,7 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
                     row.label(text="------------")
                 else :
                     row.prop(object, '["'+ component_name +'"]', text="")
+                """
                     
                 #op = row.operator(CopyComponentOperator.bl_idname, text="", icon="SETTINGS")
                 op = row.operator(DeleteComponentOperator.bl_idname, text="", icon="X")
@@ -135,25 +143,22 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
                 op.target_property = component_name
                 op.source_object_name = object.name
 
-            print("TOOOO", registry.type_infos, registry.component_uis)
-            if registry.component_uis is not None:
+            #print("TOOOO", registry.type_infos, registry.component_uis)
+            """if registry.component_uis is not None:
                 for component_name in sorted(registry.component_uis):
-                    #print("truc", truc)
+
                     row = layout.row(align=True)
                     propertyGroup = getattr(object, component_name)
-                    #print("propgroup", propertyGroup, dict(propertyGroup), propertyGroup.single_item)
                     row.label(text=component_name)
-                    split_lines = len(propertyGroup.field_names) > 1
                     col = row.column(align=True)
                     for fname in propertyGroup.field_names:
-                        #if split_lines:
                         subrow = col.row()
                     
                         display_name = fname if propertyGroup.tupple_or_struct == "struct" else ""
                         subrow.prop(propertyGroup, fname, text=display_name)
                         subrow.separator()
-                    #registry_raw
-                    #
+                
+                """
         else: 
             layout.label(text ="Select a collection/blueprint to edit it")
 
@@ -192,7 +197,8 @@ def post_load(file_name):
 
 @persistent
 def init_data_if_needed(self):
-    ensure_metadata_for_all_objects()
+    pass
+    #ensure_metadata_for_all_objects()#very inneficient , find another way
 
 def register():
     print("register")

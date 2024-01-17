@@ -1,3 +1,4 @@
+import functools
 import bpy
 import json
 from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorProperty, IntProperty, IntVectorProperty, EnumProperty, PointerProperty)
@@ -90,7 +91,7 @@ def unregister_stuff():
     except Exception:#UnboundLocalError:
         pass
 
-def process_properties(registry, properties): 
+def process_properties(registry, definition, properties, update): 
     value_types_defaults = registry.value_types_defaults 
     blender_property_mapping = registry.blender_property_mapping
     type_infos = registry.type_infos
@@ -112,25 +113,36 @@ def process_properties(registry, properties):
 
             if is_value_type:
                 if original_type_name in blender_property_mapping:
-                    blender_property = blender_property_mapping[original_type_name](name = property_name, default=value)
+                    blender_property = blender_property_mapping[original_type_name](
+                        name = property_name,
+                        default=value,
+                        #update= functools.partial(update, self, context, property_name, definition, original_type_name)
+                        update= lambda self, context: update(self, context, field_name=property_name, definition=definition, type_name=original_type_name)
+                    )
                     if original_type_name == "bevy_render::color::Color":
-                        blender_property = blender_property_mapping[original_type_name](name = property_name, default=value, subtype='COLOR')
+                        blender_property = blender_property_mapping[original_type_name](
+                            name = property_name,
+                            default=value,
+                            subtype='COLOR',
+                            update=lambda self, context: update(self, context, property_name, definition, original_type_name)
+                        )
                         #FloatVectorProperty()
                         # TODO: use FloatVectorProperty(size= xxx) to define the dimensions of the property
                     __annotations__[property_name] = blender_property
             else:
                 print("NOT A VALUE TYPE", original)
                 # FIXME: this is not right
-                __annotations__ = __annotations__ | process_component(registry, original,)
+                #__annotations__ = __annotations__ | process_component(registry, original, update)
         # if there are sub fields, add an attribute "sub_fields" possibly a pointer property ? or add a standard field to the type , that is stored under "attributes" and not __annotations (better)
     if len(default_values.keys()) > 1:
         single_item = False
     return __annotations__
 
-def process_prefixItems(registry, prefixItems):
+def process_prefixItems(registry, definition, prefixItems, update):
     value_types_defaults = registry.value_types_defaults 
     blender_property_mapping = registry.blender_property_mapping
     type_infos = registry.type_infos
+    short_name = definition["short_name"]
 
     __annotations__ = {}
     tupple_or_struct = "tupple"
@@ -147,14 +159,23 @@ def process_prefixItems(registry, prefixItems):
             value = value_types_defaults[original_type_name] if is_value_type else None
             default_values.append(value)
             prefix_infos.append(original)
-            print("ORIGINAL PROP", original)
+            #print("ORIGINAL PROP", original)
 
             property_name = str(index)# we cheat a bit, property names are numbers here, as we do not have a real property name
             if is_value_type:
                 if original_type_name in blender_property_mapping:
-                    blender_property = blender_property_mapping[original_type_name](name = property_name, default=value)
+                    blender_property = blender_property_mapping[original_type_name](
+                        name = property_name, 
+                        default=value,
+                        update=lambda self, context: update(self, context, property_name, definition, original_type_name)
+                    )
                     if original_type_name == "bevy_render::color::Color":
-                        blender_property = blender_property_mapping[original_type_name](name = property_name, default=value, subtype='COLOR')
+                        blender_property = blender_property_mapping[original_type_name](
+                            name = property_name, 
+                            default=value, 
+                            subtype='COLOR',
+                            update=lambda self, context: update(self, context, property_name, definition, original_type_name)
+                            )
                         #FloatVectorProperty()
                         # TODO: use FloatVectorProperty(size= xxx) to define the dimensions of the property
                     __annotations__[property_name] = blender_property
@@ -165,13 +186,13 @@ def process_prefixItems(registry, prefixItems):
         default_value = default_values[0]
         infos = prefix_infos[0]
         type_def = original["title"]
-        print("tupple with a single value", default_value, type_def)
+        #print("tupple with a single value", default_value, type_def)
     else: 
         single_item = False
     return __annotations__
 
 
-def process_enum(registry, definition):
+def process_enum(registry, definition, update):
     value_types_defaults = registry.value_types_defaults 
     blender_property_mapping = registry.blender_property_mapping
     type_infos = registry.type_infos
@@ -187,21 +208,20 @@ def process_enum(registry, definition):
         labels = []
         additional_annotations = {}
         for item in values:
-            print("item", item)
+            #print("item", item)
             # TODO: refactor & reuse the rest of our code above 
             labels.append(item["title"])
             if "prefixItems" in item:
-                additional_annotations = additional_annotations | process_prefixItems(registry, prefixItems=item["prefixItems"])
-                
+                additional_annotations = additional_annotations | process_prefixItems(registry, definition, item["prefixItems"], update)
 
         items = tuple((e, e, e) for e in labels)
         property_name = short_name
 
-        def update_test(self, context):
-            print("UPDATING TEST", self, context)
-            return None
-    
-        blender_property = blender_property_mapping["enum"](name = property_name, items=items, update=update_test)
+        blender_property = blender_property_mapping["enum"](
+            name = property_name,
+            items=items,
+            update=lambda self, context: update(self, context, property_name, definition, "enum")
+)
         __annotations__[property_name] = blender_property
 
         for a in additional_annotations:
@@ -214,11 +234,15 @@ def process_enum(registry, definition):
     else:
         items = tuple((e, e, "") for e in values)
         property_name = short_name
-        blender_property = blender_property_mapping["enum"](name = property_name, items=items)
+        blender_property = blender_property_mapping["enum"](
+            name = property_name,
+            items=items,
+            update=lambda self, context: update(self, context, property_name, definition, "enum")
+        )
         __annotations__[property_name] = blender_property
     return __annotations__
 
-def process_component(registry, definition):
+def process_component(registry, definition, update):
     value_types_defaults = registry.value_types_defaults 
     blender_property_mapping = registry.blender_property_mapping
     type_infos = registry.type_infos
@@ -244,14 +268,14 @@ def process_component(registry, definition):
 
         if has_properties:
             tupple_or_struct = "struct"
-            __annotations__ = __annotations__ | process_properties(registry, properties=properties)
+            __annotations__ = __annotations__ | process_properties(registry, definition, properties, update)
 
         if has_prefixItems:
             tupple_or_struct = "tupple"
-            __annotations__ = __annotations__ | process_prefixItems(registry, prefixItems=prefixItems)
+            __annotations__ = __annotations__ | process_prefixItems(registry, definition, prefixItems, update)
 
         if is_enum:
-            __annotations__ = __annotations__ | process_enum(registry, definition)
+            __annotations__ = __annotations__ | process_enum(registry, definition, update)
     return __annotations__
                 
 
@@ -261,6 +285,33 @@ def dynamic_properties_ui():
         registry.load_type_infos()
 
     type_infos = registry.type_infos
+
+
+    def update_component(self, context, field_name, definition, type_name):
+        component_name = definition["short_name"]
+        type_info = definition["typeInfo"] if "typeInfo" in definition else None
+        type_def = definition["type"] if "type" in definition else None
+
+        
+        print("update in component", component_name, type_name, type_info, field_name)#, type_def, type_info,self,self.name , "context",context.object.name, "attribute name", field_name)
+        print("definition", definition)
+
+
+        value = self[field_name]
+        if type_name == 'bool':
+            value = bool(value)
+        if type_name == 'enum':
+            print("self", self, "context", context, value)
+            value = definition["oneOf"][int(value)]
+        print("setting custom property", component_name, "field name", field_name, " value to", value)
+
+        
+        if type_info == "TupleStruct":
+            context.object[component_name] = value
+        if type_info == "Struct":
+            context.object[component_name] = value
+        if type_info == "Enum":
+            context.object[component_name] = value
 
     for component_name in type_infos:
         definition = type_infos[component_name]
@@ -277,7 +328,9 @@ def dynamic_properties_ui():
         has_prefixItems = len(prefixItems) > 0
         is_enum = type_info == "Enum"
 
-        if is_component and type_info != "Value" and type_info != "List" :
+        
+
+        if is_component and type_info != "Value" and type_info != "List" and "bevy_bevy_blender_editor_basic_example" in component_name:
             print("entry", component_name, type_def, type_info)# definition)
 
             __annotations__ = {}
@@ -290,17 +343,16 @@ def dynamic_properties_ui():
           
             if has_properties:
                 tupple_or_struct = "struct"
-                __annotations__ = __annotations__ | process_properties(registry, properties=properties)
+                __annotations__ = __annotations__ | process_properties(registry, definition, properties, update_component)
            
 
             if has_prefixItems:
                 tupple_or_struct = "tupple"
-                __annotations__ = __annotations__ | process_prefixItems(registry, prefixItems=prefixItems)
+                __annotations__ = __annotations__ | process_prefixItems(registry, definition, prefixItems, update_component)
 
             if is_enum:
-                __annotations__ = __annotations__ | process_enum(registry, definition)
+                __annotations__ = __annotations__ | process_enum(registry, definition, update_component)
                     
-
             for a in __annotations__:
                 field_names.append(a)
 
@@ -311,8 +363,8 @@ def dynamic_properties_ui():
             property_group_class = type(property_group_name, (PropertyGroup,), { '__annotations__': __annotations__, 'single_item': single_item, 'field_names': field_names, 'tupple_or_struct':tupple_or_struct })
             
             bpy.utils.register_class(property_group_class)
-            setattr(bpy.types.Object, short_name, PointerProperty(type=property_group_class))
+            setattr(bpy.types.Object, property_group_name, PointerProperty(type=property_group_class))
             
-            registry.register_component_ui(short_name, property_group_class)
+            registry.register_component_ui(short_name+"_ui", property_group_class)
 
 

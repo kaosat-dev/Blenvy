@@ -24,3 +24,10 @@ UI:
     - [ ] one for setting the VALUE inside that
 - [ ] vecs => (not vec2, vec3 etc) more complex UI to add items in a list
 - [ ] find ways to "collapse" the different levels of nested data of structs/tupples into a single custom property (ideally on the fly, but we can do without)
+
+- [ ] for single tupple components that represent a single unit type, re_use the base type's UIPropertyGroup instead of creating specific ones (ie TuppleTestF32_ui...)
+- [ ] pre_generate default values/values for each main type
+
+-  [ ] fix issues with vec2 etc not having the correct number of items
+- [ ] fix bad defaults in ui group
+- [ ] fix object enums handling on updates

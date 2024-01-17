@@ -140,7 +140,6 @@ def add_component_to_mapped(mapped, name, definitions):
     if name in mapped:
         #print("already present")
         return mapped[name]
-    print("computing", name)
     short_name = str(name)
     long_name = str(name)
 

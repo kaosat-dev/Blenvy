@@ -114,6 +114,7 @@ def add_component_to_object(object, component_definition, value=None):
         short_name = component_definition.name
         data = json.loads(component_definition.data)
 
+      
         print("component infos", data, "long_name", component_definition.long_name)
         type_name = data["type"]
         default_value = data["value"]
@@ -148,11 +149,12 @@ def add_component_to_object(object, component_definition, value=None):
             object[component_definition.name] = value
 
 
+        """
         registry = bpy.context.window_manager.components_registry.registry 
         registry = json.loads(registry)
         registry_entry = registry[long_name] if long_name in registry else None
         print("registry_entry", registry_entry)
-
+        """
 
         #object.components_meta.components.clear()
         components_in_object = object.components_meta.components
@@ -168,6 +170,13 @@ def add_component_to_object(object, component_definition, value=None):
         component_meta.long_name = long_name
         component_meta.data = component_definition.data
         component_meta.type_name = data["type"]
+
+        prop_group_name = short_name+"_ui"
+        propertyGroup = getattr(object, prop_group_name)
+
+        print("gna", propertyGroup, propertyGroup.field_names)
+
+        propertyGroup['0'] = value
 
         """
         object[component_definition.name] = 0.5
