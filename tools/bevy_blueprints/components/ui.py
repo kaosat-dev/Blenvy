@@ -179,11 +179,10 @@ def dynamic_properties_ui():
         has_prefixItems = len(prefixItems) > 0
         is_enum = type_info == "Enum"
 
-        if is_component and type_info != "Value" and type_info != "List" and "bevy_bevy_blender_editor_basic_example" in component_name:
+        if is_component and type_info != "Value" and type_info != "List" :
             print("entry", component_name, type_def, type_info)# definition)
 
-            __annotations__ = {
-            }
+            __annotations__ = {}
 
             field_names = []
             single_item = True# single item is default, for tupple structs with single types, or structs with no params,
@@ -206,6 +205,10 @@ def dynamic_properties_ui():
 
                         if is_value_type and original_type_name in blender_property_mapping:
                             blender_property = blender_property_mapping[original_type_name](name = property_name, default=value)
+                            if original_type_name == "bevy_render::color::Color":
+                                blender_property = blender_property_mapping[original_type_name](name = property_name, default=value, subtype='COLOR')
+                                #FloatVectorProperty()
+                                # TODO: use FloatVectorProperty(size= xxx) to define the dimensions of the property
                             __annotations__[property_name] = blender_property
                             field_names.append(property_name)
 
@@ -254,6 +257,26 @@ def dynamic_properties_ui():
                 values = definition["oneOf"]
                 if type_def == "object":
                     print("OBBJKEEECT")
+                    labels = []
+                    for item in values:
+                        print("item", item)
+                        # TODO: refactor & reuse the rest of our code above 
+                        labels.append(item["title"])
+                        if "prefixItems" in item:
+                            """prefix_items = item["prefixItems"]
+                            ref_name = prefix_items[0]["type"]["$ref"].replace("#/$defs/", "")
+                            original = registry[ref_name]
+                            original_type_name = original["title"]
+                            is_value_type = original_type_name in value_types_defaults"""
+                            
+
+                    items = tuple((e, e, "") for e in labels)
+                    property_name = "0"
+                    blender_property = blender_property_mapping["enum"](name = property_name, items=items)
+                    __annotations__[property_name] = blender_property
+                    field_names.append(property_name)
+
+
                     single_item = False
                 else:
                     items = tuple((e, e, "") for e in values)

@@ -136,16 +136,21 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
                 op.target_property = component_name
                 op.source_object_name = object.name
 
-            for truc in bpy.testcomponents:
+            for component_name in bpy.testcomponents:
                 #print("truc", truc)
-                row = col.row(align=True)
-                ui_thingy_name = truc
-                propertyGroup = getattr(object, ui_thingy_name)
+                row = layout.row(align=True)
+                propertyGroup = getattr(object, component_name)
                 #print("propgroup", propertyGroup, dict(propertyGroup), propertyGroup.single_item)
-                row.label(text=truc)
+                row.label(text=component_name)
+                split_lines = len(propertyGroup.field_names) > 1
+                col = row.column(align=True)
                 for fname in propertyGroup.field_names:
+                    #if split_lines:
+                    subrow = col.row()
+                   
                     display_name = fname if propertyGroup.tupple_or_struct == "struct" else ""
-                    row.prop(propertyGroup, fname, text=display_name)
+                    subrow.prop(propertyGroup, fname, text=display_name)
+                    subrow.separator()
                 #registry_raw
                 #
         else: 
