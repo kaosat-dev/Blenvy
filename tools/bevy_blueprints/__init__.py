@@ -41,8 +41,7 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
         registry_raw = json.loads(registry_raw)
 
         # we get & load our component registry
-        registry = bpy.context.window_manager.components_registry.registry 
-        registry = json.loads(registry) if registry != '' else ''
+        registry = bpy.context.window_manager.components_registry 
         available_components = bpy.context.window_manager.components_list
 
         col = layout.column(align=True)
@@ -136,23 +135,25 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
                 op.target_property = component_name
                 op.source_object_name = object.name
 
-            for component_name in bpy.testcomponents:
-                #print("truc", truc)
-                row = layout.row(align=True)
-                propertyGroup = getattr(object, component_name)
-                #print("propgroup", propertyGroup, dict(propertyGroup), propertyGroup.single_item)
-                row.label(text=component_name)
-                split_lines = len(propertyGroup.field_names) > 1
-                col = row.column(align=True)
-                for fname in propertyGroup.field_names:
-                    #if split_lines:
-                    subrow = col.row()
-                   
-                    display_name = fname if propertyGroup.tupple_or_struct == "struct" else ""
-                    subrow.prop(propertyGroup, fname, text=display_name)
-                    subrow.separator()
-                #registry_raw
-                #
+            print("TOOOO", registry.type_infos, registry.component_uis)
+            if registry.component_uis is not None:
+                for component_name in sorted(registry.component_uis):
+                    #print("truc", truc)
+                    row = layout.row(align=True)
+                    propertyGroup = getattr(object, component_name)
+                    #print("propgroup", propertyGroup, dict(propertyGroup), propertyGroup.single_item)
+                    row.label(text=component_name)
+                    split_lines = len(propertyGroup.field_names) > 1
+                    col = row.column(align=True)
+                    for fname in propertyGroup.field_names:
+                        #if split_lines:
+                        subrow = col.row()
+                    
+                        display_name = fname if propertyGroup.tupple_or_struct == "struct" else ""
+                        subrow.prop(propertyGroup, fname, text=display_name)
+                        subrow.separator()
+                    #registry_raw
+                    #
         else: 
             layout.label(text ="Select a collection/blueprint to edit it")
 

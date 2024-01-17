@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 
 from bpy_types import (PropertyGroup)
+from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorProperty, IntProperty, IntVectorProperty, EnumProperty, PointerProperty)
 
 # this is where we store the information for all available components
 class ComponentsRegistry(PropertyGroup):
@@ -15,6 +16,84 @@ class ComponentsRegistry(PropertyGroup):
         name="raw registry",
         description="component registry"
     )
+
+    blender_property_mapping = {
+        "bool": BoolProperty,
+
+        "u8": IntProperty,
+        "u16":IntProperty,
+        "u32":IntProperty,
+        "u64":IntProperty,
+        "u128":IntProperty,
+        "u64": IntProperty,
+
+        "i8": IntProperty,
+        "i16":IntProperty,
+        "i32":IntProperty,
+        "i64":IntProperty,
+        "i128":IntProperty,
+
+        "f32": FloatProperty,
+        "f64": FloatProperty,
+
+        "glam::Vec3": FloatVectorProperty,
+        "glam::Vec2": FloatVectorProperty,
+        "bevy_render::color::Color": FloatVectorProperty,
+
+        "char": StringProperty,
+        "str": StringProperty,
+        "alloc::string::String": StringProperty,
+
+        "enum":EnumProperty
+    }
+
+
+    value_types_defaults = {
+        "string":" ",
+        "boolean": True,
+        "float": 0.0,
+        "uint": 0,
+        "int":0,
+
+        # todo : we are re-doing the work of the bevy /rust side here, but it seems more pratical to alway look for the same field name on the blender side for matches
+        "bool": True,
+
+        "u8": 0,
+        "u16":0,
+        "u32":0,
+        "u64":0,
+        "u128":0,
+
+        "i8": 0,
+        "i16":0,
+        "i32":0,
+        "i64":0,
+        "i128":0,
+
+        "f32": 0.0,
+        "f64":0.0,
+
+        "char": " ",
+        "str": " ",
+        "alloc::string::String": " ",
+
+        "glam::Vec2": [0.0,0.0,0.0],#[0.0, 0.0],
+        "glam::Vec3": [0.0, 0.0, 0.0],
+        "glam::Vec4": [0.0, 0.0, 0.0, 0.0], 
+        "bevy_render::color::Color": [1.0, 1.0, 0.0]#[1.0, 1.0, 0.0, 1.0]
+    }
+
+    type_infos = None
+    component_uis = {}
+
+    # we load the json once, so we do not need to do it over & over again
+    def load_type_infos(self):
+        self.type_infos = json.loads(self.raw_registry)
+
+
+    def register_component_ui(self, name, ui):
+        self.component_uis[name] = ui
+
 
     
 def read_components():
