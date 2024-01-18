@@ -174,7 +174,7 @@ def add_component_to_object(object, component_definition, value=None):
         prop_group_name = short_name+"_ui"
         propertyGroup = getattr(object, prop_group_name)
 
-        print("gna", propertyGroup, propertyGroup.field_names)
+        print("propertyGroup", propertyGroup, propertyGroup.field_names)
 
         propertyGroup['0'] = value
 
@@ -192,8 +192,4 @@ def add_component_to_object(object, component_definition, value=None):
         #IDPropertyUIManager
         #rna_ui = object[component_definition.name].get('_RNA_UI')
 
-        #object[component_definition.name] = FloatVectorProperty(name="Hex Value", 
-        #                            subtype='COLOR', 
-        #                            default=[0.0,0.0,0.0])
-        #lookup[component_definition.type_name] if component_definition.type_name in lookup else  ""
 

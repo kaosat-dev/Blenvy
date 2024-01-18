@@ -18,33 +18,33 @@ class ComponentsRegistry(PropertyGroup):
     )
 
     blender_property_mapping = {
-        "bool": BoolProperty,
+        "bool": dict(type=BoolProperty, presets=dict()),
 
-        "u8": IntProperty,
-        "u16":IntProperty,
-        "u32":IntProperty,
-        "u64":IntProperty,
-        "u128":IntProperty,
-        "u64": IntProperty,
+        "u8": dict(type=IntProperty, presets=dict()),
+        "u16": dict(type=IntProperty, presets=dict()),
+        "u32": dict(type=IntProperty, presets=dict()),
+        "u64": dict(type=IntProperty, presets=dict()),
+        "u128": dict(type=IntProperty, presets=dict()),
+        "u64": dict(type=IntProperty, presets=dict()),
+        "usize": dict(type=IntProperty, presets=dict()),
 
-        "i8": IntProperty,
-        "i16":IntProperty,
-        "i32":IntProperty,
-        "i64":IntProperty,
-        "i128":IntProperty,
+        "i8": dict(type=IntProperty, presets=dict()),
+        "i16":dict(type=IntProperty, presets=dict()),
+        "i32":dict(type=IntProperty, presets=dict()),
+        "i64":dict(type=IntProperty, presets=dict()),
+        "i128":dict(type=IntProperty, presets=dict()),
 
-        "f32": FloatProperty,
-        "f64": FloatProperty,
+        "f32": dict(type=FloatProperty, presets=dict()),
+        "f64": dict(type=FloatProperty, presets=dict()),
 
-        "glam::Vec3": FloatVectorProperty,
-        "glam::Vec2": FloatVectorProperty,
-        "bevy_render::color::Color": FloatVectorProperty,
+        "glam::Vec2": {"type": FloatVectorProperty, "presets": dict(size = 2) },
+        "glam::Vec3": {"type": FloatVectorProperty, "presets": {"size":3} },
+        "bevy_render::color::Color": dict(type = FloatVectorProperty, presets=dict(subtype='COLOR', size=4)),
 
-        "char": StringProperty,
-        "str": StringProperty,
-        "alloc::string::String": StringProperty,
-
-        "enum":EnumProperty
+        "char": dict(type=StringProperty, presets=dict()),
+        "str":  dict(type=StringProperty, presets=dict()),
+        "alloc::string::String":  dict(type=StringProperty, presets=dict()),
+        "enum":  dict(type=EnumProperty, presets=dict()), 
     }
 
 
@@ -77,10 +77,10 @@ class ComponentsRegistry(PropertyGroup):
         "str": " ",
         "alloc::string::String": " ",
 
-        "glam::Vec2": [0.0,0.0,0.0],#[0.0, 0.0],
+        "glam::Vec2": [0.0, 0.0],
         "glam::Vec3": [0.0, 0.0, 0.0],
         "glam::Vec4": [0.0, 0.0, 0.0, 0.0], 
-        "bevy_render::color::Color": [1.0, 1.0, 0.0]#[1.0, 1.0, 0.0, 1.0]
+        "bevy_render::color::Color": [1.0, 1.0, 0.0, 1.0]
     }
 
     type_infos = None

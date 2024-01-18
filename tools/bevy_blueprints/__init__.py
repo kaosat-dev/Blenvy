@@ -99,6 +99,8 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
                 component_type = component_meta.type_name
                 component_enabled = component_meta.enabled
 
+                #row.prop(object, "foo")
+
                 # we fetch the matching ui property group
                 propertyGroup = getattr(object, component_name+"_ui")
                 row.prop(component_meta, "enabled", text="")
@@ -217,6 +219,10 @@ def register():
     bpy.app.handlers.depsgraph_update_post.append(init_data_if_needed)
 
 
+    # just a test , remove later
+    bpy.types.Object.foo = bpy.props.FloatVectorProperty(**{"description": "what the hell", "size":2})
+
+
 def unregister():
     print("unregister")
     for cls in classes:
@@ -233,3 +239,5 @@ def unregister():
     bpy.app.handlers.depsgraph_update_post.remove(init_data_if_needed)
 
     #unregister_stuff()
+
+    del bpy.types.Object.foo
