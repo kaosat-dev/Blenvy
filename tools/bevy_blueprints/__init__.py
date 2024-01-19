@@ -110,8 +110,19 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
                         if fname == "variant_" + selection:
                             subrow = col.row()
                             display_name = fname if propertyGroup.tupple_or_struct == "struct" else ""
-                            subrow.prop(propertyGroup, fname, text=display_name)
-                            subrow.separator()
+
+                            nestedPropertyGroup = getattr(propertyGroup, fname)
+                            nested = getattr(nestedPropertyGroup, "nested", False)
+                            if not nested:
+                                subrow.prop(propertyGroup, fname, text=display_name)
+                                subrow.separator()
+                            else:
+                                #print("deal with sub fields", nestedPropertyGroup.field_names)
+                                for subfname in nestedPropertyGroup.field_names:
+                                    subrow = col.row()
+                                    display_name = subfname if nestedPropertyGroup.tupple_or_struct == "struct" else ""
+                                    subrow.prop(nestedPropertyGroup, subfname, text=display_name)
+                                    subrow.separator()
                 else: 
                     for fname in field_names:
                         subrow = col.row()

@@ -1,6 +1,6 @@
 import functools
 import bpy
-from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorProperty, IntProperty, IntVectorProperty, EnumProperty, PointerProperty)
+from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorProperty, IntProperty, IntVectorProperty, EnumProperty, PointerProperty, CollectionProperty)
 from bpy_types import (PropertyGroup)
 
 # FIXME: not sure, hard coded exclude list, feels wrong
@@ -58,10 +58,10 @@ class ClearComponentDefinitionsList(bpy.types.Operator):
 
 
 # helper function that returns a lambda, used for the PropertyGroups update function
-def update_calback_helper(property_name, original_type_name, definition, update):
-    return lambda self, context: update(self, context, property_name, definition, original_type_name)
+def update_calback_helper(definition, update, component_name_override):
+    return lambda self, context: update(self, context, definition, component_name_override)
 
-def process_properties(registry, definition, properties, update): 
+def process_properties(registry, definition, properties, update, component_name_override): 
     value_types_defaults = registry.value_types_defaults 
     blender_property_mapping = registry.blender_property_mapping
     type_infos = registry.type_infos
@@ -89,7 +89,7 @@ def process_properties(registry, definition, properties, update):
                         **blender_property_def["presets"],# we inject presets first
                         name = property_name,
                         default=value,
-                        update= update_calback_helper(property_name, original_type_name, definition, update)
+                        update= update_calback_helper(definition, update, component_name_override)
                         #(lambda property_name, original_type_name: lambda self, context: update(self, context, property_name, definition, original_type_name))(property_name, original_type_name)
                     )
                     __annotations__[property_name] = blender_property
@@ -106,7 +106,7 @@ def process_properties(registry, definition, properties, update):
         single_item = False
     return __annotations__
 
-def process_prefixItems(registry, definition, prefixItems, update, name_override=None):
+def process_prefixItems(registry, definition, prefixItems, update, name_override=None, component_name_override=None):
     value_types_defaults = registry.value_types_defaults 
     blender_property_mapping = registry.blender_property_mapping
     type_infos = registry.type_infos
@@ -114,12 +114,17 @@ def process_prefixItems(registry, definition, prefixItems, update, name_override
 
     __annotations__ = {}
     tupple_or_struct = "tupple"
-    print("YOLO")
+    print("YOLO", short_name)
 
     default_values = []
     prefix_infos = []
     for index, item in enumerate(prefixItems):
         ref_name = item["type"]["$ref"].replace("#/$defs/", "")
+
+        property_name = str(index)# we cheat a bit, property names are numbers here, as we do not have a real property name
+        if name_override != None:
+            property_name = name_override
+
         if ref_name in type_infos:
             original = type_infos[ref_name]
             original_type_name = original["title"]
@@ -130,9 +135,7 @@ def process_prefixItems(registry, definition, prefixItems, update, name_override
             prefix_infos.append(original)
             #print("ORIGINAL PROP", original)
 
-            property_name = str(index)# we cheat a bit, property names are numbers here, as we do not have a real property name
-            if name_override != None:
-                property_name = name_override
+
             if is_value_type:
                 if original_type_name in blender_property_mapping:
                     blender_property_def = blender_property_mapping[original_type_name]
@@ -142,27 +145,27 @@ def process_prefixItems(registry, definition, prefixItems, update, name_override
                         **blender_property_def["presets"],# we inject presets first
                         name = property_name, 
                         default=value,
-                        update= update_calback_helper(property_name, original_type_name, definition, update)
+                        update= update_calback_helper(definition, update, component_name_override)
                     )
                   
                     __annotations__[property_name] = blender_property
             else:
+                print("NESTING")
                 print("NOT A VALUE TYPE", original)
+                original_long_name = original["title"]
+                original_short_name = original["short_name"]
+                sub_component_group = process_component(registry, original, update, {"nested": True, "type_name": original_long_name}, component_name_override=short_name)
+                # TODO: use lookup in registry, add it if necessary, or retrieve it if it already exists
+                __annotations__[property_name] = sub_component_group
+
         else: 
             print("component not found in type_infos, generating placeholder")
-            #__annotations__[property_name] = None
-
-    if len(default_values) == 1:
-        default_value = default_values[0]
-        infos = prefix_infos[0]
-        type_def = original["title"]
-        #print("tupple with a single value", default_value, type_def)
-    else: 
-        single_item = False
+            __annotations__[property_name] = StringProperty(default="N/A")
+    print("annotations", __annotations__)
     return __annotations__
 
 
-def process_enum(registry, definition, update):
+def process_enum(registry, definition, update, component_name_override):
     value_types_defaults = registry.value_types_defaults 
     blender_property_mapping = registry.blender_property_mapping
     type_infos = registry.type_infos
@@ -186,22 +189,23 @@ def process_enum(registry, definition, update):
             item_name = item["title"]
             labels.append(item_name)
             if "prefixItems" in item:
-                additional_annotations = additional_annotations | process_prefixItems(registry, definition, item["prefixItems"], update, "variant_"+item_name)
+                additional_annotations = additional_annotations | process_prefixItems(registry, definition, item["prefixItems"], update, "variant_"+item_name, component_name_override)
+            if "properties" in item:
+                print("YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+            """if not "prefixItems" in item and not "properties" in item:
+                key = "variant_"+item_name
+                additional_annotations = {}
+                additional_annotations[key] = StringProperty(default="") # TODO replace with empty ??"""
 
         items = tuple((e, e, e) for e in labels)
         property_name = short_name
-
-
-        def update_enum(self, context, property_name, definition, original_type):
-            print("update enum")
-            update(self, context, property_name, definition, original_type)
 
         blender_property_def = blender_property_mapping[original_type_name]
         blender_property = blender_property_def["type"](
             **blender_property_def["presets"],# we inject presets first
             name = property_name,
             items=items,
-            update= lambda self, context: update_enum(self, context, property_name, definition, "enum")
+            update= lambda self, context: update(self, context, definition, component_name_override)
 )
         __annotations__[property_name] = blender_property
 
@@ -220,21 +224,14 @@ def process_enum(registry, definition, update):
             **blender_property_def["presets"],# we inject presets first
             name = property_name,
             items=items,
-            update=lambda self, context: update(self, context, property_name, definition, "enum")
+            update=lambda self, context: update(self, context, definition, component_name_override)
         )
         __annotations__[property_name] = blender_property
     
     return __annotations__
 
-def process_component(registry, definition, update):
-    value_types_defaults = registry.value_types_defaults 
-    blender_property_mapping = registry.blender_property_mapping
-    type_infos = registry.type_infos
-
+def process_component(registry, definition, update, extras=None, component_name_override=None):
     component_name = definition['title']
-    is_component = definition['isComponent']  if "isComponent" in definition else False
-    is_resource = definition['is_resource']  if "is_resource" in definition else False
-
     short_name = definition["short_name"]
     type_info = definition["typeInfo"] if "typeInfo" in definition else None
     type_def = definition["type"] if "type" in definition else None
@@ -245,42 +242,75 @@ def process_component(registry, definition, update):
     has_prefixItems = len(prefixItems) > 0
     is_enum = type_info == "Enum"
 
+    print("processing", short_name, "component_name_override", component_name_override)
+
     __annotations__ = {}
+    tupple_or_struct = None
 
-    if is_component and type_info != "Value" and type_info != "List" :
-        print("entry", component_name, type_def, type_info)# definition)
+    with_properties = False
+    with_items = False
+    with_enum = False
 
-        if has_properties:
-            tupple_or_struct = "struct"
-            __annotations__ = __annotations__ | process_properties(registry, definition, properties, update)
+    print("entry", component_name, type_def, type_info)# definition)
 
-        if has_prefixItems:
-            tupple_or_struct = "tupple"
-            __annotations__ = __annotations__ | process_prefixItems(registry, definition, prefixItems, update)
+    if has_properties:
+        __annotations__ = __annotations__ | process_properties(registry, definition, properties, update, component_name_override)
+        with_properties = True
+        tupple_or_struct = "struct"
 
-        if is_enum:
-            __annotations__ = __annotations__ | process_enum(registry, definition, update)
-    return __annotations__
-                
 
-def property_group_from_infos(property_group_name, annotations, tupple_or_struct, extras):
+    if has_prefixItems:
+        __annotations__ = __annotations__ | process_prefixItems(registry, definition, prefixItems, update, None, component_name_override)
+        with_items = True
+        tupple_or_struct = "tupple"
+
+
+    if is_enum:
+        __annotations__ = __annotations__ | process_enum(registry, definition, update, component_name_override)
+        with_enum = True
+
     field_names = []
-    for a in annotations:
+    for a in __annotations__:
         field_names.append(a)
     single_item = len(field_names)
 
-    property_group_parameters =  { **extras, '__annotations__': annotations, 'single_item': single_item, 'field_names': field_names, 'tupple_or_struct':tupple_or_struct }
+    extras = extras if extras is not None else {}
+
+    print("DONE: __annotations__", __annotations__)
+    print("")
+    property_group_name = short_name+"_ui"
+    property_group_params = {
+         **extras,
+        '__annotations__': __annotations__,
+        'tupple_or_struct': tupple_or_struct,
+        'single_item': single_item, 
+        'field_names': field_names, 
+        **dict(with_properties = with_properties, with_items= with_items, with_enum= with_enum),
+       
+    }
+    property_group_pointer = property_group_from_infos(property_group_name, property_group_params)
+    registry.register_component_ui(property_group_name, property_group_pointer)
+    
+
+    # for practicality, we add an entry for a reverse lookup (short => long name, since we already have long_name => short_name with the keys of the raw registry)
+    registry.add_shortName_to_longName(short_name, component_name)
+
+    return property_group_pointer
+                
+def property_group_from_infos(property_group_name, property_group_parameters):
     # print("creating property group", property_group_name)
     property_group_class = type(property_group_name, (PropertyGroup,), property_group_parameters)
     
     bpy.utils.register_class(property_group_class)
-    setattr(bpy.types.Object, property_group_name, PointerProperty(type=property_group_class))
+    property_group_pointer = PointerProperty(type=property_group_class)
+    setattr(bpy.types.Object, property_group_name, property_group_pointer)
     
-    return property_group_class
+    return property_group_pointer #property_group_class
 
 #converts the value of a property group(no matter its complexity) into a single custom property value
-def property_group_value_to_custom_property_value(property_group, definition):
+def property_group_value_to_custom_property_value(property_group, definition, registry):
     component_name = definition["short_name"]
+    print("titi", component_name)
     type_info = definition["typeInfo"] if "typeInfo" in definition else None
     type_def = definition["type"] if "type" in definition else None
 
@@ -293,9 +323,11 @@ def property_group_value_to_custom_property_value(property_group, definition):
             value = value[:]# in case it is one of the Blender internal array types
         except Exception:
             pass
-        #print("field name", field_name, "value", value)
+        print("field name", field_name, "value", value)
         values[field_name] = value
 
+    print("computing custom property", component_name, type_info, type_def)
+    # now compute the compound values
     if type_info == "Struct":
         value = values
     if type_info == "TupleStruct":
@@ -308,8 +340,19 @@ def property_group_value_to_custom_property_value(property_group, definition):
         if type_def == "object":
             first_key = list(values.keys())[0]
             selected_entry = values[first_key]
-            value = values["variant_" + selected_entry]
-            value = selected_entry+"("+ str(value) +")"
+            print("selected entry", selected_entry, values, value)
+            value = values.get("variant_" + selected_entry, None) # default to None if there is no match, for example for entries withouth Bool/Int/String etc properties, ie empty ones
+            # TODO might be worth doing differently
+            if value != None:
+                is_property_group = isinstance(value, PropertyGroup)
+                if is_property_group:
+                    print("nesting")
+                    prop_group_name = getattr(value, "type_name")
+                    sub_definition = registry.type_infos[prop_group_name]
+                    value = property_group_value_to_custom_property_value(value, sub_definition, registry)
+                value = selected_entry+"("+ str(value) +")"
+            else :
+                value = selected_entry
         else:
             first_key = list(values.keys())[0]
             value = values[first_key]
@@ -331,63 +374,26 @@ def dynamic_properties_ui():
 
     type_infos = registry.type_infos
 
-
-    def update_component(self, context, field_name, definition, type_name):
+    def update_component(self, context, definition, component_name_override=None):
         component_name = definition["short_name"]
-        print("update in component", self, component_name, type_name, field_name)#, type_def, type_info,self,self.name , "context",context.object.name, "attribute name", field_name)
+        print("update in component", self, component_name, component_name_override)#, type_def, type_info,self,self.name , "context",context.object.name, "attribute name", field_name)
+        if component_name_override != None:
+            component_name = component_name_override
+            long_name = registry.short_names_to_long_names.get(component_name)
+            definition = registry.type_infos[long_name]
+            short_name = definition["short_name"]
+            # self = registry.component_uis[short_name+"_ui"]
+            self = getattr(bpy.context.object, component_name+"_ui") # FIXME: yikes, I REALLY dislike this ! using the context out of left field
+            # then again, trying to use the data from registry.component_uis does not seem to work
+
+            print("using override", component_name)
         # we use our helper to set the values
-        context.object[component_name] = property_group_value_to_custom_property_value(self, definition)
+        print("self", self)
+        context.object[component_name] = property_group_value_to_custom_property_value(self, definition, registry)
 
     for component_name in type_infos:
         definition = type_infos[component_name]
-        is_component = definition['isComponent']  if "isComponent" in definition else False
-        is_resource = definition['is_resource']  if "is_resource" in definition else False
-
-        short_name = definition["short_name"]
-        type_info = definition["typeInfo"] if "typeInfo" in definition else None
-        type_def = definition["type"] if "type" in definition else None
-        properties = definition["properties"] if "properties" in definition else {}
-        prefixItems = definition["prefixItems"] if "prefixItems" in definition else []
-
-        has_properties = len(properties.keys()) > 0
-        has_prefixItems = len(prefixItems) > 0
-        is_enum = type_info == "Enum"
-
-        #if is_component and type_info != "Value" and type_info != "List": # and "bevy_bevy_blender_editor_basic_example" in component_name:
-        print("entry", component_name, type_def, type_info)# definition)
-
-        __annotations__ = {}
-        tupple_or_struct = None
-        with_properties = False
-        with_items = False
-        with_enum = False
-        
-        if has_properties:
-            tupple_or_struct = "struct"
-            with_properties = True
-            __annotations__ = __annotations__ | process_properties(registry, definition, properties, update_component)
-        
-        if has_prefixItems:
-            tupple_or_struct = "tupple"
-            with_properties = True
-            __annotations__ = __annotations__ | process_prefixItems(registry, definition, prefixItems, update_component)
-
-        if is_enum:
-            with_enum = True
-            __annotations__ = __annotations__ | process_enum(registry, definition, update_component)
-                
-        print("DONE: __annotations__", __annotations__)
-        print("")
-        property_group_name = short_name+"_ui"
-
-        property_group_class = property_group_from_infos(property_group_name, __annotations__, tupple_or_struct, dict(with_properties = with_properties, with_items= with_items, with_enum= with_enum))
-        registry.register_component_ui(property_group_name, property_group_class)
-    
-        # for practicality, we add an entry for a reverse lookup (short => long name, since we already have long_name => short_name with the keys of the raw registry)
-        registry.add_shortName_to_longName(short_name, component_name)
-
-
-
+        process_component(registry, definition, update_component)
         """
         object[component_definition.name] = 0.5
         property_manager = object.id_properties_ui(component_definition.name)

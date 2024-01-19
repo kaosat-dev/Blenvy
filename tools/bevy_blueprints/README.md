@@ -39,6 +39,9 @@ UI:
     ie  *Collider:
             * Cuboid(Vec3)
             * Sphere(radius)
+- [ ] deal with enums variants that do not have any data: ex   {
+          "title": "Mesh"
+        }
 
 - [x] remove / change use of ComponentDefinitionsList 
     - when filling the list, use the long_name as index ie items.append((str(index), item.name, item.long_name)) => items.append((item.long_name, item.name, item.long_name))
@@ -48,6 +51,7 @@ UI:
             CascadeShadowConfig: has an array/list
             ClusterConfig: one of the enum variants is an object
 - [ ] possibly allow Color to be an enum as it should be ?
+- [ ] for sub items , the update functions "Name" should be the one of the root object
 
 # Additional
 

@@ -39,8 +39,20 @@ class ComponentsRegistry(PropertyGroup):
         "f64": dict(type=FloatProperty, presets=dict()),
 
         "glam::Vec2": {"type": FloatVectorProperty, "presets": dict(size = 2) },
+        "glam::DVec2": {"type": FloatVectorProperty, "presets": dict(size = 2) },
+        "glam::UVec2": {"type": FloatVectorProperty, "presets": dict(size = 2) },
+
         "glam::Vec3": {"type": FloatVectorProperty, "presets": {"size":3} },
         "glam::Vec3A":{"type": FloatVectorProperty, "presets": {"size":3} },
+        "glam::DVec3":{"type": FloatVectorProperty, "presets": {"size":3} },
+        "glam::UVec3":{"type": FloatVectorProperty, "presets": {"size":3} },
+
+        "glam::Vec4": {"type": FloatVectorProperty, "presets": {"size":4} },
+        "glam::Vec4A": {"type": FloatVectorProperty, "presets": {"size":4} },
+        "glam::DVec4": {"type": FloatVectorProperty, "presets": {"size":4} },
+        "glam::UVec4":{"type": FloatVectorProperty, "presets": {"size":4} },
+
+        "glam::Quat": {"type": FloatVectorProperty, "presets": {"size":4} },
 
         "bevy_render::color::Color": dict(type = FloatVectorProperty, presets=dict(subtype='COLOR', size=4)),
 
@@ -83,9 +95,19 @@ class ComponentsRegistry(PropertyGroup):
         "alloc::string::String": " ",
 
         "glam::Vec2": [0.0, 0.0],
+        "glam::DVec2":  [0.0, 0.0],
+        "glam::UVec2": [0, 0],
+
         "glam::Vec3": [0.0, 0.0, 0.0],
         "glam::Vec3A":[0.0, 0.0, 0.0],
+        "glam::UVec3": [0, 0, 0],
+
         "glam::Vec4": [0.0, 0.0, 0.0, 0.0], 
+        "glam::DVec4": [0.0, 0.0, 0.0, 0.0], 
+        "glam::UVec4": [0, 0, 0, 0], 
+
+        "glam::Quat":  [0.0, 0.0, 0.0, 0.0], 
+
         "bevy_render::color::Color": [1.0, 1.0, 0.0, 1.0],
 
 
