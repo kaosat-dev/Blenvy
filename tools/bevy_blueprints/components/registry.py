@@ -88,7 +88,7 @@ class ComponentsRegistry(PropertyGroup):
 
     # we load the json once, so we do not need to do it over & over again
     def load_type_infos(self):
-        self.type_infos = json.loads(self.raw_registry)
+        ComponentsRegistry.type_infos = json.loads(self.raw_registry)
 
 
     def register_component_ui(self, name, ui):

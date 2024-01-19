@@ -4,6 +4,8 @@ from bpy.props import (StringProperty, BoolProperty, FloatProperty, EnumProperty
 from bpy_types import (PropertyGroup)
 from bpy.types import (CollectionProperty)
 
+from .ui import property_group_value_to_custom_property_value
+
 
 class ComponentInfos(bpy.types.PropertyGroup):
     name : bpy.props.StringProperty(
@@ -114,7 +116,7 @@ def add_component_to_object(object, component_definition, value=None):
         short_name = component_definition.name
         data = json.loads(component_definition.data)
 
-      
+        """
         print("component infos", data, "long_name", component_definition.long_name)
         type_name = data["type"]
         default_value = data["value"]
@@ -147,14 +149,8 @@ def add_component_to_object(object, component_definition, value=None):
 
         if value is not None:
             object[component_definition.name] = value
-
-
         """
-        registry = bpy.context.window_manager.components_registry.registry 
-        registry = json.loads(registry)
-        registry_entry = registry[long_name] if long_name in registry else None
-        print("registry_entry", registry_entry)
-        """
+
 
         #object.components_meta.components.clear()
         components_in_object = object.components_meta.components
@@ -176,7 +172,19 @@ def add_component_to_object(object, component_definition, value=None):
 
         print("propertyGroup", propertyGroup, propertyGroup.field_names)
 
-        propertyGroup['0'] = value
+        registry = bpy.context.window_manager.components_registry
+        if registry.type_infos == None:
+            # TODO: throw error
+            print("registry type infos have not been loaded yet or ar missing !")
+        definition = registry.type_infos[long_name]
+        print("component definition", definition)
+        value = property_group_value_to_custom_property_value(propertyGroup, definition)
+        object[component_definition.name] = value
+
+
+        #propertyGroup['0'] = value
+
+      
 
         """
         object[component_definition.name] = 0.5

@@ -132,11 +132,15 @@ def process_properties(registry, definition, properties, update):
                 # FIXME: this is not right
                 #__annotations__ = __annotations__ | process_component(registry, original, update)
         # if there are sub fields, add an attribute "sub_fields" possibly a pointer property ? or add a standard field to the type , that is stored under "attributes" and not __annotations (better)
+        else: 
+            print("component not found in type_infos, generating placeholder")
+            __annotations__[property_name] = None
+
     if len(default_values.keys()) > 1:
         single_item = False
     return __annotations__
 
-def process_prefixItems(registry, definition, prefixItems, update):
+def process_prefixItems(registry, definition, prefixItems, update, name_override=None):
     value_types_defaults = registry.value_types_defaults 
     blender_property_mapping = registry.blender_property_mapping
     type_infos = registry.type_infos
@@ -160,6 +164,8 @@ def process_prefixItems(registry, definition, prefixItems, update):
             #print("ORIGINAL PROP", original)
 
             property_name = str(index)# we cheat a bit, property names are numbers here, as we do not have a real property name
+            if name_override != None:
+                property_name = name_override
             if is_value_type:
                 if original_type_name in blender_property_mapping:
                     blender_property_def = blender_property_mapping[original_type_name]
@@ -174,6 +180,9 @@ def process_prefixItems(registry, definition, prefixItems, update):
                     __annotations__[property_name] = blender_property
             else:
                 print("NOT A VALUE TYPE", original)
+        else: 
+            print("component not found in type_infos, generating placeholder")
+            #__annotations__[property_name] = None
 
     if len(default_values) == 1:
         default_value = default_values[0]
@@ -206,9 +215,10 @@ def process_enum(registry, definition, update):
         for item in values:
             #print("item", item)
             # TODO: refactor & reuse the rest of our code above 
-            labels.append(item["title"])
+            item_name = item["title"]
+            labels.append(item_name)
             if "prefixItems" in item:
-                additional_annotations = additional_annotations | process_prefixItems(registry, definition, item["prefixItems"], update)
+                additional_annotations = additional_annotations | process_prefixItems(registry, definition, item["prefixItems"], update, "variant_"+item_name)
 
         items = tuple((e, e, e) for e in labels)
         property_name = short_name
@@ -301,10 +311,47 @@ def property_group_from_infos(property_group_name, annotations, tupple_or_struct
     return property_group_class
 
 #converts the value of a property group(no matter its complexity) into a single custom property value
-def property_group_value_to_custom_property_value(property_group, definition, original_value):
+def property_group_value_to_custom_property_value(property_group, definition):
     component_name = definition["short_name"]
     type_info = definition["typeInfo"] if "typeInfo" in definition else None
     type_def = definition["type"] if "type" in definition else None
+
+    value = None
+    values = {}
+    for field_name in property_group.field_names:
+        #print("field name", field_name)
+        value = getattr(property_group,field_name)
+        try:
+            value = value[:]# in case it is one of the Blender internal array types
+        except Exception:
+            pass
+        print("field name", field_name, "value", value)
+        
+        values[field_name] = value
+
+    print("VALUES", values)
+    if type_info == "Struct":
+        value = values
+    if type_info == "TupleStruct":
+        if len(values.keys()) == 1:
+            first_key = list(values.keys())[0]
+            value = values[first_key]
+        else:
+            value = str(tuple(e for e in list(values.values())))
+    if type_info == "Enum":
+        if type_def == "object":
+            first_key = list(values.keys())[0]
+            selected_entry = values[first_key]
+            value = values["variant_" + selected_entry]
+            value = selected_entry+"("+ str(value) +")"
+        else:
+            first_key = list(values.keys())[0]
+            print("FURST KEY", first_key)
+            value = values[first_key]
+            #selected_entry["title"]+"("+ str(value) +")"
+
+    
+    return value
 
 
 #converts the value of a single custom property into a value (values) of a property group 
@@ -321,37 +368,9 @@ def dynamic_properties_ui():
 
     def update_component(self, context, field_name, definition, type_name):
         component_name = definition["short_name"]
-        type_info = definition["typeInfo"] if "typeInfo" in definition else None
-        type_def = definition["type"] if "type" in definition else None
-
-        print("update in component", component_name, type_name, type_info, field_name)#, type_def, type_info,self,self.name , "context",context.object.name, "attribute name", field_name)
-        print("definition", definition)
-
-        value = self[field_name]
-        if type_name == 'bool':
-            value = bool(value)
-        if type_name == 'enum':
-            print("self", self, "context", context, value)
-            value = definition["oneOf"][int(value)]
-
-        print("setting custom property", component_name, "field name", field_name, " value to", value)
-        
-        if type_info == "TupleStruct":
-            context.object[component_name] = value
-        if type_info == "Struct":
-            context.object[component_name][field_name] = value
-        if type_info == "Enum":
-            if type_def == "object":
-                index = int(field_name)
-                selected_entry = definition["oneOf"][index]
-                # TODO cast correctly ?
-                try:
-                    value = value.to_list()# if "to_list" in value else value
-                except Exception:
-                    pass
-                context.object[component_name] = selected_entry["title"]+"("+ str(value) +")"
-            else: 
-                context.object[component_name] = value
+        print("update in component", self, component_name, type_name, field_name)#, type_def, type_info,self,self.name , "context",context.object.name, "attribute name", field_name)
+        # we use our helper to set the values
+        context.object[component_name] = property_group_value_to_custom_property_value(self, definition)
 
     for component_name in type_infos:
         definition = type_infos[component_name]
@@ -368,7 +387,7 @@ def dynamic_properties_ui():
         has_prefixItems = len(prefixItems) > 0
         is_enum = type_info == "Enum"
 
-        if is_component and type_info != "Value" and type_info != "List": #and "bevy_bevy_blender_editor_basic_example" in component_name:
+        if is_component and type_info != "Value" and type_info != "List" and "bevy_bevy_blender_editor_basic_example" in component_name:
             print("entry", component_name, type_def, type_info)# definition)
 
             __annotations__ = {}
