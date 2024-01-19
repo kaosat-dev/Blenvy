@@ -12,12 +12,12 @@ class ComponentDefinitionsList(bpy.types.PropertyGroup):
         #print("add components to ui_list")
         items = []
         type_infos = context.window_manager.components_registry.type_infos
-        for index, name in enumerate(type_infos):
-            definition = type_infos[name]
-            short_name = definition["short_name"]
-            long_name = name
+        short_names = context.window_manager.components_registry.short_names_to_long_names
+        for short_name in sorted(short_names.keys()):
+            long_name = short_names[short_name]
+            definition = type_infos[long_name]
             if self.filter in short_name:
-                if not 'Handle' in short_name and short_name not in exclude: # FIXME: hard coded, seems wrong
+                if not 'Handle' in short_name and not "Cow" in short_name and not "AssetId" in short_name and short_name not in exclude: # FIXME: hard coded, seems wrong
                     items.append((long_name, short_name, long_name))
         return items
 
@@ -77,7 +77,7 @@ def process_properties(registry, definition, properties, update):
             is_value_type = original_type_name in value_types_defaults
             value = value_types_defaults[original_type_name] if is_value_type else None
             default_values[property_name] = value
-            print("ORIGINAL PROP for", property_name, original)
+            #print("ORIGINAL PROP for", property_name, original)
 
             if is_value_type:
                 if original_type_name in blender_property_mapping:
@@ -98,7 +98,7 @@ def process_properties(registry, definition, properties, update):
         # if there are sub fields, add an attribute "sub_fields" possibly a pointer property ? or add a standard field to the type , that is stored under "attributes" and not __annotations (better)
         else: 
             print("component not found in type_infos, generating placeholder")
-            __annotations__[property_name] = None
+            __annotations__[property_name] = StringProperty(default="N/A")
 
     if len(default_values.keys()) > 1:
         single_item = False
@@ -289,11 +289,9 @@ def property_group_value_to_custom_property_value(property_group, definition):
             value = value[:]# in case it is one of the Blender internal array types
         except Exception:
             pass
-        print("field name", field_name, "value", value)
-        
+        #print("field name", field_name, "value", value)
         values[field_name] = value
 
-    print("VALUES", values)
     if type_info == "Struct":
         value = values
     if type_info == "TupleStruct":
@@ -310,11 +308,11 @@ def property_group_value_to_custom_property_value(property_group, definition):
             value = selected_entry+"("+ str(value) +")"
         else:
             first_key = list(values.keys())[0]
-            print("FURST KEY", first_key)
             value = values[first_key]
             #selected_entry["title"]+"("+ str(value) +")"
 
-    
+    if len(values.keys()) == 0:
+        value = ''
     return value
 
 
@@ -351,7 +349,7 @@ def dynamic_properties_ui():
         has_prefixItems = len(prefixItems) > 0
         is_enum = type_info == "Enum"
 
-        if is_component and type_info != "Value" and type_info != "List" and "bevy_bevy_blender_editor_basic_example" in component_name:
+        if is_component and type_info != "Value" and type_info != "List": # and "bevy_bevy_blender_editor_basic_example" in component_name:
             print("entry", component_name, type_def, type_info)# definition)
 
             __annotations__ = {}
@@ -376,8 +374,8 @@ def dynamic_properties_ui():
             property_group_class = property_group_from_infos(property_group_name, __annotations__, tupple_or_struct, {})
             registry.register_component_ui(property_group_name, property_group_class)
         
-        # for practicality, we add an entry for a reverse lookup (short => long name, since we already have long_name => short_name with the keys of the raw registry)
-        registry.add_shortName_to_longName(short_name, component_name)
+            # for practicality, we add an entry for a reverse lookup (short => long name, since we already have long_name => short_name with the keys of the raw registry)
+            registry.add_shortName_to_longName(short_name, component_name)
 
 
 

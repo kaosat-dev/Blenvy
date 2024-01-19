@@ -19,7 +19,6 @@ from bpy.props import (StringProperty, EnumProperty, PointerProperty, FloatVecto
 
 from .blueprints import CreateBlueprintOperator
 from .components.operators import CopyComponentOperator, DeleteComponentOperator, PasteComponentOperator, AddComponentOperator
-from .components.definitions import (ComponentDefinition)
 from .components.registry import ComponentsRegistry
 from .components.metadata import (ComponentInfos, ComponentsMeta, ensure_metadata_for_all_objects)
 from .components.ui import (ComponentDefinitionsList, ClearComponentDefinitionsList, dynamic_properties_ui)
@@ -64,7 +63,6 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
             col = layout.column(align=True)
             row = col.row(align=True)
 
-            #row.operator(ClearComponentDefinitionsList.bl_idname, text="clear")
             row.prop(available_components, "list", text="Component")
             row.prop(available_components, "filter",text="Filter")
 
@@ -146,7 +144,6 @@ classes = [
     PasteComponentOperator,
     DeleteComponentOperator,
 
-    ComponentDefinition,
     ComponentDefinitionsList,
     ClearComponentDefinitionsList,
     

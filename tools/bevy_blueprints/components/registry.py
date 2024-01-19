@@ -40,6 +40,8 @@ class ComponentsRegistry(PropertyGroup):
 
         "glam::Vec2": {"type": FloatVectorProperty, "presets": dict(size = 2) },
         "glam::Vec3": {"type": FloatVectorProperty, "presets": {"size":3} },
+        "glam::Vec3A":{"type": FloatVectorProperty, "presets": {"size":3} },
+
         "bevy_render::color::Color": dict(type = FloatVectorProperty, presets=dict(subtype='COLOR', size=4)),
 
         "char": dict(type=StringProperty, presets=dict()),
@@ -80,6 +82,7 @@ class ComponentsRegistry(PropertyGroup):
 
         "glam::Vec2": [0.0, 0.0],
         "glam::Vec3": [0.0, 0.0, 0.0],
+        "glam::Vec3A":[0.0, 0.0, 0.0],
         "glam::Vec4": [0.0, 0.0, 0.0, 0.0], 
         "bevy_render::color::Color": [1.0, 1.0, 0.0, 1.0]
     }

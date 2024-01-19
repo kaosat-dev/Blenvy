@@ -125,6 +125,7 @@ def add_component_to_object(object, component_definition, value=None):
         component_meta.long_name = long_name
 
         # now we use our pre_generated property groups to set the initial value of our custom property
+        print("getting matching property group to set defaults")
         prop_group_name = short_name+"_ui"
         propertyGroup = getattr(object, prop_group_name)
 
