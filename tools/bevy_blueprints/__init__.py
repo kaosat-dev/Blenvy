@@ -90,22 +90,34 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
                 if component_meta == None: 
                     continue
 
-                #row.prop(object, "foo")
-
                 # we fetch the matching ui property group
                 propertyGroup = getattr(object, component_name+"_ui")
                 row.prop(component_meta, "enabled", text="")
                 row.label(text=component_name)
                 col = row.column(align=True)
-                for fname in propertyGroup.field_names:
-                    subrow = col.row()
-                    #print("drawing", fname)
-                    #if fname == "SoundMaterial":
-                    #    propertyGroup.SoundMaterial = "totot"
-                    display_name = fname if propertyGroup.tupple_or_struct == "struct" else ""
-                    subrow.prop(propertyGroup, fname, text=display_name)
-                    subrow.separator()
+                enum = getattr(propertyGroup, "with_enum")
 
+                # if it is an enum, the first field name is always the list of enum variants, the others are the variants
+                field_names = propertyGroup.field_names
+                if enum:
+                    subrow = col.row()
+                    display_name = field_names[0] if propertyGroup.tupple_or_struct == "struct" else ""
+                    subrow.prop(propertyGroup, field_names[0], text=display_name)
+                    subrow.separator()
+                    selection = getattr(propertyGroup, field_names[0])
+
+                    for fname in field_names[1:]:
+                        if fname == "variant_" + selection:
+                            subrow = col.row()
+                            display_name = fname if propertyGroup.tupple_or_struct == "struct" else ""
+                            subrow.prop(propertyGroup, fname, text=display_name)
+                            subrow.separator()
+                else: 
+                    for fname in field_names:
+                        subrow = col.row()
+                        display_name = fname if propertyGroup.tupple_or_struct == "struct" else ""
+                        subrow.prop(propertyGroup, fname, text=display_name)
+                        subrow.separator()
                 #op = row.operator(CopyComponentOperator.bl_idname, text="", icon="SETTINGS")
                 op = row.operator(DeleteComponentOperator.bl_idname, text="", icon="X")
                 op.target_property = component_name
@@ -133,10 +145,7 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
         else: 
             layout.label(text ="Select a collection/blueprint to edit it")
 
-
-
 #_register, _unregister = bpy.utils.register_classes_factory(classes)
-
 classes = [
     CreateBlueprintOperator,
     AddComponentOperator,  

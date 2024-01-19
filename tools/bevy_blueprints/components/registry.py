@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 
 from bpy_types import (PropertyGroup)
-from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorProperty, IntProperty, IntVectorProperty, EnumProperty, PointerProperty)
+from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorProperty, IntProperty, IntVectorProperty, EnumProperty, PointerProperty, CollectionProperty)
 
 # this is where we store the information for all available components
 class ComponentsRegistry(PropertyGroup):
@@ -48,6 +48,8 @@ class ComponentsRegistry(PropertyGroup):
         "str":  dict(type=StringProperty, presets=dict()),
         "alloc::string::String":  dict(type=StringProperty, presets=dict()),
         "enum":  dict(type=EnumProperty, presets=dict()), 
+
+        #"alloc::vec::Vec<alloc::string::String>": dict(type=CollectionProperty, presets=dict(type=PointerProperty(StringProperty))), #FIXME: we need more generic stuff
     }
 
 
@@ -84,7 +86,10 @@ class ComponentsRegistry(PropertyGroup):
         "glam::Vec3": [0.0, 0.0, 0.0],
         "glam::Vec3A":[0.0, 0.0, 0.0],
         "glam::Vec4": [0.0, 0.0, 0.0, 0.0], 
-        "bevy_render::color::Color": [1.0, 1.0, 0.0, 1.0]
+        "bevy_render::color::Color": [1.0, 1.0, 0.0, 1.0],
+
+
+        "alloc::vec::Vec<alloc::string::String>": [] # FIXME: NOT A FAN AT ALL
     }
 
     type_infos = None

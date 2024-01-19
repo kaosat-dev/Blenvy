@@ -19,20 +19,20 @@ UI:
     * if there is , insert metadata
     * otherwise, mark it in some way visually ?
 
-- [ ] for OBJECT enums: add two ui pieces
-    - [ ] one for selecting the TYPE to choose (ie normal enum)
-    - [ ] one for setting the VALUE inside that
+- [x] for OBJECT enums: add two ui pieces
+    - [x] one for selecting the TYPE to choose (ie normal enum)
+    - [x] one for setting the VALUE inside that
 
 
 - [ ] vecs => (not vec2, vec3 etc) more complex UI to add items in a list
 - [ ] find ways to "collapse" the different levels of nested data of structs/tupples into a single custom property (ideally on the fly, but we can do without)
 
 - [ ] for single tupple components that represent a single unit type, re_use the base type's UIPropertyGroup instead of creating specific ones (ie TuppleTestF32_ui...)
-- [ ] pre_generate default values/values for each main type
+- [x] pre_generate default values/values for each main type
 
 - [x] fix issues with vec2 etc not having the correct number of items
-- [ ] fix bad defaults in ui group
-- [ ] fix object enums handling on updates (??)
+- [x] fix bad defaults in ui group
+- [x] fix object enums handling on updates (??)
 - [x] fix issues with lambads in loops
 
 - [x] object enum should be <EntryName>(params)
@@ -47,6 +47,8 @@ UI:
 - [ ] deal correctly with complex types 
             CascadeShadowConfig: has an array/list
             ClusterConfig: one of the enum variants is an object
+- [ ] possibly allow Color to be an enum as it should be ?
+
 # Additional
 
     - update gltf_auto_export to take into account component metadata ? (might not be needed, except for "enabled" flag)

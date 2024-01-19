@@ -16,7 +16,9 @@ class ComponentDefinitionsList(bpy.types.PropertyGroup):
         for short_name in sorted(short_names.keys()):
             long_name = short_names[short_name]
             definition = type_infos[long_name]
-            if self.filter in short_name:
+            is_component = definition['isComponent']  if "isComponent" in definition else False
+
+            if self.filter in short_name and is_component:
                 if not 'Handle' in short_name and not "Cow" in short_name and not "AssetId" in short_name and short_name not in exclude: # FIXME: hard coded, seems wrong
                     items.append((long_name, short_name, long_name))
         return items
@@ -112,6 +114,7 @@ def process_prefixItems(registry, definition, prefixItems, update, name_override
 
     __annotations__ = {}
     tupple_or_struct = "tupple"
+    print("YOLO")
 
     default_values = []
     prefix_infos = []
@@ -134,6 +137,7 @@ def process_prefixItems(registry, definition, prefixItems, update, name_override
                 if original_type_name in blender_property_mapping:
                     blender_property_def = blender_property_mapping[original_type_name]
 
+                    print("HERE", short_name, original)
                     blender_property = blender_property_def["type"](
                         **blender_property_def["presets"],# we inject presets first
                         name = property_name, 
@@ -349,33 +353,38 @@ def dynamic_properties_ui():
         has_prefixItems = len(prefixItems) > 0
         is_enum = type_info == "Enum"
 
-        if is_component and type_info != "Value" and type_info != "List": # and "bevy_bevy_blender_editor_basic_example" in component_name:
-            print("entry", component_name, type_def, type_info)# definition)
+        #if is_component and type_info != "Value" and type_info != "List": # and "bevy_bevy_blender_editor_basic_example" in component_name:
+        print("entry", component_name, type_def, type_info)# definition)
 
-            __annotations__ = {}
-            single_item = True# single item is default, for tupple structs with single types, or structs with no params,
-            tupple_or_struct = None
-          
-            if has_properties:
-                tupple_or_struct = "struct"
-                __annotations__ = __annotations__ | process_properties(registry, definition, properties, update_component)
-           
-            if has_prefixItems:
-                tupple_or_struct = "tupple"
-                __annotations__ = __annotations__ | process_prefixItems(registry, definition, prefixItems, update_component)
-
-            if is_enum:
-                __annotations__ = __annotations__ | process_enum(registry, definition, update_component)
-                    
-            print("DONE: __annotations__", __annotations__)
-            print("")
-            property_group_name = short_name+"_ui"
-
-            property_group_class = property_group_from_infos(property_group_name, __annotations__, tupple_or_struct, {})
-            registry.register_component_ui(property_group_name, property_group_class)
+        __annotations__ = {}
+        tupple_or_struct = None
+        with_properties = False
+        with_items = False
+        with_enum = False
         
-            # for practicality, we add an entry for a reverse lookup (short => long name, since we already have long_name => short_name with the keys of the raw registry)
-            registry.add_shortName_to_longName(short_name, component_name)
+        if has_properties:
+            tupple_or_struct = "struct"
+            with_properties = True
+            __annotations__ = __annotations__ | process_properties(registry, definition, properties, update_component)
+        
+        if has_prefixItems:
+            tupple_or_struct = "tupple"
+            with_properties = True
+            __annotations__ = __annotations__ | process_prefixItems(registry, definition, prefixItems, update_component)
+
+        if is_enum:
+            with_enum = True
+            __annotations__ = __annotations__ | process_enum(registry, definition, update_component)
+                
+        print("DONE: __annotations__", __annotations__)
+        print("")
+        property_group_name = short_name+"_ui"
+
+        property_group_class = property_group_from_infos(property_group_name, __annotations__, tupple_or_struct, dict(with_properties = with_properties, with_items= with_items, with_enum= with_enum))
+        registry.register_component_ui(property_group_name, property_group_class)
+    
+        # for practicality, we add an entry for a reverse lookup (short => long name, since we already have long_name => short_name with the keys of the raw registry)
+        registry.add_shortName_to_longName(short_name, component_name)
 
 
 
