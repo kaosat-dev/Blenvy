@@ -44,3 +44,7 @@ UI:
     - when filling the list, use the long_name as index ie items.append((str(index), item.name, item.long_name)) => items.append((item.long_name, item.name, item.long_name))
 - [ ] when removing a component, reset the value of the attribute in the property group (or not ? could be a feature)
 - [ ] deal correctly with fields of types that are NOT in the schema.json (for ex PlayingAnimation in AnimationPlayer)
+
+# Additional
+
+    - update gltf_auto_export to take into account component metadata ? (might not be needed, except for "enabled" flag)

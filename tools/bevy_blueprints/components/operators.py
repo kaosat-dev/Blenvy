@@ -3,7 +3,7 @@ import json
 import bpy
 from bpy_types import Operator
 from bpy.props import (StringProperty, EnumProperty, PointerProperty, FloatVectorProperty)
-from .metadata import add_component_to_object, cleanup_invalid_metadata, find_component_definition_from_short_name, get_component_metadata_by_short_name
+from .metadata import add_component_to_object, cleanup_invalid_metadata, find_component_definition_from_short_name
 
 class AddComponentOperator(Operator):
     """Add component to blueprint"""
@@ -18,12 +18,12 @@ class AddComponentOperator(Operator):
     def execute(self, context):
         print("adding component to blueprint", self.component_type)
         object = context.object
-        component_definitions = context.window_manager.component_definitions
-        component_definition = component_definitions[int(self.component_type)]
-
+    
         has_component_type = self.component_type != ""
-        if has_component_type:
-            add_component_to_object(context.object, component_definition)
+        if has_component_type and object != None:
+            type_infos = context.window_manager.components_registry.type_infos
+            component_definition = type_infos[self.component_type]
+            add_component_to_object(object, component_definition)
 
         return {'FINISHED'}
 

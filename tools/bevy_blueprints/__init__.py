@@ -20,9 +20,9 @@ from bpy.props import (StringProperty, EnumProperty, PointerProperty, FloatVecto
 from .blueprints import CreateBlueprintOperator
 from .components.operators import CopyComponentOperator, DeleteComponentOperator, PasteComponentOperator, AddComponentOperator
 from .components.definitions import (ComponentDefinition)
-from .components.registry import ComponentsRegistry, read_components
+from .components.registry import ComponentsRegistry
 from .components.metadata import (ComponentInfos, ComponentsMeta, ensure_metadata_for_all_objects)
-from .components.ui import (ComponentDefinitionsList, ClearComponentDefinitionsList, dynamic_properties_ui, generate_enum_properties, unregister_stuff)
+from .components.ui import (ComponentDefinitionsList, ClearComponentDefinitionsList, dynamic_properties_ui)
 
 class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
     bl_idname = "BEVY_BLUEPRINTS_PT_TestPanel"
@@ -37,8 +37,6 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
         layout = self.layout
         object = context.object
         collection = context.collection
-        registry_raw = bpy.context.window_manager.components_registry.raw_registry
-        registry_raw = json.loads(registry_raw)
 
         # we get & load our component registry
         registry = bpy.context.window_manager.components_registry 
@@ -58,9 +56,7 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
             if child.name.endswith("_components"):
                 has_components = True
                 current_components_container= child
-
-
-
+        
         if collection is not None and has_components:
             layout.label(text="Edit blueprint: "+ collection.name)
         if object is not None:
@@ -92,12 +88,9 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
                 col = layout.column(align=True)
                 row = col.row(align=True)
 
-                component_value = object[component_name]
                 component_meta =  next(filter(lambda component: component["name"] == component_name, components_in_object), None)
                 if component_meta == None: 
                     continue
-                component_type = component_meta.type_name
-                component_enabled = component_meta.enabled
 
                 #row.prop(object, "foo")
 
@@ -115,28 +108,6 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
                     subrow.prop(propertyGroup, fname, text=display_name)
                     subrow.separator()
 
-                """# for testing, remove later
-                foo_data = json.loads(component_meta.data)
-                component_type = foo_data["type_info"]
-
-                row.prop(component_meta, "enabled", text="")
-                row.label(text=component_name)
-
-                if component_type == "string": 
-                    row.prop(object, '["'+ component_name +'"]', text="")#, placeholder="placeholder")
-                elif component_type == "Enum":
-                    #custom_enum = getattr(object, groupName)
-                    enum_name = "enum_"+component_name
-                    propertyGroup = getattr(object, enum_name)
-                    row.prop(propertyGroup, "enum", text="")
-
-                    # row.prop(object, enum_name, text="")
-                elif component_type == "object":
-                    row.label(text="------------")
-                else :
-                    row.prop(object, '["'+ component_name +'"]', text="")
-                """
-                    
                 #op = row.operator(CopyComponentOperator.bl_idname, text="", icon="SETTINGS")
                 op = row.operator(DeleteComponentOperator.bl_idname, text="", icon="X")
                 op.target_property = component_name
@@ -191,10 +162,8 @@ from bpy.app.handlers import persistent
 @persistent
 def post_load(file_name):
     print("post load", file_name)
-    read_components()
-    generate_enum_properties()
+    bpy.context.window_manager.components_registry.load_schema()
     ensure_metadata_for_all_objects()
-
     dynamic_properties_ui()
 
 @persistent
@@ -237,7 +206,5 @@ def unregister():
 
     bpy.app.handlers.load_post.remove(post_load)
     bpy.app.handlers.depsgraph_update_post.remove(init_data_if_needed)
-
-    #unregister_stuff()
 
     del bpy.types.Object.foo

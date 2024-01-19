@@ -1,10 +1,7 @@
 import functools
 import bpy
-import json
 from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorProperty, IntProperty, IntVectorProperty, EnumProperty, PointerProperty)
 from bpy_types import (PropertyGroup)
-from bpy.types import (CollectionProperty)
-from .definitions import ComponentDefinition
 
 # FIXME: not sure, hard coded exclude list, feels wrong
 exclude = ['Parent', 'Children']
@@ -12,12 +9,16 @@ exclude = ['Parent', 'Children']
 # this one is for UI only, and its inner list contains a useable list of shortnames of components
 class ComponentDefinitionsList(bpy.types.PropertyGroup):
     def add_component_to_ui_list(self, context):
+        #print("add components to ui_list")
         items = []
-        wm = context.window_manager
-        for index, item in enumerate(wm.component_definitions.values()):
-            if self.filter in item.name:
-                if not 'Handle' in item.name and item.name not in exclude: # FIXME: hard coded, seems wrong
-                    items.append((str(index), item.name, item.long_name))
+        type_infos = context.window_manager.components_registry.type_infos
+        for index, name in enumerate(type_infos):
+            definition = type_infos[name]
+            short_name = definition["short_name"]
+            long_name = name
+            if self.filter in short_name:
+                if not 'Handle' in short_name and short_name not in exclude: # FIXME: hard coded, seems wrong
+                    items.append((long_name, short_name, long_name))
         return items
 
     @classmethod
@@ -53,46 +54,9 @@ class ClearComponentDefinitionsList(bpy.types.Operator):
         return {'FINISHED'}
     
 
-bpy.samplePropertyGroups = {}
 
-def generate_enum_properties():
-    print("generate_enum_properties")
-    for component_definition in bpy.context.window_manager.component_definitions:
-        # FIXME: horrible, use registry instead of bpy.context.window_manager.component_definitions
-        data = json.loads(component_definition.data)
-        real_type = data["type_info"]
-        values = data["values"]
-        # print("component definition", component_definition.name, component_definition.type_name, real_type, values)
-        if real_type == "Enum":
-            items = tuple((e, e, "") for e in values)
-            type_name = "enum_"+component_definition.name
-          
-            #enumClass = type(type_name, (bpy.types.EnumProperty,), attributes)
-            groupName = type_name
-            attributes = {
-            }
-            attributes["enum"] = EnumProperty(
-                items=items,
-                name="enum"
-            )
-
-            propertyGroupClass = type(groupName, (PropertyGroup,), { '__annotations__': attributes })
-            # register our custom propertyGroup
-            bpy.utils.register_class(propertyGroupClass)
-            # add it to the needed type
-            setattr(bpy.types.Object, type_name, PointerProperty(type=propertyGroupClass))
-            bpy.samplePropertyGroups[type_name] = propertyGroupClass
-
-def unregister_stuff():
-    try:
-        for key, value in bpy.samplePropertyGroups.items():
-            delattr(bpy.types.Object, key)
-            bpy.utils.unregister_class(value)
-    except Exception:#UnboundLocalError:
-        pass
-
+# helper function that returns a lambda, used for the PropertyGroups update function
 def update_calback_helper(property_name, original_type_name, definition, update):
-    print("toto")
     return lambda self, context: update(self, context, property_name, definition, original_type_name)
 
 def process_properties(registry, definition, properties, update): 
@@ -411,5 +375,23 @@ def dynamic_properties_ui():
 
             property_group_class = property_group_from_infos(property_group_name, __annotations__, tupple_or_struct, {})
             registry.register_component_ui(property_group_name, property_group_class)
+        
+        # for practicality, we add an entry for a reverse lookup (short => long name, since we already have long_name => short_name with the keys of the raw registry)
+        registry.add_shortName_to_longName(short_name, component_name)
 
 
+
+        """
+        object[component_definition.name] = 0.5
+        property_manager = object.id_properties_ui(component_definition.name)
+        property_manager.update(min=-10, max=10, soft_min=-5, soft_max=5)
+
+        print("property_manager", property_manager)
+
+        object[component_definition.name] = [0.8,0.2,1.0]
+        property_manager = object.id_properties_ui(component_definition.name)
+        property_manager.update(subtype='COLOR')
+
+        #IDPropertyUIManager
+        #rna_ui = object[component_definition.name].get('_RNA_UI')
+        """
