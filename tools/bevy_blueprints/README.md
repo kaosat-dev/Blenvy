@@ -1,3 +1,30 @@
+# Bevy components
+
+This [Blender addon](./)  gives you an easy to use UI to add and configure your [Bevy]() components inside Blender !
+- **automatically generates a simple UI** to add/configure components based on a **schema** file (an export of all your Bevy components)
+- no more need to specify components manually using custom_properties, with error prone naming etc
+- adds the ability to **toggle components** on/off without having to remove the component from the object
+- adds **metadata** to objects containing information about what components it uses
+- can **convert** existing custom properties to "upgraded" ones containing metadata
+- uses Blender's **PropertyGroups** to generate custom UIs & connects those groups with the custom properties so that no matter the complexity
+of your Bevy components you get a nicely packed custom_property to use with ...
+- the ideal companion to the [gltf_auto_export]() to embed your Bevy components inside your gltf files
+
+## Installation: 
+
+* grab the latest release zip file
+
+![blender addon install](./docs/blender_addon_install_zip.png)
+
+
+* in Blender go to edit =>  preferences => install
+
+![blender addon install](./docs/blender_addon_install.png)
+
+* choose the path where ```gltf_auto_export.zip``` is stored
+
+![blender addon install](./docs/blender_addon_install2.png)
+
 
 
 
@@ -10,51 +37,10 @@ bpy.context.window_manager
 - perhaps directly export default values within the schema.json ?
         - for most types , it is straighforward, but others, not so muc: like the default color in Bevy , etc
 
-UI:
- - [x] filterable list of components to DISPLAY for selection : ComponentDefinitionsList
 
-- Filter out invalid objects for components that have no _components suffix
-- -[x] How to deal with pre-existing custom properties that have NO metadata
-    * if there is one without metadata: find if there is an available component with the same name & type ?
-    * if there is , insert metadata
-    * otherwise, mark it in some way visually ?
+## License
 
-- [x] for OBJECT enums: add two ui pieces
-    - [x] one for selecting the TYPE to choose (ie normal enum)
-    - [x] one for setting the VALUE inside that
+This tool, all its code, contents & assets is Dual-licensed under either of
 
-
-- [ ] vecs => (not vec2, vec3 etc) more complex UI to add items in a list
-- [ ] find ways to "collapse" the different levels of nested data of structs/tupples into a single custom property (ideally on the fly, but we can do without)
-
-- [ ] for single tupple components that represent a single unit type, re_use the base type's UIPropertyGroup instead of creating specific ones (ie TuppleTestF32_ui...)
-- [x] pre_generate default values/values for each main type
-
-- [x] fix issues with vec2 etc not having the correct number of items
-- [x] fix bad defaults in ui group
-- [x] fix object enums handling on updates (??)
-- [x] fix issues with lambads in loops
-
-- [x] object enum should be <EntryName>(params)
-    ie  *Collider:
-            * Cuboid(Vec3)
-            * Sphere(radius)
-- [ ] deal with enums variants that do not have any data: ex   {
-          "title": "Mesh"
-        }
-
-- [x] remove / change use of ComponentDefinitionsList 
-    - when filling the list, use the long_name as index ie items.append((str(index), item.name, item.long_name)) => items.append((item.long_name, item.name, item.long_name))
-- [ ] when removing a component, reset the value of the attribute in the property group (or not ? could be a feature)
-- [x] deal correctly with fields of types that are NOT in the schema.json (for ex PlayingAnimation in AnimationPlayer)
-- [ ] deal correctly with complex types 
-            CascadeShadowConfig: has an array/list
-            ClusterConfig: one of the enum variants is an object
-- [ ] possibly allow Color to be an enum as it should be ?
-- [x] for sub items , the update functions "Name" should be the one of the root object
-- [ ] fix copy & pasting
-    - it actually works, but the value of the custom property are not copied back to the UI, need to implement property_group_value_from_custom_property_value
-
-# Additional
-
-    - update gltf_auto_export to take into account component metadata ? (might not be needed, except for "enabled" flag)
+- Apache License, Version 2.0, ([LICENSE-APACHE](../LICENSE_APACHE.md) or https://www.apache.org/licenses/LICENSE-2.0)
+- MIT license ([LICENSE-MIT](../LICENSE_MIT.md) or https://opensource.org/licenses/MIT)

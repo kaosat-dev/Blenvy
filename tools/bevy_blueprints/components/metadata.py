@@ -4,7 +4,7 @@ from bpy.props import (StringProperty, BoolProperty, FloatProperty, EnumProperty
 from bpy_types import (PropertyGroup)
 from bpy.types import (CollectionProperty)
 
-from .ui import property_group_value_to_custom_property_value
+from .ui import property_group_value_from_custom_property_value, property_group_value_to_custom_property_value
 
 
 class ComponentInfos(bpy.types.PropertyGroup):
@@ -115,7 +115,6 @@ def add_component_to_object(object, component_definition, value=None):
 
         components_metadata = object.components_meta.components
         matching_component = next(filter(lambda component: component["name"] == short_name, components_metadata), None)
-        print("matching", matching_component)
         # matching component means we already have this type of component 
         if matching_component:
             return False
@@ -137,6 +136,9 @@ def add_component_to_object(object, component_definition, value=None):
         print("component definition", definition)
         if value == None:
             value = property_group_value_to_custom_property_value(propertyGroup, definition, registry)
-        else: # we have provided a value, that is a raw , custom property value
-            pass
+        else: # we have provided a value, that is a raw , custom property value, to set the value of the property group
+            object["__disable__update"] = True
+            property_group_value_from_custom_property_value(propertyGroup, definition, registry, value)
+            del object["__disable__update"]
+
         object[short_name] = value

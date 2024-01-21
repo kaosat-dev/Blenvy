@@ -109,9 +109,6 @@ class ComponentsRegistry(PropertyGroup):
         "glam::Quat":  [0.0, 0.0, 0.0, 0.0], 
 
         "bevy_render::color::Color": [1.0, 1.0, 0.0, 1.0],
-
-
-        "alloc::vec::Vec<alloc::string::String>": [] # FIXME: NOT A FAN AT ALL
     }
 
     type_infos = None

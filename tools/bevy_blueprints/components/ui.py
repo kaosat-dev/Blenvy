@@ -1,5 +1,6 @@
 import functools
 import bpy
+import json
 from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorProperty, IntProperty, IntVectorProperty, EnumProperty, PointerProperty, CollectionProperty)
 from bpy_types import (PropertyGroup)
 
@@ -98,12 +99,9 @@ def process_properties(registry, definition, properties, update, component_name_
                 print("NESTING")
                 print("NOT A VALUE TYPE", original)
                 original_long_name = original["title"]
-                sub_component_group = process_component(registry, original, update, {"nested": True, "type_name": original_long_name}, component_name_override=short_name)
+                (sub_component_group, _) = process_component(registry, original, update, {"nested": True, "type_name": original_long_name}, component_name_override=short_name)
                 # TODO: use lookup in registry, add it if necessary, or retrieve it if it already exists
                 __annotations__[property_name] = sub_component_group
-
-                # FIXME: this is not right
-                #__annotations__ = __annotations__ | process_component(registry, original, update)
         # if there are sub fields, add an attribute "sub_fields" possibly a pointer property ? or add a standard field to the type , that is stored under "attributes" and not __annotations (better)
         else: 
             print("component not found in type_infos, generating placeholder")
@@ -160,7 +158,7 @@ def process_prefixItems(registry, definition, prefixItems, update, name_override
                 print("NESTING")
                 print("NOT A VALUE TYPE", original)
                 original_long_name = original["title"]
-                sub_component_group = process_component(registry, original, update, {"nested": True, "type_name": original_long_name}, component_name_override=short_name)
+                (sub_component_group, _) = process_component(registry, original, update, {"nested": True, "type_name": original_long_name}, component_name_override=short_name)
                 # TODO: use lookup in registry, add it if necessary, or retrieve it if it already exists
                 __annotations__[property_name] = sub_component_group
 
@@ -236,6 +234,29 @@ def process_enum(registry, definition, update, component_name_override):
     
     return __annotations__
 
+def process_list(registry, definition, update, component_name_override=None):
+    print("WE GOT A LIST", definition)
+
+    value_types_defaults = registry.value_types_defaults 
+    blender_property_mapping = registry.blender_property_mapping
+    type_infos = registry.type_infos
+
+    short_name = definition["short_name"]
+
+    ref_name = definition["items"]["type"]["$ref"].replace("#/$defs/", "")
+    print("item type", ref_name)
+    original = type_infos[ref_name]
+
+    original_long_name = original["title"]
+    (list_content_group, list_content_group_class) = process_component(registry, original, update, {"nested": True, "type_name": original_long_name}, component_name_override=short_name)
+    item_collection = CollectionProperty(type=list_content_group_class)
+    __annotations__ = {
+        'list': item_collection,
+        'list_index': IntProperty(name = "Index for my_list", default = 0),
+        'item': list_content_group
+    }
+    return __annotations__
+
 def process_component(registry, definition, update, extras=None, component_name_override=None):
     component_name = definition['title']
     short_name = definition["short_name"]
@@ -247,6 +268,7 @@ def process_component(registry, definition, update, extras=None, component_name_
     has_properties = len(properties.keys()) > 0
     has_prefixItems = len(prefixItems) > 0
     is_enum = type_info == "Enum"
+    is_list = type_info == "List"
 
     print("processing", short_name, "component_name_override", component_name_override)
 
@@ -256,6 +278,7 @@ def process_component(registry, definition, update, extras=None, component_name_
     with_properties = False
     with_items = False
     with_enum = False
+    with_list = False
 
     print("entry", component_name, type_def, type_info)# definition)
 
@@ -273,6 +296,10 @@ def process_component(registry, definition, update, extras=None, component_name_
         __annotations__ = __annotations__ | process_enum(registry, definition, update, component_name_override)
         with_enum = True
 
+    if is_list:
+        __annotations__ = __annotations__ | process_list(registry, definition, update, component_name_override)
+        with_list= True
+
     field_names = []
     for a in __annotations__:
         field_names.append(a)
@@ -289,17 +316,17 @@ def process_component(registry, definition, update, extras=None, component_name_
         'tupple_or_struct': tupple_or_struct,
         'single_item': single_item, 
         'field_names': field_names, 
-        **dict(with_properties = with_properties, with_items= with_items, with_enum= with_enum),
+        **dict(with_properties = with_properties, with_items= with_items, with_enum= with_enum, with_list= with_list),
        
     }
-    property_group_pointer = property_group_from_infos(property_group_name, property_group_params)
+    (property_group_pointer, property_group_class) = property_group_from_infos(property_group_name, property_group_params)
     registry.register_component_ui(property_group_name, property_group_pointer)
     
 
     # for practicality, we add an entry for a reverse lookup (short => long name, since we already have long_name => short_name with the keys of the raw registry)
     registry.add_shortName_to_longName(short_name, component_name)
 
-    return property_group_pointer
+    return (property_group_pointer, property_group_class)
                 
 def property_group_from_infos(property_group_name, property_group_parameters):
     # print("creating property group", property_group_name)
@@ -309,12 +336,11 @@ def property_group_from_infos(property_group_name, property_group_parameters):
     property_group_pointer = PointerProperty(type=property_group_class)
     setattr(bpy.types.Object, property_group_name, property_group_pointer)
     
-    return property_group_pointer #property_group_class
+    return (property_group_pointer, property_group_class)
 
 #converts the value of a property group(no matter its complexity) into a single custom property value
 def property_group_value_to_custom_property_value(property_group, definition, registry):
     component_name = definition["short_name"]
-    print("titi", component_name)
     type_info = definition["typeInfo"] if "typeInfo" in definition else None
     type_def = definition["type"] if "type" in definition else None
 
@@ -323,6 +349,8 @@ def property_group_value_to_custom_property_value(property_group, definition, re
     for field_name in property_group.field_names:
         #print("field name", field_name)
         value = getattr(property_group,field_name)
+
+        # special handling for nested property groups
         is_property_group = isinstance(value, PropertyGroup)
         if is_property_group:
             print("nesting struct")
@@ -343,7 +371,6 @@ def property_group_value_to_custom_property_value(property_group, definition, re
     # now compute the compound values
     if type_info == "Struct":
         value = values        
-
     if type_info == "TupleStruct":
         if len(values.keys()) == 1:
             first_key = list(values.keys())[0]
@@ -378,8 +405,68 @@ def property_group_value_to_custom_property_value(property_group, definition, re
 
 
 #converts the value of a single custom property into a value (values) of a property group 
-def property_group_value_from_custom_property_value(property_group, custom_property_value):
-    pass
+def property_group_value_from_custom_property_value(property_group, definition, registry, custom_property_value):
+    print("setting property group value", property_group, definition, custom_property_value)
+    type_infos = registry.type_infos
+    try: # FIXME this is not normal , the values should be strings !
+        custom_property_value = custom_property_value.to_dict()
+    except Exception:
+        pass
+    #parsed_raw_fields = json.loads(custom_property_value)
+    # TODO: add disabling of property_group => custom property update call temporarly
+
+    def parse_field(item, property_group, definition):
+        type_info = definition["typeInfo"] if "typeInfo" in definition else None
+        type_def = definition["type"] if "type" in definition else None
+       
+        print("parsing", item, "type infos", type_info, "type_def", type_def)
+        if isinstance(item, dict):
+            for field_name in item:
+                #print("field name", field_name)
+                field_value = item[field_name]
+                # sub field
+                if isinstance(getattr(property_group, field_name), PropertyGroup):
+                    sub_prop_group = getattr(property_group, field_name)
+                    #print("this one is a complex field", field_name, item[field_name])
+                    sub_definition = definition["properties"][field_name]
+                    parse_field(item[field_name], sub_prop_group, sub_definition)
+                   
+                else:
+                    setattr(property_group, field_name, field_value)
+        else:
+            print("no dict")
+            ref_name = type_def["$ref"].replace("#/$defs/", "")
+            original = type_infos[ref_name]
+            print("original", original)
+            type_info = original["typeInfo"] if "typeInfo" in original else None
+            type_def = original["type"] if "type" in original else None
+
+            if type_info == "Enum":
+                print("enum")
+                if type_def == "string":
+                    setattr(property_group, '0', item)
+                elif type_def == "object":
+                    # TODO: use the same parsing logic as above: ie
+                    # - fetch the correct variant definition
+                    # - build up the fields from there
+                    print("field names", property_group.field_names)
+                    property_name = property_group.field_names[0]
+                    variants_real_names = list(map(lambda name: name.replace("variant_", ""), property_group.field_names))
+                    print("property_name", property_name, variants_real_names)
+                    chosen_variant_raw = item.split("(") # FIXME: not reliable, use some more robust logic
+                    chosen_variant = chosen_variant_raw[0]
+                    chosen_variant_value = chosen_variant_raw[2].replace("))", "")
+                    print("chosen variant", chosen_variant, "value", chosen_variant_value)
+
+                    setattr(property_group, property_name, chosen_variant)
+                    print("definition", definition)
+
+                    #setattr(property_group, variant_name, valo)
+            else: 
+                setattr(property_group, '0', item) 
+    print('parsed_raw_fields', custom_property_value)
+    parse_field(custom_property_value, property_group, definition)
+   
 
 def dynamic_properties_ui():
     registry = bpy.context.window_manager.components_registry
@@ -389,6 +476,11 @@ def dynamic_properties_ui():
     type_infos = registry.type_infos
 
     def update_component(self, context, definition, component_name_override=None):
+        current_object = bpy.context.object
+        update_disabled = current_object["__disable__update"] if "__disable__update" in current_object else False
+        if update_disabled:
+            return
+
         component_name = definition["short_name"]
         print("update in component", self, component_name, component_name_override)#, type_def, type_info,self,self.name , "context",context.object.name, "attribute name", field_name)
         if component_name_override != None:
@@ -397,7 +489,7 @@ def dynamic_properties_ui():
             definition = registry.type_infos[long_name]
             short_name = definition["short_name"]
             # self = registry.component_uis[short_name+"_ui"]
-            self = getattr(bpy.context.object, component_name+"_ui") # FIXME: yikes, I REALLY dislike this ! using the context out of left field
+            self = getattr(current_object, component_name+"_ui") # FIXME: yikes, I REALLY dislike this ! using the context out of left field
             # then again, trying to use the data from registry.component_uis does not seem to work
 
             print("using override", component_name)
@@ -408,6 +500,8 @@ def dynamic_properties_ui():
     for component_name in type_infos:
         definition = type_infos[component_name]
         process_component(registry, definition, update_component)
+
+
         """
         object[component_definition.name] = 0.5
         property_manager = object.id_properties_ui(component_definition.name)
