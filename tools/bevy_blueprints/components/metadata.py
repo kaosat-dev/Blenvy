@@ -135,5 +135,8 @@ def add_component_to_object(object, component_definition, value=None):
             print("registry type infos have not been loaded yet or ar missing !")
         definition = registry.type_infos[long_name]
         print("component definition", definition)
-        value = property_group_value_to_custom_property_value(propertyGroup, definition, registry)
+        if value == None:
+            value = property_group_value_to_custom_property_value(propertyGroup, definition, registry)
+        else: # we have provided a value, that is a raw , custom property value
+            pass
         object[short_name] = value

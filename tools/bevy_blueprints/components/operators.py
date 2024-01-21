@@ -59,7 +59,9 @@ class PasteComponentOperator(Operator):
         source_object = bpy.data.objects[source_object_name]
         component_name = context.window_manager.copied_source_component_name
         component_value = source_object[component_name]
-        print("pasting component to object", component_name, component_value)
+        print(" PASTE source", context.window_manager.copied_source_object, context.window_manager.copied_source_component_name)
+
+        print("pasting component to object: component name:", str(component_name), "component value:" + str(component_value))
         print (context.object)
         component_definition = find_component_definition_from_short_name(component_name)
         add_component_to_object(context.object, component_definition, value = component_value)

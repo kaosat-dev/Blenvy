@@ -32,6 +32,51 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
     bl_context = "objectmode"
 
 
+    def draw_propertyGroup(self, propertyGroup, col):
+        enum = getattr(propertyGroup, "with_enum")
+        # if it is an enum, the first field name is always the list of enum variants, the others are the variants
+        field_names = propertyGroup.field_names
+
+        if enum:
+            subrow = col.row()
+            display_name = field_names[0] if propertyGroup.tupple_or_struct == "struct" else ""
+            subrow.prop(propertyGroup, field_names[0], text=display_name)
+            subrow.separator()
+            selection = getattr(propertyGroup, field_names[0])
+
+            for fname in field_names[1:]:
+                if fname == "variant_" + selection:
+                    subrow = col.row()
+                    display_name = fname if propertyGroup.tupple_or_struct == "struct" else ""
+
+                    nestedPropertyGroup = getattr(propertyGroup, fname)
+                    nested = getattr(nestedPropertyGroup, "nested", False)
+                    if not nested:
+                        subrow.prop(propertyGroup, fname, text=display_name)
+                        subrow.separator()
+                    else:
+                        #print("deal with sub fields", nestedPropertyGroup.field_names)
+                        for subfname in nestedPropertyGroup.field_names:
+                            subrow = col.row()
+                            display_name = subfname if nestedPropertyGroup.tupple_or_struct == "struct" else ""
+                            subrow.prop(nestedPropertyGroup, subfname, text=display_name)
+                            subrow.separator()
+        else: 
+            for fname in field_names:
+                subrow = col.row()
+
+                nestedPropertyGroup = getattr(propertyGroup, fname)
+                nested = getattr(nestedPropertyGroup, "nested", False)
+                if nested:
+                    col.separator()
+                    col.label(text=fname) #  this is the name of the field/sub field
+                    col.separator()
+                    self.draw_propertyGroup(nestedPropertyGroup, col.row())
+                else:
+                    display_name = fname if propertyGroup.tupple_or_struct == "struct" else ""
+                    subrow.prop(propertyGroup, fname, text=display_name)
+                    subrow.separator()
+
     def draw(self, context):
         layout = self.layout
         object = context.object
@@ -95,40 +140,9 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
                 row.prop(component_meta, "enabled", text="")
                 row.label(text=component_name)
                 col = row.column(align=True)
-                enum = getattr(propertyGroup, "with_enum")
 
-                # if it is an enum, the first field name is always the list of enum variants, the others are the variants
-                field_names = propertyGroup.field_names
-                if enum:
-                    subrow = col.row()
-                    display_name = field_names[0] if propertyGroup.tupple_or_struct == "struct" else ""
-                    subrow.prop(propertyGroup, field_names[0], text=display_name)
-                    subrow.separator()
-                    selection = getattr(propertyGroup, field_names[0])
+                self.draw_propertyGroup(propertyGroup, col)
 
-                    for fname in field_names[1:]:
-                        if fname == "variant_" + selection:
-                            subrow = col.row()
-                            display_name = fname if propertyGroup.tupple_or_struct == "struct" else ""
-
-                            nestedPropertyGroup = getattr(propertyGroup, fname)
-                            nested = getattr(nestedPropertyGroup, "nested", False)
-                            if not nested:
-                                subrow.prop(propertyGroup, fname, text=display_name)
-                                subrow.separator()
-                            else:
-                                #print("deal with sub fields", nestedPropertyGroup.field_names)
-                                for subfname in nestedPropertyGroup.field_names:
-                                    subrow = col.row()
-                                    display_name = subfname if nestedPropertyGroup.tupple_or_struct == "struct" else ""
-                                    subrow.prop(nestedPropertyGroup, subfname, text=display_name)
-                                    subrow.separator()
-                else: 
-                    for fname in field_names:
-                        subrow = col.row()
-                        display_name = fname if propertyGroup.tupple_or_struct == "struct" else ""
-                        subrow.prop(propertyGroup, fname, text=display_name)
-                        subrow.separator()
                 #op = row.operator(CopyComponentOperator.bl_idname, text="", icon="SETTINGS")
                 op = row.operator(DeleteComponentOperator.bl_idname, text="", icon="X")
                 op.target_property = component_name

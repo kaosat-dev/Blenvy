@@ -65,6 +65,7 @@ def process_properties(registry, definition, properties, update, component_name_
     value_types_defaults = registry.value_types_defaults 
     blender_property_mapping = registry.blender_property_mapping
     type_infos = registry.type_infos
+    short_name = definition["short_name"]
 
     __annotations__ = {}
     default_values = {}
@@ -94,7 +95,13 @@ def process_properties(registry, definition, properties, update, component_name_
                     )
                     __annotations__[property_name] = blender_property
             else:
+                print("NESTING")
                 print("NOT A VALUE TYPE", original)
+                original_long_name = original["title"]
+                sub_component_group = process_component(registry, original, update, {"nested": True, "type_name": original_long_name}, component_name_override=short_name)
+                # TODO: use lookup in registry, add it if necessary, or retrieve it if it already exists
+                __annotations__[property_name] = sub_component_group
+
                 # FIXME: this is not right
                 #__annotations__ = __annotations__ | process_component(registry, original, update)
         # if there are sub fields, add an attribute "sub_fields" possibly a pointer property ? or add a standard field to the type , that is stored under "attributes" and not __annotations (better)
@@ -153,7 +160,6 @@ def process_prefixItems(registry, definition, prefixItems, update, name_override
                 print("NESTING")
                 print("NOT A VALUE TYPE", original)
                 original_long_name = original["title"]
-                original_short_name = original["short_name"]
                 sub_component_group = process_component(registry, original, update, {"nested": True, "type_name": original_long_name}, component_name_override=short_name)
                 # TODO: use lookup in registry, add it if necessary, or retrieve it if it already exists
                 __annotations__[property_name] = sub_component_group
@@ -258,12 +264,10 @@ def process_component(registry, definition, update, extras=None, component_name_
         with_properties = True
         tupple_or_struct = "struct"
 
-
     if has_prefixItems:
         __annotations__ = __annotations__ | process_prefixItems(registry, definition, prefixItems, update, None, component_name_override)
         with_items = True
         tupple_or_struct = "tupple"
-
 
     if is_enum:
         __annotations__ = __annotations__ | process_enum(registry, definition, update, component_name_override)
@@ -319,6 +323,15 @@ def property_group_value_to_custom_property_value(property_group, definition, re
     for field_name in property_group.field_names:
         #print("field name", field_name)
         value = getattr(property_group,field_name)
+        is_property_group = isinstance(value, PropertyGroup)
+        if is_property_group:
+            print("nesting struct")
+            prop_group_name = getattr(value, "type_name")
+            sub_definition = registry.type_infos[prop_group_name]
+            value = property_group_value_to_custom_property_value(value, sub_definition, registry)
+            print("sub struct value", value)
+
+
         try:
             value = value[:]# in case it is one of the Blender internal array types
         except Exception:
@@ -329,7 +342,8 @@ def property_group_value_to_custom_property_value(property_group, definition, re
     print("computing custom property", component_name, type_info, type_def)
     # now compute the compound values
     if type_info == "Struct":
-        value = values
+        value = values        
+
     if type_info == "TupleStruct":
         if len(values.keys()) == 1:
             first_key = list(values.keys())[0]
@@ -364,7 +378,7 @@ def property_group_value_to_custom_property_value(property_group, definition, re
 
 
 #converts the value of a single custom property into a value (values) of a property group 
-def property_group_value_from_custom_property_value():
+def property_group_value_from_custom_property_value(property_group, custom_property_value):
     pass
 
 def dynamic_properties_ui():

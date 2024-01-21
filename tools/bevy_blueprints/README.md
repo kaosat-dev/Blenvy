@@ -46,12 +46,14 @@ UI:
 - [x] remove / change use of ComponentDefinitionsList 
     - when filling the list, use the long_name as index ie items.append((str(index), item.name, item.long_name)) => items.append((item.long_name, item.name, item.long_name))
 - [ ] when removing a component, reset the value of the attribute in the property group (or not ? could be a feature)
-- [ ] deal correctly with fields of types that are NOT in the schema.json (for ex PlayingAnimation in AnimationPlayer)
+- [x] deal correctly with fields of types that are NOT in the schema.json (for ex PlayingAnimation in AnimationPlayer)
 - [ ] deal correctly with complex types 
             CascadeShadowConfig: has an array/list
             ClusterConfig: one of the enum variants is an object
 - [ ] possibly allow Color to be an enum as it should be ?
-- [ ] for sub items , the update functions "Name" should be the one of the root object
+- [x] for sub items , the update functions "Name" should be the one of the root object
+- [ ] fix copy & pasting
+    - it actually works, but the value of the custom property are not copied back to the UI, need to implement property_group_value_from_custom_property_value
 
 # Additional
 
