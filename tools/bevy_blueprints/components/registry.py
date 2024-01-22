@@ -115,6 +115,15 @@ class ComponentsRegistry(PropertyGroup):
     component_uis = {}
     short_names_to_long_names = {}
 
+
+    @classmethod
+    def register(cls):
+        bpy.types.WindowManager.components_registry = PointerProperty(type=ComponentsRegistry)
+
+    @classmethod
+    def unregister(cls):
+        del bpy.types.WindowManager.components_registry
+
     def load_schema(self):
         file_path = bpy.data.filepath
         # Get the folder
@@ -125,7 +134,6 @@ class ComponentsRegistry(PropertyGroup):
         with open(path) as f: 
             data = json.load(f) 
             defs = data["$defs"]
-
             self.registry = json.dumps(defs) # FIXME:eeek !
 
     # we load the json once, so we do not need to do it over & over again
@@ -139,9 +147,3 @@ class ComponentsRegistry(PropertyGroup):
     #for practicality, we add an entry for a reverse lookup (short => long name, since we already have long_name => short_name with the keys of the raw registry)
     def add_shortName_to_longName(self, short_name, long_name):
         self.short_names_to_long_names[short_name] = long_name
-
-    def __init__(self) -> None:
-        super().__init__()
-        print("init registry")
-
-

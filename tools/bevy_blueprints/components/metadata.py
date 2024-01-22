@@ -47,6 +47,14 @@ class ComponentsMeta(PropertyGroup):
     )
     components: bpy.props.CollectionProperty(type = ComponentInfos)  
 
+    @classmethod
+    def register(cls):
+        bpy.types.Object.components_meta = PointerProperty(type=ComponentsMeta)
+
+    @classmethod
+    def unregister(cls):
+        del bpy.types.Object.components_meta
+
 # We need a collection property of components PER object
 def get_component_metadata_by_short_name(object, short_name):
     if not "components_meta" in object:

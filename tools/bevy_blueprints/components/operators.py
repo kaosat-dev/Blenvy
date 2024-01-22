@@ -44,6 +44,17 @@ class CopyComponentOperator(Operator):
         description="name of the object to copy the component from",
     )
 
+    @classmethod
+    def register(cls):
+        bpy.types.WindowManager.copied_source_component_name = StringProperty()
+        bpy.types.WindowManager.copied_source_object = StringProperty()
+
+    @classmethod
+    def unregister(cls):
+        del bpy.types.WindowManager.copied_source_component_name
+        del bpy.types.WindowManager.copied_source_object
+      
+
     def execute(self, context):
         if self.source_component_name != '' and self.source_object_name != "":
             context.window_manager.copied_source_component_name = self.source_component_name

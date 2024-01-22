@@ -14,87 +14,15 @@ import os
 import bpy
 import json
 
-from bpy_types import Operator, UIList
 from bpy.props import (StringProperty, EnumProperty, PointerProperty, FloatVectorProperty)
 
 from .blueprints import CreateBlueprintOperator
 from .components.operators import CopyComponentOperator, DeleteComponentOperator, PasteComponentOperator, AddComponentOperator
 from .components.registry import ComponentsRegistry
 from .components.metadata import (ComponentInfos, ComponentsMeta, ensure_metadata_for_all_objects)
-from .components.ui import (ComponentDefinitionsList, ClearComponentDefinitionsList, dynamic_properties_ui)
-
-
-class MY_UL_List(UIList): 
-    """Demo UIList.""" 
-    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index): 
-        # We could write some code to decide which icon to use here...
-        custom_icon = 'OBJECT_DATAMODE' # Make sure your code supports all 3 layout types 
-        if self.layout_type in {'DEFAULT', 'COMPACT'}: 
-            print("compact")
-            #layout.label(text=item.name, icon = custom_icon) 
-            layout.prop(item, "name", text="")
-
-            #propertyGroup = getattr(object, item.component_name+"_ui")
-
-        elif self.layout_type in {'GRID'}: 
-            print("grid")
-            layout.alignment = 'CENTER' 
-            layout.label(text="", icon = custom_icon)
-
-            
-
-
-class Generic_LIST_OT_AddItem(Operator): 
-    """Add a new item to the list.""" 
-    bl_idname = "generic_list.add_item" 
-    bl_label = "Add a new item" 
-
-
-    property_group_name: StringProperty(
-        name="property group name",
-        description="",
-    )
-
-    def execute(self, context): 
-
-        print("add to list", context.object, self.property_group_name)
-        #context.scene.my_list.add() 
-        my_list_container = getattr(context.object, self.property_group_name)
-        my_list = getattr(my_list_container, "list")
-        print("my list", my_list)
-        item = my_list.add()
-        item.name = ""
-        item.component_name = "foo"
-        print("added item", item.field_names)
-        return{'FINISHED'}
-    
-
-class Generic_LIST_OT_RemoveItem(Operator): 
-    """Remove an item to the list.""" 
-    bl_idname = "generic_list.remove_item" 
-    bl_label = "Remove a new item" 
-
-
-    property_group_name: StringProperty(
-        name="property group name",
-        description="",
-    )
-
-    def execute(self, context): 
-        print("remove from list", context.object, self.property_group_name)
-       
-        return{'FINISHED'}
-    
-    def execute(self, context): 
-        print("remove from list", context.object, self.property_group_name)
-
-        my_list_container = getattr(context.object, self.property_group_name)
-        my_list = getattr(my_list_container, "list")
-        index = getattr(my_list_container, "list_index")
-        my_list.remove(index)
-        my_list_container.list_index = min(max(0, index - 1), len(my_list) - 1) 
-        return{'FINISHED'}
-
+from .components.ui import (dynamic_properties_ui)
+from .components.lists import Generic_LIST_OT_AddItem, Generic_LIST_OT_RemoveItem, GENERIC_UL_List
+from .components.definitions_list import (ComponentDefinitionsList, ClearComponentDefinitionsList)
 
 def draw_propertyGroup( propertyGroup, col):
     is_enum = getattr(propertyGroup, "with_enum")
@@ -137,7 +65,7 @@ def draw_propertyGroup( propertyGroup, col):
         #    print("aaa", item.field_names)
         #    col.prop(item, "name")
         row = col.row()
-        row.template_list("MY_UL_List", "The_List", propertyGroup, "list", propertyGroup, "list_index")
+        row.template_list("GENERIC_UL_List", "The_List", propertyGroup, "list", propertyGroup, "list_index")
         
         row = col.column()
         op = row.operator('generic_list.add_item', text='+')
@@ -201,6 +129,7 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
         
         if collection is not None and has_components:
             layout.label(text="Edit blueprint: "+ collection.name)
+        
         if object is not None:
             
             col = layout.column(align=True)
@@ -238,7 +167,6 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
                 row.prop(component_meta, "enabled", text="")
                 row.label(text=component_name)
                 col = row.column(align=True)
-                print("component name", component_name)
                 draw_propertyGroup(propertyGroup, col)
 
                 #op = row.operator(CopyComponentOperator.bl_idname, text="", icon="SETTINGS")
@@ -249,22 +177,6 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
                 op.source_component_name = component_name
                 op.source_object_name = object.name
 
-            #print("TOOOO", registry.type_infos, registry.component_uis)
-            """if registry.component_uis is not None:
-                for component_name in sorted(registry.component_uis):
-
-                    row = layout.row(align=True)
-                    propertyGroup = getattr(object, component_name)
-                    row.label(text=component_name)
-                    col = row.column(align=True)
-                    for fname in propertyGroup.field_names:
-                        subrow = col.row()
-                    
-                        display_name = fname if propertyGroup.tupple_or_struct == "struct" else ""
-                        subrow.prop(propertyGroup, fname, text=display_name)
-                        subrow.separator()
-                
-                """
         else: 
             layout.label(text ="Select a collection/blueprint to edit it")
 
@@ -284,6 +196,10 @@ classes = [
     ComponentsRegistry,
 
     BEVY_BLUEPRINTS_PT_TestPanel,
+
+    GENERIC_UL_List,
+    Generic_LIST_OT_AddItem,
+    Generic_LIST_OT_RemoveItem
 ]
 
 from bpy.app.handlers import persistent
@@ -302,41 +218,21 @@ def init_data_if_needed(self):
 
 def register():
     print("register")
-
     for cls in classes:
         bpy.utils.register_class(cls)
-
     bpy.types.WindowManager.blueprint_name = StringProperty()
-    bpy.types.Object.components_meta = PointerProperty(type=ComponentsMeta)
-    bpy.types.WindowManager.components_registry = PointerProperty(type=ComponentsRegistry)
-
-    bpy.types.WindowManager.copied_source_component_name = StringProperty()
-    bpy.types.WindowManager.copied_source_object = StringProperty()
 
     bpy.app.handlers.load_post.append(post_load)
     bpy.app.handlers.depsgraph_update_post.append(init_data_if_needed)
 
 
-    # just a test , remove later
-    bpy.types.Object.foo = bpy.props.FloatVectorProperty(**{"description": "what the hell", "size":2})
-    bpy.utils.register_class(MY_UL_List)
-
-    bpy.utils.register_class(Generic_LIST_OT_AddItem)
-    bpy.utils.register_class(Generic_LIST_OT_RemoveItem)
-
 def unregister():
     print("unregister")
     for cls in classes:
         bpy.utils.unregister_class(cls)
-
     del bpy.types.WindowManager.blueprint_name
-    del bpy.types.Object.components_meta
-    del bpy.types.WindowManager.components_registry
-
-    del bpy.types.WindowManager.copied_source_component_name
-    del bpy.types.WindowManager.copied_source_object
+    
 
     bpy.app.handlers.load_post.remove(post_load)
     bpy.app.handlers.depsgraph_update_post.remove(init_data_if_needed)
 
-    del bpy.types.Object.foo
