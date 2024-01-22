@@ -108,56 +108,6 @@ def process_prefixItems(registry, definition, prefixItems, update, name_override
                 (sub_component_group, _) = process_component(registry, original, update, {"nested": True, "type_name": original_long_name}, component_name_override=short_name)
                 # TODO: use lookup in registry, add it if necessary, or retrieve it if it already exists
                 __annotations__[property_name] = sub_component_group
-
-        elif ref_name not in type_infos and ref_name.startswith("alloc::vec::Vec<"):
-            ref_name = ref_name.replace("alloc::vec::Vec<", "").replace(">", "")
-            short_name = ref_name.split(":")[-1]
-            print("new ref", ref_name, "short_name", short_name)
-            original = {
-                "isComponent": False,
-                "isResource": False,
-                "items": {
-                    "type": {
-                    "$ref": "#/$defs/" + ref_name
-                    }
-                },
-                "short_name": "Vec<"+short_name+">",
-                "title": ref_name,
-                "type": "array",
-                "typeInfo": "List"
-            }
-            original_type_name = original["title"]
-
-            is_value_type = original_type_name in value_types_defaults
-
-            value = value_types_defaults[original_type_name] if is_value_type else None
-            default_values.append(value)
-            prefix_infos.append(original)
-
-
-            if is_value_type:
-                if original_type_name in blender_property_mapping:
-                    blender_property_def = blender_property_mapping[original_type_name]
-
-                    print("HERE", short_name, original)
-                    blender_property = blender_property_def["type"](
-                        **blender_property_def["presets"],# we inject presets first
-                        name = property_name, 
-                        default=value,
-                        update= update_calback_helper(definition, update, component_name_override)
-                    )
-                  
-                    __annotations__[property_name] = blender_property
-            else:
-                print("NESTING")
-                print("NOT A VALUE TYPE", original)
-                original_long_name = original["title"]
-                (sub_component_group, _) = process_component(registry, original, update, {"nested": True, "type_name": original_long_name}, component_name_override=short_name)
-                # TODO: use lookup in registry, add it if necessary, or retrieve it if it already exists
-                __annotations__[property_name] = sub_component_group
-
-
-
         else: 
             print("component not found in type_infos, generating placeholder")
             print("ref_name", ref_name)
@@ -252,18 +202,10 @@ def process_list(registry, definition, update, component_name_override=None):
     def update_test(self, context):
         print("AAAAHHH UPDATE")
 
-    blender_property_def = blender_property_mapping["u8"]
 
-    int_thingy =  blender_property_def["type"](
-                        **blender_property_def["presets"],# we inject presets first
-                        name = "list_index", 
-                        default=0,
-                        update= update_test
-                    )
-        
     __annotations__ = {
         "list": item_collection,
-        "list_index": int_thingy, #IntProperty(name = "Index for my_list", default = 0,  update=update_test),
+        "list_index": IntProperty(name = "Index for my_list", default = 0,  update=update_test),
         "item": list_content_group
     }
 
@@ -362,31 +304,37 @@ def property_group_value_to_custom_property_value(property_group, definition, re
 
     value = None
     values = {}
-    for field_name in property_group.field_names:
-        #print("field name", field_name)
-        value = getattr(property_group,field_name)
+    print("type_info", type_info, "def", type_def)
+    print("property_group", property_group, "definition", definition)
+    if type_info == "Value":
+        print("property_group", property_group, "definition", definition)
+    else: 
+        for field_name in property_group.field_names:
+            #print("field name", field_name)
+            value = getattr(property_group,field_name)
 
-        # special handling for nested property groups
-        is_property_group = isinstance(value, PropertyGroup)
-        if is_property_group:
-            print("nesting struct")
-            prop_group_name = getattr(value, "type_name")
-            sub_definition = registry.type_infos[prop_group_name]
-            value = property_group_value_to_custom_property_value(value, sub_definition, registry)
-            print("sub struct value", value)
+            # special handling for nested property groups
+            is_property_group = isinstance(value, PropertyGroup)
+            if is_property_group:
+                print("nesting struct")
+                prop_group_name = getattr(value, "type_name")
+                sub_definition = registry.type_infos[prop_group_name]
+                value = property_group_value_to_custom_property_value(value, sub_definition, registry)
+                print("sub struct value", value)
 
+            try:
+                value = value[:]# in case it is one of the Blender internal array types
+            except Exception:
+                pass
+            print("field name", field_name, "value", value)
+            values[field_name] = value
 
-        try:
-            value = value[:]# in case it is one of the Blender internal array types
-        except Exception:
-            pass
-        print("field name", field_name, "value", value)
-        values[field_name] = value
-
-    print("computing custom property", component_name, type_info, type_def)
+        print("computing custom property", component_name, type_info, type_def)
     # now compute the compound values
     if type_info == "Struct":
-        value = values        
+        value = values       
+    if type_info == "Tuple": 
+        value = tuple(e for e in list(values.values()))
     if type_info == "TupleStruct":
         if len(values.keys()) == 1:
             first_key = list(values.keys())[0]
@@ -416,7 +364,17 @@ def property_group_value_to_custom_property_value(property_group, definition, re
             value = values[first_key]
             #selected_entry["title"]+"("+ str(value) +")"
     if type_info == "List":
-        print("WE HAVE A LIST")
+        print("WE HAVE A LIST", values)
+        value = []
+        for val in values["list"]:
+            #print("val", val, val.type_name, val.field_names)
+            prop_group_name = getattr(val, "type_name")
+            sub_definition = registry.type_infos[prop_group_name]
+            val = property_group_value_to_custom_property_value(val, sub_definition, registry)
+            #print("real val", val)
+            value.append(val)
+        value = str(value)
+
 
     if len(values.keys()) == 0:
         value = ''

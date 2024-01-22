@@ -9,8 +9,8 @@ class GENERIC_UL_List(UIList):
         if self.layout_type in {'DEFAULT', 'COMPACT'}: 
             #print("compact")
             #layout.label(text=item.name, icon = custom_icon) 
-            layout.prop(item, "name", text="")
-
+            #layout.prop(item, "name", text="")
+            pass
             #propertyGroup = getattr(object, item.component_name+"_ui")
 
         elif self.layout_type in {'GRID'}: 

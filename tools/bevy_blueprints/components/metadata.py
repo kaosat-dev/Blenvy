@@ -92,7 +92,7 @@ def ensure_metadata_for_all_objects():
 def add_metadata_to_components_without_metadata(object):
     components_metadata = object.components_meta.components # TODO: should we check for this
     registry = bpy.context.window_manager.components_registry
-    
+
     for component_name in dict(object) :
         if component_name == "components_meta":
             continue
@@ -109,7 +109,6 @@ def add_metadata_to_components_without_metadata(object):
                 component_meta = components_metadata.add()
                 component_meta.name = short_name
                 component_meta.long_name = long_name
-                print("added metadata for component: ", component_name)
 
                 prop_group_name = short_name+"_ui"
                 propertyGroup = getattr(object, prop_group_name)
@@ -152,4 +151,5 @@ def add_component_to_object(object, component_definition, value=None):
             property_group_value_from_custom_property_value(propertyGroup, definition, registry, value)
             del object["__disable__update"]
 
+        #value_converted = value.to_dict() if "to_dict" in value else value
         object[short_name] = value

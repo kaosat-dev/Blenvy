@@ -60,9 +60,9 @@ UI:
             ClusterConfig: one of the enum variants is an object
 - [ ] possibly allow Color to be an enum as it should be ?
 - [x] for sub items , the update functions "Name" should be the one of the root object
-- [ ] fix copy & pasting
+- [x] fix copy & pasting
     - it actually works, but the value of the custom property are not copied back to the UI, need to implement property_group_value_from_custom_property_value
-
+- [ ] we need a notion of "root propertyGroup" =?
 
 # Additional
     - [ ] check if output "string" in custom properties are correct
