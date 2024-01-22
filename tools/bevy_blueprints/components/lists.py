@@ -42,7 +42,10 @@ class Generic_LIST_OT_AddItem(Operator):
         item = my_list.add()
         item.name = ""
         item.component_name = "foo"
-        print("added item", item.field_names)
+
+        is_enum = getattr(item, "with_enum")
+        is_list = getattr(item, "with_list") 
+        print("added item", item, is_enum, is_list, item.field_names, getattr(item, "field_names"))
         return{'FINISHED'}
     
 
