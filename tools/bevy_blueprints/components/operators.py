@@ -3,7 +3,7 @@ import json
 import bpy
 from bpy_types import Operator
 from bpy.props import (StringProperty, EnumProperty, PointerProperty, FloatVectorProperty)
-from .metadata import add_component_to_object, cleanup_invalid_metadata, find_component_definition_from_short_name
+from .metadata import add_component_to_object, add_metadata_to_components_without_metadata, cleanup_invalid_metadata, find_component_definition_from_short_name
 
 class AddComponentOperator(Operator):
     """Add component to blueprint"""
@@ -104,10 +104,29 @@ class DeleteComponentOperator(Operator):
     )
 
     def execute(self, context):
-        object = context.object      
+        object = context.object
         if object is not None and self.component_name in object: 
             del object[self.component_name]
         else: 
             self.report({"ERROR"}, "The object/ component to remove does not exist")
 
         return {'FINISHED'}
+
+
+class GenerateComponent_From_custom_property_Operator(Operator):
+    """generate component from custom property"""
+    bl_idname = "object.generate_component"
+    bl_label = "Generate component from custom_property Operator"
+    bl_options = {"UNDO"}
+
+    component_name: StringProperty(
+        name="component name",
+        description="component to delete",
+    )
+
+    def execute(self, context):
+        object = context.object
+        add_metadata_to_components_without_metadata(object)
+
+        return {'FINISHED'}
+

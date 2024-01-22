@@ -17,7 +17,7 @@ import json
 from bpy.props import (StringProperty, EnumProperty, PointerProperty, FloatVectorProperty)
 
 from .blueprints import CreateBlueprintOperator
-from .components.operators import CopyComponentOperator, DeleteComponentOperator, PasteComponentOperator, AddComponentOperator
+from .components.operators import CopyComponentOperator, DeleteComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, AddComponentOperator
 from .components.registry import ComponentsRegistry
 from .components.metadata import (ComponentInfos, ComponentsMeta, ensure_metadata_for_all_objects)
 from .components.ui import (generate_propertyGroups_for_components)
@@ -139,11 +139,14 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
             row.prop(available_components, "filter",text="Filter")
 
             # the button to add them
-            op = row.operator(AddComponentOperator.bl_idname, text="Add", icon="CONSOLE")
+            op = row.operator(AddComponentOperator.bl_idname, text="", icon="ADD")
             op.component_type = available_components.list
             col.separator()
 
-            # past components
+            op = row.operator(GenerateComponent_From_custom_property_Operator.bl_idname, text="" , icon="LOOP_BACK")
+            col.separator()
+
+            # paste components
             row = col.row(align=True)
             row.operator(PasteComponentOperator.bl_idname, text="Paste component ("+bpy.context.window_manager.copied_source_component_name+")", icon="PASTEDOWN")
             row.enabled = bpy.context.window_manager.copied_source_object != ''
@@ -187,6 +190,7 @@ classes = [
     CopyComponentOperator,
     PasteComponentOperator,
     DeleteComponentOperator,
+    GenerateComponent_From_custom_property_Operator,
 
     ComponentDefinitionsList,
     ClearComponentDefinitionsList,
