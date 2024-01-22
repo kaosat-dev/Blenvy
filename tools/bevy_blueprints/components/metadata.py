@@ -101,8 +101,9 @@ def add_metadata_to_components_without_metadata(object):
             if component_definition == None:
                 print("There is no component definition for component:", component_name)
             else:
-                long_name = component_definition.long_name
-                short_name = component_definition.name
+                # print("component_definition", component_definition)
+                long_name = component_definition["title"]
+                short_name = component_definition["short_name"]
 
                 component_meta = components_metadata.add()
                 component_meta.name = short_name

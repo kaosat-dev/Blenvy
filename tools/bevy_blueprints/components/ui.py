@@ -197,11 +197,25 @@ def process_list(registry, definition, update, component_name_override=None):
     original_long_name = original["title"]
     (list_content_group, list_content_group_class) = process_component(registry, original, update, {"nested": True, "type_name": original_long_name}, component_name_override=short_name)
     item_collection = CollectionProperty(type=list_content_group_class)
+
+    def update_test(self, context):
+        print("AAAAHHH UPDATE")
+
+    blender_property_def = blender_property_mapping["u8"]
+
+    int_thingy =  blender_property_def["type"](
+                        **blender_property_def["presets"],# we inject presets first
+                        name = "list_index", 
+                        default=0,
+                        update= update_test
+                    )
+        
     __annotations__ = {
-        'list': item_collection,
-        'list_index': IntProperty(name = "Index for my_list", default = 0),
-        'item': list_content_group
+        "list": item_collection,
+        "list_index": int_thingy, #IntProperty(name = "Index for my_list", default = 0,  update=update_test),
+        "item": list_content_group
     }
+
     return __annotations__
 
 def process_component(registry, definition, update, extras=None, component_name_override=None):
@@ -254,6 +268,10 @@ def process_component(registry, definition, update, extras=None, component_name_
 
     extras = extras if extras is not None else {}
 
+    def update_test(self, context):
+        print("UPPPPPDAAATE")
+
+
     print("DONE: __annotations__", __annotations__)
     print("")
     property_group_name = short_name+"_ui"
@@ -264,7 +282,7 @@ def process_component(registry, definition, update, extras=None, component_name_
         'single_item': single_item, 
         'field_names': field_names, 
         **dict(with_properties = with_properties, with_items= with_items, with_enum= with_enum, with_list= with_list),
-       
+        #**dict(update = update_test)
     }
     (property_group_pointer, property_group_class) = property_group_from_infos(property_group_name, property_group_params)
     registry.register_component_ui(property_group_name, property_group_pointer)
@@ -345,6 +363,8 @@ def property_group_value_to_custom_property_value(property_group, definition, re
             first_key = list(values.keys())[0]
             value = values[first_key]
             #selected_entry["title"]+"("+ str(value) +")"
+    if type_info == "List":
+        print("WE HAVE A LIST")
 
     if len(values.keys()) == 0:
         value = ''
@@ -415,7 +435,7 @@ def property_group_value_from_custom_property_value(property_group, definition, 
     parse_field(custom_property_value, property_group, definition)
    
 
-def dynamic_properties_ui():
+def generate_propertyGroups_for_components():
     registry = bpy.context.window_manager.components_registry
     if registry.type_infos == None:
         registry.load_type_infos()

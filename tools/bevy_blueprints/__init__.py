@@ -20,7 +20,7 @@ from .blueprints import CreateBlueprintOperator
 from .components.operators import CopyComponentOperator, DeleteComponentOperator, PasteComponentOperator, AddComponentOperator
 from .components.registry import ComponentsRegistry
 from .components.metadata import (ComponentInfos, ComponentsMeta, ensure_metadata_for_all_objects)
-from .components.ui import (dynamic_properties_ui)
+from .components.ui import (generate_propertyGroups_for_components)
 from .components.lists import Generic_LIST_OT_AddItem, Generic_LIST_OT_RemoveItem, GENERIC_UL_List
 from .components.definitions_list import (ComponentDefinitionsList, ClearComponentDefinitionsList)
 
@@ -59,8 +59,8 @@ def draw_propertyGroup( propertyGroup, col):
         propertyGroup = getattr(bpy.context.object, "Vec<String>_ui") # FIXME: the prop group passed here is the wrong one
         item_list = getattr(propertyGroup, "list")
         list_item = getattr(propertyGroup, "item")
-        print("list item", getattr(list_item, "field_names"), dict(list_item))
-        print("item_list",propertyGroup , getattr(bpy.context.object, "Vec<String>_ui") )
+        #print("list item", getattr(list_item, "field_names"), dict(list_item))
+        #print("item_list",propertyGroup , getattr(bpy.context.object, "Vec<String>_ui") )
         #for item in item_list:
         #    print("aaa", item.field_names)
         #    col.prop(item, "name")
@@ -208,8 +208,9 @@ from bpy.app.handlers import persistent
 def post_load(file_name):
     print("post load", file_name)
     bpy.context.window_manager.components_registry.load_schema()
+    generate_propertyGroups_for_components()
+
     ensure_metadata_for_all_objects()
-    dynamic_properties_ui()
 
 @persistent
 def init_data_if_needed(self):

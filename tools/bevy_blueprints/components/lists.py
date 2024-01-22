@@ -7,7 +7,7 @@ class GENERIC_UL_List(UIList):
         # We could write some code to decide which icon to use here...
         custom_icon = 'OBJECT_DATAMODE' # Make sure your code supports all 3 layout types 
         if self.layout_type in {'DEFAULT', 'COMPACT'}: 
-            print("compact")
+            #print("compact")
             #layout.label(text=item.name, icon = custom_icon) 
             layout.prop(item, "name", text="")
 
@@ -64,8 +64,8 @@ class Generic_LIST_OT_RemoveItem(Operator):
     
     def execute(self, context): 
         print("remove from list", context.object, self.property_group_name)
-
         my_list_container = getattr(context.object, self.property_group_name)
+
         my_list = getattr(my_list_container, "list")
         index = getattr(my_list_container, "list_index")
         my_list.remove(index)
