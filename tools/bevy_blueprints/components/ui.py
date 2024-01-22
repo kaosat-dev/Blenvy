@@ -411,6 +411,7 @@ def property_group_value_to_custom_property_value(property_group, definition, re
             else :
                 value = selected_entry
         else:
+            print("setting enum value, not object")
             first_key = list(values.keys())[0]
             value = values[first_key]
             #selected_entry["title"]+"("+ str(value) +")"
@@ -421,9 +422,10 @@ def property_group_value_to_custom_property_value(property_group, definition, re
         value = ''
     return value
 
-
+import re
 #converts the value of a single custom property into a value (values) of a property group 
 def property_group_value_from_custom_property_value(property_group, definition, registry, custom_property_value):
+    print(" ")
     print("setting property group value", property_group, definition, custom_property_value)
     type_infos = registry.type_infos
     try: # FIXME this is not normal , the values should be strings !
@@ -433,11 +435,80 @@ def property_group_value_from_custom_property_value(property_group, definition, 
     #parsed_raw_fields = json.loads(custom_property_value)
     # TODO: add disabling of property_group => custom property update call temporarly
 
-    def parse_field(item, property_group, definition):
+    def parse_field(item, property_group, definition, field_name):
         type_info = definition["typeInfo"] if "typeInfo" in definition else None
         type_def = definition["type"] if "type" in definition else None
+        properties = definition["properties"] if "properties" in definition else {}
+        prefixItems = definition["prefixItems"] if "prefixItems" in definition else []
+        has_properties = len(properties.keys()) > 0
+        has_prefixItems = len(prefixItems) > 0
+        is_enum = type_info == "Enum"
+        is_list = type_info == "List"
        
-        print("parsing", item, "type infos", type_info, "type_def", type_def)
+        print("parsing field", item, "type infos", type_info, "type_def", type_def)
+        if has_properties:
+            print("parsing field with properties", property_group.field_names)
+            for field_name in property_group.field_names:
+                print("foo", field_name)
+                # sub field
+                if isinstance(getattr(property_group, field_name), PropertyGroup):
+                    sub_prop_group = getattr(property_group, field_name)
+                    ref_name = properties[field_name]["type"]["$ref"].replace("#/$defs/", "")
+                    sub_definition = registry.type_infos[ref_name]
+                    parse_field(item[field_name], sub_prop_group, sub_definition, field_name)
+                else:
+                    print("foob", item)
+                    setattr(property_group, field_name, item[field_name])
+        if has_prefixItems:
+            print("parsing field with prefixItems")
+            # check if value type ?
+            if len(property_group.field_names) == 1:
+                setattr(property_group, "0", item)
+            else:
+                for field_name in property_group.field_names:
+                    setattr(property_group, field_name, item)
+        if is_enum:
+            print("parsing enum", item, definition)
+            if type_def == "object":
+                print("object enum", property_group.field_names, "value", item)
+
+                regexp = re.search('(^[^\(]+)(\((.*)\))', item)
+                chosen_variant = regexp.group(1)
+                chosen_variant_value = regexp.group(3).replace("'", '"')
+                print("REGEXP", chosen_variant, chosen_variant_value)
+
+
+                print("chosen variant", chosen_variant)
+                # first set chosen selection
+                field_name = property_group.field_names[0]
+                setattr(property_group, field_name, chosen_variant)
+                
+                # then apply all values for all variants
+                sub_definition= None
+                for variant in definition["oneOf"]:
+                    print("variant", variant)
+                    #info = definition["oneOf"][variant_name]
+                    #var_name = "variant_"+variant["title"]
+                    if variant["title"] == chosen_variant:
+                        ref_name = variant["prefixItems"][0]["type"]["$ref"].replace("#/$defs/", "")
+                        sub_definition = registry.type_infos[ref_name]
+                        print("sub definition", sub_definition)
+                        break
+                    #setattr(property_group, field_name, item)
+               
+                variant_name = "variant_"+chosen_variant 
+                sub_prop_group = getattr(property_group, variant_name)
+                parse_field(chosen_variant_value, sub_prop_group, sub_definition, None)
+
+            else:
+                print("simple enum", "field name", field_name, "value", item)
+                field_name = property_group.field_names[0]
+                setattr(property_group, field_name, item)
+
+        if is_list:
+            print("parsing list")
+
+        """
         if isinstance(item, dict):
             for field_name in item:
                 #print("field name", field_name)
@@ -481,9 +552,9 @@ def property_group_value_from_custom_property_value(property_group, definition, 
 
                     #setattr(property_group, variant_name, valo)
             else: 
-                setattr(property_group, '0', item) 
-    print('parsed_raw_fields', custom_property_value)
-    parse_field(custom_property_value, property_group, definition)
+                setattr(property_group, '0', item) """
+    # print('parsed_raw_fields', custom_property_value)
+    parse_field(custom_property_value, property_group, definition, None)
    
 
 def generate_propertyGroups_for_components():
