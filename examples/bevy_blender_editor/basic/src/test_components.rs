@@ -38,11 +38,15 @@ struct TuppleVec(Vec<String>);
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
+struct TuppleVecF32F32(Vec<(f32, f32)>);
+
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
 struct TuppleTestColor(Color);
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-struct BasicTest {
+pub struct BasicTest {
     a: f32,
     b: u64,
     c: String,
@@ -60,6 +64,43 @@ pub enum EnumTest {
     None,
 }
 
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+pub struct NestingTestLevel2 {
+   enum_inner: EnumTest,
+   color: TuppleTestColor,
+   basic: BasicTest,
+   pub nested: NestingTestLevel3
+}
+
+
+
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+pub struct NestingTestLevel3 {
+    vec: TuppleVec3,
+}
+
+
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+pub struct NestedTuppleStuff(f32, u64, NestingTestLevel2);
+
+
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+pub enum EnumComplex {
+    Float(f32),
+    Wood(String),
+    Vec(BasicTest),
+    #[default]
+    None,
+}
+
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+pub struct VecOfObjects(Vec<TuppleVec3>);
+
 pub struct ComponentsTestPlugin;
 impl Plugin for ComponentsTestPlugin {
     fn build(&self, app: &mut App) {
@@ -75,6 +116,19 @@ impl Plugin for ComponentsTestPlugin {
             .register_type::<EnumTest>()
             .register_type::<TuppleTestColor>()
             .register_type::<TuppleVec>()
-            .register_type::<Vec<String>>();
+            .register_type::<Vec<String>>()
+            
+            .register_type::<NestingTestLevel2>()
+            .register_type::<NestingTestLevel3>()
+            .register_type::<NestedTuppleStuff>()
+            .register_type::<EnumComplex>()
+
+            .register_type::<VecOfObjects>()
+            .register_type::<TuppleVecF32F32>()
+
+            .register_type::<(f32, f32)>()
+            .register_type::<Vec<(f32, f32)>>()
+            .register_type::<Vec<TuppleVec3>>()
+            ;
     }
 }

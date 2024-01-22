@@ -1,5 +1,26 @@
 {
   "$defs": {
+    "(f32, f32)": {
+      "isComponent": false,
+      "isResource": false,
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      ],
+      "short_name": "(f32, f32)",
+      "title": "(f32, f32)",
+      "type": "array",
+      "typeInfo": "Tuple"
+    },
     "alloc::borrow::Cow<std::path::Path>": {
       "isComponent": false,
       "isResource": false,
@@ -24,6 +45,19 @@
       "type": "string",
       "typeInfo": "Value"
     },
+    "alloc::vec::Vec<(f32, f32)>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/(f32, f32)"
+        }
+      },
+      "short_name": "Vec<(f32, f32)>",
+      "title": "alloc::vec::Vec<(f32, f32)>",
+      "type": "array",
+      "typeInfo": "List"
+    },
     "alloc::vec::Vec<alloc::string::String>": {
       "isComponent": false,
       "isResource": false,
@@ -34,6 +68,19 @@
       },
       "short_name": "Vec<String>",
       "title": "alloc::vec::Vec<alloc::string::String>",
+      "type": "array",
+      "typeInfo": "List"
+    },
+    "alloc::vec::Vec<bevy_bevy_blender_editor_basic_example::test_components::TuppleVec3>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/bevy_bevy_blender_editor_basic_example::test_components::TuppleVec3"
+        }
+      },
+      "short_name": "Vec<TuppleVec3>",
+      "title": "alloc::vec::Vec<bevy_bevy_blender_editor_basic_example::test_components::TuppleVec3>",
       "type": "array",
       "typeInfo": "List"
     },
@@ -2065,6 +2112,55 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_bevy_blender_editor_basic_example::test_components::EnumComplex": {
+      "isComponent": true,
+      "isResource": false,
+      "oneOf": [
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/f32"
+              }
+            }
+          ],
+          "title": "Float",
+          "type": "array"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/alloc::string::String"
+              }
+            }
+          ],
+          "title": "Wood",
+          "type": "array"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_bevy_blender_editor_basic_example::test_components::BasicTest"
+              }
+            }
+          ],
+          "title": "Vec",
+          "type": "array"
+        },
+        {
+          "title": "None"
+        }
+      ],
+      "short_name": "EnumComplex",
+      "title": "bevy_bevy_blender_editor_basic_example::test_components::EnumComplex",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
     "bevy_bevy_blender_editor_basic_example::test_components::EnumTest": {
       "isComponent": true,
       "isResource": false,
@@ -2080,6 +2176,88 @@
       "title": "bevy_bevy_blender_editor_basic_example::test_components::EnumTest",
       "type": "string",
       "typeInfo": "Enum"
+    },
+    "bevy_bevy_blender_editor_basic_example::test_components::NestedTuppleStuff": {
+      "isComponent": true,
+      "isResource": false,
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        {
+          "type": {
+            "$ref": "#/$defs/u64"
+          }
+        },
+        {
+          "type": {
+            "$ref": "#/$defs/bevy_bevy_blender_editor_basic_example::test_components::NestingTestLevel2"
+          }
+        }
+      ],
+      "short_name": "NestedTuppleStuff",
+      "title": "bevy_bevy_blender_editor_basic_example::test_components::NestedTuppleStuff",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
+    "bevy_bevy_blender_editor_basic_example::test_components::NestingTestLevel2": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "basic": {
+          "type": {
+            "$ref": "#/$defs/bevy_bevy_blender_editor_basic_example::test_components::BasicTest"
+          }
+        },
+        "color": {
+          "type": {
+            "$ref": "#/$defs/bevy_bevy_blender_editor_basic_example::test_components::TuppleTestColor"
+          }
+        },
+        "enum_inner": {
+          "type": {
+            "$ref": "#/$defs/bevy_bevy_blender_editor_basic_example::test_components::EnumTest"
+          }
+        },
+        "nested": {
+          "type": {
+            "$ref": "#/$defs/bevy_bevy_blender_editor_basic_example::test_components::NestingTestLevel3"
+          }
+        }
+      },
+      "required": [
+        "enum_inner",
+        "color",
+        "basic",
+        "nested"
+      ],
+      "short_name": "NestingTestLevel2",
+      "title": "bevy_bevy_blender_editor_basic_example::test_components::NestingTestLevel2",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_bevy_blender_editor_basic_example::test_components::NestingTestLevel3": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "vec": {
+          "type": {
+            "$ref": "#/$defs/bevy_bevy_blender_editor_basic_example::test_components::TuppleVec3"
+          }
+        }
+      },
+      "required": [
+        "vec"
+      ],
+      "short_name": "NestingTestLevel3",
+      "title": "bevy_bevy_blender_editor_basic_example::test_components::NestingTestLevel3",
+      "type": "object",
+      "typeInfo": "Struct"
     },
     "bevy_bevy_blender_editor_basic_example::test_components::TuppleTest2": {
       "isComponent": true,
@@ -2235,6 +2413,22 @@
       "type": "array",
       "typeInfo": "TupleStruct"
     },
+    "bevy_bevy_blender_editor_basic_example::test_components::TuppleVecF32F32": {
+      "isComponent": true,
+      "isResource": false,
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/alloc::vec::Vec<(f32, f32)>"
+          }
+        }
+      ],
+      "short_name": "TuppleVecF32F32",
+      "title": "bevy_bevy_blender_editor_basic_example::test_components::TuppleVecF32F32",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
     "bevy_bevy_blender_editor_basic_example::test_components::UnitTest": {
       "additionalProperties": false,
       "isComponent": true,
@@ -2245,6 +2439,22 @@
       "title": "bevy_bevy_blender_editor_basic_example::test_components::UnitTest",
       "type": "object",
       "typeInfo": "Struct"
+    },
+    "bevy_bevy_blender_editor_basic_example::test_components::VecOfObjects": {
+      "isComponent": true,
+      "isResource": false,
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/alloc::vec::Vec<bevy_bevy_blender_editor_basic_example::test_components::TuppleVec3>"
+          }
+        }
+      ],
+      "short_name": "VecOfObjects",
+      "title": "bevy_bevy_blender_editor_basic_example::test_components::VecOfObjects",
+      "type": "array",
+      "typeInfo": "TupleStruct"
     },
     "bevy_core::name::Name": {
       "additionalProperties": false,
