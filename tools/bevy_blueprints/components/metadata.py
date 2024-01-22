@@ -33,10 +33,6 @@ class ComponentInfos(bpy.types.PropertyGroup):
         default = "[]"
     )
 
-    data: bpy.props.StringProperty(
-        name = "Toto",
-        default = "[]"
-    )
     enabled: BoolProperty(
         name="enabled",
         description="component enabled",
@@ -57,6 +53,7 @@ def get_component_metadata_by_short_name(object, short_name):
         return None
     return next(filter(lambda component: component["name"] == short_name, object.components_meta.components), None)
 
+# remove no longer valid metadata from object
 def cleanup_invalid_metadata(object):
     components_metadata = object.components_meta.components
     to_remove = []
@@ -83,6 +80,7 @@ def ensure_metadata_for_all_objects():
     for object in bpy.data.objects:
         add_metadata_to_components_without_metadata(object)
 
+# adds metadata to object only if it is missing
 def add_metadata_to_components_without_metadata(object):
     components_metadata = object.components_meta.components # TODO: should we check for this
 
@@ -104,7 +102,6 @@ def add_metadata_to_components_without_metadata(object):
                 print("added metadata for component: ", component_name)
 
 
-
 # adds a component to an object (including metadata) using the provided component definition & optional value
 def add_component_to_object(object, component_definition, value=None):
     cleanup_invalid_metadata(object)
@@ -124,7 +121,6 @@ def add_component_to_object(object, component_definition, value=None):
         component_meta.long_name = long_name
 
         # now we use our pre_generated property groups to set the initial value of our custom property
-        print("getting matching property group to set defaults")
         prop_group_name = short_name+"_ui"
         propertyGroup = getattr(object, prop_group_name)
 
@@ -132,12 +128,13 @@ def add_component_to_object(object, component_definition, value=None):
         if registry.type_infos == None:
             # TODO: throw error
             print("registry type infos have not been loaded yet or ar missing !")
+
         definition = registry.type_infos[long_name]
-        print("component definition", definition)
+
         if value == None:
             value = property_group_value_to_custom_property_value(propertyGroup, definition, registry)
-        else: # we have provided a value, that is a raw , custom property value, to set the value of the property group
-            object["__disable__update"] = True
+        else: # we have provided a value, that is a raw , custom property value, to set the value of the propertyGroup
+            object["__disable__update"] = True # disable update callback while we set the values of the propertyGroup "tree" (as a propertyGroup can contain other propertyGroups) 
             property_group_value_from_custom_property_value(propertyGroup, definition, registry, value)
             del object["__disable__update"]
 

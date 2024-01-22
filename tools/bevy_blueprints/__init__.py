@@ -243,10 +243,10 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
 
                 #op = row.operator(CopyComponentOperator.bl_idname, text="", icon="SETTINGS")
                 op = row.operator(DeleteComponentOperator.bl_idname, text="", icon="X")
-                op.target_property = component_name
+                op.component_name = component_name
                 
                 op =row.operator(CopyComponentOperator.bl_idname, text="", icon="COPYDOWN")
-                op.target_property = component_name
+                op.source_component_name = component_name
                 op.source_object_name = object.name
 
             #print("TOOOO", registry.type_infos, registry.component_uis)
