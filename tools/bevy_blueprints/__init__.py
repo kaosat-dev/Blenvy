@@ -20,7 +20,7 @@ from bpy.types import Context
 from .blueprints import CreateBlueprintOperator
 from .components.operators import CopyComponentOperator, DeleteComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, AddComponentOperator
 from .components.registry import BEVY_COMPONENTS_PT_Configuration, BEVY_COMPONENTS_PT_MissingTypesPanel, ComponentsRegistry, MISSING_TYPES_UL_List, MissingBevyType, OT_OpenFilebrowser, ReloadRegistryOperator
-from .components.metadata import (ComponentInfos, ComponentsMeta, ensure_metadata_for_all_objects)
+from .components.metadata import (ComponentInfos, ComponentsMeta, ensure_metadata_for_all_objects, ensure_prop_groups_for_all_objects)
 from .components.ui import (generate_propertyGroups_for_components)
 from .components.lists import Generic_LIST_OT_AddItem, Generic_LIST_OT_RemoveItem, GENERIC_UL_List
 from .components.definitions_list import (ComponentDefinitionsList, ClearComponentDefinitionsList)
@@ -151,6 +151,8 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
 
             components_in_object = object.components_meta.components
 
+            print("object propgroups", dict(object))
+
             for component_name in sorted(dict(object)) : # sorted by component name, practical
                 if component_name == "components_meta":
                     continue
@@ -163,13 +165,15 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
 
                 # we fetch the matching ui property group
                 root_propertyGroup_name = component_name+"_ui"
-                propertyGroup = getattr(object, root_propertyGroup_name)
+                propertyGroup = getattr(object, root_propertyGroup_name, None)
                 row.prop(component_meta, "enabled", text="")
                 row.label(text=component_name)
                 col = row.column(align=True)
-                draw_propertyGroup(propertyGroup, col, [root_propertyGroup_name])
-
-                #op = row.operator(CopyComponentOperator.bl_idname, text="", icon="SETTINGS")
+                if propertyGroup:
+                    draw_propertyGroup(propertyGroup, col, [root_propertyGroup_name])
+                else:
+                    col.label(text="Missing component propertyGroup !")
+                    col.alert = True
                 op = row.operator(DeleteComponentOperator.bl_idname, text="", icon="X")
                 op.component_name = component_name
                 
@@ -259,6 +263,7 @@ def post_load(file_name):
     bpy.context.window_manager.components_registry.load_schema()
     generate_propertyGroups_for_components()
     ensure_metadata_for_all_objects()
+    ensure_prop_groups_for_all_objects()
 
 @persistent
 def init_data_if_needed(self):

@@ -6,6 +6,8 @@ from bpy_extras.io_utils import ImportHelper
 from bpy_types import (Operator, PropertyGroup, UIList)
 from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorProperty, IntProperty, IntVectorProperty, EnumProperty, PointerProperty, CollectionProperty)
 
+from .metadata import add_metadata_to_components_without_metadata, ensure_metadata_for_all_objects, ensure_prop_groups_for_all_objects
+
 from .operators import GenerateComponent_From_custom_property_Operator
 
 from .ui import generate_propertyGroups_for_components
@@ -132,7 +134,7 @@ class ComponentsRegistry(PropertyGroup):
 
     type_infos = None
     type_infos_missing = []
-    component_uis = {}
+    component_propertyGroups = {}
     short_names_to_long_names = {}
 
 
@@ -143,7 +145,17 @@ class ComponentsRegistry(PropertyGroup):
 
     @classmethod
     def unregister(cls):
+        print("unregister registry")
+        for propgroup_name in cls.component_propertyGroups.keys():
+            print("unregister comp name", propgroup_name)
+            try:
+                delattr(bpy.types.Object, propgroup_name)
+                print("removed propgroup")
+            except Exception as error:
+                print("failed to remove", error, "fom bpy.types.Object")
+        
         del bpy.types.WindowManager.components_registry
+        
 
     def load_schema(self):
         # cleanup missing types list
@@ -166,9 +178,9 @@ class ComponentsRegistry(PropertyGroup):
     def load_type_infos(self):
         ComponentsRegistry.type_infos = json.loads(self.registry)
 
-    # we keep a list of component UIs around (although, this is semi redundand)
-    def register_component_ui(self, name, ui):
-        self.component_uis[name] = ui
+    # we keep a list of component propertyGroup around 
+    def register_component_propertyGroup(self, name, propertyGroup):
+        self.component_propertyGroups[name] = propertyGroup
 
     #for practicality, we add an entry for a reverse lookup (short => long name, since we already have long_name => short_name with the keys of the raw registry)
     def add_shortName_to_longName(self, short_name, long_name):
@@ -260,6 +272,12 @@ class ReloadRegistryOperator(Operator):
         print("reload registry")
         context.window_manager.components_registry.load_schema()
         generate_propertyGroups_for_components()
+        print("")
+        print("")
+        print("")
+        #ensure_metadata_for_all_objects()
+        add_metadata_to_components_without_metadata(context.object)
+
         return {'FINISHED'}
     
 

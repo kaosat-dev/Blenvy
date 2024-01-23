@@ -255,7 +255,7 @@ def process_component(registry, definition, update, extras=None, component_name_
     }
     (property_group_pointer, property_group_class) = property_group_from_infos(property_group_name, property_group_params)
     # add our component propertyGroup to the registry
-    registry.register_component_ui(property_group_name, property_group_pointer)
+    registry.register_component_propertyGroup(property_group_name, property_group_pointer)
     # for practicality, we add an entry for a reverse lookup (short => long name, since we already have long_name => short_name with the keys of the raw registry)
     registry.add_shortName_to_longName(short_name, component_name)
 
@@ -267,7 +267,7 @@ def property_group_from_infos(property_group_name, property_group_parameters):
     
     bpy.utils.register_class(property_group_class)
     property_group_pointer = PointerProperty(type=property_group_class)
-    setattr(bpy.types.Object, property_group_name, property_group_pointer)
+    #setattr(bpy.types.Object, property_group_name, property_group_pointer)
     
     return (property_group_pointer, property_group_class)
 
@@ -449,9 +449,7 @@ def generate_propertyGroups_for_components():
             long_name = registry.short_names_to_long_names.get(component_name)
             definition = registry.type_infos[long_name]
             short_name = definition["short_name"]
-            # self = registry.component_uis[short_name+"_ui"]
             self = getattr(current_object, component_name+"_ui") # FIXME: yikes, I REALLY dislike this ! using the context out of left field
-            # then again, trying to use the data from registry.component_uis does not seem to work
 
             print("using override", component_name)
         # we use our helper to set the values

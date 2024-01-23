@@ -88,12 +88,21 @@ def ensure_metadata_for_all_objects():
     for object in bpy.data.objects:
         add_metadata_to_components_without_metadata(object)
 
+def ensure_prop_groups_for_all_objects():
+    registry = bpy.context.window_manager.components_registry
+    for object in bpy.data.objects:
+        components_metadata = object.components_meta.components
+        print("components_metadata", components_metadata)
+        #for prop in dict(object):
+
+
 # adds metadata to object only if it is missing
 def add_metadata_to_components_without_metadata(object):
     components_metadata = object.components_meta.components # TODO: should we check for this
     registry = bpy.context.window_manager.components_registry
 
     for component_name in dict(object) :
+        print("scanning", component_name)
         if component_name == "components_meta":
             continue
         component_meta =  next(filter(lambda component: component["name"] == component_name, components_metadata), None)
@@ -102,7 +111,7 @@ def add_metadata_to_components_without_metadata(object):
             if component_definition == None:
                 print("There is no component definition for component:", component_name)
             else:
-                # print("component_definition", component_definition)
+                print("component_definition", component_definition)
                 long_name = component_definition["title"]
                 short_name = component_definition["short_name"]
 
@@ -110,8 +119,14 @@ def add_metadata_to_components_without_metadata(object):
                 component_meta.name = short_name
                 component_meta.long_name = long_name
 
-                prop_group_name = short_name+"_ui"
-                propertyGroup = getattr(object, prop_group_name)
+                property_group_name = short_name+"_ui"
+                propertyGroup = getattr(object, property_group_name, None)
+                print("prop group", propertyGroup) # this is unlikely to happen as the object would need to be missing both propgroup AND metadata
+                if propertyGroup == None:
+                    print("propertygroup not found injecting")
+                    # we have not found a matching property_group, so try to inject it
+                    setattr(bpy.types.Object, property_group_name, registry.component_propertyGroups[property_group_name])
+                    propertyGroup =  getattr(object, property_group_name)#registry.component_propertyGroups[property_group_name]
                 property_group_value_from_custom_property_value(propertyGroup, component_definition, registry, object[component_name])
 
 
@@ -134,10 +149,12 @@ def add_component_to_object(object, component_definition, value=None):
         component_meta.long_name = long_name
 
         # now we use our pre_generated property groups to set the initial value of our custom property
-        prop_group_name = short_name+"_ui"
-        propertyGroup = getattr(object, prop_group_name)
-
         registry = bpy.context.window_manager.components_registry
+
+        property_group_name = short_name+"_ui"
+        setattr(bpy.types.Object, property_group_name, registry.component_propertyGroups[property_group_name])
+        propertyGroup = getattr(object, property_group_name)
+
         if registry.type_infos == None:
             # TODO: throw error
             print("registry type infos have not been loaded yet or ar missing !")
@@ -153,3 +170,4 @@ def add_component_to_object(object, component_definition, value=None):
 
         #value_converted = value.to_dict() if "to_dict" in value else value
         object[short_name] = value
+       
