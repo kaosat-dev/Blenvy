@@ -2,9 +2,19 @@ import bpy
 import json
 import os
 from pathlib import Path
-
-from bpy_types import (PropertyGroup)
+from bpy_extras.io_utils import ImportHelper
+from bpy_types import (Operator, PropertyGroup, UIList)
 from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorProperty, IntProperty, IntVectorProperty, EnumProperty, PointerProperty, CollectionProperty)
+
+from .operators import GenerateComponent_From_custom_property_Operator
+
+from .ui import generate_propertyGroups_for_components
+
+class MissingBevyType(bpy.types.PropertyGroup):
+    type_name: bpy.props.StringProperty(
+        name="type",
+       
+    )
 
 # this is where we store the information for all available components
 class ComponentsRegistry(PropertyGroup):
@@ -13,7 +23,7 @@ class ComponentsRegistry(PropertyGroup):
         description="path to the schema file",
         default="../schema.json"
     )
-
+  
     registry: bpy.props. StringProperty(
         name="registry",
         description="component registry"
@@ -23,6 +33,9 @@ class ComponentsRegistry(PropertyGroup):
         name="missing type infos",
         description="unregistered/missing type infos"
     )
+
+    missing_types_list: CollectionProperty(name="main scenes", type=MissingBevyType)
+    missing_types_list_index: IntProperty(name = "Index for main scenes list", default = 0)
 
     blender_property_mapping = {
         "bool": dict(type=BoolProperty, presets=dict()),
@@ -125,6 +138,7 @@ class ComponentsRegistry(PropertyGroup):
 
     @classmethod
     def register(cls):
+        #bpy.types.WindowManager.missing_bevy_type = MissingBevyType
         bpy.types.WindowManager.components_registry = PointerProperty(type=ComponentsRegistry)
 
     @classmethod
@@ -132,11 +146,15 @@ class ComponentsRegistry(PropertyGroup):
         del bpy.types.WindowManager.components_registry
 
     def load_schema(self):
+        # cleanup missing types list
+        self.missing_types_list.clear()
         print("bla", self.schemaPath)
         file_path = bpy.data.filepath
+
         # Get the folder
         folder_path = os.path.dirname(file_path)
-        path =  os.path.join(folder_path, "../schema.json")
+        path =  os.path.join(folder_path, self.schemaPath)
+
         print("path to defs", path)
         f = Path(bpy.path.abspath(path)) # make a path object of abs path
         with open(path) as f: 
@@ -161,6 +179,8 @@ class ComponentsRegistry(PropertyGroup):
         if not type_name in self.type_infos_missing:
             self.type_infos_missing.append(type_name)
             setattr(self, "missing_type_infos", str(self.type_infos_missing))
+            item = self.missing_types_list.add()
+            item.type_name = type_name
 
 
 
@@ -181,10 +201,24 @@ class BEVY_COMPONENTS_PT_Configuration(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         registry = bpy.context.window_manager.components_registry 
-        layout.prop(registry, "schemaPath", text="Path to your Bevy schema.json file")
-        
 
+        row = layout.row()
+        col = row.column()
+        col.enabled = False
+        col.prop(registry, "schemaPath", text="Schema file path")
+        col = row.column()
+        col.operator(OT_OpenFilebrowser.bl_idname, text="Browse for schema.json")
 
+        layout.separator()
+        layout.operator(ReloadRegistryOperator.bl_idname, text="reload registry" , icon="FILE_REFRESH")
+
+        layout.separator()
+        row = layout.row()
+        op = layout.operator(GenerateComponent_From_custom_property_Operator.bl_idname, text="generate components from custom properties" , icon="LOOP_FORWARDS") # TODO make conditional
+        row.enabled = registry.type_infos != None
+
+        layout.separator()
+        layout.separator()
 
 # TODO: move to UI
 class BEVY_COMPONENTS_PT_MissingTypesPanel(bpy.types.Panel):
@@ -203,7 +237,110 @@ class BEVY_COMPONENTS_PT_MissingTypesPanel(bpy.types.Panel):
         registry = bpy.context.window_manager.components_registry 
 
         layout.label(text="Missing types ")
-        #+getattr(registry, "missing_type_infos"))
-        for missing in getattr(registry, "type_infos_missing"):
+        
+        """for missing in getattr(registry, "type_infos_missing"):
             row = layout.row()
-            row.label(text=missing)
+            row.label(text=missing)"""
+
+        layout.template_list("MISSING_TYPES_UL_List", "Missing types list", registry, "missing_types_list", registry, "missing_types_list_index")
+
+
+class ReloadRegistryOperator(Operator):
+    """Reload registry operator"""
+    bl_idname = "object.reload_registry"
+    bl_label = "Reload Registry"
+    bl_options = {"UNDO"}
+
+    component_type: StringProperty(
+        name="component_type",
+        description="component type to add",
+    )
+
+    def execute(self, context):
+        print("reload registry")
+        context.window_manager.components_registry.load_schema()
+        generate_propertyGroups_for_components()
+        return {'FINISHED'}
+    
+
+class OT_OpenFilebrowser(Operator, ImportHelper): 
+    bl_idname = "generic.open_filebrowser" 
+    bl_label = "Open the file browser" 
+
+    filter_glob: StringProperty( 
+        default='*.json', 
+        options={'HIDDEN'} 
+    )
+    def execute(self, context): 
+        """Do something with the selected file(s)."""
+
+        filename, extension = os.path.splitext(self.filepath) 
+        print('Selected file:', self.filepath)
+        print('File name:', filename)
+        print('File extension:', extension)
+
+        file_path = bpy.data.filepath
+        # Get the folder
+        folder_path = os.path.dirname(file_path)
+        print("file_path", file_path)
+        print("folder_path", folder_path)
+
+        relative_path = os.path.relpath(self.filepath, folder_path)
+        print("rel path", relative_path )
+        context.window_manager.components_registry.schemaPath = relative_path
+        
+        return {'FINISHED'}
+    
+
+class MISSING_TYPES_UL_List(UIList): 
+    """Missing components UIList.""" 
+
+    use_filter_name_reverse: bpy.props.BoolProperty(
+        name="Reverse Name",
+        default=False,
+        options=set(),
+        description="Reverse name filtering",
+    )
+
+    use_order_name = bpy.props.BoolProperty(name="Name", default=False, options=set(),
+                                            description="Sort groups by their name (case-insensitive)")
+
+    def filter_items__(self, context, data, propname): 
+        """Filter and order items in the list.""" 
+        # We initialize filtered and ordered as empty lists. Notice that # if all sorting and filtering is disabled, we will return # these empty. 
+        filtered = [] 
+        ordered = [] 
+        items = getattr(data, propname)
+
+        helper_funcs = bpy.types.UI_UL_list
+
+
+        print("filter, order", items, self, dict(self))
+        if self.filter_name:
+            print("ssdfs", self.filter_name)
+            filtered= helper_funcs.filter_items_by_name(self.filter_name, self.bitflag_filter_item, items, "type_name", reverse=self.use_filter_name_reverse)
+
+        if not filtered:
+            filtered = [self.bitflag_filter_item] * len(items)
+
+        if self.use_order_name:
+            ordered = helper_funcs.sort_items_by_name(items, "name")
+        
+
+        return filtered, ordered 
+
+
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index): 
+        # We could write some code to decide which icon to use here...
+        custom_icon = 'OBJECT_DATAMODE' # Make sure your code supports all 3 layout types 
+        if self.layout_type in {'DEFAULT', 'COMPACT'}: 
+            row = layout.row()
+            #row.enabled = False
+            #row.alert = True
+            row.prop(item, "type_name", text="")
+
+        elif self.layout_type in {'GRID'}: 
+            print("grid")
+            layout.alignment = 'CENTER' 
+            row = layout.row()
+            row.prop(item, "type_name", text="")

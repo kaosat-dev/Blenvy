@@ -15,10 +15,11 @@ import bpy
 import json
 
 from bpy.props import (StringProperty, EnumProperty, PointerProperty, FloatVectorProperty)
+from bpy.types import Context
 
 from .blueprints import CreateBlueprintOperator
 from .components.operators import CopyComponentOperator, DeleteComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, AddComponentOperator
-from .components.registry import BEVY_COMPONENTS_PT_Configuration, BEVY_COMPONENTS_PT_MissingTypesPanel, ComponentsRegistry
+from .components.registry import BEVY_COMPONENTS_PT_Configuration, BEVY_COMPONENTS_PT_MissingTypesPanel, ComponentsRegistry, MISSING_TYPES_UL_List, MissingBevyType, OT_OpenFilebrowser, ReloadRegistryOperator
 from .components.metadata import (ComponentInfos, ComponentsMeta, ensure_metadata_for_all_objects)
 from .components.ui import (generate_propertyGroups_for_components)
 from .components.lists import Generic_LIST_OT_AddItem, Generic_LIST_OT_RemoveItem, GENERIC_UL_List
@@ -98,51 +99,27 @@ def draw_propertyGroup( propertyGroup, col, nesting =[]):
                 subrow.separator()
 
 
-
-
-class BEVY_COMPONENTS_PT_MainPanel(bpy.types.Panel):
-    bl_idname = "BEVY_COMPONENTS_PT_MainPanel"
-    bl_label = ""
+class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
+    bl_idname = "BEVY_COMPONENTS_PT_ComponentsPanel"
+    bl_label = "Components"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "Bevy Components"
     bl_context = "objectmode"
-
-
-    def draw_header(self, context):
-        layout = self.layout
-        layout.label(text="Components For "+ context.object.name)
+    bl_parent_id = "BEVY_COMPONENTS_PT_MainPanel"
 
     def draw(self, context):
-        layout = self.layout
         object = context.object
-        collection = context.collection
+        layout = self.layout
 
         # we get & load our component registry
         registry = bpy.context.window_manager.components_registry 
         available_components = bpy.context.window_manager.components_list
+
         col = layout.column(align=True)
         row = col.row(align=True)
-    
-        """row.prop(bpy.context.window_manager, "blueprint_name")
-        op = row.operator(CreateBlueprintOperator.bl_idname, text="Create blueprint", icon="CONSOLE")
-        op.blueprint_name = bpy.context.window_manager.blueprint_name
-        layout.separator()
-        
-         current_components_container = None
-        has_components = False
-        for child in collection.objects:
-            if child.name.endswith("_components"):
-                has_components = True
-                current_components_container= child
-        
-        if collection is not None and has_components:
-            layout.label(text="Edit blueprint: "+ collection.name)
-        
-        """
 
         if object is not None:
-            
             col = layout.column(align=True)
             row = col.row(align=True)
 
@@ -203,6 +180,47 @@ class BEVY_COMPONENTS_PT_MainPanel(bpy.types.Panel):
         else: 
             layout.label(text ="Select a collection/blueprint to edit it")
 
+
+class BEVY_COMPONENTS_PT_MainPanel(bpy.types.Panel):
+    bl_idname = "BEVY_COMPONENTS_PT_MainPanel"
+    bl_label = ""
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = "Bevy Components"
+    bl_context = "objectmode"
+
+
+    def draw_header(self, context):
+        layout = self.layout
+        layout.label(text="Components For "+ context.object.name)
+
+    def draw(self, context):
+        layout = self.layout
+        object = context.object
+        collection = context.collection
+
+    
+       
+    
+        """row.prop(bpy.context.window_manager, "blueprint_name")
+        op = row.operator(CreateBlueprintOperator.bl_idname, text="Create blueprint", icon="CONSOLE")
+        op.blueprint_name = bpy.context.window_manager.blueprint_name
+        layout.separator()
+        
+         current_components_container = None
+        has_components = False
+        for child in collection.objects:
+            if child.name.endswith("_components"):
+                has_components = True
+                current_components_container= child
+        
+        if collection is not None and has_components:
+            layout.label(text="Edit blueprint: "+ collection.name)
+        
+        """
+
+
+
 #_register, _unregister = bpy.utils.register_classes_factory(classes)
 classes = [
     CreateBlueprintOperator,
@@ -217,10 +235,15 @@ classes = [
     
     ComponentInfos,
     ComponentsMeta,
+    MissingBevyType,
     ComponentsRegistry,
 
+    OT_OpenFilebrowser,
+    ReloadRegistryOperator,
     BEVY_COMPONENTS_PT_MainPanel,
+    BEVY_COMPONENTS_PT_ComponentsPanel,
     BEVY_COMPONENTS_PT_Configuration,
+    MISSING_TYPES_UL_List,
     BEVY_COMPONENTS_PT_MissingTypesPanel,
 
     GENERIC_UL_List,
@@ -235,7 +258,6 @@ def post_load(file_name):
     print("post load", file_name)
     bpy.context.window_manager.components_registry.load_schema()
     generate_propertyGroups_for_components()
-
     ensure_metadata_for_all_objects()
 
 @persistent

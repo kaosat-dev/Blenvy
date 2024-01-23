@@ -30,9 +30,9 @@ UI:
     - [x] one for setting the VALUE inside that
 
 
-- [ ] vecs => (not vec2, vec3 etc) more complex UI to add items in a list
-    - [ ] generate contained CollectionGroup
-    - [ ] CollectionProperty => type = the above
+- [x] vecs => (not vec2, vec3 etc) more complex UI to add items in a list
+    - [x] generate contained CollectionGroup
+    - [x] CollectionProperty => type = the above
 - [x] find ways to "collapse" the different levels of nested data of structs/tupples into a single custom property (ideally on the fly, but we can do without)
 
 - [ ] for single tupple components that represent a single unit type, re_use the base type's UIPropertyGroup instead of creating specific ones (ie TuppleTestF32_ui...)
@@ -63,10 +63,20 @@ UI:
 - [x] fix copy & pasting
     - it actually works, but the value of the custom property are not copied back to the UI, need to implement property_group_value_from_custom_property_value
 - [ ] we need a notion of "root propertyGroup" =?
-- [ ] notify user of missing entries in schema (ie , unregistered data types)
+- [x] notify user of missing entries in schema (ie , unregistered data types)
 - [ ] clarify propgroup_ui vs named nested fields
 - [ ] fix basic enums handling
-- [ ] add a list of not found components to the registry, add to them on the fly
+- [x] add a list of not found components to the registry, add to them on the fly
+- [ ] add configuration panel (open the first time, closed on further user once configured)
+
+bpy.context.window_manager
+    .components_registry => raw registry
+    .components_list =>  refined, pythonified list of available components
+
+
+- perhaps directly export default values within the schema.json ?
+        - for most types , it is straighforward, but others, not so muc: like the default color in Bevy , etc
+
 
 # Additional
     - [ ] check if output "string" in custom properties are correct

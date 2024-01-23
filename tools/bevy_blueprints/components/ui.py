@@ -254,8 +254,8 @@ def process_component(registry, definition, update, extras=None, component_name_
         #**dict(update = update_test)
     }
     (property_group_pointer, property_group_class) = property_group_from_infos(property_group_name, property_group_params)
+    # add our component propertyGroup to the registry
     registry.register_component_ui(property_group_name, property_group_pointer)
-    
     # for practicality, we add an entry for a reverse lookup (short => long name, since we already have long_name => short_name with the keys of the raw registry)
     registry.add_shortName_to_longName(short_name, component_name)
 

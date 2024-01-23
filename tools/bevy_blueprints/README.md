@@ -10,6 +10,9 @@ This [Blender addon](./)  gives you an easy to use UI to add and configure your 
 of your Bevy components you get a nicely packed custom_property to use with ...
 - the ideal companion to the [gltf_auto_export]() to embed your Bevy components inside your gltf files
 
+> Important: 
+  the tooling is still in the early stages, even if it is close to feature complete : I advise keeping a backup of your blend file around.
+
 ## Installation: 
 
 * grab the latest release zip file
@@ -26,16 +29,6 @@ of your Bevy components you get a nicely packed custom_property to use with ...
 ![blender addon install](./docs/blender_addon_install2.png)
 
 
-
-
-
-bpy.context.window_manager
-    .components_registry => raw registry
-    .components_list =>  refined, pythonified list of available components
-
-
-- perhaps directly export default values within the schema.json ?
-        - for most types , it is straighforward, but others, not so muc: like the default color in Bevy , etc
 
 
 ## License
