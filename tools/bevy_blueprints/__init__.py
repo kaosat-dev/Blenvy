@@ -18,7 +18,7 @@ from bpy.props import (StringProperty, EnumProperty, PointerProperty, FloatVecto
 
 from .blueprints import CreateBlueprintOperator
 from .components.operators import CopyComponentOperator, DeleteComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, AddComponentOperator
-from .components.registry import ComponentsRegistry
+from .components.registry import BEVY_COMPONENTS_PT_Configuration, BEVY_COMPONENTS_PT_MissingTypesPanel, ComponentsRegistry
 from .components.metadata import (ComponentInfos, ComponentsMeta, ensure_metadata_for_all_objects)
 from .components.ui import (generate_propertyGroups_for_components)
 from .components.lists import Generic_LIST_OT_AddItem, Generic_LIST_OT_RemoveItem, GENERIC_UL_List
@@ -98,9 +98,11 @@ def draw_propertyGroup( propertyGroup, col, nesting =[]):
                 subrow.separator()
 
 
-class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
-    bl_idname = "BEVY_BLUEPRINTS_PT_TestPanel"
-    bl_label = "Bevy Components"
+
+
+class BEVY_COMPONENTS_PT_MainPanel(bpy.types.Panel):
+    bl_idname = "BEVY_COMPONENTS_PT_MainPanel"
+    bl_label = ""
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "Bevy Components"
@@ -109,7 +111,7 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
 
     def draw_header(self, context):
         layout = self.layout
-        layout.label(text="My Select Panel")
+        layout.label(text="Components For "+ context.object.name)
 
     def draw(self, context):
         layout = self.layout
@@ -119,16 +121,15 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
         # we get & load our component registry
         registry = bpy.context.window_manager.components_registry 
         available_components = bpy.context.window_manager.components_list
-
         col = layout.column(align=True)
         row = col.row(align=True)
-        
-        row.prop(bpy.context.window_manager, "blueprint_name")
+    
+        """row.prop(bpy.context.window_manager, "blueprint_name")
         op = row.operator(CreateBlueprintOperator.bl_idname, text="Create blueprint", icon="CONSOLE")
         op.blueprint_name = bpy.context.window_manager.blueprint_name
         layout.separator()
-
-        current_components_container = None
+        
+         current_components_container = None
         has_components = False
         for child in collection.objects:
             if child.name.endswith("_components"):
@@ -138,6 +139,8 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
         if collection is not None and has_components:
             layout.label(text="Edit blueprint: "+ collection.name)
         
+        """
+
         if object is not None:
             
             col = layout.column(align=True)
@@ -147,8 +150,12 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
             row.prop(available_components, "filter",text="Filter")
 
             # the button to add them
-            op = row.operator(AddComponentOperator.bl_idname, text="", icon="ADD")
+            row = col.row(align=True)
+            op = row.operator(AddComponentOperator.bl_idname, text="Add", icon="ADD")
+            row.enabled = available_components.list != ''
+
             op.component_type = available_components.list
+            col.separator()
             col.separator()
 
          
@@ -156,12 +163,13 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
             row = col.row(align=True)
             row.operator(PasteComponentOperator.bl_idname, text="Paste component ("+bpy.context.window_manager.copied_source_component_name+")", icon="PASTEDOWN")
             row.enabled = bpy.context.window_manager.copied_source_object != ''
+            col.separator()
+            col.separator()
 
             row = col.row(align=True)
             op = row.operator(GenerateComponent_From_custom_property_Operator.bl_idname, text="generate components from custom properties" , icon="LOOP_BACK") # TODO make conditional
+            row.enabled = registry.type_infos != None
             col.separator()
-
-
             col.separator()
 
             components_in_object = object.components_meta.components
@@ -211,7 +219,9 @@ classes = [
     ComponentsMeta,
     ComponentsRegistry,
 
-    BEVY_BLUEPRINTS_PT_TestPanel,
+    BEVY_COMPONENTS_PT_MainPanel,
+    BEVY_COMPONENTS_PT_Configuration,
+    BEVY_COMPONENTS_PT_MissingTypesPanel,
 
     GENERIC_UL_List,
     Generic_LIST_OT_AddItem,

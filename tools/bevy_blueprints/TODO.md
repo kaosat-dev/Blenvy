@@ -65,6 +65,8 @@ UI:
 - [ ] we need a notion of "root propertyGroup" =?
 - [ ] notify user of missing entries in schema (ie , unregistered data types)
 - [ ] clarify propgroup_ui vs named nested fields
+- [ ] fix basic enums handling
+- [ ] add a list of not found components to the registry, add to them on the fly
 
 # Additional
     - [ ] check if output "string" in custom properties are correct

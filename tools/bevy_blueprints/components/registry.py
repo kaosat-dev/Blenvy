@@ -10,12 +10,18 @@ from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorP
 class ComponentsRegistry(PropertyGroup):
     schemaPath: bpy.props.StringProperty(
         name="schema path",
-        description="path to the schema file"
+        description="path to the schema file",
+        default="../schema.json"
     )
 
     registry: bpy.props. StringProperty(
         name="registry",
         description="component registry"
+    )
+
+    missing_type_infos: StringProperty(
+        name="missing type infos",
+        description="unregistered/missing type infos"
     )
 
     blender_property_mapping = {
@@ -112,6 +118,7 @@ class ComponentsRegistry(PropertyGroup):
     }
 
     type_infos = None
+    type_infos_missing = []
     component_uis = {}
     short_names_to_long_names = {}
 
@@ -125,6 +132,7 @@ class ComponentsRegistry(PropertyGroup):
         del bpy.types.WindowManager.components_registry
 
     def load_schema(self):
+        print("bla", self.schemaPath)
         file_path = bpy.data.filepath
         # Get the folder
         folder_path = os.path.dirname(file_path)
@@ -147,3 +155,55 @@ class ComponentsRegistry(PropertyGroup):
     #for practicality, we add an entry for a reverse lookup (short => long name, since we already have long_name => short_name with the keys of the raw registry)
     def add_shortName_to_longName(self, short_name, long_name):
         self.short_names_to_long_names[short_name] = long_name
+
+    # to be able to give the user more feedback on any missin/unregistered types in their schema file
+    def add_missing_typeInfo(self, type_name):
+        if not type_name in self.type_infos_missing:
+            self.type_infos_missing.append(type_name)
+            setattr(self, "missing_type_infos", str(self.type_infos_missing))
+
+
+
+
+
+# TODO: move to UI
+class BEVY_COMPONENTS_PT_Configuration(bpy.types.Panel):
+    bl_idname = "BEVY_COMPONENTS_PT_Configuration"
+    bl_label = "Configuration"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = "Bevy Components"
+    bl_context = "objectmode"
+    bl_parent_id = "BEVY_COMPONENTS_PT_MainPanel"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_description = "list of missing/unregistered type from the bevy side"
+
+    def draw(self, context):
+        layout = self.layout
+        registry = bpy.context.window_manager.components_registry 
+        layout.prop(registry, "schemaPath", text="Path to your Bevy schema.json file")
+        
+
+
+
+# TODO: move to UI
+class BEVY_COMPONENTS_PT_MissingTypesPanel(bpy.types.Panel):
+    bl_idname = "BEVY_COMPONENTS_PT_MissingTypesPanel"
+    bl_label = "Bevy Missing/Unregistered Types"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = "Bevy Components"
+    bl_context = "objectmode"
+    bl_parent_id = "BEVY_COMPONENTS_PT_MainPanel"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_description = "list of missing/unregistered type from the bevy side"
+
+    def draw(self, context):
+        layout = self.layout
+        registry = bpy.context.window_manager.components_registry 
+
+        layout.label(text="Missing types ")
+        #+getattr(registry, "missing_type_infos"))
+        for missing in getattr(registry, "type_infos_missing"):
+            row = layout.row()
+            row.label(text=missing)
