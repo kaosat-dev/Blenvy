@@ -24,12 +24,19 @@ from .components.ui import (generate_propertyGroups_for_components)
 from .components.lists import Generic_LIST_OT_AddItem, Generic_LIST_OT_RemoveItem, GENERIC_UL_List
 from .components.definitions_list import (ComponentDefinitionsList, ClearComponentDefinitionsList)
 
-def draw_propertyGroup( propertyGroup, col):
+def draw_propertyGroup( propertyGroup, col, nesting =[]):
     is_enum = getattr(propertyGroup, "with_enum")
     is_list = getattr(propertyGroup, "with_list") 
+    #current_short_name = getattr(propertyGroup, "short_name", "") + "_ui"
+    #nesting = nesting + [current_short_name] # we need this convoluted "nested path strings " workaround so that operators working on a given
+    # item in our components hierarchy can get the correct propertyGroup by STRINGS because of course, we cannot pass objects to operators...sigh
+
     # if it is an enum, the first field name is always the list of enum variants, the others are the variants
     field_names = propertyGroup.field_names
-
+    #print("drawing", is_list, propertyGroup, nesting)
+    #type_name = getattr(propertyGroup, "type_name", None)#propertyGroup.type_name if "type_name" in propertyGroup else ""
+    #print("type name", type_name)
+    #print("name", propertyGroup.name, "name2", getattr(propertyGroup, "name"), "short_name", getattr(propertyGroup, "short_name", None), "nesting", nesting)
     if is_enum:
         subrow = col.row()
         display_name = field_names[0] if propertyGroup.tupple_or_struct == "struct" else ""
@@ -56,50 +63,35 @@ def draw_propertyGroup( propertyGroup, col):
                         subrow.separator()
     elif is_list:
         #print("show list", propertyGroup, dict(propertyGroup), propertyGroup.type_name)
-        registry = bpy.context.window_manager.components_registry
-        short_name = registry.type_infos[propertyGroup.type_name]["short_name"]
-        ui_propgroup_name = short_name+"_ui"
-        propertyGroup = getattr(bpy.context.object, ui_propgroup_name) # FIXME: the prop group passed here is the wrong one
         item_list = getattr(propertyGroup, "list")
-        list_item = getattr(propertyGroup, "item")
-        #print("list item", getattr(list_item, "field_names"), dict(list_item))
-        #print("item_list",propertyGroup , getattr(bpy.context.object, "Vec<String>_ui") )
+        item_type = getattr(propertyGroup, "type_name_short")
+      
         for item in item_list:
             row = col.row().column()
-            #print("aaa", item.field_names, item.type_name, registry.type_infos[item.type_name])
-            #col.prop(item, "name")
+            # print("aaa", item.field_names, item.type_name)#, registry.type_infos[item.type_name])
             draw_propertyGroup(item, row)
 
         row = col.row()
-        #row.template_list("GENERIC_UL_List", "The_List", propertyGroup, "list", propertyGroup, "list_index")
-        
-        """row.prop(propertyGroup, "item")
-        nested = getattr(list_item, "nested", False)
-
-        print("sdfsdf", list_item.field_names, nested)
-        if nested:
-            print("toto")
-            draw_propertyGroup(list_item, row)"""
+    
 
         row = col.column()
         op = row.operator('generic_list.add_item', text='+')
-        op.property_group_name = ui_propgroup_name
+        op.property_group_path = json.dumps(nesting)
 
         op = row.column().operator('generic_list.remove_item', text='REMOVE')
-        op.property_group_name = ui_propgroup_name
+        op.property_group_path = json.dumps(nesting)
 
         
     else: 
         for fname in field_names:
             subrow = col.row()
-
             nestedPropertyGroup = getattr(propertyGroup, fname)
             nested = getattr(nestedPropertyGroup, "nested", False)
             if nested:
                 col.separator()
                 col.label(text=fname) #  this is the name of the field/sub field
                 col.separator()
-                draw_propertyGroup(nestedPropertyGroup, col.row())
+                draw_propertyGroup(nestedPropertyGroup, col.row(), nesting= nesting + [fname] )
             else:
                 display_name = fname if propertyGroup.tupple_or_struct == "struct" else ""
                 subrow.prop(propertyGroup, fname, text=display_name)
@@ -118,7 +110,7 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
     def draw_header(self, context):
         layout = self.layout
         layout.label(text="My Select Panel")
-        
+
     def draw(self, context):
         layout = self.layout
         object = context.object
@@ -185,11 +177,12 @@ class BEVY_BLUEPRINTS_PT_TestPanel(bpy.types.Panel):
                     continue
 
                 # we fetch the matching ui property group
-                propertyGroup = getattr(object, component_name+"_ui")
+                root_propertyGroup_name = component_name+"_ui"
+                propertyGroup = getattr(object, root_propertyGroup_name)
                 row.prop(component_meta, "enabled", text="")
                 row.label(text=component_name)
                 col = row.column(align=True)
-                draw_propertyGroup(propertyGroup, col)
+                draw_propertyGroup(propertyGroup, col, [root_propertyGroup_name])
 
                 #op = row.operator(CopyComponentOperator.bl_idname, text="", icon="SETTINGS")
                 op = row.operator(DeleteComponentOperator.bl_idname, text="", icon="X")

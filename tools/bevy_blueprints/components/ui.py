@@ -184,6 +184,7 @@ def process_enum(registry, definition, update, component_name_override):
 
 def process_list(registry, definition, update, component_name_override=None):
     print("WE GOT A LIST", definition)
+    #TODO: if the content of the list is a unit type, we need to generate a fake wrapper, otherwise we cannot use layout.prop(group, "propertyName") as there is no propertyName !
 
     value_types_defaults = registry.value_types_defaults 
     blender_property_mapping = registry.blender_property_mapping
@@ -196,17 +197,14 @@ def process_list(registry, definition, update, component_name_override=None):
     original = type_infos[ref_name]
 
     original_long_name = original["title"]
-    (list_content_group, list_content_group_class) = process_component(registry, original, update, {"nested": True, "type_name": original_long_name}, component_name_override=short_name)
+    (list_content_group, list_content_group_class) = process_component(registry, original, update, {"nested": True, "type_name": original_long_name}, component_name_override)
     item_collection = CollectionProperty(type=list_content_group_class)
-
-    def update_test(self, context):
-        print("AAAAHHH UPDATE")
-
+    #item_collection["type_name"] = definition["title"]
 
     __annotations__ = {
         "list": item_collection,
-        "list_index": IntProperty(name = "Index for my_list", default = 0,  update=update_test),
-        "item": list_content_group
+        "list_index": IntProperty(name = "Index for my_list", default = 0,  update=update_calback_helper(definition, update, component_name_override)),
+        "type_name_short": StringProperty(default=short_name)
     }
 
     return __annotations__
@@ -259,7 +257,9 @@ def process_component(registry, definition, update, extras=None, component_name_
         field_names.append(a)
     single_item = len(field_names)
 
-    extras = extras if extras is not None else {}
+    extras = extras if extras is not None else {
+        "type_name": component_name
+    }
 
     def update_test(self, context):
         print("UPPPPPDAAATE")
@@ -274,7 +274,7 @@ def process_component(registry, definition, update, extras=None, component_name_
         'tupple_or_struct': tupple_or_struct,
         'single_item': single_item, 
         'field_names': field_names, 
-        **dict(with_properties = with_properties, with_items= with_items, with_enum= with_enum, with_list= with_list),
+        **dict(with_properties = with_properties, with_items= with_items, with_enum= with_enum, with_list= with_list, short_name= short_name),
         #**dict(update = update_test)
     }
     (property_group_pointer, property_group_class) = property_group_from_infos(property_group_name, property_group_params)
@@ -296,56 +296,58 @@ def property_group_from_infos(property_group_name, property_group_parameters):
     
     return (property_group_pointer, property_group_class)
 
+
+def compute_values(property_group, registry):
+    values = {}
+    for field_name in property_group.field_names:
+        print("field name", field_name)
+        value = getattr(property_group,field_name)
+
+        # special handling for nested property groups
+        is_property_group = isinstance(value, PropertyGroup) 
+        if is_property_group:
+            print("nesting in field_names loop")
+            prop_group_name = getattr(value, "type_name")
+            sub_definition = registry.type_infos[prop_group_name]
+            value = property_group_value_to_custom_property_value(value, sub_definition, registry)
+            print("sub struct value", value)
+
+        try:
+            value = value[:]# in case it is one of the Blender internal array types
+        except Exception:
+            pass
+        print("field name", field_name, "value", value)
+        values[field_name] = value
+    return values
+
 #converts the value of a property group(no matter its complexity) into a single custom property value
+# this is more or less a glorified "to_string()" method (not quite but close to)
 def property_group_value_to_custom_property_value(property_group, definition, registry):
     component_name = definition["short_name"]
     type_info = definition["typeInfo"] if "typeInfo" in definition else None
     type_def = definition["type"] if "type" in definition else None
 
     value = None
-    values = {}
-    print("type_info", type_info, "def", type_def)
+    print("computing custom property", component_name, type_info, type_def)
     print("property_group", property_group, "definition", definition)
-    if type_info == "Value":
-        print("property_group", property_group, "definition", definition)
-    else: 
-        for field_name in property_group.field_names:
-            #print("field name", field_name)
-            value = getattr(property_group,field_name)
 
-            # special handling for nested property groups
-            is_property_group = isinstance(value, PropertyGroup)
-            if is_property_group:
-                print("nesting struct")
-                prop_group_name = getattr(value, "type_name")
-                sub_definition = registry.type_infos[prop_group_name]
-                value = property_group_value_to_custom_property_value(value, sub_definition, registry)
-                print("sub struct value", value)
-
-            try:
-                value = value[:]# in case it is one of the Blender internal array types
-            except Exception:
-                pass
-            print("field name", field_name, "value", value)
-            values[field_name] = value
-
-        print("computing custom property", component_name, type_info, type_def)
-    # now compute the compound values
     if type_info == "Struct":
-        value = values       
-    if type_info == "Tuple": 
+        value = compute_values(property_group, registry)       
+    elif type_info == "Tuple": 
+        values = compute_values(property_group, registry)  
         value = tuple(e for e in list(values.values()))
-    if type_info == "TupleStruct":
+    elif type_info == "TupleStruct":
+        values = compute_values(property_group, registry)
         if len(values.keys()) == 1:
             first_key = list(values.keys())[0]
             value = values[first_key]
         else:
             value = str(tuple(e for e in list(values.values())))
-    if type_info == "Enum":
+    elif type_info == "Enum":
+        values = compute_values(property_group, registry)
         if type_def == "object":
             first_key = list(values.keys())[0]
             selected_entry = values[first_key]
-            print("selected entry", selected_entry, values, value)
             value = values.get("variant_" + selected_entry, None) # default to None if there is no match, for example for entries withouth Bool/Int/String etc properties, ie empty ones
             # TODO might be worth doing differently
             if value != None:
@@ -359,25 +361,23 @@ def property_group_value_to_custom_property_value(property_group, definition, re
             else :
                 value = selected_entry
         else:
-            print("setting enum value, not object")
             first_key = list(values.keys())[0]
             value = values[first_key]
-            #selected_entry["title"]+"("+ str(value) +")"
-    if type_info == "List":
-        print("WE HAVE A LIST", values)
+    elif type_info == "List":
+        item_list = getattr(property_group, "list")
+        item_type = getattr(property_group, "type_name_short")
         value = []
-        for val in values["list"]:
-            #print("val", val, val.type_name, val.field_names)
-            prop_group_name = getattr(val, "type_name")
-            sub_definition = registry.type_infos[prop_group_name]
-            val = property_group_value_to_custom_property_value(val, sub_definition, registry)
-            #print("real val", val)
-            value.append(val)
+        for item in item_list:
+            item_type_name = getattr(item, "type_name")
+            definition = registry.type_infos[item_type_name]
+            item_value = property_group_value_to_custom_property_value(item, definition, registry)
+            value.append(item_value)
         value = str(value)
-
-
-    if len(values.keys()) == 0:
-        value = ''
+    
+    else:
+        values = compute_values(property_group, registry)
+        if len(values.keys()) == 0:
+            value = ''
     return value
 
 import re
@@ -475,7 +475,7 @@ def generate_propertyGroups_for_components():
             return
 
         component_name = definition["short_name"]
-        print("update in component", self, component_name, component_name_override)#, type_def, type_info,self,self.name , "context",context.object.name, "attribute name", field_name)
+        print("update in component", self, component_name, "override", component_name_override)#, type_def, type_info,self,self.name , "context",context.object.name, "attribute name", field_name)
         if component_name_override != None:
             component_name = component_name_override
             long_name = registry.short_names_to_long_names.get(component_name)
@@ -492,7 +492,7 @@ def generate_propertyGroups_for_components():
 
     for component_name in type_infos:
         definition = type_infos[component_name]
-        process_component(registry, definition, update_component)
+        process_component(registry, definition, update_component, None, definition["short_name"])
 
 
         """

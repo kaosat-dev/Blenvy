@@ -1,3 +1,4 @@
+import json
 from bpy_types import Operator, UIList
 from bpy.props import (StringProperty, EnumProperty, PointerProperty, FloatVectorProperty)
 
@@ -27,25 +28,24 @@ class Generic_LIST_OT_AddItem(Operator):
     bl_label = "Add a new item" 
 
 
-    property_group_name: StringProperty(
-        name="property group name",
+    property_group_path: StringProperty(
+        name="property group path",
         description="",
     )
-
     def execute(self, context): 
+        print("")
+        propertyGroup = context.object
+        for path_item in json.loads(self.property_group_path):
+            propertyGroup = getattr(propertyGroup, path_item)
 
-        print("add to list", context.object, self.property_group_name)
-        #context.scene.my_list.add() 
-        my_list_container = getattr(context.object, self.property_group_name)
-        my_list = getattr(my_list_container, "list")
-        print("my list", my_list)
-        item = my_list.add()
-        item.name = ""
-        item.component_name = "foo"
+        print("list container", propertyGroup, dict(propertyGroup))
+        target_list = getattr(propertyGroup, "list")
+        index = getattr(propertyGroup, "list_index")
+        item = target_list.add()
+        propertyGroup.list_index = index + 1 # we use this to force the change detection
 
-        is_enum = getattr(item, "with_enum")
-        is_list = getattr(item, "with_list") 
-        print("added item", item, is_enum, is_list, item.field_names, getattr(item, "field_names"))
+        print("added item", item, item.field_names, getattr(item, "field_names"))
+        print("")
         return{'FINISHED'}
     
 
@@ -55,23 +55,22 @@ class Generic_LIST_OT_RemoveItem(Operator):
     bl_label = "Remove a new item" 
 
 
-    property_group_name: StringProperty(
-        name="property group name",
+    property_group_path: StringProperty(
+        name="property group path",
         description="",
     )
 
-    def execute(self, context): 
-        print("remove from list", context.object, self.property_group_name)
-       
-        return{'FINISHED'}
     
     def execute(self, context): 
-        print("remove from list", context.object, self.property_group_name)
-        my_list_container = getattr(context.object, self.property_group_name)
+        print("remove from list", context.object)
 
-        my_list = getattr(my_list_container, "list")
-        index = getattr(my_list_container, "list_index")
-        my_list.remove(index)
-        my_list_container.list_index = min(max(0, index - 1), len(my_list) - 1) 
+        propertyGroup = context.object
+        for path_item in json.loads(self.property_group_path):
+            propertyGroup = getattr(propertyGroup, path_item)
+
+        target_list = getattr(propertyGroup, "list")
+        index = getattr(propertyGroup, "list_index")
+        target_list.remove(index)
+        propertyGroup.list_index = min(max(0, index - 1), len(target_list) - 1) 
         return{'FINISHED'}
 

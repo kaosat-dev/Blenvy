@@ -63,6 +63,8 @@ UI:
 - [x] fix copy & pasting
     - it actually works, but the value of the custom property are not copied back to the UI, need to implement property_group_value_from_custom_property_value
 - [ ] we need a notion of "root propertyGroup" =?
+- [ ] notify user of missing entries in schema (ie , unregistered data types)
+- [ ] clarify propgroup_ui vs named nested fields
 
 # Additional
     - [ ] check if output "string" in custom properties are correct
