@@ -29,6 +29,12 @@ of your Bevy components you get a nicely packed custom_property to use with ...
 ![blender addon install](./docs/blender_addon_install2.png)
 
 
+## Useage
+
+- "generate components from custom properties" :
+   - if you have existing compatible custom properties without metadata (ie custom properties that match a type name in the schema file), this button will be displayed
+   - once you click on it, component metadata (+ui property groups) will be generated for all compatible components
+   - this operator will attempt to fill in the data correctly, and if not possible will give you the default component values
 
 
 ## License

@@ -114,7 +114,7 @@ class DeleteComponentOperator(Operator):
 
 
 class GenerateComponent_From_custom_property_Operator(Operator):
-    """generate component from custom property"""
+    """generate components from custom property"""
     bl_idname = "object.generate_component"
     bl_label = "Generate component from custom_property Operator"
     bl_options = {"UNDO"}

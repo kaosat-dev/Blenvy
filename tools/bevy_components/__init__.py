@@ -20,7 +20,7 @@ from bpy.types import Context
 from .blueprints import CreateBlueprintOperator
 from .components.operators import CopyComponentOperator, DeleteComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, AddComponentOperator
 from .components.registry import BEVY_COMPONENTS_PT_Configuration, BEVY_COMPONENTS_PT_MissingTypesPanel, ComponentsRegistry, MISSING_TYPES_UL_List, MissingBevyType, OT_OpenFilebrowser, ReloadRegistryOperator
-from .components.metadata import (ComponentInfos, ComponentsMeta, ensure_metadata_for_all_objects)
+from .components.metadata import (ComponentInfos, ComponentsMeta, do_object_custom_properties_have_missing_metadata, ensure_metadata_for_all_objects)
 from .components.ui import (generate_propertyGroups_for_components)
 from .components.lists import Generic_LIST_OT_AddItem, Generic_LIST_OT_RemoveItem, GENERIC_UL_List
 from .components.definitions_list import (ComponentDefinitionsList, ClearComponentDefinitionsList)
@@ -142,11 +142,12 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
             col.separator()
             col.separator()
 
-            row = col.row(align=True)
-            op = row.operator(GenerateComponent_From_custom_property_Operator.bl_idname, text="generate components from custom properties" , icon="LOOP_BACK") # TODO make conditional
-            row.enabled = registry.type_infos != None
-            col.separator()
-            col.separator()
+            upgradeable_customProperties = registry.type_infos != None and do_object_custom_properties_have_missing_metadata(context.object)
+            if upgradeable_customProperties:
+                row = col.row(align=True)
+                op = row.operator(GenerateComponent_From_custom_property_Operator.bl_idname, text="generate components from custom properties" , icon="LOOP_FORWARDS") 
+                col.separator()
+                col.separator()
 
             components_in_object = object.components_meta.components
 

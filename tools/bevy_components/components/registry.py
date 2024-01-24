@@ -6,7 +6,7 @@ from bpy_extras.io_utils import ImportHelper
 from bpy_types import (Operator, PropertyGroup, UIList)
 from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorProperty, IntProperty, IntVectorProperty, EnumProperty, PointerProperty, CollectionProperty)
 
-from .metadata import add_metadata_to_components_without_metadata, ensure_metadata_for_all_objects
+from .metadata import ensure_metadata_for_all_objects
 
 from .operators import GenerateComponent_From_custom_property_Operator
 
@@ -212,7 +212,7 @@ class BEVY_COMPONENTS_PT_Configuration(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        registry = bpy.context.window_manager.components_registry 
+        registry = context.window_manager.components_registry 
 
         row = layout.row()
         col = row.column()
@@ -223,11 +223,6 @@ class BEVY_COMPONENTS_PT_Configuration(bpy.types.Panel):
 
         layout.separator()
         layout.operator(ReloadRegistryOperator.bl_idname, text="reload registry" , icon="FILE_REFRESH")
-
-        layout.separator()
-        row = layout.row()
-        op = layout.operator(GenerateComponent_From_custom_property_Operator.bl_idname, text="generate components from custom properties" , icon="LOOP_FORWARDS") # TODO make conditional
-        row.enabled = registry.type_infos != None
 
         layout.separator()
         layout.separator()

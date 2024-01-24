@@ -70,7 +70,11 @@ UI:
 - [x] add configuration panel (open the first time, closed on further user once configured)
 
 - [ ] only upgrade custom properties to metadata when asked/relevant
-- [ ] add limits to ixxx types vs utypes
+- [x] add limits to ixxx types vs utypes
+- [ ] only display the "generate components xx" when relevant ie:
+    - go through list of custom properties in current object
+        - if one does not have metadata and / or propgroup: 
+            break 
 
 bpy.context.window_manager
     .components_registry => raw registry

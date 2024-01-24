@@ -83,6 +83,35 @@ def ensure_metadata_for_all_objects():
     for object in bpy.data.objects:
         add_metadata_to_components_without_metadata(object)
 
+
+def do_object_custom_properties_have_missing_metadata(object):
+    components_metadata = getattr(object, "components_meta", None)
+    print("components_metadata", components_metadata, object.components_meta)
+    if components_metadata == None:
+        return True
+
+    components_metadata = components_metadata.components
+    registry = bpy.context.window_manager.components_registry
+
+    
+    missing_metadata = False
+    for component_name in dict(object) :
+        if component_name == "components_meta":
+            continue
+        print("scanning", component_name,components_metadata )
+        component_meta =  next(filter(lambda component: component["name"] == component_name, components_metadata), None)
+        if component_meta == None: 
+            # current component has no metadata but is there even a compatible type in the registry ?
+            # if not ignore it
+            component_definition = find_component_definition_from_short_name(component_name)
+            if component_definition != None:
+                missing_metadata = True
+                break
+        
+
+    return missing_metadata
+
+
 # adds metadata to object only if it is missing
 def add_metadata_to_components_without_metadata(object):
     components_metadata = object.components_meta.components # TODO: should we check for this
