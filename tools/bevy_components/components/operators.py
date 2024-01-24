@@ -2,8 +2,8 @@ import ast
 import json
 import bpy
 from bpy_types import Operator
-from bpy.props import (StringProperty, EnumProperty, PointerProperty, FloatVectorProperty)
-from .metadata import add_component_to_object, add_metadata_to_components_without_metadata, cleanup_invalid_metadata, find_component_definition_from_short_name
+from bpy.props import (StringProperty)
+from .metadata import add_component_to_object, add_metadata_to_components_without_metadata, find_component_definition_from_short_name
 
 class AddComponentOperator(Operator):
     """Add component to blueprint"""

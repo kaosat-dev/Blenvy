@@ -14,8 +14,7 @@ import os
 import bpy
 import json
 
-from bpy.props import (StringProperty, EnumProperty, PointerProperty, FloatVectorProperty)
-from bpy.types import Context
+from bpy.props import (StringProperty)
 
 from .blueprints import CreateBlueprintOperator
 from .components.operators import CopyComponentOperator, DeleteComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, AddComponentOperator
@@ -25,7 +24,7 @@ from .registry.operators import (ReloadRegistryOperator, OT_OpenFilebrowser)
 from .registry.ui import (BEVY_COMPONENTS_PT_Configuration, BEVY_COMPONENTS_PT_MissingTypesPanel, MISSING_TYPES_UL_List)
 
 from .components.metadata import (ComponentInfos, ComponentsMeta, do_object_custom_properties_have_missing_metadata, ensure_metadata_for_all_objects)
-from .components.ui import (generate_propertyGroups_for_components)
+from .propGroups.prop_groups import (generate_propertyGroups_for_components)
 from .components.lists import Generic_LIST_OT_AddItem, Generic_LIST_OT_RemoveItem, GENERIC_UL_List
 from .components.definitions_list import (ComponentDefinitionsList, ClearComponentDefinitionsList)
 
@@ -38,7 +37,7 @@ def draw_propertyGroup( propertyGroup, col, nesting =[], rootName=None):
 
     # if it is an enum, the first field name is always the list of enum variants, the others are the variants
     field_names = propertyGroup.field_names
-    print("drawing", is_list, propertyGroup, nesting, "component_name", rootName)
+    # print("drawing", is_list, propertyGroup, nesting, "component_name", rootName)
     #type_name = getattr(propertyGroup, "type_name", None)#propertyGroup.type_name if "type_name" in propertyGroup else ""
     #print("type name", type_name)
     #print("name", propertyGroup.name, "name2", getattr(propertyGroup, "name"), "short_name", getattr(propertyGroup, "short_name", None), "nesting", nesting)

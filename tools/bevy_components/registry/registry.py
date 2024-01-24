@@ -2,12 +2,8 @@ import bpy
 import json
 import os
 from pathlib import Path
-from bpy_types import (Operator, PropertyGroup, UIList)
+from bpy_types import (PropertyGroup)
 from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorProperty, IntProperty, IntVectorProperty, EnumProperty, PointerProperty, CollectionProperty)
-
-
-
-
 
 # helper class to store missing bevy types information
 class MissingBevyType(bpy.types.PropertyGroup):
@@ -191,3 +187,18 @@ class ComponentsRegistry(PropertyGroup):
             item = self.missing_types_list.add()
             item.type_name = type_name
 
+
+"""
+    object[component_definition.name] = 0.5
+    property_manager = object.id_properties_ui(component_definition.name)
+    property_manager.update(min=-10, max=10, soft_min=-5, soft_max=5)
+
+    print("property_manager", property_manager)
+
+    object[component_definition.name] = [0.8,0.2,1.0]
+    property_manager = object.id_properties_ui(component_definition.name)
+    property_manager.update(subtype='COLOR')
+
+    #IDPropertyUIManager
+    #rna_ui = object[component_definition.name].get('_RNA_UI')
+"""

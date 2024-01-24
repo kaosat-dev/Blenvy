@@ -1,11 +1,7 @@
 import bpy
-import json
-from bpy.props import (StringProperty, BoolProperty, FloatProperty, EnumProperty, PointerProperty)
+from bpy.props import (StringProperty, BoolProperty, PointerProperty)
 from bpy_types import (PropertyGroup)
-from bpy.types import (CollectionProperty)
-
-from .ui import property_group_value_from_custom_property_value, property_group_value_to_custom_property_value
-
+from ..propGroups.conversions import property_group_value_from_custom_property_value, property_group_value_to_custom_property_value
 
 class ComponentInfos(bpy.types.PropertyGroup):
     name : bpy.props.StringProperty(
@@ -86,19 +82,16 @@ def ensure_metadata_for_all_objects():
 
 def do_object_custom_properties_have_missing_metadata(object):
     components_metadata = getattr(object, "components_meta", None)
-    print("components_metadata", components_metadata, object.components_meta)
     if components_metadata == None:
         return True
 
     components_metadata = components_metadata.components
     registry = bpy.context.window_manager.components_registry
 
-    
     missing_metadata = False
     for component_name in dict(object) :
         if component_name == "components_meta":
             continue
-        print("scanning", component_name,components_metadata )
         component_meta =  next(filter(lambda component: component["name"] == component_name, components_metadata), None)
         if component_meta == None: 
             # current component has no metadata but is there even a compatible type in the registry ?
@@ -107,8 +100,6 @@ def do_object_custom_properties_have_missing_metadata(object):
             if component_definition != None:
                 missing_metadata = True
                 break
-        
-
     return missing_metadata
 
 

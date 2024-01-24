@@ -6,7 +6,7 @@ from bpy_extras.io_utils import ImportHelper
 
 from ..components.metadata import ensure_metadata_for_all_objects
 from ..components.operators import GenerateComponent_From_custom_property_Operator
-from ..components.ui import generate_propertyGroups_for_components
+from ..propGroups.prop_groups import generate_propertyGroups_for_components
 
 class ReloadRegistryOperator(Operator):
     """Reload registry operator"""
