@@ -19,7 +19,11 @@ from bpy.types import Context
 
 from .blueprints import CreateBlueprintOperator
 from .components.operators import CopyComponentOperator, DeleteComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, AddComponentOperator
-from .components.registry import BEVY_COMPONENTS_PT_Configuration, BEVY_COMPONENTS_PT_MissingTypesPanel, ComponentsRegistry, MISSING_TYPES_UL_List, MissingBevyType, OT_OpenFilebrowser, ReloadRegistryOperator
+
+from .registry.registry import ComponentsRegistry,MissingBevyType
+from .registry.operators import (ReloadRegistryOperator, OT_OpenFilebrowser)
+from .registry.ui import (BEVY_COMPONENTS_PT_Configuration, BEVY_COMPONENTS_PT_MissingTypesPanel, MISSING_TYPES_UL_List)
+
 from .components.metadata import (ComponentInfos, ComponentsMeta, do_object_custom_properties_have_missing_metadata, ensure_metadata_for_all_objects)
 from .components.ui import (generate_propertyGroups_for_components)
 from .components.lists import Generic_LIST_OT_AddItem, Generic_LIST_OT_RemoveItem, GENERIC_UL_List

@@ -1,7 +1,7 @@
 import functools
 import bpy
 import json
-from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorProperty, IntProperty, IntVectorProperty, EnumProperty, PointerProperty, CollectionProperty)
+from bpy.props import (StringProperty, IntProperty, PointerProperty, CollectionProperty)
 from bpy_types import (PropertyGroup)
 
 

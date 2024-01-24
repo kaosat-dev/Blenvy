@@ -71,7 +71,7 @@ UI:
 
 - [ ] only upgrade custom properties to metadata when asked/relevant
 - [x] add limits to ixxx types vs utypes
-- [ ] only display the "generate components xx" when relevant ie:
+- [x] only display the "generate components xx" when relevant ie:
     - go through list of custom properties in current object
         - if one does not have metadata and / or propgroup: 
             break 
