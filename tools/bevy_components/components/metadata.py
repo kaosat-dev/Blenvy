@@ -28,11 +28,6 @@ class ComponentInfos(bpy.types.PropertyGroup):
         default = ""
     )
 
-    values: bpy.props.StringProperty(
-        name = "Values",
-        default = "[]"
-    )
-
     enabled: BoolProperty(
         name="enabled",
         description="component enabled",
@@ -88,14 +83,6 @@ def ensure_metadata_for_all_objects():
     for object in bpy.data.objects:
         add_metadata_to_components_without_metadata(object)
 
-def ensure_prop_groups_for_all_objects():
-    registry = bpy.context.window_manager.components_registry
-    for object in bpy.data.objects:
-        components_metadata = object.components_meta.components
-        print("components_metadata", components_metadata)
-        #for prop in dict(object):
-
-
 # adds metadata to object only if it is missing
 def add_metadata_to_components_without_metadata(object):
     components_metadata = object.components_meta.components # TODO: should we check for this
@@ -120,14 +107,26 @@ def add_metadata_to_components_without_metadata(object):
                 component_meta.long_name = long_name
 
                 property_group_name = short_name+"_ui"
-                propertyGroup = getattr(object, property_group_name, None)
-                print("prop group", propertyGroup) # this is unlikely to happen as the object would need to be missing both propgroup AND metadata
+                propertyGroup = getattr(component_meta, property_group_name, None)
+                # this is unlikely to happen as the object would need to be missing both propgroup AND metadata
                 if propertyGroup == None:
                     print("propertygroup not found injecting")
                     # we have not found a matching property_group, so try to inject it
-                    setattr(bpy.types.Object, property_group_name, registry.component_propertyGroups[property_group_name])
-                    propertyGroup =  getattr(object, property_group_name)#registry.component_propertyGroups[property_group_name]
+                    setattr(ComponentInfos, property_group_name, registry.component_propertyGroups[property_group_name])
+                    propertyGroup =  getattr(component_meta, property_group_name)
+
                 property_group_value_from_custom_property_value(propertyGroup, component_definition, registry, object[component_name])
+        else: # this one has metadata but we ensure that the relevant property group is already present
+            short_name = component_meta.name 
+            component_definition = find_component_definition_from_short_name(component_name)
+            property_group_name = short_name+"_ui"
+            propertyGroup = getattr(component_meta, property_group_name, None)
+            if propertyGroup == None:
+                print("propertygroup not found injecting")
+                # we have not found a matching property_group, so try to inject it
+                setattr(ComponentInfos, property_group_name, registry.component_propertyGroups[property_group_name])
+                propertyGroup =  getattr(component_meta, property_group_name)
+            property_group_value_from_custom_property_value(propertyGroup, component_definition, registry, object[component_name])
 
 
 # adds a component to an object (including metadata) using the provided component definition & optional value
@@ -152,8 +151,10 @@ def add_component_to_object(object, component_definition, value=None):
         registry = bpy.context.window_manager.components_registry
 
         property_group_name = short_name+"_ui"
-        setattr(bpy.types.Object, property_group_name, registry.component_propertyGroups[property_group_name])
-        propertyGroup = getattr(object, property_group_name)
+        propertyGroup = registry.component_propertyGroups[property_group_name]
+        setattr(ComponentInfos, property_group_name, propertyGroup) # FIXME: not ideal as all ComponentInfos get the propGroup, but have not found a way to assign it per instance
+        propertyGroup = getattr(component_meta, property_group_name)
+
 
         if registry.type_infos == None:
             # TODO: throw error

@@ -130,7 +130,8 @@ def process_enum(registry, definition, update, component_name_override):
             if "prefixItems" in item:
                 additional_annotations = additional_annotations | process_prefixItems(registry, definition, item["prefixItems"], update, "variant_"+item_name, component_name_override)
             if "properties" in item:
-                print("YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+                additional_annotations = additional_annotations | process_properties(registry, definition, item["properties"], update, component_name_override)
+
            
 
         items = tuple((e, e, e) for e in labels)
@@ -273,6 +274,7 @@ def property_group_from_infos(property_group_name, property_group_parameters):
 
 def compute_values(property_group, registry):
     values = {}
+    print("compute bla", property_group)
     for field_name in property_group.field_names:
         value = getattr(property_group,field_name)
         # special handling for nested property groups
@@ -346,7 +348,9 @@ def property_group_value_to_custom_property_value(property_group, definition, re
         values = compute_values(property_group, registry)
         if len(values.keys()) == 0:
             value = ''
-    return value
+
+    print("generating custom property value", value, type(value))
+    return str(value) # not sure about this casting
 
 import re
 #converts the value of a single custom property into a value (values) of a property group 
@@ -449,16 +453,19 @@ def generate_propertyGroups_for_components():
             long_name = registry.short_names_to_long_names.get(component_name)
             definition = registry.type_infos[long_name]
             short_name = definition["short_name"]
-            self = getattr(current_object, component_name+"_ui") # FIXME: yikes, I REALLY dislike this ! using the context out of left field
+
+            components_in_object = current_object.components_meta.components
+            component_meta =  next(filter(lambda component: component["name"] == component_name, components_in_object), None)
+            print("component_meta", component_meta)
+            self = getattr(component_meta, component_name+"_ui") #getattr(current_object, component_name+"_ui") # FIXME: yikes, I REALLY dislike this ! using the context out of left field
 
             print("using override", component_name)
         # we use our helper to set the values
-        print("self", self)
         context.object[component_name] = property_group_value_to_custom_property_value(self, definition, registry)
 
     for component_name in type_infos:
         definition = type_infos[component_name]
-        process_component(registry, definition, update_component, None, definition["short_name"])
+        process_component(registry, definition, update_component, None, (lambda short: short)(definition["short_name"]))
 
 
         """

@@ -6,7 +6,7 @@ from bpy_extras.io_utils import ImportHelper
 from bpy_types import (Operator, PropertyGroup, UIList)
 from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorProperty, IntProperty, IntVectorProperty, EnumProperty, PointerProperty, CollectionProperty)
 
-from .metadata import add_metadata_to_components_without_metadata, ensure_metadata_for_all_objects, ensure_prop_groups_for_all_objects
+from .metadata import add_metadata_to_components_without_metadata, ensure_metadata_for_all_objects
 
 from .operators import GenerateComponent_From_custom_property_Operator
 
@@ -42,13 +42,13 @@ class ComponentsRegistry(PropertyGroup):
     blender_property_mapping = {
         "bool": dict(type=BoolProperty, presets=dict()),
 
-        "u8": dict(type=IntProperty, presets=dict()),
-        "u16": dict(type=IntProperty, presets=dict()),
-        "u32": dict(type=IntProperty, presets=dict()),
-        "u64": dict(type=IntProperty, presets=dict()),
-        "u128": dict(type=IntProperty, presets=dict()),
-        "u64": dict(type=IntProperty, presets=dict()),
-        "usize": dict(type=IntProperty, presets=dict()),
+        "u8": dict(type=IntProperty, presets=dict(min=0, max=255)),
+        "u16": dict(type=IntProperty, presets=dict(min=0, max=65535)),
+        "u32": dict(type=IntProperty, presets=dict(min=0)),
+        "u64": dict(type=IntProperty, presets=dict(min=0)),
+        "u128": dict(type=IntProperty, presets=dict(min=0)),
+        "u64": dict(type=IntProperty, presets=dict(min=0)),
+        "usize": dict(type=IntProperty, presets=dict(min=0)),
 
         "i8": dict(type=IntProperty, presets=dict()),
         "i16":dict(type=IntProperty, presets=dict()),
@@ -71,7 +71,7 @@ class ComponentsRegistry(PropertyGroup):
         "glam::Vec4": {"type": FloatVectorProperty, "presets": {"size":4} },
         "glam::Vec4A": {"type": FloatVectorProperty, "presets": {"size":4} },
         "glam::DVec4": {"type": FloatVectorProperty, "presets": {"size":4} },
-        "glam::UVec4":{"type": FloatVectorProperty, "presets": {"size":4} },
+        "glam::UVec4":{"type": FloatVectorProperty, "presets": {"size":4, "min":0.0} },
 
         "glam::Quat": {"type": FloatVectorProperty, "presets": {"size":4} },
 
@@ -149,7 +149,7 @@ class ComponentsRegistry(PropertyGroup):
         for propgroup_name in cls.component_propertyGroups.keys():
             print("unregister comp name", propgroup_name)
             try:
-                delattr(bpy.types.Object, propgroup_name)
+                #delattr(bpy.types.Object, propgroup_name)
                 print("removed propgroup")
             except Exception as error:
                 print("failed to remove", error, "fom bpy.types.Object")
@@ -275,8 +275,8 @@ class ReloadRegistryOperator(Operator):
         print("")
         print("")
         print("")
-        #ensure_metadata_for_all_objects()
-        add_metadata_to_components_without_metadata(context.object)
+        ensure_metadata_for_all_objects()
+        #add_metadata_to_components_without_metadata(context.object)
 
         return {'FINISHED'}
     

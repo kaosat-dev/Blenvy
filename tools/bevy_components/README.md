@@ -3,8 +3,8 @@
 This [Blender addon](./)  gives you an easy to use UI to add and configure your [Bevy]() components inside Blender !
 - **automatically generates a simple UI** to add/configure components based on a **schema** file (an export of all your Bevy components)
 - no more need to specify components manually using custom_properties, with error prone naming etc
-- adds the ability to **toggle components** on/off without having to remove the component from the object
 - adds **metadata** to objects containing information about what components it uses
+- adds the ability to **toggle components** on/off without having to remove the component from the object
 - can **convert** existing custom properties to "upgraded" ones containing metadata
 - uses Blender's **PropertyGroups** to generate custom UIs & connects those groups with the custom properties so that no matter the complexity
 of your Bevy components you get a nicely packed custom_property to use with ...

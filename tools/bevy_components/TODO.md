@@ -67,7 +67,10 @@ UI:
 - [ ] clarify propgroup_ui vs named nested fields
 - [ ] fix basic enums handling
 - [x] add a list of not found components to the registry, add to them on the fly
-- [ ] add configuration panel (open the first time, closed on further user once configured)
+- [x] add configuration panel (open the first time, closed on further user once configured)
+
+- [ ] only upgrade custom properties to metadata when asked/relevant
+- [ ] add limits to ixxx types vs utypes
 
 bpy.context.window_manager
     .components_registry => raw registry
