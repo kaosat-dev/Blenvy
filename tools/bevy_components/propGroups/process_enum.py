@@ -2,7 +2,7 @@ from .utils import update_calback_helper
 from . import process_tupples
 from . import process_structs
 
-def process_enum(registry, definition, update, component_name_override):
+def process_enum(registry, definition, update, component_name_override, nesting):
     value_types_defaults = registry.value_types_defaults 
     blender_property_mapping = registry.blender_property_mapping
     type_infos = registry.type_infos
@@ -11,6 +11,9 @@ def process_enum(registry, definition, update, component_name_override):
     type_info = definition["typeInfo"] if "typeInfo" in definition else None
     type_def = definition["type"] if "type" in definition else None
     values = definition["oneOf"]
+
+    nesting = nesting+ [short_name]
+    print("nesting", nesting)
 
     __annotations__ = {}
     original_type_name = "enum"
@@ -22,9 +25,9 @@ def process_enum(registry, definition, update, component_name_override):
             item_name = item["title"]
             labels.append(item_name)
             if "prefixItems" in item:
-                additional_annotations = additional_annotations | process_tupples.process_tupples(registry, definition, item["prefixItems"], update, "variant_"+item_name, component_name_override)
+                additional_annotations = additional_annotations | process_tupples.process_tupples(registry, definition, item["prefixItems"], update, "variant_"+item_name, component_name_override, nesting)
             if "properties" in item:
-                additional_annotations = additional_annotations | process_structs.process_structs(registry, definition, item["properties"], update, component_name_override)
+                additional_annotations = additional_annotations | process_structs.process_structs(registry, definition, item["properties"], update, component_name_override, nesting)
 
            
 
@@ -36,7 +39,7 @@ def process_enum(registry, definition, update, component_name_override):
             **blender_property_def["presets"],# we inject presets first
             name = property_name,
             items=items,
-            update= update_calback_helper(definition, update, component_name_override)
+            update= update#update_calback_helper(definition, update, component_name_override)
 )
         __annotations__[property_name] = blender_property
 
@@ -55,7 +58,7 @@ def process_enum(registry, definition, update, component_name_override):
             **blender_property_def["presets"],# we inject presets first
             name = property_name,
             items=items,
-            update= update_calback_helper(definition, update, component_name_override)
+            update= update #update_calback_helper(definition, update, component_name_override)
         )
         __annotations__[property_name] = blender_property
     

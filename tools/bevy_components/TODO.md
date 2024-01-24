@@ -76,6 +76,8 @@ UI:
         - if one does not have metadata and / or propgroup: 
             break 
 
+- [ ] remove custom property of disabled component ?
+
 bpy.context.window_manager
     .components_registry => raw registry
     .components_list =>  refined, pythonified list of available components

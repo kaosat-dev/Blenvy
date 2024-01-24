@@ -210,8 +210,6 @@ class BEVY_COMPONENTS_PT_MainPanel(bpy.types.Panel):
         collection = context.collection
 
     
-       
-    
         """row.prop(bpy.context.window_manager, "blueprint_name")
         op = row.operator(CreateBlueprintOperator.bl_idname, text="Create blueprint", icon="CONSOLE")
         op.blueprint_name = bpy.context.window_manager.blueprint_name

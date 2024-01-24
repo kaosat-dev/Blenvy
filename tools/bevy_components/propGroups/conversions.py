@@ -4,7 +4,6 @@ from bpy_types import PropertyGroup
 # helper function for property_group_value_to_custom_property_value 
 def compute_values(property_group, registry):
     values = {}
-    print("compute bla", property_group)
     for field_name in property_group.field_names:
         value = getattr(property_group,field_name)
         # special handling for nested property groups
@@ -32,6 +31,7 @@ def property_group_value_to_custom_property_value(property_group, definition, re
     print("property_group", property_group, "definition", definition)
 
     if type_info == "Struct":
+        print("STRUCT", property_group.field_names)
         value = compute_values(property_group, registry)       
     elif type_info == "Tuple": 
         values = compute_values(property_group, registry)  
