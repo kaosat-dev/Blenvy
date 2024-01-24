@@ -1,5 +1,5 @@
 bl_info = {
-    "name": "bevy_blueprints",
+    "name": "bevy_components",
     "author": "kaosigh",
     "version": (0, 0, 1),
     "blender": (3, 4, 0),
