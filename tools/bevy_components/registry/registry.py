@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 from bpy_types import (PropertyGroup)
 from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorProperty, IntProperty, IntVectorProperty, EnumProperty, PointerProperty, CollectionProperty)
+from ..components.metadata import ComponentInfos
 
 # helper class to store missing bevy types information
 class MissingBevyType(bpy.types.PropertyGroup):
@@ -133,39 +134,34 @@ class ComponentsRegistry(PropertyGroup):
 
     @classmethod
     def register(cls):
-        #bpy.types.WindowManager.missing_bevy_type = MissingBevyType
         bpy.types.WindowManager.components_registry = PointerProperty(type=ComponentsRegistry)
 
     @classmethod
     def unregister(cls):
         print("unregister registry")
         for propgroup_name in cls.component_propertyGroups.keys():
-            print("unregister comp name", propgroup_name)
             try:
-                #delattr(bpy.types.Object, propgroup_name)
-                print("removed propgroup")
+                delattr(ComponentInfos, propgroup_name)
+                print("unregistered propertyGroup", propgroup_name)
             except Exception as error:
-                print("failed to remove", error, "fom bpy.types.Object")
+                print("failed to remove", error, "ComponentInfos")
         
         del bpy.types.WindowManager.components_registry
         
-
     def load_schema(self):
         # cleanup missing types list
         self.missing_types_list.clear()
-        print("bla", self.schemaPath)
         file_path = bpy.data.filepath
 
         # Get the folder
         folder_path = os.path.dirname(file_path)
         path =  os.path.join(folder_path, self.schemaPath)
 
-        print("path to defs", path)
         f = Path(bpy.path.abspath(path)) # make a path object of abs path
         with open(path) as f: 
             data = json.load(f) 
             defs = data["$defs"]
-            self.registry = json.dumps(defs) # FIXME:eeek !
+            self.registry = json.dumps(defs) # FIXME:meh ?
 
     # we load the json once, so we do not need to do it over & over again
     def load_type_infos(self):
@@ -187,7 +183,13 @@ class ComponentsRegistry(PropertyGroup):
             item = self.missing_types_list.add()
             item.type_name = type_name
 
-
+    custom_types_to_add = {}
+    def add_custom_type(self, type_name, type_definition):
+        self.custom_types_to_add[type_name] = type_definition
+    def process_custom_types(self):
+        for type_name in self.custom_types_to_add:
+            self.type_infos[type_name] = self.custom_types_to_add[type_name]
+        self.custom_types_to_add.clear()
 """
     object[component_definition.name] = 0.5
     property_manager = object.id_properties_ui(component_definition.name)

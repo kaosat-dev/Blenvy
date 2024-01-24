@@ -90,16 +90,27 @@ def draw_propertyGroup( propertyGroup, col, nesting =[], rootName=None):
             subrow = col.row()
             nestedPropertyGroup = getattr(propertyGroup, fname)
             nested = getattr(nestedPropertyGroup, "nested", False)
+            display_name = fname if propertyGroup.tupple_or_struct == "struct" else ""
+
             if nested:
                 col.separator()
-                col.label(text=fname) #  this is the name of the field/sub field
+                col.label(text=display_name) #  this is the name of the field/sub field
                 col.separator()
                 draw_propertyGroup(nestedPropertyGroup, col.row(), nesting + [fname], rootName )
             else:
-                display_name = fname if propertyGroup.tupple_or_struct == "struct" else ""
                 subrow.prop(propertyGroup, fname, text=display_name)
                 subrow.separator()
 
+def scan_item(item, nesting=0):
+    try:
+        for sub in dict(item).keys():
+            print("--", sub, getattr(item[sub], "type_name", None), item[sub], nesting)
+            try:
+                scan_item(item[sub], nesting+1)
+            except: 
+                pass
+    except:
+        pass
 
 class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
     bl_idname = "BEVY_COMPONENTS_PT_ComponentsPanel"
@@ -122,6 +133,9 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
         row = col.row(align=True)
 
         if object is not None:
+
+
+
             col = layout.column(align=True)
             row = col.row(align=True)
 
@@ -176,6 +190,9 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
                 root_propertyGroup_name = component_name+"_ui"
                 propertyGroup = getattr(component_meta, root_propertyGroup_name, None)
                 if propertyGroup:
+                    """print(component_name)
+                    scan_item(propertyGroup,0)
+                    print(" ")"""
                     draw_propertyGroup(propertyGroup, col, [root_propertyGroup_name], component_name)
                 else:
                     col.label(text="Missing component propertyGroup !")

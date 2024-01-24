@@ -2,7 +2,7 @@ import json
 from bpy_types import PropertyGroup
 
 # helper function for property_group_value_to_custom_property_value 
-def compute_values(property_group, registry):
+def compute_values(property_group, registry, parent):
     values = {}
     for field_name in property_group.field_names:
         value = getattr(property_group,field_name)
@@ -11,7 +11,7 @@ def compute_values(property_group, registry):
         if is_property_group:
             prop_group_name = getattr(value, "type_name")
             sub_definition = registry.type_infos[prop_group_name]
-            value = property_group_value_to_custom_property_value(value, sub_definition, registry)
+            value = property_group_value_to_custom_property_value(value, sub_definition, registry, parent)
         try:
             value = value[:]# in case it is one of the Blender internal array types
         except Exception:
@@ -21,7 +21,7 @@ def compute_values(property_group, registry):
 
 #converts the value of a property group(no matter its complexity) into a single custom property value
 # this is more or less a glorified "to_string()" method (not quite but close to)
-def property_group_value_to_custom_property_value(property_group, definition, registry):
+def property_group_value_to_custom_property_value(property_group, definition, registry, parent=None):
     component_name = definition["short_name"]
     type_info = definition["typeInfo"] if "typeInfo" in definition else None
     type_def = definition["type"] if "type" in definition else None
@@ -31,20 +31,20 @@ def property_group_value_to_custom_property_value(property_group, definition, re
     print("property_group", property_group, "definition", definition)
 
     if type_info == "Struct":
-        print("STRUCT", property_group.field_names)
-        value = compute_values(property_group, registry)       
+        #print("STRUCT", property_group.field_names)
+        value = compute_values(property_group, registry, "Some")       
     elif type_info == "Tuple": 
-        values = compute_values(property_group, registry)  
+        values = compute_values(property_group, registry, "Some")  
         value = tuple(e for e in list(values.values()))
     elif type_info == "TupleStruct":
-        values = compute_values(property_group, registry)
+        values = compute_values(property_group, registry, "Some")
         if len(values.keys()) == 1:
             first_key = list(values.keys())[0]
             value = values[first_key]
         else:
             value = str(tuple(e for e in list(values.values())))
     elif type_info == "Enum":
-        values = compute_values(property_group, registry)
+        values = compute_values(property_group, registry, "Some")
         if type_def == "object":
             first_key = list(values.keys())[0]
             selected_entry = values[first_key]
@@ -53,10 +53,9 @@ def property_group_value_to_custom_property_value(property_group, definition, re
             if value != None:
                 is_property_group = isinstance(value, PropertyGroup)
                 if is_property_group:
-                    print("nesting")
                     prop_group_name = getattr(value, "type_name")
                     sub_definition = registry.type_infos[prop_group_name]
-                    value = property_group_value_to_custom_property_value(value, sub_definition, registry)
+                    value = property_group_value_to_custom_property_value(value, sub_definition, registry, "Some")
                 value = selected_entry+"("+ str(value) +")"
             else :
                 value = selected_entry
@@ -70,17 +69,26 @@ def property_group_value_to_custom_property_value(property_group, definition, re
         for item in item_list:
             item_type_name = getattr(item, "type_name")
             definition = registry.type_infos[item_type_name]
-            item_value = property_group_value_to_custom_property_value(item, definition, registry)
+            item_value = property_group_value_to_custom_property_value(item, definition, registry, "Some")
             value.append(item_value)
         value = str(value)
     
     else:
-        values = compute_values(property_group, registry)
+        values = compute_values(property_group, registry, "Some")
         if len(values.keys()) == 0:
             value = ''
 
-    print("generating custom property value", value, type(value))
-    return str(value) # not sure about this casting
+    #print("generating custom property value", value, type(value))
+    if parent == None:
+        #print("NO PARENT",  value)
+        value = str(value)
+        
+        value = value.replace("{", "(").replace("}", ")")
+        value = value.replace("'", "") # FIXME: not good ! we do not want to replace string quotes !
+        value = value.replace("True", "true").replace("False", "false") 
+    
+
+    return value # not sure about this casting
 
 import re
 #converts the value of a single custom property into a value (values) of a property group 

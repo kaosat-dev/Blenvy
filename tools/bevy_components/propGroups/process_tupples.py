@@ -1,8 +1,7 @@
 from bpy.props import (StringProperty)
-from .utils import update_calback_helper
 from . import process_component
 
-def process_tupples(registry, definition, prefixItems, update, name_override=None, component_name_override=None, nesting=[]):
+def process_tupples(registry, definition, prefixItems, update, name_override=None, nesting=[]):
     value_types_defaults = registry.value_types_defaults 
     blender_property_mapping = registry.blender_property_mapping
     type_infos = registry.type_infos
@@ -40,7 +39,7 @@ def process_tupples(registry, definition, prefixItems, update, name_override=Non
                         **blender_property_def["presets"],# we inject presets first
                         name = property_name, 
                         default=value,
-                        update= update#update_calback_helper(definition, update, component_name_override)
+                        update= update
                     )
                   
                     __annotations__[property_name] = blender_property
@@ -48,7 +47,7 @@ def process_tupples(registry, definition, prefixItems, update, name_override=Non
                 print("NESTING")
                 print("NOT A VALUE TYPE", original)
                 original_long_name = original["title"]
-                (sub_component_group, _) = process_component.process_component(registry, original, update, {"nested": True, "type_name": original_long_name}, short_name, nesting)
+                (sub_component_group, _) = process_component.process_component(registry, original, update, {"nested": True, "type_name": original_long_name}, nesting)
                 # TODO: use lookup in registry, add it if necessary, or retrieve it if it already exists
                 __annotations__[property_name] = sub_component_group
         else: 

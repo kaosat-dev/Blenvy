@@ -1,5 +1,4 @@
 import bpy
-
 from .conversions import property_group_value_to_custom_property_value
 from .process_component import process_component
 from .utils import update_calback_helper
@@ -12,13 +11,13 @@ def update_component(self, context, definition, component_name):
     if update_disabled:
         return
     
-    #component_name = definition["short_name"]
-    print("update in component", self, component_name)#, type_def, type_info,self,self.name , "context",context.object.name, "attribute name", field_name)
+    print("update in component", component_name, self)
     components_in_object = current_object.components_meta.components
     component_meta =  next(filter(lambda component: component["name"] == component_name, components_in_object), None)
-    self = getattr(component_meta, component_name+"_ui") #getattr(current_object, component_name+"_ui") # FIXME: yikes, I REALLY dislike this ! using the context out of left field
-    # we use our helper to set the values
-    context.object[component_name] = property_group_value_to_custom_property_value(self, definition, registry)
+    if component_meta != None:
+        self = getattr(component_meta, component_name+"_ui")
+        # we use our helper to set the values
+        context.object[component_name] = property_group_value_to_custom_property_value(self, definition, registry, None)
 
 
 def generate_propertyGroups_for_components():
@@ -34,6 +33,8 @@ def generate_propertyGroups_for_components():
         is_component = definition['isComponent'] if "isComponent" in definition else False
         root_property_name = short_name if is_component else None
 
-        foo = update_calback_helper(definition, update_component, root_property_name)
         print("ROOT LEVEL", root_property_name)
-        process_component(registry, definition, foo, None, root_property_name,  []) # (lambda short: short)(definition["short_name"]))
+        process_component(registry, definition, update_calback_helper(definition, update_component, root_property_name), None, [])
+
+    # if we had to add any wrapper types on the fly, process them now
+    registry.process_custom_types()

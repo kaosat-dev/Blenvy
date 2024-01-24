@@ -77,6 +77,7 @@ UI:
             break 
 
 - [ ] remove custom property of disabled component ?
+- [ ] what to do with components with n/a fields ? perhaps disable the component ? add a "invalid" field to meta ?
 
 bpy.context.window_manager
     .components_registry => raw registry

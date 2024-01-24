@@ -6,7 +6,7 @@ from . import process_tupples
 from . import process_enum
 from . import process_list
 
-def process_component(registry, definition, update, extras=None, component_name_override=None, nesting = []):
+def process_component(registry, definition, update, extras=None, nesting = []):
     component_name = definition['title']
     short_name = definition["short_name"]
     type_info = definition["typeInfo"] if "typeInfo" in definition else None
@@ -19,7 +19,7 @@ def process_component(registry, definition, update, extras=None, component_name_
     is_enum = type_info == "Enum"
     is_list = type_info == "List"
 
-    print("processing", short_name, "component_name_override", component_name_override)
+    print("processing", short_name)
 
     __annotations__ = {}
     tupple_or_struct = None
@@ -32,21 +32,21 @@ def process_component(registry, definition, update, extras=None, component_name_
     print("entry", component_name, type_def, type_info)# definition)
 
     if has_properties:
-        __annotations__ = __annotations__ | process_structs.process_structs(registry, definition, properties, update, component_name_override, nesting)
+        __annotations__ = __annotations__ | process_structs.process_structs(registry, definition, properties, update, nesting)
         with_properties = True
         tupple_or_struct = "struct"
 
     if has_prefixItems:
-        __annotations__ = __annotations__ | process_tupples.process_tupples(registry, definition, prefixItems, update, None, component_name_override, nesting)
+        __annotations__ = __annotations__ | process_tupples.process_tupples(registry, definition, prefixItems, update, None, nesting)
         with_items = True
         tupple_or_struct = "tupple"
 
     if is_enum:
-        __annotations__ = __annotations__ | process_enum.process_enum(registry, definition, update, component_name_override, nesting)
+        __annotations__ = __annotations__ | process_enum.process_enum(registry, definition, update, nesting)
         with_enum = True
 
     if is_list:
-        __annotations__ = __annotations__ | process_list.process_list(registry, definition, update, component_name_override, nesting)
+        __annotations__ = __annotations__ | process_list.process_list(registry, definition, update, nesting)
         with_list= True
     
     field_names = []
@@ -57,10 +57,10 @@ def process_component(registry, definition, update, extras=None, component_name_
     extras = extras if extras is not None else {
         "type_name": component_name
     }
-
+    root_component = nesting[0] if len(nesting) > 0 else component_name
     print("DONE: __annotations__", __annotations__)
     print("")
-    property_group_name = short_name+"_ui"
+    # property_group_name = short_name+"_ui"
     property_group_params = {
          **extras,
         '__annotations__': __annotations__,
@@ -69,10 +69,16 @@ def process_component(registry, definition, update, extras=None, component_name_
         'field_names': field_names, 
         **dict(with_properties = with_properties, with_items= with_items, with_enum= with_enum, with_list= with_list, short_name= short_name),
         #**dict(update = update_test)
+        'root_component': root_component
     }
-    #FIXME: YIKES
+    #FIXME: YIKES, but have not found another way: 
+    """ Withouth this ; the following does not work
+    -BasicTest
+    - NestingTestLevel2
+        -BasicTest => the registration & update callback of this one overwrites the first "basicTest"
+    have not found a cleaner workaround so far
+    """
     property_group_name = str(hash(str(nesting))) + short_name+"_ui" if len(nesting) > 0 else short_name+"_ui"
-    print("PROPERTY GROUP NAME", nesting, property_group_name)
 
     (property_group_pointer, property_group_class) = property_group_from_infos(property_group_name, property_group_params)
     #TODO : check if propgroup already exists ?

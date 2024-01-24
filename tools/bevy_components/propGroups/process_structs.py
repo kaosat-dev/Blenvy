@@ -1,9 +1,7 @@
 from bpy.props import (StringProperty)
-from .utils import update_calback_helper
 from . import process_component
 
-def process_structs(registry, definition, properties, update, component_name_override, nesting): 
-    print("processing struct", component_name_override)
+def process_structs(registry, definition, properties, update, nesting): 
     value_types_defaults = registry.value_types_defaults 
     blender_property_mapping = registry.blender_property_mapping
     type_infos = registry.type_infos
@@ -14,6 +12,8 @@ def process_structs(registry, definition, properties, update, component_name_ove
 
     nesting = nesting + [short_name]
     print("nesting", nesting)
+    print("processing struct", short_name)
+
 
     for property_name in properties.keys():
         ref_name = properties[property_name]["type"]["$ref"].replace("#/$defs/", "")
@@ -28,7 +28,6 @@ def process_structs(registry, definition, properties, update, component_name_ove
             if is_value_type:
                 if original_type_name in blender_property_mapping:
                     blender_property_def = blender_property_mapping[original_type_name]
-                    print("OVER", component_name_override)
                     blender_property = blender_property_def["type"](
                         **blender_property_def["presets"],# we inject presets first
                         name = property_name,
@@ -40,9 +39,7 @@ def process_structs(registry, definition, properties, update, component_name_ove
                 print("NESTING")
                 print("NOT A VALUE TYPE", original)
                 original_long_name = original["title"]
-                override = component_name_override if component_name_override is not None else short_name
-                print("OVERRIDE", override)
-                (sub_component_group, _) = process_component.process_component(registry, original, update, {"nested": True, "type_name": original_long_name}, override, nesting)
+                (sub_component_group, _) = process_component.process_component(registry, original, update, {"nested": True, "type_name": original_long_name}, nesting)
                 # TODO: use lookup in registry, add it if necessary, or retrieve it if it already exists
                 __annotations__[property_name] = sub_component_group
         # if there are sub fields, add an attribute "sub_fields" possibly a pointer property ? or add a standard field to the type , that is stored under "attributes" and not __annotations (better)

@@ -30,6 +30,11 @@ class ComponentInfos(bpy.types.PropertyGroup):
         default=True
     )
 
+    invalid: BoolProperty(
+        name="invalid",
+        description="component is invalid, because of missing registration/ other issues",
+        default=False
+    )
 
 class ComponentsMeta(PropertyGroup):
     infos_per_component:  StringProperty(
@@ -183,7 +188,7 @@ def add_component_to_object(object, component_definition, value=None):
         definition = registry.type_infos[long_name]
 
         if value == None:
-            value = property_group_value_to_custom_property_value(propertyGroup, definition, registry)
+            value = property_group_value_to_custom_property_value(propertyGroup, definition, registry, None)
         else: # we have provided a value, that is a raw , custom property value, to set the value of the propertyGroup
             object["__disable__update"] = True # disable update callback while we set the values of the propertyGroup "tree" (as a propertyGroup can contain other propertyGroups) 
             property_group_value_from_custom_property_value(propertyGroup, definition, registry, value)
