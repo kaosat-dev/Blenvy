@@ -32,9 +32,19 @@ class Generic_LIST_OT_AddItem(Operator):
         name="property group path",
         description="",
     )
+
+    component_name: StringProperty(
+        name="component name",
+        description="",
+    )
     def execute(self, context): 
         print("")
-        propertyGroup = context.object
+        object = context.object
+        # information is stored in component meta
+        components_in_object = object.components_meta.components
+        component_meta =  next(filter(lambda component: component["name"] == self.component_name, components_in_object), None)
+
+        propertyGroup = component_meta
         for path_item in json.loads(self.property_group_path):
             propertyGroup = getattr(propertyGroup, path_item)
 
@@ -60,11 +70,19 @@ class Generic_LIST_OT_RemoveItem(Operator):
         description="",
     )
 
-    
+    component_name: StringProperty(
+        name="component name",
+        description="",
+    )
     def execute(self, context): 
         print("remove from list", context.object)
 
-        propertyGroup = context.object
+        object = context.object
+        # information is stored in component meta
+        components_in_object = object.components_meta.components
+        component_meta =  next(filter(lambda component: component["name"] == self.component_name, components_in_object), None)
+
+        propertyGroup = component_meta
         for path_item in json.loads(self.property_group_path):
             propertyGroup = getattr(propertyGroup, path_item)
 

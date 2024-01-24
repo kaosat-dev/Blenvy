@@ -25,7 +25,7 @@ from .components.ui import (generate_propertyGroups_for_components)
 from .components.lists import Generic_LIST_OT_AddItem, Generic_LIST_OT_RemoveItem, GENERIC_UL_List
 from .components.definitions_list import (ComponentDefinitionsList, ClearComponentDefinitionsList)
 
-def draw_propertyGroup( propertyGroup, col, nesting =[]):
+def draw_propertyGroup( propertyGroup, col, nesting =[], rootName=None):
     is_enum = getattr(propertyGroup, "with_enum")
     is_list = getattr(propertyGroup, "with_list") 
     #current_short_name = getattr(propertyGroup, "short_name", "") + "_ui"
@@ -34,7 +34,7 @@ def draw_propertyGroup( propertyGroup, col, nesting =[]):
 
     # if it is an enum, the first field name is always the list of enum variants, the others are the variants
     field_names = propertyGroup.field_names
-    #print("drawing", is_list, propertyGroup, nesting)
+    print("drawing", is_list, propertyGroup, nesting, "component_name", rootName)
     #type_name = getattr(propertyGroup, "type_name", None)#propertyGroup.type_name if "type_name" in propertyGroup else ""
     #print("type name", type_name)
     #print("name", propertyGroup.name, "name2", getattr(propertyGroup, "name"), "short_name", getattr(propertyGroup, "short_name", None), "nesting", nesting)
@@ -69,17 +69,16 @@ def draw_propertyGroup( propertyGroup, col, nesting =[]):
       
         for item in item_list:
             row = col.row().column()
-            # print("aaa", item.field_names, item.type_name)#, registry.type_infos[item.type_name])
-            draw_propertyGroup(item, row)
-
+            draw_propertyGroup(item, row, nesting, rootName)
         row = col.row()
     
-
         row = col.column()
         op = row.operator('generic_list.add_item', text='+')
+        op.component_name = rootName
         op.property_group_path = json.dumps(nesting)
 
         op = row.column().operator('generic_list.remove_item', text='REMOVE')
+        op.component_name = rootName
         op.property_group_path = json.dumps(nesting)
 
         
@@ -92,7 +91,7 @@ def draw_propertyGroup( propertyGroup, col, nesting =[]):
                 col.separator()
                 col.label(text=fname) #  this is the name of the field/sub field
                 col.separator()
-                draw_propertyGroup(nestedPropertyGroup, col.row(), nesting= nesting + [fname] )
+                draw_propertyGroup(nestedPropertyGroup, col.row(), nesting + [fname], rootName )
             else:
                 display_name = fname if propertyGroup.tupple_or_struct == "struct" else ""
                 subrow.prop(propertyGroup, fname, text=display_name)
@@ -173,7 +172,7 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
                 root_propertyGroup_name = component_name+"_ui"
                 propertyGroup = getattr(component_meta, root_propertyGroup_name, None)
                 if propertyGroup:
-                    draw_propertyGroup(propertyGroup, col, [root_propertyGroup_name])
+                    draw_propertyGroup(propertyGroup, col, [root_propertyGroup_name], component_name)
                 else:
                     col.label(text="Missing component propertyGroup !")
                     col.alert = True
