@@ -101,6 +101,10 @@ pub enum EnumComplex {
 #[reflect(Component)]
 pub struct VecOfObjects(Vec<TuppleVec3>);
 
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+pub struct VecOfColors(Vec<Color>);
+
 pub struct ComponentsTestPlugin;
 impl Plugin for ComponentsTestPlugin {
     fn build(&self, app: &mut App) {
@@ -129,6 +133,9 @@ impl Plugin for ComponentsTestPlugin {
             .register_type::<(f32, f32)>()
             .register_type::<Vec<(f32, f32)>>()
             .register_type::<Vec<TuppleVec3>>()
+
+            .register_type::<Vec<Color>>()
+            .register_type::<VecOfColors>()
             ;
     }
 }

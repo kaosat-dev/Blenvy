@@ -97,6 +97,19 @@
       "type": "array",
       "typeInfo": "List"
     },
+    "alloc::vec::Vec<bevy_render::color::Color>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/bevy_render::color::Color"
+        }
+      },
+      "short_name": "Vec<Color>",
+      "title": "alloc::vec::Vec<bevy_render::color::Color>",
+      "type": "array",
+      "typeInfo": "List"
+    },
     "alloc::vec::Vec<bevy_text::text::TextSection>": {
       "isComponent": false,
       "isResource": false,
@@ -2439,6 +2452,22 @@
       "title": "bevy_bevy_registry_export_basic_example::test_components::UnitTest",
       "type": "object",
       "typeInfo": "Struct"
+    },
+    "bevy_bevy_registry_export_basic_example::test_components::VecOfColors": {
+      "isComponent": true,
+      "isResource": false,
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/alloc::vec::Vec<bevy_render::color::Color>"
+          }
+        }
+      ],
+      "short_name": "VecOfColors",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::VecOfColors",
+      "type": "array",
+      "typeInfo": "TupleStruct"
     },
     "bevy_bevy_registry_export_basic_example::test_components::VecOfObjects": {
       "isComponent": true,
