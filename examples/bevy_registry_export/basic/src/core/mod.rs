@@ -13,7 +13,7 @@ pub use physics::*;
 use bevy::prelude::*;
 use bevy_gltf_blueprints::*;
 
-use bevy_blender_editor::*;
+use bevy_registry_export::*;
 
 use crate::game::Player;
 

@@ -1,5 +1,5 @@
 [package]
-name = "bevy_bevy_blender_editor_basic_example"
+name = "bevy_bevy_registry_export_basic_example"
 version = "0.3.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
@@ -7,7 +7,7 @@ license = "MIT OR Apache-2.0"
 [dependencies]
 bevy="0.12"
 bevy_gltf_blueprints = { path = "../../../crates/bevy_gltf_blueprints" }
-bevy_blender_editor = { path = "../../../crates/bevy_blender_editor" }
+bevy_registry_export = { path = "../../../crates/bevy_registry_export" }
 bevy_rapier3d = { version = "0.23.0", features = [ "serde-serialize", "debug-render-3d", "enhanced-determinism"] }
 bevy_asset_loader = { version = "0.18", features = ["standard_dynamic_assets" ]} 
 bevy_editor_pls = { version = "0.6" }

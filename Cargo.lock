@@ -538,27 +538,16 @@ dependencies = [
 ]
 
 [[package]]
-name = "bevy_bevy_blender_editor_basic_example"
+name = "bevy_bevy_registry_export_basic_example"
 version = "0.3.0"
 dependencies = [
  "bevy",
  "bevy_asset_loader",
- "bevy_blender_editor",
  "bevy_editor_pls",
  "bevy_gltf_blueprints 0.6.0",
  "bevy_rapier3d",
+ "bevy_registry_export",
  "rand",
-]
-
-[[package]]
-name = "bevy_blender_editor"
-version = "0.0.1"
-dependencies = [
- "bevy",
- "bevy_app",
- "bevy_ecs",
- "bevy_reflect",
- "serde_json",
 ]
 
 [[package]]
@@ -1198,6 +1187,17 @@ dependencies = [
  "quote",
  "syn 2.0.39",
  "uuid",
+]
+
+[[package]]
+name = "bevy_registry_export"
+version = "0.0.1"
+dependencies = [
+ "bevy",
+ "bevy_app",
+ "bevy_ecs",
+ "bevy_reflect",
+ "serde_json",
 ]
 
 [[package]]

@@ -71,16 +71,16 @@
       "type": "array",
       "typeInfo": "List"
     },
-    "alloc::vec::Vec<bevy_bevy_blender_editor_basic_example::test_components::TuppleVec3>": {
+    "alloc::vec::Vec<bevy_bevy_registry_export_basic_example::test_components::TuppleVec3>": {
       "isComponent": false,
       "isResource": false,
       "items": {
         "type": {
-          "$ref": "#/$defs/bevy_bevy_blender_editor_basic_example::test_components::TuppleVec3"
+          "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::TuppleVec3"
         }
       },
       "short_name": "Vec<TuppleVec3>",
-      "title": "alloc::vec::Vec<bevy_bevy_blender_editor_basic_example::test_components::TuppleVec3>",
+      "title": "alloc::vec::Vec<bevy_bevy_registry_export_basic_example::test_components::TuppleVec3>",
       "type": "array",
       "typeInfo": "List"
     },
@@ -1914,18 +1914,18 @@
       "type": "object",
       "typeInfo": "Enum"
     },
-    "bevy_bevy_blender_editor_basic_example::core::camera::camera_tracking::CameraTrackable": {
+    "bevy_bevy_registry_export_basic_example::core::camera::camera_tracking::CameraTrackable": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
       "properties": {},
       "required": [],
       "short_name": "CameraTrackable",
-      "title": "bevy_bevy_blender_editor_basic_example::core::camera::camera_tracking::CameraTrackable",
+      "title": "bevy_bevy_registry_export_basic_example::core::camera::camera_tracking::CameraTrackable",
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_bevy_blender_editor_basic_example::core::camera::camera_tracking::CameraTracking": {
+    "bevy_bevy_registry_export_basic_example::core::camera::camera_tracking::CameraTracking": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
@@ -1940,11 +1940,11 @@
         "offset"
       ],
       "short_name": "CameraTracking",
-      "title": "bevy_bevy_blender_editor_basic_example::core::camera::camera_tracking::CameraTracking",
+      "title": "bevy_bevy_registry_export_basic_example::core::camera::camera_tracking::CameraTracking",
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_bevy_blender_editor_basic_example::core::camera::camera_tracking::CameraTrackingOffset": {
+    "bevy_bevy_registry_export_basic_example::core::camera::camera_tracking::CameraTrackingOffset": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -1956,11 +1956,11 @@
         }
       ],
       "short_name": "CameraTrackingOffset",
-      "title": "bevy_bevy_blender_editor_basic_example::core::camera::camera_tracking::CameraTrackingOffset",
+      "title": "bevy_bevy_registry_export_basic_example::core::camera::camera_tracking::CameraTrackingOffset",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_blender_editor_basic_example::core::physics::physics_replace_proxies::AutoAABBCollider": {
+    "bevy_bevy_registry_export_basic_example::core::physics::physics_replace_proxies::AutoAABBCollider": {
       "isComponent": true,
       "isResource": false,
       "oneOf": [
@@ -1969,11 +1969,11 @@
         "Capsule"
       ],
       "short_name": "AutoAABBCollider",
-      "title": "bevy_bevy_blender_editor_basic_example::core::physics::physics_replace_proxies::AutoAABBCollider",
+      "title": "bevy_bevy_registry_export_basic_example::core::physics::physics_replace_proxies::AutoAABBCollider",
       "type": "string",
       "typeInfo": "Enum"
     },
-    "bevy_bevy_blender_editor_basic_example::core::physics::physics_replace_proxies::Collider": {
+    "bevy_bevy_registry_export_basic_example::core::physics::physics_replace_proxies::Collider": {
       "isComponent": true,
       "isResource": false,
       "oneOf": [
@@ -2028,33 +2028,33 @@
         }
       ],
       "short_name": "Collider",
-      "title": "bevy_bevy_blender_editor_basic_example::core::physics::physics_replace_proxies::Collider",
+      "title": "bevy_bevy_registry_export_basic_example::core::physics::physics_replace_proxies::Collider",
       "type": "object",
       "typeInfo": "Enum"
     },
-    "bevy_bevy_blender_editor_basic_example::game::Interactible": {
+    "bevy_bevy_registry_export_basic_example::game::Interactible": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
       "properties": {},
       "required": [],
       "short_name": "Interactible",
-      "title": "bevy_bevy_blender_editor_basic_example::game::Interactible",
+      "title": "bevy_bevy_registry_export_basic_example::game::Interactible",
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_bevy_blender_editor_basic_example::game::Player": {
+    "bevy_bevy_registry_export_basic_example::game::Player": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
       "properties": {},
       "required": [],
       "short_name": "Player",
-      "title": "bevy_bevy_blender_editor_basic_example::game::Player",
+      "title": "bevy_bevy_registry_export_basic_example::game::Player",
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_bevy_blender_editor_basic_example::game::SoundMaterial": {
+    "bevy_bevy_registry_export_basic_example::game::SoundMaterial": {
       "isComponent": true,
       "isResource": false,
       "oneOf": [
@@ -2066,22 +2066,22 @@
         "None"
       ],
       "short_name": "SoundMaterial",
-      "title": "bevy_bevy_blender_editor_basic_example::game::SoundMaterial",
+      "title": "bevy_bevy_registry_export_basic_example::game::SoundMaterial",
       "type": "string",
       "typeInfo": "Enum"
     },
-    "bevy_bevy_blender_editor_basic_example::game::picking::Pickable": {
+    "bevy_bevy_registry_export_basic_example::game::picking::Pickable": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
       "properties": {},
       "required": [],
       "short_name": "Pickable",
-      "title": "bevy_bevy_blender_editor_basic_example::game::picking::Pickable",
+      "title": "bevy_bevy_registry_export_basic_example::game::picking::Pickable",
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_bevy_blender_editor_basic_example::test_components::BasicTest": {
+    "bevy_bevy_registry_export_basic_example::test_components::BasicTest": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
@@ -2108,11 +2108,11 @@
         "c"
       ],
       "short_name": "BasicTest",
-      "title": "bevy_bevy_blender_editor_basic_example::test_components::BasicTest",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::BasicTest",
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_bevy_blender_editor_basic_example::test_components::EnumComplex": {
+    "bevy_bevy_registry_export_basic_example::test_components::EnumComplex": {
       "isComponent": true,
       "isResource": false,
       "oneOf": [
@@ -2145,7 +2145,7 @@
           "prefixItems": [
             {
               "type": {
-                "$ref": "#/$defs/bevy_bevy_blender_editor_basic_example::test_components::BasicTest"
+                "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::BasicTest"
               }
             }
           ],
@@ -2157,11 +2157,11 @@
         }
       ],
       "short_name": "EnumComplex",
-      "title": "bevy_bevy_blender_editor_basic_example::test_components::EnumComplex",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::EnumComplex",
       "type": "object",
       "typeInfo": "Enum"
     },
-    "bevy_bevy_blender_editor_basic_example::test_components::EnumTest": {
+    "bevy_bevy_registry_export_basic_example::test_components::EnumTest": {
       "isComponent": true,
       "isResource": false,
       "oneOf": [
@@ -2173,11 +2173,11 @@
         "None"
       ],
       "short_name": "EnumTest",
-      "title": "bevy_bevy_blender_editor_basic_example::test_components::EnumTest",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::EnumTest",
       "type": "string",
       "typeInfo": "Enum"
     },
-    "bevy_bevy_blender_editor_basic_example::test_components::NestedTuppleStuff": {
+    "bevy_bevy_registry_export_basic_example::test_components::NestedTuppleStuff": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2194,38 +2194,38 @@
         },
         {
           "type": {
-            "$ref": "#/$defs/bevy_bevy_blender_editor_basic_example::test_components::NestingTestLevel2"
+            "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::NestingTestLevel2"
           }
         }
       ],
       "short_name": "NestedTuppleStuff",
-      "title": "bevy_bevy_blender_editor_basic_example::test_components::NestedTuppleStuff",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::NestedTuppleStuff",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_blender_editor_basic_example::test_components::NestingTestLevel2": {
+    "bevy_bevy_registry_export_basic_example::test_components::NestingTestLevel2": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
       "properties": {
         "basic": {
           "type": {
-            "$ref": "#/$defs/bevy_bevy_blender_editor_basic_example::test_components::BasicTest"
+            "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::BasicTest"
           }
         },
         "color": {
           "type": {
-            "$ref": "#/$defs/bevy_bevy_blender_editor_basic_example::test_components::TuppleTestColor"
+            "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::TuppleTestColor"
           }
         },
         "enum_inner": {
           "type": {
-            "$ref": "#/$defs/bevy_bevy_blender_editor_basic_example::test_components::EnumTest"
+            "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::EnumTest"
           }
         },
         "nested": {
           "type": {
-            "$ref": "#/$defs/bevy_bevy_blender_editor_basic_example::test_components::NestingTestLevel3"
+            "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::NestingTestLevel3"
           }
         }
       },
@@ -2236,18 +2236,18 @@
         "nested"
       ],
       "short_name": "NestingTestLevel2",
-      "title": "bevy_bevy_blender_editor_basic_example::test_components::NestingTestLevel2",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::NestingTestLevel2",
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_bevy_blender_editor_basic_example::test_components::NestingTestLevel3": {
+    "bevy_bevy_registry_export_basic_example::test_components::NestingTestLevel3": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
       "properties": {
         "vec": {
           "type": {
-            "$ref": "#/$defs/bevy_bevy_blender_editor_basic_example::test_components::TuppleVec3"
+            "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::TuppleVec3"
           }
         }
       },
@@ -2255,11 +2255,11 @@
         "vec"
       ],
       "short_name": "NestingTestLevel3",
-      "title": "bevy_bevy_blender_editor_basic_example::test_components::NestingTestLevel3",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::NestingTestLevel3",
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_bevy_blender_editor_basic_example::test_components::TuppleTest2": {
+    "bevy_bevy_registry_export_basic_example::test_components::TuppleTest2": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2281,11 +2281,11 @@
         }
       ],
       "short_name": "TuppleTest2",
-      "title": "bevy_bevy_blender_editor_basic_example::test_components::TuppleTest2",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::TuppleTest2",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_blender_editor_basic_example::test_components::TuppleTestBool": {
+    "bevy_bevy_registry_export_basic_example::test_components::TuppleTestBool": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2297,11 +2297,11 @@
         }
       ],
       "short_name": "TuppleTestBool",
-      "title": "bevy_bevy_blender_editor_basic_example::test_components::TuppleTestBool",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::TuppleTestBool",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_blender_editor_basic_example::test_components::TuppleTestColor": {
+    "bevy_bevy_registry_export_basic_example::test_components::TuppleTestColor": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2313,11 +2313,11 @@
         }
       ],
       "short_name": "TuppleTestColor",
-      "title": "bevy_bevy_blender_editor_basic_example::test_components::TuppleTestColor",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::TuppleTestColor",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_blender_editor_basic_example::test_components::TuppleTestF32": {
+    "bevy_bevy_registry_export_basic_example::test_components::TuppleTestF32": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2329,11 +2329,11 @@
         }
       ],
       "short_name": "TuppleTestF32",
-      "title": "bevy_bevy_blender_editor_basic_example::test_components::TuppleTestF32",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::TuppleTestF32",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_blender_editor_basic_example::test_components::TuppleTestStr": {
+    "bevy_bevy_registry_export_basic_example::test_components::TuppleTestStr": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2345,11 +2345,11 @@
         }
       ],
       "short_name": "TuppleTestStr",
-      "title": "bevy_bevy_blender_editor_basic_example::test_components::TuppleTestStr",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::TuppleTestStr",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_blender_editor_basic_example::test_components::TuppleTestU64": {
+    "bevy_bevy_registry_export_basic_example::test_components::TuppleTestU64": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2361,11 +2361,11 @@
         }
       ],
       "short_name": "TuppleTestU64",
-      "title": "bevy_bevy_blender_editor_basic_example::test_components::TuppleTestU64",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::TuppleTestU64",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_blender_editor_basic_example::test_components::TuppleVec": {
+    "bevy_bevy_registry_export_basic_example::test_components::TuppleVec": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2377,11 +2377,11 @@
         }
       ],
       "short_name": "TuppleVec",
-      "title": "bevy_bevy_blender_editor_basic_example::test_components::TuppleVec",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::TuppleVec",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_blender_editor_basic_example::test_components::TuppleVec2": {
+    "bevy_bevy_registry_export_basic_example::test_components::TuppleVec2": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2393,11 +2393,11 @@
         }
       ],
       "short_name": "TuppleVec2",
-      "title": "bevy_bevy_blender_editor_basic_example::test_components::TuppleVec2",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::TuppleVec2",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_blender_editor_basic_example::test_components::TuppleVec3": {
+    "bevy_bevy_registry_export_basic_example::test_components::TuppleVec3": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2409,11 +2409,11 @@
         }
       ],
       "short_name": "TuppleVec3",
-      "title": "bevy_bevy_blender_editor_basic_example::test_components::TuppleVec3",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::TuppleVec3",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_blender_editor_basic_example::test_components::TuppleVecF32F32": {
+    "bevy_bevy_registry_export_basic_example::test_components::TuppleVecF32F32": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2425,34 +2425,34 @@
         }
       ],
       "short_name": "TuppleVecF32F32",
-      "title": "bevy_bevy_blender_editor_basic_example::test_components::TuppleVecF32F32",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::TuppleVecF32F32",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_blender_editor_basic_example::test_components::UnitTest": {
+    "bevy_bevy_registry_export_basic_example::test_components::UnitTest": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
       "properties": {},
       "required": [],
       "short_name": "UnitTest",
-      "title": "bevy_bevy_blender_editor_basic_example::test_components::UnitTest",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::UnitTest",
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_bevy_blender_editor_basic_example::test_components::VecOfObjects": {
+    "bevy_bevy_registry_export_basic_example::test_components::VecOfObjects": {
       "isComponent": true,
       "isResource": false,
       "items": false,
       "prefixItems": [
         {
           "type": {
-            "$ref": "#/$defs/alloc::vec::Vec<bevy_bevy_blender_editor_basic_example::test_components::TuppleVec3>"
+            "$ref": "#/$defs/alloc::vec::Vec<bevy_bevy_registry_export_basic_example::test_components::TuppleVec3>"
           }
         }
       ],
       "short_name": "VecOfObjects",
-      "title": "bevy_bevy_blender_editor_basic_example::test_components::VecOfObjects",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::VecOfObjects",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
