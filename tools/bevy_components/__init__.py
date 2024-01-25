@@ -179,6 +179,11 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
                 component_meta =  next(filter(lambda component: component["name"] == component_name, components_in_object), None)
                 if component_meta == None: 
                     continue
+
+                component_invalid = getattr(component_meta, "invalid")
+                invalid_details = getattr(component_meta, "invalid_details")
+                if component_invalid:
+                    row.alert = True
                 #print("meta propgroups", dict(component_meta))
 
                 row.prop(component_meta, "enabled", text="")
@@ -195,7 +200,8 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
                     print(" ")"""
                     draw_propertyGroup(propertyGroup, col, [root_propertyGroup_name], component_name)
                 else:
-                    col.label(text="Missing component propertyGroup !")
+                    error_message = invalid_details if component_invalid else "Missing component propertyGroup !"
+                    col.label(text=error_message)
                     col.alert = True
                 op = row.operator(DeleteComponentOperator.bl_idname, text="", icon="X")
                 op.component_name = component_name

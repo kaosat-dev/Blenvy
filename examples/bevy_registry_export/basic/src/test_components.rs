@@ -99,7 +99,7 @@ pub enum EnumComplex {
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-pub struct VecOfObjects(Vec<TuppleVec3>);
+pub struct VecOfVec3s(Vec<TuppleVec3>);
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
@@ -127,7 +127,7 @@ impl Plugin for ComponentsTestPlugin {
             .register_type::<NestedTuppleStuff>()
             .register_type::<EnumComplex>()
 
-            .register_type::<VecOfObjects>()
+            .register_type::<VecOfVec3s>()
             .register_type::<TuppleVecF32F32>()
 
             .register_type::<(f32, f32)>()

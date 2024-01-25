@@ -2469,7 +2469,7 @@
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::VecOfObjects": {
+    "bevy_bevy_registry_export_basic_example::test_components::VecOfVec3s": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2480,8 +2480,8 @@
           }
         }
       ],
-      "short_name": "VecOfObjects",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::VecOfObjects",
+      "short_name": "VecOfVec3s",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::VecOfVec3s",
       "type": "array",
       "typeInfo": "TupleStruct"
     },

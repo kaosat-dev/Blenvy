@@ -36,6 +36,12 @@ class ComponentInfos(bpy.types.PropertyGroup):
         default=False
     )
 
+    invalid_details: StringProperty(
+        name="invalid details",
+        description="detailed information about why the component is invalid",
+        default=""
+    )
+
 class ComponentsMeta(PropertyGroup):
     infos_per_component:  StringProperty(
         name="infos per component",
@@ -147,12 +153,18 @@ def add_metadata_to_components_without_metadata(object):
             property_group_name = short_name+"_ui"
             propertyGroup = getattr(component_meta, property_group_name, None)
             if propertyGroup == None:
-                print("propertygroup not found injecting")
-                # we have not found a matching property_group, so try to inject it
-                setattr(ComponentInfos, property_group_name, registry.component_propertyGroups[property_group_name])
-                propertyGroup =  getattr(component_meta, property_group_name)
-            property_group_value_from_custom_property_value(propertyGroup, component_definition, registry, object[component_name])
-
+                print("propertygroup not found in metadata attempting to injectt")
+                if property_group_name in registry.component_propertyGroups:
+                    # we have found a matching property_group, so try to inject it
+                    setattr(ComponentInfos, property_group_name, registry.component_propertyGroups[property_group_name])
+                    propertyGroup =  getattr(component_meta, property_group_name)
+            if propertyGroup != None:
+                property_group_value_from_custom_property_value(propertyGroup, component_definition, registry, object[component_name])
+            else:
+                # if we still have not found the property group, mark it as invalid
+                component_meta.enabled = False
+                component_meta.invalid = True
+                component_meta.invalid_details = "component type not present in the schema, possibly renamed ? Disabling for now"
 
 # adds a component to an object (including metadata) using the provided component definition & optional value
 def add_component_to_object(object, component_definition, value=None):
