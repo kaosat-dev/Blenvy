@@ -121,12 +121,34 @@ class GenerateComponent_From_custom_property_Operator(Operator):
 
     component_name: StringProperty(
         name="component name",
-        description="component to delete",
+        description="component to generate custom properties for",
     )
 
     def execute(self, context):
         object = context.object
         add_metadata_to_components_without_metadata(object)
+
+        return {'FINISHED'}
+
+
+
+class Toggle_ComponentVisibility(Operator):
+    """toggles components visibility"""
+    bl_idname = "object.toggle_component_visibility"
+    bl_label = "Toggle component visibility"
+    bl_options = {"UNDO"}
+
+    component_name: StringProperty(
+        name="component name",
+        description="component to toggle",
+    )
+
+    def execute(self, context):
+        object = context.object
+        components_in_object = object.components_meta.components
+        component_meta =  next(filter(lambda component: component["name"] == self.component_name, components_in_object), None)
+        if component_meta != None: 
+            component_meta.visible = not component_meta.visible
 
         return {'FINISHED'}
 

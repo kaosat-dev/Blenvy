@@ -42,6 +42,10 @@ class ComponentInfos(bpy.types.PropertyGroup):
         default=""
     )
 
+    visible: BoolProperty( # REALLY dislike doing this for UI control, but ok hack for now
+        default=True
+    )
+
 class ComponentsMeta(PropertyGroup):
     infos_per_component:  StringProperty(
         name="infos per component",
