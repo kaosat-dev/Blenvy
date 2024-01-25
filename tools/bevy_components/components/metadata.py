@@ -168,7 +168,7 @@ def add_metadata_to_components_without_metadata(object):
                 # if we still have not found the property group, mark it as invalid
                 component_meta.enabled = False
                 component_meta.invalid = True
-                component_meta.invalid_details = "component type not present in the schema, possibly renamed ? Disabling for now"
+                component_meta.invalid_details = "component not present in the schema, possibly renamed? Disabling for now"
 
 # adds a component to an object (including metadata) using the provided component definition & optional value
 def add_component_to_object(object, component_definition, value=None):

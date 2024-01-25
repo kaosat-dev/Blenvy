@@ -187,6 +187,8 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
                 if propertyGroup:
                     if component_visible:
                         draw_propertyGroup(propertyGroup, prop_group_location, [root_propertyGroup_name], component_name)
+                    else :
+                        row.label(text="details hidden, click on toggle to display")
                 else:
                     error_message = invalid_details if component_invalid else "Missing component propertyGroup !"
                     row.label(text=error_message)
@@ -194,12 +196,13 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
                 # "footer" with additional controls
                 op = row.operator(DeleteComponentOperator.bl_idname, text="", icon="X")
                 op.component_name = component_name
+                row.separator()
                 
                 op = row.operator(CopyComponentOperator.bl_idname, text="", icon="COPYDOWN")
                 op.source_component_name = component_name
                 op.source_object_name = object.name
-
                 row.separator()
+                
                 toggle_icon = "TRIA_DOWN" if component_visible else "TRIA_RIGHT"
                 op = row.operator(Toggle_ComponentVisibility.bl_idname, text="", icon=toggle_icon)
                 op.component_name = component_name
