@@ -79,6 +79,7 @@ UI:
 - [x] remove custom property of disabled component ? => NOpe, as we need custom properties to iterate over
 - [x] what to do with components with n/a fields ? perhaps disable the component ? add a "invalid" field to meta ?
 - [ ] format output as correct RON
+    - [ ] fix issue with empty strings
 - [ ] change custom property => propGroup to convert RON => Json first
 - [ ] cleanup process_lists
 

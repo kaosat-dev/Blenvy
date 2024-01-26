@@ -15,6 +15,7 @@ def compute_values(property_group, registry, parent):
     values = {}
     for field_name in property_group.field_names:
         value = getattr(property_group,field_name)
+
         # special handling for nested property groups
         is_property_group = isinstance(value, PropertyGroup) 
         if is_property_group:
@@ -25,6 +26,7 @@ def compute_values(property_group, registry, parent):
             value = value[:]# in case it is one of the Blender internal array types
         except Exception:
             pass
+
         values[field_name] = value
     return values
 
@@ -43,10 +45,17 @@ def property_group_value_to_custom_property_value(property_group, definition, re
         print("is struct", parent)
         #print("STRUCT", property_group.field_names)
         values = compute_values(property_group, registry, "Some") 
-        value = values
-        if parent != None:
-            print("has parent")
-            #value = {component_name: value}
+        vals = {}
+        for key, val in values.items():
+            value = val
+            #prop_group_name = getattr(val, "type_name")
+            #sub_definition = registry.type_infos[prop_group_name]
+            # check for type of it AND if it is not enum or so ?
+            """  if type(value) == str: 
+                value = '"'+value+'"'"""
+            vals[key] = value
+            
+        value = vals
         if len(values) ==0:
             return ''
     elif type_info == "Tuple": 
@@ -74,9 +83,8 @@ def property_group_value_to_custom_property_value(property_group, definition, re
             value = str(value).replace("True", "true").replace("False", "false")
         
         print("making it into a tupple")
-        value = {component_name: value}
-        if parent == None:
-            value = tuple([value])
+        #if parent == None:
+        value = tuple([value])
     elif type_info == "Enum":
         values = compute_values(property_group, registry, "Some")
         if type_def == "object":
@@ -105,11 +113,11 @@ def property_group_value_to_custom_property_value(property_group, definition, re
             item_type_name = getattr(item, "type_name")
             definition = registry.type_infos[item_type_name]
             item_value = property_group_value_to_custom_property_value(item, definition, registry, "Some")
+            print("item type", item_type_name, item_value)
+            if item_type_name.startswith("wrapper_"):
+                item_value = item_value[0]
             value.append(item_value)
-        #value = str(value)
-        """if type(value) == list:
-            value = ",".join(value)"""
-        #value = "[" + value + "]"
+        #TODO if we have a "fake" tupple for aka for value types, we need to remove one nested level somehow ?
     
     else:
         print("OTHR")
