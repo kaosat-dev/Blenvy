@@ -271,7 +271,8 @@ class BEVY_COMPONENTS_PT_MainPanel(bpy.types.Panel):
 
     def draw_header(self, context):
         layout = self.layout
-        layout.label(text="Components For "+ context.object.name)
+        name = context.object.name if context.object != None else ''
+        layout.label(text="Components For "+ name)
 
     def draw(self, context):
         layout = self.layout

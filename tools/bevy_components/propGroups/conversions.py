@@ -1,6 +1,15 @@
 import json
 from bpy_types import PropertyGroup
 
+
+conversion_tables = {
+    "glam::Vec3": lambda value: "Vec3(x:"+str(value[0])+ ", y:"+str(value[1])+ ", z:"+str(value[2])+")",
+    "glam::Vec2": lambda value: "Vec2(x:"+str(value[0])+ ", y:"+str(value[1])+")",
+    "bevy_render::color::Color": lambda value: "Rgba(red:"+str(value[0])+ ", green:"+str(value[1])+ ", blue:"+str(value[2])+ ", alpha:"+str(value[3])+   ")",
+    #"bevy_render::color::Color": lambda value: "Color::rgba("+"".join(lambda x: str(x))(value)+")",
+
+}
+
 # helper function for property_group_value_to_custom_property_value 
 def compute_values(property_group, registry, parent):
     values = {}
@@ -20,7 +29,7 @@ def compute_values(property_group, registry, parent):
     return values
 
 #converts the value of a property group(no matter its complexity) into a single custom property value
-# this is more or less a glorified "to_string()" method (not quite but close to)
+# this is more or less a glorified "to_ron()" method (not quite but close to)
 def property_group_value_to_custom_property_value(property_group, definition, registry, parent=None):
     component_name = definition["short_name"]
     type_info = definition["typeInfo"] if "typeInfo" in definition else None
@@ -28,27 +37,52 @@ def property_group_value_to_custom_property_value(property_group, definition, re
 
     value = None
     print("computing custom property", component_name, type_info, type_def)
-    print("property_group", property_group, "definition", definition)
+    #print("property_group", property_group, "definition", definition)
 
     if type_info == "Struct":
+        print("is struct", parent)
         #print("STRUCT", property_group.field_names)
-        value = compute_values(property_group, registry, "Some")       
+        values = compute_values(property_group, registry, "Some") 
+        value = values
+        if parent != None:
+            print("has parent")
+            #value = {component_name: value}
+        if len(values) ==0:
+            return ''
     elif type_info == "Tuple": 
         values = compute_values(property_group, registry, "Some")  
         value = tuple(e for e in list(values.values()))
     elif type_info == "TupleStruct":
+        print("is tupplestruct")
         values = compute_values(property_group, registry, "Some")
         if len(values.keys()) == 1:
             first_key = list(values.keys())[0]
             value = values[first_key]
+            #conversion_tables
+            sub_type = definition["prefixItems"][0]["type"]["$ref"].replace("#/$defs/", "")
+            print("sub _type", sub_type, "value", value)
+            if sub_type in conversion_tables:
+                value =  conversion_tables[sub_type](value)
+
+            elif type(value) == str:
+                value = '"'+value+'"'
         else:
-            value = str(tuple(e for e in list(values.values())))
+            value = tuple(e for e in list(values.values()))
+        print("rertert", type(value))
+        
+        if type(value) == bool:
+            value = str(value).replace("True", "true").replace("False", "false")
+        
+        print("making it into a tupple")
+        value = {component_name: value}
+        if parent == None:
+            value = tuple([value])
     elif type_info == "Enum":
         values = compute_values(property_group, registry, "Some")
         if type_def == "object":
             first_key = list(values.keys())[0]
-            selected_entry = values[first_key]
-            value = values.get("variant_" + selected_entry, None) # default to None if there is no match, for example for entries withouth Bool/Int/String etc properties, ie empty ones
+            variant_name = values[first_key]
+            value = values.get("variant_" + variant_name, None) # default to None if there is no match, for example for entries withouth Bool/Int/String etc properties, ie empty ones
             # TODO might be worth doing differently
             if value != None:
                 is_property_group = isinstance(value, PropertyGroup)
@@ -56,13 +90,14 @@ def property_group_value_to_custom_property_value(property_group, definition, re
                     prop_group_name = getattr(value, "type_name")
                     sub_definition = registry.type_infos[prop_group_name]
                     value = property_group_value_to_custom_property_value(value, sub_definition, registry, "Some")
-                value = selected_entry+"("+ str(value) +")"
+                value = variant_name+"("+ str(value) +")"
             else :
-                value = selected_entry
+                value = variant_name
         else:
             first_key = list(values.keys())[0]
             value = values[first_key]
     elif type_info == "List":
+        print("is list")
         item_list = getattr(property_group, "list")
         item_type = getattr(property_group, "type_name_short")
         value = []
@@ -71,24 +106,36 @@ def property_group_value_to_custom_property_value(property_group, definition, re
             definition = registry.type_infos[item_type_name]
             item_value = property_group_value_to_custom_property_value(item, definition, registry, "Some")
             value.append(item_value)
-        value = str(value)
+        #value = str(value)
+        """if type(value) == list:
+            value = ",".join(value)"""
+        #value = "[" + value + "]"
     
     else:
+        print("OTHR")
         values = compute_values(property_group, registry, "Some")
         if len(values.keys()) == 0:
             value = ''
 
+    print("VALUE", value, type(value))
+
     #print("generating custom property value", value, type(value))
     if parent == None:
-        #print("NO PARENT",  value)
-        value = str(value)
-        
+        print("NO PARENT")
+        value = str(value).replace("'",  "")
+        value = value.replace(",)",")")
         value = value.replace("{", "(").replace("}", ")")
-        value = value.replace("'", "") # FIXME: not good ! we do not want to replace string quotes !
-        value = value.replace("True", "true").replace("False", "false") 
-    
+    return value
 
-    return value # not sure about this casting
+
+def json_to_psuedo_ron(value):
+    value = str(value)
+    value = value.replace("{", "(").replace("}", ")")
+    value = value.replace("'", "") # FIXME: not good ! we do not want to replace string quotes !
+    value = value.replace("True", "true").replace("False", "false")
+    value = value.replace('"', "")
+    return  value
+
 
 import re
 #converts the value of a single custom property into a value (values) of a property group 

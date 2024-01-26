@@ -10,7 +10,7 @@ def update_component(self, context, definition, component_name):
     update_disabled = current_object["__disable__update"] if "__disable__update" in current_object else False
     if update_disabled:
         return
-    
+    print("")
     print("update in component", component_name, self)
     components_in_object = current_object.components_meta.components
     component_meta =  next(filter(lambda component: component["name"] == component_name, components_in_object), None)

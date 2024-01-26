@@ -77,9 +77,10 @@ UI:
             break 
 
 - [x] remove custom property of disabled component ? => NOpe, as we need custom properties to iterate over
-- [ ] what to do with components with n/a fields ? perhaps disable the component ? add a "invalid" field to meta ?
+- [x] what to do with components with n/a fields ? perhaps disable the component ? add a "invalid" field to meta ?
 - [ ] format output as correct RON
 - [ ] change custom property => propGroup to convert RON => Json first
+- [ ] cleanup process_lists
 
 bpy.context.window_manager
     .components_registry => raw registry
@@ -92,4 +93,14 @@ bpy.context.window_manager
 
 # Additional
     - [ ] check if output "string" in custom properties are correct
-    - update gltf_auto_export to take into account component metadata ? (might not be needed, except for "enabled" flag)
+
+    - gltf_auto_export
+        - [ ] add support for "enabled" flag
+        - [ ] add special components 
+                - "AutoExport" => Needed
+                - "Dynamic" ? naah wait that should be exported by the Bevy side
+        - [ ] filter out Components_meta ??
+    - bevy_gltf_components:
+        - add "compatibility mode" and deprecation warnings for the current hack-ish conversion of fake ron
+
+    
