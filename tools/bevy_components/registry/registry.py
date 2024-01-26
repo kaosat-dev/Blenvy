@@ -186,10 +186,15 @@ class ComponentsRegistry(PropertyGroup):
     custom_types_to_add = {}
     def add_custom_type(self, type_name, type_definition):
         self.custom_types_to_add[type_name] = type_definition
+
     def process_custom_types(self):
         for type_name in self.custom_types_to_add:
             self.type_infos[type_name] = self.custom_types_to_add[type_name]
         self.custom_types_to_add.clear()
+
+    invalid_components = []
+    def add_invalid_component(self, component_name):
+        self.invalid_components.append(component_name)
 """
     object[component_definition.name] = 0.5
     property_manager = object.id_properties_ui(component_definition.name)

@@ -124,9 +124,9 @@ def add_metadata_to_components_without_metadata(object):
     registry = bpy.context.window_manager.components_registry
 
     for component_name in dict(object) :
-        print("scanning", component_name)
         if component_name == "components_meta":
             continue
+        print("scanning", component_name)
         component_meta =  next(filter(lambda component: component["name"] == component_name, components_metadata), None)
         if component_meta == None: 
             component_definition = find_component_definition_from_short_name(component_name)
@@ -149,7 +149,7 @@ def add_metadata_to_components_without_metadata(object):
                     # we have not found a matching property_group, so try to inject it
                     setattr(ComponentInfos, property_group_name, registry.component_propertyGroups[property_group_name])
                     propertyGroup =  getattr(component_meta, property_group_name)
-
+                
                 property_group_value_from_custom_property_value(propertyGroup, component_definition, registry, object[component_name])
         else: # this one has metadata but we ensure that the relevant property group is already present
             short_name = component_meta.name 
@@ -164,11 +164,17 @@ def add_metadata_to_components_without_metadata(object):
                     propertyGroup =  getattr(component_meta, property_group_name)
             if propertyGroup != None:
                 property_group_value_from_custom_property_value(propertyGroup, component_definition, registry, object[component_name])
+                if short_name in registry.invalid_components:
+                    component_meta.enabled = False
+                    component_meta.invalid = True
+                    component_meta.invalid_details = "component contains fields that are not in the schema, disabling"
             else:
                 # if we still have not found the property group, mark it as invalid
                 component_meta.enabled = False
                 component_meta.invalid = True
                 component_meta.invalid_details = "component not present in the schema, possibly renamed? Disabling for now"
+
+               
 
 # adds a component to an object (including metadata) using the provided component definition & optional value
 def add_component_to_object(object, component_definition, value=None):
@@ -197,6 +203,18 @@ def add_component_to_object(object, component_definition, value=None):
         propertyGroup = getattr(component_meta, property_group_name)
 
 
+        if propertyGroup != None:
+            if short_name in registry.invalid_components:
+                component_meta.enabled = False
+                component_meta.invalid = True
+                component_meta.invalid_details = "component contains fields that are not in the schema, disabling"
+        else: # TODO: does not make sense here
+            # if we still have not found the property group, mark it as invalid
+            component_meta.enabled = False
+            component_meta.invalid = True
+            component_meta.invalid_details = "component not present in the schema, possibly renamed? Disabling for now"
+
+
         if registry.type_infos == None:
             # TODO: throw error
             print("registry type infos have not been loaded yet or ar missing !")
@@ -210,6 +228,5 @@ def add_component_to_object(object, component_definition, value=None):
             property_group_value_from_custom_property_value(propertyGroup, definition, registry, value)
             del object["__disable__update"]
 
-        #value_converted = value.to_dict() if "to_dict" in value else value
         object[short_name] = value
        

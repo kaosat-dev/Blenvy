@@ -47,5 +47,7 @@ def process_structs(registry, definition, properties, update, nesting):
             # component not found in type_infos, generating placeholder
             __annotations__[property_name] = StringProperty(default="N/A")
             registry.add_missing_typeInfo(ref_name)
+            # the root component also becomes invalid (in practice it is not always a component, but good enough)
+            registry.add_invalid_component(nesting[0])
 
     return __annotations__
