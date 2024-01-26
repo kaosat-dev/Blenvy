@@ -6,6 +6,7 @@ from .helpers import (make_empty3)
 # copy original names before creating a new scene, & reset them
 def generate_hollow_scene(scene, library_collections, addon_prefs, filter=None): 
     collection_instances_combine_mode = getattr(addon_prefs, "collection_instances_combine_mode")
+    legacy_mode = getattr(addon_prefs, "export_legacy_mode")
 
     root_collection = scene.collection 
     temp_scene = bpy.data.scenes.new(name="temp_scene")
@@ -45,7 +46,7 @@ def generate_hollow_scene(scene, library_collections, addon_prefs, filter=None):
                 object.name = original_name + "____bak"
                 empty_obj = make_empty3(original_name, object.location, object.rotation_euler, object.scale, destination_collection)
                 """we inject the collection/blueprint name, as a component called 'BlueprintName', but we only do this in the empty, not the original object"""
-                empty_obj['BlueprintName'] = '"'+collection_name+'"'
+                empty_obj['BlueprintName'] = '"'+collection_name+'"' if legacy_mode else '("'+collection_name+'")'
                 empty_obj['SpawnHere'] = ''
 
                 for k, v in object.items():

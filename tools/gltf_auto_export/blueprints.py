@@ -5,6 +5,7 @@ from .helpers import (make_empty3, traverse_tree)
 
 def generate_blueprint_hollow_scene(blueprint_collection, library_collections, addon_prefs):
     collection_instances_combine_mode = getattr(addon_prefs, "collection_instances_combine_mode")
+    legacy_mode = getattr(addon_prefs, "export_legacy_mode")
 
     temp_scene = bpy.data.scenes.new(name="temp_scene_"+blueprint_collection.name)
     temp_scene_root_collection = temp_scene.collection
@@ -66,12 +67,12 @@ def generate_blueprint_hollow_scene(blueprint_collection, library_collections, a
                 object.name = original_name + "____bak"
                 empty_obj = make_empty3(original_name, object.location, object.rotation_euler, object.scale, destination_collection)
                 """we inject the collection/blueprint name, as a component called 'BlueprintName', but we only do this in the empty, not the original object"""
-                empty_obj['BlueprintName'] = '"'+collection_name+'"'
+                empty_obj['BlueprintName'] = '"'+collection_name+'"' if legacy_mode else '("'+collection_name+'")'
                 empty_obj['SpawnHere'] = ''
 
                 
                 for k, v in object.items():
-                    if k != 'template' or k != '_combine': # do not copy these properties
+                    if k != 'template' or k != '_combine': # do not copy these custom properties/ components
                         empty_obj[k] = v
 
                 if parent_empty is not None:

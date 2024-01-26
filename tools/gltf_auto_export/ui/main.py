@@ -208,6 +208,7 @@ class GLTF_PT_auto_export_root(bpy.types.Panel):
         layout.prop(operator, 'will_save_settings')
         layout.prop(operator, "export_output_folder")
         layout.prop(operator, "export_scene_settings")
+        layout.prop(operator, "export_legacy_mode")
 
         # scene selectors
         row = layout.row()
@@ -297,8 +298,7 @@ class GLTF_PT_auto_export_blueprints(bpy.types.Panel):
         operator = sfile.active_operator
 
         layout.active = operator.export_blueprints
-        
-         # collections/blueprints 
+        # collections/blueprints 
         layout.prop(operator, "export_blueprints_path")
         layout.prop(operator, "collection_instances_combine_mode")
         layout.prop(operator, "export_marked_assets")

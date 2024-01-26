@@ -28,6 +28,8 @@ AutoExportGltfPreferenceNames = [
 
     'export_scene_settings',
 
+    'export_legacy_mode',
+
     'main_scenes',
     'library_scenes',
     'main_scenes_index',
@@ -120,6 +122,12 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         description="""For MAIN scenes only (aka levels), toggle this to generate 2 files per level: 
             - one with all dynamic data: collection or instances marked as dynamic/ saveable
             - one with all static data: anything else that is NOT marked as dynamic""",
+        default=True
+    )
+
+    export_legacy_mode: BoolProperty(
+        name='Legacy mode for Bevy',
+        description='Toggle this if you want to be compatible with bevy_gltf_blueprints/components < 0.8',
         default=True
     )
 
