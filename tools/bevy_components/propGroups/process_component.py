@@ -52,7 +52,7 @@ def process_component(registry, definition, update, extras=None, nesting = []):
     field_names = []
     for a in __annotations__:
         field_names.append(a)
-    single_item = len(field_names)
+ 
 
     extras = extras if extras is not None else {
         "type_name": component_name
@@ -65,7 +65,6 @@ def process_component(registry, definition, update, extras=None, nesting = []):
          **extras,
         '__annotations__': __annotations__,
         'tupple_or_struct': tupple_or_struct,
-        'single_item': single_item, 
         'field_names': field_names, 
         **dict(with_properties = with_properties, with_items= with_items, with_enum= with_enum, with_list= with_list, short_name= short_name),
         #**dict(update = update_test)

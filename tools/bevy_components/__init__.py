@@ -100,6 +100,7 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
                 component_invalid = getattr(component_meta, "invalid")
                 invalid_details = getattr(component_meta, "invalid_details")
                 component_visible = getattr(component_meta, "visible")
+                single_field = False
 
                 # our whole row 
                 box = layout.box() 
@@ -110,11 +111,15 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
                 row.label(text=component_name)
 
                 # we fetch the matching ui property group
-                prop_group_location = box.row(align=True).column()#row.column(align=False)#.split(factor=0.9)#layout.row(align=False)
-
                 root_propertyGroup_name = component_name+"_ui"
                 propertyGroup = getattr(component_meta, root_propertyGroup_name, None)
                 if propertyGroup:
+                    # if the component has only 0 or 1 field names, display inline, otherwise change layout
+                    single_field = len(propertyGroup.field_names) < 2
+                    prop_group_location = box.row(align=True).column()
+                    if single_field:
+                        prop_group_location = row.column(align=True)#.split(factor=0.9)#layout.row(align=False)
+                    
                     if component_visible:
                         if component_invalid:
                             error_message = invalid_details if component_invalid else "Missing component propertyGroup !"
@@ -136,6 +141,7 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
                 op.source_object_name = object.name
                 row.separator()
                 
+                #if not single_field:
                 toggle_icon = "TRIA_DOWN" if component_visible else "TRIA_RIGHT"
                 op = row.operator(Toggle_ComponentVisibility.bl_idname, text="", icon=toggle_icon)
                 op.component_name = component_name

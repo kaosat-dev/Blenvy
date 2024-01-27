@@ -106,7 +106,6 @@ def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None):
 
         #list_column.template_list("GENERIC_UL_List", "The_List", propertyGroup, "list", propertyGroup, "list_index")
 
-        
     else: 
         for fname in field_names:
             subrow = layout.row()
