@@ -1,32 +1,11 @@
 import json
 from bpy_types import Operator, UIList
-from bpy.props import (StringProperty, EnumProperty, PointerProperty, FloatVectorProperty)
-
-class GENERIC_UL_List(UIList): 
-    """Demo UIList.""" 
-    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index): 
-        # We could write some code to decide which icon to use here...
-        custom_icon = 'OBJECT_DATAMODE' # Make sure your code supports all 3 layout types 
-        if self.layout_type in {'DEFAULT', 'COMPACT'}: 
-            #print("compact")
-            #layout.label(text=item.name, icon = custom_icon) 
-            #layout.prop(item, "name", text="")
-            pass
-            #propertyGroup = getattr(object, item.component_name+"_ui")
-
-        elif self.layout_type in {'GRID'}: 
-            print("grid")
-            layout.alignment = 'CENTER' 
-            layout.label(text="", icon = custom_icon)
-
-            
-
+from bpy.props import (StringProperty, EnumProperty, PointerProperty, FloatVectorProperty, IntProperty)
 
 class Generic_LIST_OT_AddItem(Operator): 
     """Add a new item to the list.""" 
     bl_idname = "generic_list.add_item" 
     bl_label = "Add a new item" 
-
 
     property_group_path: StringProperty(
         name="property group path",
@@ -37,6 +16,7 @@ class Generic_LIST_OT_AddItem(Operator):
         name="component name",
         description="",
     )
+
     def execute(self, context): 
         print("")
         object = context.object
@@ -62,8 +42,7 @@ class Generic_LIST_OT_AddItem(Operator):
 class Generic_LIST_OT_RemoveItem(Operator): 
     """Remove an item to the list.""" 
     bl_idname = "generic_list.remove_item" 
-    bl_label = "Remove a new item" 
-
+    bl_label = "Remove selected item" 
 
     property_group_path: StringProperty(
         name="property group path",
@@ -92,3 +71,93 @@ class Generic_LIST_OT_RemoveItem(Operator):
         propertyGroup.list_index = min(max(0, index - 1), len(target_list) - 1) 
         return{'FINISHED'}
 
+
+class Generic_LIST_OT_SelectItem(Operator): 
+    """Remove an item to the list.""" 
+    bl_idname = "generic_list.select_item" 
+    bl_label = "select an item" 
+
+
+    property_group_path: StringProperty(
+        name="property group path",
+        description="",
+    )
+
+    component_name: StringProperty(
+        name="component name",
+        description="",
+    )
+
+    selection_index: IntProperty()
+
+    def execute(self, context): 
+        print("select in list", context.object)
+
+        object = context.object
+        # information is stored in component meta
+        components_in_object = object.components_meta.components
+        component_meta =  next(filter(lambda component: component["name"] == self.component_name, components_in_object), None)
+
+        propertyGroup = component_meta
+        for path_item in json.loads(self.property_group_path):
+            propertyGroup = getattr(propertyGroup, path_item)
+
+        target_list = getattr(propertyGroup, "list")
+        index = getattr(propertyGroup, "list_index")
+
+        propertyGroup.list_index = self.selection_index
+        return{'FINISHED'}
+
+
+class CUSTOM_OT_actions(Operator):
+    """Move items up and down, add and remove"""
+    bl_idname = "rule_list.list_action"
+    bl_label = "List Actions"
+    bl_description = "Move items up and down, add and remove"
+    bl_options = {'REGISTER'}
+
+    action: EnumProperty(
+        items=(
+            ('UP', "Up", ""),
+            ('DOWN', "Down", ""),
+            ('REMOVE', "Remove", ""),
+            ('ADD', "Add", "")))
+
+    def invoke(self, context, event):
+        scn = context.scene
+        idx = scn.rule_list_index
+
+        try:
+            item = scn.rule_list[idx]
+        except IndexError:
+            pass
+        else:
+            if self.action == 'DOWN' and idx < len(scn.rule_list) - 1:
+                item_next = scn.rule_list[idx + 1].name
+                scn.rule_list.move(idx, idx + 1)
+                scn.rule_list_index += 1
+                info = 'Item "%s" moved to position %d' % (item.name, scn.rule_list_index + 1)
+                self.report({'INFO'}, info)
+
+            elif self.action == 'UP' and idx >= 1:
+                item_prev = scn.rule_list[idx - 1].name
+                scn.rule_list.move(idx, idx - 1)
+                scn.rule_list_index -= 1
+                info = 'Item "%s" moved to position %d' % (item.name, scn.rule_list_index + 1)
+                self.report({'INFO'}, info)
+
+            elif self.action == 'REMOVE':
+                info = 'Item "%s" removed from list' % (scn.rule_list[idx].name)
+                scn.rule_list_index -= 1
+                scn.rule_list.remove(idx)
+                self.report({'INFO'}, info)
+
+        if self.action == 'ADD':
+            item = scn.rule_list.add()
+            item.name = f"Rule {idx +1}"
+
+            scn.rule_list_index = len(scn.rule_list) - 1
+            info = '"%s" added to list' % (item.name)
+            self.report({'INFO'}, info)
+
+        return {"FINISHED"}

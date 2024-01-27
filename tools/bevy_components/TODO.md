@@ -83,6 +83,12 @@ UI:
 - [ ] change custom property => propGroup to convert RON => Json first
 - [ ] cleanup process_lists
 
+- [ ] display single item enums inline, others in a seperate row
+
+- [ ] add button to "apply all" (in configuration), to apply/update all custom properties to ALL objects where relevant
+- [ ] add button to "apply to current" to do the same with current
+- [ ] what about metadata ?
+
 bpy.context.window_manager
     .components_registry => raw registry
     .components_list =>  refined, pythonified list of available components

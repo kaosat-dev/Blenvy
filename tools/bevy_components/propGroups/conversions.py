@@ -36,10 +36,8 @@ def property_group_value_to_custom_property_value(property_group, definition, re
     component_name = definition["short_name"]
     type_info = definition["typeInfo"] if "typeInfo" in definition else None
     type_def = definition["type"] if "type" in definition else None
-
     value = None
     print("computing custom property", component_name, type_info, type_def)
-    #print("property_group", property_group, "definition", definition)
 
     if type_info == "Struct":
         print("is struct", parent)
@@ -78,10 +76,7 @@ def property_group_value_to_custom_property_value(property_group, definition, re
         else:
             value = tuple(e for e in list(values.values()))
         print("rertert", type(value))
-        
-        if type(value) == bool:
-            value = str(value).replace("True", "true").replace("False", "false")
-        
+          
         print("making it into a tupple")
         #if parent == None:
         value = tuple([value])
@@ -133,6 +128,7 @@ def property_group_value_to_custom_property_value(property_group, definition, re
         value = str(value).replace("'",  "")
         value = value.replace(",)",")")
         value = value.replace("{", "(").replace("}", ")")
+        value = value.replace("True", "true").replace("False", "false")
     return value
 
 

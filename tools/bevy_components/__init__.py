@@ -25,82 +25,12 @@ from .registry.ui import (BEVY_COMPONENTS_PT_Configuration, BEVY_COMPONENTS_PT_M
 
 from .components.metadata import (ComponentInfos, ComponentsMeta, do_object_custom_properties_have_missing_metadata, ensure_metadata_for_all_objects)
 from .propGroups.prop_groups import (generate_propertyGroups_for_components)
-from .components.lists import Generic_LIST_OT_AddItem, Generic_LIST_OT_RemoveItem, GENERIC_UL_List
+from .components.lists import Generic_LIST_OT_AddItem, Generic_LIST_OT_RemoveItem, Generic_LIST_OT_SelectItem
 from .components.definitions_list import (ComponentDefinitionsList, ClearComponentDefinitionsList)
+from .components.ui import (GENERIC_UL_List, draw_propertyGroup)
 
-def draw_propertyGroup( propertyGroup, col, nesting =[], rootName=None):
-    is_enum = getattr(propertyGroup, "with_enum")
-    is_list = getattr(propertyGroup, "with_list") 
-    #current_short_name = getattr(propertyGroup, "short_name", "") + "_ui"
-    #nesting = nesting + [current_short_name] # we need this convoluted "nested path strings " workaround so that operators working on a given
-    # item in our components hierarchy can get the correct propertyGroup by STRINGS because of course, we cannot pass objects to operators...sigh
 
-    # if it is an enum, the first field name is always the list of enum variants, the others are the variants
-    field_names = propertyGroup.field_names
-    # print("drawing", is_list, propertyGroup, nesting, "component_name", rootName)
-    #type_name = getattr(propertyGroup, "type_name", None)#propertyGroup.type_name if "type_name" in propertyGroup else ""
-    #print("type name", type_name)
-    #print("name", propertyGroup.name, "name2", getattr(propertyGroup, "name"), "short_name", getattr(propertyGroup, "short_name", None), "nesting", nesting)
-    if is_enum:
-        subrow = col.row()
-        display_name = field_names[0] if propertyGroup.tupple_or_struct == "struct" else ""
-        subrow.prop(propertyGroup, field_names[0], text=display_name)
-        subrow.separator()
-        selection = getattr(propertyGroup, field_names[0])
-
-        for fname in field_names[1:]:
-            if fname == "variant_" + selection:
-                subrow = col.row()
-                display_name = fname if propertyGroup.tupple_or_struct == "struct" else ""
-
-                nestedPropertyGroup = getattr(propertyGroup, fname)
-                nested = getattr(nestedPropertyGroup, "nested", False)
-                if not nested:
-                    subrow.prop(propertyGroup, fname, text=display_name)
-                    subrow.separator()
-                else:
-                    #print("deal with sub fields", nestedPropertyGroup.field_names)
-                    for subfname in nestedPropertyGroup.field_names:
-                        subrow = col.row()
-                        display_name = subfname if nestedPropertyGroup.tupple_or_struct == "struct" else ""
-                        subrow.prop(nestedPropertyGroup, subfname, text=display_name)
-                        subrow.separator()
-    elif is_list:
-        #print("show list", propertyGroup, dict(propertyGroup), propertyGroup.type_name)
-        item_list = getattr(propertyGroup, "list")
-        item_type = getattr(propertyGroup, "type_name_short")
-      
-        for item in item_list:
-            row = col.row().column()
-            draw_propertyGroup(item, row, nesting, rootName)
-        row = col.row()
-    
-        row = col.column()
-        op = row.operator('generic_list.add_item', text='+')
-        op.component_name = rootName
-        op.property_group_path = json.dumps(nesting)
-
-        op = row.column().operator('generic_list.remove_item', text='REMOVE')
-        op.component_name = rootName
-        op.property_group_path = json.dumps(nesting)
-
-        
-    else: 
-        for fname in field_names:
-            subrow = col.row()
-            nestedPropertyGroup = getattr(propertyGroup, fname)
-            nested = getattr(nestedPropertyGroup, "nested", False)
-            display_name = fname if propertyGroup.tupple_or_struct == "struct" else ""
-
-            if nested:
-                col.separator()
-                col.label(text=display_name) #  this is the name of the field/sub field
-                col.separator()
-                draw_propertyGroup(nestedPropertyGroup, col.row(), nesting + [fname], rootName )
-            else:
-                subrow.prop(propertyGroup, fname, text=display_name)
-                subrow.separator()
-
+# just a test, remove
 def scan_item(item, nesting=0):
     try:
         for sub in dict(item).keys():
@@ -180,7 +110,7 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
                 row.label(text=component_name)
 
                 # we fetch the matching ui property group
-                prop_group_location = row.column(align=False)#.split(factor=0.9)#layout.row(align=False)
+                prop_group_location = box.row(align=True).column()#row.column(align=False)#.split(factor=0.9)#layout.row(align=False)
 
                 root_propertyGroup_name = component_name+"_ui"
                 propertyGroup = getattr(component_meta, root_propertyGroup_name, None)
@@ -212,52 +142,7 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
                 #row.separator()
 
         else: 
-            layout.label(text ="Select a an object to edits its components")      
-
-        """ col = layout.column(align=True)
-        row = col.row(align=True)
-
-        if object is not None:
-            col = layout.column(align=True)
-            row = col.row(align=True)
-
-            row.prop(available_components, "list", text="Component")
-            row.prop(available_components, "filter",text="Filter")
-
-            # the button to add them
-            row = col.row(align=True)
-            op = row.operator(AddComponentOperator.bl_idname, text="Add", icon="ADD")
-            row.enabled = available_components.list != ''
-
-            op.component_type = available_components.list
-            col.separator()
-            col.separator()
-
-         
-          
-            #print("object propgroups", dict(object))
-
-            for component_name in sorted(dict(object)) : # sorted by component name, practical
-                if component_name == "components_meta":
-                    continue
-                col = layout.column(align=True)
-                row = col.row(align=True)
-
-                
-
-                
-                #print("meta propgroups", dict(component_meta))
-
-                row.prop(component_meta, "enabled", text="")
-                row.label(text=component_name)
-
-                col = row.column(align=True)
-
-               
-               
-
-        else: 
-            layout.label(text ="Select a collection/blueprint to edit it")"""
+            layout.label(text ="Select an object to edit its components")      
 
 
 class BEVY_COMPONENTS_PT_MainPanel(bpy.types.Panel):
@@ -326,6 +211,7 @@ classes = [
     BEVY_COMPONENTS_PT_MissingTypesPanel,
 
     GENERIC_UL_List,
+    Generic_LIST_OT_SelectItem,
     Generic_LIST_OT_AddItem,
     Generic_LIST_OT_RemoveItem
 ]
