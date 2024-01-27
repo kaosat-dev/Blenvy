@@ -19,7 +19,7 @@ def process_component(registry, definition, update, extras=None, nesting = []):
     is_enum = type_info == "Enum"
     is_list = type_info == "List"
 
-    print("processing", short_name)
+    #print("processing", short_name, component_name, type_def, type_info)
 
     __annotations__ = {}
     tupple_or_struct = None
@@ -29,7 +29,6 @@ def process_component(registry, definition, update, extras=None, nesting = []):
     with_enum = False
     with_list = False
 
-    print("entry", component_name, type_def, type_info)# definition)
 
     if has_properties:
         __annotations__ = __annotations__ | process_structs.process_structs(registry, definition, properties, update, nesting)
@@ -58,8 +57,8 @@ def process_component(registry, definition, update, extras=None, nesting = []):
         "type_name": component_name
     }
     root_component = nesting[0] if len(nesting) > 0 else component_name
-    print("DONE: __annotations__", __annotations__)
-    print("")
+    #print("DONE: __annotations__", __annotations__)
+    #print("")
     # property_group_name = short_name+"_ui"
     property_group_params = {
          **extras,
@@ -67,7 +66,6 @@ def process_component(registry, definition, update, extras=None, nesting = []):
         'tupple_or_struct': tupple_or_struct,
         'field_names': field_names, 
         **dict(with_properties = with_properties, with_items= with_items, with_enum= with_enum, with_list= with_list, short_name= short_name),
-        #**dict(update = update_test)
         'root_component': root_component
     }
     #FIXME: YIKES, but have not found another way: 
@@ -80,7 +78,6 @@ def process_component(registry, definition, update, extras=None, nesting = []):
     property_group_name = str(hash(str(nesting))) + short_name+"_ui" if len(nesting) > 0 else short_name+"_ui"
 
     (property_group_pointer, property_group_class) = property_group_from_infos(property_group_name, property_group_params)
-    #TODO : check if propgroup already exists ?
     # add our component propertyGroup to the registry
     registry.register_component_propertyGroup(property_group_name, property_group_pointer)
     # for practicality, we add an entry for a reverse lookup (short => long name, since we already have long_name => short_name with the keys of the raw registry)

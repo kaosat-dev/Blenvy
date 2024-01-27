@@ -2,15 +2,7 @@ import json
 from bpy_types import PropertyGroup
 
 
-def convert_color(value):
-    try:
-        value = value[:]# in case it is one of the Blender internal array types
-    except Exception:
-        pass
-    return "Rgba(red:"+str(value[0])+ ", green:"+str(value[1])+ ", blue:"+str(value[2])+ ", alpha:"+str(value[3])+   ")"
-
 conversion_tables = {
-
     "bool": lambda value: value,
 
     "char": lambda value: '"'+value+'"',
@@ -19,45 +11,23 @@ conversion_tables = {
 
     "glam::Vec3": lambda value: "Vec3(x:"+str(value[0])+ ", y:"+str(value[1])+ ", z:"+str(value[2])+")",
     "glam::Vec2": lambda value: "Vec2(x:"+str(value[0])+ ", y:"+str(value[1])+")",
-    "bevy_render::color::Color": convert_color
-    
-    #lambda value: "Rgba(red:"+str(value[0])+ ", green:"+str(value[1])+ ", blue:"+str(value[2])+ ", alpha:"+str(value[3])+   ")",
+    "bevy_render::color::Color": lambda value: "Rgba(red:"+str(value[0])+ ", green:"+str(value[1])+ ", blue:"+str(value[2])+ ", alpha:"+str(value[3])+   ")",
     #"bevy_render::color::Color": lambda value: "Color::rgba("+"".join(lambda x: str(x))(value)+")",
-
 }
 
-# helper function for property_group_value_to_custom_property_value 
-def compute_values(property_group, registry, parent):
-    values = {}
-    for field_name in property_group.field_names:
-        value = getattr(property_group,field_name)
-
-        # special handling for nested property groups
-        is_property_group = isinstance(value, PropertyGroup) 
-        if is_property_group:
-            prop_group_name = getattr(value, "type_name")
-            sub_definition = registry.type_infos[prop_group_name]
-            value = property_group_value_to_custom_property_value(value, sub_definition, registry, parent)
-        try:
-            value = value[:]# in case it is one of the Blender internal array types
-        except Exception:
-            pass
-
-        values[field_name] = value
-    return values
-
+#converts the value of a property group(no matter its complexity) into a single custom property value
+# this is more or less a glorified "to_ron()" method (not quite but close to)
 def property_group_value_to_custom_property_value(property_group, definition, registry, parent=None, value=None):
     component_name = definition["short_name"]
     type_info = definition["typeInfo"] if "typeInfo" in definition else None
     type_def = definition["type"] if "type" in definition else None
     type_name = definition["title"]
-    print("computing custom property", component_name, type_info, type_def, type_name)
     is_value_type = type_name in conversion_tables
+    #print("computing custom property", component_name, type_info, type_def, type_name)
 
     if is_value_type:
         value = conversion_tables[type_name](value)
     elif type_info == "Struct":
-        print("is struct", parent)
         values = {}
         if len(property_group.field_names) ==0:
             value = ''
@@ -71,11 +41,8 @@ def property_group_value_to_custom_property_value(property_group, definition, re
                 child_property_group = value if is_property_group else None
                 value = property_group_value_to_custom_property_value(child_property_group, item_definition, registry, parent=component_name, value=value)
                 values[field_name] = value
-            value = values
-        print("values", values, len(property_group.field_names))
-        
+            value = values        
     elif type_info == "Tuple": 
-        print("is tupple")
         values = {}
         for index, field_name in enumerate(property_group.field_names):
             item_type_name = definition["prefixItems"][index]["type"]["$ref"].replace("#/$defs/", "")
@@ -89,7 +56,6 @@ def property_group_value_to_custom_property_value(property_group, definition, re
         value = tuple(e for e in list(values.values()))
 
     elif type_info == "TupleStruct":
-        print("is tupplestruct", definition)
         values = {}
         for index, field_name in enumerate(property_group.field_names):
             item_type_name = definition["prefixItems"][index]["type"]["$ref"].replace("#/$defs/", "")
@@ -103,11 +69,9 @@ def property_group_value_to_custom_property_value(property_group, definition, re
         
         value = tuple(e for e in list(values.values()))
     elif type_info == "Enum":
-        print("is enum", definition)
         selected = getattr(property_group, component_name)
 
         if type_def == "object":
-            print("property_group.field_names", property_group.field_names)
             selection_index = property_group.field_names.index("variant_"+selected)
             variant_name = property_group.field_names[selection_index]
 
@@ -126,135 +90,27 @@ def property_group_value_to_custom_property_value(property_group, definition, re
             value = selected
 
     elif type_info == "List":
-        print("is list")
         item_list = getattr(property_group, "list")
-        item_type = getattr(property_group, "type_name_short")
+        #item_type = getattr(property_group, "type_name_short")
         value = []
         for item in item_list:
             item_type_name = getattr(item, "type_name")
             definition = registry.type_infos[item_type_name]
             item_value = property_group_value_to_custom_property_value(item, definition, registry, component_name, None)
-            print("item type", item_type_name, item_value)
             if item_type_name.startswith("wrapper_"): #if we have a "fake" tupple for aka for value types, we need to remove one nested level
                 item_value = item_value[0]
             value.append(item_value) 
     else:
         value = conversion_tables[type_name](value) if is_value_type else value
         
-
-    print("VALUE", value, type(value))
-
+    #print("VALUE", value, type(value))
     #print("generating custom property value", value, type(value))
     if parent == None:
-        print("NO PARENT")
         value = str(value).replace("'",  "")
         value = value.replace(",)",")")
         value = value.replace("{", "(").replace("}", ")")
         value = value.replace("True", "true").replace("False", "false")
     return value
-
-
-#converts the value of a property group(no matter its complexity) into a single custom property value
-# this is more or less a glorified "to_ron()" method (not quite but close to)
-def property_group_value_to_custom_property_value_(property_group, definition, registry, parent=None):
-    component_name = definition["short_name"]
-    type_info = definition["typeInfo"] if "typeInfo" in definition else None
-    type_def = definition["type"] if "type" in definition else None
-    value = None
-    print("computing custom property", component_name, type_info, type_def)
-
-    if type_info == "Struct":
-        print("is struct", parent)
-        #print("STRUCT", property_group.field_names)
-        values = compute_values(property_group, registry, "Some") 
-        vals = {}
-        for key, val in values.items():
-            value = val
-            #prop_group_name = getattr(val, "type_name")
-            #sub_definition = registry.type_infos[prop_group_name]
-            # check for type of it AND if it is not enum or so ?
-            """  if type(value) == str: 
-                value = '"'+value+'"'"""
-            vals[key] = value
-            
-        value = vals
-        if len(values) ==0:
-            return ''
-    elif type_info == "Tuple": 
-        values = compute_values(property_group, registry, "Some")  
-        value = tuple(e for e in list(values.values()))
-    elif type_info == "TupleStruct":
-        print("is tupplestruct")
-        values = compute_values(property_group, registry, "Some")
-        if len(values.keys()) == 1:
-            first_key = list(values.keys())[0]
-            value = values[first_key]
-            #conversion_tables
-            sub_type = definition["prefixItems"][0]["type"]["$ref"].replace("#/$defs/", "")
-            print("sub _type", sub_type, "value", value)
-            if sub_type in conversion_tables:
-                value =  conversion_tables[sub_type](value)
-
-            elif type(value) == str:
-                value = '"'+value+'"'
-        else:
-            value = tuple(e for e in list(values.values()))
-        print("rertert", type(value))
-          
-        print("making it into a tupple")
-        #if parent == None:
-        value = tuple([value])
-    elif type_info == "Enum":
-        values = compute_values(property_group, registry, "Some")
-        if type_def == "object":
-            first_key = list(values.keys())[0]
-            variant_name = values[first_key]
-            value = values.get("variant_" + variant_name, None) # default to None if there is no match, for example for entries withouth Bool/Int/String etc properties, ie empty ones
-            # TODO might be worth doing differently
-            if value != None:
-                is_property_group = isinstance(value, PropertyGroup)
-                if is_property_group:
-                    prop_group_name = getattr(value, "type_name")
-                    sub_definition = registry.type_infos[prop_group_name]
-                    value = property_group_value_to_custom_property_value(value, sub_definition, registry, "Some")
-                value = variant_name+"("+ str(value) +")"
-            else :
-                value = variant_name
-        else:
-            first_key = list(values.keys())[0]
-            value = values[first_key]
-    elif type_info == "List":
-        print("is list")
-        item_list = getattr(property_group, "list")
-        item_type = getattr(property_group, "type_name_short")
-        value = []
-        for item in item_list:
-            item_type_name = getattr(item, "type_name")
-            definition = registry.type_infos[item_type_name]
-            item_value = property_group_value_to_custom_property_value(item, definition, registry, "Some")
-            print("item type", item_type_name, item_value)
-            if item_type_name.startswith("wrapper_"):
-                item_value = item_value[0]
-            value.append(item_value)
-        #TODO if we have a "fake" tupple for aka for value types, we need to remove one nested level somehow ?
-    
-    else:
-        print("OTHR")
-        values = compute_values(property_group, registry, "Some")
-        if len(values.keys()) == 0:
-            value = ''
-
-    print("VALUE", value, type(value))
-
-    #print("generating custom property value", value, type(value))
-    if parent == None:
-        print("NO PARENT")
-        value = str(value).replace("'",  "")
-        value = value.replace(",)",")")
-        value = value.replace("{", "(").replace("}", ")")
-        value = value.replace("True", "true").replace("False", "false")
-    return value
-
 
 def json_to_psuedo_ron(value):
     value = str(value)
@@ -272,11 +128,6 @@ def property_group_value_from_custom_property_value(property_group, definition, 
     print("setting property group value", property_group, definition, custom_property_value)
     type_infos = registry.type_infos
     value_types_defaults = registry.value_types_defaults
-
-    try: # FIXME this is not normal , the values should be strings !
-        custom_property_value = custom_property_value.to_dict()
-    except Exception:
-        pass
 
     def parse_field(item, property_group, definition, field_name):
         type_info = definition["typeInfo"] if "typeInfo" in definition else None

@@ -32,8 +32,6 @@ def generate_propertyGroups_for_components():
         short_name = definition["short_name"]
         is_component = definition['isComponent'] if "isComponent" in definition else False
         root_property_name = short_name if is_component else None
-
-        print("ROOT LEVEL", root_property_name)
         process_component(registry, definition, update_calback_helper(definition, update_component, root_property_name), None, [])
 
     # if we had to add any wrapper types on the fly, process them now

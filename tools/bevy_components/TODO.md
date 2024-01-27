@@ -78,12 +78,12 @@ UI:
 
 - [x] remove custom property of disabled component ? => NOpe, as we need custom properties to iterate over
 - [x] what to do with components with n/a fields ? perhaps disable the component ? add a "invalid" field to meta ?
-- [ ] format output as correct RON
-    - [ ] fix issue with empty strings
-- [ ] change custom property => propGroup to convert RON => Json first
-- [ ] cleanup process_lists
+- [x] format output as correct RON
+    - [x] fix issue with empty strings
+- [x] change custom property => propGroup to convert RON => Json first => obsolete
+- [x] cleanup process_lists
 
-- [ ] fix issues with enum variants with only a title
+- [x] fix issues with enum variants with only a title
 
 - [x] display single item enums inline, others in a seperate row
 

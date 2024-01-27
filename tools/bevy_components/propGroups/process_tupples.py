@@ -8,8 +8,6 @@ def process_tupples(registry, definition, prefixItems, update, name_override=Non
     short_name = definition["short_name"]
 
     nesting = nesting+[short_name]
-    print("nesting", nesting)
-
     __annotations__ = {}
 
     default_values = []
@@ -33,8 +31,6 @@ def process_tupples(registry, definition, prefixItems, update, name_override=Non
             if is_value_type:
                 if original_type_name in blender_property_mapping:
                     blender_property_def = blender_property_mapping[original_type_name]
-
-                    print("HERE", short_name, original)
                     blender_property = blender_property_def["type"](
                         **blender_property_def["presets"],# we inject presets first
                         name = property_name, 
@@ -44,11 +40,8 @@ def process_tupples(registry, definition, prefixItems, update, name_override=Non
                   
                     __annotations__[property_name] = blender_property
             else:
-                print("NESTING")
-                print("NOT A VALUE TYPE", original)
                 original_long_name = original["title"]
                 (sub_component_group, _) = process_component.process_component(registry, original, update, {"nested": True, "type_name": original_long_name}, nesting)
-                # TODO: use lookup in registry, add it if necessary, or retrieve it if it already exists
                 __annotations__[property_name] = sub_component_group
         else: 
             # component not found in type_infos, generating placeholder

@@ -9,8 +9,6 @@ def process_enum(registry, definition, update, nesting):
     values = definition["oneOf"]
 
     nesting = nesting+ [short_name]
-    print("nesting", nesting)
-
     __annotations__ = {}
     original_type_name = "enum"
 
@@ -24,12 +22,9 @@ def process_enum(registry, definition, update, nesting):
                 additional_annotations = additional_annotations | process_tupples.process_tupples(registry, definition, item["prefixItems"], update, "variant_"+item_name, nesting)
             elif "properties" in item:
                 additional_annotations = additional_annotations | process_structs.process_structs(registry, definition, item["properties"], update, nesting)
-            else:
-                annots = {
-                    "variant_"+item_name: StringProperty(default="")
-                }
-            
-                additional_annotations = additional_annotations | annots
+            else: # for the cases where it's neither a tupple nor a structs: FIXME: not 100% sure of this
+                annotations = {"variant_"+item_name: StringProperty(default="")}
+                additional_annotations = additional_annotations | annotations
 
         items = tuple((e, e, e) for e in labels)
         property_name = short_name
@@ -45,10 +40,8 @@ def process_enum(registry, definition, update, nesting):
 
         for a in additional_annotations:
             __annotations__[a] = additional_annotations[a]
-        
         # enum_value => what field to display
         # a second field + property for the "content" of the enum
-
     else:
         items = tuple((e, e, "") for e in values)
         property_name = short_name

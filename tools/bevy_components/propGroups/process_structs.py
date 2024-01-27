@@ -9,11 +9,7 @@ def process_structs(registry, definition, properties, update, nesting):
 
     __annotations__ = {}
     default_values = {}
-
     nesting = nesting + [short_name]
-    print("nesting", nesting)
-    print("processing struct", short_name)
-
 
     for property_name in properties.keys():
         ref_name = properties[property_name]["type"]["$ref"].replace("#/$defs/", "")
@@ -36,11 +32,8 @@ def process_structs(registry, definition, properties, update, nesting):
                     )
                     __annotations__[property_name] = blender_property
             else:
-                print("NESTING")
-                print("NOT A VALUE TYPE", original)
                 original_long_name = original["title"]
                 (sub_component_group, _) = process_component.process_component(registry, original, update, {"nested": True, "type_name": original_long_name}, nesting)
-                # TODO: use lookup in registry, add it if necessary, or retrieve it if it already exists
                 __annotations__[property_name] = sub_component_group
         # if there are sub fields, add an attribute "sub_fields" possibly a pointer property ? or add a standard field to the type , that is stored under "attributes" and not __annotations (better)
         else:
