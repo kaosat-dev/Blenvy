@@ -2,10 +2,26 @@ import json
 from bpy_types import PropertyGroup
 
 
+def convert_color(value):
+    try:
+        value = value[:]# in case it is one of the Blender internal array types
+    except Exception:
+        pass
+    return "Rgba(red:"+str(value[0])+ ", green:"+str(value[1])+ ", blue:"+str(value[2])+ ", alpha:"+str(value[3])+   ")"
+
 conversion_tables = {
+
+    "bool": lambda value: value,
+
+    "char": lambda value: '"'+value+'"',
+    "str": lambda value: '"'+value+'"',
+    "alloc::string::String": lambda value: '"'+value+'"',
+
     "glam::Vec3": lambda value: "Vec3(x:"+str(value[0])+ ", y:"+str(value[1])+ ", z:"+str(value[2])+")",
     "glam::Vec2": lambda value: "Vec2(x:"+str(value[0])+ ", y:"+str(value[1])+")",
-    "bevy_render::color::Color": lambda value: "Rgba(red:"+str(value[0])+ ", green:"+str(value[1])+ ", blue:"+str(value[2])+ ", alpha:"+str(value[3])+   ")",
+    "bevy_render::color::Color": convert_color
+    
+    #lambda value: "Rgba(red:"+str(value[0])+ ", green:"+str(value[1])+ ", blue:"+str(value[2])+ ", alpha:"+str(value[3])+   ")",
     #"bevy_render::color::Color": lambda value: "Color::rgba("+"".join(lambda x: str(x))(value)+")",
 
 }
@@ -30,9 +46,117 @@ def compute_values(property_group, registry, parent):
         values[field_name] = value
     return values
 
+def property_group_value_to_custom_property_value(property_group, definition, registry, parent=None, value=None):
+    component_name = definition["short_name"]
+    type_info = definition["typeInfo"] if "typeInfo" in definition else None
+    type_def = definition["type"] if "type" in definition else None
+    type_name = definition["title"]
+    print("computing custom property", component_name, type_info, type_def, type_name)
+    is_value_type = type_name in conversion_tables
+
+    if is_value_type:
+        value = conversion_tables[type_name](value)
+    elif type_info == "Struct":
+        print("is struct", parent)
+        values = {}
+        if len(property_group.field_names) ==0:
+            value = ''
+        else:
+            for index, field_name in enumerate(property_group.field_names):
+                item_type_name = definition["properties"][field_name]["type"]["$ref"].replace("#/$defs/", "")
+                item_definition = registry.type_infos[item_type_name]
+
+                value = getattr(property_group, field_name)
+                is_property_group = isinstance(value, PropertyGroup)
+                child_property_group = value if is_property_group else None
+                value = property_group_value_to_custom_property_value(child_property_group, item_definition, registry, parent=component_name, value=value)
+                values[field_name] = value
+            value = values
+        print("values", values, len(property_group.field_names))
+        
+    elif type_info == "Tuple": 
+        print("is tupple")
+        values = {}
+        for index, field_name in enumerate(property_group.field_names):
+            item_type_name = definition["prefixItems"][index]["type"]["$ref"].replace("#/$defs/", "")
+            item_definition = registry.type_infos[item_type_name]
+
+            value = getattr(property_group, field_name)
+            is_property_group = isinstance(value, PropertyGroup)
+            child_property_group = value if is_property_group else None
+            value = property_group_value_to_custom_property_value(child_property_group, item_definition, registry, parent=component_name, value=value)
+            values[field_name] = value
+        value = tuple(e for e in list(values.values()))
+
+    elif type_info == "TupleStruct":
+        print("is tupplestruct", definition)
+        values = {}
+        for index, field_name in enumerate(property_group.field_names):
+            item_type_name = definition["prefixItems"][index]["type"]["$ref"].replace("#/$defs/", "")
+            item_definition = registry.type_infos[item_type_name]
+
+            value = getattr(property_group, field_name)
+            is_property_group = isinstance(value, PropertyGroup)
+            child_property_group = value if is_property_group else None
+            value = property_group_value_to_custom_property_value(child_property_group, item_definition, registry, parent=component_name, value=value)
+            values[field_name] = value
+        
+        value = tuple(e for e in list(values.values()))
+    elif type_info == "Enum":
+        print("is enum", definition)
+        selected = getattr(property_group, component_name)
+
+        if type_def == "object":
+            print("property_group.field_names", property_group.field_names)
+            selection_index = property_group.field_names.index("variant_"+selected)
+            variant_name = property_group.field_names[selection_index]
+
+            if "prefixItems" in definition["oneOf"][selection_index-1]:
+                item_type_name = definition["oneOf"][selection_index-1]["prefixItems"][0]["type"]["$ref"].replace("#/$defs/", "")
+                item_definition = registry.type_infos[item_type_name]
+
+                value = getattr(property_group, variant_name)
+                is_property_group = isinstance(value, PropertyGroup)
+                child_property_group = value if is_property_group else None
+                value = property_group_value_to_custom_property_value(child_property_group, item_definition, registry, parent=component_name, value=value)
+                value = selected + str((value,),)
+            else:
+                value = selected # here the value of the enum is just the name of the variant
+        else: 
+            value = selected
+
+    elif type_info == "List":
+        print("is list")
+        item_list = getattr(property_group, "list")
+        item_type = getattr(property_group, "type_name_short")
+        value = []
+        for item in item_list:
+            item_type_name = getattr(item, "type_name")
+            definition = registry.type_infos[item_type_name]
+            item_value = property_group_value_to_custom_property_value(item, definition, registry, component_name, None)
+            print("item type", item_type_name, item_value)
+            if item_type_name.startswith("wrapper_"): #if we have a "fake" tupple for aka for value types, we need to remove one nested level
+                item_value = item_value[0]
+            value.append(item_value) 
+    else:
+        value = conversion_tables[type_name](value) if is_value_type else value
+        
+
+    print("VALUE", value, type(value))
+
+    #print("generating custom property value", value, type(value))
+    if parent == None:
+        print("NO PARENT")
+        value = str(value).replace("'",  "")
+        value = value.replace(",)",")")
+        value = value.replace("{", "(").replace("}", ")")
+        value = value.replace("True", "true").replace("False", "false")
+    return value
+
+
 #converts the value of a property group(no matter its complexity) into a single custom property value
 # this is more or less a glorified "to_ron()" method (not quite but close to)
-def property_group_value_to_custom_property_value(property_group, definition, registry, parent=None):
+def property_group_value_to_custom_property_value_(property_group, definition, registry, parent=None):
     component_name = definition["short_name"]
     type_info = definition["typeInfo"] if "typeInfo" in definition else None
     type_def = definition["type"] if "type" in definition else None

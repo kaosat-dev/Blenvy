@@ -56,12 +56,11 @@ def process_list(registry, definition, update, nesting=[]):
             )
             
         wrapper_annotations = {
-            '0' : blender_property#StringProperty(default="", update=update)
+            '0' : blender_property
         }
         property_group_params = {
             '__annotations__': wrapper_annotations,
             'tupple_or_struct': "tupple",
-            'single_item': True, 
             'field_names': ['0'], 
             **dict(with_properties = False, with_items= True, with_enum= False, with_list= False, short_name= wrapper_name, type_name=wrapper_name),
             #'root_component': root_component

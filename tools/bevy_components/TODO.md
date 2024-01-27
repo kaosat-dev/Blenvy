@@ -83,7 +83,9 @@ UI:
 - [ ] change custom property => propGroup to convert RON => Json first
 - [ ] cleanup process_lists
 
-- [ ] display single item enums inline, others in a seperate row
+- [ ] fix issues with enum variants with only a title
+
+- [x] display single item enums inline, others in a seperate row
 
 - [ ] add button to "apply all" (in configuration), to apply/update all custom properties to ALL objects where relevant
 - [ ] add button to "apply to current" to do the same with current

@@ -1,5 +1,6 @@
 from . import process_tupples
 from . import process_structs
+from bpy.props import (StringProperty)
 
 def process_enum(registry, definition, update, nesting):
     blender_property_mapping = registry.blender_property_mapping
@@ -21,8 +22,14 @@ def process_enum(registry, definition, update, nesting):
             labels.append(item_name)
             if "prefixItems" in item:
                 additional_annotations = additional_annotations | process_tupples.process_tupples(registry, definition, item["prefixItems"], update, "variant_"+item_name, nesting)
-            if "properties" in item:
+            elif "properties" in item:
                 additional_annotations = additional_annotations | process_structs.process_structs(registry, definition, item["properties"], update, nesting)
+            else:
+                annots = {
+                    "variant_"+item_name: StringProperty(default="")
+                }
+            
+                additional_annotations = additional_annotations | annots
 
         items = tuple((e, e, e) for e in labels)
         property_name = short_name
