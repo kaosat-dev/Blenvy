@@ -16,6 +16,7 @@ class BEVY_COMPONENTS_PT_Configuration(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         registry = context.window_manager.components_registry 
+        selected_object = context.selected_objects[0] if len(context.selected_objects) > 0 else None
 
         row = layout.row()
         col = row.column()
@@ -32,15 +33,13 @@ class BEVY_COMPONENTS_PT_Configuration(bpy.types.Panel):
 
         row = layout.row()
         row.operator(COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL.bl_idname, text="update custom properties of all objects" , icon="FILE_REFRESH")
+        row.enabled = registry.type_infos != None
 
         row = layout.row()
         row.operator(COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT.bl_idname, text="update custom properties of current object" , icon="FILE_REFRESH")
-        row.enabled = context.object is not None
-        print("dfsd", context.object)
+        row.enabled = registry.type_infos != None and selected_object is not None
+        #print("dfsd", context.object, context.active_object, bpy.context.selected_objects)
         
-
-        
-
 class BEVY_COMPONENTS_PT_MissingTypesPanel(bpy.types.Panel):
     bl_idname = "BEVY_COMPONENTS_PT_MissingTypesPanel"
     bl_label = "Bevy Missing/Unregistered Types"
@@ -57,11 +56,6 @@ class BEVY_COMPONENTS_PT_MissingTypesPanel(bpy.types.Panel):
         registry = bpy.context.window_manager.components_registry 
 
         layout.label(text="Missing types ")
-        
-        """for missing in getattr(registry, "type_infos_missing"):
-            row = layout.row()
-            row.label(text=missing)"""
-
         layout.template_list("MISSING_TYPES_UL_List", "Missing types list", registry, "missing_types_list", registry, "missing_types_list_index")
 
 
@@ -104,8 +98,6 @@ class MISSING_TYPES_UL_List(UIList):
 
 
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index): 
-        # We could write some code to decide which icon to use here...
-        custom_icon = 'OBJECT_DATAMODE' # Make sure your code supports all 3 layout types 
         if self.layout_type in {'DEFAULT', 'COMPACT'}: 
             row = layout.row()
             #row.enabled = False
@@ -113,7 +105,6 @@ class MISSING_TYPES_UL_List(UIList):
             row.prop(item, "type_name", text="")
 
         elif self.layout_type in {'GRID'}: 
-            print("grid")
             layout.alignment = 'CENTER' 
             row = layout.row()
             row.prop(item, "type_name", text="")

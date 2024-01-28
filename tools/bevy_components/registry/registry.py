@@ -30,8 +30,8 @@ class ComponentsRegistry(PropertyGroup):
         description="unregistered/missing type infos"
     )
 
-    missing_types_list: CollectionProperty(name="main scenes", type=MissingBevyType)
-    missing_types_list_index: IntProperty(name = "Index for main scenes list", default = 0)
+    missing_types_list: CollectionProperty(name="missing types list", type=MissingBevyType)
+    missing_types_list_index: IntProperty(name = "Index for missing types list", default = 0)
 
     blender_property_mapping = {
         "bool": dict(type=BoolProperty, presets=dict()),
@@ -151,6 +151,8 @@ class ComponentsRegistry(PropertyGroup):
     def load_schema(self):
         # cleanup missing types list
         self.missing_types_list.clear()
+        self.type_infos = None
+        self.type_infos_missing.clear()
         file_path = bpy.data.filepath
 
         # Get the folder

@@ -10,10 +10,8 @@ bl_info = {
     "tracker_url": "https://github.com/kaosat-dev/Blender_bevy_components_workflow/issues/new",
     "category": "User Interface"
 }
-import os
-import bpy
-import json
 
+import bpy
 from bpy.props import (StringProperty)
 
 from .blueprints import CreateBlueprintOperator
@@ -27,7 +25,7 @@ from .components.metadata import (ComponentInfos, ComponentsMeta, do_object_cust
 from .propGroups.prop_groups import (generate_propertyGroups_for_components)
 from .components.lists import GENERIC_LIST_OT_actions, Generic_LIST_OT_AddItem, Generic_LIST_OT_RemoveItem, Generic_LIST_OT_SelectItem
 from .components.definitions_list import (ComponentDefinitionsList, ClearComponentDefinitionsList)
-from .components.ui import (GENERIC_UL_List, draw_propertyGroup)
+from .components.ui import (GENERIC_UL_List, BEVY_COMPONENTS_PT_ComponentsPanel)
 
 
 # just a test, remove
@@ -41,115 +39,6 @@ def scan_item(item, nesting=0):
                 pass
     except:
         pass
-
-class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
-    bl_idname = "BEVY_COMPONENTS_PT_ComponentsPanel"
-    bl_label = "Components"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'UI'
-    bl_category = "Bevy Components"
-    bl_context = "objectmode"
-    bl_parent_id = "BEVY_COMPONENTS_PT_MainPanel"
-
-    def draw(self, context):
-        object = context.object
-        layout = self.layout
-
-        # we get & load our component registry
-        registry = bpy.context.window_manager.components_registry 
-        available_components = bpy.context.window_manager.components_list
-
-
-        if object is not None:
-            row = layout.row(align=True)
-            row.prop(available_components, "list", text="Component")
-            row.prop(available_components, "filter",text="Filter")
-
-            # add components
-            row = layout.row(align=True)
-            op = row.operator(AddComponentOperator.bl_idname, text="Add", icon="ADD")
-            op.component_type = available_components.list
-            row.enabled = available_components.list != ''
-
-            layout.separator()
-
-            # paste components
-            row = layout.row(align=True)
-            row.operator(PasteComponentOperator.bl_idname, text="Paste component ("+bpy.context.window_manager.copied_source_component_name+")", icon="PASTEDOWN")
-            row.enabled = bpy.context.window_manager.copied_source_object != ''
-
-            layout.separator()
-
-            # upgrate custom props to components
-            upgradeable_customProperties = registry.type_infos != None and do_object_custom_properties_have_missing_metadata(context.object)
-            if upgradeable_customProperties:
-                row = layout.row(align=True)
-                op = row.operator(GenerateComponent_From_custom_property_Operator.bl_idname, text="generate components from custom properties" , icon="LOOP_FORWARDS") 
-                layout.separator()
-
-
-            components_in_object = object.components_meta.components
-            for component_name in sorted(dict(object)) : # sorted by component name, practical
-                if component_name == "components_meta": 
-                    continue
-                # anything withouth metadata gets skipped, we only want to see real components, not all custom props
-                component_meta =  next(filter(lambda component: component["name"] == component_name, components_in_object), None)
-                if component_meta == None: 
-                    continue
-
-                component_invalid = getattr(component_meta, "invalid")
-                invalid_details = getattr(component_meta, "invalid_details")
-                component_visible = getattr(component_meta, "visible")
-                single_field = False
-
-                # our whole row 
-                box = layout.box() 
-                row = box.row(align=True)
-                # "header"
-                row.alert = component_invalid
-                row.prop(component_meta, "enabled", text="")
-                row.label(text=component_name)
-
-                # we fetch the matching ui property group
-                root_propertyGroup_name = component_name+"_ui"
-                propertyGroup = getattr(component_meta, root_propertyGroup_name, None)
-                if propertyGroup:
-                    # if the component has only 0 or 1 field names, display inline, otherwise change layout
-                    single_field = len(propertyGroup.field_names) < 2
-                    prop_group_location = box.row(align=True).column()
-                    if single_field:
-                        prop_group_location = row.column(align=True)#.split(factor=0.9)#layout.row(align=False)
-                    
-                    if component_visible:
-                        if component_invalid:
-                            error_message = invalid_details if component_invalid else "Missing component propertyGroup !"
-                            prop_group_location.label(text=error_message)
-                        draw_propertyGroup(propertyGroup, prop_group_location, [root_propertyGroup_name], component_name)
-                    else :
-                        row.label(text="details hidden, click on toggle to display")
-                else:
-                    error_message = invalid_details if component_invalid else "Missing component propertyGroup !"
-                    row.label(text=error_message)
-
-                # "footer" with additional controls
-                op = row.operator(DeleteComponentOperator.bl_idname, text="", icon="X")
-                op.component_name = component_name
-                row.separator()
-                
-                op = row.operator(CopyComponentOperator.bl_idname, text="", icon="COPYDOWN")
-                op.source_component_name = component_name
-                op.source_object_name = object.name
-                row.separator()
-                
-                #if not single_field:
-                toggle_icon = "TRIA_DOWN" if component_visible else "TRIA_RIGHT"
-                op = row.operator(Toggle_ComponentVisibility.bl_idname, text="", icon=toggle_icon)
-                op.component_name = component_name
-                #row.separator()
-
-        else: 
-            layout.label(text ="Select an object to edit its components")      
-
 
 class BEVY_COMPONENTS_PT_MainPanel(bpy.types.Panel):
     bl_idname = "BEVY_COMPONENTS_PT_MainPanel"

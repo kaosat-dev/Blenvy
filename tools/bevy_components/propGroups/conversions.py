@@ -124,8 +124,8 @@ def json_to_psuedo_ron(value):
 import re
 #converts the value of a single custom property into a value (values) of a property group 
 def property_group_value_from_custom_property_value(property_group, definition, registry, custom_property_value):
-    print(" ")
-    print("setting property group value", property_group, definition, custom_property_value)
+    #print(" ")
+    #print("setting property group value", property_group, definition, custom_property_value)
     type_infos = registry.type_infos
     value_types_defaults = registry.value_types_defaults
 

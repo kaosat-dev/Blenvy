@@ -32,7 +32,7 @@ class ReloadRegistryOperator(Operator):
         return {'FINISHED'}
     
 class COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL(Operator):
-    """Apply registry to ALL objects operator: update the custom property values of all objects based on their definition, if any"""
+    """Apply registry to ALL objects: update the custom property values of all objects based on their definition, if any"""
     bl_idname = "object.refresh_custom_properties_all"
     bl_label = "Apply Registry to all objects"
     bl_options = {"UNDO"}
@@ -46,7 +46,7 @@ class COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL(Operator):
         return {'FINISHED'}
     
 class COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT(Operator):
-    """Apply registry to ALL objects operator: updated the custom property values of all objects based on their definition, if any"""
+    """Apply registry to CURRENT object: update the custom property values of all objects based on their definition, if any"""
     bl_idname = "object.refresh_custom_properties_current"
     bl_label = "Apply Registry to current object"
     bl_options = {"UNDO"}

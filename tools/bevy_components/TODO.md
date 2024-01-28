@@ -91,7 +91,8 @@ UI:
 - [ ] what about metadata ?
 - [ ] only upgrade custom properties to metadata when asked/relevant
 - [x] implement move list up/down
-- [ ] change or discard property_group_value_from_custom_property_value
+- [ ] change property_group_value_from_custom_property_value
+- [x] fix reload registry clearing list of missing types 
 
 bpy.context.window_manager
     .components_registry => raw registry
