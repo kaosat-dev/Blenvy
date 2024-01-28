@@ -109,12 +109,12 @@ class Generic_LIST_OT_SelectItem(Operator):
         return{'FINISHED'}
 
 
-class CUSTOM_OT_actions(Operator):
+class GENERIC_LIST_OT_actions(Operator):
     """Move items up and down, add and remove"""
-    bl_idname = "rule_list.list_action"
+    bl_idname = "generic_list.list_action"
     bl_label = "List Actions"
     bl_description = "Move items up and down, add and remove"
-    bl_options = {'REGISTER'}
+    bl_options = {'REGISTER', 'UNDO'}
 
     action: EnumProperty(
         items=(
@@ -122,42 +122,49 @@ class CUSTOM_OT_actions(Operator):
             ('DOWN', "Down", ""),
             ('REMOVE', "Remove", ""),
             ('ADD', "Add", "")))
+    
+    property_group_path: StringProperty(
+        name="property group path",
+        description="",
+    )
+
+    component_name: StringProperty(
+        name="component name",
+        description="",
+    )
 
     def invoke(self, context, event):
-        scn = context.scene
-        idx = scn.rule_list_index
+        object = context.object
+        # information is stored in component meta
+        components_in_object = object.components_meta.components
+        component_meta =  next(filter(lambda component: component["name"] == self.component_name, components_in_object), None)
 
-        try:
-            item = scn.rule_list[idx]
-        except IndexError:
-            pass
-        else:
-            if self.action == 'DOWN' and idx < len(scn.rule_list) - 1:
-                item_next = scn.rule_list[idx + 1].name
-                scn.rule_list.move(idx, idx + 1)
-                scn.rule_list_index += 1
-                info = 'Item "%s" moved to position %d' % (item.name, scn.rule_list_index + 1)
-                self.report({'INFO'}, info)
+        propertyGroup = component_meta
+        for path_item in json.loads(self.property_group_path):
+            propertyGroup = getattr(propertyGroup, path_item)
 
-            elif self.action == 'UP' and idx >= 1:
-                item_prev = scn.rule_list[idx - 1].name
-                scn.rule_list.move(idx, idx - 1)
-                scn.rule_list_index -= 1
-                info = 'Item "%s" moved to position %d' % (item.name, scn.rule_list_index + 1)
-                self.report({'INFO'}, info)
+        target_list = getattr(propertyGroup, "list")
+        index = getattr(propertyGroup, "list_index")
 
-            elif self.action == 'REMOVE':
-                info = 'Item "%s" removed from list' % (scn.rule_list[idx].name)
-                scn.rule_list_index -= 1
-                scn.rule_list.remove(idx)
-                self.report({'INFO'}, info)
+
+        if self.action == 'DOWN' and index < len(target_list) - 1:
+            #item_next = scn.rule_list[index + 1].name
+            target_list.move(index, index + 1)
+            propertyGroup.list_index += 1
+        
+        elif self.action == 'UP' and index >= 1:
+            #item_prev = scn.rule_list[index - 1].name
+            target_list.move(index, index - 1)
+            propertyGroup.list_index -= 1
+
+        elif self.action == 'REMOVE':
+            target_list.remove(index)
+            propertyGroup.list_index = min(max(0, index - 1), len(target_list) - 1) 
 
         if self.action == 'ADD':
-            item = scn.rule_list.add()
-            item.name = f"Rule {idx +1}"
-
-            scn.rule_list_index = len(scn.rule_list) - 1
-            info = '"%s" added to list' % (item.name)
-            self.report({'INFO'}, info)
+            item = target_list.add()
+            propertyGroup.list_index = index + 1 # we use this to force the change detection
+            #info = '"%s" added to list' % (item.name)
+            #self.report({'INFO'}, info)
 
         return {"FINISHED"}

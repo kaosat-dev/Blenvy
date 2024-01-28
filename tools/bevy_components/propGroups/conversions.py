@@ -191,8 +191,8 @@ def property_group_value_from_custom_property_value(property_group, definition, 
         if is_value_type:
             pass
             
-    # print('parsed_raw_fields', custom_property_value)
     try:
-        parse_field(custom_property_value, property_group, definition, None)
+        pass
+        #parse_field(custom_property_value, property_group, definition, None)
     except Exception as error:
         print("failed to parse raw custom property data", error)

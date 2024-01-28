@@ -1,6 +1,6 @@
 import bpy
 from bpy_types import (UIList)
-from .operators import(OT_OpenFilebrowser, ReloadRegistryOperator)
+from .operators import(OT_OpenFilebrowser, ReloadRegistryOperator, COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT)
 
 class BEVY_COMPONENTS_PT_Configuration(bpy.types.Panel):
     bl_idname = "BEVY_COMPONENTS_PT_Configuration"
@@ -29,6 +29,17 @@ class BEVY_COMPONENTS_PT_Configuration(bpy.types.Panel):
 
         layout.separator()
         layout.separator()
+
+        row = layout.row()
+        row.operator(COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL.bl_idname, text="update custom properties of all objects" , icon="FILE_REFRESH")
+
+        row = layout.row()
+        row.operator(COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT.bl_idname, text="update custom properties of current object" , icon="FILE_REFRESH")
+        row.enabled = context.object is not None
+        print("dfsd", context.object)
+        
+
+        
 
 class BEVY_COMPONENTS_PT_MissingTypesPanel(bpy.types.Panel):
     bl_idname = "BEVY_COMPONENTS_PT_MissingTypesPanel"

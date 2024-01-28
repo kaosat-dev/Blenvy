@@ -69,7 +69,6 @@ UI:
 - [x] add a list of not found components to the registry, add to them on the fly
 - [x] add configuration panel (open the first time, closed on further user once configured)
 
-- [ ] only upgrade custom properties to metadata when asked/relevant
 - [x] add limits to ixxx types vs utypes
 - [x] only display the "generate components xx" when relevant ie:
     - go through list of custom properties in current object
@@ -90,6 +89,9 @@ UI:
 - [ ] add button to "apply all" (in configuration), to apply/update all custom properties to ALL objects where relevant
 - [ ] add button to "apply to current" to do the same with current
 - [ ] what about metadata ?
+- [ ] only upgrade custom properties to metadata when asked/relevant
+- [x] implement move list up/down
+- [ ] change or discard property_group_value_from_custom_property_value
 
 bpy.context.window_manager
     .components_registry => raw registry
@@ -101,7 +103,7 @@ bpy.context.window_manager
 
 
 # Additional
-    - [ ] check if output "string" in custom properties are correct
+    - [x] check if output "string" in custom properties are correct
 
     - gltf_auto_export
         - [ ] add support for "enabled" flag
@@ -110,6 +112,8 @@ bpy.context.window_manager
                 - "Dynamic" ? naah wait that should be exported by the Bevy side
         - [ ] filter out Components_meta ??
     - bevy_gltf_components:
+        - first release patch for current issues
         - add "compatibility mode" and deprecation warnings for the current hack-ish conversion of fake ron
+    - bevy_gltf_blueprints
 
     

@@ -230,3 +230,42 @@ def add_component_to_object(object, component_definition, value=None):
 
         object[short_name] = value
        
+# TODO: move to propgroups ?
+# TODO: add error handling
+# this SHOULD be done on an already cleaned object ?
+def apply_propertyGroup_values_to_object_customProperties(object):
+    cleanup_invalid_metadata(object)
+
+    components_metadata = object.components_meta.components # TODO: should we check for this
+    registry = bpy.context.window_manager.components_registry
+
+    for component_name in dict(object) :
+        if component_name == "components_meta":
+            continue
+        component_meta =  next(filter(lambda component: component["name"] == component_name, components_metadata), None)
+        if component_meta != None: 
+            short_name = component_meta.name 
+            component_definition = find_component_definition_from_short_name(component_name)
+            property_group_name = short_name+"_ui"
+            propertyGroup = getattr(component_meta, property_group_name, None)
+            if propertyGroup == None:
+                # TODO: throw error here ?
+                print("propertygroup not found in metadata attempting to injectt")
+                if property_group_name in registry.component_propertyGroups:
+                    # we have found a matching property_group, so try to inject it
+                    setattr(ComponentInfos, property_group_name, registry.component_propertyGroups[property_group_name])
+                    propertyGroup =  getattr(component_meta, property_group_name)
+            if propertyGroup != None:
+                value = property_group_value_to_custom_property_value(propertyGroup, component_definition, registry, None)
+                object[short_name] = value
+                if short_name in registry.invalid_components:
+                    component_meta.enabled = False
+                    component_meta.invalid = True
+                    component_meta.invalid_details = "component contains fields that are not in the schema, disabling"
+            else:
+                # if we still have not found the property group, mark it as invalid
+                component_meta.enabled = False
+                component_meta.invalid = True
+                component_meta.invalid_details = "component not present in the schema, possibly renamed? Disabling for now"
+        else:
+            pass # TODO: throw here too ?

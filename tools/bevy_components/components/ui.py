@@ -1,7 +1,5 @@
 import json
-from bpy_types import Operator, UIList
-from bpy.props import (StringProperty, EnumProperty, PointerProperty, FloatVectorProperty)
-
+from bpy_types import UIList
 
 class GENERIC_UL_List(UIList): 
     """Generic UIList.""" 
@@ -84,23 +82,27 @@ def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None):
         #various control buttons
         buttons_column.separator()
         row = buttons_column.row()
-        op = row.operator('generic_list.add_item', icon='ADD', text="")
+        op = row.operator('generic_list.list_action', icon='ADD', text="")
+        op.action = 'ADD'
         op.component_name = rootName
         op.property_group_path = json.dumps(nesting)
 
         row = buttons_column.row()
-        op = row.operator('generic_list.remove_item', icon='REMOVE', text="")
+        op = row.operator('generic_list.list_action', icon='REMOVE', text="")
+        op.action = 'REMOVE'
         op.component_name = rootName
         op.property_group_path = json.dumps(nesting)
 
         buttons_column.separator()
         row = buttons_column.row()
-        op = row.operator('generic_list.add_item', icon='TRIA_UP', text="")
+        op = row.operator('generic_list.list_action', icon='TRIA_UP', text="")
+        op.action = 'UP'
         op.component_name = rootName
         op.property_group_path = json.dumps(nesting)
 
         row = buttons_column.row()
-        op = row.operator('generic_list.remove_item', icon='TRIA_DOWN', text="")
+        op = row.operator('generic_list.list_action', icon='TRIA_DOWN', text="")
+        op.action = 'DOWN'
         op.component_name = rootName
         op.property_group_path = json.dumps(nesting)
 

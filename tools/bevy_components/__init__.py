@@ -20,12 +20,12 @@ from .blueprints import CreateBlueprintOperator
 from .components.operators import CopyComponentOperator, DeleteComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, AddComponentOperator, Toggle_ComponentVisibility
 
 from .registry.registry import ComponentsRegistry,MissingBevyType
-from .registry.operators import (ReloadRegistryOperator, OT_OpenFilebrowser)
+from .registry.operators import (COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT, ReloadRegistryOperator, OT_OpenFilebrowser)
 from .registry.ui import (BEVY_COMPONENTS_PT_Configuration, BEVY_COMPONENTS_PT_MissingTypesPanel, MISSING_TYPES_UL_List)
 
 from .components.metadata import (ComponentInfos, ComponentsMeta, do_object_custom_properties_have_missing_metadata, ensure_metadata_for_all_objects)
 from .propGroups.prop_groups import (generate_propertyGroups_for_components)
-from .components.lists import Generic_LIST_OT_AddItem, Generic_LIST_OT_RemoveItem, Generic_LIST_OT_SelectItem
+from .components.lists import GENERIC_LIST_OT_actions, Generic_LIST_OT_AddItem, Generic_LIST_OT_RemoveItem, Generic_LIST_OT_SelectItem
 from .components.definitions_list import (ComponentDefinitionsList, ClearComponentDefinitionsList)
 from .components.ui import (GENERIC_UL_List, draw_propertyGroup)
 
@@ -210,6 +210,9 @@ classes = [
 
     OT_OpenFilebrowser,
     ReloadRegistryOperator,
+    COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL,
+    COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT,
+    
     BEVY_COMPONENTS_PT_MainPanel,
     BEVY_COMPONENTS_PT_ComponentsPanel,
     BEVY_COMPONENTS_PT_Configuration,
@@ -219,7 +222,8 @@ classes = [
     GENERIC_UL_List,
     Generic_LIST_OT_SelectItem,
     Generic_LIST_OT_AddItem,
-    Generic_LIST_OT_RemoveItem
+    Generic_LIST_OT_RemoveItem,
+    GENERIC_LIST_OT_actions
 ]
 
 from bpy.app.handlers import persistent
