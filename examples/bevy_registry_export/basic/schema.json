@@ -2231,6 +2231,16 @@
             "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::TuppleTestColor"
           }
         },
+        "colors_list": {
+          "type": {
+            "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::VecOfColors"
+          }
+        },
+        "enable": {
+          "type": {
+            "$ref": "#/$defs/bool"
+          }
+        },
         "enum_inner": {
           "type": {
             "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::EnumTest"
@@ -2240,13 +2250,27 @@
           "type": {
             "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::NestingTestLevel3"
           }
+        },
+        "text": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        },
+        "toggle": {
+          "type": {
+            "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::TuppleTestBool"
+          }
         }
       },
       "required": [
+        "text",
+        "enable",
         "enum_inner",
         "color",
+        "toggle",
         "basic",
-        "nested"
+        "nested",
+        "colors_list"
       ],
       "short_name": "NestingTestLevel2",
       "title": "bevy_bevy_registry_export_basic_example::test_components::NestingTestLevel2",
@@ -2469,7 +2493,7 @@
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::VecOfVec3s": {
+    "bevy_bevy_registry_export_basic_example::test_components::VecOfVec3s2": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2480,8 +2504,8 @@
           }
         }
       ],
-      "short_name": "VecOfVec3s",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::VecOfVec3s",
+      "short_name": "VecOfVec3s2",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::VecOfVec3s2",
       "type": "array",
       "typeInfo": "TupleStruct"
     },

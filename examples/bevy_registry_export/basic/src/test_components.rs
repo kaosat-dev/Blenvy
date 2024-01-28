@@ -67,10 +67,14 @@ pub enum EnumTest {
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
 pub struct NestingTestLevel2 {
-   enum_inner: EnumTest,
-   color: TuppleTestColor,
-   basic: BasicTest,
-   pub nested: NestingTestLevel3
+    text: String,
+    enable: bool,
+    enum_inner: EnumTest,
+    color: TuppleTestColor,
+    toggle: TuppleTestBool,
+    basic: BasicTest,
+    pub nested: NestingTestLevel3,
+    colors_list: VecOfColors
 }
 
 
@@ -99,12 +103,11 @@ pub enum EnumComplex {
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-pub struct VecOfVec3s(Vec<TuppleVec3>);
+pub struct VecOfVec3s2(Vec<TuppleVec3>);
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
 pub struct VecOfColors(Vec<Color>);
-
 pub struct ComponentsTestPlugin;
 impl Plugin for ComponentsTestPlugin {
     fn build(&self, app: &mut App) {
@@ -127,7 +130,7 @@ impl Plugin for ComponentsTestPlugin {
             .register_type::<NestedTuppleStuff>()
             .register_type::<EnumComplex>()
 
-            .register_type::<VecOfVec3s>()
+            .register_type::<VecOfVec3s2>()
             .register_type::<TuppleVecF32F32>()
 
             .register_type::<(f32, f32)>()
