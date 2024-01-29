@@ -32,13 +32,18 @@ class BEVY_COMPONENTS_PT_Configuration(bpy.types.Panel):
         layout.separator()
 
         row = layout.row()
-        row.operator(COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL.bl_idname, text="update custom properties of all objects" , icon="FILE_REFRESH")
-        row.enabled = registry.type_infos != None
+        row.label(text="WARNING ! The following operations will overwrite your existing custom properties if they have matching types on the bevy side !")
+        row.alert = True
 
         row = layout.row()
         row.operator(COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT.bl_idname, text="update custom properties of current object" , icon="FILE_REFRESH")
         row.enabled = registry.type_infos != None and selected_object is not None
-        #print("dfsd", context.object, context.active_object, bpy.context.selected_objects)
+
+        row = layout.row()
+        row.operator(COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL.bl_idname, text="update custom properties of ALL objects" , icon="FILE_REFRESH")
+        row.enabled = registry.type_infos != None
+
+        
         
 class BEVY_COMPONENTS_PT_MissingTypesPanel(bpy.types.Panel):
     bl_idname = "BEVY_COMPONENTS_PT_MissingTypesPanel"

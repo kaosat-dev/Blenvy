@@ -124,10 +124,6 @@ def post_load(file_name):
     generate_propertyGroups_for_components()
     ensure_metadata_for_all_objects()
 
-@persistent
-def init_data_if_needed(self):
-    pass
-    #ensure_metadata_for_all_objects()#very inneficient , find another way
 
 def register():
     print("register")
@@ -136,8 +132,6 @@ def register():
     bpy.types.WindowManager.blueprint_name = StringProperty()
 
     bpy.app.handlers.load_post.append(post_load)
-    bpy.app.handlers.depsgraph_update_post.append(init_data_if_needed)
-
 
 def unregister():
     print("unregister")
@@ -145,7 +139,5 @@ def unregister():
         bpy.utils.unregister_class(cls)
     del bpy.types.WindowManager.blueprint_name
     
-
     bpy.app.handlers.load_post.remove(post_load)
-    bpy.app.handlers.depsgraph_update_post.remove(init_data_if_needed)
 

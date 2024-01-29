@@ -21,6 +21,7 @@ def process_enum(registry, definition, update, nesting):
             if "prefixItems" in item:
                 additional_annotations = additional_annotations | process_tupples.process_tupples(registry, definition, item["prefixItems"], update, "variant_"+item_name, nesting)
             elif "properties" in item:
+                # property_group_class = generate_wrapper_propertyGroup(short_name, item_long_name, definition["items"]["type"]["$ref"],registry, update)
                 additional_annotations = additional_annotations | process_structs.process_structs(registry, definition, item["properties"], update, nesting)
             else: # for the cases where it's neither a tupple nor a structs: FIXME: not 100% sure of this
                 annotations = {"variant_"+item_name: StringProperty(default="")}

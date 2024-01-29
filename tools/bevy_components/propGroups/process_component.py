@@ -19,7 +19,7 @@ def process_component(registry, definition, update, extras=None, nesting = []):
     is_enum = type_info == "Enum"
     is_list = type_info == "List"
 
-    #print("processing", short_name, component_name, type_def, type_info)
+    # print("processing", short_name, component_name, type_def, type_info)
 
     __annotations__ = {}
     tupple_or_struct = None
@@ -57,8 +57,8 @@ def process_component(registry, definition, update, extras=None, nesting = []):
         "type_name": component_name
     }
     root_component = nesting[0] if len(nesting) > 0 else component_name
-    #print("DONE: __annotations__", __annotations__)
-    #print("")
+    # print("DONE:",short_name,"__annotations__", __annotations__)
+    # print("")
     # property_group_name = short_name+"_ui"
     property_group_params = {
          **extras,

@@ -6,12 +6,10 @@ from .operators import AddComponentOperator, CopyComponentOperator, DeleteCompon
 
 class GENERIC_UL_List(UIList): 
     """Generic UIList.""" 
-
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index): 
         # We could write some code to decide which icon to use here...
         custom_icon = 'OBJECT_DATAMODE' # Make sure your code supports all 3 layout types 
-        print("draw item", data, "item", item, "active_data", active_data, "active_propname", active_propname)
-        print("sdf", data.field_names, "item", item.field_names)
+        #print("draw item", data, "item", item, "active_data", active_data, "active_propname", active_propname)
         if self.layout_type in {'DEFAULT', 'COMPACT'}: 
             #print("compact")
             #layout.label(text=getattr(data,"type_name_short")) 
@@ -137,6 +135,10 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
     bl_context = "objectmode"
     bl_parent_id = "BEVY_COMPONENTS_PT_MainPanel"
 
+    @classmethod
+    def poll(cls, context):
+        return (context.object is not None)
+
     def draw(self, context):
         object = context.object
         layout = self.layout
@@ -162,7 +164,7 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
             # paste components
             row = layout.row(align=True)
             row.operator(PasteComponentOperator.bl_idname, text="Paste component ("+bpy.context.window_manager.copied_source_component_name+")", icon="PASTEDOWN")
-            row.enabled = bpy.context.window_manager.copied_source_object != ''
+            row.enabled = registry.type_infos != None and context.window_manager.copied_source_object != ''
 
             layout.separator()
 

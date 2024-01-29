@@ -3,7 +3,7 @@ import json
 import bpy
 from bpy_types import Operator
 from bpy.props import (StringProperty)
-from .metadata import add_component_to_object, add_metadata_to_components_without_metadata, find_component_definition_from_short_name
+from .metadata import add_component_to_object, add_metadata_to_components_without_metadata, copy_propertyGroup_values_to_another_object, find_component_definition_from_short_name
 
 class AddComponentOperator(Operator):
     """Add component to blueprint"""
@@ -85,8 +85,7 @@ class PasteComponentOperator(Operator):
                 component_value = source_object[component_name]
                 print("pasting component to object: component name:", str(component_name), "component value:" + str(component_value))
                 print (context.object)
-                component_definition = find_component_definition_from_short_name(component_name)
-                add_component_to_object(context.object, component_definition, value = component_value)
+                copy_propertyGroup_values_to_another_object(source_object, context.object, component_name)
 
         return {'FINISHED'}
     

@@ -9,7 +9,7 @@ from ..components.operators import GenerateComponent_From_custom_property_Operat
 from ..propGroups.prop_groups import generate_propertyGroups_for_components
 
 class ReloadRegistryOperator(Operator):
-    """Reload registry operator"""
+    """Reloads registry (schema file) from disk, generates propertyGroups for components & ensures all objects have metadata """
     bl_idname = "object.reload_registry"
     bl_label = "Reload Registry"
     bl_options = {"UNDO"}

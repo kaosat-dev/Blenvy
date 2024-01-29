@@ -86,13 +86,19 @@ UI:
 
 - [x] display single item enums inline, others in a seperate row
 
-- [ ] add button to "apply all" (in configuration), to apply/update all custom properties to ALL objects where relevant
-- [ ] add button to "apply to current" to do the same with current
-- [ ] what about metadata ?
-- [ ] only upgrade custom properties to metadata when asked/relevant
+- [x] add button to "apply all" (in configuration), to apply/update all custom properties to ALL objects where relevant
+- [x] add button to "apply to current" to do the same with current
+- [x] add warning sign to the above
+
+- [x] what about metadata ?
+- [x] only upgrade custom properties to metadata when asked/relevant
 - [x] implement move list up/down
-- [ ] change property_group_value_from_custom_property_value
+- [ ] change property_group_value_from_custom_property_value => just disregard it for now, its point is very limited (helping people with old custom properties by attempting to generate real values)
+    and give the change to a real ron format, it is too limiting
 - [x] fix reload registry clearing list of missing types 
+- [x] clean up metadata module, a lot of repeated code
+- [x] some fields when original is 0 or 0.0 are not copyable ? (seems like a bad boolean check )
+- [ ] fix issues with object variants in enums (see clusterconfig)
 
 bpy.context.window_manager
     .components_registry => raw registry
