@@ -34,7 +34,7 @@ use bevy::prelude::{App, IntoSystemConfigs, Plugin, SystemSet, Update};
 /// ){
 /// if keycode.just_pressed(KeyCode::Return) {
 ///  commands.spawn(SceneBundle {
-///   scene: asset_server.load("basic/models/level1.glb#Scene0"),
+///   scene: asset_server.load("basic/models/level1.glb"),
 ///   transform: Transform::from_xyz(2.0, 0.0, -5.0),
 /// ..Default::default()
 /// });

@@ -1,5 +1,4 @@
 use core::ops::Deref;
-
 use bevy::ecs::component::Component;
 use bevy::render::color::Color;
 use ron::Value;
@@ -125,14 +124,13 @@ pub fn ronstring_to_reflect_component(
                 type_registration.type_info().type_path(),
                 parsed_value
             );
-            println!("RON STRING {}", ron_string);
 
             // usefull to determine what an entity looks like Serialized
-            let test_struct = VecOfColors(vec![Color::Rgba { red: 0., green: 0.0, blue: 0.0, alpha: 0.0 }]);//TuppleTestColor(Color::Rgba { red: 0., green: 0.0, blue: 0.0, alpha: 0.0 });
+            /*let test_struct = VecOfColors(vec![Color::Rgba { red: 0., green: 0.0, blue: 0.0, alpha: 0.0 }]);//TuppleTestColor(Color::Rgba { red: 0., green: 0.0, blue: 0.0, alpha: 0.0 });
             let serializer = ReflectSerializer::new(&test_struct, &type_registry);
             let serialized =
                 ron::ser::to_string_pretty(&serializer, ron::ser::PrettyConfig::default()).unwrap();
-            println!("serialized Component {}", serialized);
+            println!("serialized Component {}", serialized);*/
 
             debug!("component data ron string {}", ron_string);
             let mut deserializer = ron::Deserializer::from_str(ron_string.as_str()).unwrap();
@@ -165,6 +163,9 @@ pub fn gltf_extras_to_components(
 ) {
     let mut added_components = 0;
     let simplified_types = false;
+    if simplified_types {
+        warn!("using simplified component definitions is deprecated since 0.3, prefer defining components with real ron values (use the bevy_components tool for Blender for simplicity) ");
+    }
     for (_name, scene) in &gltf.named_scenes {
         debug!("gltf: scene name {:?}", _name);
 
