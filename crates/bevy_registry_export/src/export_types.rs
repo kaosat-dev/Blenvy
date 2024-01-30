@@ -161,9 +161,13 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
                 .iter()
                 .enumerate()
                 .map(|(field_idx, variant)| match variant {
+                    //let binding = t.type_path_table();
+                    //let short_name = binding.short_path();
                     VariantInfo::Struct(v) => json!({
                         "type": "object",
-                        "title": t.type_path(),
+                        "typeInfo": "Struct",
+                        "title": v.name(),
+                        "short_name": v.name().split("::").last().unwrap_or(v.name()),
                         "properties": v
                             .iter()
                             .enumerate()
@@ -178,7 +182,9 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
                     }),
                     VariantInfo::Tuple(v) => json!({
                         "type": "array",
+                        "typeInfo": "Tuple",
                         "title": v.name(),
+                        "short_name":v.name(),
                         "prefixItems": v
                             .iter()
                             .enumerate()
