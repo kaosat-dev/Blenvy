@@ -138,13 +138,13 @@ class ComponentsRegistry(PropertyGroup):
 
     @classmethod
     def unregister(cls):
-        print("unregister registry")
         for propgroup_name in cls.component_propertyGroups.keys():
             try:
                 delattr(ComponentInfos, propgroup_name)
                 print("unregistered propertyGroup", propgroup_name)
             except Exception as error:
-                print("failed to remove", error, "ComponentInfos")
+                pass
+                #print("failed to remove", error, "ComponentInfos")
         
         del bpy.types.WindowManager.components_registry
         

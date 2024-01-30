@@ -108,7 +108,6 @@ def property_group_value_to_custom_property_value(property_group, definition, re
                 child_property_group = value if is_property_group else None
 
                 value = property_group_value_to_custom_property_value(child_property_group, variant_definition, registry, parent=component_name, value=value)
-                print("struct enum stuff", value)
                 value = selected + str(value,)
             else:
                 print("basic enum stuff")
