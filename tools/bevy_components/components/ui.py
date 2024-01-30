@@ -51,16 +51,20 @@ def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None):
 
                 nestedPropertyGroup = getattr(propertyGroup, fname)
                 nested = getattr(nestedPropertyGroup, "nested", False)
+                # print("nestedPropertyGroup", nestedPropertyGroup, fname, nested)
+
                 if not nested:
                     subrow.prop(propertyGroup, fname, text=display_name)
                     subrow.separator()
                 else:
                     #print("deal with sub fields", nestedPropertyGroup.field_names)
-                    for subfname in nestedPropertyGroup.field_names:
+                    draw_propertyGroup(nestedPropertyGroup, layout.row().column(), nesting + [fname], rootName )
+
+                    """for subfname in nestedPropertyGroup.field_names:
                         subrow = layout.row()
                         display_name = subfname if nestedPropertyGroup.tupple_or_struct == "struct" else ""
                         subrow.prop(nestedPropertyGroup, subfname, text=display_name)
-                        subrow.separator()
+                        subrow.separator()"""
     elif is_list:
         #print("show list", propertyGroup, dict(propertyGroup), propertyGroup.type_name)
         item_list = getattr(propertyGroup, "list")

@@ -1,6 +1,20 @@
+from bpy.props import (StringProperty)
+
+from . import process_component
+from .utils import generate_wrapper_propertyGroup
 from . import process_tupples
 from . import process_structs
-from bpy.props import (StringProperty)
+
+from bpy_types import PropertyGroup
+import bpy
+from bpy.props import (PointerProperty)
+
+def prout(registry, short_name, definition, extra_annotations):
+    print("prout", short_name, definition, extra_annotations)
+    wrapper_name = "wrapper_" + short_name
+    registry.add_custom_type(wrapper_name, wrapper_definition)
+    return process_component.process_component(registry, definition, update, None, nesting) 
+
 
 def process_enum(registry, definition, update, nesting):
     blender_property_mapping = registry.blender_property_mapping
@@ -12,21 +26,35 @@ def process_enum(registry, definition, update, nesting):
     __annotations__ = {}
     original_type_name = "enum"
 
+    print("processing enum", short_name, definition)
+
     if type_def == "object":
         labels = []
         additional_annotations = {}
         for item in values:
             item_name = item["title"]
+            item_short_name = item["short_name"] if "short_name" in item else item_name
+            variant_name = "variant_"+item_short_name
             labels.append(item_name)
+
             if "prefixItems" in item:
-                additional_annotations = additional_annotations | process_tupples.process_tupples(registry, definition, item["prefixItems"], update, "variant_"+item_name, nesting)
+                #enum_annotations_inner = process_tupples.process_tupples(registry, definition, item["prefixItems"], update, nesting, None)
+                print("tupple variant in enum", short_name, item)
+                registry.add_custom_type(item_short_name, item)
+                (sub_component_group, _) = process_component.process_component(registry, item, update, {"nested": True}, nesting) 
+                additional_annotations[variant_name] = sub_component_group
             elif "properties" in item:
-                # property_group_class = generate_wrapper_propertyGroup(short_name, item_long_name, definition["items"]["type"]["$ref"],registry, update)
-                additional_annotations = additional_annotations | process_structs.process_structs(registry, definition, item["properties"], update, nesting)
+                print("struct variant in enum", short_name, item)
+                #struct_annotations_inner = process_structs.process_structs(registry, definition, item["properties"], update, nesting, None)
+                registry.add_custom_type(item_short_name, item)
+                (sub_component_group, _) = process_component.process_component(registry, item, update, {"nested": True}, nesting) 
+                additional_annotations[variant_name] = sub_component_group
             else: # for the cases where it's neither a tupple nor a structs: FIXME: not 100% sure of this
+                print("other variant in enum", short_name)
                 annotations = {"variant_"+item_name: StringProperty(default="")}
                 additional_annotations = additional_annotations | annotations
 
+        print("enum fields",additional_annotations.keys())
         items = tuple((e, e, e) for e in labels)
         property_name = short_name
 

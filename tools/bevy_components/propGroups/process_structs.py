@@ -1,7 +1,7 @@
 from bpy.props import (StringProperty)
 from . import process_component
 
-def process_structs(registry, definition, properties, update, nesting): 
+def process_structs(registry, definition, properties, update, nesting, name_override=None): 
     value_types_defaults = registry.value_types_defaults 
     blender_property_mapping = registry.blender_property_mapping
     type_infos = registry.type_infos
@@ -13,7 +13,7 @@ def process_structs(registry, definition, properties, update, nesting):
 
     for property_name in properties.keys():
         ref_name = properties[property_name]["type"]["$ref"].replace("#/$defs/", "")
-
+        
         if ref_name in type_infos:
             original = type_infos[ref_name]
             original_type_name = original["title"]

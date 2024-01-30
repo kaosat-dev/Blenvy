@@ -1,7 +1,7 @@
 from bpy.props import (StringProperty)
 from . import process_component
 
-def process_tupples(registry, definition, prefixItems, update, name_override=None, nesting=[]):
+def process_tupples(registry, definition, prefixItems, update, nesting=[], name_override=None):
     value_types_defaults = registry.value_types_defaults 
     blender_property_mapping = registry.blender_property_mapping
     type_infos = registry.type_infos
