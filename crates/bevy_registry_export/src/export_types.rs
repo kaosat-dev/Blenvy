@@ -1,50 +1,26 @@
-use std::{io::Write, fs::File};
+use std::fs::File;
 
-use bevy::{scene::DynamicSceneBuilder, utils::HashMap};
-use bevy_app::App;
-use bevy_ecs::{reflect::{AppTypeRegistry, ReflectComponent, ReflectResource}, world::World};
-use bevy_reflect::{TypeInfo, TypePath, TypeRegistration, VariantInfo, DynamicTypePath};
+use bevy::log::info;
+use bevy_ecs::{
+    reflect::{AppTypeRegistry, ReflectComponent, ReflectResource},
+    world::World,
+};
+use bevy_reflect::{TypeInfo, TypeRegistration, VariantInfo}; // TypePath // DynamicTypePath
 use serde_json::{json, Map, Value};
 
 use crate::ExportComponentsConfig;
 
-
 pub fn export_types(world: &mut World) {
-    println!("EXPOOOORT");
-    let mut writer = File::create("schema.json").expect("should have created schema file");
-
     let config = world
         .get_resource::<ExportComponentsConfig>()
         .expect("ExportComponentsConfig should exist at this stage");
 
-    let filter = config
-        .component_filter
-        .clone();
-    let filter_resources = config
-        .resource_filter
-        .clone();
-
-    let scene_builder = DynamicSceneBuilder::from_world(&world)
-        .with_filter(filter.clone())
-        .with_resource_filter(filter_resources.clone());
-    
-    let foo = scene_builder
-    // .extract_entities(vec![])
-    .extract_resources()
-    .build();
-    // foo.write_to_world(world, entity_map)
-    println!("EXPOOOORT 2");
-
-    let mut filtered_world = World::new();
-    filtered_world.init_resource::<AppTypeRegistry>();
-    foo.write_to_world(&mut filtered_world, &mut HashMap::default()).expect("writing to filtered world should have worked");
-
-    let mut target_world = filtered_world; // self.world
+    let writer =
+        File::create(config.save_path.to_path_buf()).expect("should have created schema file");
 
     let types = world.resource_mut::<AppTypeRegistry>();
-
     let types = types.read();
-    let mut schemas = types.iter().map(export_type).collect::<Map<_, _>>();
+    let schemas = types.iter().map(export_type).collect::<Map<_, _>>();
 
     serde_json::to_writer_pretty(
         writer,
@@ -56,57 +32,7 @@ pub fn export_types(world: &mut World) {
     )
     .expect("valid json");
 
-    println!("DONE")
-}
-
-pub trait ExportTypesExt {
-    fn export_types(&mut self, writer: impl Write);
-}
-
-impl ExportTypesExt for App {
-    fn export_types(&mut self, writer: impl Write) {
-
-
-        let config = self.world
-            .get_resource::<ExportComponentsConfig>()
-            .expect("ExportComponentsConfig should exist at this stage");
-
-        let filter = config
-            .component_filter
-            .clone();
-        let filter_resources = config
-            .resource_filter
-            .clone();
-
-        let scene_builder = DynamicSceneBuilder::from_world(&self.world)
-            .with_filter(filter.clone())
-            .with_resource_filter(filter_resources.clone());
-        let foo = scene_builder.build();
-        // foo.write_to_world(world, entity_map)
-
-        let mut filtered_world = World::new();
-        foo.write_to_world(&mut filtered_world, &mut HashMap::default()).expect("writing to filtered world should have worked");
-
-        let mut target_world = filtered_world; // self.world
-
-        let types = self.world.resource_mut::<AppTypeRegistry>();
-        let types = types.read();
-        let bla = types.get_with_short_type_path("sdf".into()).unwrap();
-        
-        let mut schemas = types.iter().map(|reg: &TypeRegistration| export_type(reg) ).collect::<Map<_, _>>();
-        // type_registry.get_with_short_type_path
-        serde_json::to_writer_pretty(
-            writer,
-            &json!({
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
-                "title": "bevy game schema",
-                "$defs": schemas,
-            }),
-        )
-        .expect("valid json");
-
-        eprintln!("wrote schema containing {} types", schemas.len());
-    }
+    info!("Done exporting registry schema")
 }
 
 pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
@@ -263,10 +189,10 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
         reg.data::<ReflectResource>().is_some().into(),
     );
 
-    schema.as_object_mut().unwrap().insert(
-        "short_name".to_owned(),
-        short_name.into(),
-    );
+    schema
+        .as_object_mut()
+        .unwrap()
+        .insert("short_name".to_owned(), short_name.into());
 
     (t.type_path().to_owned(), schema)
 }
