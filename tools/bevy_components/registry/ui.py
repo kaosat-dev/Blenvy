@@ -21,9 +21,9 @@ class BEVY_COMPONENTS_PT_Configuration(bpy.types.Panel):
         row = layout.row()
         col = row.column()
         col.enabled = False
-        col.prop(registry, "schemaPath", text="Schema file path")
+        col.prop(registry, "schemaPath", text="Registry Schema path")
         col = row.column()
-        col.operator(OT_OpenFilebrowser.bl_idname, text="Browse for schema.json")
+        col.operator(OT_OpenFilebrowser.bl_idname, text="Browse for registry schema file (json)")
 
         layout.separator()
         layout.operator(ReloadRegistryOperator.bl_idname, text="reload registry" , icon="FILE_REFRESH")

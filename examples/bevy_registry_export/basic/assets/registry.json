@@ -10544,5 +10544,5 @@
     }
   },
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "bevy game schema"
+  "title": "bevy component registry schema"
 }

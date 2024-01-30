@@ -20,7 +20,7 @@ impl Plugin for CorePlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
             ExportComponentsPlugin {
-                save_path: "assets/schema.json".into(),
+                save_path: "assets/registry.json".into(),
                 ..Default::default()
             },
             LightingPlugin,

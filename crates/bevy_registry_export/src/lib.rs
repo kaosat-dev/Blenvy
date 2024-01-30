@@ -31,7 +31,7 @@ impl Default for ExportComponentsPlugin {
         Self {
             component_filter: SceneFilter::default(), // unused for now
             resource_filter: SceneFilter::default(),  // unused for now
-            save_path: PathBuf::from("."),
+            save_path: PathBuf::from("assets/registry.json"),
         }
     }
 }

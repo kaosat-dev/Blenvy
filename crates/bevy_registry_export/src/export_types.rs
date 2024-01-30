@@ -26,7 +26,7 @@ pub fn export_types(world: &mut World) {
         writer,
         &json!({
             "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "title": "bevy game schema",
+            "title": "bevy component registry schema",
             "$defs": schemas,
         }),
     )
