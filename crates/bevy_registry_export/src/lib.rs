@@ -20,13 +20,13 @@ pub struct ExportComponentsConfig {
     pub(crate) resource_filter: SceneFilter, // unused for now
 }
 
-pub struct ExportComponentsPlugin {
+pub struct ExportRegistryPlugin {
     pub component_filter: SceneFilter,
     pub resource_filter: SceneFilter,
     pub save_path: PathBuf,
 }
 
-impl Default for ExportComponentsPlugin {
+impl Default for ExportRegistryPlugin {
     fn default() -> Self {
         Self {
             component_filter: SceneFilter::default(), // unused for now
@@ -36,7 +36,7 @@ impl Default for ExportComponentsPlugin {
     }
 }
 
-impl Plugin for ExportComponentsPlugin {
+impl Plugin for ExportRegistryPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(ExportComponentsConfig {
             save_path: self.save_path.clone(),
