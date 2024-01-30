@@ -1,7 +1,7 @@
 from bpy.props import (StringProperty)
 from . import process_component
 
-def process_tupples(registry, definition, prefixItems, update, nesting=[], name_override=None):
+def process_tupples(registry, definition, prefixItems, update, nesting=[]):
     value_types_defaults = registry.value_types_defaults 
     blender_property_mapping = registry.blender_property_mapping
     type_infos = registry.type_infos
@@ -16,9 +16,7 @@ def process_tupples(registry, definition, prefixItems, update, nesting=[], name_
         ref_name = item["type"]["$ref"].replace("#/$defs/", "")
 
         property_name = str(index)# we cheat a bit, property names are numbers here, as we do not have a real property name
-        if name_override != None:
-            property_name = name_override
-
+       
         if ref_name in type_infos:
             original = type_infos[ref_name]
             original_type_name = original["title"]

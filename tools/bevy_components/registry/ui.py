@@ -39,13 +39,14 @@ class BEVY_COMPONENTS_PT_Configuration(bpy.types.Panel):
         row.operator(COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT.bl_idname, text="update custom properties of current object" , icon="FILE_REFRESH")
         row.enabled = registry.type_infos != None and selected_object is not None
 
+        layout.separator()
         row = layout.row()
         row.operator(COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL.bl_idname, text="update custom properties of ALL objects" , icon="FILE_REFRESH")
         row.enabled = registry.type_infos != None
 
-        
-        
+
 class BEVY_COMPONENTS_PT_MissingTypesPanel(bpy.types.Panel):
+    """panel listing all the missing bevy types in the schema"""
     bl_idname = "BEVY_COMPONENTS_PT_MissingTypesPanel"
     bl_label = "Bevy Missing/Unregistered Types"
     bl_space_type = 'VIEW_3D'

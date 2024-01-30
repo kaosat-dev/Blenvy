@@ -25,7 +25,7 @@ from .components.metadata import (ComponentInfos, ComponentsMeta, do_object_cust
 from .propGroups.prop_groups import (generate_propertyGroups_for_components)
 from .components.lists import GENERIC_LIST_OT_actions, Generic_LIST_OT_AddItem, Generic_LIST_OT_RemoveItem, Generic_LIST_OT_SelectItem
 from .components.definitions_list import (ComponentDefinitionsList, ClearComponentDefinitionsList)
-from .components.ui import (GENERIC_UL_List, BEVY_COMPONENTS_PT_ComponentsPanel)
+from .components.ui import (BEVY_COMPONENTS_PT_ComponentsPanel)
 
 
 # just a test, remove
@@ -108,7 +108,6 @@ classes = [
     MISSING_TYPES_UL_List,
     BEVY_COMPONENTS_PT_MissingTypesPanel,
 
-    GENERIC_UL_List,
     Generic_LIST_OT_SelectItem,
     Generic_LIST_OT_AddItem,
     Generic_LIST_OT_RemoveItem,

@@ -31,12 +31,12 @@ def process_component(registry, definition, update, extras=None, nesting = []):
 
 
     if has_properties:
-        __annotations__ = __annotations__ | process_structs.process_structs(registry, definition, properties, update, nesting, None)
+        __annotations__ = __annotations__ | process_structs.process_structs(registry, definition, properties, update, nesting)
         with_properties = True
         tupple_or_struct = "struct"
 
     if has_prefixItems:
-        __annotations__ = __annotations__ | process_tupples.process_tupples(registry, definition, prefixItems, update, nesting, None)
+        __annotations__ = __annotations__ | process_tupples.process_tupples(registry, definition, prefixItems, update, nesting)
         with_items = True
         tupple_or_struct = "tupple"
 

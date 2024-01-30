@@ -98,21 +98,11 @@ UI:
 - [x] fix reload registry clearing list of missing types 
 - [x] clean up metadata module, a lot of repeated code
 - [x] some fields when original is 0 or 0.0 are not copyable ? (seems like a bad boolean check )
-- [ ] fix issues with object variants in enums (see clusterconfig)
-
-        for now:
-            ENUM:
-                - variant selector
-                - variant_A => annotations of A
-                - variant_B => annotations of B XXXX
-
-bpy.context.window_manager
-    .components_registry => raw registry
-    .components_list =>  refined, pythonified list of available components
+- [x] fix issues with object variants in enums (see clusterconfig)
 
 
 - perhaps directly export default values within the schema.json ?
-        - for most types , it is straighforward, but others, not so muc: like the default color in Bevy , etc
+        - for most types , it is straighforward, but others, not so much: like the default color in Bevy , etc
 
 
 # Additional

@@ -34,7 +34,7 @@ def property_group_value_to_custom_property_value(property_group, definition, re
     type_def = definition["type"] if "type" in definition else None
     type_name = definition["title"]
     is_value_type = type_name in conversion_tables
-    print("computing custom property", component_name, type_info, type_def, type_name)
+    #print("computing custom property", component_name, type_info, type_def, type_name)
 
     if is_value_type:
         value = conversion_tables[type_name](value)
@@ -94,20 +94,24 @@ def property_group_value_to_custom_property_value(property_group, definition, re
         if type_def == "object":
             selection_index = property_group.field_names.index("variant_"+selected)
             variant_name = property_group.field_names[selection_index]
-
-            if "prefixItems" in definition["oneOf"][selection_index-1]:
-                item_type_name = definition["oneOf"][selection_index-1]["prefixItems"][0]["type"]["$ref"].replace("#/$defs/", "")
-                item_definition = registry.type_infos[item_type_name] if item_type_name in registry.type_infos else None
-
+            variant_definition = definition["oneOf"][selection_index-1]
+            if "prefixItems" in variant_definition:
                 value = getattr(property_group, variant_name)
                 is_property_group = isinstance(value, PropertyGroup)
                 child_property_group = value if is_property_group else None
-                if item_definition != None:
-                    value = property_group_value_to_custom_property_value(child_property_group, item_definition, registry, parent=component_name, value=value)
-                else:
-                    value = '""'
-                value = selected + str((value,),)
+                
+                value = property_group_value_to_custom_property_value(child_property_group, variant_definition, registry, parent=component_name, value=value)
+                value = selected + str(value,) 
+            elif "properties" in variant_definition:
+                value = getattr(property_group, variant_name)
+                is_property_group = isinstance(value, PropertyGroup)
+                child_property_group = value if is_property_group else None
+
+                value = property_group_value_to_custom_property_value(child_property_group, variant_definition, registry, parent=component_name, value=value)
+                print("struct enum stuff", value)
+                value = selected + str(value,)
             else:
+                print("basic enum stuff")
                 value = selected # here the value of the enum is just the name of the variant
         else: 
             value = selected
@@ -137,15 +141,6 @@ def property_group_value_to_custom_property_value(property_group, definition, re
         value = value.replace("{", "(").replace("}", ")")
         value = value.replace("True", "true").replace("False", "false")
     return value
-
-def json_to_psuedo_ron(value):
-    value = str(value)
-    value = value.replace("{", "(").replace("}", ")")
-    value = value.replace("'", "") # FIXME: not good ! we do not want to replace string quotes !
-    value = value.replace("True", "true").replace("False", "false")
-    value = value.replace('"', "")
-    return  value
-
 
 import re
 #converts the value of a single custom property into a value (values) of a property group 
