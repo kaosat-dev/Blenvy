@@ -25,12 +25,6 @@ impl Default for CameraTrackingOffset {
     }
 }
 
-impl CameraTrackingOffset {
-    fn new(input: Vec3) -> Self {
-        CameraTrackingOffset(input)
-    }
-}
-
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
 /// Add this component to an entity if you want it to be tracked by a Camera

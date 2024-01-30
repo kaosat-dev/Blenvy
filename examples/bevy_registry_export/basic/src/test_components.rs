@@ -74,10 +74,8 @@ pub struct NestingTestLevel2 {
     toggle: TuppleTestBool,
     basic: BasicTest,
     pub nested: NestingTestLevel3,
-    colors_list: VecOfColors
+    colors_list: VecOfColors,
 }
-
-
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
@@ -85,11 +83,9 @@ pub struct NestingTestLevel3 {
     vec: TuppleVec3,
 }
 
-
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
 pub struct NestedTuppleStuff(f32, u64, NestingTestLevel2);
-
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
@@ -125,21 +121,16 @@ impl Plugin for ComponentsTestPlugin {
             .register_type::<TuppleTestColor>()
             .register_type::<TuppleVec>()
             .register_type::<Vec<String>>()
-            
             .register_type::<NestingTestLevel2>()
             .register_type::<NestingTestLevel3>()
             .register_type::<NestedTuppleStuff>()
             .register_type::<EnumComplex>()
-
             .register_type::<VecOfVec3s2>()
             .register_type::<TuppleVecF32F32>()
-
             .register_type::<(f32, f32)>()
             .register_type::<Vec<(f32, f32)>>()
             .register_type::<Vec<TuppleVec3>>()
-
             .register_type::<Vec<Color>>()
-            .register_type::<VecOfColors>()
-            ;
+            .register_type::<VecOfColors>();
     }
 }

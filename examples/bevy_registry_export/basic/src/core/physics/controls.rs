@@ -1,4 +1,4 @@
-use bevy::prelude::{info, ResMut};
+use bevy::{log::info, prelude::ResMut};
 use bevy_rapier3d::prelude::RapierConfiguration;
 
 pub fn pause_physics(mut physics_config: ResMut<RapierConfiguration>) {

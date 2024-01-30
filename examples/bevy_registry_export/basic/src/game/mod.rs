@@ -7,12 +7,8 @@ pub use in_main_menu::*;
 pub mod picking;
 pub use picking::*;
 
-use crate::{
-    insert_dependant_component,
-    state::{AppState, GameState},
-};
+use crate::state::{AppState, GameState};
 use bevy::prelude::*;
-use bevy_rapier3d::prelude::*;
 
 // this file is just for demo purposes, contains various types of components, systems etc
 
@@ -62,28 +58,6 @@ fn player_move_demo(
         if keycode.pressed(KeyCode::Down) {
             player.translation.z -= speed;
         }
-    }
-}
-
-// collision tests/debug
-pub fn test_collision_events(
-    mut collision_events: EventReader<CollisionEvent>,
-    mut contact_force_events: EventReader<ContactForceEvent>,
-) {
-    for collision_event in collision_events.read() {
-        println!("collision");
-        match collision_event {
-            CollisionEvent::Started(_entity1, _entity2, _) => {
-                println!("collision started")
-            }
-            CollisionEvent::Stopped(_entity1, _entity2, _) => {
-                println!("collision ended")
-            }
-        }
-    }
-
-    for contact_force_event in contact_force_events.read() {
-        println!("Received contact force event: {:?}", contact_force_event);
     }
 }
 

@@ -15,15 +15,12 @@ use bevy_gltf_blueprints::*;
 
 use bevy_registry_export::*;
 
-use crate::game::Player;
-
 pub struct CorePlugin;
 impl Plugin for CorePlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
-            ExportComponentsPlugin{
-                component_filter: SceneFilter::allow_all().allow::<Player>(),
-                resource_filter: SceneFilter::deny_all(),
+            ExportComponentsPlugin {
+                save_path: "assets/schema.json".into(),
                 ..Default::default()
             },
             LightingPlugin,
