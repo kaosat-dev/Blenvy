@@ -192,8 +192,10 @@
               }
             }
           ],
+          "short_name": "Strong",
           "title": "Strong",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -204,8 +206,10 @@
               }
             }
           ],
+          "short_name": "Weak",
           "title": "Weak",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Handle<()>",
@@ -226,8 +230,10 @@
               }
             }
           ],
+          "short_name": "Strong",
           "title": "Strong",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -238,8 +244,10 @@
               }
             }
           ],
+          "short_name": "Weak",
           "title": "Weak",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Handle<AnimationClip>",
@@ -260,8 +268,10 @@
               }
             }
           ],
+          "short_name": "Strong",
           "title": "Strong",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -272,8 +282,10 @@
               }
             }
           ],
+          "short_name": "Weak",
           "title": "Weak",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Handle<LoadedUntypedAsset>",
@@ -294,8 +306,10 @@
               }
             }
           ],
+          "short_name": "Strong",
           "title": "Strong",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -306,8 +320,10 @@
               }
             }
           ],
+          "short_name": "Weak",
           "title": "Weak",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Handle<LoadedFolder>",
@@ -328,8 +344,10 @@
               }
             }
           ],
+          "short_name": "Strong",
           "title": "Strong",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -340,8 +358,10 @@
               }
             }
           ],
+          "short_name": "Weak",
           "title": "Weak",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Handle<StandardDynamicAssetCollection>",
@@ -362,8 +382,10 @@
               }
             }
           ],
+          "short_name": "Strong",
           "title": "Strong",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -374,8 +396,10 @@
               }
             }
           ],
+          "short_name": "Weak",
           "title": "Weak",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Handle<AudioSource>",
@@ -396,8 +420,10 @@
               }
             }
           ],
+          "short_name": "Strong",
           "title": "Strong",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -408,8 +434,10 @@
               }
             }
           ],
+          "short_name": "Weak",
           "title": "Weak",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Handle<Pitch>",
@@ -430,8 +458,10 @@
               }
             }
           ],
+          "short_name": "Strong",
           "title": "Strong",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -442,8 +472,10 @@
               }
             }
           ],
+          "short_name": "Weak",
           "title": "Weak",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Handle<LineGizmo>",
@@ -464,8 +496,10 @@
               }
             }
           ],
+          "short_name": "Strong",
           "title": "Strong",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -476,8 +510,10 @@
               }
             }
           ],
+          "short_name": "Weak",
           "title": "Weak",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Handle<Gltf>",
@@ -498,8 +534,10 @@
               }
             }
           ],
+          "short_name": "Strong",
           "title": "Strong",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -510,8 +548,10 @@
               }
             }
           ],
+          "short_name": "Weak",
           "title": "Weak",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Handle<GltfMesh>",
@@ -532,8 +572,10 @@
               }
             }
           ],
+          "short_name": "Strong",
           "title": "Strong",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -544,8 +586,10 @@
               }
             }
           ],
+          "short_name": "Weak",
           "title": "Weak",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Handle<GltfNode>",
@@ -566,8 +610,10 @@
               }
             }
           ],
+          "short_name": "Strong",
           "title": "Strong",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -578,8 +624,10 @@
               }
             }
           ],
+          "short_name": "Weak",
           "title": "Weak",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Handle<GltfPrimitive>",
@@ -600,8 +648,10 @@
               }
             }
           ],
+          "short_name": "Strong",
           "title": "Strong",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -612,8 +662,10 @@
               }
             }
           ],
+          "short_name": "Weak",
           "title": "Weak",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Handle<StandardMaterial>",
@@ -634,8 +686,10 @@
               }
             }
           ],
+          "short_name": "Strong",
           "title": "Strong",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -646,8 +700,10 @@
               }
             }
           ],
+          "short_name": "Weak",
           "title": "Weak",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Handle<WireframeMaterial>",
@@ -668,8 +724,10 @@
               }
             }
           ],
+          "short_name": "Strong",
           "title": "Strong",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -680,8 +738,10 @@
               }
             }
           ],
+          "short_name": "Weak",
           "title": "Weak",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Handle<Mesh>",
@@ -702,8 +762,10 @@
               }
             }
           ],
+          "short_name": "Strong",
           "title": "Strong",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -714,8 +776,10 @@
               }
             }
           ],
+          "short_name": "Weak",
           "title": "Weak",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Handle<SkinnedMeshInverseBindposes>",
@@ -736,8 +800,10 @@
               }
             }
           ],
+          "short_name": "Strong",
           "title": "Strong",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -748,8 +814,10 @@
               }
             }
           ],
+          "short_name": "Weak",
           "title": "Weak",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Handle<Shader>",
@@ -770,8 +838,10 @@
               }
             }
           ],
+          "short_name": "Strong",
           "title": "Strong",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -782,8 +852,10 @@
               }
             }
           ],
+          "short_name": "Weak",
           "title": "Weak",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Handle<Image>",
@@ -804,8 +876,10 @@
               }
             }
           ],
+          "short_name": "Strong",
           "title": "Strong",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -816,8 +890,10 @@
               }
             }
           ],
+          "short_name": "Weak",
           "title": "Weak",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Handle<DynamicScene>",
@@ -838,8 +914,10 @@
               }
             }
           ],
+          "short_name": "Strong",
           "title": "Strong",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -850,8 +928,10 @@
               }
             }
           ],
+          "short_name": "Weak",
           "title": "Weak",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Handle<Scene>",
@@ -872,8 +952,10 @@
               }
             }
           ],
+          "short_name": "Strong",
           "title": "Strong",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -884,8 +966,10 @@
               }
             }
           ],
+          "short_name": "Weak",
           "title": "Weak",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Handle<ColorMaterial>",
@@ -906,8 +990,10 @@
               }
             }
           ],
+          "short_name": "Strong",
           "title": "Strong",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -918,8 +1004,10 @@
               }
             }
           ],
+          "short_name": "Weak",
           "title": "Weak",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Handle<TextureAtlas>",
@@ -940,8 +1028,10 @@
               }
             }
           ],
+          "short_name": "Strong",
           "title": "Strong",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -952,8 +1042,10 @@
               }
             }
           ],
+          "short_name": "Weak",
           "title": "Weak",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Handle<Font>",
@@ -978,8 +1070,10 @@
           "required": [
             "index"
           ],
-          "title": "bevy_asset::id::AssetId<()>",
-          "type": "object"
+          "short_name": "Index",
+          "title": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -994,8 +1088,10 @@
           "required": [
             "uuid"
           ],
-          "title": "bevy_asset::id::AssetId<()>",
-          "type": "object"
+          "short_name": "Uuid",
+          "title": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
         }
       ],
       "short_name": "AssetId<()>",
@@ -1020,8 +1116,10 @@
           "required": [
             "index"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_animation::AnimationClip>",
-          "type": "object"
+          "short_name": "Index",
+          "title": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -1036,8 +1134,10 @@
           "required": [
             "uuid"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_animation::AnimationClip>",
-          "type": "object"
+          "short_name": "Uuid",
+          "title": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
         }
       ],
       "short_name": "AssetId<AnimationClip>",
@@ -1062,8 +1162,10 @@
           "required": [
             "index"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_asset::assets::LoadedUntypedAsset>",
-          "type": "object"
+          "short_name": "Index",
+          "title": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -1078,8 +1180,10 @@
           "required": [
             "uuid"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_asset::assets::LoadedUntypedAsset>",
-          "type": "object"
+          "short_name": "Uuid",
+          "title": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
         }
       ],
       "short_name": "AssetId<LoadedUntypedAsset>",
@@ -1104,8 +1208,10 @@
           "required": [
             "index"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_asset::folder::LoadedFolder>",
-          "type": "object"
+          "short_name": "Index",
+          "title": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -1120,8 +1226,10 @@
           "required": [
             "uuid"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_asset::folder::LoadedFolder>",
-          "type": "object"
+          "short_name": "Uuid",
+          "title": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
         }
       ],
       "short_name": "AssetId<LoadedFolder>",
@@ -1146,8 +1254,10 @@
           "required": [
             "index"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_asset_loader::standard_dynamic_asset::StandardDynamicAssetCollection>",
-          "type": "object"
+          "short_name": "Index",
+          "title": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -1162,8 +1272,10 @@
           "required": [
             "uuid"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_asset_loader::standard_dynamic_asset::StandardDynamicAssetCollection>",
-          "type": "object"
+          "short_name": "Uuid",
+          "title": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
         }
       ],
       "short_name": "AssetId<StandardDynamicAssetCollection>",
@@ -1188,8 +1300,10 @@
           "required": [
             "index"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_audio::audio_source::AudioSource>",
-          "type": "object"
+          "short_name": "Index",
+          "title": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -1204,8 +1318,10 @@
           "required": [
             "uuid"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_audio::audio_source::AudioSource>",
-          "type": "object"
+          "short_name": "Uuid",
+          "title": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
         }
       ],
       "short_name": "AssetId<AudioSource>",
@@ -1230,8 +1346,10 @@
           "required": [
             "index"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_audio::pitch::Pitch>",
-          "type": "object"
+          "short_name": "Index",
+          "title": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -1246,8 +1364,10 @@
           "required": [
             "uuid"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_audio::pitch::Pitch>",
-          "type": "object"
+          "short_name": "Uuid",
+          "title": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
         }
       ],
       "short_name": "AssetId<Pitch>",
@@ -1272,8 +1392,10 @@
           "required": [
             "index"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_gizmos::LineGizmo>",
-          "type": "object"
+          "short_name": "Index",
+          "title": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -1288,8 +1410,10 @@
           "required": [
             "uuid"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_gizmos::LineGizmo>",
-          "type": "object"
+          "short_name": "Uuid",
+          "title": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
         }
       ],
       "short_name": "AssetId<LineGizmo>",
@@ -1314,8 +1438,10 @@
           "required": [
             "index"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_gltf::Gltf>",
-          "type": "object"
+          "short_name": "Index",
+          "title": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -1330,8 +1456,10 @@
           "required": [
             "uuid"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_gltf::Gltf>",
-          "type": "object"
+          "short_name": "Uuid",
+          "title": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
         }
       ],
       "short_name": "AssetId<Gltf>",
@@ -1356,8 +1484,10 @@
           "required": [
             "index"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_gltf::GltfMesh>",
-          "type": "object"
+          "short_name": "Index",
+          "title": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -1372,8 +1502,10 @@
           "required": [
             "uuid"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_gltf::GltfMesh>",
-          "type": "object"
+          "short_name": "Uuid",
+          "title": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
         }
       ],
       "short_name": "AssetId<GltfMesh>",
@@ -1398,8 +1530,10 @@
           "required": [
             "index"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_gltf::GltfNode>",
-          "type": "object"
+          "short_name": "Index",
+          "title": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -1414,8 +1548,10 @@
           "required": [
             "uuid"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_gltf::GltfNode>",
-          "type": "object"
+          "short_name": "Uuid",
+          "title": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
         }
       ],
       "short_name": "AssetId<GltfNode>",
@@ -1440,8 +1576,10 @@
           "required": [
             "index"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_gltf::GltfPrimitive>",
-          "type": "object"
+          "short_name": "Index",
+          "title": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -1456,8 +1594,10 @@
           "required": [
             "uuid"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_gltf::GltfPrimitive>",
-          "type": "object"
+          "short_name": "Uuid",
+          "title": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
         }
       ],
       "short_name": "AssetId<GltfPrimitive>",
@@ -1482,8 +1622,10 @@
           "required": [
             "index"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_pbr::pbr_material::StandardMaterial>",
-          "type": "object"
+          "short_name": "Index",
+          "title": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -1498,8 +1640,10 @@
           "required": [
             "uuid"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_pbr::pbr_material::StandardMaterial>",
-          "type": "object"
+          "short_name": "Uuid",
+          "title": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
         }
       ],
       "short_name": "AssetId<StandardMaterial>",
@@ -1524,8 +1668,10 @@
           "required": [
             "index"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_pbr::wireframe::WireframeMaterial>",
-          "type": "object"
+          "short_name": "Index",
+          "title": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -1540,8 +1686,10 @@
           "required": [
             "uuid"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_pbr::wireframe::WireframeMaterial>",
-          "type": "object"
+          "short_name": "Uuid",
+          "title": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
         }
       ],
       "short_name": "AssetId<WireframeMaterial>",
@@ -1566,8 +1714,10 @@
           "required": [
             "index"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_render::mesh::mesh::Mesh>",
-          "type": "object"
+          "short_name": "Index",
+          "title": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -1582,8 +1732,10 @@
           "required": [
             "uuid"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_render::mesh::mesh::Mesh>",
-          "type": "object"
+          "short_name": "Uuid",
+          "title": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
         }
       ],
       "short_name": "AssetId<Mesh>",
@@ -1608,8 +1760,10 @@
           "required": [
             "index"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_render::mesh::mesh::skinning::SkinnedMeshInverseBindposes>",
-          "type": "object"
+          "short_name": "Index",
+          "title": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -1624,8 +1778,10 @@
           "required": [
             "uuid"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_render::mesh::mesh::skinning::SkinnedMeshInverseBindposes>",
-          "type": "object"
+          "short_name": "Uuid",
+          "title": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
         }
       ],
       "short_name": "AssetId<SkinnedMeshInverseBindposes>",
@@ -1650,8 +1806,10 @@
           "required": [
             "index"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_render::render_resource::shader::Shader>",
-          "type": "object"
+          "short_name": "Index",
+          "title": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -1666,8 +1824,10 @@
           "required": [
             "uuid"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_render::render_resource::shader::Shader>",
-          "type": "object"
+          "short_name": "Uuid",
+          "title": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
         }
       ],
       "short_name": "AssetId<Shader>",
@@ -1692,8 +1852,10 @@
           "required": [
             "index"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_render::texture::image::Image>",
-          "type": "object"
+          "short_name": "Index",
+          "title": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -1708,8 +1870,10 @@
           "required": [
             "uuid"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_render::texture::image::Image>",
-          "type": "object"
+          "short_name": "Uuid",
+          "title": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
         }
       ],
       "short_name": "AssetId<Image>",
@@ -1734,8 +1898,10 @@
           "required": [
             "index"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_scene::dynamic_scene::DynamicScene>",
-          "type": "object"
+          "short_name": "Index",
+          "title": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -1750,8 +1916,10 @@
           "required": [
             "uuid"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_scene::dynamic_scene::DynamicScene>",
-          "type": "object"
+          "short_name": "Uuid",
+          "title": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
         }
       ],
       "short_name": "AssetId<DynamicScene>",
@@ -1776,8 +1944,10 @@
           "required": [
             "index"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_scene::scene::Scene>",
-          "type": "object"
+          "short_name": "Index",
+          "title": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -1792,8 +1962,10 @@
           "required": [
             "uuid"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_scene::scene::Scene>",
-          "type": "object"
+          "short_name": "Uuid",
+          "title": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
         }
       ],
       "short_name": "AssetId<Scene>",
@@ -1818,8 +1990,10 @@
           "required": [
             "index"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_sprite::mesh2d::color_material::ColorMaterial>",
-          "type": "object"
+          "short_name": "Index",
+          "title": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -1834,8 +2008,10 @@
           "required": [
             "uuid"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_sprite::mesh2d::color_material::ColorMaterial>",
-          "type": "object"
+          "short_name": "Uuid",
+          "title": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
         }
       ],
       "short_name": "AssetId<ColorMaterial>",
@@ -1860,8 +2036,10 @@
           "required": [
             "index"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_sprite::texture_atlas::TextureAtlas>",
-          "type": "object"
+          "short_name": "Index",
+          "title": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -1876,8 +2054,10 @@
           "required": [
             "uuid"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_sprite::texture_atlas::TextureAtlas>",
-          "type": "object"
+          "short_name": "Uuid",
+          "title": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
         }
       ],
       "short_name": "AssetId<TextureAtlas>",
@@ -1902,8 +2082,10 @@
           "required": [
             "index"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_text::font::Font>",
-          "type": "object"
+          "short_name": "Index",
+          "title": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -1918,8 +2100,10 @@
           "required": [
             "uuid"
           ],
-          "title": "bevy_asset::id::AssetId<bevy_text::font::Font>",
-          "type": "object"
+          "short_name": "Uuid",
+          "title": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
         }
       ],
       "short_name": "AssetId<Font>",
@@ -1999,8 +2183,10 @@
               }
             }
           ],
+          "short_name": "Ball",
           "title": "Ball",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -2011,8 +2197,10 @@
               }
             }
           ],
+          "short_name": "Cuboid",
           "title": "Cuboid",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -2033,8 +2221,10 @@
               }
             }
           ],
+          "short_name": "Capsule",
           "title": "Capsule",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "title": "Mesh"
@@ -2138,8 +2328,10 @@
               }
             }
           ],
+          "short_name": "Float",
           "title": "Float",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -2150,8 +2342,10 @@
               }
             }
           ],
+          "short_name": "Wood",
           "title": "Wood",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -2162,8 +2356,13 @@
               }
             }
           ],
+          "short_name": "Vec",
           "title": "Vec",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "title": "SomeThing"
         },
         {
           "title": "None"
@@ -2652,8 +2851,10 @@
               }
             }
           ],
+          "short_name": "Custom",
           "title": "Custom",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "title": "None"
@@ -2770,8 +2971,10 @@
               }
             }
           ],
+          "short_name": "Clear",
           "title": "Clear",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "title": "Load"
@@ -3205,8 +3408,10 @@
               }
             }
           ],
+          "short_name": "Other",
           "title": "Other",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "GamepadAxisType",
@@ -3334,8 +3539,10 @@
               }
             }
           ],
+          "short_name": "Other",
           "title": "Other",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "GamepadButtonType",
@@ -3356,8 +3563,10 @@
               }
             }
           ],
+          "short_name": "Connected",
           "title": "Connected",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "title": "Disconnected"
@@ -3664,8 +3873,10 @@
               }
             }
           ],
+          "short_name": "Other",
           "title": "Other",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "MouseButton",
@@ -3802,8 +4013,10 @@
             "force",
             "max_possible_force"
           ],
-          "title": "bevy_input::touch::ForceTouch",
-          "type": "object"
+          "short_name": "Calibrated",
+          "title": "Calibrated",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "items": false,
@@ -3814,8 +4027,10 @@
               }
             }
           ],
+          "short_name": "Normalized",
           "title": "Normalized",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "ForceTouch",
@@ -3946,8 +4161,10 @@
               }
             }
           ],
+          "short_name": "Mask",
           "title": "Mask",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "title": "Blend"
@@ -4200,8 +4417,10 @@
             "z_config",
             "dynamic_resizing"
           ],
-          "title": "bevy_pbr::light::ClusterConfig",
-          "type": "object"
+          "short_name": "XYZ",
+          "title": "XYZ",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -4237,8 +4456,10 @@
             "z_config",
             "dynamic_resizing"
           ],
-          "title": "bevy_pbr::light::ClusterConfig",
-          "type": "object"
+          "short_name": "FixedZ",
+          "title": "FixedZ",
+          "type": "object",
+          "typeInfo": "Struct"
         }
       ],
       "short_name": "ClusterConfig",
@@ -4262,8 +4483,10 @@
               }
             }
           ],
+          "short_name": "Constant",
           "title": "Constant",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "ClusterFarZMode",
@@ -4804,8 +5027,10 @@
               }
             }
           ],
+          "short_name": "Mass",
           "title": "Mass",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -4816,8 +5041,10 @@
               }
             }
           ],
+          "short_name": "MassProperties",
           "title": "MassProperties",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "AdditionalMassProperties",
@@ -5326,8 +5553,10 @@
               }
             }
           ],
+          "short_name": "Window",
           "title": "Window",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -5338,8 +5567,10 @@
               }
             }
           ],
+          "short_name": "Image",
           "title": "Image",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -5350,8 +5581,10 @@
               }
             }
           ],
+          "short_name": "TextureView",
           "title": "TextureView",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "RenderTarget",
@@ -5489,8 +5722,10 @@
               }
             }
           ],
+          "short_name": "Perspective",
           "title": "Perspective",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -5501,8 +5736,10 @@
               }
             }
           ],
+          "short_name": "Orthographic",
           "title": "Orthographic",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Projection",
@@ -5534,8 +5771,10 @@
             "width",
             "height"
           ],
-          "title": "bevy_render::camera::projection::ScalingMode",
-          "type": "object"
+          "short_name": "Fixed",
+          "title": "Fixed",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "items": false,
@@ -5546,8 +5785,10 @@
               }
             }
           ],
+          "short_name": "WindowSize",
           "title": "WindowSize",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "additionalProperties": false,
@@ -5569,8 +5810,10 @@
             "min_width",
             "min_height"
           ],
-          "title": "bevy_render::camera::projection::ScalingMode",
-          "type": "object"
+          "short_name": "AutoMin",
+          "title": "AutoMin",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -5592,8 +5835,10 @@
             "max_width",
             "max_height"
           ],
-          "title": "bevy_render::camera::projection::ScalingMode",
-          "type": "object"
+          "short_name": "AutoMax",
+          "title": "AutoMax",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "items": false,
@@ -5604,8 +5849,10 @@
               }
             }
           ],
+          "short_name": "FixedVertical",
           "title": "FixedVertical",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -5616,8 +5863,10 @@
               }
             }
           ],
+          "short_name": "FixedHorizontal",
           "title": "FixedHorizontal",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "ScalingMode",
@@ -5663,8 +5912,10 @@
             "blue",
             "alpha"
           ],
-          "title": "bevy_render::color::Color",
-          "type": "object"
+          "short_name": "Rgba",
+          "title": "Rgba",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -5700,8 +5951,10 @@
             "blue",
             "alpha"
           ],
-          "title": "bevy_render::color::Color",
-          "type": "object"
+          "short_name": "RgbaLinear",
+          "title": "RgbaLinear",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -5737,8 +5990,10 @@
             "lightness",
             "alpha"
           ],
-          "title": "bevy_render::color::Color",
-          "type": "object"
+          "short_name": "Hsla",
+          "title": "Hsla",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -5774,8 +6029,10 @@
             "hue",
             "alpha"
           ],
-          "title": "bevy_render::color::Color",
-          "type": "object"
+          "short_name": "Lcha",
+          "title": "Lcha",
+          "type": "object",
+          "typeInfo": "Struct"
         }
       ],
       "short_name": "Color",
@@ -5827,8 +6084,10 @@
               }
             }
           ],
+          "short_name": "U16",
           "title": "U16",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -5839,8 +6098,10 @@
               }
             }
           ],
+          "short_name": "U32",
           "title": "U32",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Indices",
@@ -6223,8 +6484,10 @@
               }
             }
           ],
+          "short_name": "Custom",
           "title": "Custom",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Anchor",
@@ -7088,8 +7351,10 @@
               }
             }
           ],
+          "short_name": "Px",
           "title": "Px",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -7100,8 +7365,10 @@
               }
             }
           ],
+          "short_name": "Percent",
           "title": "Percent",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -7112,8 +7379,10 @@
               }
             }
           ],
+          "short_name": "Vw",
           "title": "Vw",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -7124,8 +7393,10 @@
               }
             }
           ],
+          "short_name": "Vh",
           "title": "Vh",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -7136,8 +7407,10 @@
               }
             }
           ],
+          "short_name": "VMin",
           "title": "VMin",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -7148,8 +7421,10 @@
               }
             }
           ],
+          "short_name": "VMax",
           "title": "VMax",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Val",
@@ -7909,8 +8184,10 @@
               }
             }
           ],
+          "short_name": "Local",
           "title": "Local",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -7921,8 +8198,10 @@
               }
             }
           ],
+          "short_name": "Global",
           "title": "Global",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "ZIndex",
@@ -8173,8 +8452,10 @@
             "window",
             "path_buf"
           ],
-          "title": "bevy_window::event::FileDragAndDrop",
-          "type": "object"
+          "short_name": "DroppedFile",
+          "title": "DroppedFile",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -8196,8 +8477,10 @@
             "window",
             "path_buf"
           ],
-          "title": "bevy_window::event::FileDragAndDrop",
-          "type": "object"
+          "short_name": "HoveredFile",
+          "title": "HoveredFile",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "additionalProperties": false,
@@ -8212,8 +8495,10 @@
           "required": [
             "window"
           ],
-          "title": "bevy_window::event::FileDragAndDrop",
-          "type": "object"
+          "short_name": "HoveredFileCanceled",
+          "title": "HoveredFileCanceled",
+          "type": "object",
+          "typeInfo": "Struct"
         }
       ],
       "short_name": "FileDragAndDrop",
@@ -8612,8 +8897,10 @@
               }
             }
           ],
+          "short_name": "Index",
           "title": "Index",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "MonitorSelection",
@@ -8834,8 +9121,10 @@
               }
             }
           ],
+          "short_name": "Centered",
           "title": "Centered",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         },
         {
           "items": false,
@@ -8846,8 +9135,10 @@
               }
             }
           ],
+          "short_name": "At",
           "title": "At",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "WindowPosition",
@@ -8980,8 +9271,10 @@
               }
             }
           ],
+          "short_name": "Some",
           "title": "Some",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Option<String>",
@@ -9005,8 +9298,10 @@
               }
             }
           ],
+          "short_name": "Some",
           "title": "Some",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Option<Vec<String>>",
@@ -9030,8 +9325,10 @@
               }
             }
           ],
+          "short_name": "Some",
           "title": "Some",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Option<Handle<Image>>",
@@ -9055,8 +9352,10 @@
               }
             }
           ],
+          "short_name": "Some",
           "title": "Some",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Option<Viewport>",
@@ -9080,8 +9379,10 @@
               }
             }
           ],
+          "short_name": "Some",
           "title": "Some",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Option<Indices>",
@@ -9105,8 +9406,10 @@
               }
             }
           ],
+          "short_name": "Some",
           "title": "Some",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Option<bool>",
@@ -9130,8 +9433,10 @@
               }
             }
           ],
+          "short_name": "Some",
           "title": "Some",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Option<f32>",
@@ -9155,8 +9460,10 @@
               }
             }
           ],
+          "short_name": "Some",
           "title": "Some",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Option<f64>",
@@ -9180,8 +9487,10 @@
               }
             }
           ],
+          "short_name": "Some",
           "title": "Some",
-          "type": "array"
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
       "short_name": "Option<DVec2>",

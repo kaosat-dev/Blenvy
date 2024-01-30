@@ -97,6 +97,7 @@ pub enum EnumComplex {
     Float(f32),
     Wood(String),
     Vec(BasicTest),
+    SomeThing,
     #[default]
     None,
 }
