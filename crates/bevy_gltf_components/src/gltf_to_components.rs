@@ -1,12 +1,12 @@
-use core::ops::Deref;
 use bevy::ecs::component::Component;
 use bevy::render::color::Color;
+use core::ops::Deref;
 use ron::Value;
 use serde::de::DeserializeSeed;
 
 use bevy::ecs::{entity::Entity, reflect::ReflectComponent};
 use bevy::gltf::{Gltf, GltfExtras};
-use bevy::reflect::serde::{UntypedReflectDeserializer, ReflectSerializer};
+use bevy::reflect::serde::UntypedReflectDeserializer;
 use bevy::reflect::{Reflect, TypeInfo, TypeRegistry};
 use bevy::scene::Scene;
 use bevy::utils::HashMap;
@@ -28,7 +28,7 @@ pub struct VecOfColors(Vec<Color>);
 pub fn ronstring_to_reflect_component(
     ron_string: &String,
     type_registry: &TypeRegistry,
-    simplified_types: bool
+    simplified_types: bool,
 ) -> Vec<Box<dyn Reflect>> {
     let lookup: HashMap<String, Value> = ron::from_str(ron_string.as_str()).unwrap();
     let mut components: Vec<Box<dyn Reflect>> = Vec::new();
@@ -86,8 +86,10 @@ pub fn ronstring_to_reflect_component(
                                 }
                                 "glam::Vec3" => {
                                     let parsed: Vec<f32> = ron::from_str(&parsed_value).unwrap();
-                                    formated =
-                                        format!("(x:{},y:{},z:{})", parsed[0], parsed[1], parsed[2]);
+                                    formated = format!(
+                                        "(x:{},y:{},z:{})",
+                                        parsed[0], parsed[1], parsed[2]
+                                    );
                                 }
                                 "bevy_render::color::Color" => {
                                     let parsed: Vec<f32> = ron::from_str(&parsed_value).unwrap();
@@ -175,7 +177,8 @@ pub fn gltf_extras_to_components(
         let mut entity_components: HashMap<Entity, Vec<Box<dyn Reflect>>> = HashMap::new();
         for (entity, name, extras, parent) in query.iter(&scene.world) {
             debug!("Name: {}, entity {:?}, parent: {:?}", name, entity, parent);
-            let reflect_components = ronstring_to_reflect_component(&extras.value, &type_registry, simplified_types);
+            let reflect_components =
+                ronstring_to_reflect_component(&extras.value, &type_registry, simplified_types);
             added_components = reflect_components.len();
             debug!("Found components {}", added_components);
 

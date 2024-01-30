@@ -36,8 +36,11 @@ pub fn track_new_gltf(
             if let Some(handle) = handle {
                 tracker.add_gltf(handle.clone());
                 debug!("gltf created {:?}", handle.clone());
-            }else {
-                warn!("gltf file {:?} has no handle available, cannot inject components into it", asset_path)
+            } else {
+                warn!(
+                    "gltf file {:?} has no handle available, cannot inject components into it",
+                    asset_path
+                )
             }
         }
     }
@@ -71,8 +74,8 @@ pub fn process_loaded_scenes(
     for gltf_handle in &loaded_gltfs {
         if let Some(gltf) = gltfs.get_mut(gltf_handle) {
             gltf_extras_to_components(gltf, &mut scenes, &*type_registry);
-            
-            if let Some(path) = gltf_handle.path() {            
+
+            if let Some(path) = gltf_handle.path() {
                 tracker.processed_gltfs.insert(path.to_string());
             }
         } else {
