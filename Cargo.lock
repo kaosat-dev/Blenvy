@@ -795,7 +795,7 @@ name = "bevy_gltf_blueprints"
 version = "0.6.0"
 dependencies = [
  "bevy",
- "bevy_gltf_components 0.2.0",
+ "bevy_gltf_components 0.2.1",
 ]
 
 [[package]]
@@ -1191,7 +1191,7 @@ dependencies = [
 
 [[package]]
 name = "bevy_registry_export"
-version = "0.0.1"
+version = "0.1.0"
 dependencies = [
  "bevy",
  "bevy_app",
