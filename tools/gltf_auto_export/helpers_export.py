@@ -78,9 +78,17 @@ def export_collections(collections, folder_path, library_scene, addon_prefs, glt
     active_collection =  bpy.context.view_layer.active_layer_collection
     export_materials_library = getattr(addon_prefs,"export_materials_library")
 
+    print("context", bpy.context, "sdf", active_collection)
     for collection_name in collections:
         print("exporting collection", collection_name)
         layer_collection = bpy.context.view_layer.layer_collection
+        print("layer collection", layer_collection, "children", layer_collection.children)
+        layerColl = recurLayerCollection(layer_collection, collection_name)
+        print("layer coll", layerColl, layer_collection)
+
+        #bpy.context.view_layer.active_layer_collection = 
+        print("ALTERNATE", bpy.data.scenes['Library'].view_layers['ViewLayer'].layer_collection.children.keys())#[collection_name])
+        layer_collection = bpy.data.scenes['Library'].view_layers['ViewLayer'].layer_collection
         layerColl = recurLayerCollection(layer_collection, collection_name)
         # set active collection to the collection
         bpy.context.view_layer.active_layer_collection = layerColl
@@ -129,6 +137,7 @@ def export_blueprints_from_collections(collections, library_scene, folder_path, 
     except Exception as error:
         print("failed to export collections to gltf: ", error)
         # TODO : rethrow
+        raise error
 
 
 # export all main scenes
@@ -154,6 +163,7 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
 
     if export_blueprints : 
         if export_separate_dynamic_and_static_objects:
+            print("SPLIT STATIC AND DYNAMIC")
             # first export all dynamic objects
             (hollow_scene, temporary_collections, root_objects, special_properties) = generate_hollow_scene(scene, library_collections, addon_prefs, is_object_dynamic) 
             gltf_output_path = os.path.join(folder_path, export_output_folder, scene.name+ "_dynamic")

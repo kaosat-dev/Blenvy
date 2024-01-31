@@ -1,6 +1,6 @@
 import bpy
 from .helpers_collections import (find_layer_collection_recursive)
-from .helpers import (make_empty3)
+from .helpers import (make_empty3, make_empty2)
 
 # generate a copy of a scene that replaces collection instances with empties
 # copy original names before creating a new scene, & reset them
@@ -43,7 +43,7 @@ def generate_hollow_scene(scene, library_collections, addon_prefs, filter=None):
                 original_names.append(original_name)
 
                 object.name = original_name + "____bak"
-                empty_obj = make_empty3(original_name, object.location, object.rotation_euler, object.scale, destination_collection)
+                empty_obj = make_empty2(original_name, object.location, object.rotation_euler, object.scale, destination_collection)
                 """we inject the collection/blueprint name, as a component called 'BlueprintName', but we only do this in the empty, not the original object"""
                 empty_obj['BlueprintName'] = '"'+collection_name+'"'
                 empty_obj['SpawnHere'] = ''
@@ -70,7 +70,7 @@ def generate_hollow_scene(scene, library_collections, addon_prefs, filter=None):
         for collection in source_collection.children:
             original_name = collection.name
             collection.name = original_name + "____bak"
-            collection_placeholder = make_empty3(original_name, [0,0,0], [0,0,0], [1,1,1], destination_collection)
+            collection_placeholder = make_empty2(original_name, [0,0,0], [0,0,0], [1,1,1], destination_collection)
 
             if parent_empty is not None:
                 collection_placeholder.parent = parent_empty
@@ -105,14 +105,17 @@ def clear_hollow_scene(temp_scene, original_scene, temporary_collections, root_o
         if object.type == 'EMPTY':
             if hasattr(object, "SpawnHere"):
                 bpy.data.objects.remove(object, do_unlink=True)
-            else: 
-                bpy.context.scene.collection.objects.unlink(object)
+            else:
+                try: 
+                    temp_root_collection.objects.unlink(object)
+                except:
+                    print("failed to unlink", object)
                 if object in root_objects:
                     pass
                 else:
                     bpy.data.objects.remove(object, do_unlink=True)
-        else: 
-            bpy.context.scene.collection.objects.unlink(object)
+        else:
+            temp_root_collection.objects.unlink(object)
 
     # remove temporary collections
     for collection in temporary_collections:

@@ -120,7 +120,7 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         description="""For MAIN scenes only (aka levels), toggle this to generate 2 files per level: 
             - one with all dynamic data: collection or instances marked as dynamic/ saveable
             - one with all static data: anything else that is NOT marked as dynamic""",
-        default=True
+        default=False
     )
 
 

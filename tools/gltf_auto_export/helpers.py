@@ -16,22 +16,30 @@ def make_empty(name, location, coll_name): #string, vector, string of existing c
     return empty_obj
 
 
-def make_empty2(name, location, collection):
+def make_empty2(name, location, rotation, scale, collection):
     object_data = None #bpy.data.meshes.new("NewMesh") #None
     empty_obj = bpy.data.objects.new( name, object_data )
-    empty_obj.name = name
-    empty_obj.location = location
-
-
+    
     empty_obj.empty_display_size = 2
     empty_obj.empty_display_type = 'PLAIN_AXES'   
+
+    empty_obj.name = name
+    empty_obj.location = location
+    empty_obj.scale = scale
+    empty_obj.rotation_euler = rotation
+
     collection.objects.link( empty_obj )
+
+    #bpy.context.view_layer.update()
+
     return empty_obj
 
 def make_empty3(name, location, rotation, scale, collection): 
     original_active_object = bpy.context.active_object
+    print("original_active_object", original_active_object)
     bpy.ops.object.empty_add(type='PLAIN_AXES', location=location, rotation=rotation, scale=scale)
     empty_obj = bpy.context.active_object
+    print("empty obj", name, empty_obj, bpy.context.object)
     empty_obj.name = name
     empty_obj.scale = scale # scale is not set correctly ?????
     bpy.context.view_layer.objects.active = original_active_object

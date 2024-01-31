@@ -167,8 +167,9 @@ def auto_export(changes_per_scene, changed_export_parameters):
 
             # reset selections
             for obj in old_selections:
-                obj.select_set(True)
-
+                try:
+                    obj.select_set(True)
+                except: pass
             if export_materials_library:
                 cleanup_materials(collections, library_scenes)
 
