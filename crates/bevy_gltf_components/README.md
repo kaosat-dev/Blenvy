@@ -60,7 +60,7 @@ bevy_gltf_components = { version = "0.2"}
 Add the following to your `[dependencies]` section in `Cargo.toml`:
 
 ```toml
-bevy_gltf_components = "0.1"
+bevy_gltf_components = "0.2"
 ```
 
 Or use `cargo add`:
