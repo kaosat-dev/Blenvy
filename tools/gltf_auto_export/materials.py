@@ -38,15 +38,14 @@ def get_all_materials(collection_names, library_scenes):
         root_collection = scene.collection
         for cur_collection in traverse_tree(root_collection):
             if cur_collection.name in collection_names:
-                #print("collection: ", cur_collection.name)
                 for object in cur_collection.all_objects:
-                    # print("  object:", object.name)
                     used_material_names = used_material_names + get_materials(object)
     # we only want unique names
     used_material_names = list(set(used_material_names))
     return used_material_names
 
 
+# creates a new object with the applied material, for the material library
 def make_material_object(name, location, rotation, scale, material): 
     original_active_object = bpy.context.active_object
     # bpy.ops.object.empty_add(type='PLAIN_AXES', location=location, rotation=rotation, scale=scale)

@@ -78,17 +78,9 @@ def export_collections(collections, folder_path, library_scene, addon_prefs, glt
     active_collection =  bpy.context.view_layer.active_layer_collection
     export_materials_library = getattr(addon_prefs,"export_materials_library")
 
-    print("context", bpy.context, "sdf", active_collection)
     for collection_name in collections:
         print("exporting collection", collection_name)
-        layer_collection = bpy.context.view_layer.layer_collection
-        print("layer collection", layer_collection, "children", layer_collection.children)
-        layerColl = recurLayerCollection(layer_collection, collection_name)
-        print("layer coll", layerColl, layer_collection)
-
-        #bpy.context.view_layer.active_layer_collection = 
-        print("ALTERNATE", bpy.data.scenes['Library'].view_layers['ViewLayer'].layer_collection.children.keys())#[collection_name])
-        layer_collection = bpy.data.scenes['Library'].view_layers['ViewLayer'].layer_collection
+        layer_collection = bpy.data.scenes[library_scene.name].view_layers['ViewLayer'].layer_collection
         layerColl = recurLayerCollection(layer_collection, collection_name)
         # set active collection to the collection
         bpy.context.view_layer.active_layer_collection = layerColl
@@ -99,7 +91,6 @@ def export_collections(collections, folder_path, library_scene, addon_prefs, glt
         # if we are using the material library option, do not export materials, use placeholder instead
         if export_materials_library:
             export_settings['export_materials'] = 'PLACEHOLDER'
-
 
         #if relevant we replace sub collections instances with placeholders too
         # this is not needed if a collection/blueprint does not have sub blueprints or sub collections
@@ -119,7 +110,6 @@ def export_collections(collections, folder_path, library_scene, addon_prefs, glt
             #print("standard export")
             export_gltf(gltf_output_path, export_settings)
 
-    
     # reset active collection to the one we save before
     bpy.context.view_layer.active_layer_collection = active_collection
 

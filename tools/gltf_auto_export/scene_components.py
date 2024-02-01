@@ -1,5 +1,4 @@
-import bpy
-from .helpers import make_empty3
+from .helpers import make_empty2
 # helpers to export scene level data
 
 def upsert_scene_components(scene, world):
@@ -11,7 +10,7 @@ def upsert_scene_components(scene, world):
             break
 
     if lighting_components is None:
-        lighting_components = make_empty3('lighting_components', [0,0,0], [0,0,0], [0,0,0], None)
+        lighting_components = make_empty2('lighting_components', [0,0,0], [0,0,0], [0,0,0], None)
 
     if world is not None:
         lighting_components['AmbientLightSettings'] = ambient_color_to_component(world)
@@ -41,14 +40,8 @@ def ambient_color_to_component(world):
    
 
     if color is not None and strength is not None:
-        #print("color", color[0], color[1], color[2], color[3])
-        # print("strength", strength)
-
         colorRgba = "Rgba(red: "+ str(color[0]) + ", green: "+ str(color[1]) + ", blue: " + str(color[2]) + ", alpha: "+ str(color[3]) + ")" # TODO: YIKES clean this up
-        #colorRgba = "Rgba(red: 0.0, green: 0.0, blue:0.0, alpha:0.0)"
         component = "( color:"+ str(colorRgba)  +", brightness:"+str(strength)+")"
-
-        print("component", component)
         return component
     return None
 

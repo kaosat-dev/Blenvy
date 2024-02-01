@@ -1,7 +1,6 @@
 import bpy
 from .helpers_collections import (find_layer_collection_recursive)
-from .helpers import (make_empty3, traverse_tree)
-
+from .helpers import (make_empty2)
 
 def generate_blueprint_hollow_scene(blueprint_collection, library_collections, addon_prefs):
     collection_instances_combine_mode = getattr(addon_prefs, "collection_instances_combine_mode")
@@ -64,7 +63,7 @@ def generate_blueprint_hollow_scene(blueprint_collection, library_collections, a
                 original_names.append(original_name)
 
                 object.name = original_name + "____bak"
-                empty_obj = make_empty3(original_name, object.location, object.rotation_euler, object.scale, destination_collection)
+                empty_obj = make_empty2(original_name, object.location, object.rotation_euler, object.scale, destination_collection)
                 """we inject the collection/blueprint name, as a component called 'BlueprintName', but we only do this in the empty, not the original object"""
                 empty_obj['BlueprintName'] = '"'+collection_name+'"'
                 empty_obj['SpawnHere'] = ''
@@ -93,7 +92,7 @@ def generate_blueprint_hollow_scene(blueprint_collection, library_collections, a
         for collection in source_collection.children:
             original_name = collection.name
             collection.name = original_name + "____bak"
-            collection_placeholder = make_empty3(original_name, [0,0,0], [0,0,0], [1,1,1], destination_collection)
+            collection_placeholder = make_empty2(original_name, [0,0,0], [0,0,0], [1,1,1], destination_collection)
 
             if parent_empty is not None:
                 collection_placeholder.parent = parent_empty

@@ -9,8 +9,8 @@ def is_object_dynamic(object):
     is_dynamic =  object['Dynamic'] if 'Dynamic' in object else False
     # only look for data in the original collection if it is not alread marked as dynamic at instance level
     if not is_dynamic and object.type == 'EMPTY' and hasattr(object, 'instance_collection') :
-         # get the name of the collection this is an instance of
-        print("collection", object.instance_collection)
+        # get the name of the collection this is an instance of
+        #print("collection", object.instance_collection)
         #if object.instance_collection == None:
         #    return False
         collection_name = object.instance_collection.name
@@ -27,8 +27,6 @@ def is_object_dynamic(object):
                     if component_name == 'Dynamic':
                         is_dynamic = True
                         break
-    print("is object dynamic", is_dynamic, object)
-
     return is_dynamic
 
 def is_object_static(object):

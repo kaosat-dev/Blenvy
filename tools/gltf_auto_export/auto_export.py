@@ -15,39 +15,6 @@ from .config import scene_key
 def auto_export(changes_per_scene, changed_export_parameters):
     addon_prefs = bpy.context.preferences.addons["gltf_auto_export"].preferences
 
-    # a semi_hack to ensure we have the latest version of the settings
-    initialized = bpy.context.window_manager['__gltf_auto_export_initialized'] if '__gltf_auto_export_initialized' in bpy.context.window_manager else False
-    if not initialized:
-        print("not initialized, fetching settings if any")
-        # semi_hack to restore the correct settings if the add_on was installed before
-        settings = bpy.context.scene.get(scene_key)
-        if settings:
-            print("loading settings in main function")
-            try:
-                # Update filter if user saved settings
-                #if hasattr(self, 'export_format'):
-                #    self.filter_glob = '*.glb' if self.export_format == 'GLB' else '*.gltf'
-                for (k, v) in settings.items():
-                    setattr(addon_prefs, k, v)
-                    # inject scenes data
-                    if k == 'main_scene_names':
-                        main_scenes = addon_prefs.main_scenes
-                        for item_name in v:
-                            item = main_scenes.add()
-                            item.name = item_name
-
-                    if k == 'library_scene_names':
-                        library_scenes = addon_prefs.library_scenes
-                        for item_name in v:
-                            item = library_scenes.add()
-                            item.name = item_name
-
-
-
-            except Exception as error:
-                print("error setting preferences from saved settings", error)
-        bpy.context.window_manager['__gltf_auto_export_initialized'] = True
-
     # have the export parameters (not auto export, just gltf export) have changed: if yes (for example switch from glb to gltf, compression or not, animations or not etc), we need to re-export everything
     print ("changed_export_parameters", changed_export_parameters)
     try:
@@ -167,9 +134,7 @@ def auto_export(changes_per_scene, changed_export_parameters):
 
             # reset selections
             for obj in old_selections:
-                try:
-                    obj.select_set(True)
-                except: pass
+                obj.select_set(True)
             if export_materials_library:
                 cleanup_materials(collections, library_scenes)
 
