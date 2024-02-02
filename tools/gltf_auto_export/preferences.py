@@ -31,7 +31,12 @@ AutoExportGltfPreferenceNames = [
     'main_scenes',
     'library_scenes',
     'main_scenes_index',
-    'library_scenes_index'
+    'library_scenes_index',
+
+    'direct_mode',# specific to main auto_export operator
+    'main_scene_names',
+    'library_scene_names'
+    
 ]
 
 class AutoExportGltfAddonPreferences(AddonPreferences):
@@ -40,6 +45,22 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
     bl_idname = __package__
     bl_options = {'PRESET'}
 
+    #### these are for the operator
+    filter_glob: StringProperty(
+            default='*.glb;*.gltf', 
+            options={'HIDDEN'}
+    )
+
+    will_save_settings: BoolProperty(
+        name='Remember Export Settings',
+        description='Store glTF export settings in the Blender project',
+        default=True
+    )
+    direct_mode: BoolProperty(
+        default=False
+    )
+
+    ####
     auto_export: BoolProperty(
         name='Auto export',
         description='Automatically export to gltf on save',

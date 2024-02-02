@@ -8,164 +8,13 @@ from bpy.props import (BoolProperty,
                        CollectionProperty
                        )
 
+from ..auto_export import auto_export
+
 from ..preferences import (AutoExportGltfAddonPreferences, AutoExportGltfPreferenceNames)
 from ..helpers_scenes import (get_scenes)
 from ..helpers_collections import (get_exportable_collections)
 ######################################################
 ## ui logic & co
-
-class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
-    """test"""
-    bl_idname = "export_scenes.auto_gltf"
-    bl_label = "Apply settings"
-    bl_options = {'PRESET', 'UNDO'}
-
-    # ExportHelper mixin class uses this
-    filename_ext = ''
-
-    filter_glob: StringProperty(
-            default='*.glb;*.gltf', 
-            options={'HIDDEN'}
-    )
-
-    will_save_settings: BoolProperty(
-        name='Remember Export Settings',
-        description='Store glTF export settings in the Blender project',
-        default=True
-    )
-
-    # Custom scene property for saving settings
-    scene_key = "auto_gltfExportSettings"
-
-    export_settings = {}
-
-    def save_settings(self, context):
-        # find all props to save
-        exceptional = [
-            # options that don't start with 'export_'  
-            'main_scenes',
-            'library_scenes',
-            'collection_instances_combine_mode',
-        ]
-        all_props = self.properties
-        export_props = {
-            x: getattr(self, x) for x in dir(all_props)
-            if (x.startswith("export_") or x in exceptional) and all_props.get(x) is not None
-        }
-        # we add main & library scene names to our preferences
-        #main_scenes = list(map(lambda scene_data: scene_data, getattr(bpy.context.preferences.addons["gltf_auto_export"].preferences,"main_scenes")))
-        #library_scenes = list(map(lambda scene_data: scene_data, getattr(bpy.context.preferences.addons["gltf_auto_export"].preferences,"library_scenes")))
-        export_props['main_scene_names'] = list(map(lambda scene_data: scene_data.name, getattr(self,"main_scenes")))
-        export_props['library_scene_names'] = list(map(lambda scene_data: scene_data.name, getattr(self,"library_scenes")))
-        self.properties['main_scene_names'] = export_props['main_scene_names']
-        self.properties['library_scene_names'] = export_props['library_scene_names']
-        context.scene[self.scene_key] = export_props
-
-    def apply_settings_to_preferences(self, context):
-        # find all props to save
-        exceptional = [
-            # options that don't start with 'export_'  
-            'main_scenes',
-            'library_scenes',
-            'collection_instances_combine_mode',
-        ]
-        all_props = self.properties
-        export_props = {
-            x: getattr(self, x) for x in dir(all_props)
-            if (x.startswith("export_") or x in exceptional) and all_props.get(x) is not None
-        }
-        for (k, v) in export_props.items():
-            print("setting", k, "to ", v)
-            setattr(self.export_settings, k, v)
-        print("self.export_settings", self.export_settings)
-
-    def execute(self, context):     
-        bpy.context.window_manager.auto_export_tracker.disable_change_detection()
-        if self.will_save_settings:
-            self.save_settings(context)
-        # apply the operator properties to the addon preferences
-        self.apply_settings_to_preferences(context)
-        print("EXECUTE")
-
-        bpy.app.timers.register(bpy.context.window_manager.auto_export_tracker.enable_change_detection, first_interval=2)
-        return {'FINISHED'}    
-    
-    def invoke(self, context, event):
-        bpy.context.window_manager.auto_export_tracker.disable_change_detection()
-        print("INVOKE")
-        settings = context.scene.get(self.scene_key)
-        print("settings", settings)
-        self.will_save_settings = False
-        if settings:
-            print("loading settings in invoke AutoExportGLTF")
-            try:
-                for (k, v) in settings.items():
-                    print("loading setting", k, v)
-                    setattr(self, k, v)
-                self.will_save_settings = True
-
-                # Update filter if user saved settings
-                if hasattr(self, 'export_format'):
-                    self.filter_glob = '*.glb' if self.export_format == 'GLB' else '*.gltf'
-
-                # inject scenes data
-                if hasattr(self, 'main_scene_names'):
-                    main_scenes = self.main_scenes
-                    main_scenes.clear()
-                    for item_name in self.main_scene_names:
-                        item = main_scenes.add()
-                        item.name = item_name
-
-                if hasattr(self, 'library_scene_names'):
-                    library_scenes = self.library_scenes
-                    library_scenes.clear()
-                    for item_name in self.library_scene_names:
-                        item = library_scenes.add()
-                        item.name = item_name
-
-                if hasattr(self, 'collection_instances_combine_mode'):
-                    pass
-                    #bpy.context.preferences.addons["gltf_auto_export"].preferences.collection_instances_combine_mode = self.collection_instances_combine_mode
-
-
-            except (AttributeError, TypeError):
-                self.report({"ERROR"}, "Loading export settings failed. Removed corrupted settings")
-                del context.scene[self.scene_key]
-
-
-        for (k, v) in self.properties.items():
-            print("PROPERTIES", k, v)
-
-        addon_prefs = self.export_settings
-
-        """[main_scene_names, level_scenes, library_scene_names, library_scenes]=get_scenes(addon_prefs)
-        (collections, _) = get_exportable_collections(level_scenes, library_scenes, addon_prefs)
-
-        try:
-            # we save this list of collections in the context
-            bpy.context.window_manager.exportedCollections.clear()
-            #TODO: add error handling for this
-            for collection_name in collections:
-                ui_info = bpy.context.window_manager.exportedCollections.add()
-                ui_info.name = collection_name
-        except Exception as error:
-            self.report({"ERROR"}, "Failed to populate list of exported collections/blueprints")"""
-     
-
-
-        wm = context.window_manager
-        wm.fileselect_add(self)
-
-        return {'RUNNING_MODAL'}
-        # return self.execute(context)
-
-    def draw(self, context):
-        pass
-
-    def cancel(self, context):
-        print("cancelled")
-        bpy.app.timers.register(bpy.context.window_manager.auto_export_tracker.enable_change_detection, first_interval=2)
-
 
 class GLTF_PT_auto_export_main(bpy.types.Panel):
     bl_space_type = 'FILE_BROWSER'
@@ -225,7 +74,7 @@ class GLTF_PT_auto_export_root(bpy.types.Panel):
         col = row.column(align=True)
         col.separator()
 
-        source = bpy.context.preferences.addons["gltf_auto_export"].preferences
+        source = operator
 
         rows = 2
 
@@ -234,7 +83,7 @@ class GLTF_PT_auto_export_root(bpy.types.Panel):
         layout.prop(context.scene, "main_scene", text='')
 
         row = layout.row()
-        #row.template_list("SCENE_UL_GLTF_auto_export", "level scenes", source, "main_scenes", source, "main_scenes_index", rows=rows)
+        row.template_list("SCENE_UL_GLTF_auto_export", "level scenes", source, "main_scenes", source, "main_scenes_index", rows=rows)
 
         col = row.column(align=True)
         sub_row = col.row()
@@ -259,7 +108,7 @@ class GLTF_PT_auto_export_root(bpy.types.Panel):
         layout.prop(context.scene, "library_scene", text='')
 
         row = layout.row()
-        #row.template_list("SCENE_UL_GLTF_auto_export", "library scenes", source, "library_scenes", source, "library_scenes_index", rows=rows)
+        row.template_list("SCENE_UL_GLTF_auto_export", "library scenes", source, "library_scenes", source, "library_scenes_index", rows=rows)
 
         col = row.column(align=True)
         sub_row = col.row()
@@ -366,11 +215,13 @@ class GLTF_PT_auto_export_gltf(bpy.types.Panel):
     
     def draw(self, context):
         preferences = context.preferences
-        addon_prefs = preferences.addons["gltf_auto_export"].preferences
         layout = self.layout
 
         sfile = context.space_data
         operator = sfile.active_operator
+
+        addon_prefs = operator#preferences.addons["gltf_auto_export"].preferences
+
 
         #preferences = context.preferences
         #print("ADDON PREFERENCES ", list(preferences.addons.keys()))
@@ -379,8 +230,6 @@ class GLTF_PT_auto_export_gltf(bpy.types.Panel):
         addon_prefs_gltf = preferences.addons["io_scene_gltf2"].preferences
 
         #addon_prefs = preferences.addons["gltf_auto_export"].preferences
-
-        # print("KEYS", operator.properties.keys())
         #print("BLAS", addon_prefs.__annotations__)
         #print(addon_prefs.__dict__)
         for key in addon_prefs.__annotations__.keys():

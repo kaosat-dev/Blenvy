@@ -143,7 +143,3 @@ def get_scenes(addon_prefs):
     return [level_scene_names, level_scenes, library_scene_names, library_scenes]
 
 
-def is_scene_ok(self, scene):
-    prefs = bpy.context.preferences.addons["gltf_auto_export"].preferences
-    return scene.name not in prefs.main_scenes and scene.name not in prefs.library_scenes
-

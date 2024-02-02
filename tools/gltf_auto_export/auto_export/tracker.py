@@ -3,7 +3,7 @@ from bpy.types import (PropertyGroup)
 from bpy.props import (PointerProperty)
 
 from ..internals import CollectionsToExport
-from ..auto_export import auto_export
+from . import auto_export
 from ..preferences import (AutoExportGltfPreferenceNames)
 
 class AutoExportTracker(PropertyGroup):
@@ -43,29 +43,16 @@ class AutoExportTracker(PropertyGroup):
         print("-------------")
         print("saved", bpy.data.filepath)
         cls.change_detection_enabled = False
-        changes_per_scene = cls.changed_objects_per_scene
         print("changed_objects_per_scene in save", cls.changed_objects_per_scene)
 
-        #determine changed parameters
-        # call main operator to make sure addon preferences are set
-        bpy.ops.export_scenes.auto_gltf()
-        print("bpy.ops.export_scenes", bpy.ops.export_scenes.auto_gltf, bpy.ops.export_scenes.auto_gltf.filter_glob)
-        addon_prefs = bpy.ops.export_scenes.auto_gltf["export_settings"]
-        new_export_parameters = {}
-        for (k,v) in addon_prefs.items():
-            if k not in AutoExportGltfPreferenceNames:
-                new_export_parameters[k] = v
-        if len(cls.previous_export_parameters.keys()) == 0:
-            # this means this is a first run, export parameters where never set
-            cls.previous_export_parameters = new_export_parameters
-    
-        # do the export
-        export_parameters_changed = did_export_parameters_change(new_export_parameters, cls.previous_export_parameters)
-        auto_export(changes_per_scene, export_parameters_changed)
+        
+        # auto_export(changes_per_scene, export_parameters_changed)
+        bpy.ops.export_scenes.auto_gltf(direct_mode= True)
+
 
         # (re)set a few things after exporting
         # set the previous export parameters
-        cls.previous_export_parameters = new_export_parameters
+        #cls.previous_export_parameters = new_export_parameters
         # reset wether the gltf export paramters were changed since the last save 
         cls.export_params_changed = False
         # reset whether there have been changed objects since the last save 
