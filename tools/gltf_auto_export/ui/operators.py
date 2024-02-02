@@ -29,6 +29,7 @@ class SCENES_LIST_OT_actions(Operator):
         
         target = getattr(source, target_name)
         idx = getattr(source, target_index)
+        current_index = getattr(source, target_index)
 
         try:
             item = target[idx]
@@ -36,22 +37,20 @@ class SCENES_LIST_OT_actions(Operator):
             pass
         else:
             if self.action == 'DOWN' and idx < len(target) - 1:
-                item_next = target[idx + 1].name
                 target.move(idx, idx + 1)
-                source[target_index] += 1
-                info = 'Item "%s" moved to position %d' % (item.name, source[target_index] + 1)
+                setattr(source, target_index, current_index +1 )
+                info = 'Item "%s" moved to position %d' % (item.name, current_index + 1)
                 self.report({'INFO'}, info)
 
             elif self.action == 'UP' and idx >= 1:
-                item_prev = target[idx - 1].name
                 target.move(idx, idx - 1)
-                source[target_index] -= 1
-                info = 'Item "%s" moved to position %d' % (item.name, source[target_index] + 1)
+                setattr(source, target_index, current_index -1 )
+                info = 'Item "%s" moved to position %d' % (item.name, current_index + 1)
                 self.report({'INFO'}, info)
 
             elif self.action == 'REMOVE':
                 info = 'Item "%s" removed from list' % (target[idx].name)
-                source[target_index] -= 1
+                setattr(source, target_index, current_index -1 )
                 target.remove(idx)
                 self.report({'INFO'}, info)
 

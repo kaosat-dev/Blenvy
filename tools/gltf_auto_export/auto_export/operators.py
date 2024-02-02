@@ -1,38 +1,25 @@
+import json
 import bpy
 from bpy.types import Operator
 from bpy_extras.io_utils import ExportHelper
-from bpy.props import (BoolProperty,
-                       IntProperty,
-                       StringProperty,
-                       EnumProperty,
-                       CollectionProperty
-                       )
-
-from .auto_export import auto_export
-
+from bpy.props import (IntProperty, StringProperty)
 from ..preferences import (AutoExportGltfAddonPreferences, AutoExportGltfPreferenceNames)
 from ..helpers_scenes import (get_scenes)
 from ..helpers_collections import (get_exportable_collections)
+from .auto_export import auto_export
 
 class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
     """test"""
     bl_idname = "export_scenes.auto_gltf"
     bl_label = "Apply settings"
     bl_options = {'PRESET', 'UNDO'}
-
     # ExportHelper mixin class uses this
     filename_ext = ''
 
-    # Custom scene property for saving settings
-    scene_key = "auto_gltfExportSettings"
-
-    #export_settings = {}
-    #previous_export_settings = {}
-
     @classmethod
     def register(cls):
-        bpy.types.WindowManager.main_scene = bpy.props.PointerProperty(type=bpy.types.Scene, name="main scene", description="main_scene_picker", poll=cls._is_scene_ok)
-        bpy.types.WindowManager.library_scene = bpy.props.PointerProperty(type=bpy.types.Scene, name="library scene", description="library_scene_picker", poll=cls._is_scene_ok)
+        bpy.types.WindowManager.main_scene = bpy.props.PointerProperty(type=bpy.types.Scene, name="main scene", description="main_scene_picker", poll=cls.is_scene_ok)
+        bpy.types.WindowManager.library_scene = bpy.props.PointerProperty(type=bpy.types.Scene, name="library scene", description="library_scene_picker", poll=cls.is_scene_ok)
         
         bpy.types.WindowManager.main_scenes_list_index = IntProperty(name = "Index for main scenes list", default = 0)
         bpy.types.WindowManager.library_scenes_list_index = IntProperty(name = "Index for library scenes list", default = 0)
@@ -51,17 +38,17 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
 
         del bpy.types.WindowManager.previous_export_settings
 
-    def _is_scene_ok(self, scene):
-        print("is scene ok", self, scene)
-        return True
-        #return scene.name not in self.main_scenes and scene.name not in self.library_scenes
+    def is_scene_ok(self, scene):
+        try:
+            operator = bpy.context.space_data.active_operator
+            return scene.name not in operator.main_scenes and scene.name not in operator.library_scenes
+        except:
+            return True
 
     def save_settings(self, context):
         # find all props to save
         exceptional = [
             # options that don't start with 'export_'  
-            #'main_scenes',
-            #'library_scenes',
             'collection_instances_combine_mode',
         ]
         all_props = self.properties
@@ -74,19 +61,80 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         export_props['library_scene_names'] = list(map(lambda scene_data: scene_data.name, getattr(self,"library_scenes")))
         self.properties['main_scene_names'] = export_props['main_scene_names']
         self.properties['library_scene_names'] = export_props['library_scene_names']
-        context.window_manager[self.scene_key] = export_props
-
+ 
+        stored_settings = bpy.data.texts[".gltf_auto_export_settings"] if ".gltf_auto_export_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_settings")
+        stored_settings.clear()
+        stored_settings.write(json.dumps(export_props))
+        #print("saving settings", bpy.data.texts[".gltf_auto_export_settings"].as_string(), "raw", json.dumps(export_props))
    
+    def load_settings(self, context):
+        print("loading settings")
+        settings = None
+        try:
+            settings = bpy.data.texts[".gltf_auto_export_settings"].as_string()
+            settings = json.loads(settings)
+        except: pass
+
+        self.will_save_settings = False
+        if settings:
+            #print("loading settings in invoke AutoExportGLTF")
+            try:
+                for (k, v) in settings.items():
+                    #print("loading setting", k, v)
+                    setattr(self, k, v)
+                self.will_save_settings = True
+
+                # Update filter if user saved settings
+                if hasattr(self, 'export_format'):
+                    self.filter_glob = '*.glb' if self.export_format == 'GLB' else '*.gltf'
+
+                # inject scenes data
+                if hasattr(self, 'main_scene_names'):
+                    main_scenes = self.main_scenes
+                    main_scenes.clear()
+                    for item_name in self.main_scene_names:
+                        item = main_scenes.add()
+                        item.name = item_name
+
+                if hasattr(self, 'library_scene_names'):
+                    library_scenes = self.library_scenes
+                    library_scenes.clear()
+                    for item_name in self.library_scene_names:
+                        item = library_scenes.add()
+                        item.name = item_name
+
+            except (AttributeError, TypeError):
+                self.report({"ERROR"}, "Loading export settings failed. Removed corrupted settings")
+                bpy.data.texts.remove(bpy.data.texts[".gltf_auto_export_settings"])
+
     def did_export_settings_change(self, context):
-        previous_export_settings = context.window_manager.previous_export_settings
-        export_settings = {}
-        for (k, v) in self.properties.items():
-            if k not in AutoExportGltfPreferenceNames:
-                export_settings[k] = v
-        export_settings = str(export_settings)
-        changed = export_settings != previous_export_settings
-        context.window_manager.previous_export_settings = export_settings
-        return changed
+        previous_export_settings = bpy.data.texts[".gltf_auto_export_gltf_settings"] if ".gltf_auto_export_gltf_settings" in bpy.data.texts else None
+        # if there was no setting before, it is new, we need export
+        if previous_export_settings == None:
+            export_settings = {}
+            for (k, v) in self.properties.items():
+                if k not in AutoExportGltfPreferenceNames:
+                    export_settings[k] = v
+            export_settings = str(export_settings)
+            # the actual gltf export settings, not those of auto export
+            stored_export_settings = bpy.data.texts.new(".gltf_auto_export_gltf_settings")
+            stored_export_settings.write(export_settings)
+            return True
+        else:
+            export_settings = {}
+            for (k, v) in self.properties.items():
+                if k not in AutoExportGltfPreferenceNames:
+                    export_settings[k] = v
+
+            if len(export_settings.keys()) == 0: # first time after we already used the addon, since we already have export settings, but they have not yet been applied
+                return False 
+            
+            export_settings = str(export_settings)
+            changed = export_settings != previous_export_settings.as_string()
+
+            previous_export_settings.clear()
+            previous_export_settings.write(export_settings)
+            return changed
 
     def execute(self, context):     
         # disable change detection while the operator runs
@@ -126,42 +174,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         wm.fileselect_add(self)
 
         return {'RUNNING_MODAL'}
-        # return self.execute(context)
     
-    def load_settings(self, context):
-        settings = context.window_manager.get(self.scene_key)
-        self.will_save_settings = False
-        if settings:
-            print("loading settings in invoke AutoExportGLTF")
-            try:
-                for (k, v) in settings.items():
-                    #print("loading setting", k, v)
-                    setattr(self, k, v)
-                self.will_save_settings = True
-
-                # Update filter if user saved settings
-                if hasattr(self, 'export_format'):
-                    self.filter_glob = '*.glb' if self.export_format == 'GLB' else '*.gltf'
-
-                # inject scenes data
-                if hasattr(self, 'main_scene_names'):
-                    main_scenes = self.main_scenes
-                    main_scenes.clear()
-                    for item_name in self.main_scene_names:
-                        item = main_scenes.add()
-                        item.name = item_name
-
-                if hasattr(self, 'library_scene_names'):
-                    library_scenes = self.library_scenes
-                    library_scenes.clear()
-                    for item_name in self.library_scene_names:
-                        item = library_scenes.add()
-                        item.name = item_name
-
-            except (AttributeError, TypeError):
-                self.report({"ERROR"}, "Loading export settings failed. Removed corrupted settings")
-                del context.scene[self.scene_key]
-
     def draw(self, context):
         pass
 

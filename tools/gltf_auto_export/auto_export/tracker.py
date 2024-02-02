@@ -10,67 +10,55 @@ class AutoExportTracker(PropertyGroup):
 
     changed_objects_per_scene = {}
     change_detection_enabled = True
-    previous_export_parameters = {}
     export_params_changed = False
 
     @classmethod
     def register(cls):
         bpy.types.WindowManager.auto_export_tracker = PointerProperty(type=AutoExportTracker)
-        # setup handlers for updates & saving
-        bpy.app.handlers.save_post.append(cls.save_handler)
-        bpy.app.handlers.depsgraph_update_post.append(cls.deps_update_handler)
         # register list of exportable collections
         bpy.types.WindowManager.exportedCollections = bpy.props.CollectionProperty(type=CollectionsToExport)
+
+        # setup handlers for updates & saving
+        #bpy.app.handlers.save_post.append(cls.save_handler)
+        #bpy.app.handlers.depsgraph_update_post.append(cls.deps_update_handler)
 
     @classmethod
     def unregister(cls):
         # remove handlers & co
-        try:
+        """try:
             bpy.app.handlers.depsgraph_update_post.remove(cls.deps_update_handler)
         except:pass
         try:
             bpy.app.handlers.save_post.remove(cls.save_handler)
-        except:pass
+        except:pass"""
         del bpy.types.WindowManager.auto_export_tracker
         del bpy.types.WindowManager.exportedCollections
-
-    def __init__(self) -> None:
-        super().__init__()
-        print("INIT")
 
     @classmethod
     def save_handler(cls, scene, depsgraph):
         print("-------------")
         print("saved", bpy.data.filepath)
-        cls.change_detection_enabled = False
-        print("changed_objects_per_scene in save", cls.changed_objects_per_scene)
-
-        
         # auto_export(changes_per_scene, export_parameters_changed)
         bpy.ops.export_scenes.auto_gltf(direct_mode= True)
 
-
         # (re)set a few things after exporting
-        # set the previous export parameters
-        #cls.previous_export_parameters = new_export_parameters
         # reset wether the gltf export paramters were changed since the last save 
         cls.export_params_changed = False
         # reset whether there have been changed objects since the last save 
         cls.changed_objects_per_scene.clear()
         # all our logic is done, mark this as done
-        cls.change_detection_enabled = True
         print("EXPORT DONE")
 
     @classmethod
     def deps_update_handler(cls, scene, depsgraph):
-        print("change detection enabled", cls.change_detection_enabled)
-        if scene.name != "temp_scene": # actually do we care about anything else than the main scene(s) ?
+        # print("change detection enabled", cls.change_detection_enabled)
+        if scene.name != "temp_scene":
             #print("depsgraph_update_post", scene.name)
             changed_scene = scene.name or ""
 
             # only deal with changes if we are no in the mids of saving/exporting
             if cls.change_detection_enabled:
-                print("-------------")
+                #print("-------------")
                 if not changed_scene in cls.changed_objects_per_scene:
                     cls.changed_objects_per_scene[changed_scene] = {}
 
@@ -79,7 +67,7 @@ class AutoExportTracker(PropertyGroup):
                     if isinstance(obj.id, bpy.types.Object):
                         # get the actual object
                         object = bpy.data.objects[obj.id.name]
-                        print("changed object", obj.id.name)
+                        # print("changed object", obj.id.name)
                         cls.changed_objects_per_scene[scene.name][obj.id.name] = object
                     elif isinstance(obj.id, bpy.types.Material): # or isinstance(obj.id, bpy.types.ShaderNodeTree):
                         # print("changed material", obj.id, "scene", scene.name,)
@@ -100,17 +88,9 @@ class AutoExportTracker(PropertyGroup):
                 cls.changed_objects_per_scene.clear()
 
     def disable_change_detection(self,):
-        print("disable")
+        self.change_detection_enabled = False
         self.__class__.change_detection_enabled = False
     def enable_change_detection(self):
-        print("enable")
+        self.change_detection_enabled = True
         self.__class__.change_detection_enabled = True
 
-def did_export_parameters_change(current_params, previous_params):
-    set1 = set(previous_params.items())
-    set2 = set(current_params.items())
-    difference = dict(set1 ^ set2)
-    
-    changed_param_names = list(set(difference.keys())- set(AutoExportGltfPreferenceNames))
-    changed_parameters = len(changed_param_names) > 0
-    return changed_parameters

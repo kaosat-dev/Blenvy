@@ -9,7 +9,6 @@ from ..helpers import (check_if_blueprints_exist, check_if_blueprint_on_disk)
 from ..materials import cleanup_materials, clear_material_info, clear_materials_scene, export_materials, generate_materials_scenes, get_all_materials
 from ..scene_components import upsert_scene_components
 
-from ..config import scene_key
 
 """Main function"""
 def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):

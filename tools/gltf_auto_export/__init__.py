@@ -45,8 +45,8 @@ This is a workaround needed because of the way the settings are stored , perhaps
 
 #see here for original gltf exporter infos https://github.com/KhronosGroup/glTF-Blender-IO/blob/main/addons/io_scene_gltf2/__init__.py
 classes = [
-    #SceneLink,
-    #SceneLinks,
+    SceneLink,
+    SceneLinks,
     CUSTOM_PG_sceneName,
     SCENE_UL_GLTF_auto_export,
     SCENES_LIST_OT_actions,
@@ -68,10 +68,24 @@ classes = [
 
 def menu_func_import(self, context):
     self.layout.operator(AutoExportGLTF.bl_idname, text="glTF auto Export (.glb/gltf)")
+from bpy.app.handlers import persistent
+
+@persistent
+def post_update(scene, depsgraph):
+    bpy.context.window_manager.auto_export_tracker.deps_update_handler( scene, depsgraph)
+
+@persistent
+def post_save(scene, depsgraph):
+    bpy.context.window_manager.auto_export_tracker.save_handler( scene, depsgraph)
+
 
 def register():
+    print("registering")
     for cls in classes:
         bpy.utils.register_class(cls)
+    # for some reason, adding these directly to the tracker class in register() do not work reliably
+    bpy.app.handlers.depsgraph_update_post.append(post_update)
+    bpy.app.handlers.save_post.append(post_save)
 
     # add our addon to the toolbar
     bpy.types.TOPBAR_MT_file_export.append(menu_func_import)
@@ -81,5 +95,10 @@ def unregister():
         bpy.utils.unregister_class(cls)
     bpy.types.TOPBAR_MT_file_export.remove(menu_func_import)
 
+    bpy.app.handlers.depsgraph_update_post.remove(post_update)
+    bpy.app.handlers.save_post.remove(post_save)
+
+
 if "gltf_auto_export" == "__main__":
+    print("foo")
     register()
