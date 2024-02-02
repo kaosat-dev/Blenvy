@@ -114,37 +114,3 @@ def did_export_parameters_change(current_params, previous_params):
     changed_param_names = list(set(difference.keys())- set(AutoExportGltfPreferenceNames))
     changed_parameters = len(changed_param_names) > 0
     return changed_parameters
-
-from ..config import scene_key
-"""
-def init_settings(addon_prefs):
-     # a semi_hack to ensure we have the latest version of the settings
-    initialized = bpy.context.window_manager.auto_export_tracker.gltf_auto_export_initialized
-    if not initialized:
-        print("not initialized, fetching settings if any")
-        # semi_hack to restore the correct settings if the add_on was installed before
-        settings = bpy.context.scene.get(scene_key)
-        if settings:
-            print("loading settings in main function")
-            try:
-                # Update filter if user saved settings
-                #if hasattr(self, 'export_format'):
-                #    self.filter_glob = '*.glb' if self.export_format == 'GLB' else '*.gltf'
-                for (k, v) in settings.items():
-                    setattr(addon_prefs, k, v)
-                    # inject scenes data
-                    if k == 'main_scene_names':
-                        main_scenes = addon_prefs.main_scenes
-                        for item_name in v:
-                            item = main_scenes.add()
-                            item.name = item_name
-
-                    if k == 'library_scene_names':
-                        library_scenes = addon_prefs.library_scenes
-                        for item_name in v:
-                            item = library_scenes.add()
-                            item.name = item_name
-
-            except Exception as error:
-                print("error setting preferences from saved settings", error)
-        bpy.context.window_manager.auto_export_tracker.gltf_auto_export_initialized = True"""

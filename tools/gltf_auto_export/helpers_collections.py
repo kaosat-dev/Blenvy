@@ -22,7 +22,6 @@ def get_used_collections(scene):
 # gets all collections that should ALWAYS be exported to their respective gltf files, even if they are not used in the main scene/level
 def get_marked_collections(scene, addon_prefs):
     export_marked_assets = getattr(addon_prefs,"export_marked_assets")
-
     # print("checking library for marked collections")
     root_collection = scene.collection
     marked_collections = []
@@ -42,12 +41,10 @@ def get_sub_collections(collections, parent, children_per_collection):
     collection_names = set()
     used_collections = []
     
-
     for root_collection in collections:
         node = Node(name=root_collection.name, parent=parent)
         parent.children.append(node)
 
-      
         #print("root collection", root_collection.name)
         for collection in traverse_tree(root_collection): # TODO: filter out COLLECTIONS that have the flatten flag (unlike the flatten flag on colleciton instances themselves)
             node_name = collection.name

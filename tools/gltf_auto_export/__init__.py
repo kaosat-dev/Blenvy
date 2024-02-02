@@ -45,8 +45,8 @@ This is a workaround needed because of the way the settings are stored , perhaps
 
 #see here for original gltf exporter infos https://github.com/KhronosGroup/glTF-Blender-IO/blob/main/addons/io_scene_gltf2/__init__.py
 classes = [
-    SceneLink,
-    SceneLinks,
+    #SceneLink,
+    #SceneLinks,
     CUSTOM_PG_sceneName,
     SCENE_UL_GLTF_auto_export,
     SCENES_LIST_OT_actions,

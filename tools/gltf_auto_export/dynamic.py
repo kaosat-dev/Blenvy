@@ -8,15 +8,11 @@ import bpy
 def is_object_dynamic(object):
     is_dynamic =  object['Dynamic'] if 'Dynamic' in object else False
     # only look for data in the original collection if it is not alread marked as dynamic at instance level
-    if not is_dynamic and object.type == 'EMPTY' and hasattr(object, 'instance_collection') :
+    if not is_dynamic and object.type == 'EMPTY' and hasattr(object, 'instance_collection') and object.instance_collection != None :
+        #print("collection", object.instance_collection, "object", object.name)
         # get the name of the collection this is an instance of
-        #print("collection", object.instance_collection)
-        #if object.instance_collection == None:
-        #    return False
         collection_name = object.instance_collection.name
         original_collection = bpy.data.collections[collection_name]
-
-        #print("inspecting insides", original_collection)
 
         # scan original collection, look for a 'Dynamic' flag
         for object in original_collection.objects:

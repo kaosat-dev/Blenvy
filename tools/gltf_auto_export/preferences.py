@@ -35,8 +35,10 @@ AutoExportGltfPreferenceNames = [
 
     'direct_mode',# specific to main auto_export operator
     'main_scene_names',
-    'library_scene_names'
-    
+    'library_scene_names',
+    'previous_export_settings',
+    'filter_glob',
+    'will_save_settings'
 ]
 
 class AutoExportGltfAddonPreferences(AddonPreferences):

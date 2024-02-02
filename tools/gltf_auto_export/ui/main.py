@@ -80,7 +80,7 @@ class GLTF_PT_auto_export_root(bpy.types.Panel):
 
         # main/level scenes
         layout.label(text="main scenes")
-        layout.prop(context.scene, "main_scene", text='')
+        layout.prop(context.window_manager, "main_scene", text='')
 
         row = layout.row()
         row.template_list("SCENE_UL_GLTF_auto_export", "level scenes", source, "main_scenes", source, "main_scenes_index", rows=rows)
@@ -91,7 +91,7 @@ class GLTF_PT_auto_export_root(bpy.types.Panel):
         add_operator.action = 'ADD'
         add_operator.scene_type = 'level'
         #add_operator.source = operator
-        sub_row.enabled = context.scene.main_scene is not None
+        sub_row.enabled = context.window_manager.main_scene is not None
 
         sub_row = col.row()
         remove_operator = sub_row.operator("scene_list.list_action", icon='REMOVE', text="")
@@ -105,7 +105,7 @@ class GLTF_PT_auto_export_root(bpy.types.Panel):
 
         # library scenes
         layout.label(text="library scenes")
-        layout.prop(context.scene, "library_scene", text='')
+        layout.prop(context.window_manager, "library_scene", text='')
 
         row = layout.row()
         row.template_list("SCENE_UL_GLTF_auto_export", "library scenes", source, "library_scenes", source, "library_scenes_index", rows=rows)
@@ -115,7 +115,7 @@ class GLTF_PT_auto_export_root(bpy.types.Panel):
         add_operator = sub_row.operator("scene_list.list_action", icon='ADD', text="")
         add_operator.action = 'ADD'
         add_operator.scene_type = 'library'
-        sub_row.enabled = context.scene.library_scene is not None
+        sub_row.enabled = context.window_manager.library_scene is not None
 
 
         sub_row = col.row()
@@ -169,9 +169,6 @@ class GLTF_PT_auto_export_blueprints(bpy.types.Panel):
         layout.prop(operator, "export_materials_path")
 
        
-
-
-
 class GLTF_PT_auto_export_collections_list(bpy.types.Panel):
     bl_space_type = 'FILE_BROWSER'
     bl_region_type = 'TOOL_PROPS'
@@ -193,7 +190,6 @@ class GLTF_PT_auto_export_collections_list(bpy.types.Panel):
 
         sfile = context.space_data
         operator = sfile.active_operator
-        addon_prefs = bpy.context.preferences.addons["gltf_auto_export"].preferences
 
         for collection in bpy.context.window_manager.exportedCollections:
             row = layout.row()
@@ -220,25 +216,18 @@ class GLTF_PT_auto_export_gltf(bpy.types.Panel):
         sfile = context.space_data
         operator = sfile.active_operator
 
-        addon_prefs = operator#preferences.addons["gltf_auto_export"].preferences
+        addon_prefs = operator
 
-
-        #preferences = context.preferences
-        #print("ADDON PREFERENCES ", list(preferences.addons.keys()))
-        #print("standard blender gltf prefs", list(preferences.addons["io_scene_gltf2"].preferences.keys()))
         # we get the addon preferences from the standard gltf exporter & use those :
         addon_prefs_gltf = preferences.addons["io_scene_gltf2"].preferences
 
-        #addon_prefs = preferences.addons["gltf_auto_export"].preferences
-        #print("BLAS", addon_prefs.__annotations__)
-        #print(addon_prefs.__dict__)
+        #self.layout.operator("EXPORT_SCENE_OT_gltf", text='glTF 2.0 (.glb/.gltf)')
+        #bpy.ops.export_scene.gltf
+
         for key in addon_prefs.__annotations__.keys():
             if key not in AutoExportGltfPreferenceNames:
                 layout.prop(operator, key)
      
-
-    
-
 class SCENE_UL_GLTF_auto_export(bpy.types.UIList):
     # The draw_item function is called for each item of the collection that is visible in the list.
     #   data is the RNA object containing the collection,

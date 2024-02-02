@@ -20,7 +20,6 @@ class SCENES_LIST_OT_actions(Operator):
     scene_type: bpy.props.StringProperty()#TODO: replace with enum
 
     def invoke(self, context, event):
-        #print("INVOKE", self.scene_type, "gltf_auto_export")
         source = context.space_data.active_operator
         target_name = "library_scenes"
         target_index = "library_scenes_index"
@@ -59,19 +58,19 @@ class SCENES_LIST_OT_actions(Operator):
         if self.action == 'ADD':
             new_scene_name = None
             if self.scene_type == "level":
-                if context.scene.main_scene:
-                    new_scene_name = context.scene.main_scene.name
+                if context.window_manager.main_scene:
+                    new_scene_name = context.window_manager.main_scene.name
             else:
-                if context.scene.library_scene:
-                    new_scene_name = context.scene.library_scene.name
+                if context.window_manager.library_scene:
+                    new_scene_name = context.window_manager.library_scene.name
             if new_scene_name:
                 item = target.add()
                 item.name = new_scene_name#f"Rule {idx +1}"
 
                 if self.scene_type == "level":
-                    context.scene.main_scene = None
+                    context.window_manager.main_scene = None
                 else:
-                    context.scene.library_scene = None
+                    context.window_manager.library_scene = None
 
                 #name = f"Rule {idx +1}"
                 #target.append({"name": name})

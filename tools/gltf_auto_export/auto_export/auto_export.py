@@ -34,7 +34,7 @@ def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
 
         if export_scene_settings:
             # inject/ update scene components
-            upsert_scene_components(bpy.context.scene, world = bpy.context.scene.world)
+            upsert_scene_components(bpy.context.scene, bpy.context.scene.world, main_scene_names)
 
         # export
         if export_blueprints:
