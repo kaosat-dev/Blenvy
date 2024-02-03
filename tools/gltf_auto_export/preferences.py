@@ -58,6 +58,8 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         description='Store glTF export settings in the Blender project',
         default=True
     )
+    
+    # use when operator is called directly, works a bit differently than inside the ui
     direct_mode: BoolProperty(
         default=False
     )
