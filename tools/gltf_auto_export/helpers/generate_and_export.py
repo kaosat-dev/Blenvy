@@ -22,11 +22,15 @@ def generate_and_export(addon_prefs, export_settings, gltf_output_path, temp_sce
     # and mode
     original_mode = bpy.context.active_object.mode if bpy.context.active_object != None else None
     # we change the mode to object mode, otherwise the gltf exporter is not happy
-    if original_mode != None:
+    if original_mode != None and original_mode != 'OBJECT':
+        print("setting to object mode", original_mode)
         bpy.ops.object.mode_set(mode='OBJECT')
     # we set our active scene to be this one : this is needed otherwise the stand-in empties get generated in the wrong scene
     bpy.context.window.scene = temp_scene
-    with bpy.context.temp_override(scene=temp_scene):
+
+    area = [area for area in bpy.context.screen.areas if area.type == "VIEW_3D"][0]
+    region = [region for region in area.regions if region.type == 'WINDOW'][0]
+    with bpy.context.temp_override(scene=temp_scene, area=area, region=region):
         # detect scene mistmatch
         scene_mismatch = bpy.context.scene.name != bpy.context.window.scene.name
         if scene_mismatch:
@@ -36,7 +40,11 @@ def generate_and_export(addon_prefs, export_settings, gltf_output_path, temp_sce
         # generate contents of temporary scene
         scene_filler_data = tempScene_filler(temp_root_collection)
         # export the temporary scene
-        export_gltf(gltf_output_path, export_settings)
+        try:
+            export_gltf(gltf_output_path, export_settings)
+        except Exception as error:
+            print("failed to export gltf !", error)
+            raise error
         # restore everything
         tempScene_cleaner(temp_scene, scene_filler_data)
 
