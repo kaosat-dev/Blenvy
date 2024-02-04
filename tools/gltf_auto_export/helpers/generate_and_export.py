@@ -20,17 +20,14 @@ def generate_and_export(addon_prefs, export_settings, gltf_output_path, temp_sce
     # and selected collection
     original_collection = bpy.context.view_layer.active_layer_collection
     # and mode
-    original_mode = bpy.context.object.mode if bpy.context.object != None else None
+    original_mode = bpy.context.active_object.mode if bpy.context.active_object != None else None
     # we change the mode to object mode, otherwise the gltf exporter is not happy
     if original_mode != None:
         bpy.ops.object.mode_set(mode='OBJECT')
     # we set our active scene to be this one : this is needed otherwise the stand-in empties get generated in the wrong scene
     bpy.context.window.scene = temp_scene
-
     with bpy.context.temp_override(scene=temp_scene):
-        # print("context inside", bpy.context.scene)
         # detect scene mistmatch
-        # print("bpy.context.scene.name != bpy.context.window.scene.name", bpy.context.scene.name, bpy.context.window.scene.name)
         scene_mismatch = bpy.context.scene.name != bpy.context.window.scene.name
         if scene_mismatch:
             raise Exception("Context scene mismatch, aborting", bpy.context.scene.name, bpy.context.window.scene.name)
