@@ -2,11 +2,11 @@ import os
 import bpy
 from pathlib import Path
 
-from .generate_and_export import generate_and_export
+from ..helpers.generate_and_export import generate_and_export
 
-from .helpers_collections import (set_active_collection, traverse_tree)
-from .auto_export.export_gltf import (export_gltf, generate_gltf_export_preferences)
-from .auto_export.object_makers import make_cube
+from ..helpers.helpers_collections import (set_active_collection, traverse_tree)
+from ..auto_export.export_gltf import (export_gltf, generate_gltf_export_preferences)
+from ..helpers.object_makers import make_cube
 
 # get materials per object, and injects the materialInfo component
 def get_materials(object):

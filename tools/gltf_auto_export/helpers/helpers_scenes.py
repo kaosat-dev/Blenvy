@@ -1,38 +1,6 @@
 import bpy
 from .helpers_collections import (set_active_collection)
-from .auto_export.object_makers import (make_empty)
-
-# generate a copy of a scene that replaces collection instances with empties
-# copy original names before creating a new scene, & reset them
-def generate_hollow_scene(original_root_collection, library_collections, addon_prefs, name="__temp_scene", filter=None): 
-    collection_instances_combine_mode = getattr(addon_prefs, "collection_instances_combine_mode")
-
-    temp_scene = bpy.data.scenes.new(name=name)
-    copy_root_collection = temp_scene.collection
-
-    # we set our active scene to be this one : this is needed otherwise the stand-in empties get generated in the wrong scene
-    bpy.context.window.scene = temp_scene
-    set_active_collection(bpy.context.scene, copy_root_collection.name)
-
-    """found = find_layer_collection_recursive(copy_root_collection, bpy.context.view_layer.layer_collection)
-    if found:
-        # once it's found, set the active layer collection to the one we found
-        bpy.context.view_layer.active_layer_collection = found"""
-
-    # TODO also add the handling for "template" flags, so that instead of creating empties we link the data from the sub collection INTO the parent collection
-    # copies the contents of a collection into another one while replacing blueprint instances with empties
-    # if we have combine_mode set to "Inject", we take all the custom attributed of the nested (1 level only ! unless we use 'deepMerge') custom attributes and copy them to this level 
-       
-    results  = copy_hollowed_collection_into(
-        original_root_collection, 
-        copy_root_collection,
-        filter=filter,
-        collection_instances_combine_mode=collection_instances_combine_mode,
-        library_collections=library_collections
-        )
-    
-    return (temp_scene, results.root_objects, results.special_properties)
-
+from .object_makers import (make_empty)
 
 # copies the contents of a collection into another one while replacing library instances with empties
 def copy_hollowed_collection_into(source_collection, destination_collection, parent_empty=None, filter=None, collection_instances_combine_mode=None, library_collections=[]):

@@ -1,10 +1,10 @@
 import os
 import bpy
 
-from ..generate_and_export import generate_and_export
+from ..helpers.generate_and_export import generate_and_export
 from .export_gltf import (generate_gltf_export_preferences, export_gltf)
-from ..bevy_dynamic import is_object_dynamic, is_object_static
-from ..helpers_scenes import clear_hollow_scene, copy_hollowed_collection_into
+from ..modules.bevy_dynamic import is_object_dynamic, is_object_static
+from ..helpers.helpers_scenes import clear_hollow_scene, copy_hollowed_collection_into
 
 
 # export all main scenes

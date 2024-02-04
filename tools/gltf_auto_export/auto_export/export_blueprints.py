@@ -1,9 +1,9 @@
 import os
 import bpy
 
-from ..generate_and_export import generate_and_export
+from ..helpers.generate_and_export import generate_and_export
 from .export_gltf import (generate_gltf_export_preferences)
-from ..helpers_scenes import clear_hollow_scene, copy_hollowed_collection_into
+from ..helpers.helpers_scenes import clear_hollow_scene, copy_hollowed_collection_into
 
 # export collections: all the collections that have an instance in the main scene AND any marked collections, even if they do not have instances
 def export_collections(collections, folder_path, library_scene, addon_prefs, gltf_export_preferences, blueprint_hierarchy, library_collections): 

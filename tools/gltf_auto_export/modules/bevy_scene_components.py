@@ -1,5 +1,5 @@
 
-from .auto_export.object_makers import make_empty
+from ..helpers.object_makers import make_empty
 
 def upsert_scene_components(scene, world, main_scene_names):
     #should only be run in one of the main scenes

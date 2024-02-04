@@ -5,10 +5,10 @@ import traceback
 from .export_main_scenes import export_main_scene
 from .export_blueprints import check_if_blueprint_on_disk, check_if_blueprints_exist, export_blueprints_from_collections
 
-from ..helpers_scenes import (get_scenes, )
-from ..helpers_collections import (get_collections_in_library, get_exportable_collections, get_collections_per_scene, find_collection_ascendant_target_collection)
-from ..export_materials import cleanup_materials, export_materials
-from ..bevy_scene_components import upsert_scene_components
+from ..helpers.helpers_scenes import (get_scenes, )
+from ..helpers.helpers_collections import (get_collections_in_library, get_exportable_collections, get_collections_per_scene, find_collection_ascendant_target_collection)
+from ..modules.export_materials import cleanup_materials, export_materials
+from ..modules.bevy_scene_components import upsert_scene_components
 
 
 """Main function"""

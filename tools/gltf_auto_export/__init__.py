@@ -16,7 +16,7 @@ from .auto_export.operators import AutoExportGLTF
 from .auto_export.tracker import AutoExportTracker
 from .auto_export.preferences import (AutoExportGltfAddonPreferences)
 
-from .internals import (SceneLink,
+from .auto_export.internals import (SceneLink,
                         SceneLinks,
                         CollectionToExport,
                         CollectionsToExport,

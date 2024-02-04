@@ -2,7 +2,7 @@ import bpy
 from bpy.types import (PropertyGroup)
 from bpy.props import (PointerProperty)
 
-from ..internals import CollectionsToExport
+from .internals import CollectionsToExport
 
 class AutoExportTracker(PropertyGroup):
 

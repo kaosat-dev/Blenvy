@@ -8,7 +8,7 @@ from bpy.props import (BoolProperty,
                        CollectionProperty
                        )
 
-from ..internals import (CUSTOM_PG_sceneName)
+from .internals import (CUSTOM_PG_sceneName)
 
 AutoExportGltfPreferenceNames = [
     'auto_export',
