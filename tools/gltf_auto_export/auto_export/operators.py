@@ -145,9 +145,9 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
             self.save_settings(context)
         
         changes_per_scene = context.window_manager.auto_export_tracker.changed_objects_per_scene
+
         #determine changed parameters & do the export
         auto_export(changes_per_scene, self.did_export_settings_change(context), self)
-
         # cleanup
         bpy.app.timers.register(bpy.context.window_manager.auto_export_tracker.enable_change_detection, first_interval=1)
         return {'FINISHED'}    

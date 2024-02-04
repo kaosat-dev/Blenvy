@@ -153,7 +153,7 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
 
     if export_blueprints : 
         if export_separate_dynamic_and_static_objects:
-            print("SPLIT STATIC AND DYNAMIC")
+            #print("SPLIT STATIC AND DYNAMIC")
             # first export all dynamic objects
             (hollow_scene, temporary_collections, root_objects, special_properties) = generate_hollow_scene(scene, library_collections, addon_prefs, is_object_dynamic) 
             gltf_output_path = os.path.join(folder_path, export_output_folder, scene.name+ "_dynamic")
@@ -162,6 +162,7 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
             print("       exporting gltf to", gltf_output_path, ".gltf/glb")
             export_gltf(gltf_output_path, export_settings)
             clear_hollow_scene(hollow_scene, scene, temporary_collections, root_objects, special_properties)
+
 
             # now export static objects
             (hollow_scene, temporary_collections, root_objects, special_properties) = generate_hollow_scene(scene, library_collections, addon_prefs, is_object_static) 
@@ -173,11 +174,18 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
             clear_hollow_scene(hollow_scene, scene, temporary_collections, root_objects, special_properties)
 
         else:
-            print("NO SPLIT")
+            #print("NO SPLIT")
+
             # todo: add exception handling
             (hollow_scene, temporary_collections, root_objects, special_properties) = generate_hollow_scene(scene, library_collections, addon_prefs) 
             # set active scene to be the given scene
             bpy.context.window.scene = hollow_scene
+            print("context scene", bpy.context.scene, "window scene", bpy.context.window.scene, bpy.context.scene == bpy.context.window.scene)
+
+
+            with bpy.context.temp_override(scene=hollow_scene):
+                print("context inside", bpy.context.scene)
+
             print("       exporting gltf to", gltf_output_path, ".gltf/glb")
             export_gltf(gltf_output_path, export_settings)
 
@@ -190,6 +198,7 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
 #https://docs.blender.org/api/current/bpy.ops.export_scene.html#bpy.ops.export_scene.gltf
 def export_gltf (path, export_settings):
     settings = {**export_settings, "filepath": path}
+    # print("export settings",settings)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     bpy.ops.export_scene.gltf(**settings)
 

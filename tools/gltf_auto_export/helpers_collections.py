@@ -192,3 +192,8 @@ def find_collection_ascendant_target_collection(collection_parents, target_colle
         return None
     return find_collection_ascendant_target_collection(collection_parents, target_collections, parent)
    
+def set_active_collection(scene, collection_name):
+    layer_collection = bpy.data.scenes[scene.name].view_layers['ViewLayer'].layer_collection
+    layerColl = recurLayerCollection(layer_collection, collection_name)
+    # set active collection to the collection
+    bpy.context.view_layer.active_layer_collection = layerColl
