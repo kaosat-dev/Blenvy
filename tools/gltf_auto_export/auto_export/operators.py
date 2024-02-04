@@ -169,9 +169,11 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
             self.save_settings(context)
         
         changes_per_scene = context.window_manager.auto_export_tracker.changed_objects_per_scene
-
-        #determine changed parameters & do the export
-        auto_export(changes_per_scene, self.did_export_settings_change(), self)
+        #determine changed parameters 
+        params_changed = self.did_export_settings_change()
+        #& do the export
+        if self.direct_mode: #Do not auto export when applying settings in the menu, do it on save only
+            auto_export(changes_per_scene, params_changed, self)
         # cleanup
         bpy.app.timers.register(bpy.context.window_manager.auto_export_tracker.enable_change_detection, first_interval=1)
         return {'FINISHED'}    

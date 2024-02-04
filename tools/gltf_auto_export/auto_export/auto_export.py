@@ -138,7 +138,7 @@ def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
 
         else:
             for scene_name in main_scene_names:
-                export_main_scene(bpy.data.scenes[scene_name], folder_path, addon_prefs)
+                export_main_scene(bpy.data.scenes[scene_name], folder_path, addon_prefs, [])
 
     except Exception as error:
         print(traceback.format_exc())
