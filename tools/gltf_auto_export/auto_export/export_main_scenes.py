@@ -36,7 +36,7 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
             bpy.context.window.scene = hollow_scene
             print("       exporting gltf to", gltf_output_path, ".gltf/glb")
             export_gltf(gltf_output_path, export_settings)
-            clear_hollow_scene(hollow_scene, scene, temporary_collections, root_objects, special_properties)
+            clear_hollow_scene(hollow_scene, scene.collection, temporary_collections, root_objects, special_properties)
 
 
             # now export static objects
@@ -46,13 +46,13 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
             bpy.context.window.scene = hollow_scene
             print("       exporting gltf to", gltf_output_path, ".gltf/glb")
             export_gltf(gltf_output_path, export_settings)
-            clear_hollow_scene(hollow_scene, scene, temporary_collections, root_objects, special_properties)
+            clear_hollow_scene(hollow_scene, scene.collection, temporary_collections, root_objects, special_properties)
 
         else:
             #print("NO SPLIT")
 
             # todo: add exception handling
-            (hollow_scene, temporary_collections, root_objects, special_properties) = generate_hollow_scene(scene, library_collections, addon_prefs) 
+            (hollow_scene, temporary_collections, root_objects, special_properties) = generate_hollow_scene(scene.collection, library_collections, addon_prefs, name="__temp_scene") 
             # set active scene to be the given scene
             bpy.context.window.scene = hollow_scene
             print("context scene", bpy.context.scene, "window scene", bpy.context.window.scene, bpy.context.scene == bpy.context.window.scene)
@@ -63,7 +63,7 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
             print("       exporting gltf to", gltf_output_path, ".gltf/glb")
             export_gltf(gltf_output_path, export_settings)
 
-            clear_hollow_scene(hollow_scene, scene, temporary_collections, root_objects, special_properties)
+            clear_hollow_scene(hollow_scene, scene.collection, temporary_collections, root_objects, special_properties)
     else:
         print("       exporting gltf to", gltf_output_path, ".gltf/glb")
         export_gltf(gltf_output_path, export_settings)

@@ -1,14 +1,69 @@
 import bpy
-from .helpers_collections import (find_layer_collection_recursive)
+from .helpers_collections import (find_layer_collection_recursive, set_active_collection)
 from .auto_export.object_makers import (make_empty)
 
-# generate a copy of a scene that replaces collection instances with empties
-# copy original names before creating a new scene, & reset them
-def generate_hollow_scene(scene, library_collections, addon_prefs, filter=None): 
+
+def export_bla(scene, library_collections, addon_prefs, filter=None): 
     collection_instances_combine_mode = getattr(addon_prefs, "collection_instances_combine_mode")
 
     root_collection = scene.collection 
     temp_scene = bpy.data.scenes.new(name="temp_scene")
+    copy_root_collection = temp_scene.collection
+
+    # we set our active scene to be this one : this is needed otherwise the stand-in empties get generated in the wrong scene
+    bpy.context.window.scene = temp_scene
+
+    with bpy.context.temp_override(scene=temp_scene):
+        print("context inside", bpy.context.scene)
+        set_active_collection(bpy.context.scene, copy_root_collection.name)
+
+
+    # restore everything
+    clear_hollow_scene(hollow_scene, scene, temporary_collections, root_objects, special_properties)
+    bpy.context.window.scene = scene
+
+
+"""
+   backup = bpy.context.window.scene
+            collection = bpy.data.collections[collection_name]
+            (hollow_scene, temporary_collections, root_objects, special_properties) = generate_blueprint_hollow_scene(collection, library_collections, addon_prefs)
+
+            export_gltf(gltf_output_path, export_settings)
+
+            clear_blueprint_hollow_scene(hollow_scene, collection, temporary_collections, root_objects, special_properties)
+            bpy.context.window.scene = backup
+"""
+"""
+                blueprint_template = object['Template'] if 'Template' in object else False
+                if blueprint_template and parent_empty is None: # ONLY WORKS AT ROOT LEVEL
+                    print("BLUEPRINT TEMPLATE", blueprint_template, destination_collection, parent_empty)
+                    for object in source_collection.objects:
+                        if object.type == 'EMPTY' and object.name.endswith("components"):
+                            original_collection = bpy.data.collections[collection_name]
+                            components_holder = object
+                            print("WE CAN INJECT into", object, "data from", original_collection)
+
+                            # now we look for components inside the collection
+                            components = {}
+                            for object in original_collection.objects:
+                                if object.type == 'EMPTY' and object.name.endswith("components"):
+                                    for component_name in object.keys():
+                                        if component_name not in '_RNA_UI':
+                                            print( component_name , "-" , object[component_name] )
+                                            components[component_name] = object[component_name]
+
+                            # copy template components into target object
+                            for key in components:
+                                print("copying ", key,"to", components_holder)
+                                if not key in components_holder:
+                                    components_holder[key] = components[key]                            
+                """
+# generate a copy of a scene that replaces collection instances with empties
+# copy original names before creating a new scene, & reset them
+def generate_hollow_scene(original_root_collection, library_collections, addon_prefs, name="__temp_scene", filter=None): 
+    collection_instances_combine_mode = getattr(addon_prefs, "collection_instances_combine_mode")
+
+    temp_scene = bpy.data.scenes.new(name=name)
     copy_root_collection = temp_scene.collection
 
     # we set our active scene to be this one : this is needed otherwise the stand-in empties get generated in the wrong scene
@@ -25,6 +80,10 @@ def generate_hollow_scene(scene, library_collections, addon_prefs, filter=None):
     special_properties= { # to be able to reset any special property afterwards
         "combine": [],
     }
+
+    # TODO also add the handling for "template" flags, so that instead of creating empties we link the data from the sub collection INTO the parent collection
+    # copies the contents of a collection into another one while replacing blueprint instances with empties
+    # if we have combine_mode set to "Inject", we take all the custom attributed of the nested (1 level only ! unless we use 'deepMerge') custom attributes and copy them to this level 
 
     # copies the contents of a collection into another one while replacing library instances with empties
     def copy_hollowed_collection_into(source_collection, destination_collection, parent_empty=None):
@@ -77,12 +136,12 @@ def generate_hollow_scene(scene, library_collections, addon_prefs, filter=None):
 
             copy_hollowed_collection_into(collection, destination_collection, collection_placeholder)
             
-    copy_hollowed_collection_into(root_collection, copy_root_collection)
+    copy_hollowed_collection_into(original_root_collection, copy_root_collection)
     
     return (temp_scene, temporary_collections, root_objects, special_properties)
 
 # clear & remove "hollow scene"
-def clear_hollow_scene(temp_scene, original_scene, temporary_collections, root_objects, special_properties):
+def clear_hollow_scene(temp_scene, original_root_collection, temporary_collections, root_objects, special_properties):
 
     def restore_original_names(collection):
         if collection.name.endswith("____bak"):
@@ -95,8 +154,7 @@ def clear_hollow_scene(temp_scene, original_scene, temporary_collections, root_o
             restore_original_names(child_collection)
     
     # reset original names
-    root_collection = original_scene.collection
-    restore_original_names(root_collection)
+    restore_original_names(original_root_collection)
 
     # remove empties (only needed when we go via ops ????)
     temp_root_collection = temp_scene.collection 
