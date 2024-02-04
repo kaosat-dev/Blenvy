@@ -1,5 +1,5 @@
-from .helpers import make_empty2
-# helpers to export scene level data
+
+from .auto_export.object_makers import make_empty
 
 def upsert_scene_components(scene, world, main_scene_names):
     #should only be run in one of the main scenes
@@ -14,7 +14,7 @@ def upsert_scene_components(scene, world, main_scene_names):
             break
 
     if lighting_components is None:
-        lighting_components = make_empty2('lighting_components_'+scene.name, [0,0,0], [0,0,0], [0,0,0], root_collection)
+        lighting_components = make_empty('lighting_components_'+scene.name, [0,0,0], [0,0,0], [0,0,0], root_collection)
 
     if world is not None:
         lighting_components['AmbientLightSettings'] = ambient_color_to_component(world)

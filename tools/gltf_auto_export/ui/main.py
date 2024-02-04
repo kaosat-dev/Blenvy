@@ -10,7 +10,7 @@ from bpy.props import (BoolProperty,
 
 from ..auto_export import auto_export
 
-from ..preferences import (AutoExportGltfAddonPreferences, AutoExportGltfPreferenceNames)
+from ..auto_export.preferences import (AutoExportGltfAddonPreferences, AutoExportGltfPreferenceNames)
 from ..helpers_scenes import (get_scenes)
 from ..helpers_collections import (get_exportable_collections)
 ######################################################

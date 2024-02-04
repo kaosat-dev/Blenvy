@@ -2,12 +2,13 @@ import os
 import bpy
 import traceback
 
+from .export_main_scenes import export_main_scene
+from .export_blueprints import check_if_blueprint_on_disk, check_if_blueprints_exist, export_blueprints_from_collections
+
 from ..helpers_scenes import (get_scenes, )
 from ..helpers_collections import (get_collections_in_library, get_exportable_collections, get_collections_per_scene, find_collection_ascendant_target_collection)
-from ..helpers_export import (export_main_scene, export_blueprints_from_collections)
-from ..helpers import (check_if_blueprints_exist, check_if_blueprint_on_disk)
-from ..materials import cleanup_materials, clear_material_info, clear_materials_scene, export_materials, generate_materials_scenes, get_all_materials
-from ..scene_components import upsert_scene_components
+from ..export_materials import cleanup_materials, export_materials
+from ..bevy_scene_components import upsert_scene_components
 
 
 """Main function"""

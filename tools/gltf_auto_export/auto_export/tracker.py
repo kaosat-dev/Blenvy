@@ -3,8 +3,6 @@ from bpy.types import (PropertyGroup)
 from bpy.props import (PointerProperty)
 
 from ..internals import CollectionsToExport
-from . import auto_export
-from ..preferences import (AutoExportGltfPreferenceNames)
 
 class AutoExportTracker(PropertyGroup):
 

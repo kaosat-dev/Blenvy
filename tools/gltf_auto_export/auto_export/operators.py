@@ -3,7 +3,7 @@ import bpy
 from bpy.types import Operator
 from bpy_extras.io_utils import ExportHelper
 from bpy.props import (IntProperty, StringProperty)
-from ..preferences import (AutoExportGltfAddonPreferences, AutoExportGltfPreferenceNames)
+from .preferences import (AutoExportGltfAddonPreferences, AutoExportGltfPreferenceNames)
 from ..helpers_scenes import (get_scenes)
 from ..helpers_collections import (get_exportable_collections)
 from .auto_export import auto_export

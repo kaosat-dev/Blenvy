@@ -1,5 +1,4 @@
 import bpy
-from .helpers import traverse_tree
 
 # returns the list of the collections in use for a given scene
 def get_used_collections(scene): 
@@ -161,6 +160,15 @@ def get_collection_hierarchy(root_col, levels=1):
     recurse(root_col, root_col.children, 0)
     return level_lookup
 
+
+
+# traverse all collections
+def traverse_tree(t):
+    yield t
+    for child in t.children:
+        yield from traverse_tree(child)
+
+
 # the active collection is a View Layer concept, so you actually have to find the active LayerCollection
 # which must be done recursively
 def find_layer_collection_recursive(find, col):
@@ -197,3 +205,19 @@ def set_active_collection(scene, collection_name):
     layerColl = recurLayerCollection(layer_collection, collection_name)
     # set active collection to the collection
     bpy.context.view_layer.active_layer_collection = layerColl
+
+# find which of the library scenes the given collection stems from
+# TODO: does not seem efficient at all ?
+def get_source_scene(collection_name, library_scenes): 
+    match = None
+    for scene in library_scenes:
+        root_collection = scene.collection
+        found = False
+        for cur_collection in traverse_tree(root_collection):
+            if cur_collection.name == collection_name:
+                found = True
+                break
+        if found:
+            match = scene
+            break
+    return match

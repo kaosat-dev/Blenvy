@@ -11,20 +11,17 @@ bl_info = {
     "category": "Import-Export"
 }
 import bpy
-import os
-
-from bpy.props import (IntProperty)
 
 from .auto_export.operators import AutoExportGLTF
 from .auto_export.tracker import AutoExportTracker
-from . import helpers
+from .auto_export.preferences import (AutoExportGltfAddonPreferences)
+
 from .internals import (SceneLink,
                         SceneLinks,
                         CollectionToExport,
                         CollectionsToExport,
                         CUSTOM_PG_sceneName
                         )
-from .preferences import (AutoExportGltfAddonPreferences)
 from .ui.main import (GLTF_PT_auto_export_main,
                       GLTF_PT_auto_export_root,
                       GLTF_PT_auto_export_blueprints,
