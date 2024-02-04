@@ -91,7 +91,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         #print("saving settings", bpy.data.texts[".gltf_auto_export_settings"].as_string(), "raw", json.dumps(export_props))
    
     def load_settings(self, context):
-        print("loading settings")
+        #print("loading settings")
         settings = None
         try:
             settings = bpy.data.texts[".gltf_auto_export_settings"].as_string()
@@ -100,7 +100,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
 
         self.will_save_settings = False
         if settings:
-            print("loading settings in invoke AutoExportGLTF", settings)
+            #print("loading settings in invoke AutoExportGLTF", settings)
             try:
                 for (k, v) in settings.items():
                     #print("loading setting", k, v)
@@ -158,7 +158,6 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
 
             previous_export_settings.clear()
             previous_export_settings.write(export_settings)
-            print("export settings OTHER",export_settings )
             return changed
 
     def execute(self, context):     

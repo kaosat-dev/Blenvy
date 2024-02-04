@@ -8,7 +8,6 @@ def copy_hollowed_collection_into(source_collection, destination_collection, par
     special_properties= { # to be able to reset any special property afterwards
         "combine": [],
     }
-
     for object in source_collection.objects:
         if filter is not None and filter(object) is False:
             continue
@@ -53,9 +52,15 @@ def copy_hollowed_collection_into(source_collection, destination_collection, par
         if parent_empty is not None:
             collection_placeholder.parent = parent_empty
 
-        (sub_root_objects, sub_special_properties) = copy_hollowed_collection_into(collection, destination_collection, collection_placeholder, filter, collection_instances_combine_mode, library_collections)
-        root_objects = root_objects + sub_root_objects
-        special_properties = special_properties | sub_special_properties
+        nested_results = copy_hollowed_collection_into(collection, destination_collection, collection_placeholder, filter, collection_instances_combine_mode, library_collections)
+        sub_root_objects = nested_results["root_objects"]
+        sub_special_properties = nested_results["special_properties"]
+
+        root_objects.extend(sub_root_objects)
+        for s in sub_special_properties.keys():
+            if not s in special_properties.keys():
+                special_properties[s] = []
+            special_properties[s].extend(sub_special_properties[s])
 
     return {"root_objects": root_objects, "special_properties": special_properties}
 
