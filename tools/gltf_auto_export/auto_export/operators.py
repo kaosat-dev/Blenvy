@@ -107,8 +107,25 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
                 self.report({"ERROR"}, "Loading export settings failed. Removed corrupted settings")
                 bpy.data.texts.remove(bpy.data.texts[".gltf_auto_export_settings"])
 
-    def did_export_settings_change(self, context):
+    def did_export_settings_change(self):
         previous_export_settings = bpy.data.texts[".gltf_auto_export_gltf_settings"] if ".gltf_auto_export_gltf_settings" in bpy.data.texts else None
+        #list of settings (other than purely gltf settings) whose change should trigger a re-generation of gltf files
+        white_list = ['auto_export',
+            'export_main_scene_name',
+            'export_output_folder',
+            'export_library_scene_name',
+
+            'export_blueprints',
+            'export_blueprints_path',
+
+            'export_marked_assets',
+            'collection_instances_combine_mode',
+            'export_separate_dynamic_and_static_objects',
+
+            'export_materials_library',
+            'export_materials_path',
+
+            'export_scene_settings']
         # if there was no setting before, it is new, we need export
         if previous_export_settings == None:
             export_settings = {}
@@ -123,7 +140,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         else:
             export_settings = {}
             for (k, v) in self.properties.items():
-                if k not in AutoExportGltfPreferenceNames:
+                if k in white_list or k not in AutoExportGltfPreferenceNames:
                     export_settings[k] = v
 
             if len(export_settings.keys()) == 0: # first time after we already used the addon, since we already have export settings, but they have not yet been applied
@@ -147,7 +164,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         changes_per_scene = context.window_manager.auto_export_tracker.changed_objects_per_scene
 
         #determine changed parameters & do the export
-        auto_export(changes_per_scene, self.did_export_settings_change(context), self)
+        auto_export(changes_per_scene, self.did_export_settings_change(), self)
         # cleanup
         bpy.app.timers.register(bpy.context.window_manager.auto_export_tracker.enable_change_detection, first_interval=1)
         return {'FINISHED'}    

@@ -2,6 +2,8 @@ import os
 import bpy
 from pathlib import Path
 
+from .generate_and_export import generate_and_export
+
 from .helpers_collections import (set_active_collection, traverse_tree)
 from .auto_export.export_gltf import (export_gltf, generate_gltf_export_preferences)
 from .auto_export.object_makers import make_cube
@@ -64,19 +66,11 @@ def make_material_object(name, location=[0,0,0], rotation=[0,0,0], scale=[1,1,1]
 
 
 # generates a materials scene: 
-def generate_materials_scenes(used_material_names):
-    #bpy.ops.scene.new(type='NEW')#name="__materials_scene")
-    #bpy.context.scene.name = "__materials_scene"
-    #temp_scene = bpy.data.scenes["__materials_scene"]
-    temp_scene = bpy.data.scenes.new(name="__materials_scene")
-    root_collection = temp_scene.collection
-
+def generate_materials_scene_content(root_collection, used_material_names):
     for index, material_name in enumerate(used_material_names):
         material = bpy.data.materials[material_name]
         make_material_object("Material_"+material_name, [index * 0.2,0,0], material=material, collection=root_collection)
-
-    # we set our active scene to be this one : this is needed otherwise the stand-in objects get generated in the wrong scene
-    return temp_scene
+    return {}
 
 def clear_materials_scene(temp_scene):
     root_collection = temp_scene.collection 
@@ -105,21 +99,6 @@ def export_materials(collections, library_scenes, folder_path, addon_prefs):
     used_material_names = get_all_materials(collections, library_scenes)
     current_project_name = Path(bpy.context.blend_data.filepath).stem
 
-    # save the current active scene
-    current_scene = bpy.context.window.scene
-    # and the active collection
-    active_collection =  bpy.context.view_layer.active_layer_collection
-
-    # now do the real work
-    # ----------------------------------------------
-    mat_scene = generate_materials_scenes(used_material_names)
-    #set_active_collection(mat_scene, "Scene Collection")
-    bpy.context.window.scene = mat_scene
-    #print("active scene", bpy.context.window.scene.name, bpy.context.scene.name)
-    #print("scene infos", mat_scene.objects)
-
-    gltf_output_path = os.path.join(folder_path, export_materials_path, current_project_name + "_materials_library")
-    print("       exporting Materials to", gltf_output_path, ".gltf/glb")
     export_settings = { **gltf_export_preferences, 
                     'use_active_scene': True, 
                     'use_active_collection':True, 
@@ -128,14 +107,18 @@ def export_materials(collections, library_scenes, folder_path, addon_prefs):
                     'use_renderable': False,
                     'export_apply':True
                     }
-    export_gltf(gltf_output_path, export_settings)
-    # -----------------------------------------------
-    # remove materials scenes
-    clear_materials_scene(mat_scene)
-    # reset scene to previously selected scene
-    bpy.context.window.scene = current_scene
-    # reset active collection
-    bpy.context.view_layer.active_layer_collection = active_collection
+    gltf_output_path = os.path.join(folder_path, export_materials_path, current_project_name + "_materials_library")
+
+    print("       exporting Materials to", gltf_output_path, ".gltf/glb")
+
+    generate_and_export(
+        addon_prefs, 
+        temp_scene_name="__materials_scene",
+        export_settings=export_settings,
+        gltf_output_path=gltf_output_path,
+        tempScene_filler= lambda temp_collection: generate_materials_scene_content(temp_collection, used_material_names),
+        tempScene_cleaner= lambda temp_scene, params: clear_materials_scene(temp_scene=temp_scene)
+    )
 
 
 def cleanup_materials(collections, library_scenes):

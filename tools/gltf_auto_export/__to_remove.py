@@ -174,3 +174,49 @@ def did_export_parameters_change(current_params, previous_params):
     changed_param_names = list(set(difference.keys())- set(AutoExportGltfPreferenceNames))
     changed_parameters = len(changed_param_names) > 0
     return changed_parameters
+
+# original in export_blueprints => export_collections
+ # The part below is not necessary NORMALLY , but blender crashes in the "normal" case when using bpy.context.temp_override, 
+        #if relevant we replace sub collections instances with placeholders too
+        # this is not needed if a collection/blueprint does not have sub blueprints or sub collections
+        collection_in_blueprint_hierarchy = collection_name in blueprint_hierarchy and len(blueprint_hierarchy[collection_name]) > 0
+        collection_has_child_collections = len(bpy.data.collections[collection_name].children) > 0
+        #if collection_in_blueprint_hierarchy or collection_has_child_collections:
+    
+
+
+        """else:
+            print("standard export")
+             # set active scene to be the library scene
+            original_scene = bpy.context.window.scene
+            bpy.context.window.scene = library_scene
+            with bpy.context.temp_override(scene=library_scene):
+                print("active scene", bpy.context.scene)
+            export_gltf(gltf_output_path, export_settings)
+            bpy.context.window.scene = original_scene"""
+
+"""
+                blueprint_template = object['Template'] if 'Template' in object else False
+                if blueprint_template and parent_empty is None: # ONLY WORKS AT ROOT LEVEL
+                    print("BLUEPRINT TEMPLATE", blueprint_template, destination_collection, parent_empty)
+                    for object in source_collection.objects:
+                        if object.type == 'EMPTY' and object.name.endswith("components"):
+                            original_collection = bpy.data.collections[collection_name]
+                            components_holder = object
+                            print("WE CAN INJECT into", object, "data from", original_collection)
+
+                            # now we look for components inside the collection
+                            components = {}
+                            for object in original_collection.objects:
+                                if object.type == 'EMPTY' and object.name.endswith("components"):
+                                    for component_name in object.keys():
+                                        if component_name not in '_RNA_UI':
+                                            print( component_name , "-" , object[component_name] )
+                                            components[component_name] = object[component_name]
+
+                            # copy template components into target object
+                            for key in components:
+                                print("copying ", key,"to", components_holder)
+                                if not key in components_holder:
+                                    components_holder[key] = components[key]                            
+                """
