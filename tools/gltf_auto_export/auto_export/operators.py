@@ -16,6 +16,24 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
     # ExportHelper mixin class uses this
     filename_ext = ''
 
+    #list of settings (other than purely gltf settings) whose change should trigger a re-generation of gltf files
+    white_list = ['auto_export',
+        'export_main_scene_name',
+        'export_output_folder',
+        'export_library_scene_name',
+
+        'export_blueprints',
+        'export_blueprints_path',
+
+        'export_marked_assets',
+        'collection_instances_combine_mode',
+        'export_separate_dynamic_and_static_objects',
+
+        'export_materials_library',
+        'export_materials_path',
+
+        'export_scene_settings']
+
     @classmethod
     def register(cls):
         bpy.types.WindowManager.main_scene = bpy.props.PointerProperty(type=bpy.types.Scene, name="main scene", description="main_scene_picker", poll=cls.is_scene_ok)
@@ -56,12 +74,17 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
             x: getattr(self, x) for x in dir(all_props)
             if (x.startswith("export_") or x in exceptional) and all_props.get(x) is not None
         }
+        # we inject all that we need, the above is not sufficient
+        for (k, v) in self.properties.items():
+            if k in self.white_list or k not in AutoExportGltfPreferenceNames:
+                export_props[k] = v
         # we add main & library scene names to our preferences
+        
         export_props['main_scene_names'] = list(map(lambda scene_data: scene_data.name, getattr(self,"main_scenes")))
         export_props['library_scene_names'] = list(map(lambda scene_data: scene_data.name, getattr(self,"library_scenes")))
         self.properties['main_scene_names'] = export_props['main_scene_names']
         self.properties['library_scene_names'] = export_props['library_scene_names']
- 
+
         stored_settings = bpy.data.texts[".gltf_auto_export_settings"] if ".gltf_auto_export_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_settings")
         stored_settings.clear()
         stored_settings.write(json.dumps(export_props))
@@ -77,7 +100,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
 
         self.will_save_settings = False
         if settings:
-            #print("loading settings in invoke AutoExportGLTF")
+            print("loading settings in invoke AutoExportGLTF", settings)
             try:
                 for (k, v) in settings.items():
                     #print("loading setting", k, v)
@@ -109,23 +132,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
 
     def did_export_settings_change(self):
         previous_export_settings = bpy.data.texts[".gltf_auto_export_gltf_settings"] if ".gltf_auto_export_gltf_settings" in bpy.data.texts else None
-        #list of settings (other than purely gltf settings) whose change should trigger a re-generation of gltf files
-        white_list = ['auto_export',
-            'export_main_scene_name',
-            'export_output_folder',
-            'export_library_scene_name',
-
-            'export_blueprints',
-            'export_blueprints_path',
-
-            'export_marked_assets',
-            'collection_instances_combine_mode',
-            'export_separate_dynamic_and_static_objects',
-
-            'export_materials_library',
-            'export_materials_path',
-
-            'export_scene_settings']
+        
         # if there was no setting before, it is new, we need export
         if previous_export_settings == None:
             export_settings = {}
@@ -140,7 +147,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         else:
             export_settings = {}
             for (k, v) in self.properties.items():
-                if k in white_list or k not in AutoExportGltfPreferenceNames:
+                if k in self.white_list or k not in AutoExportGltfPreferenceNames:
                     export_settings[k] = v
 
             if len(export_settings.keys()) == 0: # first time after we already used the addon, since we already have export settings, but they have not yet been applied
@@ -151,6 +158,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
 
             previous_export_settings.clear()
             previous_export_settings.write(export_settings)
+            print("export settings OTHER",export_settings )
             return changed
 
     def execute(self, context):     
