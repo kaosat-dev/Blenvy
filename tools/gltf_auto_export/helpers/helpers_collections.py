@@ -1,5 +1,4 @@
 import bpy
-from .helpers import traverse_tree
 
 # returns the list of the collections in use for a given scene
 def get_used_collections(scene): 
@@ -22,7 +21,6 @@ def get_used_collections(scene):
 # gets all collections that should ALWAYS be exported to their respective gltf files, even if they are not used in the main scene/level
 def get_marked_collections(scene, addon_prefs):
     export_marked_assets = getattr(addon_prefs,"export_marked_assets")
-
     # print("checking library for marked collections")
     root_collection = scene.collection
     marked_collections = []
@@ -42,12 +40,10 @@ def get_sub_collections(collections, parent, children_per_collection):
     collection_names = set()
     used_collections = []
     
-
     for root_collection in collections:
         node = Node(name=root_collection.name, parent=parent)
         parent.children.append(node)
 
-      
         #print("root collection", root_collection.name)
         for collection in traverse_tree(root_collection): # TODO: filter out COLLECTIONS that have the flatten flag (unlike the flatten flag on colleciton instances themselves)
             node_name = collection.name
@@ -164,6 +160,15 @@ def get_collection_hierarchy(root_col, levels=1):
     recurse(root_col, root_col.children, 0)
     return level_lookup
 
+
+
+# traverse all collections
+def traverse_tree(t):
+    yield t
+    for child in t.children:
+        yield from traverse_tree(child)
+
+
 # the active collection is a View Layer concept, so you actually have to find the active LayerCollection
 # which must be done recursively
 def find_layer_collection_recursive(find, col):
@@ -195,3 +200,24 @@ def find_collection_ascendant_target_collection(collection_parents, target_colle
         return None
     return find_collection_ascendant_target_collection(collection_parents, target_collections, parent)
    
+def set_active_collection(scene, collection_name):
+    layer_collection = bpy.data.scenes[scene.name].view_layers['ViewLayer'].layer_collection
+    layerColl = recurLayerCollection(layer_collection, collection_name)
+    # set active collection to the collection
+    bpy.context.view_layer.active_layer_collection = layerColl
+
+# find which of the library scenes the given collection stems from
+# TODO: does not seem efficient at all ?
+def get_source_scene(collection_name, library_scenes): 
+    match = None
+    for scene in library_scenes:
+        root_collection = scene.collection
+        found = False
+        for cur_collection in traverse_tree(root_collection):
+            if cur_collection.name == collection_name:
+                found = True
+                break
+        if found:
+            match = scene
+            break
+    return match

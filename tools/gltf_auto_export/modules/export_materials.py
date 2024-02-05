@@ -1,9 +1,12 @@
-
-from .helpers_export import export_gltf, generate_gltf_export_preferences
-from .helpers import traverse_tree
-import bpy
 import os
+import bpy
 from pathlib import Path
+
+from ..helpers.generate_and_export import generate_and_export
+
+from ..helpers.helpers_collections import (set_active_collection, traverse_tree)
+from ..auto_export.export_gltf import (export_gltf, generate_gltf_export_preferences)
+from ..helpers.object_makers import make_cube
 
 # get materials per object, and injects the materialInfo component
 def get_materials(object):
@@ -38,50 +41,53 @@ def get_all_materials(collection_names, library_scenes):
         root_collection = scene.collection
         for cur_collection in traverse_tree(root_collection):
             if cur_collection.name in collection_names:
-                #print("collection: ", cur_collection.name)
                 for object in cur_collection.all_objects:
-                    # print("  object:", object.name)
                     used_material_names = used_material_names + get_materials(object)
     # we only want unique names
     used_material_names = list(set(used_material_names))
     return used_material_names
 
 
-def make_material_object(name, location, rotation, scale, material): 
-    original_active_object = bpy.context.active_object
-    # bpy.ops.object.empty_add(type='PLAIN_AXES', location=location, rotation=rotation, scale=scale)
-    bpy.ops.mesh.primitive_cube_add(size=0.1, location=location)  
-    object = bpy.context.active_object
-    object.name = name
-    #obj.scale = scale # scale is not set correctly ?????
-    if object.data.materials:
-        # assign to 1st material slot
-        object.data.materials[0] = material
-    else:
-        # no slots
-        object.data.materials.append(material)
+# creates a new object with the applied material, for the material library
+def make_material_object(name, location=[0,0,0], rotation=[0,0,0], scale=[1,1,1], material=None, collection=None): 
+    #original_active_object = bpy.context.active_object
+    #bpy.ops.mesh.primitive_cube_add(size=0.1, location=location)  
+    object = make_cube(name, location=location, rotation=rotation, scale=scale, collection=collection)
+    if material:
+        if object.data.materials:
+            # assign to 1st material slot
+            object.data.materials[0] = material
+        else:
+            # no slots
+            object.data.materials.append(material)
 
-    bpy.context.view_layer.objects.active = original_active_object
+    #bpy.context.view_layer.objects.active = original_active_object
     return object
 
 
 # generates a materials scene: 
-def generate_materials_scenes(used_material_names):
-    temp_scene = bpy.data.scenes.new(name="__materials_scene")
-    bpy.context.window.scene = temp_scene
-
+def generate_materials_scene_content(root_collection, used_material_names):
     for index, material_name in enumerate(used_material_names):
         material = bpy.data.materials[material_name]
-        make_material_object("Material_"+material_name, [index * 0.2,0,0], [], [], material)
-
-    # we set our active scene to be this one : this is needed otherwise the stand-in objects get generated in the wrong scene
-    return temp_scene
+        make_material_object("Material_"+material_name, [index * 0.2,0,0], material=material, collection=root_collection)
+    return {}
 
 def clear_materials_scene(temp_scene):
     root_collection = temp_scene.collection 
     scene_objects = [o for o in root_collection.objects]
     for object in scene_objects:
-        bpy.data.objects.remove(object, do_unlink=True)
+        #print("removing ", object)
+        try:
+            mesh = bpy.data.meshes[object.name+"_Mesh"]
+            bpy.data.meshes.remove(mesh, do_unlink=True)
+        except Exception as error:
+            pass
+            #print("could not remove mesh", error)
+            
+        try:
+            bpy.data.objects.remove(object, do_unlink=True)
+        except:pass
+
     bpy.data.scenes.remove(temp_scene)
 
 # exports the materials used inside the current project:
@@ -93,15 +99,6 @@ def export_materials(collections, library_scenes, folder_path, addon_prefs):
     used_material_names = get_all_materials(collections, library_scenes)
     current_project_name = Path(bpy.context.blend_data.filepath).stem
 
-    print("materials", used_material_names)
-
-    # save the current active scene
-    current_scene = bpy.context.window.scene
-    mat_scene = generate_materials_scenes(used_material_names)
-
-
-    gltf_output_path = os.path.join(folder_path, export_materials_path, current_project_name + "_materials_library")
-    print("       exporting Materials to", gltf_output_path, ".gltf/glb")
     export_settings = { **gltf_export_preferences, 
                     'use_active_scene': True, 
                     'use_active_collection':True, 
@@ -110,13 +107,19 @@ def export_materials(collections, library_scenes, folder_path, addon_prefs):
                     'use_renderable': False,
                     'export_apply':True
                     }
-    export_gltf(gltf_output_path, export_settings)
+    gltf_output_path = os.path.join(folder_path, export_materials_path, current_project_name + "_materials_library")
 
-    # remove materials scenes
-    clear_materials_scene(mat_scene)
+    print("       exporting Materials to", gltf_output_path, ".gltf/glb")
 
-    # reset scene to previously selected scene
-    bpy.context.window.scene = current_scene
+    generate_and_export(
+        addon_prefs, 
+        temp_scene_name="__materials_scene",
+        export_settings=export_settings,
+        gltf_output_path=gltf_output_path,
+        tempScene_filler= lambda temp_collection: generate_materials_scene_content(temp_collection, used_material_names),
+        tempScene_cleaner= lambda temp_scene, params: clear_materials_scene(temp_scene=temp_scene)
+    )
+
 
 def cleanup_materials(collections, library_scenes):
     # remove temporary components

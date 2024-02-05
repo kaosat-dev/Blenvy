@@ -2,52 +2,17 @@ import os
 import bpy
 import traceback
 
-from .helpers_scenes import (get_scenes, )
-from .helpers_collections import (get_collections_in_library, get_exportable_collections, get_collections_per_scene, find_collection_ascendant_target_collection)
-from .helpers_export import (export_main_scene, export_blueprints_from_collections)
-from .helpers import (check_if_blueprints_exist, check_if_blueprint_on_disk)
-from .materials import cleanup_materials, clear_material_info, clear_materials_scene, export_materials, generate_materials_scenes, get_all_materials
-from .scene_components import upsert_scene_components
+from .export_main_scenes import export_main_scene
+from .export_blueprints import check_if_blueprint_on_disk, check_if_blueprints_exist, export_blueprints_from_collections
 
-from .config import scene_key
+from ..helpers.helpers_scenes import (get_scenes, )
+from ..helpers.helpers_collections import (get_collections_in_library, get_exportable_collections, get_collections_per_scene, find_collection_ascendant_target_collection)
+from ..modules.export_materials import cleanup_materials, export_materials
+from ..modules.bevy_scene_components import upsert_scene_components
+
 
 """Main function"""
-def auto_export(changes_per_scene, changed_export_parameters):
-    addon_prefs = bpy.context.preferences.addons["gltf_auto_export"].preferences
-
-    # a semi_hack to ensure we have the latest version of the settings
-    initialized = bpy.context.window_manager['__gltf_auto_export_initialized'] if '__gltf_auto_export_initialized' in bpy.context.window_manager else False
-    if not initialized:
-        print("not initialized, fetching settings if any")
-        # semi_hack to restore the correct settings if the add_on was installed before
-        settings = bpy.context.scene.get(scene_key)
-        if settings:
-            print("loading settings in main function")
-            try:
-                # Update filter if user saved settings
-                #if hasattr(self, 'export_format'):
-                #    self.filter_glob = '*.glb' if self.export_format == 'GLB' else '*.gltf'
-                for (k, v) in settings.items():
-                    setattr(addon_prefs, k, v)
-                    # inject scenes data
-                    if k == 'main_scene_names':
-                        main_scenes = addon_prefs.main_scenes
-                        for item_name in v:
-                            item = main_scenes.add()
-                            item.name = item_name
-
-                    if k == 'library_scene_names':
-                        library_scenes = addon_prefs.library_scenes
-                        for item_name in v:
-                            item = library_scenes.add()
-                            item.name = item_name
-
-
-
-            except Exception as error:
-                print("error setting preferences from saved settings", error)
-        bpy.context.window_manager['__gltf_auto_export_initialized'] = True
-
+def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
     # have the export parameters (not auto export, just gltf export) have changed: if yes (for example switch from glb to gltf, compression or not, animations or not etc), we need to re-export everything
     print ("changed_export_parameters", changed_export_parameters)
     try:
@@ -69,7 +34,7 @@ def auto_export(changes_per_scene, changed_export_parameters):
 
         if export_scene_settings:
             # inject/ update scene components
-            upsert_scene_components(bpy.context.scene, world = bpy.context.scene.world)
+            upsert_scene_components(bpy.context.scene, bpy.context.scene.world, main_scene_names)
 
         # export
         if export_blueprints:
@@ -168,13 +133,12 @@ def auto_export(changes_per_scene, changed_export_parameters):
             # reset selections
             for obj in old_selections:
                 obj.select_set(True)
-
             if export_materials_library:
                 cleanup_materials(collections, library_scenes)
 
         else:
             for scene_name in main_scene_names:
-                export_main_scene(bpy.data.scenes[scene_name], folder_path, addon_prefs)
+                export_main_scene(bpy.data.scenes[scene_name], folder_path, addon_prefs, [])
 
     except Exception as error:
         print(traceback.format_exc())
