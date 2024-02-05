@@ -10,6 +10,9 @@ categories = ["game-development"]
 edition = "2021"
 license = "MIT OR Apache-2.0"
 
+[lints]
+workspace = true
+
 [dev-dependencies]
 bevy = { version = "0.12", default-features = false, features = ["bevy_asset", "bevy_scene", "bevy_gltf"] }
 

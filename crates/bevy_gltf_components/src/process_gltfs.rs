@@ -1,3 +1,4 @@
+use std::path::Path;
 use bevy::asset::AssetPath;
 use bevy::gltf::Gltf;
 use bevy::utils::HashSet;
@@ -31,14 +32,15 @@ pub fn track_new_gltf(
 ) {
     for event in events.read() {
         if let AssetEvent::Added { id } = event {
-            let asset_path = asset_server.get_path(*id).unwrap_or(AssetPath::default());
+         
             let handle = asset_server.get_id_handle(*id);
             if let Some(handle) = handle {
                 tracker.add_gltf(handle.clone());
-                debug!("gltf created {:?}", handle.clone());
+                debug!("gltf created {:?}", handle);
             } else {
+                let asset_path = asset_server.get_path(*id).unwrap_or(AssetPath::from_path(Path::new("n/a".into())));  // will unfortunatly not work, will do a PR/ discussion at the Bevy level, leaving for reference, would be very practical
                 warn!(
-                    "gltf file {:?} has no handle available, cannot inject components into it",
+                    "a gltf file ({:?}) has no handle available, cannot inject components",
                     asset_path
                 )
             }

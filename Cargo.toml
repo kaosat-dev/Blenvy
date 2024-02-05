@@ -21,6 +21,18 @@ members = [
 ]
 resolver = "2"
 
+[workspace.lints.clippy]
+type_complexity = "allow"
+doc_markdown = "warn"
+manual_let_else = "warn"
+undocumented_unsafe_blocks = "warn"
+redundant_else = "warn"
+match_same_arms = "warn"
+semicolon_if_nothing_returned = "warn"
+
+[lints]
+workspace = true
+
 #### --------------------Dev/ debug-------------------------------
 # Enable high optimizations for dependencies (incl. Bevy), but not for our code:
 [profile.dev.package."*"]
