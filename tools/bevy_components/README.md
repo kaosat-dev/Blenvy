@@ -57,9 +57,12 @@ Before you can use the add-on you need to configure it
 ## Use
 
 
-### Existing components
+### Existing components & custom properties
 
-If you already have components defined manualy in Blender inside **custom properties** you will need to define them again using the UI!
+* If you already have components defined manualy in Blender inside **custom properties** you will need to define them again using the UI!
+* avoid mixing & matching: if you change the values of **custom properties** that also have a component, the custom property will be **overriden** every time
+you change the component's value
+* you can of course still use non component custom properties as always, this add-on will only impact those that have corresponding Bevy components
 
 ### adding components
 
