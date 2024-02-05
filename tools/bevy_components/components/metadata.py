@@ -220,7 +220,7 @@ def copy_propertyGroup_values_to_another_object(source_object, target_object, co
     for field_name in source_propertyGroup.field_names:
         if field_name in source_propertyGroup:
             target_propertyGroup[field_name] = source_propertyGroup[field_name]
-
+    apply_propertyGroup_values_to_object_customProperties(target_object)
 
 # TODO: move to propgroups ?
 def apply_propertyGroup_values_to_object_customProperties(object):

@@ -105,9 +105,11 @@ UI:
         - for most types , it is straighforward, but others, not so much: like the default color in Bevy , etc
 
 - [x] change default schema.json to registry.json
-- [ ] pasted components do not get updated value in custom_property
+- [x] pasted components do not get updated value in custom_property
 - [x] finish documentation
-- [ ] add storage of registry path
+- [x] add storage of registry path
+    - [x] save after setting the data (browse for)
+    - [x] load after each reload ?
 
 # Additional
     - [x] check if output "string" in custom properties are correct
@@ -129,7 +131,7 @@ UI:
     - bevy_gltf_blueprints
         - [x] update dependency
         - [x] update version
-        - [ ] add ability to set legacy mode for bevy_gltf_components ? 
+        - [x] add ability to set legacy mode for bevy_gltf_components ? 
 
     - [ ] release all versions
     - [ ] update main documentation, add compatibility version grid

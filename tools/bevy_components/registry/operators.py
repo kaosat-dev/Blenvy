@@ -1,9 +1,10 @@
 import os
 import bpy
-from bpy_types import (Operator, PropertyGroup, UIList)
+from bpy_types import (Operator)
 from bpy.props import (StringProperty)
 from bpy_extras.io_utils import ImportHelper
 
+from ..helpers import upsert_settings
 from ..components.metadata import apply_propertyGroup_values_to_object_customProperties, ensure_metadata_for_all_objects
 from ..components.operators import GenerateComponent_From_custom_property_Operator
 from ..propGroups.prop_groups import generate_propertyGroups_for_components
@@ -73,7 +74,11 @@ class OT_OpenFilebrowser(Operator, ImportHelper):
         # Get the folder
         folder_path = os.path.dirname(file_path)
         relative_path = os.path.relpath(self.filepath, folder_path)
-        context.window_manager.components_registry.schemaPath = relative_path
+
+        registry = context.window_manager.components_registry
+        registry.schemaPath = relative_path
+
+        upsert_settings(registry.settings_save_path, {"schemaPath": relative_path})
         
         return {'FINISHED'}
     

@@ -6,11 +6,11 @@ This [Blender addon](https://github.com/kaosat-dev/Blender_bevy_components_workf
 by the [bevy_registry_export](https://crates.io/crates/bevy_registry_export) crate/plugin
 - no more need to specify components manually using custom_properties, with error prone naming etc
 - adds **metadata** to objects containing information about what components it uses + some extra information
-- adds the ability to **toggle components** on/off without having to remove the component from the object
-- can **convert** existing custom properties to "upgraded" ones containing metadata
 - uses Blender's **PropertyGroups** to generate custom UIs & connects those groups with the custom properties so that no matter the complexity
 of your Bevy components you get a nicely packed custom_property to use with ...
 - the ideal companion to the [gltf_auto_export](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/gltf_auto_export) to embed your Bevy components inside your gltf files
+<!-- - adds the ability to **toggle components** on/off without having to remove the component from the object -->
+
 
 > Important: 
   the tooling is still in the early stages, even if it is feature complete : use with caution!.
@@ -146,6 +146,9 @@ It will add the component to the select object
 - if you have a component made up of unregistered structs/enums etc, you will get visual feedback & the component will be deactivated
 
     ![invalid component](./docs/invalid_components.png)
+
+    > important ! ```gltf_auto_export``` currently has no way of filtering out components, so you need to delete invalid components like these before exporting
+    this will be adress in the future
 
 - if you are encountering this type of view: don't panic your component data is not gone ! It just means you need to reload the registry data by clicking on the relevant button
 

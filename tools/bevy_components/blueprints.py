@@ -4,7 +4,7 @@ import bpy
 from bpy_types import Operator
 from bpy.props import (StringProperty)
 
-from .helpers import make_empty3
+from .helpers import make_empty
 
 class CreateBlueprintOperator(Operator):
     """Creates blueprint"""
@@ -29,7 +29,7 @@ class CreateBlueprintOperator(Operator):
         # this is in order to deal with automatic naming
         blueprint_name = collection.name
 
-        components_empty = make_empty3(blueprint_name + "_components", [0,0,0], [0,0,0], [0,0,0])
+        components_empty = make_empty(blueprint_name + "_components", [0,0,0], [0,0,0], [0,0,0], bpy.context.scene.collection)
         bpy.ops.collection.objects_remove_all()
 
         collection.objects.link(components_empty)

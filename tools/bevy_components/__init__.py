@@ -14,6 +14,7 @@ bl_info = {
 import bpy
 from bpy.props import (StringProperty)
 
+from .helpers import load_settings
 from .blueprints import CreateBlueprintOperator
 from .components.operators import CopyComponentOperator, DeleteComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, AddComponentOperator, Toggle_ComponentVisibility
 
@@ -21,7 +22,7 @@ from .registry.registry import ComponentsRegistry,MissingBevyType
 from .registry.operators import (COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT, ReloadRegistryOperator, OT_OpenFilebrowser)
 from .registry.ui import (BEVY_COMPONENTS_PT_Configuration, BEVY_COMPONENTS_PT_MissingTypesPanel, MISSING_TYPES_UL_List)
 
-from .components.metadata import (ComponentInfos, ComponentsMeta, do_object_custom_properties_have_missing_metadata, ensure_metadata_for_all_objects)
+from .components.metadata import (ComponentInfos, ComponentsMeta, ensure_metadata_for_all_objects)
 from .propGroups.prop_groups import (generate_propertyGroups_for_components)
 from .components.lists import GENERIC_LIST_OT_actions, Generic_LIST_OT_AddItem, Generic_LIST_OT_RemoveItem, Generic_LIST_OT_SelectItem
 from .components.definitions_list import (ComponentDefinitionsList, ClearComponentDefinitionsList)
@@ -119,13 +120,14 @@ from bpy.app.handlers import persistent
 @persistent
 def post_load(file_name):
     print("post load", file_name)
-    bpy.context.window_manager.components_registry.load_schema()
+    registry = bpy.context.window_manager.components_registry
+    registry.schemaPath = load_settings(registry.settings_save_path)["schemaPath"]
+    registry.load_schema()
     generate_propertyGroups_for_components()
     ensure_metadata_for_all_objects()
 
 
 def register():
-    print("register")
     for cls in classes:
         bpy.utils.register_class(cls)
     bpy.types.WindowManager.blueprint_name = StringProperty()
@@ -133,7 +135,6 @@ def register():
     bpy.app.handlers.load_post.append(post_load)
 
 def unregister():
-    print("unregister")
     for cls in classes:
         bpy.utils.unregister_class(cls)
     del bpy.types.WindowManager.blueprint_name

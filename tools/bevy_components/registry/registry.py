@@ -14,10 +14,13 @@ class MissingBevyType(bpy.types.PropertyGroup):
 
 # this is where we store the information for all available components
 class ComponentsRegistry(PropertyGroup):
+
+    settings_save_path = ".bevy_components_settings" # where to store data in bpy.texts
+
     schemaPath: bpy.props.StringProperty(
         name="schema path",
         description="path to the registry schema file",
-        default="../registry.json"
+        default="registry.json"
     )
   
     registry: bpy.props. StringProperty(
