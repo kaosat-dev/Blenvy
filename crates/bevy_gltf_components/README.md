@@ -88,7 +88,7 @@ You **need** to disable legacy mode if you want to use the [```bevy_components``
 As it create custom properties that are writen in real **ron** file format
 instead of a simplified version (the one in the legacy mode)
 
-> Note: the legacy mode support will be dropped in future versions, and the default behaviour will be NO legacy mode support
+> Note: the legacy mode support will be dropped in future versions, and the default behaviour will be NO legacy mode
 
 ## SystemSet
 

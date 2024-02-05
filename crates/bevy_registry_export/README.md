@@ -6,7 +6,7 @@
 # bevy_registry_export
 
 This plugin allows you to create a Json export of all your components/ registered types.
-Its main use case is as a backbone for the bevy_components [Blender add-on](), that allows you to add & edit components directly in Blender, using the actual type definitions from Bevy 
+Its main use case is as a backbone for the [```bevy_components``` Blender add-on](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/bevy_components), that allows you to add & edit components directly in Blender, using the actual type definitions from Bevy 
 (and any of your custom types & components that you register in Bevy).
 
 
