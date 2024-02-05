@@ -16,8 +16,8 @@ class MissingBevyType(bpy.types.PropertyGroup):
 class ComponentsRegistry(PropertyGroup):
     schemaPath: bpy.props.StringProperty(
         name="schema path",
-        description="path to the schema file",
-        default="../schema.json"
+        description="path to the registry schema file",
+        default="../registry.json"
     )
   
     registry: bpy.props. StringProperty(

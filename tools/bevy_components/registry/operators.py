@@ -57,7 +57,8 @@ class COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT(Operator):
         apply_propertyGroup_values_to_object_customProperties(object)
         return {'FINISHED'}
 
-class OT_OpenFilebrowser(Operator, ImportHelper): 
+class OT_OpenFilebrowser(Operator, ImportHelper):
+    """Browse for registry json file"""
     bl_idname = "generic.open_filebrowser" 
     bl_label = "Open the file browser" 
 
@@ -67,20 +68,11 @@ class OT_OpenFilebrowser(Operator, ImportHelper):
     )
     def execute(self, context): 
         """Do something with the selected file(s)."""
-
-        filename, extension = os.path.splitext(self.filepath) 
-        print('Selected file:', self.filepath)
-        print('File name:', filename)
-        print('File extension:', extension)
-
+        #filename, extension = os.path.splitext(self.filepath) 
         file_path = bpy.data.filepath
         # Get the folder
         folder_path = os.path.dirname(file_path)
-        print("file_path", file_path)
-        print("folder_path", folder_path)
-
         relative_path = os.path.relpath(self.filepath, folder_path)
-        print("rel path", relative_path )
         context.window_manager.components_registry.schemaPath = relative_path
         
         return {'FINISHED'}

@@ -183,13 +183,13 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
                     
                     if component_visible:
                         if component_invalid:
-                            error_message = invalid_details if component_invalid else "Missing component propertyGroup !"
+                            error_message = invalid_details if component_invalid else "Missing component UI data, please reload registry !"
                             prop_group_location.label(text=error_message)
                         draw_propertyGroup(propertyGroup, prop_group_location, [root_propertyGroup_name], component_name)
                     else :
                         row.label(text="details hidden, click on toggle to display")
                 else:
-                    error_message = invalid_details if component_invalid else "Missing component propertyGroup !"
+                    error_message = invalid_details if component_invalid else "Missing component UI data, please reload registry !"
                     row.label(text=error_message)
 
                 # "footer" with additional controls

@@ -104,6 +104,8 @@ UI:
 - perhaps directly export default values within the schema.json ?
         - for most types , it is straighforward, but others, not so much: like the default color in Bevy , etc
 
+- [x] change default schema.json to registry.json
+- [ ] pasted components do not get updated value in custom_property
 
 # Additional
     - [x] check if output "string" in custom properties are correct

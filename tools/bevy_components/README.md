@@ -24,7 +24,7 @@ of your Bevy components you get a nicely packed custom_property to use with ...
 
 ![blender addon install](./docs/blender_addon_install.png)
 
-* choose the path where ```gltf_auto_export.zip``` is stored
+* choose the path where ```bevy_components.zip``` is stored
 
 ![blender addon install](./docs/blender_addon_install2.png)
 
