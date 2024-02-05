@@ -162,9 +162,10 @@ pub fn gltf_extras_to_components(
     gltf: &mut Gltf,
     scenes: &mut ResMut<Assets<Scene>>,
     type_registry: impl Deref<Target = TypeRegistry>,
+    legacy_mode: bool
 ) {
     let mut added_components = 0;
-    let simplified_types = false;
+    let simplified_types = legacy_mode;
     if simplified_types {
         warn!("using simplified component definitions is deprecated since 0.3, prefer defining components with real ron values (use the bevy_components tool for Blender for simplicity) ");
     }

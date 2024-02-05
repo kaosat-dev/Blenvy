@@ -110,7 +110,7 @@ fn materials_library_enabled(blueprints_config: Res<BluePrintsConfig>) -> bool {
 
 impl Plugin for BlueprintsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(ComponentsFromGltfPlugin)
+        app.add_plugins(ComponentsFromGltfPlugin::default())
             .register_type::<BlueprintName>()
             .register_type::<MaterialInfo>()
             .register_type::<SpawnHere>()
