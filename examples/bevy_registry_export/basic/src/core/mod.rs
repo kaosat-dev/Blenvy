@@ -27,6 +27,7 @@ impl Plugin for CorePlugin {
             CameraPlugin,
             PhysicsPlugin,
             BlueprintsPlugin {
+                legacy_mode: false,
                 library_folder: "models/library".into(),
                 format: GltfFormat::GLB,
                 aabbs: true,
