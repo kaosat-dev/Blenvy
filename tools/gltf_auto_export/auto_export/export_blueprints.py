@@ -22,13 +22,12 @@ def export_collections(collections, folder_path, library_scene, addon_prefs, glt
             export_settings['export_materials'] = 'PLACEHOLDER'
 
         collection = bpy.data.collections[collection_name]
-        collection_instances_combine_mode = getattr(addon_prefs, "collection_instances_combine_mode")
         generate_and_export(
             addon_prefs, 
             temp_scene_name="__temp_scene_"+collection.name,
             export_settings=export_settings,
             gltf_output_path=gltf_output_path,
-            tempScene_filler= lambda temp_collection: copy_hollowed_collection_into(collection, temp_collection, library_collections=library_collections, collection_instances_combine_mode= collection_instances_combine_mode),
+            tempScene_filler= lambda temp_collection: copy_hollowed_collection_into(collection, temp_collection, library_collections=library_collections, addon_prefs=addon_prefs),
             tempScene_cleaner= lambda temp_scene, params: clear_hollow_scene(original_root_collection=collection, temp_scene=temp_scene, **params)
         )
     # reset active collection to the one we save before

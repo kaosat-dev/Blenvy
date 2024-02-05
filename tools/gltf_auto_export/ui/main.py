@@ -68,6 +68,7 @@ class GLTF_PT_auto_export_root(bpy.types.Panel):
         layout.prop(operator, 'will_save_settings')
         layout.prop(operator, "export_output_folder")
         layout.prop(operator, "export_scene_settings")
+        layout.prop(operator, "export_legacy_mode")
 
         # scene selectors
         row = layout.row()

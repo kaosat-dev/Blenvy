@@ -3,11 +3,17 @@ from .helpers_collections import (set_active_collection)
 from .object_makers import (make_empty)
 
 # copies the contents of a collection into another one while replacing library instances with empties
-def copy_hollowed_collection_into(source_collection, destination_collection, parent_empty=None, filter=None, collection_instances_combine_mode=None, library_collections=[]):
+def copy_hollowed_collection_into(source_collection, destination_collection, parent_empty=None, filter=None, library_collections=[], addon_prefs={}):
+    collection_instances_combine_mode = getattr(addon_prefs, "collection_instances_combine_mode")
+    legacy_mode = getattr(addon_prefs, "export_legacy_mode")
+    
     root_objects = []
     special_properties= { # to be able to reset any special property afterwards
         "combine": [],
     }
+
+    collection_instances_combine_mode= collection_instances_combine_mode
+
     for object in source_collection.objects:
         if filter is not None and filter(object) is False:
             continue
@@ -22,7 +28,7 @@ def copy_hollowed_collection_into(source_collection, destination_collection, par
             object.name = original_name + "____bak"
             empty_obj = make_empty(original_name, object.location, object.rotation_euler, object.scale, destination_collection)
             """we inject the collection/blueprint name, as a component called 'BlueprintName', but we only do this in the empty, not the original object"""
-            empty_obj['BlueprintName'] = '"'+collection_name+'"'
+            empty_obj['BlueprintName'] = '"'+collection_name+'"' if legacy_mode else '("'+collection_name+'")'
             empty_obj['SpawnHere'] = ''
 
             for k, v in object.items():

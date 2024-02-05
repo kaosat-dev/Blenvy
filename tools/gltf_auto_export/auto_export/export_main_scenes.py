@@ -17,7 +17,6 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
     export_output_folder = getattr(addon_prefs,"export_output_folder")
     export_blueprints = getattr(addon_prefs,"export_blueprints")
     export_separate_dynamic_and_static_objects = getattr(addon_prefs, "export_separate_dynamic_and_static_objects")
-    collection_instances_combine_mode = getattr(addon_prefs, "collection_instances_combine_mode")
 
     gltf_output_path = os.path.join(folder_path, export_output_folder, scene.name)
     export_settings = { **gltf_export_preferences, 
@@ -38,7 +37,7 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
                 temp_scene_name="__temp_scene",
                 export_settings=export_settings,
                 gltf_output_path=gltf_output_path,
-                tempScene_filler= lambda temp_collection: copy_hollowed_collection_into(scene.collection, temp_collection, library_collections=library_collections, collection_instances_combine_mode= collection_instances_combine_mode, filter=is_object_static),
+                tempScene_filler= lambda temp_collection: copy_hollowed_collection_into(scene.collection, temp_collection, library_collections=library_collections, filter=is_object_static, addon_prefs=addon_prefs),
                 tempScene_cleaner= lambda temp_scene, params: clear_hollow_scene(original_root_collection=scene.collection, temp_scene=temp_scene, **params)
             )
 
@@ -49,7 +48,7 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
                 temp_scene_name="__temp_scene",
                 export_settings=export_settings,
                 gltf_output_path=gltf_output_path,
-                tempScene_filler= lambda temp_collection: copy_hollowed_collection_into(scene.collection, temp_collection, library_collections=library_collections, collection_instances_combine_mode= collection_instances_combine_mode, filter=is_object_dynamic),
+                tempScene_filler= lambda temp_collection: copy_hollowed_collection_into(scene.collection, temp_collection, library_collections=library_collections, filter=is_object_dynamic, addon_prefs=addon_prefs),
                 tempScene_cleaner= lambda temp_scene, params: clear_hollow_scene(original_root_collection=scene.collection, temp_scene=temp_scene, **params)
             )
 
@@ -60,7 +59,7 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
                 temp_scene_name="__temp_scene",
                 export_settings=export_settings,
                 gltf_output_path=gltf_output_path,
-                tempScene_filler= lambda temp_collection: copy_hollowed_collection_into(scene.collection, temp_collection, library_collections=library_collections, collection_instances_combine_mode= collection_instances_combine_mode),
+                tempScene_filler= lambda temp_collection: copy_hollowed_collection_into(scene.collection, temp_collection, library_collections=library_collections, addon_prefs=addon_prefs),
                 tempScene_cleaner= lambda temp_scene, params: clear_hollow_scene(original_root_collection=scene.collection, temp_scene=temp_scene, **params)
             )
 
