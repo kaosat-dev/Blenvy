@@ -1,11 +1,12 @@
+use bevy::ecs::component::Component;
+use bevy::render::color::Color;
 use core::ops::Deref;
-
 use ron::Value;
 use serde::de::DeserializeSeed;
 
 use bevy::ecs::{entity::Entity, reflect::ReflectComponent};
 use bevy::gltf::{Gltf, GltfExtras};
-use bevy::reflect::serde::UntypedReflectDeserializer; // ReflectSerializer
+use bevy::reflect::serde::UntypedReflectDeserializer;
 use bevy::reflect::{Reflect, TypeInfo, TypeRegistry};
 use bevy::scene::Scene;
 use bevy::utils::HashMap;
@@ -16,9 +17,18 @@ use bevy::{
 
 use super::capitalize_first_letter;
 
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+struct TuppleTestColor(Color);
+
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+pub struct VecOfColors(Vec<Color>);
+
 pub fn ronstring_to_reflect_component(
     ron_string: &String,
     type_registry: &TypeRegistry,
+    simplified_types: bool,
 ) -> Vec<Box<dyn Reflect>> {
     let lookup: HashMap<String, Value> = ron::from_str(ron_string.as_str()).unwrap();
     let mut components: Vec<Box<dyn Reflect>> = Vec::new();
@@ -38,82 +48,72 @@ pub fn ronstring_to_reflect_component(
             type_registry.get_with_short_type_path(capitalized_type_name.as_str())
         {
             debug!("TYPE INFO {:?}", type_registration.type_info());
-            match type_registration.type_info() {
-                TypeInfo::TupleStruct(info) => {
-                    // we handle tupple strucs with only one field differently, as Blender's custom properties with custom ui (float, int, bool, etc) always give us a tupple struct
-                    if info.field_len() == 1 {
-                        let field = info
-                            .field_at(0)
-                            .expect("we should always have at least one field here");
-                        let field_name = field.type_path();
-                        // TODO: find a way to cast with typeId instead of this matching
-                        /*match field.type_id(){
-                          TypeId::of::<f32>() => {
-                            println!("WE HAVE A f32");
-                          }
-                          }
-                          Vec3 => {
-                            println!("WE HAVE A VEC3");
-                            let bla:Vec3 = ron::from_str(&parsed_value).unwrap();
-                            println!("bla {}", bla)
-                          }
-                          _ =>{}
-                        }*/
-
-                        let mut formated = parsed_value.clone();
-                        match field_name {
-                            "f32" => {
-                                formated = parsed_value.parse::<f32>().unwrap().to_string();
-                            }
-                            "f64" => {
-                                formated = parsed_value.parse::<f64>().unwrap().to_string();
-                            }
-                            "u8" => {
-                                formated = parsed_value.parse::<u8>().unwrap().to_string();
-                            }
-                            "u16" => {
-                                formated = parsed_value.parse::<u16>().unwrap().to_string();
-                            }
-                            "u32" => {
-                                formated = parsed_value.parse::<u32>().unwrap().to_string();
-                            }
-                            "u64" => {
-                                formated = parsed_value.parse::<u64>().unwrap().to_string();
-                            }
-                            "u128" => {
-                                formated = parsed_value.parse::<u128>().unwrap().to_string();
-                            }
-                            "glam::Vec2" => {
-                                let parsed: Vec<f32> = ron::from_str(&parsed_value).unwrap();
-                                formated = format!("(x:{},y:{})", parsed[0], parsed[1]);
-                            }
-                            "glam::Vec3" => {
-                                let parsed: Vec<f32> = ron::from_str(&parsed_value).unwrap();
-                                formated =
-                                    format!("(x:{},y:{},z:{})", parsed[0], parsed[1], parsed[2]);
-                            }
-                            "bevy_render::color::Color" => {
-                                let parsed: Vec<f32> = ron::from_str(&parsed_value).unwrap();
-                                if parsed.len() == 3 {
+            if simplified_types {
+                match type_registration.type_info() {
+                    TypeInfo::TupleStruct(info) => {
+                        // we handle tupple strucs with only one field differently, as Blender's custom properties with custom ui (float, int, bool, etc) always give us a tupple struct
+                        if info.field_len() == 1 {
+                            let field = info
+                                .field_at(0)
+                                .expect("we should always have at least one field here");
+                            let field_name = field.type_path();
+                            let mut formated = parsed_value.clone();
+                            match field_name {
+                                "f32" => {
+                                    formated = parsed_value.parse::<f32>().unwrap().to_string();
+                                }
+                                "f64" => {
+                                    formated = parsed_value.parse::<f64>().unwrap().to_string();
+                                }
+                                "u8" => {
+                                    formated = parsed_value.parse::<u8>().unwrap().to_string();
+                                }
+                                "u16" => {
+                                    formated = parsed_value.parse::<u16>().unwrap().to_string();
+                                }
+                                "u32" => {
+                                    formated = parsed_value.parse::<u32>().unwrap().to_string();
+                                }
+                                "u64" => {
+                                    formated = parsed_value.parse::<u64>().unwrap().to_string();
+                                }
+                                "u128" => {
+                                    formated = parsed_value.parse::<u128>().unwrap().to_string();
+                                }
+                                "glam::Vec2" => {
+                                    let parsed: Vec<f32> = ron::from_str(&parsed_value).unwrap();
+                                    formated = format!("(x:{},y:{})", parsed[0], parsed[1]);
+                                }
+                                "glam::Vec3" => {
+                                    let parsed: Vec<f32> = ron::from_str(&parsed_value).unwrap();
                                     formated = format!(
-                                        "Rgba(red:{},green:{},blue:{}, alpha: 1.0)",
+                                        "(x:{},y:{},z:{})",
                                         parsed[0], parsed[1], parsed[2]
                                     );
                                 }
-                                if parsed.len() == 4 {
-                                    formated = format!(
-                                        "Rgba(red:{},green:{},blue:{}, alpha:{})",
-                                        parsed[0], parsed[1], parsed[2], parsed[3]
-                                    );
+                                "bevy_render::color::Color" => {
+                                    let parsed: Vec<f32> = ron::from_str(&parsed_value).unwrap();
+                                    if parsed.len() == 3 {
+                                        formated = format!(
+                                            "Rgba(red:{},green:{},blue:{}, alpha: 1.0)",
+                                            parsed[0], parsed[1], parsed[2]
+                                        );
+                                    }
+                                    if parsed.len() == 4 {
+                                        formated = format!(
+                                            "Rgba(red:{},green:{},blue:{}, alpha:{})",
+                                            parsed[0], parsed[1], parsed[2], parsed[3]
+                                        );
+                                    }
                                 }
+                                _ => {}
                             }
-                            _ => {}
-                        }
 
-                        parsed_value = format!("({formated})");
+                            parsed_value = format!("({formated})");
+                        }
                     }
+                    _ => {}
                 }
-                _ => {}
             }
 
             // println!("parsed value {}",parsed_value);
@@ -128,7 +128,7 @@ pub fn ronstring_to_reflect_component(
             );
 
             // usefull to determine what an entity looks like Serialized
-            /*let test_struct = Enemy::default();
+            /*let test_struct = VecOfColors(vec![Color::Rgba { red: 0., green: 0.0, blue: 0.0, alpha: 0.0 }]);//TuppleTestColor(Color::Rgba { red: 0., green: 0.0, blue: 0.0, alpha: 0.0 });
             let serializer = ReflectSerializer::new(&test_struct, &type_registry);
             let serialized =
                 ron::ser::to_string_pretty(&serializer, ron::ser::PrettyConfig::default()).unwrap();
@@ -162,8 +162,13 @@ pub fn gltf_extras_to_components(
     gltf: &mut Gltf,
     scenes: &mut ResMut<Assets<Scene>>,
     type_registry: impl Deref<Target = TypeRegistry>,
+    legacy_mode: bool
 ) {
     let mut added_components = 0;
+    let simplified_types = legacy_mode;
+    if simplified_types {
+        warn!("using simplified component definitions is deprecated since 0.3, prefer defining components with real ron values (use the bevy_components tool for Blender for simplicity) ");
+    }
     for (_name, scene) in &gltf.named_scenes {
         debug!("gltf: scene name {:?}", _name);
 
@@ -173,7 +178,8 @@ pub fn gltf_extras_to_components(
         let mut entity_components: HashMap<Entity, Vec<Box<dyn Reflect>>> = HashMap::new();
         for (entity, name, extras, parent) in query.iter(&scene.world) {
             debug!("Name: {}, entity {:?}, parent: {:?}", name, entity, parent);
-            let reflect_components = ronstring_to_reflect_component(&extras.value, &type_registry);
+            let reflect_components =
+                ronstring_to_reflect_component(&extras.value, &type_registry, simplified_types);
             added_components = reflect_components.len();
             debug!("Found components {}", added_components);
 

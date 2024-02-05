@@ -24,7 +24,7 @@ Here's a minimal usage example:
 # Cargo.toml
 [dependencies]
 bevy="0.12"
-bevy_gltf_components = { version = "0.2"} 
+bevy_gltf_components = { version = "0.3"} 
 
 ```
 
@@ -33,7 +33,7 @@ bevy_gltf_components = { version = "0.2"}
  fn main() {
     App::new()
          .add_plugins(DefaultPlugins)
-         .add_plugin(ComponentsFromGltfPlugin)
+         .add_plugin(ComponentsFromGltfPlugin::default())
          .add_system(spawn_level)
          .run();
  }
@@ -60,7 +60,7 @@ bevy_gltf_components = { version = "0.2"}
 Add the following to your `[dependencies]` section in `Cargo.toml`:
 
 ```toml
-bevy_gltf_components = "0.2"
+bevy_gltf_components = "0.3"
 ```
 
 Or use `cargo add`:
@@ -68,6 +68,27 @@ Or use `cargo add`:
 ```toml
 cargo add bevy_gltf_components
 ```
+
+## Configuration
+
+starting with version 0.3, this plugin is configurable
+Use the default configuration: 
+
+```rust no_run
+ComponentsFromGltfPlugin::default()
+```
+
+Or disable the legacy mode: (enabled by default)
+
+```rust no_run
+ComponentsFromGltfPlugin{legacy_mode: false}
+```
+
+You **need** to disable legacy mode if you want to use the [```bevy_components```](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/tools_bevy_blueprints/tools/bevy_components) Blender addon + the [```bevy_registry_export crate```](https://crates.io/crates/bevy_registry_export) ! 
+As it create custom properties that are writen in real **ron** file format
+instead of a simplified version (the one in the legacy mode)
+
+> Note: the legacy mode support will be dropped in future versions, and the default behaviour will be NO legacy mode
 
 ## SystemSet
 
@@ -96,7 +117,7 @@ The main branch is compatible with the latest Bevy release, while the branch `be
 Compatibility of `bevy_gltf_components` versions:
 | `bevy_gltf_components` | `bevy` |
 | :--                 | :--    |
-| `0.2`               | `0.12` |
+| `0.2 - 0.3`         | `0.12` |
 | `0.1`               | `0.11` |
 | branch `main`       | `0.12` |
 | branch `bevy_main`  | `main` |

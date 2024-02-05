@@ -32,7 +32,9 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         'export_materials_library',
         'export_materials_path',
 
-        'export_scene_settings']
+        'export_scene_settings'
+        'export_legacy_mode'
+        ]
 
     @classmethod
     def register(cls):

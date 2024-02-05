@@ -6,7 +6,7 @@ license = "MIT OR Apache-2.0"
 
 [dependencies]
 bevy="0.12"
-bevy_gltf_blueprints = "0.6"
+bevy_gltf_blueprints = "0.7"
 bevy_gltf_save_load = { path = "../../../crates/bevy_gltf_save_load" }
 
 bevy_rapier3d = { version = "0.23.0", features = [ "serde-serialize", "debug-render-3d", "enhanced-determinism"] }

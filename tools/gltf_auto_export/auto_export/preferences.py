@@ -22,6 +22,7 @@ AutoExportGltfPreferenceNames = [
     'export_marked_assets',
     'collection_instances_combine_mode',
     'export_separate_dynamic_and_static_objects',
+    'export_legacy_mode',
 
     'export_materials_library',
     'export_materials_path',
@@ -148,6 +149,11 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         default=False
     )
 
+    export_legacy_mode: BoolProperty(
+        name='Legacy mode for Bevy',
+        description='Toggle this if you want to be compatible with bevy_gltf_blueprints/components < 0.8',
+        default=True
+    )
 
     main_scenes: CollectionProperty(name="main scenes", type=CUSTOM_PG_sceneName)
     main_scenes_index: IntProperty(name = "Index for main scenes list", default = 0)

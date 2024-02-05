@@ -4,20 +4,20 @@ use bevy::gltf::Gltf;
 use bevy::utils::HashSet;
 use bevy::{asset::LoadState, prelude::*};
 
-use crate::gltf_extras_to_components;
+use crate::{gltf_extras_to_components, GltfComponentsConfig};
 
 #[derive(Resource)]
 /// component to keep track of gltfs' loading state
 pub struct GltfLoadingTracker {
     pub loading_gltfs: HashSet<Handle<Gltf>>,
-    pub loaded_gltfs: HashSet<Handle<Gltf>>,
+    pub processed_gltfs: HashSet<String>,
 }
 
 impl GltfLoadingTracker {
     pub fn new() -> GltfLoadingTracker {
         GltfLoadingTracker {
-            loaded_gltfs: HashSet::new(),
             loading_gltfs: HashSet::new(),
+            processed_gltfs: HashSet::new(),
         }
     }
     pub fn add_gltf(&mut self, handle: Handle<Gltf>) {
@@ -55,6 +55,7 @@ pub fn process_loaded_scenes(
     mut scenes: ResMut<Assets<Scene>>,
     app_type_registry: Res<AppTypeRegistry>,
     asset_server: Res<AssetServer>,
+    gltf_components_config: Res<GltfComponentsConfig>,
 ) {
     let mut loaded_gltfs = Vec::new();
     for gltf in &tracker.loading_gltfs {
@@ -75,10 +76,15 @@ pub fn process_loaded_scenes(
 
     for gltf_handle in &loaded_gltfs {
         if let Some(gltf) = gltfs.get_mut(gltf_handle) {
-            gltf_extras_to_components(gltf, &mut scenes, &*type_registry);
+            gltf_extras_to_components(gltf, &mut scenes, &*type_registry, gltf_components_config.legacy_mode);
+
+            if let Some(path) = gltf_handle.path() {
+                tracker.processed_gltfs.insert(path.to_string());
+            }
+        } else {
+            warn!("could not find gltf asset, cannot process it");
         }
         tracker.loading_gltfs.remove(gltf_handle);
-        tracker.loaded_gltfs.insert(gltf_handle.clone());
-        debug!("Done loading scene");
+        debug!("Done loading gltf file");
     }
 }
