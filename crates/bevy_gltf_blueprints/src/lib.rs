@@ -78,6 +78,8 @@ impl fmt::Display for GltfFormat {
 #[derive(Debug, Clone)]
 /// Plugin for gltf blueprints
 pub struct BlueprintsPlugin {
+    pub legacy_mode: bool, // flag that gets passed on to bevy_gltf_components
+
     pub format: GltfFormat,
     /// The base folder where library/blueprints assets are loaded from, relative to the executable.
     pub library_folder: PathBuf,
@@ -91,6 +93,7 @@ pub struct BlueprintsPlugin {
 impl Default for BlueprintsPlugin {
     fn default() -> Self {
         Self {
+            legacy_mode: true,
             format: GltfFormat::GLB,
             library_folder: PathBuf::from("models/library"),
             aabbs: false,
@@ -110,7 +113,9 @@ fn materials_library_enabled(blueprints_config: Res<BluePrintsConfig>) -> bool {
 
 impl Plugin for BlueprintsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(ComponentsFromGltfPlugin::default())
+        app.add_plugins(ComponentsFromGltfPlugin{
+            legacy_mode: self.legacy_mode
+        })
             .register_type::<BlueprintName>()
             .register_type::<MaterialInfo>()
             .register_type::<SpawnHere>()
