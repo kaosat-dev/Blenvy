@@ -106,6 +106,8 @@ UI:
 
 - [x] change default schema.json to registry.json
 - [ ] pasted components do not get updated value in custom_property
+- [x] finish documentation
+- [ ] add storage of registry path
 
 # Additional
     - [x] check if output "string" in custom properties are correct
@@ -116,9 +118,20 @@ UI:
                 - "AutoExport" => Needed
                 - "Dynamic" ? naah wait that should be exported by the Bevy side
         - [ ] filter out Components_meta ??
+        - [x] add legacy mode to the persisted parameters
+
     - bevy_gltf_components:
-        - first release patch for current issues
-        - add "compatibility mode" and deprecation warnings for the current hack-ish conversion of fake ron
+        - [x] first release patch for current issues
+        - [x] make configurable 
+        - [x] add "compatibility mode" and deprecation warnings for the current hack-ish conversion of fake ron
+        - [x] update docs to show we need to use ComponentsFromGltfPlugin::default
+
     - bevy_gltf_blueprints
+        - [x] update dependency
+        - [x] update version
+        - [ ] add ability to set legacy mode for bevy_gltf_components ? 
+
+    - [ ] release all versions
+    - [ ] update main documentation, add compatibility version grid
 
     
