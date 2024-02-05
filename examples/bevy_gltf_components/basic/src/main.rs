@@ -34,7 +34,7 @@ fn main() {
             RapierPhysicsPlugin::<NoUserData>::default(),
             RapierDebugRenderPlugin::default(),
             // our custom plugins
-            ComponentsFromGltfPlugin,
+            ComponentsFromGltfPlugin::default(),
             CorePlugin,           // reusable plugins
             DemoPlugin,           // specific to our game
             ComponentsTestPlugin, // Showcases different type of components /structs
