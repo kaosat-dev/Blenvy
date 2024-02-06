@@ -1,5 +1,6 @@
+use bevy::log::info;
 use bevy::{
-    prelude::{info, ResMut},
+    prelude::ResMut,
     time::Time,
 };
 use bevy_xpbd_3d::prelude::Physics;

@@ -1,9 +1,7 @@
-use crate::{assets::GameAssets, state::InAppRunning};
 use bevy::prelude::*;
 use bevy_gltf_blueprints::GameWorldTag;
+use bevy_gltf_worlflow_examples_common::{assets::GameAssets, GameState, InAppRunning, Player};
 use bevy_rapier3d::prelude::*;
-
-use super::Player;
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
@@ -98,5 +96,21 @@ pub fn trigger_level_transition(
                 // println!("collision ended")
             }
         }
+    }
+}
+
+
+pub struct LevelsPlugin;
+impl Plugin for LevelsPlugin {
+    fn build(&self, app: &mut App) {
+        app
+        .register_type::<LevelTransition>()
+        .add_systems(
+            Update,
+            (
+                trigger_level_transition,
+            )
+            .run_if(in_state(GameState::InGame)),
+        );
     }
 }

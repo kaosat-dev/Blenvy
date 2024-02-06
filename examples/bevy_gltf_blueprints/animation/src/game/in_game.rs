@@ -1,18 +1,15 @@
+use bevy_gltf_worlflow_examples_common::{assets::GameAssets, GameState, InAppRunning, Player};
 use bevy_rapier3d::prelude::Velocity;
 use rand::Rng;
 use std::time::Duration;
 
 use bevy::prelude::*;
 
-use crate::{
-    assets::GameAssets,
-    state::{GameState, InAppRunning},
-};
 use bevy_gltf_blueprints::{
     AnimationPlayerLink, Animations, BluePrintBundle, BlueprintName, GameWorldTag,
 };
 
-use super::{Fox, Player, Robot};
+use super::{Fox, Robot};
 
 pub fn setup_game(
     mut commands: Commands,

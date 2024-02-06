@@ -1,6 +1,5 @@
 use bevy::prelude::*;
-
-use crate::state::{AppState, GameState, InMainMenu};
+use bevy_gltf_worlflow_examples_common::{AppState, InMainMenu};
 
 pub fn setup_main_menu(mut commands: Commands) {
     commands.spawn((Camera2dBundle::default(), InMainMenu));
@@ -94,6 +93,8 @@ pub fn main_menu(
 
     mut next_app_state: ResMut<NextState<AppState>>,
     // mut next_game_state: ResMut<NextState<GameState>>,
+    // mut save_requested_events: EventWriter<SaveRequest>,
+    // mut load_requested_events: EventWriter<LoadRequest>,
 ) {
     if keycode.just_pressed(KeyCode::Return) {
         next_app_state.set(AppState::AppLoading);
