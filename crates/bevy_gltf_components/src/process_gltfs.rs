@@ -12,13 +12,15 @@ pub struct GltfLoadingTracker {
     pub loading_gltfs: HashSet<Handle<Gltf>>,
     pub processed_gltfs: HashSet<String>,
 }
-
+impl Default for GltfLoadingTracker {
+    fn default() -> Self {
+     Self::new()
+    }
+}
+    
 impl GltfLoadingTracker {
     pub fn new() -> GltfLoadingTracker {
-        GltfLoadingTracker {
-            loading_gltfs: HashSet::new(),
-            processed_gltfs: HashSet::new(),
-        }
+        GltfLoadingTracker::default()
     }
     pub fn add_gltf(&mut self, handle: Handle<Gltf>) {
         self.loading_gltfs.insert(handle);
@@ -38,11 +40,11 @@ pub fn track_new_gltf(
                 tracker.add_gltf(handle.clone());
                 debug!("gltf created {:?}", handle);
             } else {
-                let asset_path = asset_server.get_path(*id).unwrap_or(AssetPath::from_path(Path::new("n/a".into())));  // will unfortunatly not work, will do a PR/ discussion at the Bevy level, leaving for reference, would be very practical
+                let asset_path = asset_server.get_path(*id).unwrap_or(AssetPath::from_path(Path::new("n/a")));  // will unfortunatly not work, will do a PR/ discussion at the Bevy level, leaving for reference, would be very practical
                 warn!(
                     "a gltf file ({:?}) has no handle available, cannot inject components",
                     asset_path
-                )
+                );
             }
         }
     }

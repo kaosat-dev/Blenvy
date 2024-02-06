@@ -42,7 +42,7 @@ impl CopyComponents {
                     let type_id = component_info.type_id().unwrap();
                     if self.exclude.contains(&type_id) {
                         debug!("excluding component: {:?}", component_info.name());
-                        return None;
+                        None
                     } else {
                         debug!(
                             "cloning: component: {:?} {:?}",
@@ -51,32 +51,25 @@ impl CopyComponents {
                         );
 
                         if let Some(type_registration) = registry.get(type_id) {
-                            return Some(type_registration);
+                            Some(type_registration)
+                        } else if self.stringent {
+                            return Some(
+                                registry.get(type_id)
+                                    .unwrap_or_else(|| panic!("cannot clone entity: component: {:?} is not registered", component_info.name()))
+                            )
                         } else {
-                            if self.stringent {
-                                return Some(
-                                    registry.get(type_id).expect(
-                                        format!(
-                                        "cannot clone entity: component: {:?} is not registered",
-                                        component_info.name()
-                                    )
-                                        .as_str(),
-                                    ),
-                                );
-                            } else {
-                                warn!(
-                                    "cannot clone component: component: {:?} is not registered",
-                                    component_info.name()
-                                );
-                                return None;
-                            }
+                            warn!(
+                                "cannot clone component: component: {:?} is not registered",
+                                component_info.name()
+                               );
+                            None
                         }
                     }
                 })
                 .map(|type_id| {
                     return (
                         type_id.data::<ReflectComponent>().unwrap().clone(),
-                        type_id.type_info().type_id().clone(), // we need the original type_id down the line
+                        type_id.type_info().type_id(), // we need the original type_id down the line
                     );
                 })
                 .collect::<Vec<_>>()
@@ -104,6 +97,6 @@ impl CopyComponents {
 // This allows the command to be used in systems
 impl Command for CopyComponents {
     fn apply(self, world: &mut World) {
-        self.transfer_components(world)
+        self.transfer_components(world);
     }
 }

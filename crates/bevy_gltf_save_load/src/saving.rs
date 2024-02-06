@@ -17,7 +17,7 @@ pub struct SaveRequest {
 pub struct SavingFinished;
 
 pub fn should_save(save_requests: EventReader<SaveRequest>) -> bool {
-    return save_requests.len() > 0;
+    !save_requests.is_empty()
 }
 
 #[derive(Resource, Clone, Debug, Default, Reflect)]
@@ -66,7 +66,7 @@ pub(crate) fn prepare_save_game(
     }
     for (_, blueprint_name, library) in static_entities.iter() {
         let library_path: String = library
-            .map_or_else(|| "", |l| &l.0.to_str().unwrap())
+            .map_or_else(|| "", |l| l.0.to_str().unwrap())
             .into();
         commands.insert_resource(StaticEntitiesStorage {
             name: blueprint_name.0.clone(),

@@ -121,7 +121,7 @@ impl Plugin for BlueprintsPlugin {
             .register_type::<SpawnHere>()
             .register_type::<Animations>()
             .insert_resource(BluePrintsConfig {
-                format: self.format.clone(),
+                format: self.format,
                 library_folder: self.library_folder.clone(),
 
                 aabbs: self.aabbs,

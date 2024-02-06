@@ -41,7 +41,7 @@ pub fn compute_descendant_aabb(
             if let Ok(aabb) = existing_aabbs.get(*child) {
                 chilren_aabbs.push(*aabb);
             } else {
-                let aabb = compute_descendant_aabb(*child, children, &existing_aabbs);
+                let aabb = compute_descendant_aabb(*child, children, existing_aabbs);
                 chilren_aabbs.push(aabb);
             }
         }
@@ -57,5 +57,5 @@ pub fn compute_descendant_aabb(
         return aabb;
     }
 
-    return Aabb::default();
+    Aabb::default()
 }
