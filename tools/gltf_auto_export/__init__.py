@@ -1,7 +1,7 @@
 bl_info = {
     "name": "gltf_auto_export",
     "author": "kaosigh",
-    "version": (0, 11, 0),
+    "version": (0, 12, 0),
     "blender": (3, 4, 0),
     "location": "File > Import-Export",
     "description": "glTF/glb auto-export",
@@ -77,7 +77,6 @@ def post_save(scene, depsgraph):
 
 
 def register():
-    print("registering")
     for cls in classes:
         bpy.utils.register_class(cls)
     # for some reason, adding these directly to the tracker class in register() do not work reliably
@@ -97,5 +96,4 @@ def unregister():
 
 
 if "gltf_auto_export" == "__main__":
-    print("foo")
     register()
