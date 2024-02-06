@@ -8,6 +8,9 @@ pub struct GameAssets {
     #[asset(key = "world")]
     pub world: Handle<Gltf>,
 
+    #[asset(key = "world_dynamic", optional)]
+    pub world_dynamic: Option<Handle<Gltf>>,
+
     #[asset(key = "level1", optional)]
     pub level1: Option<Handle<Gltf>>,
     #[asset(key = "level2", optional)]

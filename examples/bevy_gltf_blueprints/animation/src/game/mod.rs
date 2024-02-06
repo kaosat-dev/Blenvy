@@ -24,9 +24,6 @@ impl Plugin for GamePlugin {
         app
             .register_type::<Robot>()
             .register_type::<Fox>()
-            // little helper utility, to automatically inject components that are dependant on an other component
-            // ie, here an Entity with a Player component should also always have a ShouldBeWithPlayer component
-            // you get a warning if you use this, as I consider this to be stop-gap solution (usually you should have either a bundle, or directly define all needed components)
             .add_systems(
                 Update,
                 (

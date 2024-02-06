@@ -1,6 +1,5 @@
 use bevy::prelude::*;
-
-use crate::state::InGameSaving;
+use bevy_gltf_worlflow_examples_common::InGameSaving;
 
 pub fn setup_saving_screen(mut commands: Commands) {
     commands.spawn((

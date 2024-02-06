@@ -1,9 +1,5 @@
 use bevy::prelude::*;
-
-use crate::{
-    assets::GameAssets,
-    state::{GameState, InAppRunning},
-};
+use bevy_gltf_worlflow_examples_common::{assets::GameAssets, GameState, InAppRunning};
 use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, GameWorldTag};
 
 use bevy_rapier3d::prelude::Velocity;

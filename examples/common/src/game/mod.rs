@@ -23,7 +23,6 @@ impl Plugin for GamePlugin {
         app.add_plugins((
             PlayerPlugin,
             PickingPlugin
-
         ))
             /* .register_type::<Interactible>()
             .register_type::<SoundMaterial>()

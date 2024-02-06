@@ -2111,179 +2111,6 @@
       "type": "object",
       "typeInfo": "Enum"
     },
-    "bevy_bevy_registry_export_basic_example::core::camera::camera_tracking::CameraTrackable": {
-      "additionalProperties": false,
-      "isComponent": true,
-      "isResource": false,
-      "properties": {},
-      "required": [],
-      "short_name": "CameraTrackable",
-      "title": "bevy_bevy_registry_export_basic_example::core::camera::camera_tracking::CameraTrackable",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "bevy_bevy_registry_export_basic_example::core::camera::camera_tracking::CameraTracking": {
-      "additionalProperties": false,
-      "isComponent": true,
-      "isResource": false,
-      "properties": {
-        "offset": {
-          "type": {
-            "$ref": "#/$defs/glam::Vec3"
-          }
-        }
-      },
-      "required": [
-        "offset"
-      ],
-      "short_name": "CameraTracking",
-      "title": "bevy_bevy_registry_export_basic_example::core::camera::camera_tracking::CameraTracking",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "bevy_bevy_registry_export_basic_example::core::camera::camera_tracking::CameraTrackingOffset": {
-      "isComponent": true,
-      "isResource": false,
-      "items": false,
-      "prefixItems": [
-        {
-          "type": {
-            "$ref": "#/$defs/glam::Vec3"
-          }
-        }
-      ],
-      "short_name": "CameraTrackingOffset",
-      "title": "bevy_bevy_registry_export_basic_example::core::camera::camera_tracking::CameraTrackingOffset",
-      "type": "array",
-      "typeInfo": "TupleStruct"
-    },
-    "bevy_bevy_registry_export_basic_example::core::physics::physics_replace_proxies::AutoAABBCollider": {
-      "isComponent": true,
-      "isResource": false,
-      "oneOf": [
-        "Cuboid",
-        "Ball",
-        "Capsule"
-      ],
-      "short_name": "AutoAABBCollider",
-      "title": "bevy_bevy_registry_export_basic_example::core::physics::physics_replace_proxies::AutoAABBCollider",
-      "type": "string",
-      "typeInfo": "Enum"
-    },
-    "bevy_bevy_registry_export_basic_example::core::physics::physics_replace_proxies::Collider": {
-      "isComponent": true,
-      "isResource": false,
-      "oneOf": [
-        {
-          "items": false,
-          "prefixItems": [
-            {
-              "type": {
-                "$ref": "#/$defs/f32"
-              }
-            }
-          ],
-          "short_name": "Ball",
-          "title": "Ball",
-          "type": "array",
-          "typeInfo": "Tuple"
-        },
-        {
-          "items": false,
-          "prefixItems": [
-            {
-              "type": {
-                "$ref": "#/$defs/glam::Vec3"
-              }
-            }
-          ],
-          "short_name": "Cuboid",
-          "title": "Cuboid",
-          "type": "array",
-          "typeInfo": "Tuple"
-        },
-        {
-          "items": false,
-          "prefixItems": [
-            {
-              "type": {
-                "$ref": "#/$defs/glam::Vec3"
-              }
-            },
-            {
-              "type": {
-                "$ref": "#/$defs/glam::Vec3"
-              }
-            },
-            {
-              "type": {
-                "$ref": "#/$defs/f32"
-              }
-            }
-          ],
-          "short_name": "Capsule",
-          "title": "Capsule",
-          "type": "array",
-          "typeInfo": "Tuple"
-        },
-        {
-          "title": "Mesh"
-        }
-      ],
-      "short_name": "Collider",
-      "title": "bevy_bevy_registry_export_basic_example::core::physics::physics_replace_proxies::Collider",
-      "type": "object",
-      "typeInfo": "Enum"
-    },
-    "bevy_bevy_registry_export_basic_example::game::Interactible": {
-      "additionalProperties": false,
-      "isComponent": true,
-      "isResource": false,
-      "properties": {},
-      "required": [],
-      "short_name": "Interactible",
-      "title": "bevy_bevy_registry_export_basic_example::game::Interactible",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "bevy_bevy_registry_export_basic_example::game::Player": {
-      "additionalProperties": false,
-      "isComponent": true,
-      "isResource": false,
-      "properties": {},
-      "required": [],
-      "short_name": "Player",
-      "title": "bevy_bevy_registry_export_basic_example::game::Player",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "bevy_bevy_registry_export_basic_example::game::SoundMaterial": {
-      "isComponent": true,
-      "isResource": false,
-      "oneOf": [
-        "Metal",
-        "Wood",
-        "Rock",
-        "Cloth",
-        "Squishy",
-        "None"
-      ],
-      "short_name": "SoundMaterial",
-      "title": "bevy_bevy_registry_export_basic_example::game::SoundMaterial",
-      "type": "string",
-      "typeInfo": "Enum"
-    },
-    "bevy_bevy_registry_export_basic_example::game::picking::Pickable": {
-      "additionalProperties": false,
-      "isComponent": true,
-      "isResource": false,
-      "properties": {},
-      "required": [],
-      "short_name": "Pickable",
-      "title": "bevy_bevy_registry_export_basic_example::game::picking::Pickable",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
     "bevy_bevy_registry_export_basic_example::test_components::BasicTest": {
       "additionalProperties": false,
       "isComponent": true,
@@ -3187,6 +3014,207 @@
       "required": [],
       "short_name": "SpawnHere",
       "title": "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_gltf_worlflow_examples_common::core::camera::camera_replace_proxies::SSAOSettings": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {},
+      "required": [],
+      "short_name": "SSAOSettings",
+      "title": "bevy_gltf_worlflow_examples_common::core::camera::camera_replace_proxies::SSAOSettings",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_gltf_worlflow_examples_common::core::camera::camera_tracking::CameraTrackable": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {},
+      "required": [],
+      "short_name": "CameraTrackable",
+      "title": "bevy_gltf_worlflow_examples_common::core::camera::camera_tracking::CameraTrackable",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_gltf_worlflow_examples_common::core::camera::camera_tracking::CameraTracking": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "offset": {
+          "type": {
+            "$ref": "#/$defs/glam::Vec3"
+          }
+        }
+      },
+      "required": [
+        "offset"
+      ],
+      "short_name": "CameraTracking",
+      "title": "bevy_gltf_worlflow_examples_common::core::camera::camera_tracking::CameraTracking",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_gltf_worlflow_examples_common::core::camera::camera_tracking::CameraTrackingOffset": {
+      "isComponent": true,
+      "isResource": false,
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/glam::Vec3"
+          }
+        }
+      ],
+      "short_name": "CameraTrackingOffset",
+      "title": "bevy_gltf_worlflow_examples_common::core::camera::camera_tracking::CameraTrackingOffset",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
+    "bevy_gltf_worlflow_examples_common::core::lighting::lighting_replace_proxies::AmbientLightSettings": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "brightness": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "color": {
+          "type": {
+            "$ref": "#/$defs/bevy_render::color::Color"
+          }
+        }
+      },
+      "required": [
+        "color",
+        "brightness"
+      ],
+      "short_name": "AmbientLightSettings",
+      "title": "bevy_gltf_worlflow_examples_common::core::lighting::lighting_replace_proxies::AmbientLightSettings",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_gltf_worlflow_examples_common::core::lighting::lighting_replace_proxies::ShadowmapSettings": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "size": {
+          "type": {
+            "$ref": "#/$defs/usize"
+          }
+        }
+      },
+      "required": [
+        "size"
+      ],
+      "short_name": "ShadowmapSettings",
+      "title": "bevy_gltf_worlflow_examples_common::core::lighting::lighting_replace_proxies::ShadowmapSettings",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_gltf_worlflow_examples_common::core::physics::physics_replace_proxies::AutoAABBCollider": {
+      "isComponent": true,
+      "isResource": false,
+      "oneOf": [
+        "Cuboid",
+        "Ball",
+        "Capsule"
+      ],
+      "short_name": "AutoAABBCollider",
+      "title": "bevy_gltf_worlflow_examples_common::core::physics::physics_replace_proxies::AutoAABBCollider",
+      "type": "string",
+      "typeInfo": "Enum"
+    },
+    "bevy_gltf_worlflow_examples_common::core::physics::physics_replace_proxies::Collider": {
+      "isComponent": true,
+      "isResource": false,
+      "oneOf": [
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/f32"
+              }
+            }
+          ],
+          "short_name": "Ball",
+          "title": "Ball",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/glam::Vec3"
+              }
+            }
+          ],
+          "short_name": "Cuboid",
+          "title": "Cuboid",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/glam::Vec3"
+              }
+            },
+            {
+              "type": {
+                "$ref": "#/$defs/glam::Vec3"
+              }
+            },
+            {
+              "type": {
+                "$ref": "#/$defs/f32"
+              }
+            }
+          ],
+          "short_name": "Capsule",
+          "title": "Capsule",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "title": "Mesh"
+        }
+      ],
+      "short_name": "Collider",
+      "title": "bevy_gltf_worlflow_examples_common::core::physics::physics_replace_proxies::Collider",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "bevy_gltf_worlflow_examples_common::game::picking::Pickable": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {},
+      "required": [],
+      "short_name": "Pickable",
+      "title": "bevy_gltf_worlflow_examples_common::game::picking::Pickable",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_gltf_worlflow_examples_common::game::player::Player": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {},
+      "required": [],
+      "short_name": "Player",
+      "title": "bevy_gltf_worlflow_examples_common::game::player::Player",
       "type": "object",
       "typeInfo": "Struct"
     },

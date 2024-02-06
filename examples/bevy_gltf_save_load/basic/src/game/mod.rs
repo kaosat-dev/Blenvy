@@ -1,4 +1,5 @@
 pub mod in_game;
+use bevy_gltf_worlflow_examples_common::{AppState, GameState};
 pub use in_game::*;
 
 pub mod in_main_menu;
@@ -10,63 +11,9 @@ pub use in_game_loading::*;
 pub mod in_game_saving;
 pub use in_game_saving::*;
 
-pub mod picking;
-pub use picking::*;
-
-use crate::state::{AppState, GameState};
 use bevy::prelude::*;
 use bevy_gltf_save_load::{LoadRequest, LoadingFinished, SaveRequest, SavingFinished};
 
-// this file is just for demo purposes, contains various types of components, systems etc
-
-#[derive(Component, Reflect, Default, Debug)]
-#[reflect(Component)]
-pub enum SoundMaterial {
-    Metal,
-    Wood,
-    Rock,
-    Cloth,
-    Squishy,
-    #[default]
-    None,
-}
-
-#[derive(Component, Reflect, Default, Debug)]
-#[reflect(Component)]
-/// Demo marker component
-pub struct Player;
-
-#[derive(Component, Reflect, Default, Debug)]
-#[reflect(Component)]
-/// Demo component showing auto injection of components
-pub struct ShouldBeWithPlayer;
-
-#[derive(Component, Reflect, Default, Debug)]
-#[reflect(Component)]
-/// Demo marker component
-pub struct Interactible;
-
-fn player_move_demo(
-    keycode: Res<Input<KeyCode>>,
-    mut players: Query<&mut Transform, With<Player>>,
-) {
-    let speed = 0.2;
-    if let Ok(mut player) = players.get_single_mut() {
-        if keycode.pressed(KeyCode::Left) {
-            player.translation.x += speed;
-        }
-        if keycode.pressed(KeyCode::Right) {
-            player.translation.x -= speed;
-        }
-
-        if keycode.pressed(KeyCode::Up) {
-            player.translation.z += speed;
-        }
-        if keycode.pressed(KeyCode::Down) {
-            player.translation.z -= speed;
-        }
-    }
-}
 
 pub fn request_save(
     mut save_requests: EventWriter<SaveRequest>,
@@ -124,19 +71,10 @@ pub fn on_loading_finished(
 pub struct GamePlugin;
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(PickingPlugin)
-            .register_type::<Interactible>()
-            .register_type::<SoundMaterial>()
-            .register_type::<Player>()
+        app
             .add_systems(
                 Update,
                 (
-                    // little helper utility, to automatically inject components that are dependant on an other component
-                    // ie, here an Entity with a Player component should also always have a ShouldBeWithPlayer component
-                    // you get a warning if you use this, as I consider this to be stop-gap solution (usually you should have either a bundle, or directly define all needed components)
-
-                    // insert_dependant_component::<Player, ShouldBeWithPlayer>,
-                    player_move_demo, //.run_if(in_state(AppState::Running)),
                     spawn_test,
                     spawn_test_unregisted_components,
                     spawn_test_parenting,
