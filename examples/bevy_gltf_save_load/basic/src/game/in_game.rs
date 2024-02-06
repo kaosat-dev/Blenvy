@@ -62,7 +62,7 @@ pub fn unload_world(mut commands: Commands, gameworlds: Query<Entity, With<GameW
 }
 
 pub fn should_reset(keycode: Res<Input<KeyCode>>) -> bool {
-    return keycode.just_pressed(KeyCode::N);
+    keycode.just_pressed(KeyCode::N)
 }
 
 pub fn spawn_test(
@@ -171,7 +171,7 @@ pub fn spawn_test_parenting(
                     blueprint: BlueprintName("Sphero".to_string()),
                     ..Default::default()
                 },
-                bevy::prelude::Name::from(format!("SubParentingTest")),
+                bevy::prelude::Name::from("SubParentingTest".to_string()),
                 TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
                 Dynamic(true),
             ))
@@ -183,7 +183,7 @@ pub fn spawn_test_parenting(
                     blueprint: BlueprintName("Container".into()),
                     ..Default::default()
                 },
-                bevy::prelude::Name::from(format!("ParentingTest")),
+                bevy::prelude::Name::from("ParentingTest".to_string()),
                 Dynamic(true),
                 TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
             ))

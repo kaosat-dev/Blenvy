@@ -4,9 +4,6 @@ pub use camera::*;
 pub mod lighting;
 pub use lighting::*;
 
-pub mod relationships;
-pub use relationships::*;
-
 pub mod physics;
 pub use physics::*;
 

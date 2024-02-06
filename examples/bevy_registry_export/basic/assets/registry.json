@@ -71,16 +71,16 @@
       "type": "array",
       "typeInfo": "List"
     },
-    "alloc::vec::Vec<bevy_bevy_registry_export_basic_example::test_components::TuppleVec3>": {
+    "alloc::vec::Vec<bevy_bevy_registry_export_basic_example::test_components::TupleVec3>": {
       "isComponent": false,
       "isResource": false,
       "items": {
         "type": {
-          "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::TuppleVec3"
+          "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::TupleVec3"
         }
       },
-      "short_name": "Vec<TuppleVec3>",
-      "title": "alloc::vec::Vec<bevy_bevy_registry_export_basic_example::test_components::TuppleVec3>",
+      "short_name": "Vec<TupleVec3>",
+      "title": "alloc::vec::Vec<bevy_bevy_registry_export_basic_example::test_components::TupleVec3>",
       "type": "array",
       "typeInfo": "List"
     },
@@ -2389,7 +2389,7 @@
       "type": "string",
       "typeInfo": "Enum"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::NestedTuppleStuff": {
+    "bevy_bevy_registry_export_basic_example::test_components::NestedTupleStuff": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2410,8 +2410,8 @@
           }
         }
       ],
-      "short_name": "NestedTuppleStuff",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::NestedTuppleStuff",
+      "short_name": "NestedTupleStuff",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::NestedTupleStuff",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
@@ -2427,7 +2427,7 @@
         },
         "color": {
           "type": {
-            "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::TuppleTestColor"
+            "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::TupleTestColor"
           }
         },
         "colors_list": {
@@ -2457,7 +2457,7 @@
         },
         "toggle": {
           "type": {
-            "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::TuppleTestBool"
+            "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::TupleTestBool"
           }
         }
       },
@@ -2483,7 +2483,7 @@
       "properties": {
         "vec": {
           "type": {
-            "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::TuppleVec3"
+            "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::TupleVec3"
           }
         }
       },
@@ -2495,7 +2495,7 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::TuppleTest2": {
+    "bevy_bevy_registry_export_basic_example::test_components::TupleTest2": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2516,12 +2516,12 @@
           }
         }
       ],
-      "short_name": "TuppleTest2",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::TuppleTest2",
+      "short_name": "TupleTest2",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::TupleTest2",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::TuppleTestBool": {
+    "bevy_bevy_registry_export_basic_example::test_components::TupleTestBool": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2532,12 +2532,12 @@
           }
         }
       ],
-      "short_name": "TuppleTestBool",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::TuppleTestBool",
+      "short_name": "TupleTestBool",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::TupleTestBool",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::TuppleTestColor": {
+    "bevy_bevy_registry_export_basic_example::test_components::TupleTestColor": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2548,12 +2548,12 @@
           }
         }
       ],
-      "short_name": "TuppleTestColor",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::TuppleTestColor",
+      "short_name": "TupleTestColor",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::TupleTestColor",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::TuppleTestF32": {
+    "bevy_bevy_registry_export_basic_example::test_components::TupleTestF32": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2564,12 +2564,12 @@
           }
         }
       ],
-      "short_name": "TuppleTestF32",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::TuppleTestF32",
+      "short_name": "TupleTestF32",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::TupleTestF32",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::TuppleTestStr": {
+    "bevy_bevy_registry_export_basic_example::test_components::TupleTestStr": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2580,12 +2580,12 @@
           }
         }
       ],
-      "short_name": "TuppleTestStr",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::TuppleTestStr",
+      "short_name": "TupleTestStr",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::TupleTestStr",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::TuppleTestU64": {
+    "bevy_bevy_registry_export_basic_example::test_components::TupleTestU64": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2596,12 +2596,12 @@
           }
         }
       ],
-      "short_name": "TuppleTestU64",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::TuppleTestU64",
+      "short_name": "TupleTestU64",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::TupleTestU64",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::TuppleVec": {
+    "bevy_bevy_registry_export_basic_example::test_components::TupleVec": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2612,12 +2612,12 @@
           }
         }
       ],
-      "short_name": "TuppleVec",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::TuppleVec",
+      "short_name": "TupleVec",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::TupleVec",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::TuppleVec2": {
+    "bevy_bevy_registry_export_basic_example::test_components::TupleVec2": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2628,12 +2628,12 @@
           }
         }
       ],
-      "short_name": "TuppleVec2",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::TuppleVec2",
+      "short_name": "TupleVec2",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::TupleVec2",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::TuppleVec3": {
+    "bevy_bevy_registry_export_basic_example::test_components::TupleVec3": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2644,12 +2644,12 @@
           }
         }
       ],
-      "short_name": "TuppleVec3",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::TuppleVec3",
+      "short_name": "TupleVec3",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::TupleVec3",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::TuppleVecF32F32": {
+    "bevy_bevy_registry_export_basic_example::test_components::TupleVecF32F32": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2660,8 +2660,8 @@
           }
         }
       ],
-      "short_name": "TuppleVecF32F32",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::TuppleVecF32F32",
+      "short_name": "TupleVecF32F32",
+      "title": "bevy_bevy_registry_export_basic_example::test_components::TupleVecF32F32",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
@@ -2699,7 +2699,7 @@
       "prefixItems": [
         {
           "type": {
-            "$ref": "#/$defs/alloc::vec::Vec<bevy_bevy_registry_export_basic_example::test_components::TuppleVec3>"
+            "$ref": "#/$defs/alloc::vec::Vec<bevy_bevy_registry_export_basic_example::test_components::TupleVec3>"
           }
         }
       ],

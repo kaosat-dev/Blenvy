@@ -5,9 +5,7 @@ members = [
     "crates/bevy_gltf_save_load",
     "crates/bevy_registry_export",
     "examples/bevy_gltf_components/basic/",
-    "examples/bevy_gltf_components/basic_wasm/",
     "examples/bevy_gltf_blueprints/basic/",
-    "examples/bevy_gltf_blueprints/basic_wasm/",
     "examples/bevy_gltf_blueprints/basic_scene_components/",
     "examples/bevy_gltf_blueprints/basic_xpbd_physics/",
     "examples/bevy_gltf_blueprints/nested_blueprints/",
@@ -17,7 +15,6 @@ members = [
     "examples/bevy_gltf_blueprints/materials/",
     "examples/bevy_gltf_save_load/basic/",
     "examples/bevy_registry_export/basic"
-
 ]
 resolver = "2"
 

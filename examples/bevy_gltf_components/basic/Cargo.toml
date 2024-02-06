@@ -9,3 +9,19 @@ bevy="0.12"
 bevy_gltf_components = { path = "../../../crates/bevy_gltf_components" }
 bevy_rapier3d = { version = "0.23.0", features = [ "serde-serialize", "debug-render-3d", "enhanced-determinism"] }
 bevy_editor_pls = { version = "0.6" }
+
+[profile.wasm-release]
+# Use release profile as default values
+inherits = "release"
+
+# Optimize with size in mind, also try "s", sometimes it is better.
+# This doesn't increase compilation times compared to -O3, great improvements
+opt-level = "z"
+
+# Do a second optimization pass removing duplicate or unused code from dependencies.
+# Slows compile times, marginal improvements
+lto = "fat"
+
+# When building crates, optimize larger chunks at a time
+# Slows compile times, marginal improvements
+codegen-units = 1

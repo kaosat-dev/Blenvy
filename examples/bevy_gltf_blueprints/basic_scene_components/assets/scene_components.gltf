@@ -635,7 +635,7 @@
 		{
 			"extras":{
 				"AmbientLightP":"( color:[0.0, 0.0, 0.0, 0.0], brightness:0.5)",
-				"TuppleTestColor":[
+				"TupleTestColor":[
 					1.0,
 					0.07497033476829529,
 					0.11196978390216827,
