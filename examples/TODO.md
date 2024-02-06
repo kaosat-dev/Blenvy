@@ -22,6 +22,6 @@
 
 
 - [ ] merge basic 
-    - [ ] with scene_components as there is NOTHING specific code wise now for scene components
+    - [x] with scene_components as there is NOTHING specific code wise now for scene components
     - [ ] with nested_blueprints as there is NOTHING specific code wise now for scene components
 - [x] merge multiple levels with multiple levels_multiple blendfiles

@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{gltf::Gltf, prelude::*};
 use bevy_gltf_blueprints::GameWorldTag;
 use bevy_gltf_worlflow_examples_common::{assets::GameAssets, GameState, InAppRunning, Player};
 use bevy_rapier3d::prelude::*;
@@ -66,14 +66,14 @@ pub fn trigger_level_transition(
                     commands.entity(current_game_world.0).despawn_recursive();
 
                     let target_level = &transition_trigger.target;
-                    let level;
+                    let level: Handle<Gltf>;
                     println!("target level {}", target_level);
                     if target_level == "Level1" {
-                        level = &game_assets.level1;
-                    } else if (target_level == "Level2") {
-                        level = &game_assets.level2;
+                        level = game_assets.level1.clone().unwrap();
+                    } else if target_level == "Level2" {
+                        level = game_assets.level2.clone().unwrap();
                     } else {
-                        level = &game_assets.world;
+                        level = game_assets.world.clone();
                     }
                     info!("spawning new level");
                     commands.spawn((
