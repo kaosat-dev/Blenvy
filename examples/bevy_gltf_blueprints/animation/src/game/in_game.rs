@@ -100,9 +100,9 @@ pub fn animation_change_on_proximity_foxes(
             let mut anim_name = "Walk";
             if distance < 8.5 {
                 anim_name = "Run";
-            } else if distance >= 8.5 && distance < 10.0 {
+            } else if (8.5..10.0).contains(&distance) {
                 anim_name = "Walk";
-            } else if distance >= 10.0 && distance < 15.0 {
+            } else if (10.0..15.0).contains(&distance) {
                 anim_name = "Survey";
             }
             // now play the animation based on the chosen animation name
@@ -137,9 +137,9 @@ pub fn animation_change_on_proximity_robots(
             let mut anim_name = "Idle";
             if distance < 8.5 {
                 anim_name = "Jump";
-            } else if distance >= 8.5 && distance < 10.0 {
+            } else if (8.5..10.0).contains(&distance) {
                 anim_name = "Scan";
-            } else if distance >= 10.0 && distance < 15.0 {
+            } else if (10.0..15.0).contains(&distance) {
                 anim_name = "Idle";
             }
 
