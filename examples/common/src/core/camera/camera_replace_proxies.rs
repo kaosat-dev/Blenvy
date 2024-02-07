@@ -10,9 +10,9 @@ use super::CameraTrackingOffset;
 #[reflect(Component)]
 pub struct SSAOSettings;
 
+#[allow(clippy::type_complexity)]
 pub fn camera_replace_proxies(
     mut commands: Commands,
-    #[allow(clippy::type_complexity)]
     mut added_cameras: Query<
         (
             Entity,

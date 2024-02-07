@@ -30,8 +30,8 @@ impl Default for CameraTrackingOffset {
 /// Add this component to an entity if you want it to be tracked by a Camera
 pub struct CameraTrackable;
 
+#[allow(clippy::type_complexity)]
 pub fn camera_track(
-    #[allow(clippy::type_complexity)]
     mut tracking_cameras: Query<
         (&mut Transform, &CameraTrackingOffset),
         (

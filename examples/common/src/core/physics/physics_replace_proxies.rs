@@ -25,6 +25,7 @@ pub enum AutoAABBCollider {
 }
 
 // replaces all physics stand-ins with the actual rapier types
+#[allow(clippy::type_complexity)]
 pub fn physics_replace_proxies(
     meshes: Res<Assets<Mesh>>,
     mesh_handles: Query<&Handle<Mesh>>,
