@@ -10,6 +10,7 @@ pub struct LevelTransition {
 }
 
 // very barebones example of triggering level transitions
+#[allow(clippy::too_many_arguments)]
 pub fn trigger_level_transition(
     mut collision_events: EventReader<CollisionEvent>,
     level_transition_triggers: Query<&LevelTransition>,
