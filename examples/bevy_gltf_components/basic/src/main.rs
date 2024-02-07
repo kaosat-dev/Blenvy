@@ -56,7 +56,6 @@ fn spawn_level(
     }
 }
 
-
 fn main() {
     App::new()
         .add_plugins((

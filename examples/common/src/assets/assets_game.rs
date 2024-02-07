@@ -16,7 +16,6 @@ pub struct GameAssets {
     #[asset(key = "level2", optional)]
     pub level2: Option<Handle<Gltf>>,
 
-
     #[asset(key = "models", collection(typed, mapped))]
     pub models: HashMap<String, Handle<Gltf>>,
 

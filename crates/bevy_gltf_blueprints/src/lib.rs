@@ -113,47 +113,47 @@ fn materials_library_enabled(blueprints_config: Res<BluePrintsConfig>) -> bool {
 
 impl Plugin for BlueprintsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(ComponentsFromGltfPlugin{
-            legacy_mode: self.legacy_mode
+        app.add_plugins(ComponentsFromGltfPlugin {
+            legacy_mode: self.legacy_mode,
         })
-            .register_type::<BlueprintName>()
-            .register_type::<MaterialInfo>()
-            .register_type::<SpawnHere>()
-            .register_type::<Animations>()
-            .insert_resource(BluePrintsConfig {
-                format: self.format,
-                library_folder: self.library_folder.clone(),
+        .register_type::<BlueprintName>()
+        .register_type::<MaterialInfo>()
+        .register_type::<SpawnHere>()
+        .register_type::<Animations>()
+        .insert_resource(BluePrintsConfig {
+            format: self.format,
+            library_folder: self.library_folder.clone(),
 
-                aabbs: self.aabbs,
-                aabb_cache: HashMap::new(),
+            aabbs: self.aabbs,
+            aabb_cache: HashMap::new(),
 
-                material_library: self.material_library,
-                material_library_folder: self.material_library_folder.clone(),
-                material_library_cache: HashMap::new(),
-            })
-            .configure_sets(
-                Update,
-                (GltfBlueprintsSet::Spawn, GltfBlueprintsSet::AfterSpawn)
-                    .chain()
-                    .after(GltfComponentsSet::Injection),
+            material_library: self.material_library,
+            material_library_folder: self.material_library_folder.clone(),
+            material_library_cache: HashMap::new(),
+        })
+        .configure_sets(
+            Update,
+            (GltfBlueprintsSet::Spawn, GltfBlueprintsSet::AfterSpawn)
+                .chain()
+                .after(GltfComponentsSet::Injection),
+        )
+        .add_systems(
+            Update,
+            (
+                spawn_from_blueprints,
+                compute_scene_aabbs.run_if(aabbs_enabled),
+                apply_deferred.run_if(aabbs_enabled),
+                apply_deferred,
+                materials_inject.run_if(materials_library_enabled),
             )
-            .add_systems(
-                Update,
-                (
-                    spawn_from_blueprints,
-                    compute_scene_aabbs.run_if(aabbs_enabled),
-                    apply_deferred.run_if(aabbs_enabled),
-                    apply_deferred,
-                    materials_inject.run_if(materials_library_enabled),
-                )
-                    .chain()
-                    .in_set(GltfBlueprintsSet::Spawn),
-            )
-            .add_systems(
-                Update,
-                (spawned_blueprint_post_process, apply_deferred)
-                    .chain()
-                    .in_set(GltfBlueprintsSet::AfterSpawn),
-            );
+                .chain()
+                .in_set(GltfBlueprintsSet::Spawn),
+        )
+        .add_systems(
+            Update,
+            (spawned_blueprint_post_process, apply_deferred)
+                .chain()
+                .in_set(GltfBlueprintsSet::AfterSpawn),
+        );
     }
 }

@@ -53,15 +53,17 @@ impl CopyComponents {
                         if let Some(type_registration) = registry.get(type_id) {
                             Some(type_registration)
                         } else if self.stringent {
-                            return Some(
-                                registry.get(type_id)
-                                    .unwrap_or_else(|| panic!("cannot clone entity: component: {:?} is not registered", component_info.name()))
-                            )
+                            return Some(registry.get(type_id).unwrap_or_else(|| {
+                                panic!(
+                                    "cannot clone entity: component: {:?} is not registered",
+                                    component_info.name()
+                                )
+                            }));
                         } else {
                             warn!(
                                 "cannot clone component: component: {:?} is not registered",
                                 component_info.name()
-                               );
+                            );
                             None
                         }
                     }

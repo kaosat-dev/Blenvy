@@ -65,9 +65,7 @@ pub(crate) fn prepare_save_game(
         }
     }
     for (_, blueprint_name, library) in static_entities.iter() {
-        let library_path: String = library
-            .map_or_else(|| "", |l| l.0.to_str().unwrap())
-            .into();
+        let library_path: String = library.map_or_else(|| "", |l| l.0.to_str().unwrap()).into();
         commands.insert_resource(StaticEntitiesStorage {
             name: blueprint_name.0.clone(),
             library_path,

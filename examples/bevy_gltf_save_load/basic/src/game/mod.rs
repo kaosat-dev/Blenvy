@@ -14,7 +14,6 @@ pub use in_game_saving::*;
 use bevy::prelude::*;
 use bevy_gltf_save_load::{LoadRequest, LoadingFinished, SaveRequest, SavingFinished};
 
-
 pub fn request_save(
     mut save_requests: EventWriter<SaveRequest>,
     keycode: Res<Input<KeyCode>>,
@@ -71,39 +70,38 @@ pub fn on_loading_finished(
 pub struct GamePlugin;
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        app
-            .add_systems(
-                Update,
-                (
-                    spawn_test,
-                    spawn_test_unregisted_components,
-                    spawn_test_parenting,
-                )
-                    .run_if(in_state(GameState::InGame)),
+        app.add_systems(
+            Update,
+            (
+                spawn_test,
+                spawn_test_unregisted_components,
+                spawn_test_parenting,
             )
-            .add_systems(
-                Update,
-                (unload_world, apply_deferred, setup_game)
-                    .chain()
-                    .run_if(should_reset)
-                    .run_if(in_state(AppState::AppRunning)),
-            )
-            .add_systems(
-                Update,
-                (
-                    request_save,
-                    request_load,
-                    on_saving_finished,
-                    on_loading_finished,
-                ),
-            )
-            .add_systems(OnEnter(AppState::MenuRunning), setup_main_menu)
-            .add_systems(OnExit(AppState::MenuRunning), teardown_main_menu)
-            .add_systems(Update, main_menu.run_if(in_state(AppState::MenuRunning)))
-            .add_systems(OnEnter(GameState::InLoading), setup_loading_screen)
-            .add_systems(OnExit(GameState::InLoading), teardown_loading_screen)
-            .add_systems(OnEnter(GameState::InSaving), setup_saving_screen)
-            .add_systems(OnExit(GameState::InSaving), teardown_saving_screen)
-            .add_systems(OnEnter(AppState::AppRunning), setup_game);
+                .run_if(in_state(GameState::InGame)),
+        )
+        .add_systems(
+            Update,
+            (unload_world, apply_deferred, setup_game)
+                .chain()
+                .run_if(should_reset)
+                .run_if(in_state(AppState::AppRunning)),
+        )
+        .add_systems(
+            Update,
+            (
+                request_save,
+                request_load,
+                on_saving_finished,
+                on_loading_finished,
+            ),
+        )
+        .add_systems(OnEnter(AppState::MenuRunning), setup_main_menu)
+        .add_systems(OnExit(AppState::MenuRunning), teardown_main_menu)
+        .add_systems(Update, main_menu.run_if(in_state(AppState::MenuRunning)))
+        .add_systems(OnEnter(GameState::InLoading), setup_loading_screen)
+        .add_systems(OnExit(GameState::InLoading), teardown_loading_screen)
+        .add_systems(OnEnter(GameState::InSaving), setup_saving_screen)
+        .add_systems(OnExit(GameState::InSaving), teardown_saving_screen)
+        .add_systems(OnEnter(AppState::AppRunning), setup_game);
     }
 }

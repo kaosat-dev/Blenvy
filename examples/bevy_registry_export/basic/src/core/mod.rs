@@ -1,4 +1,3 @@
-
 use bevy::prelude::*;
 use bevy_gltf_blueprints::*;
 use bevy_registry_export::*;

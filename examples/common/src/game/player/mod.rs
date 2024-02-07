@@ -29,18 +29,12 @@ fn player_move_demo(
     }
 }
 
-
 pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.register_type::<Player>()
-
-        .add_systems(
+        app.register_type::<Player>().add_systems(
             Update,
-            (
-                player_move_demo,
-            )
-                .run_if(in_state(GameState::InGame)),
+            (player_move_demo,).run_if(in_state(GameState::InGame)),
         );
     }
 }

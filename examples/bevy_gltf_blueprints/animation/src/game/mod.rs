@@ -17,12 +17,10 @@ pub struct Fox;
 /// Demo marker component
 pub struct Robot;
 
-
 pub struct GamePlugin;
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        app
-            .register_type::<Robot>()
+        app.register_type::<Robot>()
             .register_type::<Fox>()
             .add_systems(
                 Update,

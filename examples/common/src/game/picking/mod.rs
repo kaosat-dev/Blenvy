@@ -1,6 +1,6 @@
+use crate::Player;
 use bevy::prelude::*;
 use bevy_gltf_blueprints::GltfBlueprintsSet;
-use crate::Player;
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]

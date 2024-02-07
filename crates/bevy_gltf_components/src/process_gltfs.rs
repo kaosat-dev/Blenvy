@@ -1,8 +1,8 @@
-use std::path::Path;
 use bevy::asset::AssetPath;
 use bevy::gltf::Gltf;
 use bevy::utils::HashSet;
 use bevy::{asset::LoadState, prelude::*};
+use std::path::Path;
 
 use crate::{gltf_extras_to_components, GltfComponentsConfig};
 
@@ -14,10 +14,10 @@ pub struct GltfLoadingTracker {
 }
 impl Default for GltfLoadingTracker {
     fn default() -> Self {
-     Self::new()
+        Self::new()
     }
 }
-    
+
 impl GltfLoadingTracker {
     pub fn new() -> GltfLoadingTracker {
         GltfLoadingTracker {
@@ -37,13 +37,14 @@ pub fn track_new_gltf(
 ) {
     for event in events.read() {
         if let AssetEvent::Added { id } = event {
-         
             let handle = asset_server.get_id_handle(*id);
             if let Some(handle) = handle {
                 tracker.add_gltf(handle.clone());
                 debug!("gltf created {:?}", handle);
             } else {
-                let asset_path = asset_server.get_path(*id).unwrap_or(AssetPath::from_path(Path::new("n/a")));  // will unfortunatly not work, will do a PR/ discussion at the Bevy level, leaving for reference, would be very practical
+                let asset_path = asset_server
+                    .get_path(*id)
+                    .unwrap_or(AssetPath::from_path(Path::new("n/a"))); // will unfortunatly not work, will do a PR/ discussion at the Bevy level, leaving for reference, would be very practical
                 warn!(
                     "a gltf file ({:?}) has no handle available, cannot inject components",
                     asset_path
@@ -81,7 +82,12 @@ pub fn process_loaded_scenes(
 
     for gltf_handle in &loaded_gltfs {
         if let Some(gltf) = gltfs.get_mut(gltf_handle) {
-            gltf_extras_to_components(gltf, &mut scenes, &*type_registry, gltf_components_config.legacy_mode);
+            gltf_extras_to_components(
+                gltf,
+                &mut scenes,
+                &*type_registry,
+                gltf_components_config.legacy_mode,
+            );
 
             if let Some(path) = gltf_handle.path() {
                 tracker.processed_gltfs.insert(path.to_string());

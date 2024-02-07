@@ -114,7 +114,7 @@ pub(crate) fn spawn_from_blueprints(
             .keys()
             .next()
             .expect("there should be at least one named scene in the gltf file to spawn");
-       
+
         let scene = &gltf.named_scenes[main_scene_name];
 
         // transforms are optional, but still deal with them correctly

@@ -100,18 +100,12 @@ pub fn trigger_level_transition(
     }
 }
 
-
 pub struct LevelsPlugin;
 impl Plugin for LevelsPlugin {
     fn build(&self, app: &mut App) {
-        app
-        .register_type::<LevelTransition>()
-        .add_systems(
+        app.register_type::<LevelTransition>().add_systems(
             Update,
-            (
-                trigger_level_transition,
-            )
-            .run_if(in_state(GameState::InGame)),
+            (trigger_level_transition,).run_if(in_state(GameState::InGame)),
         );
     }
 }
