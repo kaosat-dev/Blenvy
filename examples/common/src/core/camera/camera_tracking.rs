@@ -31,6 +31,7 @@ impl Default for CameraTrackingOffset {
 pub struct CameraTrackable;
 
 pub fn camera_track(
+    #[allow(clippy::type_complexity)]
     mut tracking_cameras: Query<
         (&mut Transform, &CameraTrackingOffset),
         (
