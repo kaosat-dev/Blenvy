@@ -12,7 +12,7 @@ use crate::{CopyComponents, InBlueprint, NoInBlueprint, OriginalChildren};
 /// - it removes one level of useless nesting
 /// - it copies the blueprint's root components to the entity it was spawned on (original entity)
 /// - it copies the children of the blueprint scene into the original entity
-/// - it add AnimationLink components so that animations can be controlled from the original entity
+/// - it add `AnimationLink` components so that animations can be controlled from the original entity
 /// - it cleans up/ removes a few , by then uneeded components
 pub(crate) fn spawned_blueprint_post_process(
     unprocessed_entities: Query<

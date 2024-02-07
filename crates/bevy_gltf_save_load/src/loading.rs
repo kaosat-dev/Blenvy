@@ -24,18 +24,18 @@ pub(crate) struct LoadFirstStageDone;
 #[reflect(Component)]
 pub(crate) struct CleanupScene;
 
-/// helper system that "converts" loadRequest events to LoadRequested resources
+/// helper system that "converts" loadRequest events to `LoadRequested` resources
 pub(crate) fn mark_load_requested(
     mut load_requests: EventReader<LoadRequest>,
     mut commands: Commands,
 ) {
     let mut save_path: String = "".into();
     for load_request in load_requests.read() {
-        if load_request.path != "" {
+        if !load_request.path.is_empty() {
             save_path = load_request.path.clone();
         }
     }
-    if save_path != "" {
+    if !save_path.is_empty() {
         commands.insert_resource(LoadRequested { path: save_path });
     }
 }
@@ -111,7 +111,7 @@ pub(crate) fn load_static(
             ))
             .id();
 
-        if info.library_path != "" {
+        if !info.library_path.is_empty() {
             commands
                 .entity(static_data)
                 .insert(Library(info.library_path.clone().into()));

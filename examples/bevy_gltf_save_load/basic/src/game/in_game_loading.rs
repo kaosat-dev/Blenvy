@@ -1,6 +1,5 @@
 use bevy::{core_pipeline::clear_color::ClearColorConfig, prelude::*};
-
-use crate::state::InGameLoading;
+use bevy_gltf_worlflow_examples_common::InGameLoading;
 
 pub fn setup_loading_screen(mut commands: Commands) {
     commands.spawn((

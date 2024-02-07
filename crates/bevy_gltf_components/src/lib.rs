@@ -7,7 +7,10 @@ pub use gltf_to_components::*;
 pub mod process_gltfs;
 pub use process_gltfs::*;
 
-use bevy::{ecs::system::Resource, prelude::{App, IntoSystemConfigs, Plugin, SystemSet, Update}};
+use bevy::{
+    ecs::system::Resource,
+    prelude::{App, IntoSystemConfigs, Plugin, SystemSet, Update},
+};
 
 /// A Bevy plugin for extracting components from gltf files and automatically adding them to the relevant entities
 /// It will automatically run every time you load a gltf file
@@ -54,14 +57,12 @@ pub struct GltfComponentsConfig {
 }
 
 pub struct ComponentsFromGltfPlugin {
-    pub legacy_mode: bool
+    pub legacy_mode: bool,
 }
 
 impl Default for ComponentsFromGltfPlugin {
     fn default() -> Self {
-        Self {
-           legacy_mode: true
-        }
+        Self { legacy_mode: true }
     }
 }
 
@@ -69,7 +70,7 @@ impl Plugin for ComponentsFromGltfPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(GltfLoadingTracker::new())
             .insert_resource(GltfComponentsConfig {
-                legacy_mode: self.legacy_mode
+                legacy_mode: self.legacy_mode,
             })
             .add_systems(Update, (track_new_gltf, process_loaded_scenes))
             .add_systems(

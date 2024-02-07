@@ -1,6 +1,5 @@
 use bevy::prelude::*;
-
-use crate::state::{AppState, GameState, InMainMenu};
+use bevy_gltf_worlflow_examples_common::{AppState, InMainMenu};
 
 pub fn setup_main_menu(mut commands: Commands) {
     commands.spawn((Camera2dBundle::default(), InMainMenu));

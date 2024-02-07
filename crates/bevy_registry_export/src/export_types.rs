@@ -15,8 +15,7 @@ pub fn export_types(world: &mut World) {
         .get_resource::<ExportComponentsConfig>()
         .expect("ExportComponentsConfig should exist at this stage");
 
-    let writer =
-        File::create(config.save_path.to_path_buf()).expect("should have created schema file");
+    let writer = File::create(&config.save_path).expect("should have created schema file");
 
     let types = world.resource_mut::<AppTypeRegistry>();
     let types = types.read();

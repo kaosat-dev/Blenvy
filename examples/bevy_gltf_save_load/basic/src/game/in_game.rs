@@ -1,8 +1,7 @@
-use super::Player;
-use crate::state::{GameState, InAppRunning};
 use bevy::prelude::*;
 use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, GameWorldTag, Library, NoInBlueprint};
 use bevy_gltf_save_load::{Dynamic, DynamicEntitiesRoot, StaticEntitiesRoot};
+use bevy_gltf_worlflow_examples_common::{GameState, InAppRunning, Player};
 use bevy_rapier3d::prelude::Velocity;
 use rand::Rng;
 
@@ -62,7 +61,7 @@ pub fn unload_world(mut commands: Commands, gameworlds: Query<Entity, With<GameW
 }
 
 pub fn should_reset(keycode: Res<Input<KeyCode>>) -> bool {
-    return keycode.just_pressed(KeyCode::N);
+    keycode.just_pressed(KeyCode::N)
 }
 
 pub fn spawn_test(
@@ -171,7 +170,7 @@ pub fn spawn_test_parenting(
                     blueprint: BlueprintName("Sphero".to_string()),
                     ..Default::default()
                 },
-                bevy::prelude::Name::from(format!("SubParentingTest")),
+                bevy::prelude::Name::from("SubParentingTest".to_string()),
                 TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
                 Dynamic(true),
             ))
@@ -183,7 +182,7 @@ pub fn spawn_test_parenting(
                     blueprint: BlueprintName("Container".into()),
                     ..Default::default()
                 },
-                bevy::prelude::Name::from(format!("ParentingTest")),
+                bevy::prelude::Name::from("ParentingTest".to_string()),
                 Dynamic(true),
                 TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
             ))

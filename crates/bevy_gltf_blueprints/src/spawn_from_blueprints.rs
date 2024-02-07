@@ -19,17 +19,17 @@ pub struct BlueprintName(pub String);
 pub struct SpawnHere;
 
 #[derive(Component)]
-/// FlagComponent for dynamically spawned scenes
+/// flag component for dynamically spawned scenes
 pub struct Spawned;
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-/// flag component marking any spwaned child of blueprints ..unless the original entity was marked with the 'NoInBlueprint' marker component
+/// flag component marking any spwaned child of blueprints ..unless the original entity was marked with the `NoInBlueprint` marker component
 pub struct InBlueprint;
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-/// flag component preventing any spwaned child of blueprints to be marked with the InBlueprint component
+/// flag component preventing any spawned child of blueprints to be marked with the `InBlueprint` component
 pub struct NoInBlueprint;
 
 #[derive(Component, Reflect, Default, Debug)]
@@ -112,14 +112,15 @@ pub(crate) fn spawn_from_blueprints(
         let main_scene_name = gltf
             .named_scenes
             .keys()
-            .nth(0)
+            .next()
             .expect("there should be at least one named scene in the gltf file to spawn");
+
         let scene = &gltf.named_scenes[main_scene_name];
 
         // transforms are optional, but still deal with them correctly
         let mut transforms: Transform = Transform::default();
         if transform.is_some() {
-            transforms = transform.unwrap().clone();
+            transforms = *transform.unwrap();
         }
 
         commands.entity(entity).insert((

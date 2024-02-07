@@ -1,13 +1,7 @@
 use bevy::{gltf::Gltf, prelude::*};
 use bevy_editor_pls::prelude::*;
 use bevy_gltf_components::ComponentsFromGltfPlugin;
-use bevy_rapier3d::prelude::*;
-
-mod core;
-use crate::core::*;
-
-mod game;
-use game::*;
+use bevy_gltf_worlflow_examples_common::CorePlugin;
 
 mod test_components;
 use test_components::*;
@@ -22,27 +16,6 @@ enum AppState {
     #[default]
     Loading,
     Running,
-}
-
-fn main() {
-    App::new()
-        .add_plugins((
-            DefaultPlugins.set(AssetPlugin::default()),
-            // editor
-            EditorPlugin::default(),
-            // physics
-            RapierPhysicsPlugin::<NoUserData>::default(),
-            RapierDebugRenderPlugin::default(),
-            // our custom plugins
-            ComponentsFromGltfPlugin::default(),
-            CorePlugin,           // reusable plugins
-            DemoPlugin,           // specific to our game
-            ComponentsTestPlugin, // Showcases different type of components /structs
-        ))
-        .add_state::<AppState>()
-        .add_systems(Startup, setup)
-        .add_systems(Update, (spawn_level.run_if(in_state(AppState::Loading)),))
-        .run();
 }
 
 #[derive(Resource)]
@@ -64,24 +37,39 @@ fn spawn_level(
     models: Res<Assets<bevy::gltf::Gltf>>,
 ) {
     if let Some(asset_event) = asset_event_reader.read().next() {
-        match asset_event {
-            AssetEvent::Added { id } => {
-                info!("GLTF loaded/ added {:?}", asset_event);
-                let my_gltf = models.get(*id).unwrap();
-                if scene_markers.is_empty() {
-                    info!("spawning scene");
-                    commands.spawn((
-                        SceneBundle {
-                            scene: my_gltf.scenes[0].clone(),
-                            ..default()
-                        },
-                        LoadedMarker,
-                        Name::new("Level1"),
-                    ));
-                    next_state.set(AppState::Running);
-                }
+        if let AssetEvent::Added { id } = asset_event {
+            info!("GLTF loaded/ added {:?}", asset_event);
+            let my_gltf = models.get(*id).unwrap();
+            if scene_markers.is_empty() {
+                info!("spawning scene");
+                commands.spawn((
+                    SceneBundle {
+                        scene: my_gltf.scenes[0].clone(),
+                        ..default()
+                    },
+                    LoadedMarker,
+                    Name::new("Level1"),
+                ));
+                next_state.set(AppState::Running);
             }
-            _ => (),
         }
     }
+}
+
+fn main() {
+    App::new()
+        .add_plugins((
+            DefaultPlugins.set(AssetPlugin::default()),
+            // editor
+            EditorPlugin::default(),
+            // physics
+            // our custom plugins
+            ComponentsFromGltfPlugin::default(),
+            CorePlugin,           // reusable plugins
+            ComponentsTestPlugin, // Showcases different type of components /structs
+        ))
+        .add_state::<AppState>()
+        .add_systems(Startup, setup)
+        .add_systems(Update, (spawn_level.run_if(in_state(AppState::Loading)),))
+        .run();
 }

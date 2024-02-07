@@ -1,14 +1,44 @@
 
-# Basic bevy_gltf_components demo
+# Basic bevy_gltf_components + wasm demo
 
-## Running this example
+
+## Running this example (non-wasm)
 
 ```
 cargo run --features bevy/dynamic_linking
 ```
 
+## Wasm
 
-### Additional notes
+### Setup
+
+as per the bevy documentation:
+
+```shell
+rustup target add wasm32-unknown-unknown
+cargo install wasm-bindgen-cli
+```
+
+
+### Building this example
+
+navigate to the current folder , and then
+
+
+```shell
+cargo build --release --target wasm32-unknown-unknown --target-dir ./target
+wasm-bindgen --out-name wasm_example \
+  --out-dir ./target/wasm \
+  --target web target/wasm32-unknown-unknown/release/bevy_gltf_components_basic_wasm_example.wasm
+
+```
+
+### Running this example
+
+run a web server in the current folder, and navigate to the page, you should see the example in your browser
+
+
+## Additional notes
 
 * You usually define either the Components directly or use ```Proxy components``` that get replaced in Bevy systems with the actual Components that you want (usually when for some reason, ie external crates with unregistered components etc) you cannot use the components directly.
 
@@ -26,6 +56,7 @@ Feel free to use as you want, rip it appart, use any/all parts that you need !
 
 This tooling and workflow has enabled me to go from a blank Bevy + Blender setup to a working barebones level in very little time (30 minutes or so ?) !
 You can then add your own components & systems for your own gameplay very easilly
+
 
 ## Information
 - the Bevy/ Rust code is [here](./src/main.rs)

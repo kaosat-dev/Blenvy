@@ -24,6 +24,7 @@ pub enum AutoAABBCollider {
 }
 
 // replaces all physics stand-ins with the actual xpbd types
+#[allow(clippy::type_complexity)]
 pub fn physics_replace_proxies(
     meshes: Res<Assets<Mesh>>,
     mesh_handles: Query<&Handle<Mesh>>,
@@ -78,7 +79,7 @@ pub fn physics_replace_proxies(
                 for (_, collider_mesh) in
                     Mesh::search_in_children(entity, &children, &meshes, &mesh_handles)
                 {
-                    xpbd_collider = XpbdCollider::trimesh_from_mesh(&collider_mesh).unwrap(); // convex_hull_from_mesh?
+                    xpbd_collider = XpbdCollider::trimesh_from_mesh(collider_mesh).unwrap(); // convex_hull_from_mesh?
                     commands.entity(entity).insert(xpbd_collider);
                 }
             }

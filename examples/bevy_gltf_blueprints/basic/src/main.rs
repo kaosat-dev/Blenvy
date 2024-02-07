@@ -1,14 +1,9 @@
 use bevy::prelude::*;
 use bevy_editor_pls::prelude::*;
+use bevy_gltf_worlflow_examples_common::CommonPlugin;
 
 mod core;
 use crate::core::*;
-
-pub mod assets;
-use assets::*;
-
-pub mod state;
-use state::*;
 
 mod game;
 use game::*;
@@ -23,8 +18,7 @@ fn main() {
             // editor
             EditorPlugin::default(),
             // our custom plugins
-            StatePlugin,
-            AssetsPlugin,
+            CommonPlugin,
             CorePlugin,           // reusable plugins
             GamePlugin,           // specific to our game
             ComponentsTestPlugin, // Showcases different type of components /structs
