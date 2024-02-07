@@ -37,24 +37,21 @@ fn spawn_level(
     models: Res<Assets<bevy::gltf::Gltf>>,
 ) {
     if let Some(asset_event) = asset_event_reader.read().next() {
-        match asset_event {
-            AssetEvent::Added { id } => {
-                info!("GLTF loaded/ added {:?}", asset_event);
-                let my_gltf = models.get(*id).unwrap();
-                if scene_markers.is_empty() {
-                    info!("spawning scene");
-                    commands.spawn((
-                        SceneBundle {
-                            scene: my_gltf.scenes[0].clone(),
-                            ..default()
-                        },
-                        LoadedMarker,
-                        Name::new("Level1"),
-                    ));
-                    next_state.set(AppState::Running);
-                }
+        if let AssetEvent::Added { id } = asset_event {
+            info!("GLTF loaded/ added {:?}", asset_event);
+            let my_gltf = models.get(*id).unwrap();
+            if scene_markers.is_empty() {
+                info!("spawning scene");
+                commands.spawn((
+                    SceneBundle {
+                        scene: my_gltf.scenes[0].clone(),
+                        ..default()
+                    },
+                    LoadedMarker,
+                    Name::new("Level1"),
+                ));
+                next_state.set(AppState::Running);
             }
-            _ => (),
         }
     }
 }
