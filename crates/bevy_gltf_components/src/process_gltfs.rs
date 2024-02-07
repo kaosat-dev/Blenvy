@@ -20,7 +20,10 @@ impl Default for GltfLoadingTracker {
     
 impl GltfLoadingTracker {
     pub fn new() -> GltfLoadingTracker {
-        GltfLoadingTracker::default()
+        GltfLoadingTracker {
+            loading_gltfs: HashSet::new(),
+            processed_gltfs: HashSet::new(),
+        }
     }
     pub fn add_gltf(&mut self, handle: Handle<Gltf>) {
         self.loading_gltfs.insert(handle);
