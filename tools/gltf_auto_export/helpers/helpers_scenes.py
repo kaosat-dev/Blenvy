@@ -58,7 +58,14 @@ def copy_hollowed_collection_into(source_collection, destination_collection, par
         if parent_empty is not None:
             collection_placeholder.parent = parent_empty
 
-        nested_results = copy_hollowed_collection_into(collection, destination_collection, collection_placeholder, filter, collection_instances_combine_mode, library_collections)
+        nested_results = copy_hollowed_collection_into(
+            source_collection = collection, 
+            destination_collection = destination_collection, 
+            parent_empty = collection_placeholder, 
+            filter = filter,
+            library_collections = library_collections, 
+            addon_prefs=addon_prefs
+        )
         sub_root_objects = nested_results["root_objects"]
         sub_special_properties = nested_results["special_properties"]
 
