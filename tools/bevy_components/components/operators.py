@@ -7,7 +7,7 @@ from .metadata import add_component_to_object, add_metadata_to_components_withou
 
 class AddComponentOperator(Operator):
     """Add component to blueprint"""
-    bl_idname = "object.addblueprint_to_component"
+    bl_idname = "object.add_component"
     bl_label = "Add component to blueprint Operator"
     bl_options = {"UNDO"}
 
@@ -17,7 +17,7 @@ class AddComponentOperator(Operator):
     )
 
     def execute(self, context):
-        print("adding component to blueprint", self.component_type)
+        print("adding component ", self.component_type, "to object",context.object.name)
         object = context.object
     
         has_component_type = self.component_type != ""

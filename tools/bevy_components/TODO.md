@@ -139,7 +139,19 @@ UI:
     
 ## Phase 2
 
-- fix handling of long component names
+- [ ] fix handling of long component names
+- [x] fix "reload registry" not clearing all previous data (reloading registry does not seem to account for added/removed components in the registry )
 - add file watcher for registry
-    - add handling of removed registry file
-    - reloading registry does not seem to account for added/removed components in the registry ??
+    - [x] have the watcher work as expected
+    - [ ] add handling of removed registry file
+    - [ ] clear & reset handler when the file browser for the registry is used
+
+- tests
+    - [x] load registry
+    - just check list of components vs lists in registry
+    - try adding all components ? or just one or two ?
+        - [ ] select an object
+        - [ ] call the add_component operator ?
+    - change params
+    - check if all went well
+    -

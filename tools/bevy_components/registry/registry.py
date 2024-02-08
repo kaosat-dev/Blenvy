@@ -24,7 +24,7 @@ class ComponentsRegistry(PropertyGroup):
         description="path to the registry schema file",
         default="registry.json"
     )
-    schmemaFullPath : bpy.props.StringProperty(
+    schemaFullPath : bpy.props.StringProperty(
         name="schema full path",
         description="path to the registry schema file",
     )
@@ -180,9 +180,9 @@ class ComponentsRegistry(PropertyGroup):
 
     
     def watch_schema(self):
-        print("watching schema file for changes")
+        # print("watching schema file for changes")
         try:
-            stamp = os.stat(self.schmemaFullPath).st_mtime
+            stamp = os.stat(self.schemaFullPath).st_mtime
             stamp = str(stamp)
             if stamp != self.schemaTimeStamp and self.schemaTimeStamp != "":
                 print("FILE CHANGED !!", stamp,  self.schemaTimeStamp)
@@ -218,7 +218,7 @@ class ComponentsRegistry(PropertyGroup):
         # Get the folder
         folder_path = os.path.dirname(file_path)
         path =  os.path.join(folder_path, self.schemaPath)
-        self.schmemaFullPath = path
+        self.schemaFullPath = path
 
         f = Path(bpy.path.abspath(path)) # make a path object of abs path
         with open(path) as f: 
