@@ -274,6 +274,19 @@ class ComponentsRegistry(PropertyGroup):
 
     def add_invalid_component(self, component_name):
         self.invalid_components.append(component_name)
+
+
+    ###########
+        
+    propGroupIdCounter: IntProperty(
+        name="propGroupIdCounter",
+        description="",
+        min=-10000,
+        max=10000,
+        default=-10000
+    )
+    def get_propertyGroupName_from_shortName(self, shortName):
+        return None #property_group_name
 """
     object[component_definition.name] = 0.5
     property_manager = object.id_properties_ui(component_definition.name)

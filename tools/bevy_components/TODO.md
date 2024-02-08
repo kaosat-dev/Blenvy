@@ -147,6 +147,8 @@ UI:
     - [ ] clear & reset handler when the file browser for the registry is used
 
 - tests
+    clear && pytest -svv --blender-executable <path_to_blender>/blender/blender-4.0.2-linux-x64/blender
+
     - [x] load registry
     - just check list of components vs lists in registry
     - try adding all components ? or just one or two ?
@@ -155,3 +157,11 @@ UI:
     - change params
     - check if all went well
     -
+
+ - indirection level
+    - currently 
+        - short_name +_"ui => direct lookup
+        - problem : max 64 chars for propertyGroupNames
+    - possible solution
+        - propertyGroupName storage: simple , incremented INT (call it propGroupId for ex)
+        - lookup shortName => propGroupId
