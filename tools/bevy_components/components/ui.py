@@ -119,7 +119,7 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
         # we get & load our component registry
         registry = bpy.context.window_manager.components_registry 
         available_components = bpy.context.window_manager.components_list
-
+        registry_has_type_infos = registry.has_type_infos()
 
         if object is not None:
             row = layout.row(align=True)
@@ -137,12 +137,12 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
             # paste components
             row = layout.row(align=True)
             row.operator(PasteComponentOperator.bl_idname, text="Paste component ("+bpy.context.window_manager.copied_source_component_name+")", icon="PASTEDOWN")
-            row.enabled = registry.type_infos != None and context.window_manager.copied_source_object != ''
+            row.enabled = registry_has_type_infos and context.window_manager.copied_source_object != ''
 
             layout.separator()
 
             # upgrate custom props to components
-            upgradeable_customProperties = registry.type_infos != None and do_object_custom_properties_have_missing_metadata(context.object)
+            upgradeable_customProperties = registry.has_type_infos() and do_object_custom_properties_have_missing_metadata(context.object)
             if upgradeable_customProperties:
                 row = layout.row(align=True)
                 op = row.operator(GenerateComponent_From_custom_property_Operator.bl_idname, text="generate components from custom properties" , icon="LOOP_FORWARDS") 

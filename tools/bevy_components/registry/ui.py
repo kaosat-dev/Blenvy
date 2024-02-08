@@ -16,6 +16,7 @@ class BEVY_COMPONENTS_PT_Configuration(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         registry = context.window_manager.components_registry 
+        registry_has_type_infos = registry.has_type_infos()
         selected_object = context.selected_objects[0] if len(context.selected_objects) > 0 else None
 
         row = layout.row()
@@ -29,6 +30,9 @@ class BEVY_COMPONENTS_PT_Configuration(bpy.types.Panel):
         layout.operator(ReloadRegistryOperator.bl_idname, text="reload registry" , icon="FILE_REFRESH")
 
         layout.separator()
+        layout.prop(registry, "watcher_poll_frequency", text="registry file poll frequency (s)")
+
+        layout.separator()
         layout.separator()
 
         row = layout.row()
@@ -37,12 +41,12 @@ class BEVY_COMPONENTS_PT_Configuration(bpy.types.Panel):
 
         row = layout.row()
         row.operator(COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT.bl_idname, text="update custom properties of current object" , icon="FILE_REFRESH")
-        row.enabled = registry.type_infos != None and selected_object is not None
+        row.enabled = registry_has_type_infos and selected_object is not None
 
         layout.separator()
         row = layout.row()
         row.operator(COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL.bl_idname, text="update custom properties of ALL objects" , icon="FILE_REFRESH")
-        row.enabled = registry.type_infos != None
+        row.enabled = registry_has_type_infos
 
 
 class BEVY_COMPONENTS_PT_MissingTypesPanel(bpy.types.Panel):

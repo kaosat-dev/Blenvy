@@ -4,7 +4,9 @@ import os
 from pathlib import Path
 from bpy_types import (PropertyGroup)
 from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorProperty, IntProperty, IntVectorProperty, EnumProperty, PointerProperty, CollectionProperty)
-from ..components.metadata import ComponentInfos
+
+from ..propGroups.prop_groups import generate_propertyGroups_for_components
+from ..components.metadata import ComponentInfos, ensure_metadata_for_all_objects
 
 # helper class to store missing bevy types information
 class MissingBevyType(bpy.types.PropertyGroup):
@@ -22,6 +24,10 @@ class ComponentsRegistry(PropertyGroup):
         description="path to the registry schema file",
         default="registry.json"
     )
+    schmemaFullPath : bpy.props.StringProperty(
+        name="schema full path",
+        description="path to the registry schema file",
+    )
   
     registry: bpy.props. StringProperty(
         name="registry",
@@ -32,6 +38,22 @@ class ComponentsRegistry(PropertyGroup):
         name="missing type infos",
         description="unregistered/missing type infos"
     )
+
+    watcher_poll_frequency: IntProperty(
+        name="watcher poll frequency",
+        description="frequency (s) at wich to poll for changes to the registry file",
+        min=1,
+        max=10,
+        default=1
+    )
+    watcher_active: BoolProperty(name = "Flag for watcher status", default = False)
+
+    schemaTimeStamp: StringProperty(
+        name="last timestamp of schema file",
+        description="",
+        default=""
+    )
+
 
     missing_types_list: CollectionProperty(name="missing types list", type=MissingBevyType)
     missing_types_list_index: IntProperty(name = "Index for missing types list", default = 0)
@@ -129,38 +151,74 @@ class ComponentsRegistry(PropertyGroup):
         "bevy_render::color::Color": [1.0, 1.0, 0.0, 1.0],
     }
 
-    type_infos = None
+    type_infos = {}
     type_infos_missing = []
     component_propertyGroups = {}
     short_names_to_long_names = {}
-
+    custom_types_to_add = {}
+    invalid_components = []
 
     @classmethod
     def register(cls):
         bpy.types.WindowManager.components_registry = PointerProperty(type=ComponentsRegistry)
 
+        bpy.context.window_manager.components_registry.watcher_active = False
+
     @classmethod
     def unregister(cls):
+        bpy.context.window_manager.components_registry.watcher_active = False
+
         for propgroup_name in cls.component_propertyGroups.keys():
             try:
                 delattr(ComponentInfos, propgroup_name)
-                print("unregistered propertyGroup", propgroup_name)
+                #print("unregistered propertyGroup", propgroup_name)
             except Exception as error:
                 pass
                 #print("failed to remove", error, "ComponentInfos")
         
         del bpy.types.WindowManager.components_registry
-        
-    def load_schema(self):
-        # cleanup missing types list
-        self.missing_types_list.clear()
-        self.type_infos = None
-        self.type_infos_missing.clear()
-        file_path = bpy.data.filepath
 
+    
+    def watch_schema(self):
+        print("watching schema file for changes")
+        try:
+            stamp = os.stat(self.schmemaFullPath).st_mtime
+            stamp = str(stamp)
+            if stamp != self.schemaTimeStamp and self.schemaTimeStamp != "":
+                print("FILE CHANGED !!", stamp,  self.schemaTimeStamp)
+                # see here for better ways : https://stackoverflow.com/questions/11114492/check-if-a-file-is-not-open-nor-being-used-by-another-process
+                """try:
+                    os.rename(path, path)
+                    #return False
+                except OSError:    # file is in use
+                    print("in use")
+                    #return True"""
+                #bpy.ops.object.reload_registry()
+                # we need to add an additional delay as the file might not have loaded yet
+                bpy.app.timers.register(lambda: bpy.ops.object.reload_registry(), first_interval=1)
+
+            self.schemaTimeStamp = stamp
+        except Exception as error:
+            pass
+        return self.watcher_poll_frequency
+    
+    def load_schema(self):
+        print("load schema", self)
+        # cleanup previous data if any
+        self.missing_types_list.clear()
+        self.type_infos.clear()
+        self.type_infos_missing.clear()
+        self.component_propertyGroups.clear()
+        self.short_names_to_long_names.clear()
+        self.custom_types_to_add.clear()
+        self.invalid_components.clear()
+
+        # now prepare paths to load data
+        file_path = bpy.data.filepath
         # Get the folder
         folder_path = os.path.dirname(file_path)
         path =  os.path.join(folder_path, self.schemaPath)
+        self.schmemaFullPath = path
 
         f = Path(bpy.path.abspath(path)) # make a path object of abs path
         with open(path) as f: 
@@ -168,9 +226,27 @@ class ComponentsRegistry(PropertyGroup):
             defs = data["$defs"]
             self.registry = json.dumps(defs) # FIXME:meh ?
 
+        """try:
+            bpy.app.timers.unregister(self.watch_schema)
+        except Exception as error:
+            print("failed to unregister", error)
+            pass"""
+        # start timer
+        if not self.watcher_active:
+            self.watcher_active = True
+            bpy.app.timers.register(self.watch_schema)
+
+
     # we load the json once, so we do not need to do it over & over again
     def load_type_infos(self):
+        print("load type infos")
         ComponentsRegistry.type_infos = json.loads(self.registry)
+    
+    def has_type_infos(self):
+        return len(self.type_infos.keys()) != 0
+
+    def load_settings(self):
+        self.schemaPath = load_settings(registry.settings_save_path)["schemaPath"]
 
     # we keep a list of component propertyGroup around 
     def register_component_propertyGroup(self, name, propertyGroup):
@@ -188,7 +264,6 @@ class ComponentsRegistry(PropertyGroup):
             item = self.missing_types_list.add()
             item.type_name = type_name
 
-    custom_types_to_add = {}
     def add_custom_type(self, type_name, type_definition):
         self.custom_types_to_add[type_name] = type_definition
 
@@ -197,7 +272,6 @@ class ComponentsRegistry(PropertyGroup):
             self.type_infos[type_name] = self.custom_types_to_add[type_name]
         self.custom_types_to_add.clear()
 
-    invalid_components = []
     def add_invalid_component(self, component_name):
         self.invalid_components.append(component_name)
 """

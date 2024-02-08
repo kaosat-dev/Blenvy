@@ -131,7 +131,6 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
     bpy.types.WindowManager.blueprint_name = StringProperty()
-
     bpy.app.handlers.load_post.append(post_load)
 
 def unregister():

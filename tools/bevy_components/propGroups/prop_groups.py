@@ -22,7 +22,7 @@ def update_component(self, context, definition, component_name):
 
 def generate_propertyGroups_for_components():
     registry = bpy.context.window_manager.components_registry
-    if registry.type_infos == None:
+    if not registry.has_type_infos():
         registry.load_type_infos()
 
     type_infos = registry.type_infos
@@ -33,6 +33,6 @@ def generate_propertyGroups_for_components():
         is_component = definition['isComponent'] if "isComponent" in definition else False
         root_property_name = short_name if is_component else None
         process_component(registry, definition, update_calback_helper(definition, update_component, root_property_name), None, [])
-
+        
     # if we had to add any wrapper types on the fly, process them now
     registry.process_custom_types()

@@ -137,3 +137,9 @@ UI:
     - [ ] update main documentation, add compatibility version grid
 
     
+## Phase 2
+
+- fix handling of long component names
+- add file watcher for registry
+    - add handling of removed registry file
+    - reloading registry does not seem to account for added/removed components in the registry ??

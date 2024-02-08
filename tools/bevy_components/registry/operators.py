@@ -28,7 +28,12 @@ class ReloadRegistryOperator(Operator):
         print("")
         print("")
         ensure_metadata_for_all_objects()
-        #add_metadata_to_components_without_metadata(context.object)
+
+        # now force refresh the ui
+        for area in context.screen.areas: 
+            for region in area.regions:
+                if region.type == "UI":
+                    region.tag_redraw()
 
         return {'FINISHED'}
     

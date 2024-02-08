@@ -135,8 +135,8 @@ def add_component_to_object(object, component_definition, value=None):
         long_name = component_definition["title"]
         short_name = component_definition["short_name"]
         registry = bpy.context.window_manager.components_registry
-        if registry.type_infos == None:
-            raise Exception('registry type infos have not been loaded yet or ar missing !')
+        if not registry.has_type_infos():
+            raise Exception('registry type infos have not been loaded yet or are missing !')
         definition = registry.type_infos[long_name]
         # now we use our pre_generated property groups to set the initial value of our custom property
         (_, propertyGroup) = upsert_component_in_object(object, component_name=short_name, registry=registry)
