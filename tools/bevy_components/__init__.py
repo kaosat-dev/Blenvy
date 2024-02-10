@@ -19,7 +19,7 @@ from .blueprints import CreateBlueprintOperator
 from .components.operators import CopyComponentOperator, DeleteComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, AddComponentOperator, Toggle_ComponentVisibility
 
 from .registry.registry import ComponentsRegistry,MissingBevyType
-from .registry.operators import (COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT, ReloadRegistryOperator, OT_OpenFilebrowser)
+from .registry.operators import (COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT, COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT, ReloadRegistryOperator, OT_OpenFilebrowser)
 from .registry.ui import (BEVY_COMPONENTS_PT_Configuration, BEVY_COMPONENTS_PT_MissingTypesPanel, MISSING_TYPES_UL_List)
 
 from .components.metadata import (ComponentInfos, ComponentsMeta, ensure_metadata_for_all_objects)
@@ -102,6 +102,9 @@ classes = [
     ReloadRegistryOperator,
     COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL,
     COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT,
+
+    COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL,
+    COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT,
     
     BEVY_COMPONENTS_PT_MainPanel,
     BEVY_COMPONENTS_PT_ComponentsPanel,

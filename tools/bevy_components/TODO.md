@@ -145,6 +145,7 @@ UI:
     - [x] have the watcher work as expected
     - [ ] add handling of removed registry file
     - [ ] clear & reset handler when the file browser for the registry is used
+- [ ] re-enable watcher
 
 - tests
     clear && pytest -svv --blender-executable <path_to_blender>/blender/blender-4.0.2-linux-x64/blender
@@ -165,3 +166,8 @@ UI:
     - possible solution
         - propertyGroupName storage: simple , incremented INT (call it propGroupId for ex)
         - lookup shortName => propGroupId
+
+    - do a first pass, by replacing manual propGroupNames creation with a function
+    - in a second pass, replace the innards
+
+- add button to regenerate cutom prop values from custom properties (allows us to sidestep any future issues with internals changing)

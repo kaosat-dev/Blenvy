@@ -5,7 +5,7 @@ from bpy.props import (StringProperty)
 from bpy_extras.io_utils import ImportHelper
 
 from ..helpers import upsert_settings
-from ..components.metadata import apply_propertyGroup_values_to_object_customProperties, ensure_metadata_for_all_objects
+from ..components.metadata import apply_customProperty_values_to_object_propertyGroups, apply_propertyGroup_values_to_object_customProperties, ensure_metadata_for_all_objects
 from ..components.operators import GenerateComponent_From_custom_property_Operator
 from ..propGroups.prop_groups import generate_propertyGroups_for_components
 
@@ -52,7 +52,7 @@ class COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL(Operator):
         return {'FINISHED'}
     
 class COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT(Operator):
-    """Apply registry to CURRENT object: update the custom property values of all objects based on their definition, if any"""
+    """Apply registry to CURRENT object: update the custom property values of current object based on their definition, if any"""
     bl_idname = "object.refresh_custom_properties_current"
     bl_label = "Apply Registry to current object"
     bl_options = {"UNDO"}
@@ -61,6 +61,31 @@ class COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT(Operator):
         print("apply registry to current object")
         object = context.object
         apply_propertyGroup_values_to_object_customProperties(object)
+        return {'FINISHED'}
+    
+
+class COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT(Operator):
+    """Update UI values from custom properties to CURRENT object"""
+    bl_idname = "object.refresh_ui_from_custom_properties_current"
+    bl_label = "Apply custom_properties to current object"
+    bl_options = {"UNDO"}
+
+    def execute(self, context):
+        print("apply custom properties to current object")
+        object = context.object
+        apply_customProperty_values_to_object_propertyGroups(object)
+        return {'FINISHED'}
+    
+class COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL(Operator):
+    """Update UI values from custom properties to ALL object"""
+    bl_idname = "object.refresh_ui_from_custom_properties_all"
+    bl_label = "Apply custom_properties to all objects"
+    bl_options = {"UNDO"}
+
+    def execute(self, context):
+        print("apply custom properties to all object")
+        for object in bpy.data.objects:
+            apply_customProperty_values_to_object_propertyGroups(object)
         return {'FINISHED'}
 
 class OT_OpenFilebrowser(Operator, ImportHelper):

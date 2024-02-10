@@ -7,7 +7,7 @@ def process_enum(registry, definition, update, nesting):
     type_def = definition["type"] if "type" in definition else None
     values = definition["oneOf"]
 
-    nesting = nesting+ [short_name]
+    nesting = nesting + [short_name]
     __annotations__ = {}
     original_type_name = "enum"
 

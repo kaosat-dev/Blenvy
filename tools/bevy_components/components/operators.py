@@ -85,7 +85,8 @@ class PasteComponentOperator(Operator):
                 component_value = source_object[component_name]
                 print("pasting component to object: component name:", str(component_name), "component value:" + str(component_value))
                 print (context.object)
-                copy_propertyGroup_values_to_another_object(source_object, context.object, component_name)
+                registry = context.window_manager.components_registry
+                copy_propertyGroup_values_to_another_object(source_object, context.object, component_name, registry)
 
         return {'FINISHED'}
     

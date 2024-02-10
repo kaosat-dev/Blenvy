@@ -157,7 +157,7 @@ def upsert_component_in_object(object, component_name, registry):
     if component_definition != None:
         short_name = component_definition["short_name"]
         long_name = component_definition["title"]
-        property_group_name = short_name+"_ui"
+        property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
         propertyGroup = None
 
         component_meta = next(filter(lambda component: component["name"] == short_name, target_components_metadata), None)
@@ -196,13 +196,14 @@ def upsert_component_in_object(object, component_name, registry):
         return(None, None)
 
 
-def copy_propertyGroup_values_to_another_object(source_object, target_object, component_name):
+def copy_propertyGroup_values_to_another_object(source_object, target_object, component_name, registry):
     if source_object == None or target_object == None or component_name == None:
         raise Exception('missing input data, cannot copy component propertryGroup')
     
     component_definition = find_component_definition_from_short_name(component_name)
     short_name = component_definition["short_name"]
-    property_group_name = short_name+"_ui"
+    property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
+
     registry = bpy.context.window_manager.components_registry
 
     source_components_metadata = source_object.components_meta.components
@@ -234,3 +235,22 @@ def apply_propertyGroup_values_to_object_customProperties(object):
         if component_definition != None:
             value = property_group_value_to_custom_property_value(propertyGroup, component_definition, registry, None)
             object[component_name] = value
+
+
+
+def apply_customProperty_values_to_object_propertyGroups(object):
+    print("apply custom properties to ")
+    registry = bpy.context.window_manager.components_registry
+    for component_name in dict(object) :
+        if component_name == "components_meta":
+            continue
+        component_definition = find_component_definition_from_short_name(component_name)
+        if component_definition != None:
+            property_group_name = registry.get_propertyGroupName_from_shortName(component_name)
+            components_metadata = object.components_meta.components
+            source_componentMeta = next(filter(lambda component: component["name"] == component_name, components_metadata), None)
+            # matching component means we already have this type of component 
+            propertyGroup = getattr(source_componentMeta, property_group_name)
+            customProperty_value = object[component_name]
+            #value = property_group_value_to_custom_property_value(propertyGroup, component_definition, registry, None)
+            property_group_value_from_custom_property_value(propertyGroup, component_definition, registry, customProperty_value)

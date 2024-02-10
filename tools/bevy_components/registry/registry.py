@@ -205,6 +205,8 @@ class ComponentsRegistry(PropertyGroup):
     def load_schema(self):
         print("load schema", self)
         # cleanup previous data if any
+        self.propGroupIdCounter = 0
+        self.short_names_to_propgroup_names.clear()
         self.missing_types_list.clear()
         self.type_infos.clear()
         self.type_infos_missing.clear()
@@ -234,7 +236,7 @@ class ComponentsRegistry(PropertyGroup):
         # start timer
         if not self.watcher_active:
             self.watcher_active = True
-            bpy.app.timers.register(self.watch_schema)
+            #bpy.app.timers.register(self.watch_schema)
 
 
     # we load the json once, so we do not need to do it over & over again
@@ -281,12 +283,30 @@ class ComponentsRegistry(PropertyGroup):
     propGroupIdCounter: IntProperty(
         name="propGroupIdCounter",
         description="",
-        min=-10000,
-        max=10000,
-        default=-10000
+        min=0,
+        max=1000000000,
+        default=0
     )
+    
+    short_names_to_propgroup_names = {}
+
+    # generate propGroup name from nesting level & shortName: each shortName + nesting is unique
+    def generate_propGroup_name(self, nesting, shortName):
+        #print("gen propGroup name for", shortName, nesting)
+        if shortName in self.short_names_to_propgroup_names and len(nesting) == 0:
+            return self.get_propertyGroupName_from_shortName(shortName)
+        
+        self.propGroupIdCounter += 1
+
+        propGroupIndex = str(self.propGroupIdCounter)
+        propGroupName = propGroupIndex + "_ui"
+        self.short_names_to_propgroup_names[shortName] = propGroupName
+        return propGroupName
+
     def get_propertyGroupName_from_shortName(self, shortName):
-        return None #property_group_name
+        return self.short_names_to_propgroup_names[shortName]
+
+
 """
     object[component_definition.name] = 0.5
     property_manager = object.id_properties_ui(component_definition.name)

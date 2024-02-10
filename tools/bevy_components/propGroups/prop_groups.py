@@ -15,7 +15,8 @@ def update_component(self, context, definition, component_name):
     components_in_object = current_object.components_meta.components
     component_meta =  next(filter(lambda component: component["name"] == component_name, components_in_object), None)
     if component_meta != None:
-        self = getattr(component_meta, component_name+"_ui")
+        property_group_name = registry.get_propertyGroupName_from_shortName(component_name)
+        self = getattr(component_meta, property_group_name)
         # we use our helper to set the values
         context.object[component_name] = property_group_value_to_custom_property_value(self, definition, registry, None)
 

@@ -6,7 +6,6 @@ from .operators import AddComponentOperator, CopyComponentOperator, DeleteCompon
 def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None):
     is_enum = getattr(propertyGroup, "with_enum")
     is_list = getattr(propertyGroup, "with_list") 
-    #current_short_name = getattr(propertyGroup, "short_name", "") + "_ui"
     #nesting = nesting + [current_short_name] # we need this convoluted "nested path strings " workaround so that operators working on a given
     # item in our components hierarchy can get the correct propertyGroup by STRINGS because of course, we cannot pass objects to operators...sigh
 
@@ -172,7 +171,7 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
                 row.label(text=component_name)
 
                 # we fetch the matching ui property group
-                root_propertyGroup_name = component_name+"_ui"
+                root_propertyGroup_name =  registry.get_propertyGroupName_from_shortName(component_name)
                 propertyGroup = getattr(component_meta, root_propertyGroup_name, None)
                 if propertyGroup:
                     # if the component has only 0 or 1 field names, display inline, otherwise change layout

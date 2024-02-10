@@ -1,6 +1,11 @@
 import bpy
 from bpy_types import (UIList)
-from .operators import(OT_OpenFilebrowser, ReloadRegistryOperator, COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT)
+from .operators import(
+    COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL, 
+    COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT, 
+    OT_OpenFilebrowser, ReloadRegistryOperator, 
+    COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL, 
+    COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT)
 
 class BEVY_COMPONENTS_PT_Configuration(bpy.types.Panel):
     bl_idname = "BEVY_COMPONENTS_PT_Configuration"
@@ -40,12 +45,25 @@ class BEVY_COMPONENTS_PT_Configuration(bpy.types.Panel):
         row.alert = True
 
         row = layout.row()
-        row.operator(COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT.bl_idname, text="update custom properties of current object" , icon="FILE_REFRESH")
+        row.operator(COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT.bl_idname, text="update custom properties of current object" , icon="LOOP_FORWARDS")
         row.enabled = registry_has_type_infos and selected_object is not None
 
         layout.separator()
         row = layout.row()
-        row.operator(COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL.bl_idname, text="update custom properties of ALL objects" , icon="FILE_REFRESH")
+        row.operator(COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL.bl_idname, text="update custom properties of ALL objects" , icon="LOOP_FORWARDS")
+        row.enabled = registry_has_type_infos
+
+        row = layout.row()
+        row.label(text="WARNING ! The following operations will try to overwrite your existing ui values if they have matching types on the bevy side !")
+        row.alert = True
+
+        row = layout.row()
+        row.operator(COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT.bl_idname, text="update UI FROM custom properties of current object" , icon="LOOP_BACK")
+        row.enabled = registry_has_type_infos and selected_object is not None
+
+        layout.separator()
+        row = layout.row()
+        row.operator(COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL.bl_idname, text="update UI FROM custom properties of ALL objects" , icon="LOOP_BACK")
         row.enabled = registry_has_type_infos
 
 

@@ -18,7 +18,7 @@ def test_blend():
     add_component_operator = bpy.ops.object.add_component
     add_component_operator(component_type=component_type)
 
-    property_group_name = short_name+"_ui"
+    property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
     object = bpy.context.object
 
     target_components_metadata = object.components_meta.components
