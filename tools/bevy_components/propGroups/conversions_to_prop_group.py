@@ -61,7 +61,7 @@ def parse_tuplestruct_string(string, start_nesting=0):
     for index, char in enumerate(string):
         buff.append(char)
         if char == ","and nesting_level == start_nesting:
-            end_offset = index
+            end_offset = index - 1
             end_offset = len(string) if end_offset == 0 else end_offset
 
             val = "".join(string[start_offset:end_offset])
@@ -75,16 +75,17 @@ def parse_tuplestruct_string(string, start_nesting=0):
 
         if char == "[" or char == "(":
             if nesting_level == start_nesting:
-                start_offset = index
-                print("start offset", start_offset)
+                start_offset = index + 1 
+                print("nesting & setting start offset", start_offset)
             nesting_level  += 1
             print("nesting down", nesting_level)
 
         if char == "]" or char == ")" :
+            nesting_level  -= 1
+
             if nesting_level == start_nesting:
                 end_offset = index
-                print("end offset", end_offset)
-            nesting_level  -= 1
+                print("unesting & setting end offset", end_offset)
             print("nesting up", nesting_level)
 
        
