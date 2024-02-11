@@ -3,48 +3,60 @@ import re
 import json
 
 
-def parse_struct_string(content):
-    print("processing stuff", content)
+def parse_struct_string(string, start_nesting=0, nested=False):
+    print("processing struct string", string, "start_nesting", start_nesting)
     fields = {}
     buff = []
     current_fieldName = None
-    gathering_nested = False
     nesting_level = 0 
 
-    for index, char in enumerate(content):
+    start_offset = 0
+    end_offset = 0
+
+    in_progress = False
+
+    for index, char in enumerate(string):
         buff.append(char)
-        if char == "," and not gathering_nested:
-            val = "".join(buff[:-1])
-            buff = []
-            if not current_fieldName in fields:
-                fields[current_fieldName] = val.strip()
+        if char == "," and nesting_level == start_nesting:
+            print("first case", end_offset)
+            end_offset = index
+            end_offset = len(string) if end_offset == 0 else end_offset
+
+            val = "".join(string[start_offset:end_offset])
+            fields[current_fieldName] = val.strip()
+            start_offset = index + 1
             print("done with field name", current_fieldName, "value", fields[current_fieldName])
 
-        if char == "(" : #and not gathering_nested:
-            print("started gathering nested", current_fieldName)
-            gathering_nested = True
-            """regexp = re.search('^[^(]*\((.*)\).*', )
-            content = regexp.group(1)"""
-        if char == ")" :
-            val = "".join(buff).strip()
-            buff = []
-            fields[current_fieldName] = val  # FIXME: stupid to add back parens #parse_struct_string(val)
-            print("finished gathering nested", current_fieldName, "value", fields[current_fieldName])
+        if char == "(" :
+            nesting_level  += 1
+            if nesting_level == start_nesting:
+                start_offset = index + 1 
+                print("nesting & setting start offset", start_offset)
+            print("nesting down", nesting_level)
 
-            #print("index", index, len(content) )
-            if len(content) - index > 2: #TODO: check this
-                print("nested done")
-                gathering_nested = False
-        if char == ":" and not gathering_nested:
-            fieldName = "".join(buff[:-1])
-            buff = []
-            #fields[fieldName] = ""
+        if char == ")":
+            print("nesting up", nesting_level)
+            if nesting_level == start_nesting:
+                end_offset = index
+                print("unesting & setting end offset", end_offset)
+            nesting_level  -= 1
+
+
+        if char == ":" and nesting_level == start_nesting:
+            end_offset = index
+            fieldName = "".join(string[start_offset:end_offset])
             current_fieldName = fieldName.strip()
-            print("starting field name", fieldName)
-    #print("done with field name", current_fieldName)
-    if not gathering_nested:
-        val = "".join(buff)
-        fields[current_fieldName] = val.strip()
+            start_offset = index + 1
+            end_offset = 0 #hack
+            print("starting field name", fieldName, "index", index)
+            buff = []
+            
+    end_offset = len(string) if end_offset == 0 else end_offset
+    print("final start and end offset", start_offset, end_offset, "total length", len(string))
+
+    val = "".join(string[start_offset:end_offset])
+
+    fields[current_fieldName] = val.strip()
     print("done with all fields", fields)
     return fields
 
@@ -60,7 +72,7 @@ def parse_tuplestruct_string(string, start_nesting=0):
     # todo: strip all stuff before start_nesting
     for index, char in enumerate(string):
         buff.append(char)
-        if char == ","and nesting_level == start_nesting:
+        if char == "," and nesting_level == start_nesting:
             end_offset = index - 1
             end_offset = len(string) if end_offset == 0 else end_offset
 
@@ -218,9 +230,9 @@ def property_group_value_from_custom_property_value(property_group, definition, 
 
     elif type_info == "Tuple": 
         print("is Tuple", value)
-        regexp = re.search('^[^(]*\((.*)\).*', value)
-        content = regexp.group(1) if value != "" else ""
-        custom_property_values = parse_tuplestruct_string(content)#, start_nesting=1)
+        #regexp = re.search('^[^(]*\((.*)\).*', value)
+        #content = regexp.group(1) if value != "" else ""
+        custom_property_values = parse_tuplestruct_string(value)#, start_nesting=1)
         print("custom_property_values", custom_property_values)
 
         for index, field_name in enumerate(property_group.field_names):
@@ -236,14 +248,9 @@ def property_group_value_from_custom_property_value(property_group, definition, 
                 propGroup_value = property_group_value_from_custom_property_value(child_property_group, item_definition, registry, value=custom_property_value)
 
     elif type_info == "TupleStruct":
-        '''regexp = re.search('^[^(]*\((.*)\).*', value)
-        content = regexp.group(1)'''
-
-        regexp = re.search('(^[^\(]*)(\((.*)\))', value)
-        content = regexp.group(3)
-
         print("is TupleStruct", value)
-        custom_property_values = parse_tuplestruct_string(content)
+        field_names_count = len(property_group.field_names)
+        custom_property_values = parse_tuplestruct_string(value, start_nesting=1) # if field_names_count == 1 else 2)
         print("custom_property_values", custom_property_values)
         for index, field_name in enumerate(property_group.field_names):
             item_type_name = definition["prefixItems"][index]["type"]["$ref"].replace("#/$defs/", "")
@@ -304,7 +311,7 @@ def property_group_value_from_custom_property_value(property_group, definition, 
         print("is List", value)
         item_list = getattr(property_group, "list")
         print("item_list", item_list)
-        custom_property_values = parse_tuplestruct_string(value, start_nesting=1)
+        custom_property_values = parse_tuplestruct_string(value, start_nesting=0)
         for index, item in enumerate(item_list):
             print("index", index)
             item_type_name = getattr(item, "type_name")
