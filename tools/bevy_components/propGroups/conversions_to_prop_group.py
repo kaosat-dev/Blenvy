@@ -49,45 +49,54 @@ def parse_struct_string(content):
     return fields
 
 def parse_tuplestruct_string(string, start_nesting=0):
-    print("processing tuppleStruct", string)
+    print("processing tuppleStruct", string, "start_nesting", start_nesting)
     fields = []
     buff = []
     nesting_level = 0 
     field_index = 0
 
-    bla_bla = 0
+    start_offset = 0
+    end_offset = 0
     # todo: strip all stuff before start_nesting
     for index, char in enumerate(string):
         buff.append(char)
         if char == ","and nesting_level == start_nesting:
-            val = "".join(buff[bla_bla:-1:])
+            end_offset = index
+            end_offset = len(string) if end_offset == 0 else end_offset
+
+            val = "".join(string[start_offset:end_offset])
             buff = []
             #if not current_fieldName in fields:
             fields.append(val.strip())
             field_index += 1
-            print("blabla", bla_bla)
+
+            print("start and end offset", start_offset, end_offset, "total length", len(string))
             print("done with field name", field_index, "value", fields)
 
         if char == "[" or char == "(":
             if nesting_level == start_nesting:
-                bla_bla = index
+                start_offset = index
+                print("start offset", start_offset)
             nesting_level  += 1
-            print("nesting", nesting_level)
+            print("nesting down", nesting_level)
 
         if char == "]" or char == ")" :
             if nesting_level == start_nesting:
-                bla_bla = index
+                end_offset = index
+                print("end offset", end_offset)
             nesting_level  -= 1
+            print("nesting up", nesting_level)
 
        
         if char == ":" and nesting_level == start_nesting:
             buff = []
             print("starting field name", field_index)
 
-    print("final blabla", bla_bla, len(string))
-    stop = len(string)- bla_bla
-    print("stop", stop)
-    val = "".join(buff[:-stop] if start_nesting != 0 else buff)
+    #stop = len(string)- end_offset
+    end_offset = len(string) if end_offset == 0 else end_offset
+    print("final start and end offset", start_offset, end_offset, "total length", len(string))
+
+    val = "".join(string[start_offset:end_offset]) #if end_offset != 0 else buff)
     fields.append(val.strip())
     print("done with all fields", fields)
     return fields
@@ -207,17 +216,23 @@ def property_group_value_from_custom_property_value(property_group, definition, 
             print("struct with zero fields")
 
     elif type_info == "Tuple": 
-        print("is Tuple")
+        print("is Tuple", value)
+        regexp = re.search('^[^(]*\((.*)\).*', value)
+        content = regexp.group(1) if value != "" else ""
+        custom_property_values = parse_tuplestruct_string(content)#, start_nesting=1)
+        print("custom_property_values", custom_property_values)
+
         for index, field_name in enumerate(property_group.field_names):
             item_type_name = definition["prefixItems"][index]["type"]["$ref"].replace("#/$defs/", "")
             item_definition = registry.type_infos[item_type_name] if item_type_name in registry.type_infos else None
             
+            custom_property_value = custom_property_values[index]
+
             propGroup_value = getattr(property_group, field_name)
             is_property_group = isinstance(propGroup_value, PropertyGroup)
             child_property_group = propGroup_value if is_property_group else None
             if item_definition != None:
-                propGroup_value = property_group_value_from_custom_property_value(child_property_group, item_definition, registry, value=value)
-            #values[field_name] = value
+                propGroup_value = property_group_value_from_custom_property_value(child_property_group, item_definition, registry, value=custom_property_value)
 
     elif type_info == "TupleStruct":
         '''regexp = re.search('^[^(]*\((.*)\).*', value)
@@ -241,9 +256,10 @@ def property_group_value_from_custom_property_value(property_group, definition, 
             child_property_group = value if is_property_group else None
             if item_definition != None:
                 custom_prop_value = property_group_value_from_custom_property_value(child_property_group, item_definition, registry, value=custom_prop_value)
-            else:
-                custom_prop_value = custom_prop_value
-            setattr(property_group, field_name, custom_prop_value)
+            try:
+                setattr(property_group, field_name, custom_prop_value)
+            except Exception as error:
+                print("could not set property value", error)
 
     elif type_info == "Enum":
         field_names = property_group.field_names
@@ -296,10 +312,10 @@ def property_group_value_from_custom_property_value(property_group, definition, 
             custom_prop_value = custom_property_values[index]
             print("list item", index, "value", custom_prop_value)
 
-            '''if definition != None:
-                item_value = property_group_value_from_custom_property_value(item, definition, registry, value=None)
+            if definition != None:
+                item_value = property_group_value_from_custom_property_value(item, definition, registry, value=custom_prop_value)
                 if item_type_name.startswith("wrapper_"): #if we have a "fake" tupple for aka for value types, we need to remove one nested level
-                    item_value = item_value[0]'''
+                    item_value = item_value[0]
             
     else:
         print("something else")

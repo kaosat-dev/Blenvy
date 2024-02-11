@@ -1,9 +1,5 @@
 import bpy
 
-def load_registry():
-    
-
-    return None
 
 def test_blend():
     registry = bpy.context.window_manager.components_registry
