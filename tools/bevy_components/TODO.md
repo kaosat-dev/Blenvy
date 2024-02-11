@@ -139,7 +139,11 @@ UI:
     
 ## Phase 2
 
-- [ ] fix handling of long component names
+- [x] fix handling of long component names
+    - [x] fix nesting level handling issue for new system : ie basic component DOES NOT work, but nestedLevel2 does
+    - add goddam tests !
+    - [ ] verify some weird prop => custom property values (Calculated Clip for example)
+
 - [x] fix "reload registry" not clearing all previous data (reloading registry does not seem to account for added/removed components in the registry )
 - add file watcher for registry
     - [x] have the watcher work as expected
@@ -155,7 +159,11 @@ UI:
     - try adding all components ? or just one or two ?
         - [ ] select an object
         - [ ] call the add_component operator ?
-    - change params
+    - [ ] change params 
+        - use field names + component definitions to set values
+    - [ ] test propgroup values => custom property values
+    - [ ] test custom property value => propgroup value 
+
     - check if all went well
     -
 
@@ -171,3 +179,6 @@ UI:
     - in a second pass, replace the innards
 
 - add button to regenerate cutom prop values from custom properties (allows us to sidestep any future issues with internals changing)
+    - [ ] fix enums (see Clusterconfig)
+    - [ ] fix tupleStructs (see TupleVecF32F32) =>  always the same problem of having us pre-parse data without knowing what we have inside
+        - find a way to only split by level 0 (highest level) nesting "," seperators, ignoring any level of nesting until we dig one level deeper

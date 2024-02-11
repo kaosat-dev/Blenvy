@@ -293,14 +293,15 @@ class ComponentsRegistry(PropertyGroup):
     # generate propGroup name from nesting level & shortName: each shortName + nesting is unique
     def generate_propGroup_name(self, nesting, shortName):
         #print("gen propGroup name for", shortName, nesting)
-        if shortName in self.short_names_to_propgroup_names and len(nesting) == 0:
-            return self.get_propertyGroupName_from_shortName(shortName)
+        #if shortName in self.short_names_to_propgroup_names and len(nesting) == 0:
+        #    return self.get_propertyGroupName_from_shortName(shortName)
         
         self.propGroupIdCounter += 1
 
         propGroupIndex = str(self.propGroupIdCounter)
         propGroupName = propGroupIndex + "_ui"
-        self.short_names_to_propgroup_names[shortName] = propGroupName
+        key = str(nesting) + shortName if len(nesting) > 0 else shortName
+        self.short_names_to_propgroup_names[key] = propGroupName
         return propGroupName
 
     def get_propertyGroupName_from_shortName(self, shortName):

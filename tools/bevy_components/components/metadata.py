@@ -1,7 +1,8 @@
 import bpy
 from bpy.props import (StringProperty, BoolProperty, PointerProperty)
 from bpy_types import (PropertyGroup)
-from ..propGroups.conversions import property_group_value_from_custom_property_value, property_group_value_to_custom_property_value
+from ..propGroups.conversions_from_prop_group import property_group_value_to_custom_property_value
+from ..propGroups.conversions_to_prop_group import property_group_value_from_custom_property_value
 
 class ComponentInfos(bpy.types.PropertyGroup):
     name : bpy.props.StringProperty(
@@ -253,4 +254,7 @@ def apply_customProperty_values_to_object_propertyGroups(object):
             propertyGroup = getattr(source_componentMeta, property_group_name)
             customProperty_value = object[component_name]
             #value = property_group_value_to_custom_property_value(propertyGroup, component_definition, registry, None)
+            
+            object["__disable__update"] = True # disable update callback while we set the values of the propertyGroup "tree" (as a propertyGroup can contain other propertyGroups) 
             property_group_value_from_custom_property_value(propertyGroup, component_definition, registry, customProperty_value)
+            del object["__disable__update"]

@@ -1,5 +1,5 @@
 import bpy
-from .conversions import property_group_value_to_custom_property_value
+from .conversions_from_prop_group import property_group_value_to_custom_property_value
 from .process_component import process_component
 from .utils import update_calback_helper
 
