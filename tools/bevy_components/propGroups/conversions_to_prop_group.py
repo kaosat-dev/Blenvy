@@ -1,3 +1,4 @@
+from decimal import Decimal
 from bpy_types import PropertyGroup
 import re
 import json
@@ -55,7 +56,7 @@ def parse_struct_string(string, start_nesting=0):
     val = "".join(string[start_offset:end_offset])
 
     fields[current_fieldName] = val.strip()
-    #print("done with all fields", fields)
+    print("done with all fields", fields)
     return fields
 
 def parse_tuplestruct_string(string, start_nesting=0):
@@ -123,6 +124,8 @@ def parse_color(value, caster, typeName):
     parsed = parse_struct_string(value.replace(typeName,"").replace("(", "").replace(")","") )
     return [caster(parsed['red']), caster(parsed['green']), caster(parsed['blue']), caster(parsed['alpha'])]
 
+def to_int(input):
+    return int(float(input))
 
 type_mappings = {
     "bool": lambda value: True if value == "true" else False,
@@ -146,15 +149,15 @@ type_mappings = {
 
     "glam::Vec2": lambda value: parse_vec2(value, float, "Vec2"),
     "glam::DVec2": lambda value: parse_vec2(value, float, "DVec2"),
-    "glam::UVec2": lambda value: parse_vec2(value, int, "UVec2"),
+    "glam::UVec2": lambda value: parse_vec2(value, to_int, "UVec2"),
 
     'glam::Vec3': lambda value: parse_vec3(value, float, "Vec3"),
     "glam::Vec3A": lambda value: parse_vec3(value, float, "Vec3A"),
-    "glam::UVec3": lambda value: parse_vec3(value, int, "UVec3"),
+    "glam::UVec3": lambda value: parse_vec3(value, to_int, "UVec3"),
 
     "glam::Vec4": lambda value: parse_vec4(value, float, "Vec4"),
     "glam::DVec4": lambda value: parse_vec4(value, float, "DVec4"),
-    "glam::UVec4": lambda value: parse_vec4(value, int, "UVec4"),
+    "glam::UVec4": lambda value: parse_vec4(value, to_int, "UVec4"),
 
     "glam::Quat": lambda value: parse_vec4(value, float, "Quat"),
 
@@ -196,7 +199,7 @@ def property_group_value_from_custom_property_value(property_group, definition, 
     elif type_info == "Struct":
         if len(property_group.field_names) != 0 :
             print("is struct", value)
-            custom_property_values = parse_struct_string(value, start_nesting=1)
+            custom_property_values = parse_struct_string(value, start_nesting=1 if value.startswith("(") else 0)
             print("custom_property_values", custom_property_values)
             for index, field_name in enumerate(property_group.field_names):
                 print("FIELD NAME", field_name)
@@ -264,9 +267,14 @@ def property_group_value_from_custom_property_value(property_group, definition, 
         print("is Enum", value)
         if type_def == "object":
             regexp = re.search('(^[^\(]+)(\((.*)\))', value)
-            chosen_variant_raw = regexp.group(1)
-            chosen_variant_value = regexp.group(3)
-            chosen_variant_name = "variant_" + chosen_variant_raw 
+            try:
+                chosen_variant_raw = regexp.group(1)
+                chosen_variant_value = regexp.group(3)
+                chosen_variant_name = "variant_" + chosen_variant_raw 
+            except:
+                chosen_variant_raw = value
+                chosen_variant_value = ""
+                chosen_variant_name = "variant_" + chosen_variant_raw 
             print("object Enum", value, chosen_variant_raw, "value", chosen_variant_value, property_group.field_names)
             selection_index = property_group.field_names.index(chosen_variant_name)
             variant_definition = definition["oneOf"][selection_index-1]
