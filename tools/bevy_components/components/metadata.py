@@ -148,6 +148,7 @@ def add_component_to_object(object, component_definition, value=None):
             property_group_value_from_custom_property_value(propertyGroup, definition, registry, value)
             del object["__disable__update"]
 
+        print("short name length", len(short_name))
         object[short_name] = value
        
 def upsert_component_in_object(object, component_name, registry):

@@ -3,7 +3,7 @@ import bpy
 
 def test_blend():
     registry = bpy.context.window_manager.components_registry
-    registry.schemaPath = "../../examples/bevy_registry_export/basic/assets/registry.json"
+    registry.schemaPath = "../../testing/bevy_registry_export/basic/assets/registry.json"
     #print("registry", registry)
     bpy.ops.object.reload_registry()
     #print("registry type infos", registry.type_infos)

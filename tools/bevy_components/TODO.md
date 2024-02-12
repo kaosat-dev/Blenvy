@@ -179,7 +179,12 @@ UI:
     - in a second pass, replace the innards
 
 - add button to regenerate cutom prop values from custom properties (allows us to sidestep any future issues with internals changing)
+    - [ ] fix lists
     - [ ] fix enums (see Clusterconfig)
     - [ ] fix tupleStructs (see TupleVecF32F32) =>  always the same problem of having us pre-parse data without knowing what we have inside
         - find a way to only split by level 0 (highest level) nesting "," seperators, ignoring any level of nesting until we dig one level deeper
         - solve nesting level use issues
+
+- coherence in operators: 
+    - component_name vs component_type
+    - delete => remove

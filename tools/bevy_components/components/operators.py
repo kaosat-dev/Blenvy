@@ -80,7 +80,7 @@ class PasteComponentOperator(Operator):
         else:
             component_name = context.window_manager.copied_source_component_name
             if not component_name in source_object:
-                self.report({"ERROR"}, "The source component to copy a component from does not exist")
+                self.report({"ERROR"}, "The source component to copy from does not exist")
             else:
                 component_value = source_object[component_name]
                 print("pasting component to object: component name:", str(component_name), "component value:" + str(component_value))
@@ -108,7 +108,7 @@ class DeleteComponentOperator(Operator):
         if object is not None and self.component_name in object: 
             del object[self.component_name]
         else: 
-            self.report({"ERROR"}, "The object/ component to remove does not exist")
+            self.report({"ERROR"}, "The object/ component to remove ("+ self.component_name +") does not exist")
 
         return {'FINISHED'}
 
