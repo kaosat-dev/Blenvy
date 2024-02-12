@@ -1,5 +1,7 @@
 import bpy
 
+from ..propGroups.conversions_to_prop_group import property_group_value_from_custom_property_value
+from ..propGroups.conversions_from_prop_group import property_group_value_to_custom_property_value
 
 
 def test_add_components():
@@ -41,21 +43,9 @@ def test_add_components():
     #assert propertyGroup.field_names == ['a', 'b', 'c']
 
 import pprint
-def test_component_should_generate_correct_custom_properties():
-    registry = bpy.context.window_manager.components_registry
-    registry.schemaPath = "../../testing/bevy_registry_export/basic/assets/registry.json"
-    bpy.ops.object.reload_registry()
 
-    type_infos = registry.type_infos
-    object = bpy.context.object
 
-    add_component_operator = bpy.ops.object.add_component
-    errors = []
-    addable_components = []
-    added_components = []
-
-    custom_property_values = {}
-    expected_custom_property_values = {
+expected_custom_property_values = {
         'Aabb': '(center: Vec3A(x:0.0, y:0.0, z:0.0), half_extents: Vec3A(x:0.0, y:0.0, z:0.0))',
         'AdditionalMassProperties': 'Mass(0.0)',
         'AmbientLightSettings': '(brightness: 0.0, color: Rgba(red:1.0, green:1.0, blue:0.0, alpha:1.0))',
@@ -245,8 +235,22 @@ def test_component_should_generate_correct_custom_properties():
         'ZIndex': 'Local(0)'
         }
 
-    
 
+def test_components_should_generate_correct_custom_properties():
+    registry = bpy.context.window_manager.components_registry
+    registry.schemaPath = "../../testing/bevy_registry_export/basic/assets/registry.json"
+    bpy.ops.object.reload_registry()
+
+    type_infos = registry.type_infos
+    object = bpy.context.object
+
+    add_component_operator = bpy.ops.object.add_component
+    errors = []
+    addable_components = []
+    added_components = []
+
+    custom_property_values = {}
+    
     for type_name in type_infos:
         definition = type_infos[type_name]
         component_type = definition["title"]
@@ -279,6 +283,58 @@ def test_component_should_generate_correct_custom_properties():
     """pp = pprint.PrettyPrinter(depth=14, width=120)
     print("CUSTOM PROPERTY VALUES")
     pp.pprint(custom_property_values)"""
+
+def test_components_should_generate_correct_propertyGroup_values_from_custom_properties():
+    registry = bpy.context.window_manager.components_registry
+    registry.schemaPath = "../../testing/bevy_registry_export/basic/assets/registry.json"
+    bpy.ops.object.reload_registry()
+
+    type_infos = registry.type_infos
+    object = bpy.context.object
+
+    add_component_operator = bpy.ops.object.add_component
+    errors = []
+    addable_components = []
+    added_components = []
+    custom_property_values = {}
+
+    #generate_propGroup_values_from_customProp_values_operator = bpy.ops.object.refresh_ui_from_custom_properties_current
+    #generate_propGroup_values_from_customProp_values_operator()
+
+    for type_name in type_infos:
+        definition = type_infos[type_name]
+        component_type = definition["title"]
+        short_name = definition["short_name"]
+        is_component = definition['isComponent']  if "isComponent" in definition else False
+        if not is_component:
+            continue
+
+        addable_components.append(component_type)
+
+        try:
+            add_component_operator(component_type=component_type)
+            property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
+
+            target_components_metadata = object.components_meta.components
+            component_meta = next(filter(lambda component: component["name"] == short_name, target_components_metadata), None)
+            propertyGroup = getattr(component_meta, property_group_name, None)
+
+            custom_property_value = object[short_name]
+            # we update propgroup values from custom property values
+            property_group_value_from_custom_property_value(propertyGroup, definition, registry, custom_property_value, nesting = [])
+            # and then generate it back
+            custom_property_value_regen = property_group_value_to_custom_property_value(propertyGroup, definition, registry, None)
+            assert custom_property_value_regen == expected_custom_property_values[short_name]
+
+            # custom_property_values[short_name] = object[short_name]
+            #assert object[short_name] == expected_custom_property_values[short_name]
+            #print("CUSTOM PROPERTY ", object[short_name])
+
+        except Exception as error:
+            errors.append(error)
+
+    assert len(errors) == 1
+    assert len(added_components) == 150
 
 
 def test_remove_components():
@@ -387,3 +443,4 @@ def test_copy_paste_components():
 
     a_fieldValue = getattr(propertyGroup, propertyGroup.field_names[0])
     assert a_fieldValue == 25.0
+

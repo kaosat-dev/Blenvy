@@ -156,11 +156,14 @@ UI:
 
     - [x] load registry
     - just check list of components vs lists in registry
-    - try adding all components ? or just one or two ?
-        - [ ] select an object
-        - [ ] call the add_component operator ?
+    - [x] try adding all components
+        - [x] select an object
+        - [x] call the add_component operator 
+
     - [ ] change params 
         - use field names + component definitions to set values
+        - [ ] find a way to shuffle params of ALL components based on a reliable, repeatable seed
+
     - [ ] test propgroup values => custom property values
     - [ ] test custom property value => propgroup value 
 
@@ -184,6 +187,7 @@ UI:
     - [ ] fix tupleStructs (see TupleVecF32F32) =>  always the same problem of having us pre-parse data without knowing what we have inside
         - find a way to only split by level 0 (highest level) nesting "," seperators, ignoring any level of nesting until we dig one level deeper
         - solve nesting level use issues
+
 
 - coherence in operators: 
     - component_name vs component_type

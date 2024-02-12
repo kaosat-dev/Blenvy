@@ -79,8 +79,8 @@ def parse_tuplestruct_string(string, start_nesting=0):
             val = "".join(string[start_offset:end_offset])
             fields.append(val.strip())
             field_index += 1
-            print("start and end offset", start_offset, end_offset, "total length", len(string))
-            print("done with field name", field_index, "value", fields)
+            #print("start and end offset", start_offset, end_offset, "total length", len(string))
+            #print("done with field name", field_index, "value", fields)
             start_offset = index + 1
             end_offset = 0 # hack
 
@@ -88,19 +88,19 @@ def parse_tuplestruct_string(string, start_nesting=0):
             nesting_level  += 1
             if nesting_level == start_nesting:
                 start_offset = index + 1 
-                print("nesting & setting start offset", start_offset)
-            print("nesting down", nesting_level)
+                #print("nesting & setting start offset", start_offset)
+            #print("nesting down", nesting_level)
 
         if char == "]" or char == ")" :
             if nesting_level == start_nesting:
                 end_offset = index
-                print("unesting & setting end offset", end_offset)
-            print("nesting up", nesting_level)
+                #print("unesting & setting end offset", end_offset)
+            #print("nesting up", nesting_level)
             nesting_level  -= 1
 
 
     end_offset = len(string) if end_offset == 0 else end_offset
-    print("final start and end offset", start_offset, end_offset, "total length", len(string))
+    #print("final start and end offset", start_offset, end_offset, "total length", len(string))
 
     val = "".join(string[start_offset:end_offset]) #if end_offset != 0 else buff)
     fields.append(val.strip())
