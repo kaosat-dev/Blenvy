@@ -3,7 +3,7 @@ import re
 import json
 
 
-def parse_struct_string(string, start_nesting=0, nested=False):
+def parse_struct_string(string, start_nesting=0):
     print("processing struct string", string, "start_nesting", start_nesting)
     fields = {}
     buff = []
@@ -13,32 +13,30 @@ def parse_struct_string(string, start_nesting=0, nested=False):
     start_offset = 0
     end_offset = 0
 
-    in_progress = False
-
     for index, char in enumerate(string):
         buff.append(char)
         if char == "," and nesting_level == start_nesting:
-            print("first case", end_offset)
+            #print("first case", end_offset)
             end_offset = index
             end_offset = len(string) if end_offset == 0 else end_offset
 
             val = "".join(string[start_offset:end_offset])
             fields[current_fieldName] = val.strip()
             start_offset = index + 1
-            print("done with field name", current_fieldName, "value", fields[current_fieldName])
+            #print("done with field name", current_fieldName, "value", fields[current_fieldName])
 
         if char == "(" :
             nesting_level  += 1
             if nesting_level == start_nesting:
                 start_offset = index + 1 
-                print("nesting & setting start offset", start_offset)
-            print("nesting down", nesting_level)
+                #print("nesting & setting start offset", start_offset)
+            #print("nesting down", nesting_level)
 
         if char == ")":
-            print("nesting up", nesting_level)
+            #print("nesting up", nesting_level)
             if nesting_level == start_nesting:
                 end_offset = index
-                print("unesting & setting end offset", end_offset)
+                #print("unesting & setting end offset", end_offset)
             nesting_level  -= 1
 
 
@@ -48,16 +46,16 @@ def parse_struct_string(string, start_nesting=0, nested=False):
             current_fieldName = fieldName.strip()
             start_offset = index + 1
             end_offset = 0 #hack
-            print("starting field name", fieldName, "index", index)
+            #print("starting field name", fieldName, "index", index)
             buff = []
             
     end_offset = len(string) if end_offset == 0 else end_offset
-    print("final start and end offset", start_offset, end_offset, "total length", len(string))
+    #print("final start and end offset", start_offset, end_offset, "total length", len(string))
 
     val = "".join(string[start_offset:end_offset])
 
     fields[current_fieldName] = val.strip()
-    print("done with all fields", fields)
+    #print("done with all fields", fields)
     return fields
 
 def parse_tuplestruct_string(string, start_nesting=0):
@@ -70,42 +68,36 @@ def parse_tuplestruct_string(string, start_nesting=0):
     start_offset = 0
     end_offset = 0
     # todo: strip all stuff before start_nesting
+
     for index, char in enumerate(string):
         buff.append(char)
         if char == "," and nesting_level == start_nesting:
-            end_offset = index - 1
+            end_offset = index
             end_offset = len(string) if end_offset == 0 else end_offset
 
             val = "".join(string[start_offset:end_offset])
-            buff = []
-            #if not current_fieldName in fields:
             fields.append(val.strip())
             field_index += 1
-
             print("start and end offset", start_offset, end_offset, "total length", len(string))
             print("done with field name", field_index, "value", fields)
+            start_offset = index + 1
+            end_offset = 0 # hack
 
         if char == "[" or char == "(":
+            nesting_level  += 1
             if nesting_level == start_nesting:
                 start_offset = index + 1 
                 print("nesting & setting start offset", start_offset)
-            nesting_level  += 1
             print("nesting down", nesting_level)
 
         if char == "]" or char == ")" :
-            nesting_level  -= 1
-
             if nesting_level == start_nesting:
                 end_offset = index
                 print("unesting & setting end offset", end_offset)
             print("nesting up", nesting_level)
+            nesting_level  -= 1
 
-       
-        if char == ":" and nesting_level == start_nesting:
-            buff = []
-            print("starting field name", field_index)
 
-    #stop = len(string)- end_offset
     end_offset = len(string) if end_offset == 0 else end_offset
     print("final start and end offset", start_offset, end_offset, "total length", len(string))
 
@@ -171,7 +163,7 @@ type_mappings = {
 }
 
 #converts the value of a single custom property into a value (values) of a property group 
-def property_group_value_from_custom_property_value(property_group, definition, registry, value):
+def property_group_value_from_custom_property_value(property_group, definition, registry, value, nesting = []):
     value_types_defaults = registry.value_types_defaults
 
     type_info = definition["typeInfo"] if "typeInfo" in definition else None
@@ -186,25 +178,26 @@ def property_group_value_from_custom_property_value(property_group, definition, 
 
     #is_value_type = type_def in value_types_defaults or type_name in value_types_defaults
     is_value_type = type_name in value_types_defaults
+    nesting = nesting + [definition["short_name"]]
 
     print(" ")
-    print("raw value", value)
-    print("definition", definition)
+    print("raw value", value, "nesting", nesting)
+    print("nesting", len(nesting))
+    #print("definition", definition)
 
+    
 
     if is_value_type:
         print("value type", value, "type name in type_mappings", type_name in type_mappings)
+        value = value.replace("(", "").replace(")", "")# FIXME: temporary, incoherent use of nesting levels between parse_tuplestruct_string & parse_struct_string
         value = type_mappings[type_name](value) if type_name in type_mappings else value
         print("value", value)
         return value
     elif type_info == "Struct":
         if len(property_group.field_names) != 0 :
-            regexp = re.search('^[^(]*\((.*)\).*', value)
-            content = regexp.group(1) if value != "" else ""
-            print("is struct", content)
-
-            custom_property_values = parse_struct_string(content)
-            values = {}
+            print("is struct", value)
+            custom_property_values = parse_struct_string(value, start_nesting=1)
+            print("custom_property_values", custom_property_values)
             for index, field_name in enumerate(property_group.field_names):
                 print("FIELD NAME", field_name)
                 item_type_name = definition["properties"][field_name]["type"]["$ref"].replace("#/$defs/", "")
@@ -217,7 +210,7 @@ def property_group_value_from_custom_property_value(property_group, definition, 
                 is_property_group = isinstance(propGroup_value, PropertyGroup)
                 child_property_group = propGroup_value if is_property_group else None
                 if item_definition != None:
-                    custom_prop_value = property_group_value_from_custom_property_value(child_property_group, item_definition, registry, value=custom_prop_value)
+                    custom_prop_value = property_group_value_from_custom_property_value(child_property_group, item_definition, registry, value=custom_prop_value, nesting=nesting)
                 else:
                     custom_prop_value = custom_prop_value
                 try:
@@ -230,9 +223,7 @@ def property_group_value_from_custom_property_value(property_group, definition, 
 
     elif type_info == "Tuple": 
         print("is Tuple", value)
-        #regexp = re.search('^[^(]*\((.*)\).*', value)
-        #content = regexp.group(1) if value != "" else ""
-        custom_property_values = parse_tuplestruct_string(value)#, start_nesting=1)
+        custom_property_values = parse_tuplestruct_string(value, start_nesting=1 if len(nesting) == 1 else 1)
         print("custom_property_values", custom_property_values)
 
         for index, field_name in enumerate(property_group.field_names):
@@ -245,12 +236,11 @@ def property_group_value_from_custom_property_value(property_group, definition, 
             is_property_group = isinstance(propGroup_value, PropertyGroup)
             child_property_group = propGroup_value if is_property_group else None
             if item_definition != None:
-                propGroup_value = property_group_value_from_custom_property_value(child_property_group, item_definition, registry, value=custom_property_value)
+                propGroup_value = property_group_value_from_custom_property_value(child_property_group, item_definition, registry, value=custom_property_value, nesting=nesting)
 
     elif type_info == "TupleStruct":
         print("is TupleStruct", value)
-        field_names_count = len(property_group.field_names)
-        custom_property_values = parse_tuplestruct_string(value, start_nesting=1) # if field_names_count == 1 else 2)
+        custom_property_values = parse_tuplestruct_string(value, start_nesting=1 if len(nesting) == 1 else 0)
         print("custom_property_values", custom_property_values)
         for index, field_name in enumerate(property_group.field_names):
             item_type_name = definition["prefixItems"][index]["type"]["$ref"].replace("#/$defs/", "")
@@ -263,7 +253,7 @@ def property_group_value_from_custom_property_value(property_group, definition, 
             is_property_group = isinstance(value, PropertyGroup)
             child_property_group = value if is_property_group else None
             if item_definition != None:
-                custom_prop_value = property_group_value_from_custom_property_value(child_property_group, item_definition, registry, value=custom_prop_value)
+                custom_prop_value = property_group_value_from_custom_property_value(child_property_group, item_definition, registry, value=custom_prop_value, nesting=nesting)
             try:
                 setattr(property_group, field_name, custom_prop_value)
             except Exception as error:
@@ -291,14 +281,14 @@ def property_group_value_from_custom_property_value(property_group, definition, 
                 is_property_group = isinstance(value, PropertyGroup)
                 child_property_group = value if is_property_group else None
                 
-                value = property_group_value_from_custom_property_value(child_property_group, variant_definition, registry, value=chosen_variant_value)
+                value = property_group_value_from_custom_property_value(child_property_group, variant_definition, registry, value=chosen_variant_value, nesting=nesting)
                 
             elif "properties" in variant_definition:
                 value = getattr(property_group, chosen_variant_name)
                 is_property_group = isinstance(value, PropertyGroup)
                 child_property_group = value if is_property_group else None
 
-                value = property_group_value_from_custom_property_value(child_property_group, variant_definition, registry, value=chosen_variant_value)
+                value = property_group_value_from_custom_property_value(child_property_group, variant_definition, registry, value=chosen_variant_value, nesting=nesting)
                 
         else:
             print("other enum")
@@ -311,7 +301,8 @@ def property_group_value_from_custom_property_value(property_group, definition, 
         print("is List", value)
         item_list = getattr(property_group, "list")
         print("item_list", item_list)
-        custom_property_values = parse_tuplestruct_string(value, start_nesting=0)
+        custom_property_values = parse_tuplestruct_string(value, start_nesting=1 if len(nesting) == 1 else 1)
+        print("custom_property_values", custom_property_values)
         for index, item in enumerate(item_list):
             print("index", index)
             item_type_name = getattr(item, "type_name")
@@ -321,87 +312,9 @@ def property_group_value_from_custom_property_value(property_group, definition, 
             print("list item", index, "value", custom_prop_value)
 
             if definition != None:
-                item_value = property_group_value_from_custom_property_value(item, definition, registry, value=custom_prop_value)
+                item_value = property_group_value_from_custom_property_value(item, definition, registry, value=custom_prop_value, nesting=nesting)
                 if item_type_name.startswith("wrapper_"): #if we have a "fake" tupple for aka for value types, we need to remove one nested level
                     item_value = item_value[0]
             
     else:
         print("something else")
-
-#converts the value of a single custom property into a value (values) of a property group 
-def property_group_value_from_custom_property_value_old(property_group, definition, registry, custom_property_value):
-    #print(" ")
-    #print("setting property group value", property_group, definition, custom_property_value)
-    type_infos = registry.type_infos
-    value_types_defaults = registry.value_types_defaults
-    print("custom_property_value", custom_property_value)
-
-    def parse_field(item, property_group, definition, field_name):
-        type_info = definition["typeInfo"] if "typeInfo" in definition else None
-        type_def = definition["type"] if "type" in definition else None
-        properties = definition["properties"] if "properties" in definition else {}
-        prefixItems = definition["prefixItems"] if "prefixItems" in definition else []
-        has_properties = len(properties.keys()) > 0
-        has_prefixItems = len(prefixItems) > 0
-        is_enum = type_info == "Enum"
-        is_list = type_info == "List"
-        is_value_type = type_def in value_types_defaults
-
-        print("parsing field", item, "type infos", type_info, "type_def", type_def)
-        if type_info == "Struct":
-            print("is object")
-            for field_name in property_group.field_names:
-                print("field name", field_name)
-                # sub field
-                if isinstance(getattr(property_group, field_name), PropertyGroup):
-                    sub_prop_group = getattr(property_group, field_name)
-                    ref_name = properties[field_name]["type"]["$ref"].replace("#/$defs/", "")
-                    sub_definition = type_infos[ref_name]
-                    parse_field(item[field_name], sub_prop_group, sub_definition, field_name)
-                else:
-                    setattr(property_group, field_name, item[field_name])
-                
-        if has_prefixItems:
-            if len(property_group.field_names) == 1:
-                setattr(property_group, "0", item) # FIXME: not ideal
-            else:
-                for field_name in property_group.field_names:
-                    setattr(property_group, field_name, item)
-        if is_enum:
-            if type_def == "object":
-                regexp = re.search('(^[^\(]+)(\((.*)\))', item)
-                chosen_variant = regexp.group(1)
-                chosen_variant_value = regexp.group(3).replace("'", '"').replace("(", "[").replace(")","]")
-                chosen_variant_value = json.loads(chosen_variant_value)
-
-                # first set chosen selection
-                field_name = property_group.field_names[0]
-                setattr(property_group, field_name, chosen_variant)
-                
-                # thenlook for the information about the matching variant
-                sub_definition= None
-                for variant in definition["oneOf"]:
-                    if variant["title"] == chosen_variant:
-                        ref_name = variant["prefixItems"][0]["type"]["$ref"].replace("#/$defs/", "")
-                        sub_definition = type_infos[ref_name]
-                        break
-                variant_name = "variant_"+chosen_variant 
-                if isinstance(getattr(property_group, variant_name), PropertyGroup):
-                    sub_prop_group = getattr(property_group, variant_name)
-                    parse_field(chosen_variant_value, sub_prop_group, sub_definition, variant_name)
-                else: 
-                    setattr(property_group, variant_name, chosen_variant_value)
-            else:
-                field_name = property_group.field_names[0]
-                setattr(property_group, field_name, item)
-
-        if is_list:
-            print("is list")
-
-        if is_value_type:
-            print("is value type")
-            
-    try:
-        parse_field(custom_property_value, property_group, definition, None)
-    except Exception as error:
-        print("failed to parse raw custom property data", error)

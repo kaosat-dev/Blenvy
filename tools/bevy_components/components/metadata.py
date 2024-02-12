@@ -251,7 +251,7 @@ def apply_customProperty_values_to_object_propertyGroups(object):
             components_metadata = object.components_meta.components
             source_componentMeta = next(filter(lambda component: component["name"] == component_name, components_metadata), None)
             # matching component means we already have this type of component 
-            propertyGroup = getattr(source_componentMeta, property_group_name)
+            propertyGroup = getattr(source_componentMeta, property_group_name, None)
             customProperty_value = object[component_name]
             #value = property_group_value_to_custom_property_value(propertyGroup, component_definition, registry, None)
             
