@@ -71,16 +71,16 @@
       "type": "array",
       "typeInfo": "List"
     },
-    "alloc::vec::Vec<bevy_bevy_registry_export_basic_example::test_components::TupleVec3>": {
+    "alloc::vec::Vec<bevy_bevy_registry_export_basic_testing::test_components::TupleVec3>": {
       "isComponent": false,
       "isResource": false,
       "items": {
         "type": {
-          "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::TupleVec3"
+          "$ref": "#/$defs/bevy_bevy_registry_export_basic_testing::test_components::TupleVec3"
         }
       },
       "short_name": "Vec<TupleVec3>",
-      "title": "alloc::vec::Vec<bevy_bevy_registry_export_basic_example::test_components::TupleVec3>",
+      "title": "alloc::vec::Vec<bevy_bevy_registry_export_basic_testing::test_components::TupleVec3>",
       "type": "array",
       "typeInfo": "List"
     },
@@ -2111,18 +2111,18 @@
       "type": "object",
       "typeInfo": "Enum"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrAreWeOverDoingTHISPerhapsIHaveNoClueItWouldStillBeGOODToKnowBUtWhereDoWeStopOrIsTHISSomeRandomGibberishPleaseStopNoICannotStopForREAL": {
+    "bevy_bevy_registry_export_basic_testing::test_components::AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrAreWeOverDoingTHISPerhapsIHaveNoClueItWouldStillBeGOODToKnowBUtWhereDoWeStopOrIsTHISSomeRandomGibberishPleaseStopNoICannotStopForREAL": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
       "properties": {},
       "required": [],
       "short_name": "AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrAreWeOverDoingTHISPerhapsIHaveNoClueItWouldStillBeGOODToKnowBUtWhereDoWeStopOrIsTHISSomeRandomGibberishPleaseStopNoICannotStopForREAL",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrAreWeOverDoingTHISPerhapsIHaveNoClueItWouldStillBeGOODToKnowBUtWhereDoWeStopOrIsTHISSomeRandomGibberishPleaseStopNoICannotStopForREAL",
+      "title": "bevy_bevy_registry_export_basic_testing::test_components::AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrAreWeOverDoingTHISPerhapsIHaveNoClueItWouldStillBeGOODToKnowBUtWhereDoWeStopOrIsTHISSomeRandomGibberishPleaseStopNoICannotStopForREAL",
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::BasicTest": {
+    "bevy_bevy_registry_export_basic_testing::test_components::BasicTest": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
@@ -2149,11 +2149,11 @@
         "c"
       ],
       "short_name": "BasicTest",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::BasicTest",
+      "title": "bevy_bevy_registry_export_basic_testing::test_components::BasicTest",
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::EnumComplex": {
+    "bevy_bevy_registry_export_basic_testing::test_components::EnumComplex": {
       "isComponent": true,
       "isResource": false,
       "oneOf": [
@@ -2190,7 +2190,7 @@
           "prefixItems": [
             {
               "type": {
-                "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::BasicTest"
+                "$ref": "#/$defs/bevy_bevy_registry_export_basic_testing::test_components::BasicTest"
               }
             }
           ],
@@ -2207,11 +2207,11 @@
         }
       ],
       "short_name": "EnumComplex",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::EnumComplex",
+      "title": "bevy_bevy_registry_export_basic_testing::test_components::EnumComplex",
       "type": "object",
       "typeInfo": "Enum"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::EnumTest": {
+    "bevy_bevy_registry_export_basic_testing::test_components::EnumTest": {
       "isComponent": true,
       "isResource": false,
       "oneOf": [
@@ -2223,11 +2223,11 @@
         "None"
       ],
       "short_name": "EnumTest",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::EnumTest",
+      "title": "bevy_bevy_registry_export_basic_testing::test_components::EnumTest",
       "type": "string",
       "typeInfo": "Enum"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::NestedTupleStuff": {
+    "bevy_bevy_registry_export_basic_testing::test_components::NestedTupleStuff": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2244,33 +2244,33 @@
         },
         {
           "type": {
-            "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::NestingTestLevel2"
+            "$ref": "#/$defs/bevy_bevy_registry_export_basic_testing::test_components::NestingTestLevel2"
           }
         }
       ],
       "short_name": "NestedTupleStuff",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::NestedTupleStuff",
+      "title": "bevy_bevy_registry_export_basic_testing::test_components::NestedTupleStuff",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::NestingTestLevel2": {
+    "bevy_bevy_registry_export_basic_testing::test_components::NestingTestLevel2": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
       "properties": {
         "basic": {
           "type": {
-            "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::BasicTest"
+            "$ref": "#/$defs/bevy_bevy_registry_export_basic_testing::test_components::BasicTest"
           }
         },
         "color": {
           "type": {
-            "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::TupleTestColor"
+            "$ref": "#/$defs/bevy_bevy_registry_export_basic_testing::test_components::TupleTestColor"
           }
         },
         "colors_list": {
           "type": {
-            "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::VecOfColors"
+            "$ref": "#/$defs/bevy_bevy_registry_export_basic_testing::test_components::VecOfColors"
           }
         },
         "enable": {
@@ -2280,12 +2280,12 @@
         },
         "enum_inner": {
           "type": {
-            "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::EnumTest"
+            "$ref": "#/$defs/bevy_bevy_registry_export_basic_testing::test_components::EnumTest"
           }
         },
         "nested": {
           "type": {
-            "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::NestingTestLevel3"
+            "$ref": "#/$defs/bevy_bevy_registry_export_basic_testing::test_components::NestingTestLevel3"
           }
         },
         "text": {
@@ -2295,7 +2295,7 @@
         },
         "toggle": {
           "type": {
-            "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::TupleTestBool"
+            "$ref": "#/$defs/bevy_bevy_registry_export_basic_testing::test_components::TupleTestBool"
           }
         }
       },
@@ -2310,18 +2310,18 @@
         "colors_list"
       ],
       "short_name": "NestingTestLevel2",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::NestingTestLevel2",
+      "title": "bevy_bevy_registry_export_basic_testing::test_components::NestingTestLevel2",
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::NestingTestLevel3": {
+    "bevy_bevy_registry_export_basic_testing::test_components::NestingTestLevel3": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
       "properties": {
         "vec": {
           "type": {
-            "$ref": "#/$defs/bevy_bevy_registry_export_basic_example::test_components::TupleVec3"
+            "$ref": "#/$defs/bevy_bevy_registry_export_basic_testing::test_components::TupleVec3"
           }
         }
       },
@@ -2329,11 +2329,11 @@
         "vec"
       ],
       "short_name": "NestingTestLevel3",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::NestingTestLevel3",
+      "title": "bevy_bevy_registry_export_basic_testing::test_components::NestingTestLevel3",
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::TupleTest2": {
+    "bevy_bevy_registry_export_basic_testing::test_components::TupleTest2": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2355,11 +2355,11 @@
         }
       ],
       "short_name": "TupleTest2",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::TupleTest2",
+      "title": "bevy_bevy_registry_export_basic_testing::test_components::TupleTest2",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::TupleTestBool": {
+    "bevy_bevy_registry_export_basic_testing::test_components::TupleTestBool": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2371,11 +2371,11 @@
         }
       ],
       "short_name": "TupleTestBool",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::TupleTestBool",
+      "title": "bevy_bevy_registry_export_basic_testing::test_components::TupleTestBool",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::TupleTestColor": {
+    "bevy_bevy_registry_export_basic_testing::test_components::TupleTestColor": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2387,11 +2387,11 @@
         }
       ],
       "short_name": "TupleTestColor",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::TupleTestColor",
+      "title": "bevy_bevy_registry_export_basic_testing::test_components::TupleTestColor",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::TupleTestF32": {
+    "bevy_bevy_registry_export_basic_testing::test_components::TupleTestF32": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2403,11 +2403,11 @@
         }
       ],
       "short_name": "TupleTestF32",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::TupleTestF32",
+      "title": "bevy_bevy_registry_export_basic_testing::test_components::TupleTestF32",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::TupleTestStr": {
+    "bevy_bevy_registry_export_basic_testing::test_components::TupleTestStr": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2419,11 +2419,11 @@
         }
       ],
       "short_name": "TupleTestStr",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::TupleTestStr",
+      "title": "bevy_bevy_registry_export_basic_testing::test_components::TupleTestStr",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::TupleTestU64": {
+    "bevy_bevy_registry_export_basic_testing::test_components::TupleTestU64": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2435,11 +2435,11 @@
         }
       ],
       "short_name": "TupleTestU64",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::TupleTestU64",
+      "title": "bevy_bevy_registry_export_basic_testing::test_components::TupleTestU64",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::TupleVec": {
+    "bevy_bevy_registry_export_basic_testing::test_components::TupleVec": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2451,11 +2451,11 @@
         }
       ],
       "short_name": "TupleVec",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::TupleVec",
+      "title": "bevy_bevy_registry_export_basic_testing::test_components::TupleVec",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::TupleVec2": {
+    "bevy_bevy_registry_export_basic_testing::test_components::TupleVec2": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2467,11 +2467,11 @@
         }
       ],
       "short_name": "TupleVec2",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::TupleVec2",
+      "title": "bevy_bevy_registry_export_basic_testing::test_components::TupleVec2",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::TupleVec3": {
+    "bevy_bevy_registry_export_basic_testing::test_components::TupleVec3": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2483,11 +2483,11 @@
         }
       ],
       "short_name": "TupleVec3",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::TupleVec3",
+      "title": "bevy_bevy_registry_export_basic_testing::test_components::TupleVec3",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::TupleVecF32F32": {
+    "bevy_bevy_registry_export_basic_testing::test_components::TupleVecF32F32": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2499,22 +2499,22 @@
         }
       ],
       "short_name": "TupleVecF32F32",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::TupleVecF32F32",
+      "title": "bevy_bevy_registry_export_basic_testing::test_components::TupleVecF32F32",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::UnitTest": {
+    "bevy_bevy_registry_export_basic_testing::test_components::UnitTest": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
       "properties": {},
       "required": [],
       "short_name": "UnitTest",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::UnitTest",
+      "title": "bevy_bevy_registry_export_basic_testing::test_components::UnitTest",
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::VecOfColors": {
+    "bevy_bevy_registry_export_basic_testing::test_components::VecOfColors": {
       "isComponent": true,
       "isResource": false,
       "items": false,
@@ -2526,23 +2526,23 @@
         }
       ],
       "short_name": "VecOfColors",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::VecOfColors",
+      "title": "bevy_bevy_registry_export_basic_testing::test_components::VecOfColors",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_bevy_registry_export_basic_example::test_components::VecOfVec3s2": {
+    "bevy_bevy_registry_export_basic_testing::test_components::VecOfVec3s2": {
       "isComponent": true,
       "isResource": false,
       "items": false,
       "prefixItems": [
         {
           "type": {
-            "$ref": "#/$defs/alloc::vec::Vec<bevy_bevy_registry_export_basic_example::test_components::TupleVec3>"
+            "$ref": "#/$defs/alloc::vec::Vec<bevy_bevy_registry_export_basic_testing::test_components::TupleVec3>"
           }
         }
       ],
       "short_name": "VecOfVec3s2",
-      "title": "bevy_bevy_registry_export_basic_example::test_components::VecOfVec3s2",
+      "title": "bevy_bevy_registry_export_basic_testing::test_components::VecOfVec3s2",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
@@ -3027,6 +3027,22 @@
       "title": "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere",
       "type": "object",
       "typeInfo": "Struct"
+    },
+    "bevy_gltf_worlflow_examples_common::core::audio::SoundMaterial": {
+      "isComponent": true,
+      "isResource": false,
+      "oneOf": [
+        "Metal",
+        "Wood",
+        "Rock",
+        "Cloth",
+        "Squishy",
+        "None"
+      ],
+      "short_name": "SoundMaterial",
+      "title": "bevy_gltf_worlflow_examples_common::core::audio::SoundMaterial",
+      "type": "string",
+      "typeInfo": "Enum"
     },
     "bevy_gltf_worlflow_examples_common::core::camera::camera_replace_proxies::SSAOSettings": {
       "additionalProperties": false,

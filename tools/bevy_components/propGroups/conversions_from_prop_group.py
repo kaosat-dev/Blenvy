@@ -109,7 +109,6 @@ def property_group_value_to_custom_property_value(property_group, definition, re
                 value = property_group_value_to_custom_property_value(child_property_group, variant_definition, registry, parent=component_name, value=value)
                 value = selected + str(value,)
             else:
-                print("basic enum stuff")
                 value = selected # here the value of the enum is just the name of the variant
         else: 
             value = selected

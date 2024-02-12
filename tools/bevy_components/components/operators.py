@@ -17,8 +17,8 @@ class AddComponentOperator(Operator):
     )
 
     def execute(self, context):
-        print("adding component ", self.component_type, "to object",context.object.name)
         object = context.object
+        print("adding component ", self.component_type, "to object  '"+object.name+"'")
     
         has_component_type = self.component_type != ""
         if has_component_type and object != None:
@@ -105,6 +105,9 @@ class DeleteComponentOperator(Operator):
 
     def execute(self, context):
         object = context.object
+
+        print("removing component ", self.component_name, "from object  '"+object.name+"'")
+
         if object is not None and self.component_name in object: 
             del object[self.component_name]
         else: 

@@ -8,8 +8,8 @@ def test_blend():
     bpy.ops.object.reload_registry()
     #print("registry type infos", registry.type_infos)
 
-    component_type = "bevy_bevy_registry_export_basic_example::test_components::BasicTest"
     short_name = "BasicTest"
+    component_type = registry.short_names_to_long_names[short_name]
 
     add_component_operator = bpy.ops.object.add_component
     add_component_operator(component_type=component_type)

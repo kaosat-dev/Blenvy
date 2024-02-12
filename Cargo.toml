@@ -8,16 +8,15 @@ members = [
     "examples/common/",
 
     "examples/bevy_gltf_components/basic/",
-
     "examples/bevy_gltf_blueprints/basic/",
     "examples/bevy_gltf_blueprints/basic_xpbd_physics/",
     "examples/bevy_gltf_blueprints/animation/",
     "examples/bevy_gltf_blueprints/multiple_levels_multiple_blendfiles",
     "examples/bevy_gltf_blueprints/materials/",
-
     "examples/bevy_gltf_save_load/basic/",
-    
-    "examples/bevy_registry_export/basic"
+    "examples/bevy_registry_export/basic",
+
+    "testing/bevy_registry_export/basic"
 ]
 resolver = "2"
 
