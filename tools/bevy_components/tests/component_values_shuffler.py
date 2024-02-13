@@ -66,6 +66,8 @@ type_mappings = {
 #    
     
 def is_def_value_type(definition, registry):
+    if definition == None:
+        return True
     value_types_defaults = registry.value_types_defaults
     type_name = definition["title"]
     is_value_type = type_name in value_types_defaults
