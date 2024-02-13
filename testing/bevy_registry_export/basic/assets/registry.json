@@ -2111,14 +2111,14 @@
       "type": "object",
       "typeInfo": "Enum"
     },
-    "bevy_bevy_registry_export_basic_testing::test_components::AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrAreWeOverDoingTHISPerhapsIHaveNoClueItWouldStillBeGOODToKnowBUtWhereDoWeStopOrIsTHISSomeRandomGibberishPleaseStopNoICannotStopForREAL": {
+    "bevy_bevy_registry_export_basic_testing::test_components::AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrWut": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
       "properties": {},
       "required": [],
-      "short_name": "AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrAreWeOverDoingTHISPerhapsIHaveNoClueItWouldStillBeGOODToKnowBUtWhereDoWeStopOrIsTHISSomeRandomGibberishPleaseStopNoICannotStopForREAL",
-      "title": "bevy_bevy_registry_export_basic_testing::test_components::AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrAreWeOverDoingTHISPerhapsIHaveNoClueItWouldStillBeGOODToKnowBUtWhereDoWeStopOrIsTHISSomeRandomGibberishPleaseStopNoICannotStopForREAL",
+      "short_name": "AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrWut",
+      "title": "bevy_bevy_registry_export_basic_testing::test_components::AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrWut",
       "type": "object",
       "typeInfo": "Struct"
     },
@@ -2201,6 +2201,38 @@
         },
         {
           "title": "SomeThing"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "a": {
+              "title": "a",
+              "type": {
+                "$ref": "#/$defs/f32"
+              }
+            },
+            "b": {
+              "title": "b",
+              "type": {
+                "$ref": "#/$defs/u32"
+              }
+            },
+            "c": {
+              "title": "c",
+              "type": {
+                "$ref": "#/$defs/alloc::string::String"
+              }
+            }
+          },
+          "required": [
+            "a",
+            "b",
+            "c"
+          ],
+          "short_name": "StructLike",
+          "title": "StructLike",
+          "type": "object",
+          "typeInfo": "Struct"
         },
         {
           "title": "None"
@@ -3027,22 +3059,6 @@
       "title": "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere",
       "type": "object",
       "typeInfo": "Struct"
-    },
-    "bevy_gltf_worlflow_examples_common::core::audio::SoundMaterial": {
-      "isComponent": true,
-      "isResource": false,
-      "oneOf": [
-        "Metal",
-        "Wood",
-        "Rock",
-        "Cloth",
-        "Squishy",
-        "None"
-      ],
-      "short_name": "SoundMaterial",
-      "title": "bevy_gltf_worlflow_examples_common::core::audio::SoundMaterial",
-      "type": "string",
-      "typeInfo": "Enum"
     },
     "bevy_gltf_worlflow_examples_common::core::camera::camera_replace_proxies::SSAOSettings": {
       "additionalProperties": false,

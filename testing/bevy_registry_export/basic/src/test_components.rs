@@ -94,6 +94,11 @@ pub enum EnumComplex {
     Wood(String),
     Vec(BasicTest),
     SomeThing,
+    StructLike {
+        a: f32,
+        b: u32,
+        c: String
+    },
     #[default]
     None,
 }
@@ -113,7 +118,7 @@ pub struct AAAAddedCOMPONENT;
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-pub struct AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrAreWeOverDoingTHISPerhapsIHaveNoClueItWouldStillBeGOODToKnowBUtWhereDoWeStopOrIsTHISSomeRandomGibberishPleaseStopNoICannotStopForREAL;
+pub struct AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrWut;
 
 pub struct ComponentsTestPlugin;
 impl Plugin for ComponentsTestPlugin {
@@ -143,7 +148,7 @@ impl Plugin for ComponentsTestPlugin {
             .register_type::<Vec<Color>>()
             .register_type::<VecOfColors>()
             // .register_type::<AAAAddedCOMPONENT>()
-            .register_type::<AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrAreWeOverDoingTHISPerhapsIHaveNoClueItWouldStillBeGOODToKnowBUtWhereDoWeStopOrIsTHISSomeRandomGibberishPleaseStopNoICannotStopForREAL>()
+            .register_type::<AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrWut>()
             ;
     }
 }

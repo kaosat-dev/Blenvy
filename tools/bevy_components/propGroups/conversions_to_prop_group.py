@@ -186,7 +186,7 @@ def property_group_value_from_custom_property_value(property_group, definition, 
     print(" ")
     print("raw value", value, "nesting", nesting)
     print("nesting", len(nesting))
-    #print("definition", definition)
+    print("definition", definition)
 
     
 
@@ -289,6 +289,7 @@ def property_group_value_from_custom_property_value(property_group, definition, 
                 is_property_group = isinstance(value, PropertyGroup)
                 child_property_group = value if is_property_group else None
                 
+                chosen_variant_value = "(" +chosen_variant_value +")" # needed to handle nesting correctly
                 value = property_group_value_from_custom_property_value(child_property_group, variant_definition, registry, value=chosen_variant_value, nesting=nesting)
                 
             elif "properties" in variant_definition:
@@ -309,7 +310,7 @@ def property_group_value_from_custom_property_value(property_group, definition, 
         print("is List", value)
         item_list = getattr(property_group, "list")
         print("item_list", item_list)
-        custom_property_values = parse_tuplestruct_string(value, start_nesting=1 if len(nesting) == 1 else 1)
+        custom_property_values = parse_tuplestruct_string(value, start_nesting=1)
         print("custom_property_values", custom_property_values)
         for index, item in enumerate(item_list):
             print("index", index)
