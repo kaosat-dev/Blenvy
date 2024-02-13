@@ -74,6 +74,7 @@ class ComponentsRegistry(PropertyGroup):
         "i32":dict(type=IntProperty, presets=dict()),
         "i64":dict(type=IntProperty, presets=dict()),
         "i128":dict(type=IntProperty, presets=dict()),
+        "isize": dict(type=IntProperty, presets=dict()),
 
         "f32": dict(type=FloatProperty, presets=dict()),
         "f64": dict(type=FloatProperty, presets=dict()),
@@ -120,12 +121,14 @@ class ComponentsRegistry(PropertyGroup):
         "u32":0,
         "u64":0,
         "u128":0,
+        "usize":0,
 
         "i8": 0,
         "i16":0,
         "i32":0,
         "i64":0,
         "i128":0,
+        "isize":0,
 
         "f32": 0.0,
         "f64":0.0,

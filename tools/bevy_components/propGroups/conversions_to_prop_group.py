@@ -143,6 +143,7 @@ type_mappings = {
     "i32": lambda value: int(value),
     "i64": lambda value: int(value),
     "i128": lambda value: int(value),
+    "isize": lambda value: int(value),
 
     'f32': lambda value: float(value),
     'f64': lambda value: float(value),

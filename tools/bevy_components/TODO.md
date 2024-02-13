@@ -170,6 +170,11 @@ UI:
     - check if all went well
     -
 
+ - [ ] fix issues with incorect custom_property generation
+ - [ ] add handling for core::ops::Range<f32>
+ - [ ] add handling for alloc::borrow::Cow<str>
+ - [x] add handling of isize
+
  - indirection level
     - currently 
         - short_name +_"ui => direct lookup

@@ -1,6 +1,10 @@
 from bpy_types import PropertyGroup
 
 
+def test(val):
+    print("isize", val)
+    return 0
+
 conversion_tables = {
     "bool": lambda value: value,
 
@@ -36,6 +40,7 @@ def property_group_value_to_custom_property_value(property_group, definition, re
     #print("computing custom property", component_name, type_info, type_def, type_name)
 
     if is_value_type:
+        print("value type", component_name)
         value = conversion_tables[type_name](value)
     elif type_info == "Struct":
         values = {}
@@ -47,11 +52,15 @@ def property_group_value_to_custom_property_value(property_group, definition, re
                 item_definition = registry.type_infos[item_type_name] if item_type_name in registry.type_infos else None
 
                 value = getattr(property_group, field_name)
+                print("bla in struct", field_name)
                 is_property_group = isinstance(value, PropertyGroup)
                 child_property_group = value if is_property_group else None
                 if item_definition != None:
+                    print("here", field_name, item_definition)
                     value = property_group_value_to_custom_property_value(child_property_group, item_definition, registry, parent=component_name, value=value)
+                    print("value", value)
                 else:
+                    print("there", field_name)
                     value = '""'
                 values[field_name] = value
             value = values        
@@ -88,6 +97,7 @@ def property_group_value_to_custom_property_value(property_group, definition, re
         
         value = tuple(e for e in list(values.values()))
     elif type_info == "Enum":
+        print("enum")
         selected = getattr(property_group, component_name)
 
         if type_def == "object":
@@ -95,6 +105,7 @@ def property_group_value_to_custom_property_value(property_group, definition, re
             variant_name = property_group.field_names[selection_index]
             variant_definition = definition["oneOf"][selection_index-1]
             if "prefixItems" in variant_definition:
+                print("tupple")
                 value = getattr(property_group, variant_name)
                 is_property_group = isinstance(value, PropertyGroup)
                 child_property_group = value if is_property_group else None
@@ -102,6 +113,7 @@ def property_group_value_to_custom_property_value(property_group, definition, re
                 value = property_group_value_to_custom_property_value(child_property_group, variant_definition, registry, parent=component_name, value=value)
                 value = selected + str(value,) 
             elif "properties" in variant_definition:
+                print("struc")
                 value = getattr(property_group, variant_name)
                 is_property_group = isinstance(value, PropertyGroup)
                 child_property_group = value if is_property_group else None
@@ -109,7 +121,15 @@ def property_group_value_to_custom_property_value(property_group, definition, re
                 value = property_group_value_to_custom_property_value(child_property_group, variant_definition, registry, parent=component_name, value=value)
                 value = selected + str(value,)
             else:
-                value = selected # here the value of the enum is just the name of the variant
+                print("other")
+                value = getattr(property_group, variant_name)
+                is_property_group = isinstance(value, PropertyGroup)
+                child_property_group = value if is_property_group else None
+                if child_property_group:
+                    value = property_group_value_to_custom_property_value(child_property_group, variant_definition, registry, parent=component_name, value=value)
+                    value = selected + str(value,)
+                else:
+                    value = selected # here the value of the enum is just the name of the variant
         else: 
             value = selected
 
@@ -128,7 +148,10 @@ def property_group_value_to_custom_property_value(property_group, definition, re
                 item_value = '""'
             value.append(item_value) 
     else:
+        print("unhandled case value", value,"type", type(value), isinstance(value, PropertyGroup))
         value = conversion_tables[type_name](value) if is_value_type else value
+        value = '""' if isinstance(value, PropertyGroup) else value
+        
         
     #print("VALUE", value, type(value))
     #print("generating custom property value", value, type(value))

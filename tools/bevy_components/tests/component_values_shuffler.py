@@ -41,6 +41,7 @@ type_mappings = {
     "i32": rand_int,
     "i64": rand_int,
     "i128": rand_int,
+    "isize": rand_int,
 
     'f32': rand_float,
     'f64': rand_float,
