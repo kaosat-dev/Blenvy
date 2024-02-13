@@ -11,8 +11,7 @@ def test_shuffler():
 
     add_component_operator = bpy.ops.object.add_component
 
-
-    """short_name = "BasicTest"
+    short_name = "BasicTest"
     component_type = registry.short_names_to_long_names[short_name]
 
     add_component_operator(component_type=component_type)
@@ -28,7 +27,7 @@ def test_shuffler():
     assert getattr(propertyGroup, 'a') == 0.5714026093482971
     assert getattr(propertyGroup, 'b') == 54
     assert getattr(propertyGroup, 'c') == "psagopiu"
-    """
+    
 
     # Testing a more complex component
     short_name = "NestingTestLevel2"
@@ -42,9 +41,29 @@ def test_shuffler():
     propertyGroup = getattr(component_meta, property_group_name, None)
 
     definition = type_infos[component_type]
-    component_values_shuffler(seed= 10, property_group=propertyGroup, definition=definition, registry=registry)
+    component_values_shuffler(seed= 17, property_group=propertyGroup, definition=definition, registry=registry)
 
-    assert getattr(propertyGroup, 'a') == 0.5714026093482971
-   
+    print("propertyGroup", object[short_name])
+    #field_basic = getattr(propertyGroup, 'basic'
+    # cheating / making things easier for us for complex types: we use the custom property value
+    assert object[short_name] == '(basic: (a: 0.5219839215278625, b: 38, c: "ljfywwrv"), color: (Rgba(red:0.2782765030860901, green:0.9174930453300476, blue:0.24890311062335968, alpha:0.815186083316803)), colors_list: ([Rgba(red:0.2523837685585022, green:0.5016026496887207, blue:0.317435085773468, alpha:0.8463277816772461), Rgba(red:0.945193886756897, green:0.4015909433364868, blue:0.9984470009803772, alpha:0.06219279021024704)]), enable: true, enum_inner: Wood, nested: (vec: (Vec3(x:0.1509154736995697, y:0.7055686116218567, z:0.5588918924331665))), text: "vgkrdwuc", toggle: (false))'
 
 
+    # And another complex component
+    short_name = "EnumComplex"
+    component_type = registry.short_names_to_long_names[short_name]
+    add_component_operator(component_type=component_type)
+
+
+    property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
+    target_components_metadata = object.components_meta.components
+    component_meta = next(filter(lambda component: component["name"] == short_name, target_components_metadata), None)
+    propertyGroup = getattr(component_meta, property_group_name, None)
+
+    definition = type_infos[component_type]
+    component_values_shuffler(seed= 17, property_group=propertyGroup, definition=definition, registry=registry)
+
+    print("propertyGroup", object[short_name])
+    #field_basic = getattr(propertyGroup, 'basic'
+    # cheating / making things easier for us for complex types: we use the custom property value
+    assert object[short_name] == 'StructLike(a: 0.41416797041893005, b: 38, c: "ljfywwrv")'

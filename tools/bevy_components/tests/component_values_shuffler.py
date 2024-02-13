@@ -3,6 +3,8 @@ import random
 import string
 from bpy_types import PropertyGroup
 
+def random_bool():
+    return bool(random.getrandbits(1))
 
 def rand_int():
     return random.randint(0, 100)
@@ -16,7 +18,7 @@ def random_word(length):
 
 def random_vec(length, type,):
     value = []
-    for i in [0..length]:
+    for i in range(0, length):
         if type == 'float':
             value.append(rand_float())
         if type == 'int':
@@ -24,7 +26,7 @@ def random_vec(length, type,):
     return value
 
 type_mappings = {
-    "bool": lambda value: True if value == "true" else False,
+    "bool": random_bool,
 
     "u8": rand_int,
     "u16": rand_int,
@@ -63,6 +65,11 @@ type_mappings = {
 
 #    
     
+def is_def_value_type(definition, registry):
+    value_types_defaults = registry.value_types_defaults
+    type_name = definition["title"]
+    is_value_type = type_name in value_types_defaults
+    return is_value_type
 
 
 def component_values_shuffler(seed=1, property_group=None, definition=None, registry=None, parent=None):
@@ -85,6 +92,7 @@ def component_values_shuffler(seed=1, property_group=None, definition=None, regi
     is_value_type = type_name in value_types_defaults
 
     if is_value_type:
+        #print("value type", type_name)
         fieldValue = type_mappings[type_name]() # see https://docs.python.org/3/library/random.html
         return fieldValue #setattr(propertyGroup , fieldName, fieldValue)
 
@@ -100,11 +108,14 @@ def component_values_shuffler(seed=1, property_group=None, definition=None, regi
                 value = component_values_shuffler(seed, child_property_group, item_definition, registry, parent=component_name)
             else:
                 value = '""'
-            print("setting attr", field_name , "for", component_name, "to", value)
-            setattr(property_group , field_name, value)
+            is_item_value_type = is_def_value_type(item_definition, registry)
+            if is_item_value_type:
+                #print("setting attr", field_name , "for", component_name, "to", value, "value type", is_item_value_type)
+                setattr(property_group , field_name, value)
 
     elif type_info == "Tuple": 
-        values = {}
+        #print("tup")
+
         for index, field_name in enumerate(property_group.field_names):
             item_type_name = definition["prefixItems"][index]["type"]["$ref"].replace("#/$defs/", "")
             item_definition = registry.type_infos[item_type_name] if item_type_name in registry.type_infos else None
@@ -116,11 +127,14 @@ def component_values_shuffler(seed=1, property_group=None, definition=None, regi
                 value = component_values_shuffler(seed, child_property_group, item_definition, registry, parent=component_name)
             else:
                 value = '""'
-            values[field_name] = value
-        value = tuple(e for e in list(values.values()))
+
+            is_item_value_type = is_def_value_type(item_definition, registry)
+            if is_item_value_type:
+                #print("setting attr", field_name , "for", component_name, "to", value, "value type", is_item_value_type)
+                setattr(property_group , field_name, value)
 
     elif type_info == "TupleStruct":
-        values = {}
+        #print("tupstruct")
         for index, field_name in enumerate(property_group.field_names):
             item_type_name = definition["prefixItems"][index]["type"]["$ref"].replace("#/$defs/", "")
             item_definition = registry.type_infos[item_type_name] if item_type_name in registry.type_infos else None
@@ -132,11 +146,18 @@ def component_values_shuffler(seed=1, property_group=None, definition=None, regi
                 value = component_values_shuffler(seed, child_property_group, item_definition, registry, parent=component_name)
             else:
                 value = '""'
-            values[field_name] = value
+
+            is_item_value_type = is_def_value_type(item_definition, registry)
+            if is_item_value_type:
+                setattr(property_group , field_name, value)
         
-        value = tuple(e for e in list(values.values()))
     elif type_info == "Enum":
-        selected = getattr(property_group, component_name)
+        available_variants = definition["oneOf"] if type_def != "object" else list(map(lambda x: x["title"], definition["oneOf"]))
+        print("available variants", available_variants)
+        selected = random.choice(available_variants) 
+
+        # set selected variant
+        setattr(property_group , component_name, selected)
 
         if type_def == "object":
             selection_index = property_group.field_names.index("variant_"+selected)
@@ -161,20 +182,31 @@ def component_values_shuffler(seed=1, property_group=None, definition=None, regi
         else: 
             value = selected
 
+        
+
     elif type_info == "List":
         item_list = getattr(property_group, "list")
-        #item_type = getattr(property_group, "type_name_short")
-        value = []
-        for item in item_list:
-            item_type_name = getattr(item, "type_name")
+        item_type_name = getattr(property_group, "type_name_short")
+        item_type_long = registry.short_names_to_long_names[item_type_name]
+        #print("list item type", item_type_name)
+
+        number_of_list_items_to_add =  random.randint(1, 2)
+
+        for i in range(0, number_of_list_items_to_add):
+            new_entry = item_list.add()   
+            item_type_name = getattr(new_entry, "type_name") # we get the REAL type name
             definition = registry.type_infos[item_type_name] if item_type_name in registry.type_infos else None
+
             if definition != None:
-                item_value = component_values_shuffler(seed, item, definition, registry, parent=component_name)
-                if item_type_name.startswith("wrapper_"): #if we have a "fake" tupple for aka for value types, we need to remove one nested level
-                    item_value = item_value[0]
+                item_value = component_values_shuffler(seed, new_entry, definition, registry, parent=component_name)
             else:
-                item_value = '""'
-            value.append(item_value) 
+                pass
+
+          
+
+
+ 
+          
     else:
         value = "" #conversion_tables[type_name](value) if is_value_type else value
     
