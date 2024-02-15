@@ -25,6 +25,7 @@ def process_list(registry, definition, update, nesting=[]):
     nesting = nesting+[short_name]
     item_collection = CollectionProperty(type=property_group_class)
 
+    item_short_name = item_short_name if not is_item_value_type else  "wrapper_" + item_short_name
     __annotations__ = {
         "list": item_collection,
         "list_index": IntProperty(name = "Index for list", default = 0,  update=update),

@@ -283,7 +283,8 @@ def _test_components_should_generate_correct_custom_properties():
     pp.pprint(custom_property_values)
     """
 
-expected_custom_property_values_randomized = {'AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrWut': '',
+expected_custom_property_values_randomized = {
+ 'AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrWut': '',
  'Aabb': '(center: Vec3A(x:0.5714026093482971, y:0.42888906598091125, z:0.5780913233757019), half_extents: '
          'Vec3A(x:0.20609822869300842, y:0.8133212327957153, z:0.8235888481140137))',
  'AdditionalMassProperties': 'Mass(0.42888906598091125)',
@@ -385,7 +386,7 @@ expected_custom_property_values_randomized = {'AComponentWithAnExtremlyExagerate
  'Label': '',
  'LockedAxes': '(73)',
  'MaterialInfo': '(name: "sbnpsago", source: "piuzfbqp")',
- 'Mesh2dHandle': '(Strong(\\""\\))',
+ 'Mesh2dHandle': '(Strong(""))',
  'MeshMorphWeights': '(weights: "")',
  'MorphWeights': '(first_mesh: "", weights: "")',
  'Name': '(hash: 73, name: "")',
@@ -440,7 +441,7 @@ expected_custom_property_values_randomized = {'AComponentWithAnExtremlyExagerate
  'Sensor': '',
  'ShadowFilteringMethod': 'Jimenez14',
  'ShadowmapSettings': '(size: 73)',
- 'SkinnedMesh': '(inverse_bindposes: Strong(\\""\\), joints: [])',
+ 'SkinnedMesh': '(inverse_bindposes: Strong(""), joints: [])',
  'Sleeping': '(angular_threshold: 0.5714026093482971, linear_threshold: 0.42888906598091125, sleeping: true)',
  'SolverGroups': '(filters: (73), memberships: (4))',
  'SpawnHere': '',
@@ -448,9 +449,9 @@ expected_custom_property_values_randomized = {'AComponentWithAnExtremlyExagerate
               'alpha:0.20609822869300842), inner_angle: 0.8133212327957153, intensity: 0.8235888481140137, '
               'outer_angle: 0.6534725427627563, radius: 0.16022956371307373, range: 0.5206693410873413, '
               'shadow_depth_bias: 0.3277728259563446, shadow_normal_bias: 0.24999667704105377, shadows_enabled: true)',
- 'Sprite': '(anchor: "Custom(Vec2(x:0.03258506581187248, y:0.4825616776943207))", color: '
-           'Rgba(red:0.014832446351647377, green:0.46258050203323364, blue:0.4912964105606079, '
-           'alpha:0.27752065658569336), custom_size: "", flip_x: true, flip_y: false, rect: "")',
+ 'Sprite': '(anchor: Custom(Vec2(x:0.03258506581187248, y:0.4825616776943207)), color: Rgba(red:0.014832446351647377, '
+           'green:0.46258050203323364, blue:0.4912964105606079, alpha:0.27752065658569336), custom_size: "", flip_x: '
+           'true, flip_y: false, rect: "")',
  'Style': '(align_content: SpaceAround, align_items: Default, align_self: Baseline, aspect_ratio: '
           'Some(0.5780913233757019), border: (bottom: Px(0.46258050203323364), left: Vw(0.8235888481140137), right: '
           'VMin(0.8106188178062439), top: Auto), bottom: Vh(0.49008557200431824), column_gap: Auto, direction: '
@@ -466,15 +467,14 @@ expected_custom_property_values_randomized = {'AComponentWithAnExtremlyExagerate
           'right: Vh(0.15641891956329346), top: Px(0.9697836637496948)), position_type: Relative, right: Auto, '
           'row_gap: Auto, top: Vw(0.3011642396450043), width: Vh(0.6578909158706665))',
  'Text': '(alignment: Right, linebreak_behavior: WordBoundary, sections: [(style: (color: Rgba(red:0.4825616776943207, '
-         'green:0.014832446351647377, blue:0.46258050203323364, alpha:0.4912964105606079), font: '
-         'Weak(\\Index(\\\\\\index\\\\\\: \\\\\\""\\\\\\)\\), font_size: 0.03440357372164726), value: "pkchxlbn"), '
-         '(style: (color: Rgba(red:0.8601610660552979, green:0.6031906008720398, blue:0.38160598278045654, '
-         'alpha:0.2836182117462158), font: Weak(\\Uuid(\\\\\\uuid\\\\\\: \\\\\\""\\\\\\)\\), font_size: '
-         '0.17467059195041656), value: "jvleoyho")])',
+         'green:0.014832446351647377, blue:0.46258050203323364, alpha:0.4912964105606079), font: Weak(Index(index: '
+         '"")), font_size: 0.03440357372164726), value: "pkchxlbn"), (style: (color: Rgba(red:0.8601610660552979, '
+         'green:0.6031906008720398, blue:0.38160598278045654, alpha:0.2836182117462158), font: Weak(Uuid(uuid: "")), '
+         'font_size: 0.17467059195041656), value: "jvleoyho")])',
  'Text2dBounds': '(size: Vec2(x:0.5714026093482971, y:0.42888906598091125))',
  'TextFlags': '(needs_new_measure_func: true, needs_recompute: false)',
  'TextLayoutInfo': '(glyphs: "", logical_size: Vec2(x:0.5714026093482971, y:0.42888906598091125))',
- 'TextureAtlasSprite': '(anchor: "Custom(Vec2(x:0.03258506581187248, y:0.4825616776943207))", color: '
+ 'TextureAtlasSprite': '(anchor: Custom(Vec2(x:0.03258506581187248, y:0.4825616776943207)), color: '
                        'Rgba(red:0.014832446351647377, green:0.46258050203323364, blue:0.4912964105606079, '
                        'alpha:0.27752065658569336), custom_size: "", flip_x: true, flip_y: false, index: 4)',
  'Tonemapping': 'None',
@@ -493,7 +493,7 @@ expected_custom_property_values_randomized = {'AComponentWithAnExtremlyExagerate
  'TupleVec3': '(Vec3(x:0.5714026093482971, y:0.42888906598091125, z:0.5780913233757019))',
  'TupleVecF32F32': '([(0.42888906598091125, 0.5780913233757019)])',
  'UiCameraConfig': '(show_ui: true)',
- 'UiImage': '(flip_x: true, flip_y: false, texture: Weak(\\Uuid(\\\\\\uuid\\\\\\: \\\\\\""\\\\\\)\\))',
+ 'UiImage': '(flip_x: true, flip_y: false, texture: Weak(Uuid(uuid: "")))',
  'UiImageSize': '(size: Vec2(x:0.5714026093482971, y:0.42888906598091125))',
  'UiTextureAtlasImage': '(flip_x: true, flip_y: false, index: 54)',
  'UnitTest': '',
@@ -509,8 +509,8 @@ expected_custom_property_values_randomized = {'AComponentWithAnExtremlyExagerate
            'Default, visible: false), decorations: false, enabled_buttons: (close: true, maximize: false, minimize: '
            'true), fit_canvas_to_parent: false, focused: true, ime_enabled: true, ime_position: '
            'Vec2(x:0.16022956371307373, y:0.5206693410873413), internal: (maximize_request: Some(false), '
-           'minimize_request: None, physical_cursor_position: "Some(DVec2(x:0.0445563830435276, '
-           'y:0.8601610660552979))"), mode: SizedFullscreen, position: "Centered(Primary)", present_mode: Fifo, '
+           'minimize_request: None, physical_cursor_position: Some(DVec2(x:0.0445563830435276, '
+           'y:0.8601610660552979))), mode: SizedFullscreen, position: Centered(Primary), present_mode: Fifo, '
            'prevent_default_event_handling: true, resizable: true, resize_constraints: (max_height: '
            '0.2623211145401001, max_width: 0.17467059195041656, min_height: 0.30310511589050293, min_width: '
            '0.36258742213249207), resolution: (physical_height: 58, physical_width: 98, scale_factor: '

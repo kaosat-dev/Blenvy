@@ -31,6 +31,9 @@ def test_parse_tuplestruct_string():
     assert parse_tuplestruct_string("([Rgba(red:1.0, green:1.0, blue:0.0, alpha:1.0), Rgba(red:1.0, green:0.0, blue:0.5, alpha:1.0)])", start_nesting=2) == ['Rgba(red:1.0, green:1.0, blue:0.0, alpha:1.0)', 'Rgba(red:1.0, green:0.0, blue:0.5, alpha:1.0)']
     assert parse_tuplestruct_string('(7.2, 2607, "sdf")', start_nesting=1) == ['7.2', '2607', '"sdf"']
 
+    assert parse_tuplestruct_string('[a, b]', start_nesting=1) == ['a', 'b']
+    assert parse_tuplestruct_string('[]', start_nesting=1) == []
+
 def test_parse_struct_string():
     assert parse_struct_string("a: 45, b:65") == {'a': '45', 'b':'65'}
     assert parse_struct_string("x:-2.0, y:120.0, z:1.0") == {'x': '-2.0', 'y':'120.0', 'z':'1.0'}

@@ -171,11 +171,13 @@ UI:
     -
 
  - [ ] fix issues with incorect custom_property generation
+   - [ ] fix issue with object variants for enums
+
  - [ ] add handling for core::ops::Range<f32>
  - [ ] add handling for alloc::borrow::Cow<str>
  - [x] add handling of isize
 
- - indirection level
+ - [x] indirection level
     - currently 
         - short_name +_"ui => direct lookup
         - problem : max 64 chars for propertyGroupNames
