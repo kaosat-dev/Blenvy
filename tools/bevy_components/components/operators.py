@@ -3,7 +3,7 @@ import json
 import bpy
 from bpy_types import Operator
 from bpy.props import (StringProperty)
-from .metadata import add_component_to_object, add_metadata_to_components_without_metadata, copy_propertyGroup_values_to_another_object, find_component_definition_from_short_name
+from .metadata import add_component_to_object, add_metadata_to_components_without_metadata, copy_propertyGroup_values_to_another_object, find_component_definition_from_short_name, remove_component_from_object
 
 class AddComponentOperator(Operator):
     """Add component to blueprint"""
@@ -109,7 +109,7 @@ class DeleteComponentOperator(Operator):
         print("removing component ", self.component_name, "from object  '"+object.name+"'")
 
         if object is not None and self.component_name in object: 
-            del object[self.component_name]
+            remove_component_from_object(object, self.component_name)
         else: 
             self.report({"ERROR"}, "The object/ component to remove ("+ self.component_name +") does not exist")
 

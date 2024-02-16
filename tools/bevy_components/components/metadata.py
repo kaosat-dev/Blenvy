@@ -4,7 +4,7 @@ from bpy_types import (PropertyGroup)
 from ..propGroups.conversions_from_prop_group import property_group_value_to_custom_property_value
 from ..propGroups.conversions_to_prop_group import property_group_value_from_custom_property_value
 
-class ComponentInfos(bpy.types.PropertyGroup):
+class ComponentMetadata(bpy.types.PropertyGroup):
     name : bpy.props.StringProperty(
         name = "name",
         default = ""
@@ -52,7 +52,7 @@ class ComponentsMeta(PropertyGroup):
         name="infos per component",
         description="component"
     )
-    components: bpy.props.CollectionProperty(type = ComponentInfos)  
+    components: bpy.props.CollectionProperty(type = ComponentMetadata)  
 
     @classmethod
     def register(cls):
@@ -176,7 +176,7 @@ def upsert_component_in_object(object, component_name, registry):
             if property_group_name in registry.component_propertyGroups:
                 # we have found a matching property_group, so try to inject it
                 # now inject property group
-                setattr(ComponentInfos, property_group_name, registry.component_propertyGroups[property_group_name]) # FIXME: not ideal as all ComponentInfos get the propGroup, but have not found a way to assign it per instance
+                setattr(ComponentMetadata, property_group_name, registry.component_propertyGroups[property_group_name]) # FIXME: not ideal as all ComponentMetadata get the propGroup, but have not found a way to assign it per instance
                 propertyGroup = getattr(component_meta, property_group_name, None)
         
         # now deal with property groups details
@@ -258,3 +258,24 @@ def apply_customProperty_values_to_object_propertyGroups(object):
             object["__disable__update"] = True # disable update callback while we set the values of the propertyGroup "tree" (as a propertyGroup can contain other propertyGroups) 
             property_group_value_from_custom_property_value(propertyGroup, component_definition, registry, customProperty_value)
             del object["__disable__update"]
+
+# removes the given component from the object: removes both the custom property and the matching metadata from the object
+def remove_component_from_object(object, component_name):
+    del object[component_name]
+
+    components_metadata = getattr(object, "components_meta", None)
+    if components_metadata == None:
+        return False
+    
+    components_metadata = components_metadata.components
+    to_remove = []
+    for index, component_meta in enumerate(components_metadata):
+        short_name = component_meta.name
+        if short_name == component_name:
+            to_remove.append(index)
+            break
+    for index in to_remove:
+        components_metadata.remove(index)
+    return True
+
+  

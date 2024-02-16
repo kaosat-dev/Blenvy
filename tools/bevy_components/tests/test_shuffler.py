@@ -82,5 +82,60 @@ def test_shuffler():
 
     print("propertyGroup", object[short_name])
     # cheating / making things easier for us for complex types: we use the custom property value
-    assert object[short_name] == 'StructLike(a: 0.41416797041893005, b: 38, c: "ljfywwrv")'
+    assert object[short_name] == '(animation: "", paused: true)'
+
+
+
+    # And another complex component
+    short_name = "VecOfColors"
+    component_type = registry.short_names_to_long_names[short_name]
+    add_component_operator(component_type=component_type)
+
+
+    property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
+    target_components_metadata = object.components_meta.components
+    component_meta = next(filter(lambda component: component["name"] == short_name, target_components_metadata), None)
+    propertyGroup = getattr(component_meta, property_group_name, None)
+
+    definition = type_infos[component_type]
+    component_values_shuffler(seed= 17, property_group=propertyGroup, definition=definition, registry=registry)
+
+    print("propertyGroup", object[short_name])
+    # cheating / making things easier for us for complex types: we use the custom property value
+    assert object[short_name] == '([Rgba(red:0.8066907525062561, green:0.9604947566986084, blue:0.2896253764629364, alpha:0.766107439994812), Rgba(red:0.7042198777198792, green:0.6613830327987671, blue:0.11016204953193665, alpha:0.02693677879869938)])'
+    
+
+    # And another complex component
+    short_name = "VecOfF32s"
+    component_type = registry.short_names_to_long_names[short_name]
+    add_component_operator(component_type=component_type)
+
+    property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
+    target_components_metadata = object.components_meta.components
+    component_meta = next(filter(lambda component: component["name"] == short_name, target_components_metadata), None)
+    propertyGroup = getattr(component_meta, property_group_name, None)
+
+    definition = type_infos[component_type]
+    component_values_shuffler(seed= 17, property_group=propertyGroup, definition=definition, registry=registry)
+
+    print("propertyGroup", object[short_name])
+    # cheating / making things easier for us for complex types: we use the custom property value
+    assert object[short_name] == '([0.8066907525062561, 0.9604947566986084])'
+
+    # And another complex component
+    short_name = "SkinnedMesh"
+    component_type = registry.short_names_to_long_names[short_name]
+    add_component_operator(component_type=component_type)
+
+    property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
+    target_components_metadata = object.components_meta.components
+    component_meta = next(filter(lambda component: component["name"] == short_name, target_components_metadata), None)
+    propertyGroup = getattr(component_meta, property_group_name, None)
+
+    definition = type_infos[component_type]
+    component_values_shuffler(seed= 17, property_group=propertyGroup, definition=definition, registry=registry)
+
+    print("propertyGroup", object[short_name])
+    # cheating / making things easier for us for complex types: we use the custom property value
+    assert object[short_name] == '(inverse_bindposes: Weak(Uuid(uuid: "73b3b118-7d01-4778-8bcc-4e79055f5d22")), joints: ["n/a", "n/a"])'
     

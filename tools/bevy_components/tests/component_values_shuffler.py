@@ -1,6 +1,7 @@
 
 import random
 import string
+import uuid
 from bpy_types import PropertyGroup
 
 def random_bool():
@@ -62,8 +63,11 @@ type_mappings = {
 
     'bevy_render::color::Color': lambda : random_vec(4, 'float'),
     'alloc::string::String': lambda : random_word(8),
-}
+    'alloc::borrow::Cow<str>': lambda : random_word(8),
 
+    'bevy_ecs::Entity': lambda: '"n/a"', # TODO: find ways to specify actual entity ids ?
+    'bevy_utils::Uuid': lambda: '"'+str( uuid.UUID("73b3b118-7d01-4778-8bcc-4e79055f5d22") )+'"'
+}
 #    
     
 def is_def_value_type(definition, registry):
@@ -74,7 +78,7 @@ def is_def_value_type(definition, registry):
     is_value_type = type_name in value_types_defaults
     return is_value_type
 
-
+# see https://docs.python.org/3/library/random.html
 def component_values_shuffler(seed=1, property_group=None, definition=None, registry=None, parent=None):
     if parent == None:
         random.seed(seed)
@@ -95,9 +99,8 @@ def component_values_shuffler(seed=1, property_group=None, definition=None, regi
     is_value_type = type_name in value_types_defaults
 
     if is_value_type:
-        #print("value type", type_name)
-        fieldValue = type_mappings[type_name]() # see https://docs.python.org/3/library/random.html
-        return fieldValue #setattr(propertyGroup , fieldName, fieldValue)
+        fieldValue = type_mappings[type_name]() 
+        return fieldValue 
 
     elif type_info == "Struct":
         for index, field_name in enumerate(property_group.field_names):
@@ -156,7 +159,6 @@ def component_values_shuffler(seed=1, property_group=None, definition=None, regi
         
     elif type_info == "Enum":
         available_variants = definition["oneOf"] if type_def != "object" else list(map(lambda x: x["title"], definition["oneOf"]))
-        print("available variants", available_variants)
         selected = random.choice(available_variants) 
 
         # set selected variant
@@ -189,10 +191,9 @@ def component_values_shuffler(seed=1, property_group=None, definition=None, regi
 
     elif type_info == "List":
         item_list = getattr(property_group, "list")
-        item_type_name = getattr(property_group, "type_name_short")
-        item_type_long = registry.short_names_to_long_names[item_type_name]
-        #print("list item type", item_type_name)
+        item_list.clear()
 
+        item_type_name = getattr(property_group, "type_name_short")
         number_of_list_items_to_add =  random.randint(1, 2)
 
         for i in range(0, number_of_list_items_to_add):
@@ -201,17 +202,15 @@ def component_values_shuffler(seed=1, property_group=None, definition=None, regi
             definition = registry.type_infos[item_type_name] if item_type_name in registry.type_infos else None
 
             if definition != None:
-                item_value = component_values_shuffler(seed, new_entry, definition, registry, parent=component_name)
+                component_values_shuffler(seed, new_entry, definition, registry, parent=component_name)
             else:
                 pass
-
-          
-
-
- 
-          
     else:
-        value = "" #conversion_tables[type_name](value) if is_value_type else value
+        print("something else")
+        fieldValue = type_mappings[type_name]() 
+        return fieldValue 
+
+    #return value
     
    
                         

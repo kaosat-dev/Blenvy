@@ -1,18 +1,19 @@
 import bpy
 import json
 import os
+import uuid
 from pathlib import Path
 from bpy_types import (PropertyGroup)
 from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorProperty, IntProperty, IntVectorProperty, EnumProperty, PointerProperty, CollectionProperty)
 
 from ..propGroups.prop_groups import generate_propertyGroups_for_components
-from ..components.metadata import ComponentInfos, ensure_metadata_for_all_objects
+from ..components.metadata import ComponentMetadata, ensure_metadata_for_all_objects
 
 # helper class to store missing bevy types information
 class MissingBevyType(bpy.types.PropertyGroup):
     type_name: bpy.props.StringProperty(
         name="type",
-    )
+    ) # type: ignore
 
 # this is where we store the information for all available components
 class ComponentsRegistry(PropertyGroup):
@@ -23,21 +24,21 @@ class ComponentsRegistry(PropertyGroup):
         name="schema path",
         description="path to the registry schema file",
         default="registry.json"
-    )
+    )# type: ignore
     schemaFullPath : bpy.props.StringProperty(
         name="schema full path",
         description="path to the registry schema file",
-    )
+    )# type: ignore
   
     registry: bpy.props. StringProperty(
         name="registry",
         description="component registry"
-    )
+    )# type: ignore
 
     missing_type_infos: StringProperty(
         name="missing type infos",
         description="unregistered/missing type infos"
-    )
+    )# type: ignore
 
     watcher_poll_frequency: IntProperty(
         name="watcher poll frequency",
@@ -45,18 +46,19 @@ class ComponentsRegistry(PropertyGroup):
         min=1,
         max=10,
         default=1
-    )
-    watcher_active: BoolProperty(name = "Flag for watcher status", default = False)
+    )# type: ignore
+
+    watcher_active: BoolProperty(name = "Flag for watcher status", default = False)# type: ignore
 
     schemaTimeStamp: StringProperty(
         name="last timestamp of schema file",
         description="",
         default=""
-    )
+    )# type: ignore
 
 
-    missing_types_list: CollectionProperty(name="missing types list", type=MissingBevyType)
-    missing_types_list_index: IntProperty(name = "Index for missing types list", default = 0)
+    missing_types_list: CollectionProperty(name="missing types list", type=MissingBevyType)# type: ignore
+    missing_types_list_index: IntProperty(name = "Index for missing types list", default = 0)# type: ignore
 
     blender_property_mapping = {
         "bool": dict(type=BoolProperty, presets=dict()),
@@ -100,9 +102,14 @@ class ComponentsRegistry(PropertyGroup):
         "char": dict(type=StringProperty, presets=dict()),
         "str":  dict(type=StringProperty, presets=dict()),
         "alloc::string::String":  dict(type=StringProperty, presets=dict()),
+        "alloc::borrow::Cow<str>": dict(type=StringProperty, presets=dict()),
+
+
         "enum":  dict(type=EnumProperty, presets=dict()), 
 
-        #"alloc::vec::Vec<alloc::string::String>": dict(type=CollectionProperty, presets=dict(type=PointerProperty(StringProperty))), #FIXME: we need more generic stuff
+        'bevy_ecs::Entity':  dict(type=StringProperty, presets=dict()),
+        'bevy_utils::Uuid':  dict(type=StringProperty, presets=dict()),
+
     }
 
 
@@ -136,6 +143,7 @@ class ComponentsRegistry(PropertyGroup):
         "char": " ",
         "str": " ",
         "alloc::string::String": " ",
+        "alloc::borrow::Cow<str>":  " ",
 
         "glam::Vec2": [0.0, 0.0],
         "glam::DVec2":  [0.0, 0.0],
@@ -152,6 +160,10 @@ class ComponentsRegistry(PropertyGroup):
         "glam::Quat":  [0.0, 0.0, 0.0, 0.0], 
 
         "bevy_render::color::Color": [1.0, 1.0, 0.0, 1.0],
+
+        'bevy_ecs::Entity': '"n/a"',
+        'bevy_utils::Uuid': '"'+str(uuid.uuid4())+'"'
+
     }
 
     type_infos = {}
@@ -173,15 +185,14 @@ class ComponentsRegistry(PropertyGroup):
 
         for propgroup_name in cls.component_propertyGroups.keys():
             try:
-                delattr(ComponentInfos, propgroup_name)
+                delattr(ComponentMetadata, propgroup_name)
                 #print("unregistered propertyGroup", propgroup_name)
             except Exception as error:
                 pass
-                #print("failed to remove", error, "ComponentInfos")
+                #print("failed to remove", error, "ComponentMetadata")
         
         del bpy.types.WindowManager.components_registry
 
-    
     def watch_schema(self):
         # print("watching schema file for changes")
         try:
@@ -289,7 +300,7 @@ class ComponentsRegistry(PropertyGroup):
         min=0,
         max=1000000000,
         default=0
-    )
+    ) # type: ignore
     
     short_names_to_propgroup_names = {}
 

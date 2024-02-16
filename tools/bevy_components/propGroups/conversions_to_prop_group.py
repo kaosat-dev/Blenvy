@@ -1,11 +1,8 @@
-from decimal import Decimal
 from bpy_types import PropertyGroup
 import re
-import json
-
 
 def parse_struct_string(string, start_nesting=0):
-    print("processing struct string", string, "start_nesting", start_nesting)
+    #print("processing struct string", string, "start_nesting", start_nesting)
     fields = {}
     buff = []
     current_fieldName = None
@@ -56,11 +53,11 @@ def parse_struct_string(string, start_nesting=0):
     val = "".join(string[start_offset:end_offset])
 
     fields[current_fieldName] = val.strip()
-    print("done with all fields", fields)
+    #print("done with all fields", fields)
     return fields
 
 def parse_tuplestruct_string(string, start_nesting=0):
-    print("processing tuppleStruct", string, "start_nesting", start_nesting)
+    #print("processing tuppleStruct", string, "start_nesting", start_nesting)
     fields = []
     buff = []
     nesting_level = 0 
@@ -105,7 +102,7 @@ def parse_tuplestruct_string(string, start_nesting=0):
     val = "".join(string[start_offset:end_offset]) #if end_offset != 0 else buff)
     fields.append(val.strip())
     fields = list(filter(lambda entry: entry != '', fields))
-    print("done with all fields", fields)
+    #print("done with all fields", fields)
     return fields
 
 
@@ -193,31 +190,23 @@ def property_group_value_from_custom_property_value(property_group, definition, 
     is_value_type = type_name in value_types_defaults
     nesting = nesting + [definition["short_name"]]
 
-    print(" ")
+    """print(" ")
     print("raw value", value, "nesting", nesting)
     print("nesting", len(nesting))
-    print("definition", definition)
-
-    
+    print("definition", definition)"""
 
     if is_value_type:
-        print("value type", value, "type name in type_mappings", type_name in type_mappings)
         value = value.replace("(", "").replace(")", "")# FIXME: temporary, incoherent use of nesting levels between parse_tuplestruct_string & parse_struct_string
         value = type_mappings[type_name](value) if type_name in type_mappings else value
-        print("value", value, type(value))
         return value
     elif type_info == "Struct":
         if len(property_group.field_names) != 0 :
-            print("is struct", value)
             custom_property_values = parse_struct_string(value, start_nesting=1 if value.startswith("(") else 0)
-            print("custom_property_values", custom_property_values)
             for index, field_name in enumerate(property_group.field_names):
-                print("FIELD NAME", field_name)
                 item_type_name = definition["properties"][field_name]["type"]["$ref"].replace("#/$defs/", "")
                 item_definition = registry.type_infos[item_type_name] if item_type_name in registry.type_infos else None
 
                 custom_prop_value = custom_property_values[field_name]
-                print("field value", custom_prop_value)
 
                 propGroup_value = getattr(property_group, field_name)
                 is_property_group = isinstance(propGroup_value, PropertyGroup)
@@ -235,9 +224,7 @@ def property_group_value_from_custom_property_value(property_group, definition, 
             print("struct with zero fields")
 
     elif type_info == "Tuple": 
-        print("is Tuple", value)
         custom_property_values = parse_tuplestruct_string(value, start_nesting=1 if len(nesting) == 1 else 1)
-        print("custom_property_values", custom_property_values)
 
         for index, field_name in enumerate(property_group.field_names):
             item_type_name = definition["prefixItems"][index]["type"]["$ref"].replace("#/$defs/", "")
@@ -250,20 +237,16 @@ def property_group_value_from_custom_property_value(property_group, definition, 
             child_property_group = propGroup_value if is_property_group else None
             if item_definition != None:
                 custom_property_value = property_group_value_from_custom_property_value(child_property_group, item_definition, registry, value=custom_property_value, nesting=nesting)
-                print("propGroup_value", custom_property_value)
             if is_def_value_type(item_definition, registry):
                 setattr(property_group , field_name, custom_property_value)
 
     elif type_info == "TupleStruct":
-        print("is TupleStruct", value)
         custom_property_values = parse_tuplestruct_string(value, start_nesting=1 if len(nesting) == 1 else 0)
-        print("custom_property_values", custom_property_values)
         for index, field_name in enumerate(property_group.field_names):
             item_type_name = definition["prefixItems"][index]["type"]["$ref"].replace("#/$defs/", "")
             item_definition = registry.type_infos[item_type_name] if item_type_name in registry.type_infos else None
 
             custom_prop_value = custom_property_values[index]
-            print("field name", field_name, "value", custom_prop_value)
 
             value = getattr(property_group, field_name)
             is_property_group = isinstance(value, PropertyGroup)
@@ -276,7 +259,6 @@ def property_group_value_from_custom_property_value(property_group, definition, 
 
     elif type_info == "Enum":
         field_names = property_group.field_names
-        print("is Enum", value)
         if type_def == "object":
             regexp = re.search('(^[^\(]+)(\((.*)\))', value)
             try:
@@ -287,11 +269,8 @@ def property_group_value_from_custom_property_value(property_group, definition, 
                 chosen_variant_raw = value
                 chosen_variant_value = ""
                 chosen_variant_name = "variant_" + chosen_variant_raw 
-            print("object Enum", value, chosen_variant_raw, "value", chosen_variant_value, property_group.field_names)
             selection_index = property_group.field_names.index(chosen_variant_name)
             variant_definition = definition["oneOf"][selection_index-1]
-            print("variant definition", variant_definition)
-
             # first we set WHAT variant is selected
             setattr(property_group, field_names[0], chosen_variant_raw)
 
@@ -312,19 +291,13 @@ def property_group_value_from_custom_property_value(property_group, definition, 
                 value = property_group_value_from_custom_property_value(child_property_group, variant_definition, registry, value=chosen_variant_value, nesting=nesting)
                 
         else:
-            print("other enum")
             chosen_variant_raw = value
             setattr(property_group, field_names[0], chosen_variant_raw)
 
     elif type_info == "List":
-        print("is List", value)
         item_list = getattr(property_group, "list")
         item_type_name = getattr(property_group, "type_name_short")
-
-        print("item_list", item_list, item_type_name)
         custom_property_values = parse_tuplestruct_string(value, start_nesting=2 if item_type_name.startswith("wrapper_") and value.startswith('(') else 1) # TODO : the additional check here is wrong, there is an issue somewhere in higher level stuff
-        print("custom_property_values", custom_property_values)
-
         # clear list first
         item_list.clear()
 
@@ -334,7 +307,6 @@ def property_group_value_from_custom_property_value(property_group, definition, 
             definition = registry.type_infos[item_type_name] if item_type_name in registry.type_infos else None
 
             if definition != None:
-                print("dfsdfsdfsdf", definition["short_name"])
                 property_group_value_from_custom_property_value(new_entry, definition, registry, value=raw_value, nesting=nesting)            
     else:
         print("something else")
