@@ -123,6 +123,19 @@
       "type": "array",
       "typeInfo": "List"
     },
+    "alloc::vec::Vec<f32>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/f32"
+        }
+      },
+      "short_name": "Vec<f32>",
+      "title": "alloc::vec::Vec<f32>",
+      "type": "array",
+      "typeInfo": "List"
+    },
     "bevy_animation::AnimationClip": {
       "additionalProperties": false,
       "isComponent": false,
@@ -2559,6 +2572,22 @@
       ],
       "short_name": "VecOfColors",
       "title": "bevy_bevy_registry_export_basic_testing::test_components::VecOfColors",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
+    "bevy_bevy_registry_export_basic_testing::test_components::VecOfF32s": {
+      "isComponent": true,
+      "isResource": false,
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/alloc::vec::Vec<f32>"
+          }
+        }
+      ],
+      "short_name": "VecOfF32s",
+      "title": "bevy_bevy_registry_export_basic_testing::test_components::VecOfF32s",
       "type": "array",
       "typeInfo": "TupleStruct"
     },

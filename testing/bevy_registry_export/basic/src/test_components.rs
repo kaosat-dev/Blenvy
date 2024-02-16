@@ -1,3 +1,5 @@
+use std::ops::Range;
+
 use bevy::prelude::*;
 
 #[derive(Component, Reflect, Default, Debug)]
@@ -97,7 +99,7 @@ pub enum EnumComplex {
     StructLike {
         a: f32,
         b: u32,
-        c: String
+        c: String,
     },
     #[default]
     None,
@@ -115,10 +117,17 @@ pub struct VecOfColors(Vec<Color>);
 #[reflect(Component)]
 pub struct AAAAddedCOMPONENT;
 
-
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
 pub struct AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrWut;
+
+/* fn toto(){
+   let bla:core::ops::Range<f32> = Range { start: 0.1, end: 5.0};
+} */
+
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+pub struct VecOfF32s(Vec<f32>);
 
 pub struct ComponentsTestPlugin;
 impl Plugin for ComponentsTestPlugin {
@@ -147,8 +156,10 @@ impl Plugin for ComponentsTestPlugin {
             .register_type::<Vec<TupleVec3>>()
             .register_type::<Vec<Color>>()
             .register_type::<VecOfColors>()
+            .register_type::<Range<f32>>()
+            .register_type::<VecOfF32s>()
+            .register_type::<Vec<f32>>()
             // .register_type::<AAAAddedCOMPONENT>()
-            .register_type::<AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrWut>()
-            ;
+            .register_type::<AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrWut>();
     }
 }
