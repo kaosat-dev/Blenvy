@@ -15,6 +15,9 @@ of your Bevy components you get a nicely packed custom_property to use with ...
 > Important: 
   the tooling is still in the early stages, even if it is feature complete : use with caution!.
 
+> IMPORTANT !! if you have previously used v0.1 , v0.2 had a breaking change, please see [this](#regenerate-ui-values) section on how to upgrade your data to v0.2.\
+This problem should not be present going forward
+
 ## Installation: 
 
 * grab the latest release zip file from the releases tab (choose the bevy_components releases !)
@@ -95,6 +98,24 @@ it will automatically update the value of the corresponding custom property
 
 ![edit component](./docs/edit_component2.png)
 
+### Create components from custom properties
+
+- IF you have a valid component type  and the correct corresponding RON string in the custom_property value (this button will not appear if not), this add-on can automatically
+generate the corresponding component for you:
+
+- Fill/check your custom property (here for Aabb) 
+
+![generate_components 2](./docs/generate_components2.png)
+
+- click on the button
+
+![generate_components](./docs/generate_components.png)
+
+-voila !
+
+![generate_components 3](./docs/generate_components3.png)
+
+
 ### copy & pasting 
 
 - you can also copy & paste components between objects
@@ -161,20 +182,38 @@ It will add the component to the select object
 
 ## advanced configuration
 
- - there are also additional QOL features, that you should not need most of the time
+ ### registry file polling
 
-    - "update custom properties of current object" : will go over **all components** that you have defined for the **currently selected object**, and re-generate the 
+
+  * by default, the add-on will check for changes in your registry file every second, and refresh the UI accordingly
+    * you can set the polling frequency or turn it off if you do not want auto-refresh
+
+    ![registry file polling](./docs/registry_polling.png)
+
+
+ ### regenerate custom property values
+
+  - "update custom properties of current object" : will go over **all components** that you have defined for the **currently selected object**, and re-generate the 
 
     corresponding custom property values 
 
      ![update custom properties](./docs/other_options.png)
 
 
-    - "update custom properties of ALL objects" : same as above but it will do so for the **ALL objects in your blend file** (so can be slow!), and re-generate the 
+  - "update custom properties of ALL objects" : same as above but it will do so for the **ALL objects in your blend file** (so can be slow!), and re-generate the 
 
     corresponding custom property values 
 
      ![update custom properties for all](./docs/other_options2.png)
+
+  
+  ### regenerate UI values
+
+   - since v0.2, you have the option to regenerate (for the selected object or all objects, as above) to regenerate your UI values from the custom property values
+
+   ![update UI FROM custom properties](./docs/update_ui_from_custom_properties.png)
+
+   > IMPORTANT !! use this if you have previously used v0.1 , as v0.2 had a breaking change, that makes it **necessary** to use this **once** to upgrade the UI data
 
 
 ## Additional important information
@@ -190,6 +229,11 @@ Please see the documentation of those crates for more information.
 ## Examples
 
 you can find an example [here](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_registry_export/)
+
+## Known issues & limitations:
+
+* **Range** data (ie ```Range<f32>``` etc) are not handled at this time (issue seems to be on the Bevy side)
+* **Entity** structs are always set to 0 (setting entity values on the Blender side at this time does not make much sense anyway) 
 
 ## License
 
