@@ -9,7 +9,7 @@ def test_shuffler():
     type_infos = registry.type_infos
     object = bpy.context.object
 
-    add_component_operator = bpy.ops.object.add_component
+    add_component_operator = bpy.ops.object.add_bevy_component
 
     short_name = "BasicTest"
     component_type = registry.short_names_to_long_names[short_name]

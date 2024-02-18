@@ -240,7 +240,7 @@ def apply_propertyGroup_values_to_object_customProperties(object):
 
 
 def apply_customProperty_values_to_object_propertyGroups(object):
-    print("apply custom properties to ")
+    print("apply custom properties to ", object.name)
     registry = bpy.context.window_manager.components_registry
     for component_name in dict(object) :
         if component_name == "components_meta":

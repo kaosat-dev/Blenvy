@@ -19,7 +19,7 @@ def setup_data(request):
 
         type_infos = registry.type_infos
         object = bpy.context.object
-        remove_component_operator = bpy.ops.object.delete_component
+        remove_component_operator = bpy.ops.object.remove_bevy_component
 
         for type_name in type_infos:
             definition = type_infos[type_name]
@@ -43,7 +43,7 @@ def test_components_should_generate_correct_custom_properties(setup_data):
     type_infos = registry.type_infos
     object = bpy.context.object
 
-    add_component_operator = bpy.ops.object.add_component
+    add_component_operator = bpy.ops.object.add_bevy_component
     errors = []
     addable_components = []
     added_components = []
@@ -91,7 +91,7 @@ def test_components_should_generate_correct_custom_properties_with_randomozied_v
     type_infos = registry.type_infos
     object = bpy.context.object
 
-    add_component_operator = bpy.ops.object.add_component
+    add_component_operator = bpy.ops.object.add_bevy_component
     errors = []
     error_components = []
     addable_components = []
@@ -142,7 +142,7 @@ def test_components_should_generate_correct_propertyGroup_values_from_custom_pro
     type_infos = registry.type_infos
     object = bpy.context.object
 
-    add_component_operator = bpy.ops.object.add_component
+    add_component_operator = bpy.ops.object.add_bevy_component
     errors = []
     addable_components = []
     added_components = []
@@ -200,7 +200,7 @@ def test_remove_components(setup_data):
 
     type_infos = registry.type_infos
 
-    add_component_operator = bpy.ops.object.add_component
+    add_component_operator = bpy.ops.object.add_bevy_component
     errors = []
     addable_components = []
     added_components = []
@@ -232,7 +232,7 @@ def test_remove_components(setup_data):
 
     # now test component removal
     errors.clear()
-    remove_component_operator = bpy.ops.object.delete_component
+    remove_component_operator = bpy.ops.object.remove_bevy_component
     for component_type in added_components:
         component_name = type_infos[component_type]["short_name"]
         try:
@@ -252,7 +252,7 @@ def test_copy_paste_components(setup_data):
     component_type = registry.short_names_to_long_names[short_name]
 
     # SOURCE object setup
-    add_component_operator = bpy.ops.object.add_component
+    add_component_operator = bpy.ops.object.add_bevy_component
     add_component_operator(component_type=component_type)
 
     property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
@@ -264,7 +264,7 @@ def test_copy_paste_components(setup_data):
 
     setattr(propertyGroup, propertyGroup.field_names[0], 25.0)
 
-    copy_component_operator = bpy.ops.object.copy_component
+    copy_component_operator = bpy.ops.object.copy_bevy_component
     copy_component_operator(source_component_name=short_name, source_object_name=object.name)
 
     # ---------------------------------------
@@ -279,7 +279,7 @@ def test_copy_paste_components(setup_data):
     # first check that there is no component currently
     assert component_meta == None
 
-    paste_component_operator = bpy.ops.object.paste_component
+    paste_component_operator = bpy.ops.object.paste_bevy_component
     paste_component_operator()
 
     target_components_metadata = new_cube.components_meta.components

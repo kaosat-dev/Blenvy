@@ -1,7 +1,7 @@
 import json
 import bpy
 from .metadata import do_object_custom_properties_have_missing_metadata
-from .operators import AddComponentOperator, CopyComponentOperator, DeleteComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, Toggle_ComponentVisibility
+from .operators import AddComponentOperator, CopyComponentOperator, RemoveComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, Toggle_ComponentVisibility
    
 def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None):
     is_enum = getattr(propertyGroup, "with_enum")
@@ -192,7 +192,7 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
                     row.label(text=error_message)
 
                 # "footer" with additional controls
-                op = row.operator(DeleteComponentOperator.bl_idname, text="", icon="X")
+                op = row.operator(RemoveComponentOperator.bl_idname, text="", icon="X")
                 op.component_name = component_name
                 row.separator()
                 

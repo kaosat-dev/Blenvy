@@ -40,6 +40,8 @@ class ComponentsRegistry(PropertyGroup):
         description="unregistered/missing type infos"
     )# type: ignore
 
+    disable_all_object_updates: BoolProperty(name="disable_object_updates", default=False) # type: ignore
+
     watcher_poll_frequency: IntProperty(
         name="watcher poll frequency",
         description="frequency (s) at wich to poll for changes to the registry file",

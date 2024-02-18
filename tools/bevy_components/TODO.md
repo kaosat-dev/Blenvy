@@ -133,8 +133,8 @@ UI:
         - [x] update version
         - [x] add ability to set legacy mode for bevy_gltf_components ? 
 
-    - [ ] release all versions
-    - [ ] update main documentation, add compatibility version grid
+    - [x] release all versions
+    - [x] update main documentation, add compatibility version grid
 
     
 ## Phase 2
@@ -160,15 +160,14 @@ UI:
         - [x] select an object
         - [x] call the add_component operator 
 
-    - [ ] change params 
+    - [x] change params 
         - use field names + component definitions to set values
-        - [ ] find a way to shuffle params of ALL components based on a reliable, repeatable seed
+        - [x] find a way to shuffle params of ALL components based on a reliable, repeatable seed
 
-    - [ ] test propgroup values => custom property values
-    - [ ] test custom property value => propgroup value 
+    - [x] test propgroup values => custom property values
+    - [x] test custom property value => propgroup value 
 
     - check if all went well
-    -
 
  - [x] fix issues with incorect custom_property generation
    - [x] fix issue with object variants for enums
@@ -199,7 +198,10 @@ UI:
         - solve nesting level use issues
 
 - [x] remove metadata when deleting components
+- [x] add try catch around custom_prop =>  propGroup
+- [x] enhance the GenerateComponent_From_custom_property_Operator to use the new system to actually generate the stuff
 
 - coherence in operators: 
     - component_name vs component_type
-    - delete => remove
+    - [x] delete => remove
+

@@ -3,18 +3,18 @@ import json
 import bpy
 from bpy_types import Operator
 from bpy.props import (StringProperty)
-from .metadata import add_component_to_object, add_metadata_to_components_without_metadata, copy_propertyGroup_values_to_another_object, find_component_definition_from_short_name, remove_component_from_object
+from .metadata import add_component_to_object, add_metadata_to_components_without_metadata, apply_customProperty_values_to_object_propertyGroups, copy_propertyGroup_values_to_another_object, find_component_definition_from_short_name, remove_component_from_object
 
 class AddComponentOperator(Operator):
     """Add component to blueprint"""
-    bl_idname = "object.add_component"
+    bl_idname = "object.add_bevy_component"
     bl_label = "Add component to blueprint Operator"
     bl_options = {"UNDO"}
 
     component_type: StringProperty(
         name="component_type",
         description="component type to add",
-    )
+    ) # type: ignore
 
     def execute(self, context):
         object = context.object
@@ -30,19 +30,19 @@ class AddComponentOperator(Operator):
 
 class CopyComponentOperator(Operator):
     """Copy component from blueprint"""
-    bl_idname = "object.copy_component"
+    bl_idname = "object.copy_bevy_component"
     bl_label = "Copy component Operator"
     bl_options = {"UNDO"}
 
     source_component_name: StringProperty(
         name="source component_name",
         description="name of the component to copy",
-    )
+    ) # type: ignore
 
     source_object_name: StringProperty(
         name="source object name",
         description="name of the object to copy the component from",
-    )
+    ) # type: ignore
 
     @classmethod
     def register(cls):
@@ -67,7 +67,7 @@ class CopyComponentOperator(Operator):
 
 class PasteComponentOperator(Operator):
     """Paste component to blueprint"""
-    bl_idname = "object.paste_component"
+    bl_idname = "object.paste_bevy_component"
     bl_label = "Paste component to blueprint Operator"
     bl_options = {"UNDO"}
 
@@ -92,16 +92,16 @@ class PasteComponentOperator(Operator):
     
 
     
-class DeleteComponentOperator(Operator):
+class RemoveComponentOperator(Operator):
     """Delete component from blueprint"""
-    bl_idname = "object.delete_component"
+    bl_idname = "object.remove_bevy_component"
     bl_label = "Delete component from blueprint Operator"
     bl_options = {"UNDO"}
 
     component_name: StringProperty(
         name="component name",
         description="component to delete",
-    )
+    ) # type: ignore
 
     def execute(self, context):
         object = context.object
@@ -118,33 +118,41 @@ class DeleteComponentOperator(Operator):
 
 class GenerateComponent_From_custom_property_Operator(Operator):
     """generate components from custom property"""
-    bl_idname = "object.generate_component"
+    bl_idname = "object.generate_bevy_component_from_custom_property"
     bl_label = "Generate component from custom_property Operator"
     bl_options = {"UNDO"}
 
     component_name: StringProperty(
         name="component name",
         description="component to generate custom properties for",
-    )
+    ) # type: ignore
 
     def execute(self, context):
         object = context.object
-        add_metadata_to_components_without_metadata(object)
 
+        error = False
+        try:
+            add_metadata_to_components_without_metadata(object)
+            apply_customProperty_values_to_object_propertyGroups(object)
+        except Exception as error:
+            del object["__disable__update"] # make sure custom properties are updateable afterwards, even in the case of failure
+            error = True
+            self.report({'ERROR'}, "Failed to update propertyGroup values from custom property: Error:" + str(error))
+        if not error:
+            self.report({'INFO'}, "Sucessfully generated UI values for custom properties for selected object")
         return {'FINISHED'}
-
 
 
 class Toggle_ComponentVisibility(Operator):
     """toggles components visibility"""
-    bl_idname = "object.toggle_component_visibility"
+    bl_idname = "object.toggle_bevy_component_visibility"
     bl_label = "Toggle component visibility"
     bl_options = {"UNDO"}
 
     component_name: StringProperty(
         name="component name",
         description="component to toggle",
-    )
+    ) # type: ignore
 
     def execute(self, context):
         object = context.object

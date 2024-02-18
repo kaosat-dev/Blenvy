@@ -8,10 +8,11 @@ def update_component(self, context, definition, component_name):
     registry = bpy.context.window_manager.components_registry
     current_object = bpy.context.object
     update_disabled = current_object["__disable__update"] if "__disable__update" in current_object else False
+    update_disabled = registry.disable_all_object_updates or update_disabled # global settings
     if update_disabled:
         return
     print("")
-    print("update in component", component_name, self)
+    print("update in component", component_name, self, "current_object", current_object.name)
     components_in_object = current_object.components_meta.components
     component_meta =  next(filter(lambda component: component["name"] == component_name, components_in_object), None)
     if component_meta != None:

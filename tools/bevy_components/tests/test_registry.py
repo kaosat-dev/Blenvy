@@ -10,7 +10,7 @@ def test_blend():
     short_name = "BasicTest"
     component_type = registry.short_names_to_long_names[short_name]
 
-    add_component_operator = bpy.ops.object.add_component
+    add_component_operator = bpy.ops.object.add_bevy_component
     add_component_operator(component_type=component_type)
 
     property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
@@ -22,7 +22,7 @@ def test_blend():
     print("propertyGroup", propertyGroup, propertyGroup.field_names)
 
 
-    """copy_component_operator = bpy.ops.object.copy_component
+    """copy_component_operator = bpy.ops.object.copy_bevy_component
     copy_component_operator()"""
 
 

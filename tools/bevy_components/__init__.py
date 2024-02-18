@@ -1,7 +1,7 @@
 bl_info = {
     "name": "bevy_components",
     "author": "kaosigh",
-    "version": (0, 1, 0),
+    "version": (0, 2, 0),
     "blender": (3, 4, 0),
     "location": "VIEW_3D",
     "description": "UI to help create Bevy blueprints and components",
@@ -16,7 +16,7 @@ from bpy.props import (StringProperty)
 
 from .helpers import load_settings
 from .blueprints import CreateBlueprintOperator
-from .components.operators import CopyComponentOperator, DeleteComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, AddComponentOperator, Toggle_ComponentVisibility
+from .components.operators import CopyComponentOperator, RemoveComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, AddComponentOperator, Toggle_ComponentVisibility
 
 from .registry.registry import ComponentsRegistry,MissingBevyType
 from .registry.operators import (COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT, COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT, ReloadRegistryOperator, OT_OpenFilebrowser)
@@ -86,7 +86,7 @@ classes = [
     AddComponentOperator,  
     CopyComponentOperator,
     PasteComponentOperator,
-    DeleteComponentOperator,
+    RemoveComponentOperator,
     GenerateComponent_From_custom_property_Operator,
     Toggle_ComponentVisibility,
 

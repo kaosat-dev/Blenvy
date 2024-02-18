@@ -6,7 +6,6 @@ from bpy_extras.io_utils import ImportHelper
 
 from ..helpers import upsert_settings
 from ..components.metadata import apply_customProperty_values_to_object_propertyGroups, apply_propertyGroup_values_to_object_customProperties, ensure_metadata_for_all_objects
-from ..components.operators import GenerateComponent_From_custom_property_Operator
 from ..propGroups.prop_groups import generate_propertyGroups_for_components
 
 class ReloadRegistryOperator(Operator):
@@ -18,7 +17,7 @@ class ReloadRegistryOperator(Operator):
     component_type: StringProperty(
         name="component_type",
         description="component type to add",
-    )
+    ) # type: ignore
 
     def execute(self, context):
         print("reload registry")
@@ -73,7 +72,16 @@ class COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT(Operator):
     def execute(self, context):
         print("apply custom properties to current object")
         object = context.object
-        apply_customProperty_values_to_object_propertyGroups(object)
+        error = False
+        try:
+            apply_customProperty_values_to_object_propertyGroups(object)
+        except Exception as error:
+            del object["__disable__update"] # make sure custom properties are updateable afterwards, even in the case of failure
+            error = True
+            self.report({'ERROR'}, "Failed to update propertyGroup values from custom property: Error:" + str(error))
+        if not error:
+            self.report({'INFO'}, "Sucessfully generated UI values for custom properties for selected object")
+
         return {'FINISHED'}
     
 class COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL(Operator):
@@ -84,8 +92,21 @@ class COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL(Operator):
 
     def execute(self, context):
         print("apply custom properties to all object")
+        bpy.context.window_manager.components_registry.disable_all_object_updates = True
+        errors = []
         for object in bpy.data.objects:
-            apply_customProperty_values_to_object_propertyGroups(object)
+            try:
+                apply_customProperty_values_to_object_propertyGroups(object)
+            except Exception as error:
+                del object["__disable__update"] # make sure custom properties are updateable afterwards, even in the case of failure
+                errors.append( "object: '" + object.name + "', error: " + str(error))
+        if len(errors) > 0:
+            self.report({'ERROR'}, "Failed to update propertyGroup values from custom property: Errors:" + str(errors))
+        else: 
+            self.report({'INFO'}, "Sucessfully generated UI values for custom properties for all objects")
+        bpy.context.window_manager.components_registry.disable_all_object_updates = False
+
+
         return {'FINISHED'}
 
 class OT_OpenFilebrowser(Operator, ImportHelper):
@@ -96,7 +117,7 @@ class OT_OpenFilebrowser(Operator, ImportHelper):
     filter_glob: StringProperty( 
         default='*.json', 
         options={'HIDDEN'} 
-    )
+    ) # type: ignore
     def execute(self, context): 
         """Do something with the selected file(s)."""
         #filename, extension = os.path.splitext(self.filepath) 
