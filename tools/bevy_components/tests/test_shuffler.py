@@ -137,5 +137,5 @@ def test_shuffler():
 
     print("propertyGroup", object[short_name])
     # cheating / making things easier for us for complex types: we use the custom property value
-    assert object[short_name] == '(inverse_bindposes: Weak(Uuid(uuid: "73b3b118-7d01-4778-8bcc-4e79055f5d22")), joints: ["n/a", "n/a"])'
+    assert object[short_name] == '(inverse_bindposes: Weak(Uuid(uuid: "73b3b118-7d01-4778-8bcc-4e79055f5d22")), joints: [0, 0])'
     

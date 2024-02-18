@@ -109,7 +109,7 @@ expected_custom_property_values = {
  'OrthographicProjection': '(area: (max: Vec2(x:0.0, y:0.0), min: Vec2(x:0.0, y:0.0)), far: 0.0, near: 0.0, scale: '
                            '0.0, scaling_mode: Fixed(height: 0.0, width: 0.0), viewport_origin: Vec2(x:0.0, y:0.0))',
  'Outline': '(color: Rgba(red:1.0, green:1.0, blue:0.0, alpha:1.0), offset: Auto, width: Auto)',
- 'Parent': '("n/a")',
+ 'Parent': '(0)',
  'PerspectiveProjection': '(aspect_ratio: 0.0, far: 0.0, fov: 0.0, near: 0.0)',
  'Pickable': '',
  'Player': '',
@@ -225,7 +225,7 @@ expected_custom_property_values_randomized = {'AComponentWithAnExtremlyExagerate
  'CascadesFrusta': '',
  'CascadesVisibleEntities': '',
  'Ccd': '(enabled: true)',
- 'Children': '(["n/a"])',
+ 'Children': '([0])',
  'ClusterConfig': 'None',
  'Collider': 'Ball(0.42888906598091125)',
  'CollidingEntities': '("")',
@@ -325,7 +325,7 @@ expected_custom_property_values_randomized = {'AComponentWithAnExtremlyExagerate
                            'y:0.07608934491872787))',
  'Outline': '(color: Rgba(red:0.5714026093482971, green:0.42888906598091125, blue:0.5780913233757019, '
             'alpha:0.20609822869300842), offset: VMax(0.4912964105606079), width: Percent(0.6534725427627563))',
- 'Parent': '("n/a")',
+ 'Parent': '(0)',
  'PerspectiveProjection': '(aspect_ratio: 0.5714026093482971, far: 0.42888906598091125, fov: 0.5780913233757019, near: '
                           '0.20609822869300842)',
  'Pickable': '',
@@ -347,7 +347,7 @@ expected_custom_property_values_randomized = {'AComponentWithAnExtremlyExagerate
  'Sensor': '',
  'ShadowFilteringMethod': 'Jimenez14',
  'ShadowmapSettings': '(size: 73)',
- 'SkinnedMesh': '(inverse_bindposes: Strong(""), joints: ["n/a", "n/a"])',
+ 'SkinnedMesh': '(inverse_bindposes: Strong(""), joints: [0, 0])',
  'Sleeping': '(angular_threshold: 0.5714026093482971, linear_threshold: 0.42888906598091125, sleeping: true)',
  'SolverGroups': '(filters: (73), memberships: (4))',
  'SpawnHere': '',

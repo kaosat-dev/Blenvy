@@ -65,7 +65,7 @@ type_mappings = {
     'alloc::string::String': lambda : random_word(8),
     'alloc::borrow::Cow<str>': lambda : random_word(8),
 
-    'bevy_ecs::Entity': lambda: '"n/a"', # TODO: find ways to specify actual entity ids ?
+    'bevy_ecs::Entity': lambda: 0, #4294967295, #
     'bevy_utils::Uuid': lambda: '"'+str( uuid.UUID("73b3b118-7d01-4778-8bcc-4e79055f5d22") )+'"'
 }
 #    

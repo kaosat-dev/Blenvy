@@ -23,14 +23,14 @@ def parse_struct_string(string, start_nesting=0):
             start_offset = index + 1
             #print("done with field name", current_fieldName, "value", fields[current_fieldName])
 
-        if char == "(" :
+        if char == "[" or char == "(":
             nesting_level  += 1
             if nesting_level == start_nesting:
                 start_offset = index + 1 
                 #print("nesting & setting start offset", start_offset)
             #print("nesting down", nesting_level)
 
-        if char == ")":
+        if char == "]" or char == ")" :
             #print("nesting up", nesting_level)
             if nesting_level == start_nesting:
                 end_offset = index
@@ -161,7 +161,8 @@ type_mappings = {
     "glam::Quat": lambda value: parse_vec4(value, float, "Quat"),
 
     'alloc::string::String': lambda value: str(value.replace('"', "")),
-    'bevy_render::color::Color': lambda value: parse_color(value, float, "Rgba")
+    'bevy_render::color::Color': lambda value: parse_color(value, float, "Rgba"),
+    'bevy_ecs::Entity': lambda value: int(value),
 }
 
 def is_def_value_type(definition, registry):
@@ -207,7 +208,7 @@ def property_group_value_from_custom_property_value(property_group, definition, 
                 item_definition = registry.type_infos[item_type_name] if item_type_name in registry.type_infos else None
 
                 custom_prop_value = custom_property_values[field_name]
-
+                #print("field name", field_name, "value", custom_prop_value)
                 propGroup_value = getattr(property_group, field_name)
                 is_property_group = isinstance(propGroup_value, PropertyGroup)
                 child_property_group = propGroup_value if is_property_group else None
@@ -221,7 +222,8 @@ def property_group_value_from_custom_property_value(property_group, definition, 
                
 
         else:
-            print("struct with zero fields")
+            pass
+            #print("struct with zero fields")
 
     elif type_info == "Tuple": 
         custom_property_values = parse_tuplestruct_string(value, start_nesting=1 if len(nesting) == 1 else 1)
@@ -300,6 +302,7 @@ def property_group_value_from_custom_property_value(property_group, definition, 
         custom_property_values = parse_tuplestruct_string(value, start_nesting=2 if item_type_name.startswith("wrapper_") and value.startswith('(') else 1) # TODO : the additional check here is wrong, there is an issue somewhere in higher level stuff
         # clear list first
         item_list.clear()
+        #print("custom_property_values", custom_property_values, "value", value, "item_type_name", item_type_name)
 
         for raw_value in custom_property_values:
             new_entry = item_list.add()   
@@ -309,4 +312,9 @@ def property_group_value_from_custom_property_value(property_group, definition, 
             if definition != None:
                 property_group_value_from_custom_property_value(new_entry, definition, registry, value=raw_value, nesting=nesting)            
     else:
-        print("something else")
+        try:
+            value = value.replace("(", "").replace(")", "")# FIXME: temporary, incoherent use of nesting levels between parse_tuplestruct_string & parse_struct_string
+            value = type_mappings[type_name](value) if type_name in type_mappings else value
+            return value
+        except:
+            pass

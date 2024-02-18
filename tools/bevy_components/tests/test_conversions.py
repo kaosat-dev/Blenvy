@@ -9,11 +9,8 @@ def test_parse_tuplestruct_string():
     assert parse_tuplestruct_string("[(a: 45, b: 65)]", start_nesting=1) == ['(a: 45, b: 65)']
     assert parse_tuplestruct_string("45, 65, 'bla'", start_nesting=0) == ['45', '65', "'bla'"]
 
-
     assert parse_tuplestruct_string("[(A), (B)]", start_nesting=1) == ['(A)', '(B)']
-    #assert parse_tuplestruct_string("[(A), (B)]", start_nesting=2) == ['A','B']
 
-    #assert parse_tuplestruct_string("([(-1.8, 2.9), (0.0, -62)])", start_nesting=0) == ['[(-1.8, 2.9), (0.0, -62)]']
     assert parse_tuplestruct_string("([(-1.8, 2.9), (0.0, -62)])", start_nesting=1) == ['[(-1.8, 2.9), (0.0, -62)]']
     assert parse_tuplestruct_string("([(-1.8, 2.9), (0.0, -62)])", start_nesting=2) == ['(-1.8, 2.9)', '(0.0, -62)']
     assert parse_tuplestruct_string("([(-1.8, 2.9), (0.0, -62), (25)])", start_nesting=2) == ['(-1.8, 2.9)', '(0.0, -62)', '(25)']
@@ -50,3 +47,5 @@ def test_parse_struct_string():
 
     
     assert parse_struct_string("dimensions: UVec3(x:0.0, y:0.0, z:0.0), dynamic_resizing: true, z_config: (far_z_mode: MaxLightRange, first_slice_depth: 0.0)") == {'dimensions': 'UVec3(x:0.0, y:0.0, z:0.0)', 'dynamic_resizing': 'true', 'z_config': '(far_z_mode: MaxLightRange, first_slice_depth: 0.0)'}
+
+    assert parse_struct_string('(inverse_bindposes: Strong(""), joints: [4294967295, 4294967295, 4294967295])', start_nesting=1) == {'inverse_bindposes': 'Strong("")', 'joints': '[4294967295, 4294967295, 4294967295]'}
