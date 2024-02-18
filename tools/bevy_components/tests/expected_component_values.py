@@ -1,7 +1,6 @@
 
 
-expected_custom_property_values = {
- 'AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrWut': '',
+expected_custom_property_values = {'AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrWut': '',
  'Aabb': '(center: Vec3A(x:0.0, y:0.0, z:0.0), half_extents: Vec3A(x:0.0, y:0.0, z:0.0))',
  'AdditionalMassProperties': 'Mass(0.0)',
  'AmbientLightSettings': '(brightness: 0.0, color: Rgba(red:1.0, green:1.0, blue:0.0, alpha:1.0))',
@@ -66,6 +65,7 @@ expected_custom_property_values = {
  'Handle<AudioSource>': 'Strong("")',
  'Handle<ColorMaterial>': 'Strong("")',
  'Handle<DynamicScene>': 'Strong("")',
+ 'Handle<ExtendedMaterial<StandardMaterial, MyExtension>>': 'Strong("")',
  'Handle<Font>': 'Strong("")',
  'Handle<Gltf>': 'Strong("")',
  'Handle<GltfMesh>': 'Strong("")',
@@ -188,7 +188,6 @@ expected_custom_property_values = {
 
 
 
-
 expected_custom_property_values_randomized = {'AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrWut': '',
  'Aabb': '(center: Vec3A(x:0.5714026093482971, y:0.42888906598091125, z:0.5780913233757019), half_extents: '
          'Vec3A(x:0.20609822869300842, y:0.8133212327957153, z:0.8235888481140137))',
@@ -269,6 +268,7 @@ expected_custom_property_values_randomized = {'AComponentWithAnExtremlyExagerate
  'Handle<AudioSource>': 'Strong("")',
  'Handle<ColorMaterial>': 'Strong("")',
  'Handle<DynamicScene>': 'Strong("")',
+ 'Handle<ExtendedMaterial<StandardMaterial, MyExtension>>': 'Strong("")',
  'Handle<Font>': 'Strong("")',
  'Handle<Gltf>': 'Strong("")',
  'Handle<GltfMesh>': 'Strong("")',

@@ -1,6 +1,9 @@
+use bevy::{
+    pbr::{ExtendedMaterial, MaterialExtension},
+    prelude::*,
+    render::render_resource::*,
+};
 use std::ops::Range;
-
-use bevy::prelude::*;
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
@@ -129,6 +132,25 @@ pub struct AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrWut;
 #[reflect(Component)]
 pub struct VecOfF32s(Vec<f32>);
 
+// test for extended materials
+#[derive(Asset, AsBindGroup, Reflect, Debug, Clone)]
+struct MyExtension {
+    // We need to ensure that the bindings of the base material and the extension do not conflict,
+    // so we start from binding slot 100, leaving slots 0-99 for the base material.
+    #[uniform(100)]
+    quantize_steps: u32,
+}
+
+impl MaterialExtension for MyExtension {
+    fn fragment_shader() -> ShaderRef {
+        "shaders/extended_material.wgsl".into()
+    }
+
+    fn deferred_fragment_shader() -> ShaderRef {
+        "shaders/extended_material.wgsl".into()
+    }
+}
+
 pub struct ComponentsTestPlugin;
 impl Plugin for ComponentsTestPlugin {
     fn build(&self, app: &mut App) {
@@ -160,6 +182,9 @@ impl Plugin for ComponentsTestPlugin {
             .register_type::<VecOfF32s>()
             .register_type::<Vec<f32>>()
             // .register_type::<AAAAddedCOMPONENT>()
-            .register_type::<AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrWut>();
+            .register_type::<AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrWut>()
+            .add_plugins(MaterialPlugin::<
+                ExtendedMaterial<StandardMaterial, MyExtension>,
+            >::default());
     }
 }
