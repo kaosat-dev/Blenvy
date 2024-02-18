@@ -1,7 +1,7 @@
 bl_info = {
     "name": "bevy_components",
     "author": "kaosigh",
-    "version": (0, 1, 0),
+    "version": (0, 2, 0),
     "blender": (3, 4, 0),
     "location": "VIEW_3D",
     "description": "UI to help create Bevy blueprints and components",
@@ -16,13 +16,13 @@ from bpy.props import (StringProperty)
 
 from .helpers import load_settings
 from .blueprints import CreateBlueprintOperator
-from .components.operators import CopyComponentOperator, DeleteComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, AddComponentOperator, Toggle_ComponentVisibility
+from .components.operators import CopyComponentOperator, RemoveComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, AddComponentOperator, Toggle_ComponentVisibility
 
 from .registry.registry import ComponentsRegistry,MissingBevyType
-from .registry.operators import (COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT, ReloadRegistryOperator, OT_OpenFilebrowser)
+from .registry.operators import (COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT, COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT, ReloadRegistryOperator, OT_OpenFilebrowser)
 from .registry.ui import (BEVY_COMPONENTS_PT_Configuration, BEVY_COMPONENTS_PT_MissingTypesPanel, MISSING_TYPES_UL_List)
 
-from .components.metadata import (ComponentInfos, ComponentsMeta, ensure_metadata_for_all_objects)
+from .components.metadata import (ComponentMetadata, ComponentsMeta, ensure_metadata_for_all_objects)
 from .propGroups.prop_groups import (generate_propertyGroups_for_components)
 from .components.lists import GENERIC_LIST_OT_actions, Generic_LIST_OT_AddItem, Generic_LIST_OT_RemoveItem, Generic_LIST_OT_SelectItem
 from .components.definitions_list import (ComponentDefinitionsList, ClearComponentDefinitionsList)
@@ -86,14 +86,14 @@ classes = [
     AddComponentOperator,  
     CopyComponentOperator,
     PasteComponentOperator,
-    DeleteComponentOperator,
+    RemoveComponentOperator,
     GenerateComponent_From_custom_property_Operator,
     Toggle_ComponentVisibility,
 
     ComponentDefinitionsList,
     ClearComponentDefinitionsList,
     
-    ComponentInfos,
+    ComponentMetadata,
     ComponentsMeta,
     MissingBevyType,
     ComponentsRegistry,
@@ -102,6 +102,9 @@ classes = [
     ReloadRegistryOperator,
     COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL,
     COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT,
+
+    COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL,
+    COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT,
     
     BEVY_COMPONENTS_PT_MainPanel,
     BEVY_COMPONENTS_PT_ComponentsPanel,
@@ -119,19 +122,14 @@ from bpy.app.handlers import persistent
 
 @persistent
 def post_load(file_name):
-    print("post load", file_name)
     registry = bpy.context.window_manager.components_registry
-    registry.schemaPath = load_settings(registry.settings_save_path)["schemaPath"]
-    registry.load_schema()
-    generate_propertyGroups_for_components()
-    ensure_metadata_for_all_objects()
-
-
+    if registry != None:
+        registry.load_settings()
+        
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
     bpy.types.WindowManager.blueprint_name = StringProperty()
-
     bpy.app.handlers.load_post.append(post_load)
 
 def unregister():

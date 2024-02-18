@@ -1,12 +1,11 @@
 import json
 import bpy
 from .metadata import do_object_custom_properties_have_missing_metadata
-from .operators import AddComponentOperator, CopyComponentOperator, DeleteComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, Toggle_ComponentVisibility
+from .operators import AddComponentOperator, CopyComponentOperator, RemoveComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, Toggle_ComponentVisibility
    
 def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None):
     is_enum = getattr(propertyGroup, "with_enum")
     is_list = getattr(propertyGroup, "with_list") 
-    #current_short_name = getattr(propertyGroup, "short_name", "") + "_ui"
     #nesting = nesting + [current_short_name] # we need this convoluted "nested path strings " workaround so that operators working on a given
     # item in our components hierarchy can get the correct propertyGroup by STRINGS because of course, we cannot pass objects to operators...sigh
 
@@ -119,7 +118,7 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
         # we get & load our component registry
         registry = bpy.context.window_manager.components_registry 
         available_components = bpy.context.window_manager.components_list
-
+        registry_has_type_infos = registry.has_type_infos()
 
         if object is not None:
             row = layout.row(align=True)
@@ -137,12 +136,12 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
             # paste components
             row = layout.row(align=True)
             row.operator(PasteComponentOperator.bl_idname, text="Paste component ("+bpy.context.window_manager.copied_source_component_name+")", icon="PASTEDOWN")
-            row.enabled = registry.type_infos != None and context.window_manager.copied_source_object != ''
+            row.enabled = registry_has_type_infos and context.window_manager.copied_source_object != ''
 
             layout.separator()
 
             # upgrate custom props to components
-            upgradeable_customProperties = registry.type_infos != None and do_object_custom_properties_have_missing_metadata(context.object)
+            upgradeable_customProperties = registry.has_type_infos() and do_object_custom_properties_have_missing_metadata(context.object)
             if upgradeable_customProperties:
                 row = layout.row(align=True)
                 op = row.operator(GenerateComponent_From_custom_property_Operator.bl_idname, text="generate components from custom properties" , icon="LOOP_FORWARDS") 
@@ -172,28 +171,29 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
                 row.label(text=component_name)
 
                 # we fetch the matching ui property group
-                root_propertyGroup_name = component_name+"_ui"
-                propertyGroup = getattr(component_meta, root_propertyGroup_name, None)
-                if propertyGroup:
-                    # if the component has only 0 or 1 field names, display inline, otherwise change layout
-                    single_field = len(propertyGroup.field_names) < 2
-                    prop_group_location = box.row(align=True).column()
-                    if single_field:
-                        prop_group_location = row.column(align=True)#.split(factor=0.9)#layout.row(align=False)
-                    
-                    if component_visible:
-                        if component_invalid:
-                            error_message = invalid_details if component_invalid else "Missing component UI data, please reload registry !"
-                            prop_group_location.label(text=error_message)
-                        draw_propertyGroup(propertyGroup, prop_group_location, [root_propertyGroup_name], component_name)
-                    else :
-                        row.label(text="details hidden, click on toggle to display")
-                else:
-                    error_message = invalid_details if component_invalid else "Missing component UI data, please reload registry !"
-                    row.label(text=error_message)
+                root_propertyGroup_name =  registry.get_propertyGroupName_from_shortName(component_name)
+                if root_propertyGroup_name:
+                    propertyGroup = getattr(component_meta, root_propertyGroup_name, None)
+                    if propertyGroup:
+                        # if the component has only 0 or 1 field names, display inline, otherwise change layout
+                        single_field = len(propertyGroup.field_names) < 2
+                        prop_group_location = box.row(align=True).column()
+                        if single_field:
+                            prop_group_location = row.column(align=True)#.split(factor=0.9)#layout.row(align=False)
+                        
+                        if component_visible:
+                            if component_invalid:
+                                error_message = invalid_details if component_invalid else "Missing component UI data, please reload registry !"
+                                prop_group_location.label(text=error_message)
+                            draw_propertyGroup(propertyGroup, prop_group_location, [root_propertyGroup_name], component_name)
+                        else :
+                            row.label(text="details hidden, click on toggle to display")
+                    else:
+                        error_message = invalid_details if component_invalid else "Missing component UI data, please reload registry !"
+                        row.label(text=error_message)
 
                 # "footer" with additional controls
-                op = row.operator(DeleteComponentOperator.bl_idname, text="", icon="X")
+                op = row.operator(RemoveComponentOperator.bl_idname, text="", icon="X")
                 op.component_name = component_name
                 row.separator()
                 

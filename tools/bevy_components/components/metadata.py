@@ -1,9 +1,10 @@
 import bpy
 from bpy.props import (StringProperty, BoolProperty, PointerProperty)
 from bpy_types import (PropertyGroup)
-from ..propGroups.conversions import property_group_value_from_custom_property_value, property_group_value_to_custom_property_value
+from ..propGroups.conversions_from_prop_group import property_group_value_to_custom_property_value
+from ..propGroups.conversions_to_prop_group import property_group_value_from_custom_property_value
 
-class ComponentInfos(bpy.types.PropertyGroup):
+class ComponentMetadata(bpy.types.PropertyGroup):
     name : bpy.props.StringProperty(
         name = "name",
         default = ""
@@ -51,7 +52,7 @@ class ComponentsMeta(PropertyGroup):
         name="infos per component",
         description="component"
     )
-    components: bpy.props.CollectionProperty(type = ComponentInfos)  
+    components: bpy.props.CollectionProperty(type = ComponentMetadata)  
 
     @classmethod
     def register(cls):
@@ -131,12 +132,12 @@ def add_metadata_to_components_without_metadata(object):
 def add_component_to_object(object, component_definition, value=None):
     cleanup_invalid_metadata(object)
     if object is not None:
-        print("add_component_to_object", component_definition)
+        # print("add_component_to_object", component_definition)
         long_name = component_definition["title"]
         short_name = component_definition["short_name"]
         registry = bpy.context.window_manager.components_registry
-        if registry.type_infos == None:
-            raise Exception('registry type infos have not been loaded yet or ar missing !')
+        if not registry.has_type_infos():
+            raise Exception('registry type infos have not been loaded yet or are missing !')
         definition = registry.type_infos[long_name]
         # now we use our pre_generated property groups to set the initial value of our custom property
         (_, propertyGroup) = upsert_component_in_object(object, component_name=short_name, registry=registry)
@@ -157,7 +158,7 @@ def upsert_component_in_object(object, component_name, registry):
     if component_definition != None:
         short_name = component_definition["short_name"]
         long_name = component_definition["title"]
-        property_group_name = short_name+"_ui"
+        property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
         propertyGroup = None
 
         component_meta = next(filter(lambda component: component["name"] == short_name, target_components_metadata), None)
@@ -175,7 +176,7 @@ def upsert_component_in_object(object, component_name, registry):
             if property_group_name in registry.component_propertyGroups:
                 # we have found a matching property_group, so try to inject it
                 # now inject property group
-                setattr(ComponentInfos, property_group_name, registry.component_propertyGroups[property_group_name]) # FIXME: not ideal as all ComponentInfos get the propGroup, but have not found a way to assign it per instance
+                setattr(ComponentMetadata, property_group_name, registry.component_propertyGroups[property_group_name]) # FIXME: not ideal as all ComponentMetadata get the propGroup, but have not found a way to assign it per instance
                 propertyGroup = getattr(component_meta, property_group_name, None)
         
         # now deal with property groups details
@@ -196,13 +197,14 @@ def upsert_component_in_object(object, component_name, registry):
         return(None, None)
 
 
-def copy_propertyGroup_values_to_another_object(source_object, target_object, component_name):
+def copy_propertyGroup_values_to_another_object(source_object, target_object, component_name, registry):
     if source_object == None or target_object == None or component_name == None:
         raise Exception('missing input data, cannot copy component propertryGroup')
     
     component_definition = find_component_definition_from_short_name(component_name)
     short_name = component_definition["short_name"]
-    property_group_name = short_name+"_ui"
+    property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
+
     registry = bpy.context.window_manager.components_registry
 
     source_components_metadata = source_object.components_meta.components
@@ -234,3 +236,46 @@ def apply_propertyGroup_values_to_object_customProperties(object):
         if component_definition != None:
             value = property_group_value_to_custom_property_value(propertyGroup, component_definition, registry, None)
             object[component_name] = value
+
+
+
+def apply_customProperty_values_to_object_propertyGroups(object):
+    print("apply custom properties to ", object.name)
+    registry = bpy.context.window_manager.components_registry
+    for component_name in dict(object) :
+        if component_name == "components_meta":
+            continue
+        component_definition = find_component_definition_from_short_name(component_name)
+        if component_definition != None:
+            property_group_name = registry.get_propertyGroupName_from_shortName(component_name)
+            components_metadata = object.components_meta.components
+            source_componentMeta = next(filter(lambda component: component["name"] == component_name, components_metadata), None)
+            # matching component means we already have this type of component 
+            propertyGroup = getattr(source_componentMeta, property_group_name, None)
+            customProperty_value = object[component_name]
+            #value = property_group_value_to_custom_property_value(propertyGroup, component_definition, registry, None)
+            
+            object["__disable__update"] = True # disable update callback while we set the values of the propertyGroup "tree" (as a propertyGroup can contain other propertyGroups) 
+            property_group_value_from_custom_property_value(propertyGroup, component_definition, registry, customProperty_value)
+            del object["__disable__update"]
+
+# removes the given component from the object: removes both the custom property and the matching metadata from the object
+def remove_component_from_object(object, component_name):
+    del object[component_name]
+
+    components_metadata = getattr(object, "components_meta", None)
+    if components_metadata == None:
+        return False
+    
+    components_metadata = components_metadata.components
+    to_remove = []
+    for index, component_meta in enumerate(components_metadata):
+        short_name = component_meta.name
+        if short_name == component_name:
+            to_remove.append(index)
+            break
+    for index in to_remove:
+        components_metadata.remove(index)
+    return True
+
+  

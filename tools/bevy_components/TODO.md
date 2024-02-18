@@ -133,7 +133,77 @@ UI:
         - [x] update version
         - [x] add ability to set legacy mode for bevy_gltf_components ? 
 
-    - [ ] release all versions
-    - [ ] update main documentation, add compatibility version grid
+    - [x] release all versions
+    - [x] update main documentation, add compatibility version grid
 
     
+## Phase 2
+
+- [x] fix handling of long component names
+    - [x] fix nesting level handling issue for new system : ie basic component DOES NOT work, but nestedLevel2 does
+    - add goddam tests !
+    - [ ] verify some weird prop => custom property values (Calculated Clip for example)
+
+- [x] fix "reload registry" not clearing all previous data (reloading registry does not seem to account for added/removed components in the registry )
+- add file watcher for registry
+    - [x] have the watcher work as expected
+    - [ ] add handling of removed registry file
+    - [ ] clear & reset handler when the file browser for the registry is used
+- [ ] re-enable watcher
+
+- tests
+    clear && pytest -svv --blender-executable <path_to_blender>/blender/blender-4.0.2-linux-x64/blender
+
+    - [x] load registry
+    - just check list of components vs lists in registry
+    - [x] try adding all components
+        - [x] select an object
+        - [x] call the add_component operator 
+
+    - [x] change params 
+        - use field names + component definitions to set values
+        - [x] find a way to shuffle params of ALL components based on a reliable, repeatable seed
+
+    - [x] test propgroup values => custom property values
+    - [x] test custom property value => propgroup value 
+
+    - check if all went well
+
+ - [x] fix issues with incorect custom_property generation
+   - [x] fix issue with object variants for enums
+
+ - [ ] add handling for core::ops::Range<f32> & other ranges
+ - [x] add handling for alloc::borrow::Cow<str>
+ - [x] add handling of isize
+
+ - [x] indirection level
+    - currently 
+        - short_name +_"ui => direct lookup
+        - problem : max 64 chars for propertyGroupNames
+    - possible solution
+        - propertyGroupName storage: simple , incremented INT (call it propGroupId for ex)
+        - lookup shortName => propGroupId
+
+    - do a first pass, by replacing manual propGroupNames creation with a function
+    - in a second pass, replace the innards
+
+- add button to regenerate cutom prop values from custom properties (allows us to sidestep any future issues with internals changing)
+    - [x] fix lists
+    - [x] fix enums (see Clusterconfig)
+        - [x] need an example with one tupple one struct
+        - [x] projection
+        - [ ] additionalmassproperties
+    - [x] fix tupleStructs (see TupleVecF32F32) =>  always the same problem of having us pre-parse data without knowing what we have inside
+        - find a way to only split by level 0 (highest level) nesting "," seperators, ignoring any level of nesting until we dig one level deeper
+        - solve nesting level use issues
+
+- [x] remove metadata when deleting components
+- [x] add try catch around custom_prop =>  propGroup
+- [x] enhance the GenerateComponent_From_custom_property_Operator to use the new system to actually generate the stuff
+
+- coherence in operators: 
+    - component_name vs component_type
+    - [x] delete => remove
+
+- [x] clean up reloading of registry settings
+- [x] clean up file watcher

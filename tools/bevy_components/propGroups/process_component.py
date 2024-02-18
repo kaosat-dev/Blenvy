@@ -59,7 +59,6 @@ def process_component(registry, definition, update, extras=None, nesting = []):
     root_component = nesting[0] if len(nesting) > 0 else component_name
     # print("DONE:",short_name,"__annotations__", __annotations__)
     # print("")
-    # property_group_name = short_name+"_ui"
     property_group_params = {
          **extras,
         '__annotations__': __annotations__,
@@ -75,8 +74,7 @@ def process_component(registry, definition, update, extras=None, nesting = []):
         -BasicTest => the registration & update callback of this one overwrites the first "basicTest"
     have not found a cleaner workaround so far
     """
-    property_group_name = str(hash(str(nesting))) + short_name+"_ui" if len(nesting) > 0 else short_name+"_ui"
-
+    property_group_name = registry.generate_propGroup_name(nesting, short_name)
     (property_group_pointer, property_group_class) = property_group_from_infos(property_group_name, property_group_params)
     # add our component propertyGroup to the registry
     registry.register_component_propertyGroup(property_group_name, property_group_pointer)
