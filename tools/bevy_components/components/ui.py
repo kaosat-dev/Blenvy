@@ -172,24 +172,25 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
 
                 # we fetch the matching ui property group
                 root_propertyGroup_name =  registry.get_propertyGroupName_from_shortName(component_name)
-                propertyGroup = getattr(component_meta, root_propertyGroup_name, None)
-                if propertyGroup:
-                    # if the component has only 0 or 1 field names, display inline, otherwise change layout
-                    single_field = len(propertyGroup.field_names) < 2
-                    prop_group_location = box.row(align=True).column()
-                    if single_field:
-                        prop_group_location = row.column(align=True)#.split(factor=0.9)#layout.row(align=False)
-                    
-                    if component_visible:
-                        if component_invalid:
-                            error_message = invalid_details if component_invalid else "Missing component UI data, please reload registry !"
-                            prop_group_location.label(text=error_message)
-                        draw_propertyGroup(propertyGroup, prop_group_location, [root_propertyGroup_name], component_name)
-                    else :
-                        row.label(text="details hidden, click on toggle to display")
-                else:
-                    error_message = invalid_details if component_invalid else "Missing component UI data, please reload registry !"
-                    row.label(text=error_message)
+                if root_propertyGroup_name:
+                    propertyGroup = getattr(component_meta, root_propertyGroup_name, None)
+                    if propertyGroup:
+                        # if the component has only 0 or 1 field names, display inline, otherwise change layout
+                        single_field = len(propertyGroup.field_names) < 2
+                        prop_group_location = box.row(align=True).column()
+                        if single_field:
+                            prop_group_location = row.column(align=True)#.split(factor=0.9)#layout.row(align=False)
+                        
+                        if component_visible:
+                            if component_invalid:
+                                error_message = invalid_details if component_invalid else "Missing component UI data, please reload registry !"
+                                prop_group_location.label(text=error_message)
+                            draw_propertyGroup(propertyGroup, prop_group_location, [root_propertyGroup_name], component_name)
+                        else :
+                            row.label(text="details hidden, click on toggle to display")
+                    else:
+                        error_message = invalid_details if component_invalid else "Missing component UI data, please reload registry !"
+                        row.label(text=error_message)
 
                 # "footer" with additional controls
                 op = row.operator(RemoveComponentOperator.bl_idname, text="", icon="X")

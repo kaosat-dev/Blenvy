@@ -18,7 +18,6 @@ def make_empty(name, location, rotation, scale, collection):
     #bpy.context.view_layer.update()
     return empty_obj
 
-#".gltf_auto_export_settings"
 def upsert_settings(name, data):
     stored_settings = bpy.data.texts[name] if name in bpy.data.texts else bpy.data.texts.new(name)
     stored_settings.clear()

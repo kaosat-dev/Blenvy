@@ -35,7 +35,10 @@ class BEVY_COMPONENTS_PT_Configuration(bpy.types.Panel):
         layout.operator(ReloadRegistryOperator.bl_idname, text="reload registry" , icon="FILE_REFRESH")
 
         layout.separator()
-        layout.prop(registry, "watcher_poll_frequency", text="registry file poll frequency (s)")
+        row = layout.row()
+        
+        row.prop(registry, "watcher_enabled", text="enable registry file polling")
+        row.prop(registry, "watcher_poll_frequency", text="registry file poll frequency (s)")
 
         layout.separator()
         layout.separator()

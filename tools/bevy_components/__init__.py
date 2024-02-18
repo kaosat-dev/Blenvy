@@ -122,20 +122,10 @@ from bpy.app.handlers import persistent
 
 @persistent
 def post_load(file_name):
-    print("post load", file_name)
     registry = bpy.context.window_manager.components_registry
     if registry != None:
-        print("hello", registry.settings_save_path)
-        settings = load_settings(registry.settings_save_path)
-
-        if settings!= None:
-            print("settings", settings)
-            registry.schemaPath = settings["schemaPath"]
-            registry.load_schema()
-            generate_propertyGroups_for_components()
-            ensure_metadata_for_all_objects()
-
-
+        registry.load_settings()
+        
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)

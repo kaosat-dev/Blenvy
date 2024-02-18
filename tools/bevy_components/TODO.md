@@ -205,3 +205,5 @@ UI:
     - component_name vs component_type
     - [x] delete => remove
 
+- [x] clean up reloading of registry settings
+- [x] clean up file watcher
