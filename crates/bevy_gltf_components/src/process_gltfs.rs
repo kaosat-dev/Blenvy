@@ -1,101 +1,87 @@
-use bevy::asset::AssetPath;
-use bevy::gltf::Gltf;
-use bevy::utils::HashSet;
-use bevy::{asset::LoadState, prelude::*};
-use std::path::Path;
+use bevy::{
+    core::Name,
+    ecs::{
+        entity::Entity,
+        query::Added,
+        reflect::{AppTypeRegistry, ReflectComponent},
+        world::World,
+    },
+    gltf::GltfExtras,
+    hierarchy::Parent,
+    log::debug,
+    reflect::{Reflect, TypeRegistration},
+    utils::HashMap,
+};
 
-use crate::{gltf_extras_to_components, GltfComponentsConfig};
+use crate::{ronstring_to_reflect_component, GltfComponentsConfig};
 
-#[derive(Resource)]
-/// component to keep track of gltfs' loading state
-pub struct GltfLoadingTracker {
-    pub loading_gltfs: HashSet<Handle<Gltf>>,
-    pub processed_gltfs: HashSet<String>,
-}
-impl Default for GltfLoadingTracker {
-    fn default() -> Self {
-        Self::new()
-    }
-}
+/// main function: injects components into each entity in gltf files that have `gltf_extras`, using reflection
+pub fn add_components_from_gltf_extras(world: &mut World) {
+    let mut extras =
+        world.query_filtered::<(Entity, &Name, &GltfExtras, &Parent), Added<GltfExtras>>();
+    let mut entity_components: HashMap<Entity, Vec<(Box<dyn Reflect>, TypeRegistration)>> =
+        HashMap::new();
 
-impl GltfLoadingTracker {
-    pub fn new() -> GltfLoadingTracker {
-        GltfLoadingTracker {
-            loading_gltfs: HashSet::new(),
-            processed_gltfs: HashSet::new(),
-        }
-    }
-    pub fn add_gltf(&mut self, handle: Handle<Gltf>) {
-        self.loading_gltfs.insert(handle);
-    }
-}
+    let gltf_components_config = world.resource::<GltfComponentsConfig>();
 
-pub fn track_new_gltf(
-    mut tracker: ResMut<GltfLoadingTracker>,
-    mut events: EventReader<AssetEvent<Gltf>>,
-    asset_server: Res<AssetServer>,
-) {
-    for event in events.read() {
-        if let AssetEvent::Added { id } = event {
-            let handle = asset_server.get_id_handle(*id);
-            if let Some(handle) = handle {
-                tracker.add_gltf(handle.clone());
-                debug!("gltf created {:?}", handle);
-            } else {
-                let asset_path = asset_server
-                    .get_path(*id)
-                    .unwrap_or(AssetPath::from_path(Path::new("n/a"))); // will unfortunatly not work, will do a PR/ discussion at the Bevy level, leaving for reference, would be very practical
-                warn!(
-                    "a gltf file ({:?}) has no handle available, cannot inject components",
-                    asset_path
-                );
-            }
-        }
-    }
-    events.clear();
-}
-
-pub fn process_loaded_scenes(
-    mut gltfs: ResMut<Assets<Gltf>>,
-    mut tracker: ResMut<GltfLoadingTracker>,
-    mut scenes: ResMut<Assets<Scene>>,
-    app_type_registry: Res<AppTypeRegistry>,
-    asset_server: Res<AssetServer>,
-    gltf_components_config: Res<GltfComponentsConfig>,
-) {
-    let mut loaded_gltfs = Vec::new();
-    for gltf in &tracker.loading_gltfs {
+    for (entity, name, extra, parent) in extras.iter(world) {
         debug!(
-            "checking for loaded gltfs {:?}",
-            asset_server.get_load_state(gltf)
+            "Name: {}, entity {:?}, parent: {:?}, extras {:?}",
+            name, entity, parent, extra
         );
 
-        if let Some(load_state) = asset_server.get_load_state(gltf.clone()) {
-            if load_state == LoadState::Loaded {
-                debug!("Adding scene to processing list");
-                loaded_gltfs.push(gltf.clone());
+        let type_registry: &AppTypeRegistry = world.resource();
+        let type_registry = type_registry.read();
+        let reflect_components = ronstring_to_reflect_component(
+            &extra.value,
+            &type_registry,
+            gltf_components_config.legacy_mode,
+        );
+
+        // we assign the components specified /xxx_components objects to their parent node
+        let mut target_entity = entity;
+        // if the node contains "components" or ends with "_pa" (ie add to parent), the components will not be added to the entity itself but to its parent
+        // this is mostly used for Blender collections
+        if name.as_str().contains("components") || name.as_str().ends_with("_pa") {
+            debug!("adding components to parent");
+            target_entity = parent.get();
+        }
+        debug!("adding to {:?}", target_entity);
+
+        // if there where already components set to be added to this entity (for example when entity_data was refering to a parent), update the vec of entity_components accordingly
+        // this allows for example blender collection to provide basic ecs data & the instances to override/ define their own values
+        if entity_components.contains_key(&target_entity) {
+            let mut updated_components: Vec<(Box<dyn Reflect>, TypeRegistration)> = Vec::new();
+            let current_components = &entity_components[&target_entity];
+            // first inject the current components
+            for (component, type_registration) in current_components {
+                updated_components.push((component.clone_value(), type_registration.clone()));
             }
+            // then inject the new components: this also enables overwrite components set in the collection
+            for (component, type_registration) in reflect_components {
+                updated_components.push((component.clone_value(), type_registration));
+            }
+            entity_components.insert(target_entity, updated_components);
+        } else {
+            entity_components.insert(target_entity, reflect_components);
         }
     }
 
-    let type_registry = app_type_registry.read();
-
-    for gltf_handle in &loaded_gltfs {
-        if let Some(gltf) = gltfs.get_mut(gltf_handle) {
-            gltf_extras_to_components(
-                gltf,
-                &mut scenes,
-                &*type_registry,
-                gltf_components_config.legacy_mode,
-            );
-
-            if let Some(path) = gltf_handle.path() {
-                tracker.processed_gltfs.insert(path.to_string());
-            }
-        } else {
-            warn!("could not find gltf asset, cannot process it");
+    for (entity, components) in entity_components {
+        if !components.is_empty() {
+            debug!("--entity {:?}, components {}", entity, components.len());
         }
-        tracker.loading_gltfs.remove(gltf_handle);
-        debug!("Done loading gltf file");
+        for (component, type_registration) in components {
+            let mut entity_mut = world.entity_mut(entity);
+            debug!(
+                "------adding {} {:?}",
+                component.get_represented_type_info().unwrap().type_path(),
+                component
+            );
+            type_registration
+                .data::<ReflectComponent>()
+                .unwrap()
+                .insert(&mut entity_mut, &*component); // TODO: how can we insert any additional components "by hand" here ?
+        }
     }
 }

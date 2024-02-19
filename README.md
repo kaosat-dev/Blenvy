@@ -113,6 +113,7 @@ Thanks to all the contributors helping out with this project ! Big kudos to you,
 - [BSDGuyShawn](https://github.com/BSDGuyShawn)
 - [yukkop](https://github.com/yukkop)
 - [killercup](https://github.com/killercup)
+- [janhohenheim ](https://github.com/janhohenheim)
 
 ## License
 
