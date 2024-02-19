@@ -1,8 +1,8 @@
 pub mod utils;
 pub use utils::*;
 
-pub mod gltf_to_components;
-pub use gltf_to_components::*;
+pub mod ronstring_to_reflect_component;
+pub use ronstring_to_reflect_component::*;
 
 pub mod process_gltfs;
 pub use process_gltfs::*;
@@ -68,14 +68,15 @@ impl Default for ComponentsFromGltfPlugin {
 
 impl Plugin for ComponentsFromGltfPlugin {
     fn build(&self, app: &mut App) {
-        app.insert_resource(GltfLoadingTracker::new())
+        app
+            //.insert_resource(GltfLoadingTracker::new())
             .insert_resource(GltfComponentsConfig {
                 legacy_mode: self.legacy_mode,
             })
-            .add_systems(Update, (track_new_gltf, process_loaded_scenes))
+            //.add_systems(Update, (track_new_gltf, process_loaded_scenes))
             .add_systems(
                 Update,
-                (process_loaded_scenes).in_set(GltfComponentsSet::Injection),
+                (add_components_from_gltf_extras).in_set(GltfComponentsSet::Injection),
             );
     }
 }
