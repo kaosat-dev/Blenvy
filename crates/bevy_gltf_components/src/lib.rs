@@ -68,15 +68,12 @@ impl Default for ComponentsFromGltfPlugin {
 
 impl Plugin for ComponentsFromGltfPlugin {
     fn build(&self, app: &mut App) {
-        app
-            //.insert_resource(GltfLoadingTracker::new())
-            .insert_resource(GltfComponentsConfig {
-                legacy_mode: self.legacy_mode,
-            })
-            //.add_systems(Update, (track_new_gltf, process_loaded_scenes))
-            .add_systems(
-                Update,
-                (add_components_from_gltf_extras).in_set(GltfComponentsSet::Injection),
-            );
+        app.insert_resource(GltfComponentsConfig {
+            legacy_mode: self.legacy_mode,
+        })
+        .add_systems(
+            Update,
+            (add_components_from_gltf_extras).in_set(GltfComponentsSet::Injection),
+        );
     }
 }

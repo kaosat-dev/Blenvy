@@ -22,19 +22,14 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
     let mut entity_components: HashMap<Entity, Vec<(Box<dyn Reflect>, TypeRegistration)>> =
         HashMap::new();
 
+    let gltf_components_config = world.resource::<GltfComponentsConfig>();
+
     for (entity, name, extra, parent) in extras.iter(world) {
-        /*let Ok(json) = serde_json::from_str::<Value>(&extra.value) else {
-            continue;
-        };
-        let Some(object) = json.as_object() else {
-            continue;
-        };*/
         debug!(
             "Name: {}, entity {:?}, parent: {:?}, extras {:?}",
             name, entity, parent, extra
         );
 
-        let gltf_components_config = world.resource::<GltfComponentsConfig>();
         let type_registry: &AppTypeRegistry = world.resource();
         let type_registry = type_registry.read();
         let reflect_components = ronstring_to_reflect_component(
@@ -89,5 +84,4 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
                 .insert(&mut entity_mut, &*component); // TODO: how can we insert any additional components "by hand" here ?
         }
     }
-    //Ok(())
 }
