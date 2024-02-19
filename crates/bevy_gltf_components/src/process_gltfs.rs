@@ -33,18 +33,16 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
             "Name: {}, entity {:?}, parent: {:?}, extras {:?}",
             name, entity, parent, extra
         );
-        let reflect_components = {
-            let gltf_components_config = world.resource::<GltfComponentsConfig>();
-            let type_registry: &AppTypeRegistry = world.resource();
-            let type_registry = type_registry.read();
-            let reflect_components = ronstring_to_reflect_component(
-                &extra.value,
-                &type_registry,
-                gltf_components_config.legacy_mode,
-            );
-            reflect_components
-        };
-
+        
+        let gltf_components_config = world.resource::<GltfComponentsConfig>();
+        let type_registry: &AppTypeRegistry = world.resource();
+        let type_registry = type_registry.read();
+        let reflect_components = ronstring_to_reflect_component(
+            &extra.value,
+            &type_registry,
+            gltf_components_config.legacy_mode,
+        );
+            
         // we assign the components specified /xxx_components objects to their parent node
         let mut target_entity = entity;
         // if the node contains "components" or ends with "_pa" (ie add to parent), the components will not be added to the entity itself but to its parent
