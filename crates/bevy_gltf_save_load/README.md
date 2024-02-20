@@ -34,8 +34,8 @@ Here's a minimal usage example:
 ```toml
 # Cargo.toml
 [dependencies]
-bevy="0.12"
-bevy_gltf_save_load = "0.1"
+bevy="0.13"
+bevy_gltf_save_load = "0.3"
 bevy_gltf_blueprints = "0.6" // also needed
 ```
 
@@ -141,8 +141,8 @@ take a look at the [example]('https://github.com/kaosat-dev/Blender_bevy_compone
 Add the following to your `[dependencies]` section in `Cargo.toml`:
 
 ```toml
-bevy_gltf_save_load = "0.1"
-bevy_gltf_blueprints = "0.6" // also needed, as bevy_gltf_save_load does not re-export it at this time
+bevy_gltf_save_load = "0.3"
+bevy_gltf_blueprints = "0.8" // also needed, as bevy_gltf_save_load does not re-export it at this time
 
 ```
 
@@ -299,8 +299,9 @@ The main branch is compatible with the latest Bevy release, while the branch `be
 Compatibility of `bevy_gltf_save_load` versions:
 | `bevy_gltf_save_load` | `bevy` |
 | :--                 | :--    |
-| `0.1 `              | `0.12` |
-| branch `main`       | `0.12` |
+| `0.3 `              | `0.13` |
+| `0.1 - 0.2`         | `0.12` |
+| branch `main`       | `0.13` |
 | branch `bevy_main`  | `main` |
 
 

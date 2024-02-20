@@ -30,7 +30,7 @@ pub struct MaterialInfo {
 pub(crate) fn materials_inject(
     mut blueprints_config: ResMut<BluePrintsConfig>,
     material_infos: Query<(&MaterialInfo, &Children), Added<MaterialInfo>>,
-    with_materials_and_meshes: Query<(
+    with_materials_and_meshes: Query<(), (
         With<Parent>,
         With<Handle<StandardMaterial>>,
         With<Handle<Mesh>>,

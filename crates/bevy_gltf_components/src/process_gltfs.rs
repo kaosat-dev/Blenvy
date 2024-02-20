@@ -32,6 +32,7 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
 
         let type_registry: &AppTypeRegistry = world.resource();
         let type_registry = type_registry.read();
+            
         let reflect_components = ronstring_to_reflect_component(
             &extra.value,
             &type_registry,
@@ -68,20 +69,27 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
     }
 
     for (entity, components) in entity_components {
+        let type_registry: &AppTypeRegistry = world.resource();
+        let type_registry = type_registry.clone();
+        let type_registry = type_registry.read();
+
         if !components.is_empty() {
             debug!("--entity {:?}, components {}", entity, components.len());
         }
-        for (component, type_registration) in components {
-            let mut entity_mut = world.entity_mut(entity);
+        for (component, type_registration) in components { 
             debug!(
                 "------adding {} {:?}",
                 component.get_represented_type_info().unwrap().type_path(),
                 component
             );
-            type_registration
+
+            {
+                let mut entity_mut = world.entity_mut(entity);
+                type_registration
                 .data::<ReflectComponent>()
-                .unwrap()
-                .insert(&mut entity_mut, &*component); // TODO: how can we insert any additional components "by hand" here ?
+                .expect("Unable to reflect component")
+                .insert(&mut entity_mut, &*component, &type_registry); // TODO: how can we insert any additional components "by hand" here ?
+            }
         }
     }
 }
