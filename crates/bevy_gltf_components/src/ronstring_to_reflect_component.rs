@@ -19,6 +19,7 @@ pub fn ronstring_to_reflect_component(
         if &type_string == "components_meta" {
             continue;
         }
+        info!("{}", type_string);
         let capitalized_type_name = capitalize_first_letter(type_string.as_str());
 
         let mut parsed_value: String;
