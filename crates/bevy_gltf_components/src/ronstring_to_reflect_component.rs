@@ -16,11 +16,10 @@ pub fn ronstring_to_reflect_component(
     let mut components: Vec<(Box<dyn Reflect>, TypeRegistration)> = Vec::new();
     for (key, value) in lookup.into_iter() {
         let type_string = key.replace("component: ", "").trim().to_string();
-        let capitalized_type_name = capitalize_first_letter(type_string.as_str());
-
-        if &capitalized_type_name == "Components_meta" {
+        if &type_string == "components_meta" {
             continue;
         }
+        let capitalized_type_name = capitalize_first_letter(type_string.as_str());
 
         let mut parsed_value: String;
         match value.clone() {
