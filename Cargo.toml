@@ -34,9 +34,6 @@ semicolon_if_nothing_returned = "warn"
 [profile.dev.package."*"]
 opt-level = 3
 
-[profile.dev.package.bevy]
-features = ["dynamic"]
-
 #### --------------------Production/ release-------------------------------
 [profile.release]
 strip = "debuginfo"
