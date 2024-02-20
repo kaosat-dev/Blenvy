@@ -48,7 +48,7 @@ pub fn physics_replace_proxies(
         match collider_proxy {
             Collider::Ball(radius) => {
                 info!("generating collider from proxy: ball");
-                xpbd_collider = XpbdCollider::ball(*radius);
+                xpbd_collider = XpbdCollider::sphere(*radius);
                 commands.entity(entity)
                     .insert(xpbd_collider)
                     //.insert(ActiveEvents::COLLISION_EVENTS)  // FIXME: this is just for demo purposes (also is there something like that in xpbd ?) !!!

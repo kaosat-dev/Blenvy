@@ -22,6 +22,7 @@ impl Plugin for PhysicsPlugin {
                 Update,
                 physics_replace_proxies.after(GltfBlueprintsSet::AfterSpawn),
             )
+            .add_systems(Update, toggle_physics_debug)
             .add_systems(OnEnter(GameState::InGame), resume_physics)
             .add_systems(OnExit(GameState::InGame), pause_physics);
     }

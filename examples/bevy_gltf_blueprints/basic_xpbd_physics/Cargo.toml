@@ -8,3 +8,5 @@ license = "MIT OR Apache-2.0"
 bevy="0.13"
 bevy_gltf_blueprints = { path = "../../../crates/bevy_gltf_blueprints" }
 bevy_gltf_worlflow_examples_common = { path = "../../common" }
+bevy_xpbd_3d = "0.4"
+rand = "0.8.5"

@@ -39,12 +39,12 @@ pub fn setup_game(
 }
 
 pub fn spawn_test(
-    keycode: Res<Input<KeyCode>>,
+    keycode: Res<ButtonInput<KeyCode>>,
     mut commands: Commands,
 
     mut game_world: Query<(Entity, &Children), With<GameWorldTag>>,
 ) {
-    if keycode.just_pressed(KeyCode::T) {
+    if keycode.just_pressed(KeyCode::KeyT) {
         let world = game_world.single_mut();
         let world = world.1[0];
 
