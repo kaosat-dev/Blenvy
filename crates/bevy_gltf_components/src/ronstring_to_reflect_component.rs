@@ -18,6 +18,10 @@ pub fn ronstring_to_reflect_component(
         let type_string = key.replace("component: ", "").trim().to_string();
         let capitalized_type_name = capitalize_first_letter(type_string.as_str());
 
+        if &capitalized_type_name == "Components_meta" {
+            continue;
+        }
+
         let mut parsed_value: String;
         match value.clone() {
             Value::String(str) => {
