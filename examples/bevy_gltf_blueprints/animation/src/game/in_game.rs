@@ -43,12 +43,12 @@ pub fn setup_game(
 }
 
 pub fn spawn_test(
-    keycode: Res<Input<KeyCode>>,
+    keycode: Res<ButtonInput<KeyCode>>,
     mut commands: Commands,
 
     mut game_world: Query<(Entity, &Children), With<GameWorldTag>>,
 ) {
-    if keycode.just_pressed(KeyCode::T) {
+    if keycode.just_pressed(KeyCode::KeyT) {
         let world = game_world.single_mut();
         let world = world.1[0];
 
@@ -165,11 +165,11 @@ pub fn animation_control(
 
     mut animation_players: Query<&mut AnimationPlayer>,
 
-    keycode: Res<Input<KeyCode>>,
+    keycode: Res<ButtonInput<KeyCode>>,
     // mut entities_with_animations : Query<(&mut AnimationPlayer, &mut Animations)>,
 ) {
     // robots
-    if keycode.just_pressed(KeyCode::B) {
+    if keycode.just_pressed(KeyCode::KeyB) {
         for (link, animations) in animated_enemies.iter() {
             let mut animation_player = animation_players.get_mut(link.0).unwrap();
             let anim_name = "Scan";
@@ -187,7 +187,7 @@ pub fn animation_control(
     }
 
     // foxes
-    if keycode.just_pressed(KeyCode::W) {
+    if keycode.just_pressed(KeyCode::KeyW) {
         for (link, animations) in animated_foxes.iter() {
             let mut animation_player = animation_players.get_mut(link.0).unwrap();
             let anim_name = "Walk";
@@ -204,7 +204,7 @@ pub fn animation_control(
         }
     }
 
-    if keycode.just_pressed(KeyCode::X) {
+    if keycode.just_pressed(KeyCode::KeyX) {
         for (link, animations) in animated_foxes.iter() {
             let mut animation_player = animation_players.get_mut(link.0).unwrap();
             let anim_name = "Run";
@@ -221,7 +221,7 @@ pub fn animation_control(
         }
     }
 
-    if keycode.just_pressed(KeyCode::C) {
+    if keycode.just_pressed(KeyCode::KeyC) {
         for (link, animations) in animated_foxes.iter() {
             let mut animation_player = animation_players.get_mut(link.0).unwrap();
             let anim_name = "Survey";

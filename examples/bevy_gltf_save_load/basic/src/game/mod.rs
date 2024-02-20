@@ -16,19 +16,19 @@ use bevy_gltf_save_load::{LoadRequest, LoadingFinished, SaveRequest, SavingFinis
 
 pub fn request_save(
     mut save_requests: EventWriter<SaveRequest>,
-    keycode: Res<Input<KeyCode>>,
+    keycode: Res<ButtonInput<KeyCode>>,
 
     current_state: Res<State<GameState>>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
-    if keycode.just_pressed(KeyCode::S)
+    if keycode.just_pressed(KeyCode::KeyS)
         && (current_state.get() != &GameState::InLoading)
         && (current_state.get() != &GameState::InSaving)
     {
         next_game_state.set(GameState::InSaving);
         save_requests.send(SaveRequest {
             path: "save.scn.ron".into(),
-        })
+        });
     }
 }
 
@@ -43,18 +43,18 @@ pub fn on_saving_finished(
 
 pub fn request_load(
     mut load_requests: EventWriter<LoadRequest>,
-    keycode: Res<Input<KeyCode>>,
+    keycode: Res<ButtonInput<KeyCode>>,
     current_state: Res<State<GameState>>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
-    if keycode.just_pressed(KeyCode::L)
+    if keycode.just_pressed(KeyCode::KeyL)
         && (current_state.get() != &GameState::InLoading)
         && (current_state.get() != &GameState::InSaving)
     {
         next_game_state.set(GameState::InLoading);
         load_requests.send(LoadRequest {
             path: "save.scn.ron".into(),
-        })
+        });
     }
 }
 

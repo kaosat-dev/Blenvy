@@ -89,24 +89,11 @@ pub fn teardown_main_menu(bla: Query<Entity, With<InMainMenu>>, mut commands: Co
 }
 
 pub fn main_menu(
-    keycode: Res<Input<KeyCode>>,
-
+    keycode: Res<ButtonInput<KeyCode>>,
     mut next_app_state: ResMut<NextState<AppState>>,
-    // mut next_game_state: ResMut<NextState<GameState>>,
-    // mut save_requested_events: EventWriter<SaveRequest>,
-    // mut load_requested_events: EventWriter<LoadRequest>,
+  
 ) {
-    if keycode.just_pressed(KeyCode::Return) {
+    if keycode.just_pressed(KeyCode::Enter) {
         next_app_state.set(AppState::AppLoading);
-        // next_game_state.set(GameState::None);
-    }
-
-    if keycode.just_pressed(KeyCode::L) {
-        next_app_state.set(AppState::AppLoading);
-        // load_requested_events.send(LoadRequest { path: "toto".into() })
-    }
-
-    if keycode.just_pressed(KeyCode::S) {
-        // save_requested_events.send(SaveRequest { path: "toto".into() })
     }
 }

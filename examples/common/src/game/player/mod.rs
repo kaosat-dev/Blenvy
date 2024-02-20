@@ -8,22 +8,22 @@ use crate::GameState;
 pub struct Player;
 
 fn player_move_demo(
-    keycode: Res<Input<KeyCode>>,
+    keycode: Res<ButtonInput<KeyCode>>,
     mut players: Query<&mut Transform, With<Player>>,
 ) {
     let speed = 0.2;
     if let Ok(mut player) = players.get_single_mut() {
-        if keycode.pressed(KeyCode::Left) {
+        if keycode.pressed(KeyCode::ArrowLeft) {
             player.translation.x += speed;
         }
-        if keycode.pressed(KeyCode::Right) {
+        if keycode.pressed(KeyCode::ArrowRight) {
             player.translation.x -= speed;
         }
 
-        if keycode.pressed(KeyCode::Up) {
+        if keycode.pressed(KeyCode::ArrowUp) {
             player.translation.z += speed;
         }
-        if keycode.pressed(KeyCode::Down) {
+        if keycode.pressed(KeyCode::ArrowDown) {
             player.translation.z -= speed;
         }
     }

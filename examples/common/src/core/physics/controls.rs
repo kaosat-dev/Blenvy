@@ -1,6 +1,6 @@
 use bevy::{
     ecs::system::Res,
-    input::{keyboard::KeyCode, Input},
+    input::{keyboard::KeyCode, ButtonInput},
     log::info,
     prelude::ResMut,
 };
@@ -18,9 +18,9 @@ pub fn resume_physics(mut physics_config: ResMut<RapierConfiguration>) {
 
 pub fn toggle_physics_debug(
     mut debug_config: ResMut<DebugRenderContext>,
-    keycode: Res<Input<KeyCode>>,
+    keycode: Res<ButtonInput<KeyCode>>,
 ) {
-    if keycode.just_pressed(KeyCode::D) {
+    if keycode.just_pressed(KeyCode::KeyD) {
         debug_config.enabled = !debug_config.enabled;
     }
 }

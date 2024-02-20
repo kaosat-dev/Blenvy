@@ -26,7 +26,7 @@ pub fn lighting_replace_proxies(
     mut commands: Commands,
 ) {
     for (entity, mut light) in added_dirights.iter_mut() {
-        light.illuminance *= 5.0;
+        // light.illuminance *= 5.0; // arbitrary/ eyeballed to match the levels of Blender
         light.shadows_enabled = true;
         let shadow_config: CascadeShadowConfig = CascadeShadowConfigBuilder {
             first_cascade_far_bound: 15.0,
@@ -41,7 +41,7 @@ pub fn lighting_replace_proxies(
     }
 
     for mut light in added_pointlights.iter_mut() {
-        light.intensity *= 0.001; // arbitrary/ eyeballed to match the levels of Blender
+        // light.intensity *= 0.001; // arbitrary/ eyeballed to match the levels of Blender
         light.shadows_enabled = true;
     }
 
@@ -50,9 +50,10 @@ pub fn lighting_replace_proxies(
     }
 
     for ambient in added_ambient_proxies.iter() {
+        println!("AMBIENT {:?} {}", ambient.color, ambient.brightness);
         commands.insert_resource(AmbientLight {
             color: ambient.color,
-            brightness: ambient.brightness,
+            brightness: ambient.brightness,// * 4000.,
         });
         // FIXME: does this belong here ?
         commands.insert_resource(ClearColor(ambient.color * ambient.brightness));

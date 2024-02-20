@@ -16,7 +16,7 @@ impl Plugin for GamePlugin {
         app.add_plugins(LevelsPlugin)
             .add_systems(
                 Update,
-                (spawn_test, spawn_test_unregisted_components).run_if(in_state(GameState::InGame)),
+                (spawn_test).run_if(in_state(GameState::InGame)),
             )
             .add_systems(OnEnter(AppState::MenuRunning), setup_main_menu)
             .add_systems(OnExit(AppState::MenuRunning), teardown_main_menu)

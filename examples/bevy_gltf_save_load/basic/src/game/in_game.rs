@@ -60,16 +60,16 @@ pub fn unload_world(mut commands: Commands, gameworlds: Query<Entity, With<GameW
     }
 }
 
-pub fn should_reset(keycode: Res<Input<KeyCode>>) -> bool {
-    keycode.just_pressed(KeyCode::N)
+pub fn should_reset(keycode: Res<ButtonInput<KeyCode>>) -> bool {
+    keycode.just_pressed(KeyCode::KeyN)
 }
 
 pub fn spawn_test(
-    keycode: Res<Input<KeyCode>>,
+    keycode: Res<ButtonInput<KeyCode>>,
     mut dynamic_entities_world: Query<Entity, With<DynamicEntitiesRoot>>,
     mut commands: Commands,
 ) {
-    if keycode.just_pressed(KeyCode::T) {
+    if keycode.just_pressed(KeyCode::KeyT) {
         let world = dynamic_entities_world.single_mut();
 
         let mut rng = rand::thread_rng();
@@ -109,12 +109,12 @@ pub fn spawn_test(
 struct UnregisteredComponent;
 
 pub fn spawn_test_unregisted_components(
-    keycode: Res<Input<KeyCode>>,
+    keycode: Res<ButtonInput<KeyCode>>,
     mut commands: Commands,
 
     mut dynamic_entities_world: Query<Entity, With<DynamicEntitiesRoot>>,
 ) {
-    if keycode.just_pressed(KeyCode::U) {
+    if keycode.just_pressed(KeyCode::KeyU) {
         let world = dynamic_entities_world.single_mut();
 
         let mut rng = rand::thread_rng();
@@ -152,13 +152,13 @@ pub fn spawn_test_unregisted_components(
 }
 
 pub fn spawn_test_parenting(
-    keycode: Res<Input<KeyCode>>,
+    keycode: Res<ButtonInput<KeyCode>>,
     players: Query<Entity, With<Player>>,
     mut commands: Commands,
 
     names: Query<(Entity, &Name)>,
 ) {
-    if keycode.just_pressed(KeyCode::P) {
+    if keycode.just_pressed(KeyCode::KeyP) {
         let mut rng = rand::thread_rng();
         let range = 5.5;
         let x: f32 = rng.gen_range(-range..range);

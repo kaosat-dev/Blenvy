@@ -1,5 +1,4 @@
 use bevy::prelude::*;
-use bevy_editor_pls::prelude::*;
 use bevy_gltf_worlflow_examples_common::CommonPlugin;
 
 mod core;
@@ -15,8 +14,6 @@ fn main() {
     App::new()
         .add_plugins((
             DefaultPlugins.set(AssetPlugin::default()),
-            // editor
-            EditorPlugin::default(),
             // our custom plugins
             CommonPlugin,
             CorePlugin,           // reusable plugins
