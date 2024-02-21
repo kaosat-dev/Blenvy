@@ -31,7 +31,7 @@ pub fn camera_replace_proxies(
     for (entity, mut camera, mut exposure, bloom_settings, ssao_setting) in added_cameras.iter_mut() {
         info!("detected added camera, updating proxy");
         camera.hdr = true;
-        // exposure.ev100 *= 0.8;
+        exposure.ev100 *= 1.0;
         commands
             .entity(entity)
             .insert(DebandDither::Enabled)

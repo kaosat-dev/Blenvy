@@ -10,7 +10,7 @@ use bevy::prelude::*;
 use bevy_xpbd_3d::prelude::*;
 
 use bevy_gltf_blueprints::GltfBlueprintsSet;
-use bevy_gltf_worlflow_examples_common::GameState;
+use crate::state::GameState;
 
 pub struct PhysicsPlugin;
 impl Plugin for PhysicsPlugin {

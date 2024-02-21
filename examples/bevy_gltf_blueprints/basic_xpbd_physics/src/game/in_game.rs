@@ -1,10 +1,7 @@
 use bevy::prelude::*;
 use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, GameWorldTag};
-
 use bevy_gltf_worlflow_examples_common::{assets::GameAssets, GameState, InAppRunning};
-// use bevy_rapier3d::prelude::Velocity;
 use bevy_xpbd_3d::prelude::*;
-
 use rand::Rng;
 
 pub fn setup_game(
@@ -13,7 +10,6 @@ pub fn setup_game(
     models: Res<Assets<bevy::gltf::Gltf>>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
-    println!("setting up all stuff");
     commands.insert_resource(AmbientLight {
         color: Color::WHITE,
         brightness: 0.2,
