@@ -102,10 +102,10 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
 
         self.will_save_settings = False
         if settings:
-            #print("loading settings in invoke AutoExportGLTF", settings)
+            print("loading settings in invoke AutoExportGLTF", settings)
             try:
                 for (k, v) in settings.items():
-                    #print("loading setting", k, v)
+                    print("loading setting", k, v)
                     setattr(self, k, v)
                 self.will_save_settings = True
 
@@ -128,7 +128,8 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
                         item = library_scenes.add()
                         item.name = item_name
 
-            except (AttributeError, TypeError):
+            except Exception as error:
+                print("error", error)
                 self.report({"ERROR"}, "Loading export settings failed. Removed corrupted settings")
                 bpy.data.texts.remove(bpy.data.texts[".gltf_auto_export_settings"])
 

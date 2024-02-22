@@ -2,16 +2,32 @@ import bpy
 from .helpers_collections import (set_active_collection)
 from .object_makers import (make_empty)
 
+
+# these are mostly for when using this add-on together with the bevy_components add-on
+custom_properties_to_filter_out = ['_combine', 'template', 'components_meta']
+
+def is_component_valid(object, component_name):
+    if "components_meta" in object:
+        target_components_metadata = object.components_meta.components
+        component_meta = next(filter(lambda component: component["name"] == component_name, target_components_metadata), None)
+        if component_meta != None:
+            return component_meta.enabled and not component_meta.invalid
+    return True
+
+def remove_unwanted_custom_properties(object):
+    to_remove = []
+    for component_name in object.keys():
+        if not is_component_valid(object, component_name):
+            to_remove.append(component_name)
+    
+    for cp in custom_properties_to_filter_out + to_remove:
+        if cp in object:
+            del object[cp]
+
 # copies the contents of a collection into another one while replacing library instances with empties
 def copy_hollowed_collection_into(source_collection, destination_collection, parent_empty=None, filter=None, library_collections=[], addon_prefs={}):
     collection_instances_combine_mode = getattr(addon_prefs, "collection_instances_combine_mode")
     legacy_mode = getattr(addon_prefs, "export_legacy_mode")
-    
-    root_objects = []
-    special_properties= { # to be able to reset any special property afterwards
-        "combine": [],
-    }
-
     collection_instances_combine_mode= collection_instances_combine_mode
 
     for object in source_collection.objects:
@@ -31,23 +47,26 @@ def copy_hollowed_collection_into(source_collection, destination_collection, par
             empty_obj['BlueprintName'] = '"'+collection_name+'"' if legacy_mode else '("'+collection_name+'")'
             empty_obj['SpawnHere'] = ''
 
-            for k, v in object.items():
-                if k != 'template' or k != '_combine': # do not copy these properties
-                    empty_obj[k] = v
+            # we copy custom properties over from our original object to our empty
+            for component_name, component_value in object.items():
+                if component_name not in custom_properties_to_filter_out and is_component_valid(object, component_name): #copy only valid properties
+                    empty_obj[component_name] = component_value
             if parent_empty is not None:
                 empty_obj.parent = parent_empty
-        else:
-            # we backup special properties that we do not want to export, and remove them
-            if '_combine' in object:
-                special_properties["combine"].append((object, object['_combine']))
-                del object['_combine']
+        else:         
+            # we create a copy of our object, to leave the original one as it is
+            original_name = object.name
+            object.name = original_name + "____bak"
+            copy = object.copy()
+            copy.name = original_name
+            remove_unwanted_custom_properties(copy)
 
             if parent_empty is not None:
-                object.parent = parent_empty
-                destination_collection.objects.link(object)
+                copy.parent = parent_empty
+                destination_collection.objects.link(copy)
             else:
-                root_objects.append(object)
-                destination_collection.objects.link(object)
+                # root_objects.append(object)
+                destination_collection.objects.link(copy)
 
     # for every sub-collection of the source, copy its content into a new sub-collection of the destination
     for collection in source_collection.children:
@@ -58,7 +77,7 @@ def copy_hollowed_collection_into(source_collection, destination_collection, par
         if parent_empty is not None:
             collection_placeholder.parent = parent_empty
 
-        nested_results = copy_hollowed_collection_into(
+        copy_hollowed_collection_into(
             source_collection = collection, 
             destination_collection = destination_collection, 
             parent_empty = collection_placeholder, 
@@ -66,24 +85,19 @@ def copy_hollowed_collection_into(source_collection, destination_collection, par
             library_collections = library_collections, 
             addon_prefs=addon_prefs
         )
-        sub_root_objects = nested_results["root_objects"]
-        sub_special_properties = nested_results["special_properties"]
-
-        root_objects.extend(sub_root_objects)
-        for s in sub_special_properties.keys():
-            if not s in special_properties.keys():
-                special_properties[s] = []
-            special_properties[s].extend(sub_special_properties[s])
-
-    return {"root_objects": root_objects, "special_properties": special_properties}
+    
+    return {}
 
 # clear & remove "hollow scene"
-def clear_hollow_scene(temp_scene, original_root_collection, root_objects, special_properties):
+def clear_hollow_scene(temp_scene, original_root_collection):
     def restore_original_names(collection):
         if collection.name.endswith("____bak"):
             collection.name = collection.name.replace("____bak", "")
         for object in collection.objects:
             if object.instance_type == 'COLLECTION':
+                if object.name.endswith("____bak"):
+                    object.name = object.name.replace("____bak", "")
+            else: 
                 if object.name.endswith("____bak"):
                     object.name = object.name.replace("____bak", "")
         for child_collection in collection.children:
@@ -96,29 +110,7 @@ def clear_hollow_scene(temp_scene, original_root_collection, root_objects, speci
     temp_root_collection = temp_scene.collection 
     temp_scene_objects = [o for o in temp_root_collection.objects]
     for object in temp_scene_objects:
-        if object.type == 'EMPTY':
-            if hasattr(object, "SpawnHere"):
-                bpy.data.objects.remove(object, do_unlink=True)
-            else:
-                try: 
-                    temp_root_collection.objects.unlink(object)
-                except:
-                    print("failed to unlink", object)
-                if object in root_objects:
-                    pass
-                else:
-                    bpy.data.objects.remove(object, do_unlink=True)
-        else:
-            temp_root_collection.objects.unlink(object)
-
-    # remove temporary collections
-    """for collection in temporary_collections:
-        bpy.data.collections.remove(collection)"""
-
-    # put back special properties
-    for (object, value) in special_properties["combine"]:
-        object['_combine'] = value
-
+        bpy.data.objects.remove(object, do_unlink=True)
     # remove the temporary scene
     bpy.data.scenes.remove(temp_scene)
 
