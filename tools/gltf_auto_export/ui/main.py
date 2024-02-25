@@ -37,7 +37,6 @@ class GLTF_PT_auto_export_main(bpy.types.Panel):
 
         sfile = context.space_data
 
-
 class GLTF_PT_auto_export_root(bpy.types.Panel):
     bl_space_type = 'FILE_BROWSER'
     bl_region_type = 'TOOL_PROPS'
@@ -66,6 +65,7 @@ class GLTF_PT_auto_export_root(bpy.types.Panel):
 
         layout.active = operator.auto_export
         layout.prop(operator, 'will_save_settings')
+        layout.prop(operator, "export_change_detection")
         layout.prop(operator, "export_output_folder")
         layout.prop(operator, "export_scene_settings")
         layout.prop(operator, "export_legacy_mode")
@@ -124,8 +124,6 @@ class GLTF_PT_auto_export_root(bpy.types.Panel):
         remove_operator.action = 'REMOVE'
         remove_operator.scene_type = 'library'
         col.separator()
-
-
       
 class GLTF_PT_auto_export_blueprints(bpy.types.Panel):
     bl_space_type = 'FILE_BROWSER'

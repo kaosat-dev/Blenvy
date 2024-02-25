@@ -21,7 +21,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         'export_main_scene_name',
         'export_output_folder',
         'export_library_scene_name',
-
+        'export_change_detection',
         'export_blueprints',
         'export_blueprints_path',
 
