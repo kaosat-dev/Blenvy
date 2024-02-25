@@ -1,22 +1,23 @@
 pub mod in_game;
 pub use in_game::*;
 
-pub mod in_main_menu;
-pub use in_main_menu::*;
-
 use bevy::prelude::*;
 use bevy_gltf_worlflow_examples_common::{AppState, GameState};
 
+
+fn start_game(
+    mut next_app_state: ResMut<NextState<AppState>>,
+){
+    next_app_state.set(AppState::AppLoading);
+}
 pub struct GamePlugin;
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
             Update,
-            (spawn_test, spawn_test_unregisted_components).run_if(in_state(GameState::InGame)),
+            (spawn_test).run_if(in_state(GameState::InGame)),
         )
-        .add_systems(OnEnter(AppState::MenuRunning), setup_main_menu)
-        .add_systems(OnExit(AppState::MenuRunning), teardown_main_menu)
-        .add_systems(Update, main_menu.run_if(in_state(AppState::MenuRunning)))
+        .add_systems(OnEnter(AppState::MenuRunning), start_game)
         .add_systems(OnEnter(AppState::AppRunning), setup_game);
     }
 }
