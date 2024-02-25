@@ -9,7 +9,8 @@ from ..helpers.helpers_collections import (get_exportable_collections)
 from .auto_export import auto_export
 
 class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
-    """test"""
+    """auto export gltf"""
+    #bl_idname = "object.xxx"
     bl_idname = "export_scenes.auto_gltf"
     bl_label = "Apply settings"
     bl_options = {'PRESET', 'UNDO'}
@@ -93,7 +94,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         #print("saving settings", bpy.data.texts[".gltf_auto_export_settings"].as_string(), "raw", json.dumps(export_props))
    
     def load_settings(self, context):
-        #print("loading settings")
+        # print("loading settings")
         settings = None
         try:
             settings = bpy.data.texts[".gltf_auto_export_settings"].as_string()
@@ -164,6 +165,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
             return changed
 
     def execute(self, context):     
+        print("toto", self.main_scenes)
         # disable change detection while the operator runs
         bpy.context.window_manager.auto_export_tracker.disable_change_detection()
         if self.direct_mode:
