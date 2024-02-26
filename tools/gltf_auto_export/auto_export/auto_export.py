@@ -21,6 +21,9 @@ def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
         folder_path = os.path.dirname(file_path)
         # get the preferences for our addon
 
+        #should we use change detection or not 
+        export_change_detection = getattr(addon_prefs, "export_change_detection")
+
         export_blueprints = getattr(addon_prefs,"export_blueprints")
         export_output_folder = getattr(addon_prefs,"export_output_folder")
 
@@ -75,7 +78,7 @@ def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
                         if matching_collection is not None:
                             changed_collections.append(matching_collection)
 
-            collections_to_export = list(set(changed_collections + collections_not_on_disk))
+            collections_to_export =  list(set(changed_collections + collections_not_on_disk)) if export_change_detection else collections
 
             # we need to re_export everything if the export parameters have been changed
             collections_to_export = collections if changed_export_parameters else collections_to_export
@@ -110,14 +113,14 @@ def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
             print("export MAIN scenes")
             for scene_name in main_scene_names:
                 # we have more relaxed rules to determine if the main scenes have changed : any change is ok, (allows easier handling of changes, render settings etc)
-                do_export_main_scene =  changed_export_parameters or scene_name in changes_per_scene.keys() or not check_if_blueprint_on_disk(scene_name, export_levels_path, gltf_extension)
+                do_export_main_scene = not export_change_detection or changed_export_parameters or scene_name in changes_per_scene.keys() or not check_if_blueprint_on_disk(scene_name, export_levels_path, gltf_extension)
                 if do_export_main_scene:
                     print("     exporting scene:", scene_name)
                     export_main_scene(bpy.data.scenes[scene_name], folder_path, addon_prefs, library_collections)
 
 
             # now deal with blueprints/collections
-            do_export_library_scene = changed_export_parameters or len(collections_to_export) > 0 # export_library_scene_name in changes_per_scene.keys()
+            do_export_library_scene = not export_change_detection or changed_export_parameters or len(collections_to_export) > 0 # export_library_scene_name in changes_per_scene.keys()
             print("export LIBRARY")
             if do_export_library_scene:
                 # we only want to go through the library scenes where our collections to export are present

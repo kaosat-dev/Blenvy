@@ -15,6 +15,7 @@ AutoExportGltfPreferenceNames = [
     'export_main_scene_name',
     'export_output_folder',
     'export_library_scene_name',
+    'export_change_detection',
 
     'export_blueprints',
     'export_blueprints_path',
@@ -39,7 +40,7 @@ AutoExportGltfPreferenceNames = [
     'library_scene_names',
     'previous_export_settings',
     'filter_glob',
-    'will_save_settings'
+    'will_save_settings',
 ]
 
 class AutoExportGltfAddonPreferences(AddonPreferences):
@@ -85,6 +86,11 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         name='Library scene',
         description='The name of the library scene to auto export',
         default='Library'
+    )
+    export_change_detection: BoolProperty(
+        name='Change detection',
+        description='Use change detection to determine what/if should be exported',
+        default=True
     )
     # scene components
     export_scene_settings: BoolProperty(
