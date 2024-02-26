@@ -80,7 +80,17 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         # we inject all that we need, the above is not sufficient
         for (k, v) in self.properties.items():
             if k in self.white_list or k not in AutoExportGltfPreferenceNames:
-                export_props[k] = v
+                value = v
+                # FIXME: really weird having to do this
+                if k == "collection_instances_combine_mode":
+                    value = self.collection_instances_combine_mode
+                if k == "export_format":
+                    value = self.export_format
+                if k == "export_image_format":
+                    value = self.export_image_format
+                if k == "export_materials":
+                    value = self.export_materials
+                export_props[k] = value
         # we add main & library scene names to our preferences
         
         export_props['main_scene_names'] = list(map(lambda scene_data: scene_data.name, getattr(self,"main_scenes")))
@@ -165,7 +175,6 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
             return changed
 
     def execute(self, context):     
-        print("toto", self.main_scenes)
         # disable change detection while the operator runs
         bpy.context.window_manager.auto_export_tracker.disable_change_detection()
         if self.direct_mode:
