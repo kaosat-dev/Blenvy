@@ -2,9 +2,10 @@ use bevy::{
     core::Name,
     ecs::{
         entity::Entity,
-        query::Added,
+        query::{Added, Without},
         reflect::{AppTypeRegistry, ReflectComponent},
         world::World,
+        component::Component
     },
     gltf::GltfExtras,
     hierarchy::Parent,
@@ -15,10 +16,14 @@ use bevy::{
 
 use crate::{ronstring_to_reflect_component, GltfComponentsConfig};
 
+/// this is a flag component to tag a processed gltf, to avoid processing things multiple times
+#[derive(Component)]
+pub struct GltfProcessed;
+
 /// main function: injects components into each entity in gltf files that have `gltf_extras`, using reflection
 pub fn add_components_from_gltf_extras(world: &mut World) {
     let mut extras =
-        world.query_filtered::<(Entity, &Name, &GltfExtras, &Parent), Added<GltfExtras>>();
+        world.query_filtered::<(Entity, &Name, &GltfExtras, &Parent), (Added<GltfExtras>, Without<GltfProcessed>)>();
     let mut entity_components: HashMap<Entity, Vec<(Box<dyn Reflect>, TypeRegistration)>> =
         HashMap::new();
 
@@ -88,8 +93,11 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
                 type_registration
                 .data::<ReflectComponent>()
                 .expect("Unable to reflect component")
-                .insert(&mut entity_mut, &*component, &type_registry); // TODO: how can we insert any additional components "by hand" here ?
+                .insert(&mut entity_mut, &*component, &type_registry);
+
+                entity_mut.insert(GltfProcessed); //  this is how can we insert any additional components
             }
         }
     }
+
 }
