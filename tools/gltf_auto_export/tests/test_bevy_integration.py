@@ -10,8 +10,8 @@ def setup_data(request):
     print("\nSetting up resources...")
 
     def finalizer():
-        #root_path =  "../../testing/bevy_example"
-        assets_root_path = "../../testing/bevy_example/assets"
+        root_path =  "../../testing/bevy_example"
+        assets_root_path = os.path.join(root_path, "assets")
         models_path =  os.path.join(assets_root_path, "models")
         #materials_path = os.path.join("../../testing", "materials")
         #other_materials_path = os.path.join("../../testing", "other_materials")
