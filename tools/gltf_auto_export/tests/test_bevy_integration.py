@@ -69,12 +69,17 @@ def test_export_complex(setup_data):
     )
     # blueprint1 => has an instance, got changed, should export
     # blueprint2 => has NO instance, but marked as asset, should export
-    # blueprint3 => has NO instance, not marked as asset, should NOT export
+    # blueprint3 => has NO instance, not marked as asset, used inside blueprint 4: should export
+    # blueprint4 => has an instance, with nested blueprint3, should export
+    # blueprint5 => has NO instance, not marked as asset, should NOT export
+
     assert os.path.exists(os.path.join(models_path, "World.glb")) == True
 
     assert os.path.exists(os.path.join(models_path, "library", "Blueprint1.glb")) == True
     assert os.path.exists(os.path.join(models_path, "library", "Blueprint2.glb")) == True
-    assert os.path.exists(os.path.join(models_path, "library", "Blueprint3.glb")) == False
+    assert os.path.exists(os.path.join(models_path, "library", "Blueprint3.glb")) == True
+    assert os.path.exists(os.path.join(models_path, "library", "Blueprint4_nested.glb")) == True
+    assert os.path.exists(os.path.join(models_path, "library", "Blueprint5.glb")) == False
 
     # now run bevy
     bla = "cargo run --features bevy/dynamic_linking"

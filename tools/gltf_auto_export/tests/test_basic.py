@@ -179,7 +179,9 @@ def test_export_do_not_export_marked_assets(setup_data):
     assert os.path.exists(os.path.join(setup_data["models_path"], "World.glb")) == True
     assert os.path.exists(os.path.join(setup_data["models_path"], "library", "Blueprint1.glb")) == True
     assert os.path.exists(os.path.join(setup_data["models_path"], "library", "Blueprint2.glb")) == False
-    assert os.path.exists(os.path.join(setup_data["models_path"], "library", "Blueprint3.glb")) == False
+    assert os.path.exists(os.path.join(setup_data["models_path"], "library", "Blueprint3.glb")) == True
+    assert os.path.exists(os.path.join(setup_data["models_path"], "library", "Blueprint4_nested.glb")) == True
+    assert os.path.exists(os.path.join(setup_data["models_path"], "library", "Blueprint5.glb")) == False
 
 
 def test_export_separate_dynamic_and_static_objects(setup_data):
