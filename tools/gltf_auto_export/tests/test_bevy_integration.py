@@ -25,7 +25,9 @@ def setup_data(request):
 
         if os.path.exists(other_materials_path):
             shutil.rmtree(other_materials_path)"""
-        
+        diagnostics_file_path = os.path.join(root_path, "bevy_diagnostics.json")
+        if os.path.exists(diagnostics_file_path):
+            os.remove(diagnostics_file_path)
 
     request.addfinalizer(finalizer)
 
@@ -65,7 +67,8 @@ def test_export_complex(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False
+        export_legacy_mode=False,
+        export_animations=True
     )
     # blueprint1 => has an instance, got changed, should export
     # blueprint2 => has NO instance, but marked as asset, should export
@@ -80,6 +83,8 @@ def test_export_complex(setup_data):
     assert os.path.exists(os.path.join(models_path, "library", "Blueprint3.glb")) == True
     assert os.path.exists(os.path.join(models_path, "library", "Blueprint4_nested.glb")) == True
     assert os.path.exists(os.path.join(models_path, "library", "Blueprint5.glb")) == False
+    assert os.path.exists(os.path.join(models_path, "library", "Blueprint6_animated.glb")) == True
+    assert os.path.exists(os.path.join(models_path, "library", "Blueprint7_hierarchy.glb")) == True
 
     # now run bevy
     bla = "cargo run --features bevy/dynamic_linking"
@@ -91,3 +96,9 @@ def test_export_complex(setup_data):
     return_code = subprocess.call(["cargo", "run", "--features", "bevy/dynamic_linking"], cwd=root_path)
     print("RETURN CODE OF BEVY APP", return_code)
     assert return_code == 0
+
+    with open(os.path.join(root_path, "bevy_diagnostics.json")) as diagnostics_file:
+        diagnostics = json.load(diagnostics_file)
+        print("diagnostics", diagnostics)
+        assert diagnostics["animations"] == True
+        
