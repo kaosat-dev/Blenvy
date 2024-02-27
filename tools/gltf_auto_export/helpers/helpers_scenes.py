@@ -24,12 +24,57 @@ def remove_unwanted_custom_properties(object):
         if cp in object:
             del object[cp]
 
+def duplicate_object(object):
+    print("copying ", object.name)
+    obj_copy = object.copy()
+    if object.data:
+        data = object.data.copy()
+        obj_copy.data = data
+    if object.animation_data:
+        print("OJECT ANIMATION")
+        obj_copy.animation_data.action = object.animation_data.action.copy()
+        print("copy animation stuff", obj_copy.animation_data.action)
+    return obj_copy
+
+def duplicate_object2(object, original_name):
+    print("copy object", object)
+
+    with bpy.context.temp_override(object=object, active_object = object):
+        bpy.ops.object.duplicate(linked=False)
+        new_obj = bpy.context.active_object
+
+        print("new obj", new_obj, "bpy.context.view_layer", bpy.context.view_layer.objects)
+        for obj in bpy.context.view_layer.objects:
+            print("obj", obj)
+        bpy.context.view_layer.update()
+        new_obj.name = original_name
+
+        if object.animation_data:
+            print("OJECT ANIMATION")
+            new_obj.animation_data.action = object.animation_data.action.copy()
+      
+    return new_obj
+
+# TODO: do remove_unwanted_custom_properties(object): for all objects in hiearchy
+def duplicate_object_recursive(object, parent, collect):
+    original_name = object.name
+    object.name = original_name + "____bak"
+    copy = duplicate_object(object)
+    copy.name = original_name
+    collect.objects.link(copy)
+    if parent:
+        copy.parent = parent
+
+    for child in object.children:
+        duplicate_object_recursive(child, copy, collect)
+    return copy
+
+
 # copies the contents of a collection into another one while replacing library instances with empties
 def copy_hollowed_collection_into(source_collection, destination_collection, parent_empty=None, filter=None, library_collections=[], addon_prefs={}):
     collection_instances_combine_mode = getattr(addon_prefs, "collection_instances_combine_mode")
     legacy_mode = getattr(addon_prefs, "export_legacy_mode")
     collection_instances_combine_mode= collection_instances_combine_mode
-
     for object in source_collection.objects:
         if filter is not None and filter(object) is False:
             continue
@@ -54,19 +99,16 @@ def copy_hollowed_collection_into(source_collection, destination_collection, par
             if parent_empty is not None:
                 empty_obj.parent = parent_empty
         else:         
-            # we create a copy of our object, to leave the original one as it is
-            original_name = object.name
-            object.name = original_name + "____bak"
-            copy = object.copy()
-            copy.name = original_name
-            remove_unwanted_custom_properties(copy)
+           
+            # we create a copy of our object and its children, to leave the original one as it is
+            if object.parent == None:
+                copy = duplicate_object_recursive(object, None, destination_collection)
+                remove_unwanted_custom_properties(copy)
 
-            if parent_empty is not None:
-                copy.parent = parent_empty
-                destination_collection.objects.link(copy)
-            else:
-                # root_objects.append(object)
-                destination_collection.objects.link(copy)
+                if parent_empty is not None:
+                    copy.parent = parent_empty
+                #destination_collection.objects.link(copy)
+                
 
     # for every sub-collection of the source, copy its content into a new sub-collection of the destination
     for collection in source_collection.children:
