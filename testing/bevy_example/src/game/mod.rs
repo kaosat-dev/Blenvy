@@ -7,7 +7,10 @@ use std::{
 use bevy_gltf_blueprints::{AnimationPlayerLink, BlueprintName};
 pub use in_game::*;
 
-use bevy::{prelude::*, render::view::screenshot::ScreenshotManager, time::common_conditions::on_timer, window::PrimaryWindow};
+use bevy::{
+    prelude::*, render::view::screenshot::ScreenshotManager, time::common_conditions::on_timer,
+    window::PrimaryWindow,
+};
 use bevy_gltf_worlflow_examples_common::{AppState, GameState};
 
 use crate::{TupleTestF32, UnitTest};
@@ -23,27 +26,34 @@ fn start_game(mut next_app_state: ResMut<NextState<AppState>>) {
 fn validate_export(
     parents: Query<&Parent>,
     children: Query<&Children>,
-    names : Query<&Name>,
+    names: Query<&Name>,
     blueprints: Query<(Entity, &Name, &BlueprintName)>,
     animation_player_links: Query<(Entity, &AnimationPlayerLink)>,
-    exported_cylinder: Query<(Entity, &Name, &UnitTest, &TupleTestF32)>
+    exported_cylinder: Query<(Entity, &Name, &UnitTest, &TupleTestF32)>,
 ) {
     let animations_found = !animation_player_links.is_empty();
-    
-    let mut cylinder_found = false;
-    if let Ok(nested_cylinder) = exported_cylinder.get_single(){
-        let parent_name = names.get(parents.get(nested_cylinder.0).unwrap().get()).unwrap();
-        cylinder_found =  parent_name.to_string() == "Cube.001".to_string() && nested_cylinder.1.to_string() == "Cylinder".to_string() && nested_cylinder.3.0 == 75.1 ;
-    }
 
+    let mut cylinder_found = false;
+    if let Ok(nested_cylinder) = exported_cylinder.get_single() {
+        let parent_name = names
+            .get(parents.get(nested_cylinder.0).unwrap().get())
+            .unwrap();
+        cylinder_found = parent_name.to_string() == "Cube.001".to_string()
+            && nested_cylinder.1.to_string() == "Cylinder".to_string()
+            && nested_cylinder.3 .0 == 75.1;
+    }
 
     let mut nested_blueprint_found = false;
     for (entity, name, blueprint_name) in blueprints.iter() {
-        if name.to_string() == "Blueprint4_nested".to_string() && blueprint_name.0.to_string() == "Blueprint4_nested".to_string() {
-            if let Ok(cur_children) = children.get(entity)  {
-                for child in cur_children.iter(){
+        if name.to_string() == "Blueprint4_nested".to_string()
+            && blueprint_name.0.to_string() == "Blueprint4_nested".to_string()
+        {
+            if let Ok(cur_children) = children.get(entity) {
+                for child in cur_children.iter() {
                     if let Ok((_, child_name, child_blueprint_name)) = blueprints.get(*child) {
-                        if child_name.to_string() == "Blueprint3".to_string() && child_blueprint_name.0.to_string() == "Blueprint3".to_string() {
+                        if child_name.to_string() == "Blueprint3".to_string()
+                            && child_blueprint_name.0.to_string() == "Blueprint3".to_string()
+                        {
                             nested_blueprint_found = true;
                         }
                     }
@@ -51,19 +61,21 @@ fn validate_export(
             }
         }
     }
-    
+
     fs::write(
         "bevy_diagnostics.json",
-        format!("{{ \"animations\": {},  \"cylinder_found\": {} ,  \"nested_blueprint_found\": {} }}", animations_found, cylinder_found, nested_blueprint_found),
+        format!(
+            "{{ \"animations\": {},  \"cylinder_found\": {} ,  \"nested_blueprint_found\": {} }}",
+            animations_found, cylinder_found, nested_blueprint_found
+        ),
     )
     .expect("Unable to write file");
-    
 }
 
 fn generate_screenshot(
     main_window: Query<Entity, With<PrimaryWindow>>,
     mut screenshot_manager: ResMut<ScreenshotManager>,
-){
+) {
     screenshot_manager
         .save_screenshot_to_disk(main_window.single(), "screenshot.png")
         .unwrap();
