@@ -25,48 +25,29 @@ def remove_unwanted_custom_properties(object):
             del object[cp]
 
 def duplicate_object(object):
-    print("copying ", object.name)
     obj_copy = object.copy()
     if object.data:
         data = object.data.copy()
         obj_copy.data = data
-    if object.animation_data:
-        print("OJECT ANIMATION")
+    if object.animation_data and object.animation_data.action:
         obj_copy.animation_data.action = object.animation_data.action.copy()
-        print("copy animation stuff", obj_copy.animation_data.action)
     return obj_copy
 
-def duplicate_object2(object, original_name):
-    print("copy object", object)
-
-    with bpy.context.temp_override(object=object, active_object = object):
-        bpy.ops.object.duplicate(linked=False)
-        new_obj = bpy.context.active_object
-
-        print("new obj", new_obj, "bpy.context.view_layer", bpy.context.view_layer.objects)
-        for obj in bpy.context.view_layer.objects:
-            print("obj", obj)
-        bpy.context.view_layer.update()
-        new_obj.name = original_name
-
-        if object.animation_data:
-            print("OJECT ANIMATION")
-            new_obj.animation_data.action = object.animation_data.action.copy()
-      
-    return new_obj
-
-# TODO: do remove_unwanted_custom_properties(object): for all objects in hiearchy
-def duplicate_object_recursive(object, parent, collect):
+#also removes unwanted custom_properties for all objects in hiearchy
+def duplicate_object_recursive(object, parent, collection):
     original_name = object.name
     object.name = original_name + "____bak"
     copy = duplicate_object(object)
     copy.name = original_name
-    collect.objects.link(copy)
+    collection.objects.link(copy)
+
+    remove_unwanted_custom_properties(copy)
+
     if parent:
         copy.parent = parent
 
     for child in object.children:
-        duplicate_object_recursive(child, copy, collect)
+        duplicate_object_recursive(child, copy, collection)
     return copy
 
 
@@ -103,12 +84,9 @@ def copy_hollowed_collection_into(source_collection, destination_collection, par
             # we create a copy of our object and its children, to leave the original one as it is
             if object.parent == None:
                 copy = duplicate_object_recursive(object, None, destination_collection)
-                remove_unwanted_custom_properties(copy)
 
                 if parent_empty is not None:
-                    copy.parent = parent_empty
-                #destination_collection.objects.link(copy)
-                
+                    copy.parent = parent_empty                
 
     # for every sub-collection of the source, copy its content into a new sub-collection of the destination
     for collection in source_collection.children:

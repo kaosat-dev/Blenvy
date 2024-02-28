@@ -5,6 +5,9 @@ import json
 import pytest
 import shutil
 
+from PIL import Image
+from pixelmatch.contrib.PIL import pixelmatch
+
 @pytest.fixture
 def setup_data(request):
     print("\nSetting up resources...")
@@ -28,6 +31,10 @@ def setup_data(request):
         diagnostics_file_path = os.path.join(root_path, "bevy_diagnostics.json")
         if os.path.exists(diagnostics_file_path):
             os.remove(diagnostics_file_path)
+
+        screenshot_observed_path = os.path.join(root_path, "screenshot.png")
+        if os.path.exists(screenshot_observed_path):
+            os.remove(screenshot_observed_path)
 
     request.addfinalizer(finalizer)
 
@@ -101,4 +108,17 @@ def test_export_complex(setup_data):
         diagnostics = json.load(diagnostics_file)
         print("diagnostics", diagnostics)
         assert diagnostics["animations"] == True
+        assert diagnostics["cylinder_found"] == True
+
+    # last but not least, do a visual compare
+    screenshot_expected_path = os.path.join(root_path, "expected_screenshot.png")
+    screenshot_observed_path = os.path.join(root_path, "screenshot.png")
+    img_a = Image.open(screenshot_expected_path)
+    img_b = Image.open(screenshot_observed_path)
+    img_diff = Image.new("RGBA", img_a.size)
+    mismatch = pixelmatch(img_a, img_b, img_diff, includeAA=True)
+    print("image mismatch", mismatch)
+    assert mismatch < 50
+
+
         

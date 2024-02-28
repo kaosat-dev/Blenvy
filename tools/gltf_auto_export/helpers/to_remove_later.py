@@ -220,3 +220,23 @@ def did_export_parameters_change(current_params, previous_params):
                                 if not key in components_holder:
                                     components_holder[key] = components[key]                            
                 """
+
+# potentially useful alternative
+def duplicate_object2(object, original_name):
+    print("copy object", object)
+
+    with bpy.context.temp_override(object=object, active_object = object):
+        bpy.ops.object.duplicate(linked=False)
+        new_obj = bpy.context.active_object
+
+        print("new obj", new_obj, "bpy.context.view_layer", bpy.context.view_layer.objects)
+        for obj in bpy.context.view_layer.objects:
+            print("obj", obj)
+        bpy.context.view_layer.update()
+        new_obj.name = original_name
+
+        if object.animation_data:
+            print("OJECT ANIMATION")
+            new_obj.animation_data.action = object.animation_data.action.copy()
+      
+    return new_obj
