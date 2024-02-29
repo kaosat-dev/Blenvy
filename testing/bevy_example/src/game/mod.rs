@@ -30,6 +30,7 @@ fn validate_export(
     blueprints: Query<(Entity, &Name, &BlueprintName)>,
     animation_player_links: Query<(Entity, &AnimationPlayerLink)>,
     exported_cylinder: Query<(Entity, &Name, &UnitTest, &TupleTestF32)>,
+    empties_candidates: Query<(Entity, &Name, &GlobalTransform)>,
 ) {
     let animations_found = !animation_player_links.is_empty();
 
@@ -62,11 +63,19 @@ fn validate_export(
         }
     }
 
+    let mut empty_found = false;
+    for (_, name, _) in empties_candidates.iter() {
+        if name.to_string() == "Empty".to_string() {
+            empty_found = true;
+            break;
+        }
+    }
+
     fs::write(
         "bevy_diagnostics.json",
         format!(
-            "{{ \"animations\": {},  \"cylinder_found\": {} ,  \"nested_blueprint_found\": {} }}",
-            animations_found, cylinder_found, nested_blueprint_found
+            "{{ \"animations\": {},  \"cylinder_found\": {} ,  \"nested_blueprint_found\": {}, \"empty_found\": {} }}",
+            animations_found, cylinder_found, nested_blueprint_found, empty_found
         ),
     )
     .expect("Unable to write file");

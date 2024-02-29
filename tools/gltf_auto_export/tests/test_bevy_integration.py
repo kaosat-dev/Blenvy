@@ -109,6 +109,7 @@ def test_export_complex(setup_data):
         print("diagnostics", diagnostics)
         assert diagnostics["animations"] == True
         assert diagnostics["cylinder_found"] == True
+        assert diagnostics["empty_found"] == True
 
     # last but not least, do a visual compare
     screenshot_expected_path = os.path.join(root_path, "expected_screenshot.png")
