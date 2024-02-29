@@ -39,21 +39,19 @@ fn validate_export(
         let parent_name = names
             .get(parents.get(nested_cylinder.0).unwrap().get())
             .unwrap();
-        cylinder_found = parent_name.to_string() == "Cube.001".to_string()
-            && nested_cylinder.1.to_string() == "Cylinder".to_string()
+        cylinder_found = parent_name.to_string() == *"Cube.001"
+            && nested_cylinder.1.to_string() == *"Cylinder"
             && nested_cylinder.3 .0 == 75.1;
     }
 
     let mut nested_blueprint_found = false;
     for (entity, name, blueprint_name) in blueprints.iter() {
-        if name.to_string() == "Blueprint4_nested".to_string()
-            && blueprint_name.0.to_string() == "Blueprint4_nested".to_string()
-        {
+        if name.to_string() == *"Blueprint4_nested" && blueprint_name.0 == *"Blueprint4_nested" {
             if let Ok(cur_children) = children.get(entity) {
                 for child in cur_children.iter() {
                     if let Ok((_, child_name, child_blueprint_name)) = blueprints.get(*child) {
-                        if child_name.to_string() == "Blueprint3".to_string()
-                            && child_blueprint_name.0.to_string() == "Blueprint3".to_string()
+                        if child_name.to_string() == *"Blueprint3"
+                            && child_blueprint_name.0 == *"Blueprint3"
                         {
                             nested_blueprint_found = true;
                         }
@@ -65,7 +63,7 @@ fn validate_export(
 
     let mut empty_found = false;
     for (_, name, _) in empties_candidates.iter() {
-        if name.to_string() == "Empty".to_string() {
+        if name.to_string() == *"Empty" {
             empty_found = true;
             break;
         }
