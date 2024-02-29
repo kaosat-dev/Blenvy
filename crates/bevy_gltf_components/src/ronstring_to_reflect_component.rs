@@ -113,7 +113,8 @@ pub fn ronstring_to_reflect_component(
             println!("serialized Component {}", serialized);*/
 
             debug!("component data ron string {}", ron_string);
-            let mut deserializer = ron::Deserializer::from_str(ron_string.as_str()).expect("deserialzer should have been generated from string");
+            let mut deserializer = ron::Deserializer::from_str(ron_string.as_str())
+                .expect("deserialzer should have been generated from string");
             let reflect_deserializer = UntypedReflectDeserializer::new(type_registry);
             let component = reflect_deserializer
                 .deserialize(&mut deserializer)

@@ -1,4 +1,4 @@
-use std::fs::File;
+use std::{fs::File, path::Path};
 
 use bevy::log::info;
 use bevy_ecs::{
@@ -8,14 +8,17 @@ use bevy_ecs::{
 use bevy_reflect::{TypeInfo, TypeRegistration, VariantInfo}; // TypePath // DynamicTypePath
 use serde_json::{json, Map, Value};
 
-use crate::ExportComponentsConfig;
+use crate::{AssetRoot, ExportComponentsConfig};
 
 pub fn export_types(world: &mut World) {
     let config = world
         .get_resource::<ExportComponentsConfig>()
         .expect("ExportComponentsConfig should exist at this stage");
 
-    let writer = File::create(&config.save_path).expect("should have created schema file");
+    let asset_root = world.resource::<AssetRoot>();
+    let registry_save_path = Path::join(&asset_root.0, &config.save_path);
+    println!("registry_save_path {:?}", registry_save_path);
+    let writer = File::create(registry_save_path).expect("should have created schema file");
 
     let types = world.resource_mut::<AppTypeRegistry>();
     let types = types.read();

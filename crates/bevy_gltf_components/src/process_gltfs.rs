@@ -5,7 +5,6 @@ use bevy::{
         query::{Added, Without},
         reflect::{AppTypeRegistry, ReflectComponent},
         world::World,
-        component::Component
     },
     gltf::GltfExtras,
     hierarchy::Parent,
@@ -14,11 +13,7 @@ use bevy::{
     utils::HashMap,
 };
 
-use crate::{ronstring_to_reflect_component, GltfComponentsConfig};
-
-/// this is a flag component to tag a processed gltf, to avoid processing things multiple times
-#[derive(Component)]
-pub struct GltfProcessed;
+use crate::{ronstring_to_reflect_component, GltfComponentsConfig, GltfProcessed};
 
 /// main function: injects components into each entity in gltf files that have `gltf_extras`, using reflection
 pub fn add_components_from_gltf_extras(world: &mut World) {
@@ -37,7 +32,7 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
 
         let type_registry: &AppTypeRegistry = world.resource();
         let type_registry = type_registry.read();
-            
+
         let reflect_components = ronstring_to_reflect_component(
             &extra.value,
             &type_registry,
@@ -81,7 +76,7 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
         if !components.is_empty() {
             debug!("--entity {:?}, components {}", entity, components.len());
         }
-        for (component, type_registration) in components { 
+        for (component, type_registration) in components {
             debug!(
                 "------adding {} {:?}",
                 component.get_represented_type_info().unwrap().type_path(),
@@ -91,13 +86,12 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
             {
                 let mut entity_mut = world.entity_mut(entity);
                 type_registration
-                .data::<ReflectComponent>()
-                .expect("Unable to reflect component")
-                .insert(&mut entity_mut, &*component, &type_registry);
+                    .data::<ReflectComponent>()
+                    .expect("Unable to reflect component")
+                    .insert(&mut entity_mut, &*component, &type_registry);
 
                 entity_mut.insert(GltfProcessed); //  this is how can we insert any additional components
             }
         }
     }
-
 }
