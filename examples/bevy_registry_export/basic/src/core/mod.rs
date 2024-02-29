@@ -7,7 +7,7 @@ impl Plugin for CorePlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
             ExportRegistryPlugin {
-                save_path: "assets/registry.json".into(),
+                save_path: "registry.json".into(),
                 ..Default::default()
             },
             BlueprintsPlugin {

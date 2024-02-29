@@ -17,7 +17,6 @@ pub mod physics_xpbd;
 #[cfg(feature = "physics_xpbd")]
 pub use physics_xpbd::*;
 
-
 use bevy::prelude::*;
 
 pub struct CorePlugin;

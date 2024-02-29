@@ -102,5 +102,4 @@ pub fn main_menu(
     if keycode.just_pressed(KeyCode::KeyL) {
         next_app_state.set(AppState::AppLoading);
     }
-
 }

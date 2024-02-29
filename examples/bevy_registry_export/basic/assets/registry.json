@@ -835,6 +835,44 @@
       "type": "object",
       "typeInfo": "Enum"
     },
+    "bevy_asset::handle::Handle<bevy_pbr::wireframe::WireframeMaterial>": {
+      "isComponent": true,
+      "isResource": false,
+      "oneOf": [
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/std::sync::Arc<bevy_asset::handle::StrongHandle>"
+              }
+            }
+          ],
+          "short_name": "Strong",
+          "title": "Strong",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_asset::id::AssetId<bevy_pbr::wireframe::WireframeMaterial>"
+              }
+            }
+          ],
+          "short_name": "Weak",
+          "title": "Weak",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Handle<WireframeMaterial>",
+      "title": "bevy_asset::handle::Handle<bevy_pbr::wireframe::WireframeMaterial>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
     "bevy_asset::handle::Handle<bevy_render::mesh::mesh::Mesh>": {
       "isComponent": true,
       "isResource": false,
@@ -1772,6 +1810,52 @@
       ],
       "short_name": "AssetId<StandardMaterial>",
       "title": "bevy_asset::id::AssetId<bevy_pbr::pbr_material::StandardMaterial>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "bevy_asset::id::AssetId<bevy_pbr::wireframe::WireframeMaterial>": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "index": {
+              "title": "index",
+              "type": {
+                "$ref": "#/$defs/bevy_asset::assets::AssetIndex"
+              }
+            }
+          },
+          "required": [
+            "index"
+          ],
+          "short_name": "Index",
+          "title": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "uuid": {
+              "title": "uuid",
+              "type": {
+                "$ref": "#/$defs/bevy_utils::Uuid"
+              }
+            }
+          },
+          "required": [
+            "uuid"
+          ],
+          "short_name": "Uuid",
+          "title": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
+        }
+      ],
+      "short_name": "AssetId<WireframeMaterial>",
+      "title": "bevy_asset::id::AssetId<bevy_pbr::wireframe::WireframeMaterial>",
       "type": "object",
       "typeInfo": "Enum"
     },
@@ -3179,6 +3263,30 @@
       "type": "object",
       "typeInfo": "Value"
     },
+    "bevy_egui::EguiSettings": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "default_open_url_target": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<alloc::string::String>"
+          }
+        },
+        "scale_factor": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      },
+      "required": [
+        "scale_factor"
+      ],
+      "short_name": "EguiSettings",
+      "title": "bevy_egui::EguiSettings",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "bevy_gizmos::aabb::AabbGizmoConfigGroup": {
       "additionalProperties": false,
       "isComponent": false,
@@ -3336,6 +3444,17 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_gltf_components::GltfProcessed": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {},
+      "required": [],
+      "short_name": "GltfProcessed",
+      "title": "bevy_gltf_components::GltfProcessed",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "bevy_gltf_worlflow_examples_common::core::camera::camera_replace_proxies::SSAOSettings": {
       "additionalProperties": false,
       "isComponent": true,
@@ -3437,7 +3556,7 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_gltf_worlflow_examples_common::core::physics::physics_replace_proxies::AutoAABBCollider": {
+    "bevy_gltf_worlflow_examples_common::core::physics_rapier::physics_replace_proxies::AutoAABBCollider": {
       "isComponent": true,
       "isResource": false,
       "oneOf": [
@@ -3446,11 +3565,11 @@
         "Capsule"
       ],
       "short_name": "AutoAABBCollider",
-      "title": "bevy_gltf_worlflow_examples_common::core::physics::physics_replace_proxies::AutoAABBCollider",
+      "title": "bevy_gltf_worlflow_examples_common::core::physics_rapier::physics_replace_proxies::AutoAABBCollider",
       "type": "string",
       "typeInfo": "Enum"
     },
-    "bevy_gltf_worlflow_examples_common::core::physics::physics_replace_proxies::Collider": {
+    "bevy_gltf_worlflow_examples_common::core::physics_rapier::physics_replace_proxies::Collider": {
       "isComponent": true,
       "isResource": false,
       "oneOf": [
@@ -3511,7 +3630,7 @@
         }
       ],
       "short_name": "Collider",
-      "title": "bevy_gltf_worlflow_examples_common::core::physics::physics_replace_proxies::Collider",
+      "title": "bevy_gltf_worlflow_examples_common::core::physics_rapier::physics_replace_proxies::Collider",
       "type": "object",
       "typeInfo": "Enum"
     },
@@ -7054,6 +7173,72 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_pbr::wireframe::NoWireframe": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {},
+      "required": [],
+      "short_name": "NoWireframe",
+      "title": "bevy_pbr::wireframe::NoWireframe",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_pbr::wireframe::Wireframe": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {},
+      "required": [],
+      "short_name": "Wireframe",
+      "title": "bevy_pbr::wireframe::Wireframe",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_pbr::wireframe::WireframeColor": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "color": {
+          "type": {
+            "$ref": "#/$defs/bevy_render::color::Color"
+          }
+        }
+      },
+      "required": [
+        "color"
+      ],
+      "short_name": "WireframeColor",
+      "title": "bevy_pbr::wireframe::WireframeColor",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_pbr::wireframe::WireframeConfig": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": true,
+      "properties": {
+        "default_color": {
+          "type": {
+            "$ref": "#/$defs/bevy_render::color::Color"
+          }
+        },
+        "global": {
+          "type": {
+            "$ref": "#/$defs/bool"
+          }
+        }
+      },
+      "required": [
+        "global",
+        "default_color"
+      ],
+      "short_name": "WireframeConfig",
+      "title": "bevy_pbr::wireframe::WireframeConfig",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "bevy_rapier3d::dynamics::rigid_body::AdditionalMassProperties": {
       "isComponent": true,
       "isResource": false,
@@ -9338,6 +9523,43 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_time::virt::Virtual": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "effective_speed": {
+          "type": {
+            "$ref": "#/$defs/f64"
+          }
+        },
+        "max_delta": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::Duration"
+          }
+        },
+        "paused": {
+          "type": {
+            "$ref": "#/$defs/bool"
+          }
+        },
+        "relative_speed": {
+          "type": {
+            "$ref": "#/$defs/f64"
+          }
+        }
+      },
+      "required": [
+        "max_delta",
+        "paused",
+        "relative_speed",
+        "effective_speed"
+      ],
+      "short_name": "Virtual",
+      "title": "bevy_time::virt::Virtual",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "bevy_transform::components::global_transform::GlobalTransform": {
       "isComponent": true,
       "isResource": false,
@@ -11430,6 +11652,14 @@
       "isResource": false,
       "short_name": "Range<f32>",
       "title": "core::ops::Range<f32>",
+      "type": "object",
+      "typeInfo": "Value"
+    },
+    "core::ops::Range<f64>": {
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "Range<f64>",
+      "title": "core::ops::Range<f64>",
       "type": "object",
       "typeInfo": "Value"
     },

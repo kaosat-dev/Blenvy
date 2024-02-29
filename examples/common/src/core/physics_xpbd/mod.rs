@@ -9,8 +9,8 @@ pub use controls::*;
 use bevy::prelude::*;
 use bevy_xpbd_3d::prelude::*;
 
-use bevy_gltf_blueprints::GltfBlueprintsSet;
 use crate::state::GameState;
+use bevy_gltf_blueprints::GltfBlueprintsSet;
 
 pub struct PhysicsPlugin;
 impl Plugin for PhysicsPlugin {

@@ -2,8 +2,8 @@ use bevy::core_pipeline::bloom::{BloomCompositeMode, BloomSettings};
 use bevy::core_pipeline::experimental::taa::TemporalAntiAliasBundle;
 use bevy::core_pipeline::tonemapping::{DebandDither, Tonemapping};
 use bevy::pbr::ScreenSpaceAmbientOcclusionBundle;
-use bevy::render::camera::Exposure;
 use bevy::prelude::*;
+use bevy::render::camera::Exposure;
 
 use super::CameraTrackingOffset;
 
@@ -28,7 +28,8 @@ pub fn camera_replace_proxies(
     added_bloom_settings: Query<&BloomSettings, Added<BloomSettings>>,
     added_ssao_settings: Query<&SSAOSettings, Added<SSAOSettings>>, // Move to camera
 ) {
-    for (entity, mut camera, mut exposure, bloom_settings, ssao_setting) in added_cameras.iter_mut() {
+    for (entity, mut camera, mut exposure, bloom_settings, ssao_setting) in added_cameras.iter_mut()
+    {
         info!("detected added camera, updating proxy");
         camera.hdr = true;
         exposure.ev100 *= 1.0;

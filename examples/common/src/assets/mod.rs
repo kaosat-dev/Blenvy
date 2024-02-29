@@ -20,7 +20,7 @@ impl Plugin for AssetsPlugin {
                     .with_dynamic_assets_file::<StandardDynamicAssetCollection>(
                         "assets_core.assets.ron",
                     )
-                    .load_collection::<CoreAssets>()
+                    .load_collection::<CoreAssets>(),
             )
             // load game assets
             .add_loading_state(
@@ -29,7 +29,7 @@ impl Plugin for AssetsPlugin {
                     .with_dynamic_assets_file::<StandardDynamicAssetCollection>(
                         "assets_game.assets.ron",
                     )
-                    .load_collection::<GameAssets>()
+                    .load_collection::<GameAssets>(),
             );
     }
 }

@@ -53,7 +53,7 @@ pub fn lighting_replace_proxies(
         println!("AMBIENT {:?} {}", ambient.color, ambient.brightness);
         commands.insert_resource(AmbientLight {
             color: ambient.color,
-            brightness: ambient.brightness,// * 4000.,
+            brightness: ambient.brightness, // * 4000.,
         });
         // FIXME: does this belong here ?
         commands.insert_resource(ClearColor(ambient.color * ambient.brightness));

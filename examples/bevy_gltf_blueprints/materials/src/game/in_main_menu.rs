@@ -91,7 +91,6 @@ pub fn teardown_main_menu(bla: Query<Entity, With<InMainMenu>>, mut commands: Co
 pub fn main_menu(
     keycode: Res<ButtonInput<KeyCode>>,
     mut next_app_state: ResMut<NextState<AppState>>,
-  
 ) {
     if keycode.just_pressed(KeyCode::Enter) {
         next_app_state.set(AppState::AppLoading);
