@@ -71,7 +71,7 @@ def copy_hollowed_collection_into(source_collection, destination_collection, par
             empty_obj = make_empty(original_name, object.location, object.rotation_euler, object.scale, destination_collection)
             """we inject the collection/blueprint name, as a component called 'BlueprintName', but we only do this in the empty, not the original object"""
             empty_obj['BlueprintName'] = '"'+collection_name+'"' if legacy_mode else '("'+collection_name+'")'
-            empty_obj['SpawnHere'] = ''
+            empty_obj['SpawnHere'] = '()'
 
             # we copy custom properties over from our original object to our empty
             for component_name, component_value in object.items():
