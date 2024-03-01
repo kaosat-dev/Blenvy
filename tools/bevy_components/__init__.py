@@ -1,7 +1,7 @@
 bl_info = {
     "name": "bevy_components",
     "author": "kaosigh",
-    "version": (0, 2, 0),
+    "version": (0, 3, 0),
     "blender": (3, 4, 0),
     "location": "VIEW_3D",
     "description": "UI to help create Bevy blueprints and components",

@@ -11,11 +11,13 @@ from .expected_component_values import (expected_custom_property_values, expecte
 def setup_data(request):
     print("\nSetting up resources...")
 
+    schemaPath = "../../testing/bevy_registry_export/basic/assets/registry.json"
+
+    yield {"schema_path": schemaPath}
+
     def finalizer():
         print("\nPerforming teardown...")
         registry = bpy.context.window_manager.components_registry
-        #registry.schemaPath = "../../testing/bevy_registry_export/basic/assets/registry.json"
-        #bpy.ops.object.reload_registry()
 
         type_infos = registry.type_infos
         object = bpy.context.object
@@ -34,10 +36,9 @@ def setup_data(request):
 
     return None
 
-
 def test_components_should_generate_correct_custom_properties(setup_data):
     registry = bpy.context.window_manager.components_registry
-    registry.schemaPath = "../../testing/bevy_registry_export/basic/assets/registry.json"
+    registry.schemaPath = setup_data["schema_path"]
     bpy.ops.object.reload_registry()
 
     type_infos = registry.type_infos
@@ -83,9 +84,9 @@ def test_components_should_generate_correct_custom_properties(setup_data):
     assert len(added_components) == 152
 
     
-def test_components_should_generate_correct_custom_properties_with_randomozied_values(setup_data):
+def test_components_should_generate_correct_custom_properties_with_randomized_values(setup_data):
     registry = bpy.context.window_manager.components_registry
-    registry.schemaPath = "../../testing/bevy_registry_export/basic/assets/registry.json"
+    registry.schemaPath = setup_data["schema_path"]
     bpy.ops.object.reload_registry()
 
     type_infos = registry.type_infos
@@ -136,7 +137,7 @@ def test_components_should_generate_correct_custom_properties_with_randomozied_v
 
 def test_components_should_generate_correct_propertyGroup_values_from_custom_properties(setup_data):
     registry = bpy.context.window_manager.components_registry
-    registry.schemaPath = "../../testing/bevy_registry_export/basic/assets/registry.json"
+    registry.schemaPath = setup_data["schema_path"]
     bpy.ops.object.reload_registry()
 
     type_infos = registry.type_infos
@@ -195,7 +196,7 @@ def test_components_should_generate_correct_propertyGroup_values_from_custom_pro
 
 def test_remove_components(setup_data):
     registry = bpy.context.window_manager.components_registry
-    registry.schemaPath = "../../testing/bevy_registry_export/basic/assets/registry.json"
+    registry.schemaPath = setup_data["schema_path"]
     bpy.ops.object.reload_registry()
 
     type_infos = registry.type_infos
@@ -244,7 +245,7 @@ def test_remove_components(setup_data):
 def test_copy_paste_components(setup_data):
     context = bpy.context
     registry = context.window_manager.components_registry
-    registry.schemaPath = "../../testing/bevy_registry_export/basic/assets/registry.json"
+    registry.schemaPath = setup_data["schema_path"]
     bpy.ops.object.reload_registry()
 
     #component_type = "bevy_bevy_registry_export_basic_example::test_components::BasicTest"
@@ -294,4 +295,3 @@ def test_copy_paste_components(setup_data):
 
     a_fieldValue = getattr(propertyGroup, propertyGroup.field_names[0])
     assert a_fieldValue == 25.0
-
