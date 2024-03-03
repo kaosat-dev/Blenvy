@@ -7,6 +7,8 @@ pub use ronstring_to_reflect_component::*;
 pub mod process_gltfs;
 pub use process_gltfs::*;
 
+pub mod blender_settings;
+
 use bevy::{
     ecs::{component::Component, reflect::ReflectComponent, system::Resource},
     prelude::{App, IntoSystemConfigs, Plugin, SystemSet, Update},
@@ -74,7 +76,8 @@ impl Default for ComponentsFromGltfPlugin {
 
 impl Plugin for ComponentsFromGltfPlugin {
     fn build(&self, app: &mut App) {
-        app.register_type::<GltfProcessed>()
+        app.add_plugins(blender_settings::plugin)
+            .register_type::<GltfProcessed>()
             .insert_resource(GltfComponentsConfig {
                 legacy_mode: self.legacy_mode,
             })

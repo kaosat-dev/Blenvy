@@ -4,14 +4,14 @@ use bevy::pbr::{CascadeShadowConfig, CascadeShadowConfigBuilder, DirectionalLigh
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-pub struct AmbientLightSettings {
+pub struct BlenderBackgroundShader {
     pub color: Color,
     pub brightness: f32,
 }
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-pub struct ShadowmapSettings {
+pub struct BlenderShadowSettings {
     pub size: usize,
 }
 
@@ -20,8 +20,8 @@ pub fn lighting_replace_proxies(
     mut added_spotlights: Query<&mut SpotLight, Added<SpotLight>>,
     mut added_pointlights: Query<&mut PointLight, Added<PointLight>>,
 
-    added_ambient_proxies: Query<&AmbientLightSettings, Added<AmbientLightSettings>>,
-    added_shadowmap_settings: Query<&ShadowmapSettings, Added<ShadowmapSettings>>,
+    added_ambient_proxies: Query<&BlenderBackgroundShader, Added<BlenderBackgroundShader>>,
+    added_shadowmap_settings: Query<&BlenderShadowSettings, Added<BlenderShadowSettings>>,
 
     mut commands: Commands,
 ) {
