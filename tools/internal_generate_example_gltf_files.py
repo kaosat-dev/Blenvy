@@ -36,16 +36,17 @@ for example_path in examples:
         for file in os.listdir(assets_path):
             if file.endswith(".blend"):
                 print("file found !", file)
-                blend_files.append(os.path.join(assets_path, file))
+                blend_files.append(os.path.join("assets", file))
     if os.path.exists(art_path):
         for file in os.listdir(art_path):
             if file.endswith(".blend"):
                 print("file found !", file)
-                blend_files.append(os.path.join(art_path, file))
+                blend_files.append(os.path.join("art", file))
 
     
     print("blend files", blend_files)
     for blend_file in blend_files:
-        command = "/home/ckaos/.local/bin/pytest -svv --blender-executable /home/ckaos/tools/blender/blender-4.0.2-linux-x64/blender --blender-template "+blend_file
+        fake_test_path = os.path.abspath("./internal_gen.py")
+        command = "pytest -svv --blender-executable /home/ckaos/tools/blender/blender-4.0.2-linux-x64/blender --blender-template "+blend_file + " "+fake_test_path
         return_code = subprocess.call(command.split(" "), cwd=example_path)
         #generate_example_gltf_files(example_path)
