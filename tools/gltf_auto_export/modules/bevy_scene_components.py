@@ -17,9 +17,9 @@ def upsert_scene_components(scene, world, main_scene_names):
         lighting_components = make_empty('lighting_components_'+scene.name, [0,0,0], [0,0,0], [0,0,0], root_collection)
 
     if world is not None:
-        lighting_components['AmbientLightSettings'] = ambient_color_to_component(world)
+        lighting_components['BlenderBackgroundShader'] = ambient_color_to_component(world)
 
-    lighting_components['ShadowmapSettings'] = scene_shadows_to_component(scene)
+    lighting_components['BlenderShadowSettings'] = scene_shadows_to_component(scene)
 
 
     if scene.eevee.use_bloom:
@@ -40,22 +40,22 @@ def ambient_color_to_component(world):
         color = world.node_tree.nodes['Background'].inputs[0].default_value
         strength = world.node_tree.nodes['Background'].inputs[1].default_value
     except Exception as ex:
-        print("failed to parse ambient color: Only backgroud is supported")
+        print("failed to parse ambient color: Only background is supported")
    
 
     if color is not None and strength is not None:
-        colorRgba = "Rgba(red: "+ str(color[0]) + ", green: "+ str(color[1]) + ", blue: " + str(color[2]) + ", alpha: "+ str(color[3]) + ")" # TODO: YIKES clean this up
-        component = "( color:"+ str(colorRgba)  +", brightness:"+str(strength)+")"
+        colorRgba = f"Rgba(red: {color[0]}, green: {color[1]}, blue: {color[2]}, alpha: {color[3]})"
+        component = f"( color: {colorRgba}, strength: {strength})"
         return component
     return None
 
 def scene_shadows_to_component(scene):
-    cascade_resolution = scene.eevee.shadow_cascade_size
-    component = "(size: "+ cascade_resolution +")"
+    cascade_size = scene.eevee.shadow_cascade_size
+    component = f"(cascade_size: {cascade_size})"
     return component
 
 def scene_bloom_to_component(scene):
-    component = "BloomSettings(intensity: "+ str(scene.eevee.bloom_intensity) +")"
+    component = f"BloomSettings(intensity: {scene.eevee.bloom_intensity})"
     return component
 
 def scene_ao_to_component(scene):

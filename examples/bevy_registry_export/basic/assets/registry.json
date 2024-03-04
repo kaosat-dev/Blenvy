@@ -3455,6 +3455,50 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_gltf_components::blender_settings::lighting::BlenderBackgroundShader": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "color": {
+          "type": {
+            "$ref": "#/$defs/bevy_render::color::Color"
+          }
+        },
+        "strength": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      },
+      "required": [
+        "color",
+        "strength"
+      ],
+      "short_name": "BlenderBackgroundShader",
+      "title": "bevy_gltf_components::blender_settings::lighting::BlenderBackgroundShader",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_gltf_components::blender_settings::lighting::BlenderShadowSettings": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "cascade_size": {
+          "type": {
+            "$ref": "#/$defs/usize"
+          }
+        }
+      },
+      "required": [
+        "cascade_size"
+      ],
+      "short_name": "BlenderShadowSettings",
+      "title": "bevy_gltf_components::blender_settings::lighting::BlenderShadowSettings",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "bevy_gltf_worlflow_examples_common::core::camera::camera_replace_proxies::SSAOSettings": {
       "additionalProperties": false,
       "isComponent": true,
@@ -3512,7 +3556,7 @@
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_gltf_worlflow_examples_common::core::lighting::lighting_replace_proxies::AmbientLightSettings": {
+    "bevy_gltf_worlflow_examples_common::core::lighting::lighting_replace_proxies::BlenderBackgroundShader": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
@@ -3532,12 +3576,12 @@
         "color",
         "brightness"
       ],
-      "short_name": "AmbientLightSettings",
-      "title": "bevy_gltf_worlflow_examples_common::core::lighting::lighting_replace_proxies::AmbientLightSettings",
+      "short_name": "BlenderBackgroundShader",
+      "title": "bevy_gltf_worlflow_examples_common::core::lighting::lighting_replace_proxies::BlenderBackgroundShader",
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_gltf_worlflow_examples_common::core::lighting::lighting_replace_proxies::ShadowmapSettings": {
+    "bevy_gltf_worlflow_examples_common::core::lighting::lighting_replace_proxies::BlenderShadowSettings": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
@@ -3551,8 +3595,8 @@
       "required": [
         "size"
       ],
-      "short_name": "ShadowmapSettings",
-      "title": "bevy_gltf_worlflow_examples_common::core::lighting::lighting_replace_proxies::ShadowmapSettings",
+      "short_name": "BlenderShadowSettings",
+      "title": "bevy_gltf_worlflow_examples_common::core::lighting::lighting_replace_proxies::BlenderShadowSettings",
       "type": "object",
       "typeInfo": "Struct"
     },
