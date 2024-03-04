@@ -3623,6 +3623,31 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_gltf_components::blender_settings::lighting::BlenderLightShadows": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "buffer_bias": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "enabled": {
+          "type": {
+            "$ref": "#/$defs/bool"
+          }
+        }
+      },
+      "required": [
+        "enabled",
+        "buffer_bias"
+      ],
+      "short_name": "BlenderLightShadows",
+      "title": "bevy_gltf_components::blender_settings::lighting::BlenderLightShadows",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "bevy_gltf_components::blender_settings::lighting::BlenderShadowSettings": {
       "additionalProperties": false,
       "isComponent": true,
