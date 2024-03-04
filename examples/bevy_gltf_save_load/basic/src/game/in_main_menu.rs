@@ -2,8 +2,15 @@ use bevy::prelude::*;
 use bevy_gltf_worlflow_examples_common::{AppState, InMainMenu};
 
 pub fn setup_main_menu(mut commands: Commands) {
-    commands.spawn((Camera2dBundle::default(), InMainMenu));
-
+    commands.spawn((
+        Camera2dBundle{
+            camera: Camera {
+                order: 102, // needed because of this: https://github.com/jakobhellermann/bevy_editor_pls/blob/crates/bevy_editor_pls_default_windows/src/cameras/mod.rs#L213C9-L213C28
+                ..default()
+            },
+        ..Default::default()
+    }, InMainMenu));
+    
     commands.spawn((
         TextBundle::from_section(
             "SOME GAME TITLE !!",
