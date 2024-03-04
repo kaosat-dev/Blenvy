@@ -16,9 +16,7 @@ members = [
     "examples/bevy_gltf_save_load/basic/",
     "examples/bevy_registry_export/basic",
 
-    "testing/bevy_registry_export/basic",
     "testing/bevy_example"
-
 ]
 resolver = "2"
 
