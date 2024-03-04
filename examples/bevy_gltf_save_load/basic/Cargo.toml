@@ -5,14 +5,12 @@ edition = "2021"
 license = "MIT OR Apache-2.0"
 
 [dependencies]
-bevy="0.12"
-bevy_gltf_blueprints = "0.7"
+bevy = { version = "0.13", features = ["dynamic_linking"] }
+bevy_gltf_blueprints = { path = "../../../crates/bevy_gltf_blueprints" }
 bevy_gltf_save_load = { path = "../../../crates/bevy_gltf_save_load" }
-bevy_gltf_worlflow_examples_common = { path = "../../common" }
+bevy_gltf_worlflow_examples_common_rapier = { path = "../../common_rapier" }
 
-bevy_rapier3d = { version = "0.23.0", features = [ "serde-serialize", "debug-render-3d", "enhanced-determinism"] }
-bevy_asset_loader = { version = "0.18", features = ["standard_dynamic_assets" ]} 
-bevy_editor_pls = { version = "0.6" }
+serde_json = "1.0.108"
+serde = "1.0.193"
+bevy_rapier3d = { version = "0.25.0", features = ["serde-serialize", "debug-render-3d", "enhanced-determinism"] }
 rand = "0.8.5"
-serde_json="1.0.108"
-serde="1.0.193"

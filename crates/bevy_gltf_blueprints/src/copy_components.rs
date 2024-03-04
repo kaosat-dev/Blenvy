@@ -78,6 +78,9 @@ impl CopyComponents {
         };
 
         for (component, type_id) in components {
+            let type_registry: &AppTypeRegistry = world.resource();
+            let type_registry = type_registry.clone();
+            let type_registry = type_registry.read();
             let source = component
                 .reflect(world.get_entity(self.source).unwrap())
                 .unwrap()
@@ -90,7 +93,7 @@ impl CopyComponents {
             // println!("contains typeid {:?} {}", type_id, destination.contains_type_id(type_id));
             // we only want to copy components that are NOT already in the destination (ie no overwriting existing components)
             if !destination.contains_type_id(type_id) {
-                component.insert(&mut destination, &*source);
+                component.insert(&mut destination, &*source, &type_registry);
             }
         }
     }

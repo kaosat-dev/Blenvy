@@ -1,7 +1,6 @@
 use bevy::{gltf::Gltf, prelude::*};
-use bevy_editor_pls::prelude::*;
 use bevy_gltf_components::ComponentsFromGltfPlugin;
-use bevy_gltf_worlflow_examples_common::CorePlugin;
+use bevy_gltf_worlflow_examples_common_rapier::CorePlugin;
 
 mod test_components;
 use test_components::*;
@@ -61,14 +60,14 @@ fn main() {
         .add_plugins((
             DefaultPlugins.set(AssetPlugin::default()),
             // editor
-            EditorPlugin::default(),
+            // EditorPlugin::default(),
             // physics
             // our custom plugins
             ComponentsFromGltfPlugin::default(),
             CorePlugin,           // reusable plugins
             ComponentsTestPlugin, // Showcases different type of components /structs
         ))
-        .add_state::<AppState>()
+        .init_state::<AppState>()
         .add_systems(Startup, setup)
         .add_systems(Update, (spawn_level.run_if(in_state(AppState::Loading)),))
         .run();

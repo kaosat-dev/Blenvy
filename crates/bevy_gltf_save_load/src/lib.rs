@@ -92,15 +92,15 @@ impl Plugin for SaveLoadPlugin {
                 Update,
                 (unload_world, apply_deferred, load_game)
                     .chain()
-                    .run_if(resource_exists::<LoadRequested>())
-                    .run_if(not(resource_exists::<LoadFirstStageDone>()))
+                    .run_if(resource_exists::<LoadRequested>)
+                    .run_if(not(resource_exists::<LoadFirstStageDone>))
                     .in_set(LoadingSet::Load),
             )
             .add_systems(
                 Update,
                 (load_static, apply_deferred, cleanup_loaded_scene)
                     .chain()
-                    .run_if(resource_exists::<LoadFirstStageDone>())
+                    .run_if(resource_exists::<LoadFirstStageDone>)
                     // .run_if(in_state(AppState::LoadingGame))
                     .in_set(LoadingSet::Load),
             );

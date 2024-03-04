@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, GameWorldTag};
-use bevy_gltf_worlflow_examples_common::{assets::GameAssets, GameState, InAppRunning};
-
+use bevy_gltf_worlflow_examples_common_rapier::{assets::GameAssets, GameState, InAppRunning};
 use bevy_rapier3d::prelude::Velocity;
 use rand::Rng;
 
@@ -40,12 +39,12 @@ pub fn setup_game(
 struct UnregisteredComponent;
 
 pub fn spawn_test(
-    keycode: Res<Input<KeyCode>>,
+    keycode: Res<ButtonInput<KeyCode>>,
     mut commands: Commands,
 
     mut game_world: Query<(Entity, &Children), With<GameWorldTag>>,
 ) {
-    if keycode.just_pressed(KeyCode::T) {
+    if keycode.just_pressed(KeyCode::KeyT) {
         let world = game_world.single_mut();
         let world = world.1[0];
 
@@ -83,12 +82,12 @@ pub fn spawn_test(
 }
 
 pub fn spawn_test_unregisted_components(
-    keycode: Res<Input<KeyCode>>,
+    keycode: Res<ButtonInput<KeyCode>>,
     mut commands: Commands,
 
     mut game_world: Query<(Entity, &Children), With<GameWorldTag>>,
 ) {
-    if keycode.just_pressed(KeyCode::U) {
+    if keycode.just_pressed(KeyCode::KeyU) {
         let world = game_world.single_mut();
         let world = world.1[0];
 

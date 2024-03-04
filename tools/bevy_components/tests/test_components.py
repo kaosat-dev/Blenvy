@@ -48,12 +48,12 @@ def test_components_should_generate_correct_custom_properties(setup_data):
         except Exception as error:
             errors.append(error)
 
-    """pp = pprint.PrettyPrinter(depth=14, width=120)
+    '''pp = pprint.PrettyPrinter(depth=14, width=120)
     print("CUSTOM PROPERTY VALUES")
-    pp.pprint(custom_property_values)"""
+    pp.pprint(custom_property_values)'''
 
     assert len(errors) == 0
-    assert len(added_components) == 152
+    assert len(added_components) == 158
 
     
 def test_components_should_generate_correct_custom_properties_with_randomized_values(setup_data):
@@ -105,7 +105,7 @@ def test_components_should_generate_correct_custom_properties_with_randomized_va
 
     print("error_components", error_components)
     assert len(errors) == 0
-    assert len(added_components) == 152
+    assert len(added_components) == 158
 
 def test_components_should_generate_correct_propertyGroup_values_from_custom_properties(setup_data):
     registry = bpy.context.window_manager.components_registry
@@ -163,7 +163,7 @@ def test_components_should_generate_correct_propertyGroup_values_from_custom_pro
     for index, error in enumerate(errors):
         print("ERROR", error, failing_components[index])
     assert len(errors) == 0
-    assert len(added_components) == 152
+    assert len(added_components) == 158
 
 
 def test_remove_components(setup_data):

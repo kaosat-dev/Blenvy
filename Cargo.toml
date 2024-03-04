@@ -1,22 +1,12 @@
 [workspace]
 members = [
-    "crates/bevy_gltf_components",
-    "crates/bevy_gltf_blueprints",
-    "crates/bevy_gltf_save_load",
-    "crates/bevy_registry_export",
-
-    "examples/common/",
-
-    "examples/bevy_gltf_components/basic/",
-    "examples/bevy_gltf_blueprints/basic/",
-    "examples/bevy_gltf_blueprints/basic_xpbd_physics/",
-    "examples/bevy_gltf_blueprints/animation/",
-    "examples/bevy_gltf_blueprints/multiple_levels_multiple_blendfiles",
-    "examples/bevy_gltf_blueprints/materials/",
-    "examples/bevy_gltf_save_load/basic/",
-    "examples/bevy_registry_export/basic",
-
-    "testing/bevy_example"
+    "crates/*",
+    "examples/common*",
+    "examples/bevy_gltf_components/*",
+    "examples/bevy_gltf_blueprints/*",
+    "examples/bevy_gltf_save_load/*",
+    "examples/bevy_registry_export/*",
+    "testing/bevy_example/",
 ]
 resolver = "2"
 
@@ -30,6 +20,10 @@ match_same_arms = "warn"
 semicolon_if_nothing_returned = "warn"
 
 #### --------------------Dev/ debug-------------------------------
+# Enable a small amount of optimization in debug mode
+[profile.dev]
+opt-level = 1
+
 # Enable high optimizations for dependencies (incl. Bevy), but not for our code:
 [profile.dev.package."*"]
 opt-level = 3

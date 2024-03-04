@@ -20,7 +20,7 @@ jobs:
           key: ubuntu-latest-cargo-lint-${{ hashFiles('**/Cargo.toml') }}
       - uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: 1.75.0
+          toolchain: 1.76.0
           components: rustfmt, clippy
       - name: Install alsa and udev
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev

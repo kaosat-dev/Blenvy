@@ -25,7 +25,7 @@ pub enum AutoAABBCollider {
 
 // replaces all physics stand-ins with the actual xpbd types
 #[allow(clippy::type_complexity)]
-pub fn physics_replace_proxies(
+pub(crate) fn physics_replace_proxies(
     meshes: Res<Assets<Mesh>>,
     mesh_handles: Query<&Handle<Mesh>>,
     mut proxy_colliders: Query<
@@ -48,7 +48,7 @@ pub fn physics_replace_proxies(
         match collider_proxy {
             Collider::Ball(radius) => {
                 info!("generating collider from proxy: ball");
-                xpbd_collider = XpbdCollider::ball(*radius);
+                xpbd_collider = XpbdCollider::sphere(*radius);
                 commands.entity(entity)
                     .insert(xpbd_collider)
                     //.insert(ActiveEvents::COLLISION_EVENTS)  // FIXME: this is just for demo purposes (also is there something like that in xpbd ?) !!!

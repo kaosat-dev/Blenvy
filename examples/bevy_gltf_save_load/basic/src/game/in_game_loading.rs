@@ -1,13 +1,11 @@
-use bevy::{core_pipeline::clear_color::ClearColorConfig, prelude::*};
-use bevy_gltf_worlflow_examples_common::InGameLoading;
+use bevy::prelude::*;
+use bevy_gltf_worlflow_examples_common_rapier::InGameLoading;
 
 pub fn setup_loading_screen(mut commands: Commands) {
     commands.spawn((
         Camera2dBundle {
-            camera_2d: Camera2d {
-                clear_color: ClearColorConfig::Custom(Color::BLACK),
-            },
             camera: Camera {
+                clear_color: ClearColorConfig::Custom(Color::BLACK),
                 // renders after / on top of the main camera
                 order: 2,
                 ..default()

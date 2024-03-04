@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_gltf_worlflow_examples_common::InGameSaving;
+use bevy_gltf_worlflow_examples_common_rapier::InGameSaving;
 
 pub fn setup_saving_screen(mut commands: Commands) {
     commands.spawn((

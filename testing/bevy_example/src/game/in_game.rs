@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, GameWorldTag};
-use bevy_gltf_worlflow_examples_common::{assets::GameAssets, GameState, InAppRunning};
+use bevy_gltf_worlflow_examples_common_rapier::{assets::GameAssets, GameState, InAppRunning};
 
 use bevy_rapier3d::prelude::Velocity;
 use rand::Rng;
@@ -11,7 +11,6 @@ pub fn setup_game(
     models: Res<Assets<bevy::gltf::Gltf>>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
-    println!("setting up all stuff");
     commands.insert_resource(AmbientLight {
         color: Color::WHITE,
         brightness: 0.2,
@@ -41,12 +40,12 @@ pub fn setup_game(
 struct UnregisteredComponent;
 
 pub fn spawn_test(
-    keycode: Res<Input<KeyCode>>,
+    keycode: Res<ButtonInput<KeyCode>>,
     mut commands: Commands,
 
     mut game_world: Query<(Entity, &Children), With<GameWorldTag>>,
 ) {
-    if keycode.just_pressed(KeyCode::T) {
+    if keycode.just_pressed(KeyCode::KeyT) {
         let world = game_world.single_mut();
         let world = world.1[0];
 

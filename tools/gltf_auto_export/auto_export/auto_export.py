@@ -15,6 +15,7 @@ from ..modules.bevy_scene_components import upsert_scene_components
 def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
     # have the export parameters (not auto export, just gltf export) have changed: if yes (for example switch from glb to gltf, compression or not, animations or not etc), we need to re-export everything
     print ("changed_export_parameters", changed_export_parameters)
+    
     try:
         file_path = bpy.data.filepath
         # Get the folder
@@ -38,6 +39,10 @@ def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
         if export_scene_settings:
             # inject/ update scene components
             upsert_scene_components(bpy.context.scene, bpy.context.scene.world, main_scene_names)
+        #inject/ update light shadow information
+        for light in bpy.data.lights:
+            enabled = 'true' if light.use_shadow else 'false'
+            light['BlenderLightShadows'] = f"(enabled: {enabled}, buffer_bias: {light.shadow_buffer_bias})"
 
         # export
         if export_blueprints:

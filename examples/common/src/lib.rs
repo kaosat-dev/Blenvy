@@ -11,10 +11,17 @@ pub mod game;
 pub use game::*;
 
 use bevy::prelude::*;
+use bevy_editor_pls::prelude::*;
 
 pub struct CommonPlugin;
 impl Plugin for CommonPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins((StatePlugin, AssetsPlugin, CorePlugin, GamePlugin));
+        app.add_plugins((
+            StatePlugin,
+            AssetsPlugin,
+            CorePlugin,
+            GamePlugin,
+            EditorPlugin::default(),
+        ));
     }
 }

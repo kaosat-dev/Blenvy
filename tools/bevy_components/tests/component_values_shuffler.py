@@ -65,7 +65,7 @@ type_mappings = {
     'alloc::string::String': lambda : random_word(8),
     'alloc::borrow::Cow<str>': lambda : random_word(8),
 
-    'bevy_ecs::Entity': lambda: 0, #4294967295, #
+    'bevy_ecs::entity::Entity': lambda: 0, #4294967295, #
     'bevy_utils::Uuid': lambda: '"'+str( uuid.UUID("73b3b118-7d01-4778-8bcc-4e79055f5d22") )+'"'
 }
 #    
@@ -199,6 +199,7 @@ def component_values_shuffler(seed=1, property_group=None, definition=None, regi
         for i in range(0, number_of_list_items_to_add):
             new_entry = item_list.add()   
             item_type_name = getattr(new_entry, "type_name") # we get the REAL type name
+
             definition = registry.type_infos[item_type_name] if item_type_name in registry.type_infos else None
 
             if definition != None:
@@ -207,7 +208,7 @@ def component_values_shuffler(seed=1, property_group=None, definition=None, regi
                 pass
     else:
         print("something else")
-        fieldValue = type_mappings[type_name]() 
+        fieldValue = type_mappings[type_name]() if type_name in type_mappings else 'None'
         return fieldValue 
 
     #return value

@@ -6,7 +6,7 @@ use bevy::{
 };
 use bevy_gltf_blueprints::*;
 use bevy_gltf_save_load::*;
-use bevy_gltf_worlflow_examples_common::{CameraTrackingOffset, Pickable};
+use bevy_gltf_worlflow_examples_common_rapier::{CameraTrackingOffset, Pickable};
 use bevy_rapier3d::dynamics::Velocity;
 use std::any::TypeId;
 

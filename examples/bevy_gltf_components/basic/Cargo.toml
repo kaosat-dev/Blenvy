@@ -5,9 +5,6 @@ edition = "2021"
 license = "MIT OR Apache-2.0"
 
 [dependencies]
-bevy="0.12"
+bevy = { version = "0.13", features = ["dynamic_linking"] }
 bevy_gltf_components = { path = "../../../crates/bevy_gltf_components" }
-bevy_gltf_worlflow_examples_common = { path = "../../common" }
-
-bevy_rapier3d = { version = "0.23.0", features = [ "serde-serialize", "debug-render-3d", "enhanced-determinism"] }
-bevy_editor_pls = { version = "0.6" }
+bevy_gltf_worlflow_examples_common_rapier = { path = "../../common_rapier" }

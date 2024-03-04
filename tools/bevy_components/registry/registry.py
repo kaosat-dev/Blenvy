@@ -150,7 +150,7 @@ class ComponentsRegistry(PropertyGroup):
 
         "enum":  dict(type=EnumProperty, presets=dict()), 
 
-        'bevy_ecs::Entity': {"type": IntProperty, "presets": {"min":0} },
+        'bevy_ecs::entity::Entity': {"type": IntProperty, "presets": {"min":0} },
         'bevy_utils::Uuid':  dict(type=StringProperty, presets=dict()),
 
     }
@@ -204,7 +204,7 @@ class ComponentsRegistry(PropertyGroup):
 
         "bevy_render::color::Color": [1.0, 1.0, 0.0, 1.0],
 
-        'bevy_ecs::Entity': 0,#4294967295, # this is the same as Bevy's Entity::Placeholder, too big for Blender..sigh
+        'bevy_ecs::entity::Entity': 0,#4294967295, # this is the same as Bevy's Entity::Placeholder, too big for Blender..sigh
         'bevy_utils::Uuid': '"'+str(uuid.uuid4())+'"'
 
     }
