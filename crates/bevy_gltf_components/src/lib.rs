@@ -8,13 +8,9 @@ pub mod process_gltfs;
 pub use process_gltfs::*;
 
 use bevy::{
-<<<<<<< HEAD
-    ecs::{component::Component, reflect::ReflectComponent, system::Resource},
-=======
     app::Startup,
-    ecs::system::{Res, Resource},
+    ecs::{component::Component, reflect::ReflectComponent, system::{Res, Resource}},
     log::warn,
->>>>>>> 9cb9dda5d35c635d367fa81ca1a6c752cda9bc02
     prelude::{App, IntoSystemConfigs, Plugin, SystemSet, Update},
     reflect::Reflect,
 };
