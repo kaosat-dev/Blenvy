@@ -1,6 +1,6 @@
 use bevy::{gltf::Gltf, prelude::*};
 use bevy_gltf_components::ComponentsFromGltfPlugin;
-use bevy_gltf_worlflow_examples_common::CorePlugin;
+use bevy_gltf_worlflow_examples_common_rapier::CorePlugin;
 
 mod test_components;
 use test_components::*;

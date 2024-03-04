@@ -1,6 +1,8 @@
 use bevy::{gltf::Gltf, prelude::*};
 use bevy_gltf_blueprints::GameWorldTag;
-use bevy_gltf_worlflow_examples_common::{assets::GameAssets, GameState, InAppRunning, Player};
+use bevy_gltf_worlflow_examples_common_rapier::{
+    assets::GameAssets, GameState, InAppRunning, Player,
+};
 use bevy_rapier3d::prelude::*;
 
 #[derive(Component, Reflect, Default, Debug)]
