@@ -1,5 +1,5 @@
 pub mod in_game;
-use bevy_gltf_worlflow_examples_common::{AppState, GameState};
+use bevy_gltf_worlflow_examples_common_rapier::{AppState, GameState};
 pub use in_game::*;
 
 pub mod in_main_menu;

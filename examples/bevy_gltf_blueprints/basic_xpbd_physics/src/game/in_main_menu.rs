@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_gltf_worlflow_examples_common::{AppState, InMainMenu};
+use bevy_gltf_worlflow_examples_common_xpbd::{AppState, InMainMenu};
 
 pub fn setup_main_menu(mut commands: Commands) {
     commands.spawn((

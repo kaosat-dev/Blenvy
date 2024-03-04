@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_gltf_worlflow_examples_common::InGameLoading;
+use bevy_gltf_worlflow_examples_common_rapier::InGameLoading;
 
 pub fn setup_loading_screen(mut commands: Commands) {
     commands.spawn((

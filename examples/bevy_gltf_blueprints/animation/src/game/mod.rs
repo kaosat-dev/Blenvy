@@ -5,7 +5,7 @@ pub mod in_main_menu;
 pub use in_main_menu::*;
 
 use bevy::prelude::*;
-use bevy_gltf_worlflow_examples_common::{AppState, GameState};
+use bevy_gltf_worlflow_examples_common_rapier::{AppState, GameState};
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
