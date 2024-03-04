@@ -3,7 +3,7 @@
 expected_custom_property_values = {'AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrWut': '()',
  'Aabb': '(center: Vec3A(x:0.0, y:0.0, z:0.0), half_extents: Vec3A(x:0.0, y:0.0, z:0.0))',
  'AdditionalMassProperties': 'Mass(0.0)',
- 'AmbientLightSettings': '(brightness: 0.0, color: Rgba(red:1.0, green:1.0, blue:0.0, alpha:1.0))',
+ 'BlenderBackgroundShader': '(strength: 0.0, color: Rgba(red:1.0, green:1.0, blue:0.0, alpha:1.0))',
  'AnimationPlayer': '(animation: "", paused: true)',
  'Animations': '(named_animations: "")',
  'AutoAABBCollider': 'Cuboid',
@@ -126,7 +126,7 @@ expected_custom_property_values = {'AComponentWithAnExtremlyExageratedOrMaybeNot
  'ScreenSpaceAmbientOcclusionSettings': '(quality_level: "")',
  'Sensor': '()',
  'ShadowFilteringMethod': 'Hardware2x2',
- 'ShadowmapSettings': '(size: 0)',
+ 'BlenderShadowSettings': '(cascade_size: 0)',
  'SkinnedMesh': '(inverse_bindposes: Strong(""), joints: [])',
  'Sleeping': '(angular_threshold: 0.0, linear_threshold: 0.0, sleeping: true)',
  'SolverGroups': '(filters: (0), memberships: (0))',
@@ -193,7 +193,7 @@ expected_custom_property_values_randomized = {'AComponentWithAnExtremlyExagerate
  'Aabb': '(center: Vec3A(x:0.5714026093482971, y:0.42888906598091125, z:0.5780913233757019), half_extents: '
          'Vec3A(x:0.20609822869300842, y:0.8133212327957153, z:0.8235888481140137))',
  'AdditionalMassProperties': 'Mass(0.42888906598091125)',
- 'AmbientLightSettings': '(brightness: 0.5714026093482971, color: Rgba(red:0.42888906598091125, '
+ 'BlenderBackgroundShader': '(strength: 0.5714026093482971, color: Rgba(red:0.42888906598091125, '
                          'green:0.5780913233757019, blue:0.20609822869300842, alpha:0.8133212327957153))',
  'AnimationPlayer': '(animation: "", paused: true)',
  'Animations': '(named_animations: "")',
@@ -347,7 +347,7 @@ expected_custom_property_values_randomized = {'AComponentWithAnExtremlyExagerate
  'ScreenSpaceAmbientOcclusionSettings': '(quality_level: "")',
  'Sensor': '()',
  'ShadowFilteringMethod': 'Jimenez14',
- 'ShadowmapSettings': '(size: 73)',
+ 'BlenderShadowSettings': '(cascade_size: 73)',
  'SkinnedMesh': '(inverse_bindposes: Strong(""), joints: [0, 0])',
  'Sleeping': '(angular_threshold: 0.5714026093482971, linear_threshold: 0.42888906598091125, sleeping: true)',
  'SolverGroups': '(filters: (73), memberships: (4))',

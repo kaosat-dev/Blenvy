@@ -17,7 +17,7 @@ pub fn export_types(world: &mut World) {
 
     let asset_root = world.resource::<AssetRoot>();
     let registry_save_path = Path::join(&asset_root.0, &config.save_path);
-    println!("registry_save_path {:?}", registry_save_path);
+    println!("registry_save_path {}", registry_save_path.display());
     let writer = File::create(registry_save_path).expect("should have created schema file");
 
     let types = world.resource_mut::<AppTypeRegistry>();
