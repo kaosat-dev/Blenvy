@@ -22,13 +22,11 @@ pub struct CorePlugin;
 impl Plugin for CorePlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(CameraPlugin);
-        
+
         #[cfg(feature = "physics_rapier")]
         app.add_plugins(PhysicsPlugin);
 
         #[cfg(feature = "physics_xpbd")]
         app.add_plugins(PhysicsPluginXPBD);
-        
-
     }
 }
