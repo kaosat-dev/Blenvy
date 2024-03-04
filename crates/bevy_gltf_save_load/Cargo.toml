@@ -1,6 +1,6 @@
 [package]
 name = "bevy_gltf_save_load"
-version = "0.2.1"
+version = "0.3.0"
 authors = ["Mark 'kaosat-dev' Moissette"]
 description = "Save & load your bevy games"
 homepage = "https://github.com/kaosat-dev/Blender_bevy_components_workflow"
@@ -18,4 +18,4 @@ bevy = { version = "0.12", default-features = false, features = ["bevy_asset", "
 
 [dependencies]
 bevy = { version = "0.12", default-features = false, features = ["bevy_asset", "bevy_scene", "bevy_gltf"] }
-bevy_gltf_blueprints = "0.7"
+bevy_gltf_blueprints = "0.8"

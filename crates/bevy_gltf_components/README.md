@@ -24,7 +24,7 @@ Here's a minimal usage example:
 # Cargo.toml
 [dependencies]
 bevy="0.12"
-bevy_gltf_components = { version = "0.3"} 
+bevy_gltf_components = { version = "0.4"} 
 
 ```
 
@@ -60,7 +60,7 @@ bevy_gltf_components = { version = "0.3"}
 Add the following to your `[dependencies]` section in `Cargo.toml`:
 
 ```toml
-bevy_gltf_components = "0.3"
+bevy_gltf_components = "0.4"
 ```
 
 Or use `cargo add`:
@@ -117,7 +117,7 @@ The main branch is compatible with the latest Bevy release, while the branch `be
 Compatibility of `bevy_gltf_components` versions:
 | `bevy_gltf_components` | `bevy` |
 | :--                 | :--    |
-| `0.2 - 0.3`         | `0.12` |
+| `0.2 - 0.4`         | `0.12` |
 | `0.1`               | `0.11` |
 | branch `main`       | `0.12` |
 | branch `bevy_main`  | `main` |

@@ -26,7 +26,7 @@ Here's a minimal usage example:
 # Cargo.toml
 [dependencies]
 bevy="0.12"
-bevy_gltf_blueprints = { version = "0.7"} 
+bevy_gltf_blueprints = { version = "0.8"} 
 
 ```
 
@@ -64,7 +64,7 @@ fn spawn_blueprint(
 Add the following to your `[dependencies]` section in `Cargo.toml`:
 
 ```toml
-bevy_gltf_blueprints = "0.7"
+bevy_gltf_blueprints = "0.8"
 ```
 
 Or use `cargo add`:
@@ -346,7 +346,7 @@ The main branch is compatible with the latest Bevy release, while the branch `be
 Compatibility of `bevy_gltf_blueprints` versions:
 | `bevy_gltf_blueprints` | `bevy` |
 | :--                 | :--    |
-| `0.3 - 0.7`         | `0.12` |
+| `0.3 - 0.8`         | `0.12` |
 | `0.1 - 0.2`         | `0.11` |
 | branch `main`       | `0.12` |
 | branch `bevy_main`  | `main` |

@@ -18,7 +18,7 @@ Here's a minimal usage example:
 # Cargo.toml
 [dependencies]
 bevy="0.12"
-bevy_registry_export = "0.1"
+bevy_registry_export = "0.2"
 ```
 
 ```rust no_run
@@ -44,7 +44,7 @@ take a look at the [example]('https://github.com/kaosat-dev/Blender_bevy_compone
 Add the following to your `[dependencies]` section in `Cargo.toml`:
 
 ```toml
-bevy_registry_export = "0.1"
+bevy_registry_export = "0.2"
 
 ```
 
@@ -112,8 +112,9 @@ The main branch is compatible with the latest Bevy release, while the branch `be
 Compatibility of `bevy_registry_export` versions:
 | `bevy_registry_export` | `bevy` |  `bevy_components (Blender add-on)` |
 | :--                 | :--    |:--    |
-| `0.1 `              | `0.12` | `0.1.0` |
-| branch `main`       | `0.12` | `0.1.0` |
+| `0.2 `              | `0.12` | `0.3` |
+| `0.1 `              | `0.12` | `0.1 -0.2` |
+| branch `main`       | `0.12` | `0.1` |
 | branch `bevy_main`  | `main` | `n/a` |
 
 
