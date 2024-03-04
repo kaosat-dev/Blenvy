@@ -6,17 +6,17 @@ use bevy::{
 };
 use bevy_rapier3d::{prelude::RapierConfiguration, render::DebugRenderContext};
 
-pub fn pause_physics(mut physics_config: ResMut<RapierConfiguration>) {
+pub(crate) fn pause_physics(mut physics_config: ResMut<RapierConfiguration>) {
     info!("pausing physics");
     physics_config.physics_pipeline_active = false;
 }
 
-pub fn resume_physics(mut physics_config: ResMut<RapierConfiguration>) {
+pub(crate) fn resume_physics(mut physics_config: ResMut<RapierConfiguration>) {
     info!("unpausing physics");
     physics_config.physics_pipeline_active = true;
 }
 
-pub fn toggle_physics_debug(
+pub(crate) fn toggle_physics_debug(
     mut debug_config: ResMut<DebugRenderContext>,
     keycode: Res<ButtonInput<KeyCode>>,
 ) {

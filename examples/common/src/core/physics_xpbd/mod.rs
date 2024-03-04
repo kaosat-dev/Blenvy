@@ -1,10 +1,10 @@
-pub mod physics_replace_proxies;
-pub use physics_replace_proxies::*;
+pub(crate) mod physics_replace_proxies;
+pub(crate) use physics_replace_proxies::*;
 
-pub mod utils;
+pub(crate) mod utils;
 
-pub mod controls;
-pub use controls::*;
+pub(crate) mod controls;
+pub(crate) use controls::*;
 
 use bevy::prelude::*;
 use bevy_xpbd_3d::prelude::*;
@@ -12,8 +12,8 @@ use bevy_xpbd_3d::prelude::*;
 use crate::state::GameState;
 use bevy_gltf_blueprints::GltfBlueprintsSet;
 
-pub struct PhysicsPlugin;
-impl Plugin for PhysicsPlugin {
+pub struct PhysicsPluginXPBD;
+impl Plugin for PhysicsPluginXPBD {
     fn build(&self, app: &mut App) {
         app.add_plugins((PhysicsPlugins::default(), PhysicsDebugPlugin::default()))
             .register_type::<AutoAABBCollider>()

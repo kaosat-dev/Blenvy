@@ -1,10 +1,10 @@
-pub mod physics_replace_proxies;
-pub use physics_replace_proxies::*;
+pub(crate) mod physics_replace_proxies;
+pub(crate) use physics_replace_proxies::*;
 
-pub mod utils;
+pub(crate) mod utils;
 
-pub mod controls;
-pub use controls::*;
+pub(crate) mod controls;
+pub(crate) use controls::*;
 
 use crate::state::GameState;
 use bevy::prelude::*;
