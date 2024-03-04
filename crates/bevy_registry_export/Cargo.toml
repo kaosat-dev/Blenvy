@@ -1,6 +1,6 @@
 [package]
 name = "bevy_registry_export"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["Mark 'kaosat-dev' Moissette", "Pascal 'Killercup' Hertleif"]
 description = "Allows you to define [Bevy](https://bevyengine.org/) components direclty inside gltf files and instanciate the components on the Bevy side."
 homepage = "https://github.com/kaosat-dev/Blender_bevy_components_workflow"

@@ -1,9 +1,10 @@
 import bpy
 from .component_values_shuffler import component_values_shuffler
+from .setup_data import setup_data
 
-def test_shuffler():
+def test_shuffler(setup_data):
     registry = bpy.context.window_manager.components_registry
-    registry.schemaPath = "../../testing/bevy_registry_export/basic/assets/registry.json"
+    registry.schemaPath = setup_data["schema_path"]
     bpy.ops.object.reload_registry()
 
     type_infos = registry.type_infos

@@ -31,7 +31,7 @@ def toggle_watcher(self, context):
 
 def watch_schema():
     self = bpy.context.window_manager.components_registry
-    print("watching schema file for changes")
+    # print("watching schema file for changes")
     try:
         stamp = os.stat(self.schemaFullPath).st_mtime
         stamp = str(stamp)
