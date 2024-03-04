@@ -140,3 +140,21 @@ def test_shuffler(setup_data):
     # cheating / making things easier for us for complex types: we use the custom property value
     assert object[short_name] == '(inverse_bindposes: Weak(Uuid(uuid: "73b3b118-7d01-4778-8bcc-4e79055f5d22")), joints: [0, 0])'
     
+
+    # And another complex component
+    short_name = "CameraRenderGraph"
+    component_type = registry.short_names_to_long_names[short_name]
+    add_component_operator(component_type=component_type)
+
+    property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
+    target_components_metadata = object.components_meta.components
+    component_meta = next(filter(lambda component: component["name"] == short_name, target_components_metadata), None)
+    propertyGroup = getattr(component_meta, property_group_name, None)
+
+    definition = type_infos[component_type]
+    component_values_shuffler(seed= 17, property_group=propertyGroup, definition=definition, registry=registry)
+
+    print("propertyGroup", object[short_name])
+    # cheating / making things easier for us for complex types: we use the custom property value
+    assert object[short_name] == 'None'
+    

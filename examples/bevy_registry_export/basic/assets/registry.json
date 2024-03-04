@@ -3480,6 +3480,31 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_gltf_components::blender_settings::lighting::BlenderLightShadows": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "buffer_bias": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "enabled": {
+          "type": {
+            "$ref": "#/$defs/bool"
+          }
+        }
+      },
+      "required": [
+        "enabled",
+        "buffer_bias"
+      ],
+      "short_name": "BlenderLightShadows",
+      "title": "bevy_gltf_components::blender_settings::lighting::BlenderLightShadows",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "bevy_gltf_components::blender_settings::lighting::BlenderShadowSettings": {
       "additionalProperties": false,
       "isComponent": true,
@@ -3556,51 +3581,29 @@
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_gltf_worlflow_examples_common::core::lighting::lighting_replace_proxies::BlenderBackgroundShader": {
+    "bevy_gltf_worlflow_examples_common::game::picking::Pickable": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
-      "properties": {
-        "brightness": {
-          "type": {
-            "$ref": "#/$defs/f32"
-          }
-        },
-        "color": {
-          "type": {
-            "$ref": "#/$defs/bevy_render::color::Color"
-          }
-        }
-      },
-      "required": [
-        "color",
-        "brightness"
-      ],
-      "short_name": "BlenderBackgroundShader",
-      "title": "bevy_gltf_worlflow_examples_common::core::lighting::lighting_replace_proxies::BlenderBackgroundShader",
+      "properties": {},
+      "required": [],
+      "short_name": "Pickable",
+      "title": "bevy_gltf_worlflow_examples_common::game::picking::Pickable",
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_gltf_worlflow_examples_common::core::lighting::lighting_replace_proxies::BlenderShadowSettings": {
+    "bevy_gltf_worlflow_examples_common::game::player::Player": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
-      "properties": {
-        "size": {
-          "type": {
-            "$ref": "#/$defs/usize"
-          }
-        }
-      },
-      "required": [
-        "size"
-      ],
-      "short_name": "BlenderShadowSettings",
-      "title": "bevy_gltf_worlflow_examples_common::core::lighting::lighting_replace_proxies::BlenderShadowSettings",
+      "properties": {},
+      "required": [],
+      "short_name": "Player",
+      "title": "bevy_gltf_worlflow_examples_common::game::player::Player",
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_gltf_worlflow_examples_common::core::physics_rapier::physics_replace_proxies::AutoAABBCollider": {
+    "bevy_gltf_worlflow_examples_common_rapier::physics::physics_replace_proxies::AutoAABBCollider": {
       "isComponent": true,
       "isResource": false,
       "oneOf": [
@@ -3609,11 +3612,11 @@
         "Capsule"
       ],
       "short_name": "AutoAABBCollider",
-      "title": "bevy_gltf_worlflow_examples_common::core::physics_rapier::physics_replace_proxies::AutoAABBCollider",
+      "title": "bevy_gltf_worlflow_examples_common_rapier::physics::physics_replace_proxies::AutoAABBCollider",
       "type": "string",
       "typeInfo": "Enum"
     },
-    "bevy_gltf_worlflow_examples_common::core::physics_rapier::physics_replace_proxies::Collider": {
+    "bevy_gltf_worlflow_examples_common_rapier::physics::physics_replace_proxies::Collider": {
       "isComponent": true,
       "isResource": false,
       "oneOf": [
@@ -3674,31 +3677,9 @@
         }
       ],
       "short_name": "Collider",
-      "title": "bevy_gltf_worlflow_examples_common::core::physics_rapier::physics_replace_proxies::Collider",
+      "title": "bevy_gltf_worlflow_examples_common_rapier::physics::physics_replace_proxies::Collider",
       "type": "object",
       "typeInfo": "Enum"
-    },
-    "bevy_gltf_worlflow_examples_common::game::picking::Pickable": {
-      "additionalProperties": false,
-      "isComponent": true,
-      "isResource": false,
-      "properties": {},
-      "required": [],
-      "short_name": "Pickable",
-      "title": "bevy_gltf_worlflow_examples_common::game::picking::Pickable",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "bevy_gltf_worlflow_examples_common::game::player::Player": {
-      "additionalProperties": false,
-      "isComponent": true,
-      "isResource": false,
-      "properties": {},
-      "required": [],
-      "short_name": "Player",
-      "title": "bevy_gltf_worlflow_examples_common::game::player::Player",
-      "type": "object",
-      "typeInfo": "Struct"
     },
     "bevy_hierarchy::components::children::Children": {
       "isComponent": true,

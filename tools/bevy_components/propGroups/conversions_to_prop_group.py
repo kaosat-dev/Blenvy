@@ -164,7 +164,7 @@ type_mappings = {
     'alloc::borrow::Cow<str>': lambda value: str(value.replace('"', "")),
 
     'bevy_render::color::Color': lambda value: parse_color(value, float, "Rgba"),
-    'bevy_ecs::Entity': lambda value: int(value),
+    'bevy_ecs::entity::Entity': lambda value: int(value),
 }
 
 def is_def_value_type(definition, registry):
