@@ -33,10 +33,9 @@ def property_group_value_to_custom_property_value(property_group, definition, re
     type_def = definition["type"] if "type" in definition else None
     type_name = definition["title"]
     is_value_type = type_name in conversion_tables
-    print("computing custom property", component_name, type_info, type_def, type_name)
+    #print("computing custom property", component_name, type_info, type_def, type_name)
 
     if is_value_type:
-        print("is value ", type_name, value)
         value = conversion_tables[type_name](value)
     elif type_info == "Struct":
         values = {}
@@ -136,11 +135,8 @@ def property_group_value_to_custom_property_value(property_group, definition, re
                 item_value = '""'
             value.append(item_value) 
     else:
-        print("other stuff", value)
         value = conversion_tables[type_name](value) if is_value_type else value
-        print("here", value)
         value = '""' if isinstance(value, PropertyGroup) else value
-        
         
     #print("generating custom property value", value, type(value))
     if isinstance(value, str):
