@@ -19,3 +19,4 @@ bevy = { version = "0.12", default-features = false, features = ["bevy_asset", "
 [dependencies]
 bevy = { version = "0.12", default-features = false, features = ["bevy_asset", "bevy_scene", "bevy_gltf"] }
 bevy_gltf_blueprints = "0.8"
+#bevy_gltf_blueprints = { path = "../bevy_gltf_blueprints" }
