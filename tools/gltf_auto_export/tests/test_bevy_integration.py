@@ -94,11 +94,11 @@ def test_export_complex(setup_data):
     assert os.path.exists(os.path.join(models_path, "library", "Blueprint7_hierarchy.glb")) == True
 
     # now run bevy
-    bla = "cargo run --features bevy/dynamic_linking"
+    command = "cargo run --features bevy/dynamic_linking"
     # assert getattr(propertyGroup, 'a') == 0.5714026093482971
     FNULL = open(os.devnull, 'w')    #use this if you want to suppress output to stdout from the subprocess
     filename = "my_file.dat"
-    args = bla
+    args = command
     #subprocess.call(args, stdout=FNULL, stderr=FNULL, shell=False, cwd=bevy_run_exec_path)
     return_code = subprocess.call(["cargo", "run", "--features", "bevy/dynamic_linking"], cwd=root_path)
     print("RETURN CODE OF BEVY APP", return_code)
