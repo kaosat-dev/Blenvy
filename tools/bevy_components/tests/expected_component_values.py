@@ -1,6 +1,6 @@
 
 
-expected_custom_property_values = {'AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrWut': '',
+expected_custom_property_values = {'AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrWut': '()',
  'Aabb': '(center: Vec3A(x:0.0, y:0.0, z:0.0), half_extents: Vec3A(x:0.0, y:0.0, z:0.0))',
  'AdditionalMassProperties': 'Mass(0.0)',
  'AmbientLightSettings': '(brightness: 0.0, color: Rgba(red:1.0, green:1.0, blue:0.0, alpha:1.0))',
@@ -14,20 +14,20 @@ expected_custom_property_values = {'AComponentWithAnExtremlyExageratedOrMaybeNot
                   '0.0))',
  'BlueprintName': '(" ")',
  'BorderColor': '(Rgba(red:1.0, green:1.0, blue:0.0, alpha:1.0))',
- 'Button': '',
+ 'Button': '()',
  'CalculatedClip': '(clip: (max: Vec2(x:0.0, y:0.0), min: Vec2(x:0.0, y:0.0)))',
  'Camera': '(hdr: true, is_active: true, msaa_writeback: true, order: 0, viewport: None)',
  'Camera2d': '(clear_color: Default)',
  'Camera3d': '(clear_color: Default, depth_load_op: Clear(0.0), depth_texture_usages: "", '
              'screen_space_specular_transmission_quality: "", screen_space_specular_transmission_steps: 0)',
- 'CameraRenderGraph': '( )',
- 'CameraTrackable': '',
+ 'CameraRenderGraph': '(" ")',
+ 'CameraTrackable': '()',
  'CameraTracking': '(offset: Vec3(x:0.0, y:0.0, z:0.0))',
  'CameraTrackingOffset': '(Vec3(x:0.0, y:0.0, z:0.0))',
  'CascadeShadowConfig': '(bounds: [], minimum_distance: 0.0, overlap_proportion: 0.0)',
  'Cascades': '(cascades: "")',
- 'CascadesFrusta': '',
- 'CascadesVisibleEntities': '',
+ 'CascadesFrusta': '()',
+ 'CascadesVisibleEntities': '()',
  'Ccd': '(enabled: true)',
  'Children': '([])',
  'ClusterConfig': 'None',
@@ -36,10 +36,10 @@ expected_custom_property_values = {'AComponentWithAnExtremlyExageratedOrMaybeNot
  'CollisionGroups': '(filters: (0), memberships: (0))',
  'ColorGrading': '(exposure: 0.0, gamma: 0.0, post_saturation: 0.0, pre_saturation: 0.0)',
  'ContactForceEventThreshold': '(0.0)',
- 'ContentSize': '',
+ 'ContentSize': '()',
  'ContrastAdaptiveSharpeningSettings': '(denoise: true, enabled: true, sharpening_strength: 0.0)',
- 'CubemapFrusta': '',
- 'CubemapVisibleEntities': '',
+ 'CubemapFrusta': '()',
+ 'CubemapVisibleEntities': '()',
  'Damping': '(angular_damping: 0.0, linear_damping: 0.0)',
  'DebandDither': 'Disabled',
  'DirectionalLight': '(color: Rgba(red:1.0, green:1.0, blue:0.0, alpha:1.0), illuminance: 0.0, shadow_depth_bias: 0.0, '
@@ -53,7 +53,7 @@ expected_custom_property_values = {'AComponentWithAnExtremlyExageratedOrMaybeNot
  'FogSettings': '(color: Rgba(red:1.0, green:1.0, blue:0.0, alpha:1.0), directional_light_color: Rgba(red:1.0, '
                 'green:1.0, blue:0.0, alpha:1.0), directional_light_exponent: 0.0, falloff: "")',
  'Friction': '(coefficient: 0.0, combine_rule: "")',
- 'Frustum': '',
+ 'Frustum': '()',
  'Fxaa': '(edge_threshold: "", edge_threshold_min: "", enabled: true)',
  'GlobalTransform': '((matrix3: (x_axis: Vec3A(x:0.0, y:0.0, z:0.0), y_axis: Vec3A(x:0.0, y:0.0, z:0.0), z_axis: '
                     'Vec3A(x:0.0, y:0.0, z:0.0)), translation: Vec3A(x:0.0, y:0.0, z:0.0)))',
@@ -86,13 +86,13 @@ expected_custom_property_values = {'AComponentWithAnExtremlyExageratedOrMaybeNot
  'Handle<WireframeMaterial>': 'Strong("")',
  'InheritedVisibility': '(true)',
  'Interaction': 'Pressed',
- 'Label': '',
+ 'Label': '()',
  'LockedAxes': '(0)',
  'MaterialInfo': '(name: " ", source: " ")',
  'Mesh2dHandle': '(Strong(""))',
  'MeshMorphWeights': '(weights: [])',
  'MorphWeights': '(first_mesh: "", weights: [])',
- 'Name': '(hash: 0, name:  )',
+ 'Name': '(hash: 0, name: " ")',
  'NestedTupleStuff': '(0.0, 0, (basic: (a: 0.0, b: 0, c: " "), color: (Rgba(red:1.0, green:1.0, blue:0.0, alpha:1.0)), '
                      'colors_list: ([]), enable: true, enum_inner: Metal, nested: (vec: (Vec3(x:0.0, y:0.0, z:0.0))), '
                      'text: " ", toggle: (true)))',
@@ -100,37 +100,37 @@ expected_custom_property_values = {'AComponentWithAnExtremlyExageratedOrMaybeNot
                       'colors_list: ([]), enable: true, enum_inner: Metal, nested: (vec: (Vec3(x:0.0, y:0.0, z:0.0))), '
                       'text: " ", toggle: (true))',
  'NestingTestLevel3': '(vec: (Vec3(x:0.0, y:0.0, z:0.0)))',
- 'NoFrustumCulling': '',
- 'NoWireframe': '',
+ 'NoFrustumCulling': '()',
+ 'NoWireframe': '()',
  'Node': '(calculated_size: Vec2(x:0.0, y:0.0), outline_offset: 0.0, outline_width: 0.0, stack_index: 0, '
          'unrounded_size: Vec2(x:0.0, y:0.0))',
- 'NotShadowCaster': '',
- 'NotShadowReceiver': '',
+ 'NotShadowCaster': '()',
+ 'NotShadowReceiver': '()',
  'OrthographicProjection': '(area: (max: Vec2(x:0.0, y:0.0), min: Vec2(x:0.0, y:0.0)), far: 0.0, near: 0.0, scale: '
                            '0.0, scaling_mode: Fixed(height: 0.0, width: 0.0), viewport_origin: Vec2(x:0.0, y:0.0))',
  'Outline': '(color: Rgba(red:1.0, green:1.0, blue:0.0, alpha:1.0), offset: Auto, width: Auto)',
  'Parent': '(0)',
  'PerspectiveProjection': '(aspect_ratio: 0.0, far: 0.0, fov: 0.0, near: 0.0)',
- 'Pickable': '',
- 'Player': '',
+ 'Pickable': '()',
+ 'Player': '()',
  'PointLight': '(color: Rgba(red:1.0, green:1.0, blue:0.0, alpha:1.0), intensity: 0.0, radius: 0.0, range: 0.0, '
                'shadow_depth_bias: 0.0, shadow_normal_bias: 0.0, shadows_enabled: true)',
- 'PrimaryWindow': '',
+ 'PrimaryWindow': '()',
  'Projection': 'Perspective((aspect_ratio: 0.0, far: 0.0, fov: 0.0, near: 0.0))',
  'RelativeCursorPosition': '(normalized: "", normalized_visible_node_rect: (max: Vec2(x:0.0, y:0.0), min: Vec2(x:0.0, '
                            'y:0.0)))',
  'RenderLayers': '(0)',
  'Restitution': '(coefficient: 0.0, combine_rule: "")',
  'RigidBody': 'Dynamic',
- 'SSAOSettings': '',
+ 'SSAOSettings': '()',
  'ScreenSpaceAmbientOcclusionSettings': '(quality_level: "")',
- 'Sensor': '',
+ 'Sensor': '()',
  'ShadowFilteringMethod': 'Hardware2x2',
  'ShadowmapSettings': '(size: 0)',
  'SkinnedMesh': '(inverse_bindposes: Strong(""), joints: [])',
  'Sleeping': '(angular_threshold: 0.0, linear_threshold: 0.0, sleeping: true)',
  'SolverGroups': '(filters: (0), memberships: (0))',
- 'SpawnHere': '',
+ 'SpawnHere': '()',
  'SpotLight': '(color: Rgba(red:1.0, green:1.0, blue:0.0, alpha:1.0), inner_angle: 0.0, intensity: 0.0, outer_angle: '
               '0.0, radius: 0.0, range: 0.0, shadow_depth_bias: 0.0, shadow_normal_bias: 0.0, shadows_enabled: true)',
  'Sprite': '(anchor: Center, color: Rgba(red:1.0, green:1.0, blue:0.0, alpha:1.0), custom_size: "", flip_x: true, '
@@ -167,14 +167,14 @@ expected_custom_property_values = {'AComponentWithAnExtremlyExageratedOrMaybeNot
  'UiImage': '(flip_x: true, flip_y: true, texture: Strong(""))',
  'UiImageSize': '(size: Vec2(x:0.0, y:0.0))',
  'UiTextureAtlasImage': '(flip_x: true, flip_y: true, index: 0)',
- 'UnitTest': '',
+ 'UnitTest': '()',
  'VecOfColors': '([])',
  'VecOfF32s': '([])',
  'VecOfVec3s2': '([])',
  'Velocity': '(angvel: Vec3(x:0.0, y:0.0, z:0.0), linvel: Vec3(x:0.0, y:0.0, z:0.0))',
  'ViewVisibility': '(true)',
  'Visibility': 'Inherited',
- 'VisibleEntities': '',
+ 'VisibleEntities': '()',
  'Window': '(canvas: None, composite_alpha_mode: Auto, cursor: (grab_mode: None, hit_test: true, icon: Default, '
            'visible: true), decorations: true, enabled_buttons: (close: true, maximize: true, minimize: true), '
            'fit_canvas_to_parent: true, focused: true, ime_enabled: true, ime_position: Vec2(x:0.0, y:0.0), internal: '
@@ -183,12 +183,13 @@ expected_custom_property_values = {'AComponentWithAnExtremlyExageratedOrMaybeNot
            'resize_constraints: (max_height: 0.0, max_width: 0.0, min_height: 0.0, min_width: 0.0), resolution: '
            '(physical_height: 0, physical_width: 0, scale_factor: 0.0, scale_factor_override: None), title: " ", '
            'transparent: true, visible: true, window_level: AlwaysOnBottom, window_theme: "")',
- 'Wireframe': '',
+ 'Wireframe': '()',
  'ZIndex': 'Local(0)'}
 
 
 
-expected_custom_property_values_randomized = {'AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrWut': '',
+
+expected_custom_property_values_randomized = {'AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrWut': '()',
  'Aabb': '(center: Vec3A(x:0.5714026093482971, y:0.42888906598091125, z:0.5780913233757019), half_extents: '
          'Vec3A(x:0.20609822869300842, y:0.8133212327957153, z:0.8235888481140137))',
  'AdditionalMassProperties': 'Mass(0.42888906598091125)',
@@ -207,22 +208,22 @@ expected_custom_property_values_randomized = {'AComponentWithAnExtremlyExagerate
  'BlueprintName': '("sbnpsago")',
  'BorderColor': '(Rgba(red:0.5714026093482971, green:0.42888906598091125, blue:0.5780913233757019, '
                 'alpha:0.20609822869300842))',
- 'Button': '',
+ 'Button': '()',
  'CalculatedClip': '(clip: (max: Vec2(x:0.5714026093482971, y:0.42888906598091125), min: Vec2(x:0.5780913233757019, '
                    'y:0.20609822869300842)))',
  'Camera': '(hdr: true, is_active: false, msaa_writeback: false, order: 61, viewport: None)',
  'Camera2d': '(clear_color: None)',
  'Camera3d': '(clear_color: None, depth_load_op: Clear(0.42888906598091125), depth_texture_usages: "", '
              'screen_space_specular_transmission_quality: "", screen_space_specular_transmission_steps: 73)',
- 'CameraRenderGraph': '(sbnpsago)',
- 'CameraTrackable': '',
+ 'CameraRenderGraph': '("sbnpsago")',
+ 'CameraTrackable': '()',
  'CameraTracking': '(offset: Vec3(x:0.5714026093482971, y:0.42888906598091125, z:0.5780913233757019))',
  'CameraTrackingOffset': '(Vec3(x:0.5714026093482971, y:0.42888906598091125, z:0.5780913233757019))',
  'CascadeShadowConfig': '(bounds: [0.42888906598091125], minimum_distance: 0.5780913233757019, overlap_proportion: '
                         '0.20609822869300842)',
  'Cascades': '(cascades: "")',
- 'CascadesFrusta': '',
- 'CascadesVisibleEntities': '',
+ 'CascadesFrusta': '()',
+ 'CascadesVisibleEntities': '()',
  'Ccd': '(enabled: true)',
  'Children': '([0])',
  'ClusterConfig': 'None',
@@ -232,10 +233,10 @@ expected_custom_property_values_randomized = {'AComponentWithAnExtremlyExagerate
  'ColorGrading': '(exposure: 0.5714026093482971, gamma: 0.42888906598091125, post_saturation: 0.5780913233757019, '
                  'pre_saturation: 0.20609822869300842)',
  'ContactForceEventThreshold': '(0.5714026093482971)',
- 'ContentSize': '',
+ 'ContentSize': '()',
  'ContrastAdaptiveSharpeningSettings': '(denoise: true, enabled: false, sharpening_strength: 0.42888906598091125)',
- 'CubemapFrusta': '',
- 'CubemapVisibleEntities': '',
+ 'CubemapFrusta': '()',
+ 'CubemapVisibleEntities': '()',
  'Damping': '(angular_damping: 0.5714026093482971, linear_damping: 0.42888906598091125)',
  'DebandDither': 'Disabled',
  'DirectionalLight': '(color: Rgba(red:0.5714026093482971, green:0.42888906598091125, blue:0.5780913233757019, '
@@ -254,7 +255,7 @@ expected_custom_property_values_randomized = {'AComponentWithAnExtremlyExagerate
                 'green:0.8235888481140137, blue:0.6534725427627563, alpha:0.16022956371307373), '
                 'directional_light_exponent: 0.5206693410873413, falloff: "")',
  'Friction': '(coefficient: 0.5714026093482971, combine_rule: "")',
- 'Frustum': '',
+ 'Frustum': '()',
  'Fxaa': '(edge_threshold: "", edge_threshold_min: "", enabled: true)',
  'GlobalTransform': '((matrix3: (x_axis: Vec3A(x:0.5714026093482971, y:0.42888906598091125, z:0.5780913233757019), '
                     'y_axis: Vec3A(x:0.20609822869300842, y:0.8133212327957153, z:0.8235888481140137), z_axis: '
@@ -289,13 +290,13 @@ expected_custom_property_values_randomized = {'AComponentWithAnExtremlyExagerate
  'Handle<WireframeMaterial>': 'Strong("")',
  'InheritedVisibility': '(true)',
  'Interaction': 'None',
- 'Label': '',
+ 'Label': '()',
  'LockedAxes': '(73)',
  'MaterialInfo': '(name: "sbnpsago", source: "piuzfbqp")',
  'Mesh2dHandle': '(Strong(""))',
  'MeshMorphWeights': '(weights: [0.42888906598091125])',
  'MorphWeights': '(first_mesh: "", weights: [0.42888906598091125])',
- 'Name': '(hash: 73, name: bnpsagop)',
+ 'Name': '(hash: 73, name: "bnpsagop")',
  'NestedTupleStuff': '(0.5714026093482971, 54, (basic: (a: 0.4825616776943207, b: 1, c: "gopiuzfb"), color: '
                      '(Rgba(red:0.5206693410873413, green:0.3277728259563446, blue:0.24999667704105377, '
                      'alpha:0.952816903591156)), colors_list: ([Rgba(red:0.0445563830435276, green:0.8601610660552979, '
@@ -311,13 +312,13 @@ expected_custom_property_values_randomized = {'AComponentWithAnExtremlyExagerate
                       '(vec: (Vec3(x:0.1329781413078308, y:0.7678378224372864, z:0.9824132323265076))), text: '
                       '"otmbsahe", toggle: (false))',
  'NestingTestLevel3': '(vec: (Vec3(x:0.5714026093482971, y:0.42888906598091125, z:0.5780913233757019)))',
- 'NoFrustumCulling': '',
- 'NoWireframe': '',
+ 'NoFrustumCulling': '()',
+ 'NoWireframe': '()',
  'Node': '(calculated_size: Vec2(x:0.5714026093482971, y:0.42888906598091125), outline_offset: 0.5780913233757019, '
          'outline_width: 0.20609822869300842, stack_index: 62, unrounded_size: Vec2(x:0.8235888481140137, '
          'y:0.6534725427627563))',
- 'NotShadowCaster': '',
- 'NotShadowReceiver': '',
+ 'NotShadowCaster': '()',
+ 'NotShadowReceiver': '()',
  'OrthographicProjection': '(area: (max: Vec2(x:0.5714026093482971, y:0.42888906598091125), min: '
                            'Vec2(x:0.5780913233757019, y:0.20609822869300842)), far: 0.8133212327957153, near: '
                            '0.8235888481140137, scale: 0.6534725427627563, scaling_mode: '
@@ -328,13 +329,13 @@ expected_custom_property_values_randomized = {'AComponentWithAnExtremlyExagerate
  'Parent': '(0)',
  'PerspectiveProjection': '(aspect_ratio: 0.5714026093482971, far: 0.42888906598091125, fov: 0.5780913233757019, near: '
                           '0.20609822869300842)',
- 'Pickable': '',
- 'Player': '',
+ 'Pickable': '()',
+ 'Player': '()',
  'PointLight': '(color: Rgba(red:0.5714026093482971, green:0.42888906598091125, blue:0.5780913233757019, '
                'alpha:0.20609822869300842), intensity: 0.8133212327957153, radius: 0.8235888481140137, range: '
                '0.6534725427627563, shadow_depth_bias: 0.16022956371307373, shadow_normal_bias: 0.5206693410873413, '
                'shadows_enabled: false)',
- 'PrimaryWindow': '',
+ 'PrimaryWindow': '()',
  'Projection': 'Perspective((aspect_ratio: 0.42888906598091125, far: 0.5780913233757019, fov: 0.20609822869300842, '
                'near: 0.8133212327957153))',
  'RelativeCursorPosition': '(normalized: "", normalized_visible_node_rect: (max: Vec2(x:0.5714026093482971, '
@@ -342,15 +343,15 @@ expected_custom_property_values_randomized = {'AComponentWithAnExtremlyExagerate
  'RenderLayers': '(73)',
  'Restitution': '(coefficient: 0.5714026093482971, combine_rule: "")',
  'RigidBody': 'Dynamic',
- 'SSAOSettings': '',
+ 'SSAOSettings': '()',
  'ScreenSpaceAmbientOcclusionSettings': '(quality_level: "")',
- 'Sensor': '',
+ 'Sensor': '()',
  'ShadowFilteringMethod': 'Jimenez14',
  'ShadowmapSettings': '(size: 73)',
  'SkinnedMesh': '(inverse_bindposes: Strong(""), joints: [0, 0])',
  'Sleeping': '(angular_threshold: 0.5714026093482971, linear_threshold: 0.42888906598091125, sleeping: true)',
  'SolverGroups': '(filters: (73), memberships: (4))',
- 'SpawnHere': '',
+ 'SpawnHere': '()',
  'SpotLight': '(color: Rgba(red:0.5714026093482971, green:0.42888906598091125, blue:0.5780913233757019, '
               'alpha:0.20609822869300842), inner_angle: 0.8133212327957153, intensity: 0.8235888481140137, '
               'outer_angle: 0.6534725427627563, radius: 0.16022956371307373, range: 0.5206693410873413, '
@@ -402,7 +403,7 @@ expected_custom_property_values_randomized = {'AComponentWithAnExtremlyExagerate
  'UiImage': '(flip_x: true, flip_y: false, texture: Weak(Uuid(uuid: "73b3b118-7d01-4778-8bcc-4e79055f5d22")))',
  'UiImageSize': '(size: Vec2(x:0.5714026093482971, y:0.42888906598091125))',
  'UiTextureAtlasImage': '(flip_x: true, flip_y: false, index: 54)',
- 'UnitTest': '',
+ 'UnitTest': '()',
  'VecOfColors': '([Rgba(red:0.42888906598091125, green:0.5780913233757019, blue:0.20609822869300842, '
                 'alpha:0.8133212327957153)])',
  'VecOfF32s': '([0.42888906598091125])',
@@ -411,7 +412,7 @@ expected_custom_property_values_randomized = {'AComponentWithAnExtremlyExagerate
              'Vec3(x:0.20609822869300842, y:0.8133212327957153, z:0.8235888481140137))',
  'ViewVisibility': '(true)',
  'Visibility': 'Visible',
- 'VisibleEntities': '',
+ 'VisibleEntities': '()',
  'Window': '(canvas: None, composite_alpha_mode: PostMultiplied, cursor: (grab_mode: Confined, hit_test: true, icon: '
            'Default, visible: false), decorations: false, enabled_buttons: (close: true, maximize: false, minimize: '
            'true), fit_canvas_to_parent: false, focused: true, ime_enabled: true, ime_position: '
@@ -423,5 +424,6 @@ expected_custom_property_values_randomized = {'AComponentWithAnExtremlyExagerate
            '0.36258742213249207), resolution: (physical_height: 58, physical_width: 98, scale_factor: '
            '0.8600491285324097, scale_factor_override: None), title: "otmbsahe", transparent: false, visible: true, '
            'window_level: Normal, window_theme: "")',
- 'Wireframe': '',
+ 'Wireframe': '()',
  'ZIndex': 'Local(54)'}
+

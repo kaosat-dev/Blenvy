@@ -35,8 +35,8 @@ Here's a minimal usage example:
 # Cargo.toml
 [dependencies]
 bevy="0.13"
-bevy_gltf_save_load = "0.3"
-bevy_gltf_blueprints = "0.6" // also needed
+bevy_gltf_save_load = "0.4"
+bevy_gltf_blueprints = "0.9" // also needed
 ```
 
 ```rust no_run
@@ -142,7 +142,11 @@ Add the following to your `[dependencies]` section in `Cargo.toml`:
 
 ```toml
 bevy_gltf_save_load = "0.3"
+<<<<<<< HEAD
 bevy_gltf_blueprints = "0.8" // also needed, as bevy_gltf_save_load does not re-export it at this time
+=======
+bevy_gltf_blueprints = "0.6" // also needed, as bevy_gltf_save_load does not re-export it at this time
+>>>>>>> 9cb9dda5d35c635d367fa81ca1a6c752cda9bc02
 
 ```
 
@@ -299,9 +303,9 @@ The main branch is compatible with the latest Bevy release, while the branch `be
 Compatibility of `bevy_gltf_save_load` versions:
 | `bevy_gltf_save_load` | `bevy` |
 | :--                 | :--    |
-| `0.3 `              | `0.13` |
-| `0.1 - 0.2`         | `0.12` |
-| branch `main`       | `0.13` |
+| `0.4 `              | `0.13` |
+| `0.1 -0.3`          | `0.12` |
+| branch `main`       | `0.12` |
 | branch `bevy_main`  | `main` |
 
 

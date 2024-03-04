@@ -8,7 +8,13 @@ pub mod process_gltfs;
 pub use process_gltfs::*;
 
 use bevy::{
+<<<<<<< HEAD
     ecs::{component::Component, reflect::ReflectComponent, system::Resource},
+=======
+    app::Startup,
+    ecs::system::{Res, Resource},
+    log::warn,
+>>>>>>> 9cb9dda5d35c635d367fa81ca1a6c752cda9bc02
     prelude::{App, IntoSystemConfigs, Plugin, SystemSet, Update},
     reflect::Reflect,
 };
@@ -72,12 +78,19 @@ impl Default for ComponentsFromGltfPlugin {
     }
 }
 
+fn check_for_legacy_mode(gltf_components_config: Res<GltfComponentsConfig>) {
+    if gltf_components_config.legacy_mode {
+        warn!("using simplified component definitions is deprecated since 0.3, prefer defining components with real ron values (use the bevy_components tool for Blender for simplicity) ");
+    }
+}
+
 impl Plugin for ComponentsFromGltfPlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<GltfProcessed>()
             .insert_resource(GltfComponentsConfig {
                 legacy_mode: self.legacy_mode,
             })
+            .add_systems(Startup, check_for_legacy_mode)
             .add_systems(
                 Update,
                 (add_components_from_gltf_extras).in_set(GltfComponentsSet::Injection),

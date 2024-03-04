@@ -16,7 +16,7 @@ members = [
     "examples/bevy_gltf_save_load/basic/",
     "examples/bevy_registry_export/basic",
 
-    "testing/bevy_registry_export/basic"
+    "testing/bevy_example"
 ]
 resolver = "2"
 
@@ -33,9 +33,6 @@ semicolon_if_nothing_returned = "warn"
 # Enable high optimizations for dependencies (incl. Bevy), but not for our code:
 [profile.dev.package."*"]
 opt-level = 3
-
-[profile.dev.package.bevy]
-features = ["dynamic"]
 
 #### --------------------Production/ release-------------------------------
 [profile.release]

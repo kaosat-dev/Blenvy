@@ -18,6 +18,8 @@ of your Bevy components you get a nicely packed custom_property to use with ...
 > IMPORTANT !! if you have previously used v0.1 , v0.2 had a breaking change, please see [this](#regenerate-ui-values) section on how to upgrade your data to v0.2.\
 This problem should not be present going forward
 
+> IMPORTANT !! if you have previously used v0.2 , v0.3 had a breaking change, please see [this](#regenerate-custom-property-values) section on how to upgrade your data to v0.3.
+
 ## Installation: 
 
 * grab the latest release zip file from the releases tab (choose the bevy_components releases !)
@@ -205,6 +207,9 @@ It will add the component to the select object
     corresponding custom property values 
 
      ![update custom properties for all](./docs/other_options2.png)
+
+     > IMPORTANT !! use this if you have previously used v0.1 or v0.2 , as v0.3 had a breaking change, that makes it **necessary** to use this **once** to upgrade components data
+     You should also re-export your gltf files , otherwise you might run into issues
 
   
   ### regenerate UI values

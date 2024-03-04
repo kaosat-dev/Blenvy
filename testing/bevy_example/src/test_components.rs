@@ -7,11 +7,11 @@ use std::ops::Range;
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-struct UnitTest;
+pub struct UnitTest;
 
 #[derive(Component, Reflect, Default, Debug, Deref, DerefMut)]
 #[reflect(Component)]
-struct TupleTestF32(f32);
+pub struct TupleTestF32(pub f32);
 
 #[derive(Component, Reflect, Default, Debug, Deref, DerefMut)]
 #[reflect(Component)]

@@ -33,7 +33,8 @@ def generate_gltf_export_preferences(addon_prefs):
         export_skins=True,
         export_morph=False,
         export_apply=False,
-        export_animations=False
+        export_animations=False,
+        export_optimize_animation_size=False
     )
         
     for key in addon_prefs.__annotations__.keys():

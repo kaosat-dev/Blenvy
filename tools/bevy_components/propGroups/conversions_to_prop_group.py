@@ -161,6 +161,8 @@ type_mappings = {
     "glam::Quat": lambda value: parse_vec4(value, float, "Quat"),
 
     'alloc::string::String': lambda value: str(value.replace('"', "")),
+    'alloc::borrow::Cow<str>': lambda value: str(value.replace('"', "")),
+
     'bevy_render::color::Color': lambda value: parse_color(value, float, "Rgba"),
     'bevy_ecs::Entity': lambda value: int(value),
 }

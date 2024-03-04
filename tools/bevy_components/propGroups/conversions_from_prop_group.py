@@ -6,6 +6,7 @@ conversion_tables = {
     "char": lambda value: '"'+value+'"',
     "str": lambda value: '"'+value+'"',
     "alloc::string::String": lambda value: '"'+value+'"',
+    "alloc::borrow::Cow<str>": lambda value: '"'+value+'"',
 
     "glam::Vec2": lambda value: "Vec2(x:"+str(value[0])+ ", y:"+str(value[1])+")",
     "glam::DVec2": lambda value: "DVec2(x:"+str(value[0])+ ", y:"+str(value[1])+")",
@@ -39,7 +40,7 @@ def property_group_value_to_custom_property_value(property_group, definition, re
     elif type_info == "Struct":
         values = {}
         if len(property_group.field_names) ==0:
-            value = ''
+            value = '()'
         else:
             for index, field_name in enumerate(property_group.field_names):
                 item_type_name = definition["properties"][field_name]["type"]["$ref"].replace("#/$defs/", "")
@@ -136,7 +137,6 @@ def property_group_value_to_custom_property_value(property_group, definition, re
     else:
         value = conversion_tables[type_name](value) if is_value_type else value
         value = '""' if isinstance(value, PropertyGroup) else value
-        
         
     #print("generating custom property value", value, type(value))
     if isinstance(value, str):

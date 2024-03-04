@@ -24,7 +24,7 @@ Here's a minimal usage example:
 # Cargo.toml
 [dependencies]
 bevy="0.13"
-bevy_gltf_components = { version = "0.4"} 
+bevy_gltf_components = { version = "0.5"} 
 
 ```
 
@@ -60,7 +60,7 @@ bevy_gltf_components = { version = "0.4"}
 Add the following to your `[dependencies]` section in `Cargo.toml`:
 
 ```toml
-bevy_gltf_components = "0.4"
+bevy_gltf_components = "0.5"
 ```
 
 Or use `cargo add`:
@@ -71,7 +71,7 @@ cargo add bevy_gltf_components
 
 ## Configuration
 
-starting with version 0.4, this plugin is configurable
+starting with version 0.3, this plugin is configurable
 Use the default configuration: 
 
 ```rust no_run
@@ -117,8 +117,8 @@ The main branch is compatible with the latest Bevy release, while the branch `be
 Compatibility of `bevy_gltf_components` versions:
 | `bevy_gltf_components` | `bevy` |
 | :--                 | :--    |
-| `0.4`               | `0.13` |
-| `0.2 - 0.3`         | `0.12` |
+| `0.5`               | `0.13` |
+| `0.2 - 0.4`         | `0.12` |
 | `0.1`               | `0.11` |
 | branch `main`       | `0.13` |
 | branch `bevy_main`  | `main` |
