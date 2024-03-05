@@ -16,7 +16,7 @@ from bpy.props import (StringProperty)
 
 from .helpers import load_settings
 from .blueprints import CreateBlueprintOperator
-from .components.operators import CopyComponentOperator, OT_rename_component, RemoveComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, AddComponentOperator, RenameHelper, Toggle_ComponentVisibility
+from .components.operators import CopyComponentOperator, OT_rename_component, RemoveComponentFromAllObjectsOperator, RemoveComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, AddComponentOperator, RenameHelper, Toggle_ComponentVisibility
 
 from .registry.registry import ComponentsRegistry,MissingBevyType
 from .registry.operators import (COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT, COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT, OT_select_component_name_to_replace, OT_select_object, ReloadRegistryOperator, OT_OpenFilebrowser)
@@ -87,6 +87,7 @@ classes = [
     CopyComponentOperator,
     PasteComponentOperator,
     RemoveComponentOperator,
+    RemoveComponentFromAllObjectsOperator,
     OT_rename_component,
     RenameHelper,
     GenerateComponent_From_custom_property_Operator,

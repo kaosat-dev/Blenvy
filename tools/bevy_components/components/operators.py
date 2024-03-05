@@ -91,9 +91,42 @@ class PasteComponentOperator(Operator):
         return {'FINISHED'}
     
 class RemoveComponentOperator(Operator):
-    """Delete component from blueprint"""
+    """Remove component from object"""
     bl_idname = "object.remove_bevy_component"
-    bl_label = "Delete component from blueprint Operator"
+    bl_label = "Remove component from object Operator"
+    bl_options = {"UNDO"}
+
+    component_name: StringProperty(
+        name="component name",
+        description="component to delete",
+    ) # type: ignore
+
+    object_name: StringProperty(
+        name="object name",
+        description="object whose component to delete",
+        default=""
+    ) # type: ignore
+
+    def execute(self, context):
+        if self.object_name == "":
+            object = context.object
+        else:
+            object = bpy.data.objects[self.object_name]
+
+        print("removing component ", self.component_name, "from object  '"+object.name+"'")
+
+        if object is not None and self.component_name in object: 
+            remove_component_from_object(object, self.component_name)
+        else: 
+            self.report({"ERROR"}, "The object/ component to remove ("+ self.component_name +") does not exist")
+
+        return {'FINISHED'}
+
+
+class RemoveComponentFromAllObjectsOperator(Operator):
+    """Remove component from all object"""
+    bl_idname = "object.remove_bevy_component_all"
+    bl_label = "Remove component from all objects Operator"
     bl_options = {"UNDO"}
 
     component_name: StringProperty(
@@ -102,14 +135,12 @@ class RemoveComponentOperator(Operator):
     ) # type: ignore
 
     def execute(self, context):
-        object = context.object
+        print("removing component ", self.component_name, "from all objects")
 
-        print("removing component ", self.component_name, "from object  '"+object.name+"'")
-
-        if object is not None and self.component_name in object: 
-            remove_component_from_object(object, self.component_name)
-        else: 
-            self.report({"ERROR"}, "The object/ component to remove ("+ self.component_name +") does not exist")
+        for object in bpy.data.objects:
+            if len(object.keys()) > 0:
+                if object is not None and self.component_name in object: 
+                    remove_component_from_object(object, self.component_name)
 
         return {'FINISHED'}
 

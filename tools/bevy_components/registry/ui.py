@@ -3,7 +3,7 @@ import bpy
 from bpy_types import (UIList)
 from bpy.props import (StringProperty)
 
-from ..components.operators import OT_rename_component
+from ..components.operators import OT_rename_component, RemoveComponentFromAllObjectsOperator, RemoveComponentOperator
 from .operators import(
     COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL, 
     COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT, 
@@ -52,7 +52,7 @@ class BEVY_COMPONENTS_PT_Configuration(bpy.types.Panel):
 class BEVY_COMPONENTS_PT_AdvancedToolsPanel(bpy.types.Panel):
     """panel listing all the missing bevy types in the schema"""
     bl_idname = "BEVY_COMPONENTS_PT_AdvancedToolsPanel"
-    bl_label = "Advanced tools & configuration"
+    bl_label = "Advanced tools"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "Bevy Components"
@@ -86,53 +86,64 @@ class BEVY_COMPONENTS_PT_AdvancedToolsPanel(bpy.types.Panel):
         col.label(text="-----")
 
         for object in bpy.data.objects: # TODO: very inneficent
-            if "components_meta" in object:
-                components_metadata = object.components_meta.components
-                comp_names = []
-                for index, component_meta in enumerate(components_metadata):
-                    short_name = component_meta.name
-                    if component_meta.invalid:
-                        row = layout.row()
-                        col = row.column()
-                        col.label(text="Invalid")
-                        col = row.column()
-                        col.label(text=short_name)
-                        col = row.column()
-                        operator = col.operator(OT_select_object.bl_idname, text=object.name)
-                        operator.object_name = object.name
+            if len(object.keys()) > 0:
+                if "components_meta" in object:
+                    components_metadata = object.components_meta.components
+                    comp_names = []
+                    for index, component_meta in enumerate(components_metadata):
+                        short_name = component_meta.name
+                        if component_meta.invalid:
+                            row = layout.row()
+                            col = row.column()
+                            col.label(text="Invalid")
+                            col = row.column()
+                            col.label(text=short_name)
+                            col = row.column()
+                            operator = col.operator(OT_select_object.bl_idname, text=object.name)
+                            operator.object_name = object.name
 
-                        col = row.column()
-                        operator = col.operator(OT_select_component_name_to_replace.bl_idname, text="select for rename")
-                        operator.component_name = short_name
+                            col = row.column()
+                            operator = col.operator(OT_select_component_name_to_replace.bl_idname, text="select for rename")
+                            operator.component_name = short_name
 
-                        if not object.name in objects_with_invalid_components:
-                            objects_with_invalid_components.append(object.name)
-                        
-                        if not short_name in invalid_component_names:
-                            invalid_component_names.append(short_name)
+                            col = row.column()
+                            operator = row.operator(RemoveComponentOperator.bl_idname, text="", icon="X")
+                            operator.object_name = object.name
+                            operator.component_name = short_name
+
+                            if not object.name in objects_with_invalid_components:
+                                objects_with_invalid_components.append(object.name)
+                            
+                            if not short_name in invalid_component_names:
+                                invalid_component_names.append(short_name)
 
 
-                    comp_names.append(short_name) 
+                        comp_names.append(short_name) 
 
-                for custom_property in object.keys():
-                    if custom_property != 'components_meta' and custom_property not in comp_names:
-                        row = layout.row()
-                        col = row.column()
-                        col.label(text="Unregistered")
-                        col = row.column()
-                        col.label(text=custom_property)
-                        col = row.column()
-                        operator = col.operator(OT_select_object.bl_idname, text=object.name)
-                        operator.object_name = object.name
+                    for custom_property in object.keys():
+                        if custom_property != 'components_meta' and custom_property not in comp_names:
+                            row = layout.row()
+                            col = row.column()
+                            col.label(text="Unregistered")
+                            col = row.column()
+                            col.label(text=custom_property)
+                            col = row.column()
+                            operator = col.operator(OT_select_object.bl_idname, text=object.name)
+                            operator.object_name = object.name
 
-                        col = row.column()
-                        operator = col.operator(OT_select_component_name_to_replace.bl_idname, text="select for rename")
-                        operator.component_name = custom_property
+                            col = row.column()
+                            operator = col.operator(OT_select_component_name_to_replace.bl_idname, text="select for rename")
+                            operator.component_name = custom_property
 
-                        if not object.name in objects_with_invalid_components:
-                            objects_with_invalid_components.append(object.name)
-                        if not short_name in invalid_component_names:
-                            invalid_component_names.append(custom_property)
+                            col = row.column()
+                            operator = row.operator(RemoveComponentOperator.bl_idname, text="", icon="X")
+                            operator.object_name = object.name
+                            operator.component_name = custom_property
+
+                            if not object.name in objects_with_invalid_components:
+                                objects_with_invalid_components.append(object.name)
+                            if not short_name in invalid_component_names:
+                                invalid_component_names.append(custom_property)
         layout.separator()
         layout.separator()
 
@@ -158,6 +169,12 @@ class BEVY_COMPONENTS_PT_AdvancedToolsPanel(bpy.types.Panel):
         operator.target_objects = json.dumps(objects_with_invalid_components)
         new_name = registry.type_infos[available_components.list]['short_name'] if available_components.list in registry.type_infos else ""
         operator.new_name = new_name
+        col.enabled = registry_has_type_infos
+
+        col = row.column()
+        operator = row.operator(RemoveComponentFromAllObjectsOperator.bl_idname, text="", icon="X")
+        operator.component_name = context.window_manager.bevy_component_rename_helper.original_name
+        col.enabled = registry_has_type_infos
 
         layout.separator()
         layout.separator()
