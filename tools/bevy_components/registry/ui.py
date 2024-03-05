@@ -169,27 +169,54 @@ class BEVY_COMPONENTS_PT_AdvancedToolsPanel(bpy.types.Panel):
         row.label(text="WARNING ! The following operations will overwrite your existing custom properties if they have matching types on the bevy side !")
         row.alert = True
 
+        ##
         row = layout.row()
-        row.operator(COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT.bl_idname, text="update custom properties of current object" , icon="LOOP_FORWARDS")
-        row.enabled = registry_has_type_infos and selected_object is not None
+        custom_properties_from_components_progress_current = context.window_manager.custom_properties_from_components_progress
+
+        if custom_properties_from_components_progress_current == -1.0:
+            row.operator(COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT.bl_idname, text="update custom properties of current object" , icon="LOOP_FORWARDS")
+            row.enabled = registry_has_type_infos and selected_object is not None
+        else:
+            if hasattr(layout,"progress") : # only for Blender > 4.0
+                layout.progress(factor = custom_properties_from_components_progress_current, text=f"updating {custom_properties_from_components_progress_current * 100.0:.2f}%")
 
         layout.separator()
         row = layout.row()
-        row.operator(COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL.bl_idname, text="update custom properties of ALL objects" , icon="LOOP_FORWARDS")
-        row.enabled = registry_has_type_infos
+        custom_properties_from_components_progress_all = context.window_manager.custom_properties_from_components_progress_all
+
+        if custom_properties_from_components_progress_all == -1.0:
+            row.operator(COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL.bl_idname, text="update custom properties of ALL objects" , icon="LOOP_FORWARDS")
+            row.enabled = registry_has_type_infos
+        else:
+            if hasattr(layout,"progress") : # only for Blender > 4.0
+                layout.progress(factor = custom_properties_from_components_progress_all, text=f"updating {custom_properties_from_components_progress_all * 100.0:.2f}%")
+
+        ########################
 
         row = layout.row()
         row.label(text="WARNING ! The following operations will try to overwrite your existing ui values if they have matching types on the bevy side !")
         row.alert = True
 
+        components_from_custom_properties_progress_current = context.window_manager.components_from_custom_properties_progress
+
         row = layout.row()
-        row.operator(COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT.bl_idname, text="update UI FROM custom properties of current object" , icon="LOOP_BACK")
-        row.enabled = registry_has_type_infos and selected_object is not None
+        if components_from_custom_properties_progress_current == -1.0:
+            row.operator(COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT.bl_idname, text="update UI FROM custom properties of current object" , icon="LOOP_BACK")
+            row.enabled = registry_has_type_infos and selected_object is not None
+        else:
+            if hasattr(layout,"progress") : # only for Blender > 4.0
+                layout.progress(factor = components_from_custom_properties_progress_current, text=f"updating {components_from_custom_properties_progress_current * 100.0:.2f}%")
 
         layout.separator()
         row = layout.row()
-        row.operator(COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL.bl_idname, text="update UI FROM custom properties of ALL objects" , icon="LOOP_BACK")
-        row.enabled = registry_has_type_infos
+        components_from_custom_properties_progress_all = context.window_manager.components_from_custom_properties_progress_all
+
+        if components_from_custom_properties_progress_all == -1.0:
+            row.operator(COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL.bl_idname, text="update UI FROM custom properties of ALL objects" , icon="LOOP_BACK")
+            row.enabled = registry_has_type_infos
+        else:
+            if hasattr(layout,"progress") : # only for Blender > 4.0
+                layout.progress(factor = components_from_custom_properties_progress_all, text=f"updating {components_from_custom_properties_progress_all * 100.0:.2f}%")
 
 
 class BEVY_COMPONENTS_PT_MissingTypesPanel(bpy.types.Panel):
