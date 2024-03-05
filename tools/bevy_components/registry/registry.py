@@ -241,9 +241,6 @@ class ComponentsRegistry(PropertyGroup):
 
         del bpy.types.WindowManager.components_registry
 
-
-    
-    
     def load_schema(self):
         print("load schema", self)
         # cleanup previous data if any
@@ -352,9 +349,9 @@ class ComponentsRegistry(PropertyGroup):
         return propGroupName
 
     def get_propertyGroupName_from_shortName(self, shortName):
-        
         return self.short_names_to_propgroup_names.get(shortName, None)
 
+    ###########
 
 """
     object[component_definition.name] = 0.5

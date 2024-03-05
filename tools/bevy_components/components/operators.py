@@ -90,8 +90,6 @@ class PasteComponentOperator(Operator):
 
         return {'FINISHED'}
     
-
-    
 class RemoveComponentOperator(Operator):
     """Delete component from blueprint"""
     bl_idname = "object.remove_bevy_component"
@@ -112,6 +110,58 @@ class RemoveComponentOperator(Operator):
             remove_component_from_object(object, self.component_name)
         else: 
             self.report({"ERROR"}, "The object/ component to remove ("+ self.component_name +") does not exist")
+
+        return {'FINISHED'}
+
+
+class RenameHelper(bpy.types.PropertyGroup):
+    original_name: bpy.props.StringProperty(name="") # type: ignore
+    new_name: bpy.props.StringProperty(name="") # type: ignore
+
+    #object: bpy.props.PointerProperty(type=bpy.types.Object)
+    @classmethod
+    def register(cls):
+        bpy.types.WindowManager.bevy_component_rename_helper = bpy.props.PointerProperty(type=RenameHelper)
+
+    @classmethod
+    def unregister(cls):
+        # remove handlers & co
+        del bpy.types.WindowManager.bevy_component_rename_helper
+
+class OT_rename_component(Operator):
+    """Rename component"""
+    bl_idname = "object.rename_component"
+    bl_label = "rename component"
+    bl_options = {"UNDO"}
+
+    new_name: StringProperty(
+        name="new_name",
+        description="new name of component",
+    ) # type: ignore
+
+    target_objects: bpy.props.StringProperty() # type: ignore
+
+    def execute(self, context):
+        registry = context.window_manager.components_registry
+        type_infos = registry.type_infos
+        settings = context.window_manager.bevy_component_rename_helper
+        original_name = settings.original_name
+        new_name = self.new_name
+
+        print("renaming components: original name", settings.original_name, "new_name", self.new_name, "targets", self.target_objects)
+        target_objects = json.loads(self.target_objects)
+        if original_name != '' and new_name != '' and len(target_objects) > 0:
+            for object_name in target_objects:
+                object = bpy.data.objects[object_name]
+                if object and original_name in object:
+                    object[new_name] = object[original_name]
+                    remove_component_from_object(object, original_name)
+                    # attempt conversion
+                    long_name = registry.short_names_to_long_names[new_name]
+                    component_definition = type_infos[long_name]
+                    add_component_to_object(object, component_definition, object[new_name])
+        # TODO: clear data after we are done
+
 
         return {'FINISHED'}
 

@@ -1,9 +1,15 @@
+import json
 import bpy
 from bpy_types import (UIList)
+from bpy.props import (StringProperty)
+
+from ..components.operators import OT_rename_component
 from .operators import(
     COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL, 
     COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT, 
-    OT_OpenFilebrowser, ReloadRegistryOperator, 
+    OT_OpenFilebrowser,
+    OT_select_component_name_to_replace,
+    OT_select_object, ReloadRegistryOperator, 
     COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL, 
     COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT)
 
@@ -21,8 +27,7 @@ class BEVY_COMPONENTS_PT_Configuration(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         registry = context.window_manager.components_registry 
-        registry_has_type_infos = registry.has_type_infos()
-        selected_object = context.selected_objects[0] if len(context.selected_objects) > 0 else None
+      
 
         row = layout.row()
         col = row.column()
@@ -42,6 +47,123 @@ class BEVY_COMPONENTS_PT_Configuration(bpy.types.Panel):
 
         layout.separator()
         layout.separator()
+
+        
+class BEVY_COMPONENTS_PT_AdvancedToolsPanel(bpy.types.Panel):
+    """panel listing all the missing bevy types in the schema"""
+    bl_idname = "BEVY_COMPONENTS_PT_AdvancedToolsPanel"
+    bl_label = "Advanced tools & configuration"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = "Bevy Components"
+    bl_context = "objectmode"
+    bl_parent_id = "BEVY_COMPONENTS_PT_MainPanel"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_description = "advanced tooling"
+
+    def draw(self, context):
+        layout = self.layout
+        registry = bpy.context.window_manager.components_registry 
+        registry_has_type_infos = registry.has_type_infos()
+        selected_object = context.selected_objects[0] if len(context.selected_objects) > 0 else None
+        available_components = bpy.context.window_manager.components_list
+
+        row = layout.row()
+        box= row.box()
+        box.label(text="Invalid/ unregistered components")
+
+        objects_with_invalid_components = []
+        invalid_component_names = []
+
+        row = layout.row()
+        col = row.column()
+        col.label(text="Status")
+        col = row.column()
+        col.label(text="Component")
+        col = row.column()
+        col.label(text="Object")
+        col = row.column()
+        col.label(text="-----")
+
+        for object in bpy.data.objects: # TODO: very inneficent
+            if "components_meta" in object:
+                components_metadata = object.components_meta.components
+                comp_names = []
+                for index, component_meta in enumerate(components_metadata):
+                    short_name = component_meta.name
+                    if component_meta.invalid:
+                        row = layout.row()
+                        col = row.column()
+                        col.label(text="Invalid")
+                        col = row.column()
+                        col.label(text=short_name)
+                        col = row.column()
+                        operator = col.operator(OT_select_object.bl_idname, text=object.name)
+                        operator.object_name = object.name
+
+                        col = row.column()
+                        operator = col.operator(OT_select_component_name_to_replace.bl_idname, text="select for rename")
+                        operator.component_name = short_name
+
+                        if not object.name in objects_with_invalid_components:
+                            objects_with_invalid_components.append(object.name)
+                        
+                        if not short_name in invalid_component_names:
+                            invalid_component_names.append(short_name)
+
+
+                    comp_names.append(short_name) 
+
+                for custom_property in object.keys():
+                    if custom_property != 'components_meta' and custom_property not in comp_names:
+                        row = layout.row()
+                        col = row.column()
+                        col.label(text="Unregistered")
+                        col = row.column()
+                        col.label(text=custom_property)
+                        col = row.column()
+                        operator = col.operator(OT_select_object.bl_idname, text=object.name)
+                        operator.object_name = object.name
+
+                        col = row.column()
+                        operator = col.operator(OT_select_component_name_to_replace.bl_idname, text="select for rename")
+                        operator.component_name = custom_property
+
+                        if not object.name in objects_with_invalid_components:
+                            objects_with_invalid_components.append(object.name)
+                        if not short_name in invalid_component_names:
+                            invalid_component_names.append(custom_property)
+        layout.separator()
+        layout.separator()
+
+        row = layout.row()
+        col = row.column()
+        col.label(text="Original")
+        col = row.column()
+        col.label(text="New")
+        col = row.column()
+        col.label(text="------")
+
+        row = layout.row()
+        col = row.column()
+        box = col.box()
+        box.label(text=bpy.context.window_manager.bevy_component_rename_helper.original_name)
+
+        col = row.column()
+        col.prop(available_components, "list", text="")
+        #row.prop(available_components, "filter",text="Filter")
+
+        col = row.column()
+        operator = col.operator(OT_rename_component.bl_idname, text="rename")
+        operator.target_objects = json.dumps(objects_with_invalid_components)
+        new_name = registry.type_infos[available_components.list]['short_name'] if available_components.list in registry.type_infos else ""
+        operator.new_name = new_name
+
+        layout.separator()
+        layout.separator()
+        row = layout.row()
+        box= row.box()
+        box.label(text="Conversions between custom properties and components & vice-versa")
 
         row = layout.row()
         row.label(text="WARNING ! The following operations will overwrite your existing custom properties if they have matching types on the bevy side !")

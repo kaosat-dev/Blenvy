@@ -133,3 +133,41 @@ class OT_OpenFilebrowser(Operator, ImportHelper):
         
         return {'FINISHED'}
     
+
+class OT_select_object(Operator):
+    """Select object by name"""
+    bl_idname = "object.select"
+    bl_label = "Select object"
+    bl_options = {"UNDO"}
+
+    object_name: StringProperty(
+        name="object_name",
+        description="object to select's name ",
+    ) # type: ignore
+
+    def execute(self, context):
+        if self.object_name:
+            object = bpy.data.objects[self.object_name]
+            scenes_of_object = list(object.users_scene)
+            if len(scenes_of_object) > 0:
+                bpy.ops.object.select_all(action='DESELECT')
+                bpy.context.window.scene = scenes_of_object[0]
+                object.select_set(True)    
+                bpy.context.view_layer.objects.active = object
+        return {'FINISHED'}
+    
+class OT_select_component_name_to_replace(Operator):
+    """Select component name to replace"""
+    bl_idname = "object.select_component_name_to_replace"
+    bl_label = "Select object"
+    bl_options = {"UNDO"}
+
+    component_name: StringProperty(
+        name="component_name",
+        description="component name to replace",
+    ) # type: ignore
+
+    def execute(self, context):
+        context.window_manager.bevy_component_rename_helper.original_name = self.component_name
+        return {'FINISHED'}
+    
