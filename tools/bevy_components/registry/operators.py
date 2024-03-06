@@ -220,7 +220,7 @@ class OT_select_object(Operator):
 class OT_select_component_name_to_replace(Operator):
     """Select component name to replace"""
     bl_idname = "object.select_component_name_to_replace"
-    bl_label = "Select object"
+    bl_label = "Select component name for bulk replace"
     bl_options = {"UNDO"}
 
     component_name: StringProperty(

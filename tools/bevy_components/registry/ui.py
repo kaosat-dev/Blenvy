@@ -61,6 +61,54 @@ class BEVY_COMPONENTS_PT_AdvancedToolsPanel(bpy.types.Panel):
     bl_options = {'DEFAULT_CLOSED'}
     bl_description = "advanced tooling"
 
+
+    def draw_invalid_or_unregistered_header(self, layout, items):
+        row = layout.row()
+
+        for item in items:
+            col = row.column()
+            col.label(text=item)
+
+
+    def draw_invalid_or_unregistered(self, layout, status, component_name, object):
+        available_components = bpy.context.window_manager.components_list
+        registry = bpy.context.window_manager.components_registry 
+        registry_has_type_infos = registry.has_type_infos()
+
+        row = layout.row()
+
+        col = row.column()
+        col.label(text=component_name)
+
+        col = row.column()
+        operator = col.operator(OT_select_object.bl_idname, text=object.name)
+        operator.object_name = object.name
+
+        col = row.column()
+        col.label(text=status)
+
+        col = row.column()
+        col.prop(available_components, "list", text="")
+
+        col = row.column()
+        operator = col.operator(OT_rename_component.bl_idname, text="", icon="SHADERFX") #rename
+        new_name = registry.type_infos[available_components.list]['short_name'] if available_components.list in registry.type_infos else ""
+        operator.original_name = component_name
+        operator.target_objects = json.dumps([object.name])
+        operator.new_name = new_name
+        col.enabled = registry_has_type_infos and component_name != "" and component_name != new_name
+
+
+        col = row.column()
+        operator = col.operator(RemoveComponentOperator.bl_idname, text="", icon="X")
+        operator.object_name = object.name
+        operator.component_name = component_name
+
+        col = row.column()
+        col = row.column()
+        operator = col.operator(OT_select_component_name_to_replace.bl_idname, text="", icon="EYEDROPPER") #text="select for rename", 
+        operator.component_name = component_name
+
     def draw(self, context):
         layout = self.layout
         registry = bpy.context.window_manager.components_registry 
@@ -75,15 +123,7 @@ class BEVY_COMPONENTS_PT_AdvancedToolsPanel(bpy.types.Panel):
         objects_with_invalid_components = []
         invalid_component_names = []
 
-        row = layout.row()
-        col = row.column()
-        col.label(text="Status")
-        col = row.column()
-        col.label(text="Component")
-        col = row.column()
-        col.label(text="Object")
-        col = row.column()
-        col.label(text="-----")
+        self.draw_invalid_or_unregistered_header(layout, ["Component", "Object", "Status", "Target"])
 
         for object in bpy.data.objects: # TODO: very inneficent
             if len(object.keys()) > 0:
@@ -93,24 +133,8 @@ class BEVY_COMPONENTS_PT_AdvancedToolsPanel(bpy.types.Panel):
                     for index, component_meta in enumerate(components_metadata):
                         short_name = component_meta.name
                         if component_meta.invalid:
-                            row = layout.row()
-                            col = row.column()
-                            col.label(text="Invalid")
-                            col = row.column()
-                            col.label(text=short_name)
-                            col = row.column()
-                            operator = col.operator(OT_select_object.bl_idname, text=object.name)
-                            operator.object_name = object.name
-
-                            col = row.column()
-                            operator = col.operator(OT_select_component_name_to_replace.bl_idname, text="select for rename")
-                            operator.component_name = short_name
-
-                            col = row.column()
-                            operator = row.operator(RemoveComponentOperator.bl_idname, text="", icon="X")
-                            operator.object_name = object.name
-                            operator.component_name = short_name
-
+                            self.draw_invalid_or_unregistered(layout, "Invalid", short_name, object)
+                        
                             if not object.name in objects_with_invalid_components:
                                 objects_with_invalid_components.append(object.name)
                             
@@ -122,23 +146,7 @@ class BEVY_COMPONENTS_PT_AdvancedToolsPanel(bpy.types.Panel):
 
                     for custom_property in object.keys():
                         if custom_property != 'components_meta' and custom_property not in comp_names:
-                            row = layout.row()
-                            col = row.column()
-                            col.label(text="Unregistered")
-                            col = row.column()
-                            col.label(text=custom_property)
-                            col = row.column()
-                            operator = col.operator(OT_select_object.bl_idname, text=object.name)
-                            operator.object_name = object.name
-
-                            col = row.column()
-                            operator = col.operator(OT_select_component_name_to_replace.bl_idname, text="select for rename")
-                            operator.component_name = custom_property
-
-                            col = row.column()
-                            operator = row.operator(RemoveComponentOperator.bl_idname, text="", icon="X")
-                            operator.object_name = object.name
-                            operator.component_name = custom_property
+                            self.draw_invalid_or_unregistered(layout, "Unregistered", custom_property, object)
 
                             if not object.name in objects_with_invalid_components:
                                 objects_with_invalid_components.append(object.name)
@@ -146,6 +154,7 @@ class BEVY_COMPONENTS_PT_AdvancedToolsPanel(bpy.types.Panel):
                                 invalid_component_names.append(custom_property)
         layout.separator()
         layout.separator()
+        original_name = bpy.context.window_manager.bevy_component_rename_helper.original_name
 
         row = layout.row()
         col = row.column()
@@ -158,23 +167,23 @@ class BEVY_COMPONENTS_PT_AdvancedToolsPanel(bpy.types.Panel):
         row = layout.row()
         col = row.column()
         box = col.box()
-        box.label(text=bpy.context.window_manager.bevy_component_rename_helper.original_name)
+        box.label(text=original_name)
 
         col = row.column()
         col.prop(available_components, "list", text="")
         #row.prop(available_components, "filter",text="Filter")
-
+    
         col = row.column()
-        operator = col.operator(OT_rename_component.bl_idname, text="rename")
+        operator = col.operator(OT_rename_component.bl_idname, text="apply", icon="SHADERFX")
         operator.target_objects = json.dumps(objects_with_invalid_components)
         new_name = registry.type_infos[available_components.list]['short_name'] if available_components.list in registry.type_infos else ""
         operator.new_name = new_name
-        col.enabled = registry_has_type_infos
+        col.enabled = registry_has_type_infos and original_name != "" and original_name != new_name
 
         col = row.column()
         operator = row.operator(RemoveComponentFromAllObjectsOperator.bl_idname, text="", icon="X")
         operator.component_name = context.window_manager.bevy_component_rename_helper.original_name
-        col.enabled = registry_has_type_infos
+        col.enabled = registry_has_type_infos and original_name != ""
 
         layout.separator()
         layout.separator()

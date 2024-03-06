@@ -165,6 +165,7 @@ class OT_rename_component(Operator):
     bl_label = "rename component"
     bl_options = {"UNDO"}
 
+    original_name: bpy.props.StringProperty(default="") # type: ignore
     new_name: StringProperty(
         name="new_name",
         description="new name of component",
@@ -176,22 +177,59 @@ class OT_rename_component(Operator):
         registry = context.window_manager.components_registry
         type_infos = registry.type_infos
         settings = context.window_manager.bevy_component_rename_helper
-        original_name = settings.original_name
+        original_name = settings.original_name if self.original_name == "" else self.original_name
         new_name = self.new_name
 
-        print("renaming components: original name", settings.original_name, "new_name", self.new_name, "targets", self.target_objects)
+        print("FOO", self.original_name, "fsdf", settings.original_name)
+
+        print("renaming components: original name", original_name, "new_name", self.new_name, "targets", self.target_objects)
         target_objects = json.loads(self.target_objects)
-        if original_name != '' and new_name != '' and len(target_objects) > 0:
+        errors = []
+        if original_name != '' and new_name != '' and original_name != new_name and len(target_objects) > 0:
             for object_name in target_objects:
                 object = bpy.data.objects[object_name]
                 if object and original_name in object:
-                    object[new_name] = object[original_name]
-                    remove_component_from_object(object, original_name)
-                    # attempt conversion
-                    long_name = registry.short_names_to_long_names[new_name]
-                    component_definition = type_infos[long_name]
-                    add_component_to_object(object, component_definition, object[new_name])
+                    # get metadata
+                    components_metadata = getattr(object, "components_meta", None)
+                    component_meta = None
+                    if components_metadata:
+                        components_metadata = components_metadata.components
+                        component_meta =  next(filter(lambda component: component["name"] == new_name, components_metadata), None)
+                    # copy data to new component, remove the old one
+                    try: 
+                        object[new_name] = object[original_name]
+                        remove_component_from_object(object, original_name)
+                    except Exception as error:
+                        if '__disable__update' in object:
+                            del object["__disable__update"] # make sure custom properties are updateable afterwards, even in the case of failure
+                        if component_meta:
+                            component_meta.invalid = True
+                            component_meta.invalid_details = "unknow issue when renaming/transforming component, please remove it & add it back again"
+
+                        errors.append( "failed to copy old component value to new component: object: '" + object.name + "', error: " + str(error))
+                        
+                    try:
+                        # attempt conversion
+                        long_name = registry.short_names_to_long_names[new_name]
+                        component_definition = type_infos[long_name]
+                        add_component_to_object(object, component_definition, object[new_name])
+                    except Exception as error:
+                        if '__disable__update' in object:
+                            del object["__disable__update"] # make sure custom properties are updateable afterwards, even in the case of failure
+                        if component_meta:
+                            component_meta.invalid = True
+                            component_meta.invalid_details = "wrong custom property value, overwrite them by changing the values in the ui or change them & regenerate ('Update UI from ...button')"
+
+                        errors.append( "wrong custom property values to generate target component: object: '" + object.name + "', error: " + str(error))
+
+        if len(errors) > 0:
+            self.report({'ERROR'}, "Failed to rename component: Errors:" + str(errors))
+        else: 
+            self.report({'INFO'}, "Sucessfully renamed component")
+
         # TODO: clear data after we are done
+        self.original_name = ""
+        context.window_manager.bevy_component_rename_helper.original_name = ""
 
 
         return {'FINISHED'}
