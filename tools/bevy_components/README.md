@@ -57,6 +57,14 @@ Before you can use the add-on you need to configure it
 
 ![configuration 3](./docs/configuration3.png)
 
+ #### registry file polling
+
+
+  * by default, the add-on will check for changes in your registry file every second, and refresh the UI accordingly
+    * you can set the polling frequency or turn it off if you do not want auto-refresh
+
+    ![registry file polling](./docs/registry_polling.png)
+
 
 
 ## Use
@@ -173,8 +181,8 @@ It will add the component to the select object
 
     ![invalid component](./docs/invalid_components.png)
 
-    > important ! ```gltf_auto_export``` currently has no way of filtering out components, so you need to delete invalid components like these before exporting
-    this will be adress in the future
+  > see [here](#invalidunregistered-type-renaming--conversion) for ways to convert invalid / unregistered components to other types.
+
 
 - if you are encountering this type of view: don't panic your component data is not gone ! It just means you need to reload the registry data by clicking on the relevant button
 
@@ -182,18 +190,65 @@ It will add the component to the select object
 
   
 
-## advanced configuration
+## Advanced Tools
 
- ### registry file polling
+In this section you will find various additional more advanced tooling
+
+### Invalid/unregistered type renaming / conversion
+
+If you have components that are
+  * invalid : ie some error was diagnosed
+  * unregistered: a custom property is present on the object, but there is no matching type in the registry
+
+Here you will get an overview, of ALL invalid and unregistered components in your Blender project, so you can find them, rename/convert them,
+or delete them, also in bulk
+
+![component rename overview](./docs/component_rename_overview2.png)
+
+* you can click on the button to select the object in your outliner (this also works across scenes, so you will be taken to the scene where the
+given object is located)
+
+![update custom properties](./docs/component_rename_object_select.png)
 
 
-  * by default, the add-on will check for changes in your registry file every second, and refresh the UI accordingly
-    * you can set the polling frequency or turn it off if you do not want auto-refresh
+#### Single object component renaming/ conversion
 
-    ![registry file polling](./docs/registry_polling.png)
+  - to rename/convert a single component for a single object:
+    
+    * go to the row of the object you want to convert the component of
+    * in the dropdown menu, choose the target component
+    * click on the button with the magic wand to convert the component
+
+       ![single rename](./docs/component_rename_single.png)
+
+  > the tool will attempt to automatically convert the source component, including the field names/values, if the target component has the same ones
+    If it fails to do the conversion, you will get an error message, and you will either have to change the custom property yourself, or you can simply
+    change the values in the UI, which will automatically generate the custom property value
+
+  - to delete a single component for a single object:
+
+    * go to the row of the object you want to remove the component from
+    * click on the button with the "x" to remove the component  
+
+       ![single delete](./docs/component_remove_single.png)
+
+#### Bulk component renaming/ conversion
+
+  - use this method if you want to convert ALL components of a given type of ALL objects 
+
+    * click on this button to pick your source component
+
+      ![bulk convert remove](./docs/component_rename_remove_bulk.png)
+
+    * for conversion: in the dropdown menu, choose the target component & click apply to convert all matching components
+    * for deletion: clic on the "x" to remove all matching components
+
+      ![bulk convert remove](./docs/component_rename_remove_bulk2.png)
 
 
- ### regenerate custom property values
+ ### For conversion between custom properties & components & vice-versa
+
+ #### regenerate custom property values
 
   - "update custom properties of current object" : will go over **all components** that you have defined for the **currently selected object**, and re-generate the 
 
@@ -212,7 +267,7 @@ It will add the component to the select object
      You should also re-export your gltf files , otherwise you might run into issues
 
   
-  ### regenerate UI values
+  #### regenerate component/ UI values
 
    - since v0.2, you have the option to regenerate (for the selected object or all objects, as above) to regenerate your UI values from the custom property values
 
