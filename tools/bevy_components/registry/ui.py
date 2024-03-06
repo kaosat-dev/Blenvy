@@ -174,16 +174,27 @@ class BEVY_COMPONENTS_PT_AdvancedToolsPanel(bpy.types.Panel):
         #row.prop(available_components, "filter",text="Filter")
     
         col = row.column()
-        operator = col.operator(OT_rename_component.bl_idname, text="apply", icon="SHADERFX")
-        operator.target_objects = json.dumps(objects_with_invalid_components)
-        new_name = registry.type_infos[available_components.list]['short_name'] if available_components.list in registry.type_infos else ""
-        operator.new_name = new_name
-        col.enabled = registry_has_type_infos and original_name != "" and original_name != new_name
+        components_rename_progress = context.window_manager.components_rename_progress
+
+        if components_rename_progress == -1.0:
+            operator = col.operator(OT_rename_component.bl_idname, text="apply", icon="SHADERFX")
+            operator.target_objects = json.dumps(objects_with_invalid_components)
+            new_name = registry.type_infos[available_components.list]['short_name'] if available_components.list in registry.type_infos else ""
+            operator.new_name = new_name
+            col.enabled = registry_has_type_infos and original_name != "" and original_name != new_name
+        else:
+            if hasattr(layout,"progress") : # only for Blender > 4.0
+                col.progress(factor = components_rename_progress, text=f"updating {components_rename_progress * 100.0:.2f}%")
 
         col = row.column()
-        operator = row.operator(RemoveComponentFromAllObjectsOperator.bl_idname, text="", icon="X")
-        operator.component_name = context.window_manager.bevy_component_rename_helper.original_name
-        col.enabled = registry_has_type_infos and original_name != ""
+        remove_components_progress = context.window_manager.components_remove_progress
+        if remove_components_progress == -1.0:
+            operator = row.operator(RemoveComponentFromAllObjectsOperator.bl_idname, text="", icon="X")
+            operator.component_name = context.window_manager.bevy_component_rename_helper.original_name
+            col.enabled = registry_has_type_infos and original_name != ""
+        else:
+            if hasattr(layout,"progress") : # only for Blender > 4.0
+                col.progress(factor = remove_components_progress, text=f"updating {remove_components_progress * 100.0:.2f}%")
 
         layout.separator()
         layout.separator()

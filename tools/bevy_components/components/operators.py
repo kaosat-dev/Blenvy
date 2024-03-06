@@ -112,9 +112,7 @@ class RemoveComponentOperator(Operator):
             object = context.object
         else:
             object = bpy.data.objects[self.object_name]
-
         print("removing component ", self.component_name, "from object  '"+object.name+"'")
-
         if object is not None and self.component_name in object: 
             remove_component_from_object(object, self.component_name)
         else: 
@@ -134,13 +132,27 @@ class RemoveComponentFromAllObjectsOperator(Operator):
         description="component to delete",
     ) # type: ignore
 
+    @classmethod
+    def register(cls):
+        bpy.types.WindowManager.components_remove_progress = bpy.props.FloatProperty(default=-1.0)
+
+    @classmethod
+    def unregister(cls):
+        del bpy.types.WindowManager.components_remove_progress
+
     def execute(self, context):
         print("removing component ", self.component_name, "from all objects")
-
-        for object in bpy.data.objects:
+        total = len(bpy.data.objects)
+        for index, object in enumerate(bpy.data.objects):
             if len(object.keys()) > 0:
                 if object is not None and self.component_name in object: 
                     remove_component_from_object(object, self.component_name)
+            
+            progress = index / total
+            context.window_manager.components_remove_progress = progress
+            # now force refresh the ui
+            bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)
+        context.window_manager.components_remove_progress = -1.0
 
         return {'FINISHED'}
 
@@ -173,6 +185,14 @@ class OT_rename_component(Operator):
 
     target_objects: bpy.props.StringProperty() # type: ignore
 
+    @classmethod
+    def register(cls):
+        bpy.types.WindowManager.components_rename_progress = bpy.props.FloatProperty(default=-1.0) #bpy.props.PointerProperty(type=RenameHelper)
+
+    @classmethod
+    def unregister(cls):
+        del bpy.types.WindowManager.components_rename_progress
+
     def execute(self, context):
         registry = context.window_manager.components_registry
         type_infos = registry.type_infos
@@ -180,13 +200,14 @@ class OT_rename_component(Operator):
         original_name = settings.original_name if self.original_name == "" else self.original_name
         new_name = self.new_name
 
-        print("FOO", self.original_name, "fsdf", settings.original_name)
 
         print("renaming components: original name", original_name, "new_name", self.new_name, "targets", self.target_objects)
         target_objects = json.loads(self.target_objects)
         errors = []
+        total = len(target_objects)
+
         if original_name != '' and new_name != '' and original_name != new_name and len(target_objects) > 0:
-            for object_name in target_objects:
+            for index, object_name in enumerate(target_objects):
                 object = bpy.data.objects[object_name]
                 if object and original_name in object:
                     # get metadata
@@ -221,6 +242,11 @@ class OT_rename_component(Operator):
                             component_meta.invalid_details = "wrong custom property value, overwrite them by changing the values in the ui or change them & regenerate ('Update UI from ...button')"
 
                         errors.append( "wrong custom property values to generate target component: object: '" + object.name + "', error: " + str(error))
+                
+                progress = index / total
+                context.window_manager.components_rename_progress = progress
+                # now force refresh the ui
+                bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)
 
         if len(errors) > 0:
             self.report({'ERROR'}, "Failed to rename component: Errors:" + str(errors))
@@ -230,6 +256,7 @@ class OT_rename_component(Operator):
         #clear data after we are done
         self.original_name = ""
         context.window_manager.bevy_component_rename_helper.original_name = ""
+        context.window_manager.components_rename_progress = -1.0
 
 
         return {'FINISHED'}
