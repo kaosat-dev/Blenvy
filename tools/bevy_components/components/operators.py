@@ -227,7 +227,7 @@ class OT_rename_component(Operator):
         else: 
             self.report({'INFO'}, "Sucessfully renamed component")
 
-        # TODO: clear data after we are done
+        #clear data after we are done
         self.original_name = ""
         context.window_manager.bevy_component_rename_helper.original_name = ""
 
