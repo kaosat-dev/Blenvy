@@ -150,7 +150,7 @@ impl Plugin for BlueprintsPlugin {
                 .in_set(GltfBlueprintsSet::Spawn),
         )
         .add_systems(
-            Update,
+            PostUpdate,
             (spawned_blueprint_post_process, apply_deferred)
                 .chain()
                 .in_set(GltfBlueprintsSet::AfterSpawn),
