@@ -1,7 +1,7 @@
 bl_info = {
     "name": "bevy_components",
     "author": "kaosigh",
-    "version": (0, 4, 0),
+    "version": (0, 4, 1),
     "blender": (3, 4, 0),
     "location": "VIEW_3D",
     "description": "UI to help create Bevy blueprints and components",
@@ -16,11 +16,11 @@ from bpy.props import (StringProperty)
 
 from .helpers import load_settings
 from .blueprints import CreateBlueprintOperator
-from .components.operators import CopyComponentOperator, RemoveComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, AddComponentOperator, Toggle_ComponentVisibility
+from .components.operators import CopyComponentOperator, Fix_Component_Operator, OT_rename_component, RemoveComponentFromAllObjectsOperator, RemoveComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, AddComponentOperator, RenameHelper, Toggle_ComponentVisibility
 
 from .registry.registry import ComponentsRegistry,MissingBevyType
-from .registry.operators import (COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT, COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT, ReloadRegistryOperator, OT_OpenFilebrowser)
-from .registry.ui import (BEVY_COMPONENTS_PT_Configuration, BEVY_COMPONENTS_PT_MissingTypesPanel, MISSING_TYPES_UL_List)
+from .registry.operators import (COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT, COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT, OT_select_component_name_to_replace, OT_select_object, ReloadRegistryOperator, OT_OpenFilebrowser)
+from .registry.ui import (BEVY_COMPONENTS_PT_Configuration, BEVY_COMPONENTS_PT_AdvancedToolsPanel, BEVY_COMPONENTS_PT_MissingTypesPanel, MISSING_TYPES_UL_List)
 
 from .components.metadata import (ComponentMetadata, ComponentsMeta, ensure_metadata_for_all_objects)
 from .propGroups.prop_groups import (generate_propertyGroups_for_components)
@@ -87,6 +87,10 @@ classes = [
     CopyComponentOperator,
     PasteComponentOperator,
     RemoveComponentOperator,
+    RemoveComponentFromAllObjectsOperator,
+    Fix_Component_Operator,
+    OT_rename_component,
+    RenameHelper,
     GenerateComponent_From_custom_property_Operator,
     Toggle_ComponentVisibility,
 
@@ -105,9 +109,13 @@ classes = [
 
     COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL,
     COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT,
+
+    OT_select_object,
+    OT_select_component_name_to_replace, 
     
     BEVY_COMPONENTS_PT_MainPanel,
     BEVY_COMPONENTS_PT_ComponentsPanel,
+    BEVY_COMPONENTS_PT_AdvancedToolsPanel,
     BEVY_COMPONENTS_PT_Configuration,
     MISSING_TYPES_UL_List,
     BEVY_COMPONENTS_PT_MissingTypesPanel,

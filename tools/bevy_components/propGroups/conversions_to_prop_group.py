@@ -224,8 +224,9 @@ def property_group_value_from_custom_property_value(property_group, definition, 
                
 
         else:
-            pass
-            #print("struct with zero fields")
+            if len(value) > 2: #a unit struct should be two chars long :()
+                #print("struct with zero fields")
+                raise Exception("input string too big for a unit struct")
 
     elif type_info == "Tuple": 
         custom_property_values = parse_tuplestruct_string(value, start_nesting=1 if len(nesting) == 1 else 1)

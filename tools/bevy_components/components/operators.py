@@ -3,7 +3,7 @@ import json
 import bpy
 from bpy_types import Operator
 from bpy.props import (StringProperty)
-from .metadata import add_component_to_object, add_metadata_to_components_without_metadata, apply_customProperty_values_to_object_propertyGroups, copy_propertyGroup_values_to_another_object, find_component_definition_from_short_name, remove_component_from_object
+from .metadata import add_component_to_object, add_metadata_to_components_without_metadata, apply_customProperty_values_to_object_propertyGroups, apply_propertyGroup_values_to_object_customProperties_for_component, copy_propertyGroup_values_to_another_object, find_component_definition_from_short_name, remove_component_from_object
 
 class AddComponentOperator(Operator):
     """Add component to blueprint"""
@@ -90,12 +90,10 @@ class PasteComponentOperator(Operator):
 
         return {'FINISHED'}
     
-
-    
 class RemoveComponentOperator(Operator):
-    """Delete component from blueprint"""
+    """Remove component from object"""
     bl_idname = "object.remove_bevy_component"
-    bl_label = "Delete component from blueprint Operator"
+    bl_label = "Remove component from object Operator"
     bl_options = {"UNDO"}
 
     component_name: StringProperty(
@@ -103,15 +101,170 @@ class RemoveComponentOperator(Operator):
         description="component to delete",
     ) # type: ignore
 
+    object_name: StringProperty(
+        name="object name",
+        description="object whose component to delete",
+        default=""
+    ) # type: ignore
+
     def execute(self, context):
-        object = context.object
-
+        if self.object_name == "":
+            object = context.object
+        else:
+            object = bpy.data.objects[self.object_name]
         print("removing component ", self.component_name, "from object  '"+object.name+"'")
-
         if object is not None and self.component_name in object: 
             remove_component_from_object(object, self.component_name)
         else: 
             self.report({"ERROR"}, "The object/ component to remove ("+ self.component_name +") does not exist")
+
+        return {'FINISHED'}
+
+
+class RemoveComponentFromAllObjectsOperator(Operator):
+    """Remove component from all object"""
+    bl_idname = "object.remove_bevy_component_all"
+    bl_label = "Remove component from all objects Operator"
+    bl_options = {"UNDO"}
+
+    component_name: StringProperty(
+        name="component name",
+        description="component to delete",
+    ) # type: ignore
+
+    @classmethod
+    def register(cls):
+        bpy.types.WindowManager.components_remove_progress = bpy.props.FloatProperty(default=-1.0)
+
+    @classmethod
+    def unregister(cls):
+        del bpy.types.WindowManager.components_remove_progress
+
+    def execute(self, context):
+        print("removing component ", self.component_name, "from all objects")
+        total = len(bpy.data.objects)
+        for index, object in enumerate(bpy.data.objects):
+            if len(object.keys()) > 0:
+                if object is not None and self.component_name in object: 
+                    remove_component_from_object(object, self.component_name)
+            
+            progress = index / total
+            context.window_manager.components_remove_progress = progress
+            # now force refresh the ui
+            bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)
+        context.window_manager.components_remove_progress = -1.0
+
+        return {'FINISHED'}
+
+
+class RenameHelper(bpy.types.PropertyGroup):
+    original_name: bpy.props.StringProperty(name="") # type: ignore
+    new_name: bpy.props.StringProperty(name="") # type: ignore
+
+    #object: bpy.props.PointerProperty(type=bpy.types.Object)
+    @classmethod
+    def register(cls):
+        bpy.types.WindowManager.bevy_component_rename_helper = bpy.props.PointerProperty(type=RenameHelper)
+
+    @classmethod
+    def unregister(cls):
+        # remove handlers & co
+        del bpy.types.WindowManager.bevy_component_rename_helper
+
+class OT_rename_component(Operator):
+    """Rename component"""
+    bl_idname = "object.rename_bevy_component"
+    bl_label = "rename component"
+    bl_options = {"UNDO"}
+
+    original_name: bpy.props.StringProperty(default="") # type: ignore
+    new_name: StringProperty(
+        name="new_name",
+        description="new name of component",
+    ) # type: ignore
+
+    target_objects: bpy.props.StringProperty() # type: ignore
+
+    @classmethod
+    def register(cls):
+        bpy.types.WindowManager.components_rename_progress = bpy.props.FloatProperty(default=-1.0) #bpy.props.PointerProperty(type=RenameHelper)
+
+    @classmethod
+    def unregister(cls):
+        del bpy.types.WindowManager.components_rename_progress
+
+    def execute(self, context):
+        registry = context.window_manager.components_registry
+        type_infos = registry.type_infos
+        settings = context.window_manager.bevy_component_rename_helper
+        original_name = settings.original_name if self.original_name == "" else self.original_name
+        new_name = self.new_name
+
+
+        print("renaming components: original name", original_name, "new_name", self.new_name, "targets", self.target_objects)
+        target_objects = json.loads(self.target_objects)
+        errors = []
+        total = len(target_objects)
+
+        if original_name != '' and new_name != '' and original_name != new_name and len(target_objects) > 0:
+            for index, object_name in enumerate(target_objects):
+                object = bpy.data.objects[object_name]
+                if object and original_name in object:
+                    
+                    # copy data to new component, remove the old one
+                    try: 
+                        object[new_name] = object[original_name]
+                        remove_component_from_object(object, original_name)
+                    except Exception as error:
+                        if '__disable__update' in object:
+                            del object["__disable__update"] # make sure custom properties are updateable afterwards, even in the case of failure
+                        # get metadata
+                        components_metadata = getattr(object, "components_meta", None)
+                        if components_metadata:
+                            components_metadata = components_metadata.components
+                            component_meta =  next(filter(lambda component: component["name"] == new_name, components_metadata), None)
+                            if component_meta:
+                                component_meta.invalid = True
+                                component_meta.invalid_details = "unknow issue when renaming/transforming component, please remove it & add it back again"
+
+                        errors.append( "failed to copy old component value to new component: object: '" + object.name + "', error: " + str(error))
+                        
+                    try:
+                        # attempt conversion
+                        long_name = registry.short_names_to_long_names[new_name]
+                        component_definition = type_infos[long_name]
+                        add_component_to_object(object, component_definition, object[new_name])
+                    except Exception as error:
+                        if '__disable__update' in object:
+                            del object["__disable__update"] # make sure custom properties are updateable afterwards, even in the case of failure
+                        components_metadata = getattr(object, "components_meta", None)
+                        if components_metadata:
+                            components_metadata = components_metadata.components
+                            component_meta =  next(filter(lambda component: component["name"] == new_name, components_metadata), None)
+                            if component_meta:
+                                component_meta.invalid = True
+                                component_meta.invalid_details = "wrong custom property value, overwrite them by changing the values in the ui or change them & regenerate"
+
+                        errors.append( "wrong custom property values to generate target component: object: '" + object.name + "', error: " + str(error))
+                
+                progress = index / total
+                context.window_manager.components_rename_progress = progress
+
+                try:
+                    # now force refresh the ui
+                    bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)
+                except: pass # this is to allow this to run in cli/headless mode
+
+        if len(errors) > 0:
+            self.report({'ERROR'}, "Failed to rename component: Errors:" + str(errors))
+        else: 
+            self.report({'INFO'}, "Sucessfully renamed component")
+
+        #clear data after we are done
+        self.original_name = ""
+        context.window_manager.bevy_component_rename_helper.original_name = ""
+        context.window_manager.components_rename_progress = -1.0
+
 
         return {'FINISHED'}
 
@@ -142,6 +295,31 @@ class GenerateComponent_From_custom_property_Operator(Operator):
             self.report({'INFO'}, "Sucessfully generated UI values for custom properties for selected object")
         return {'FINISHED'}
 
+
+class Fix_Component_Operator(Operator):
+    """attempt to fix component"""
+    bl_idname = "object.fix_bevy_component"
+    bl_label = "Fix component (attempts to)"
+    bl_options = {"UNDO"}
+
+    component_name: StringProperty(
+        name="component name",
+        description="component to fix",
+    ) # type: ignore
+
+    def execute(self, context):
+        object = context.object
+        error = False
+        try:
+            apply_propertyGroup_values_to_object_customProperties_for_component(object, self.component_name)
+        except Exception as error:
+            if "__disable__update" in object:
+                del object["__disable__update"] # make sure custom properties are updateable afterwards, even in the case of failure
+            error = True
+            self.report({'ERROR'}, "Failed to fix component: Error:" + str(error))
+        if not error:
+            self.report({'INFO'}, "Sucessfully fixed component (please double check component & its custom property value)")
+        return {'FINISHED'}
 
 class Toggle_ComponentVisibility(Operator):
     """toggles components visibility"""
