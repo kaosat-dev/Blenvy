@@ -3,7 +3,7 @@ import json
 import bpy
 from bpy_types import Operator
 from bpy.props import (StringProperty)
-from .metadata import add_component_to_object, add_metadata_to_components_without_metadata, apply_customProperty_values_to_object_propertyGroups, copy_propertyGroup_values_to_another_object, find_component_definition_from_short_name, remove_component_from_object
+from .metadata import add_component_to_object, add_metadata_to_components_without_metadata, apply_customProperty_values_to_object_propertyGroups, apply_propertyGroup_values_to_object_customProperties_for_component, copy_propertyGroup_values_to_another_object, find_component_definition_from_short_name, remove_component_from_object
 
 class AddComponentOperator(Operator):
     """Add component to blueprint"""
@@ -173,7 +173,7 @@ class RenameHelper(bpy.types.PropertyGroup):
 
 class OT_rename_component(Operator):
     """Rename component"""
-    bl_idname = "object.rename_component"
+    bl_idname = "object.rename_bevy_component"
     bl_label = "rename component"
     bl_options = {"UNDO"}
 
@@ -210,12 +210,7 @@ class OT_rename_component(Operator):
             for index, object_name in enumerate(target_objects):
                 object = bpy.data.objects[object_name]
                 if object and original_name in object:
-                    # get metadata
-                    components_metadata = getattr(object, "components_meta", None)
-                    component_meta = None
-                    if components_metadata:
-                        components_metadata = components_metadata.components
-                        component_meta =  next(filter(lambda component: component["name"] == new_name, components_metadata), None)
+                    
                     # copy data to new component, remove the old one
                     try: 
                         object[new_name] = object[original_name]
@@ -223,9 +218,14 @@ class OT_rename_component(Operator):
                     except Exception as error:
                         if '__disable__update' in object:
                             del object["__disable__update"] # make sure custom properties are updateable afterwards, even in the case of failure
-                        if component_meta:
-                            component_meta.invalid = True
-                            component_meta.invalid_details = "unknow issue when renaming/transforming component, please remove it & add it back again"
+                        # get metadata
+                        components_metadata = getattr(object, "components_meta", None)
+                        if components_metadata:
+                            components_metadata = components_metadata.components
+                            component_meta =  next(filter(lambda component: component["name"] == new_name, components_metadata), None)
+                            if component_meta:
+                                component_meta.invalid = True
+                                component_meta.invalid_details = "unknow issue when renaming/transforming component, please remove it & add it back again"
 
                         errors.append( "failed to copy old component value to new component: object: '" + object.name + "', error: " + str(error))
                         
@@ -237,16 +237,23 @@ class OT_rename_component(Operator):
                     except Exception as error:
                         if '__disable__update' in object:
                             del object["__disable__update"] # make sure custom properties are updateable afterwards, even in the case of failure
-                        if component_meta:
-                            component_meta.invalid = True
-                            component_meta.invalid_details = "wrong custom property value, overwrite them by changing the values in the ui or change them & regenerate ('Update UI from ...button')"
+                        components_metadata = getattr(object, "components_meta", None)
+                        if components_metadata:
+                            components_metadata = components_metadata.components
+                            component_meta =  next(filter(lambda component: component["name"] == new_name, components_metadata), None)
+                            if component_meta:
+                                component_meta.invalid = True
+                                component_meta.invalid_details = "wrong custom property value, overwrite them by changing the values in the ui or change them & regenerate"
 
                         errors.append( "wrong custom property values to generate target component: object: '" + object.name + "', error: " + str(error))
                 
                 progress = index / total
                 context.window_manager.components_rename_progress = progress
-                # now force refresh the ui
-                bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)
+
+                try:
+                    # now force refresh the ui
+                    bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)
+                except: pass # this is to allow this to run in cli/headless mode
 
         if len(errors) > 0:
             self.report({'ERROR'}, "Failed to rename component: Errors:" + str(errors))
@@ -288,6 +295,31 @@ class GenerateComponent_From_custom_property_Operator(Operator):
             self.report({'INFO'}, "Sucessfully generated UI values for custom properties for selected object")
         return {'FINISHED'}
 
+
+class Fix_Component_Operator(Operator):
+    """attempt to fix component"""
+    bl_idname = "object.fix_bevy_component"
+    bl_label = "Fix component (attempts to)"
+    bl_options = {"UNDO"}
+
+    component_name: StringProperty(
+        name="component name",
+        description="component to fix",
+    ) # type: ignore
+
+    def execute(self, context):
+        object = context.object
+        error = False
+        try:
+            apply_propertyGroup_values_to_object_customProperties_for_component(object, self.component_name)
+        except Exception as error:
+            if "__disable__update" in object:
+                del object["__disable__update"] # make sure custom properties are updateable afterwards, even in the case of failure
+            error = True
+            self.report({'ERROR'}, "Failed to fix component: Error:" + str(error))
+        if not error:
+            self.report({'INFO'}, "Sucessfully fixed component (please double check component & its custom property value)")
+        return {'FINISHED'}
 
 class Toggle_ComponentVisibility(Operator):
     """toggles components visibility"""

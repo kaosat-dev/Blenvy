@@ -16,7 +16,7 @@ from bpy.props import (StringProperty)
 
 from .helpers import load_settings
 from .blueprints import CreateBlueprintOperator
-from .components.operators import CopyComponentOperator, OT_rename_component, RemoveComponentFromAllObjectsOperator, RemoveComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, AddComponentOperator, RenameHelper, Toggle_ComponentVisibility
+from .components.operators import CopyComponentOperator, Fix_Component_Operator, OT_rename_component, RemoveComponentFromAllObjectsOperator, RemoveComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, AddComponentOperator, RenameHelper, Toggle_ComponentVisibility
 
 from .registry.registry import ComponentsRegistry,MissingBevyType
 from .registry.operators import (COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT, COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT, OT_select_component_name_to_replace, OT_select_object, ReloadRegistryOperator, OT_OpenFilebrowser)
@@ -88,6 +88,7 @@ classes = [
     PasteComponentOperator,
     RemoveComponentOperator,
     RemoveComponentFromAllObjectsOperator,
+    Fix_Component_Operator,
     OT_rename_component,
     RenameHelper,
     GenerateComponent_From_custom_property_Operator,
@@ -114,8 +115,8 @@ classes = [
     
     BEVY_COMPONENTS_PT_MainPanel,
     BEVY_COMPONENTS_PT_ComponentsPanel,
-    BEVY_COMPONENTS_PT_Configuration,
     BEVY_COMPONENTS_PT_AdvancedToolsPanel,
+    BEVY_COMPONENTS_PT_Configuration,
     MISSING_TYPES_UL_List,
     BEVY_COMPONENTS_PT_MissingTypesPanel,
 

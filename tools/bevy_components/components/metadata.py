@@ -237,6 +237,23 @@ def apply_propertyGroup_values_to_object_customProperties(object):
             value = property_group_value_to_custom_property_value(propertyGroup, component_definition, registry, None)
             object[component_name] = value
 
+# apply component value(s) to custom property of a single component
+def apply_propertyGroup_values_to_object_customProperties_for_component(object, component_name):
+    registry = bpy.context.window_manager.components_registry
+    print("yallah", component_name)
+    (_, propertyGroup) =  upsert_component_in_object(object, component_name, registry)
+    component_definition = find_component_definition_from_short_name(component_name)
+    if component_definition != None:
+        print("merde")
+        value = property_group_value_to_custom_property_value(propertyGroup, component_definition, registry, None)
+        object[component_name] = value
+    
+    components_metadata = object.components_meta.components
+    componentMeta = next(filter(lambda component: component["name"] == component_name, components_metadata), None)
+    if componentMeta:
+        print("here")
+        componentMeta.invalid = False
+        componentMeta.invalid_details = ""
 
 
 def apply_customProperty_values_to_object_propertyGroups(object):
@@ -258,6 +275,8 @@ def apply_customProperty_values_to_object_propertyGroups(object):
             object["__disable__update"] = True # disable update callback while we set the values of the propertyGroup "tree" (as a propertyGroup can contain other propertyGroups) 
             property_group_value_from_custom_property_value(propertyGroup, component_definition, registry, customProperty_value)
             del object["__disable__update"]
+            source_componentMeta.invalid = False
+            source_componentMeta.invalid_details = ""
 
 # removes the given component from the object: removes both the custom property and the matching metadata from the object
 def remove_component_from_object(object, component_name):

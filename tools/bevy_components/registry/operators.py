@@ -113,8 +113,10 @@ class COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT(Operator):
             apply_customProperty_values_to_object_propertyGroups(object)
             progress = 0.5
             context.window_manager.components_from_custom_properties_progress = progress
-            # now force refresh the ui
-            bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)
+            try:
+                # now force refresh the ui
+                bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)
+            except:pass # ony run in ui
 
         except Exception as error:
             del object["__disable__update"] # make sure custom properties are updateable afterwards, even in the case of failure
