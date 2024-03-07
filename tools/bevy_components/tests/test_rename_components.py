@@ -65,37 +65,6 @@ def test_rename_component_single_complex_struct(setup_data):
     assert object[target_component_name] == 'Capsule(Vec3(x:1.0, y:2.0, z:0.0), Vec3(x:0.0, y:0.0, z:0.0), 3.0)'
     assert get_component_propGroup(registry, target_component_name, get_component_metadata(object, target_component_name)) != None
 
-    
-def test_rename_component_single_error_handling(setup_data):
-    registry = bpy.context.window_manager.components_registry
-    registry.schemaPath = setup_data["schema_path"]
-    bpy.ops.object.reload_registry()
-
-    rename_component_operator = bpy.ops.object.rename_bevy_component
-    object = bpy.context.object
-
-
-    source_component_name = "SomeOldUnitStruct"
-    target_component_name = "UnitTest"
-    object[source_component_name] = 'Capsule(Vec3(x:1.0, y:2.0, z:0.0), Vec3(x:0.0, y:0.0, z:0.0), 3.0)'
-
-    expected_error = 'Error: Failed to rename component: Errors:["wrong custom property values to generate target component: object: \'Cube\', error: input string too big for a unit struct"]\n'
-    expected_error = re.escape(expected_error)
-    with pytest.raises(Exception, match=expected_error):   
-        rename_component_operator(original_name=source_component_name, new_name=target_component_name, target_objects=json.dumps([object.name]))
-    
-    target_component_metadata = get_component_metadata(object, target_component_name)
-
-    is_old_component_in_object = source_component_name in object
-    is_new_component_in_object = target_component_name in object
-    assert is_old_component_in_object == False
-    assert is_new_component_in_object == True
-    assert object[target_component_name] == 'Capsule(Vec3(x:1.0, y:2.0, z:0.0), Vec3(x:0.0, y:0.0, z:0.0), 3.0)'
-    assert get_component_propGroup(registry, target_component_name, target_component_metadata) != None
-    assert target_component_metadata.invalid == True
-    
-    assert target_component_metadata.invalid_details == 'wrong custom property value, overwrite them by changing the values in the ui or change them & regenerate'
-
 
 def test_rename_component_bulk(setup_data):
     registry = bpy.context.window_manager.components_registry
@@ -122,6 +91,35 @@ def test_rename_component_bulk(setup_data):
         assert object[target_component_name] == '()'
         assert get_component_propGroup(registry, target_component_name, get_component_metadata(object, target_component_name)) != None
 
+def test_rename_component_single_error_handling(setup_data):
+    registry = bpy.context.window_manager.components_registry
+    registry.schemaPath = setup_data["schema_path"]
+    bpy.ops.object.reload_registry()
+
+    rename_component_operator = bpy.ops.object.rename_bevy_component
+    object = bpy.context.object
+
+
+    source_component_name = "SomeOldUnitStruct"
+    target_component_name = "UnitTest"
+    object[source_component_name] = 'Capsule(Vec3(x:1.0, y:2.0, z:0.0), Vec3(x:0.0, y:0.0, z:0.0), 3.0)'
+
+    expected_error = f'Error: Failed to rename component: Errors:["wrong custom property values to generate target component: object: \'{object.name}\', error: input string too big for a unit struct"]\n'
+    expected_error = re.escape(expected_error)
+    with pytest.raises(Exception, match=expected_error):   
+        rename_component_operator(original_name=source_component_name, new_name=target_component_name, target_objects=json.dumps([object.name]))
+    
+    target_component_metadata = get_component_metadata(object, target_component_name)
+
+    is_old_component_in_object = source_component_name in object
+    is_new_component_in_object = target_component_name in object
+    assert is_old_component_in_object == False
+    assert is_new_component_in_object == True
+    assert object[target_component_name] == 'Capsule(Vec3(x:1.0, y:2.0, z:0.0), Vec3(x:0.0, y:0.0, z:0.0), 3.0)'
+    assert get_component_propGroup(registry, target_component_name, target_component_metadata) != None
+    assert target_component_metadata.invalid == True
+    
+    assert target_component_metadata.invalid_details == 'wrong custom property value, overwrite them by changing the values in the ui or change them & regenerate'
 
 def test_rename_component_single_error_handling_clean_errors(setup_data):
     registry = bpy.context.window_manager.components_registry
@@ -136,7 +134,7 @@ def test_rename_component_single_error_handling_clean_errors(setup_data):
     target_component_name = "UnitTest"
     object[source_component_name] = 'Capsule(Vec3(x:1.0, y:2.0, z:0.0), Vec3(x:0.0, y:0.0, z:0.0), 3.0)'
 
-    expected_error = 'Error: Failed to rename component: Errors:["wrong custom property values to generate target component: object: \'Cube\', error: input string too big for a unit struct"]\n'
+    expected_error = f'Error: Failed to rename component: Errors:["wrong custom property values to generate target component: object: \'{object.name}\', error: input string too big for a unit struct"]\n'
     expected_error = re.escape(expected_error)
     with pytest.raises(Exception, match=expected_error):   
         rename_component_operator(original_name=source_component_name, new_name=target_component_name, target_objects=json.dumps([object.name]))
