@@ -1,6 +1,6 @@
 use std::path::{Path, PathBuf};
 
-use bevy::{gltf::Gltf, prelude::*};
+use bevy::{gltf::Gltf, prelude::*, utils::HashMap};
 
 use crate::{Animations, BluePrintsConfig};
 
@@ -45,6 +45,11 @@ pub struct AddToGameWorld;
 #[derive(Component)]
 /// helper component, just to transfer child data
 pub(crate) struct OriginalChildren(pub Vec<Entity>);
+
+
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+pub struct BlueprintsList(pub HashMap<String,Vec<String>>);
 
 /// main spawning functions,
 /// * also takes into account the already exisiting "override" components, ie "override components" > components from blueprint

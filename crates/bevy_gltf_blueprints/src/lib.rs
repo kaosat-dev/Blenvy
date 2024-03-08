@@ -120,6 +120,10 @@ impl Plugin for BlueprintsPlugin {
         .register_type::<MaterialInfo>()
         .register_type::<SpawnHere>()
         .register_type::<Animations>()
+        .register_type::<BlueprintsList>()
+        .register_type::<Vec<String>>()
+        .register_type::<HashMap<String,Vec<String>>>()
+        
         .insert_resource(BluePrintsConfig {
             format: self.format,
             library_folder: self.library_folder.clone(),
