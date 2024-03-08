@@ -4,7 +4,7 @@ import bpy
 from ..helpers.generate_and_export import generate_and_export
 from .export_gltf import (generate_gltf_export_preferences, export_gltf)
 from ..modules.bevy_dynamic import is_object_dynamic, is_object_static
-from ..helpers.helpers_scenes import clear_hollow_scene, copy_hollowed_collection_into
+from ..helpers.helpers_scenes import clear_hollow_scene, copy_hollowed_collection_into, inject_blueprints_list_into_main_scene
 
 
 # export all main scenes
@@ -29,6 +29,8 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
                        }
 
     if export_blueprints : 
+        inject_blueprints_list_into_main_scene(scene)
+
         if export_separate_dynamic_and_static_objects:
             #print("SPLIT STATIC AND DYNAMIC")
             # first export static objects

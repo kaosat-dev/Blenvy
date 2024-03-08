@@ -1,5 +1,6 @@
+import json
 import bpy
-from .helpers_collections import (set_active_collection)
+from .helpers_collections import (CollectionNode, get_sub_collections, get_used_collections, set_active_collection)
 from .object_makers import (make_empty)
 
 
@@ -149,3 +150,40 @@ def get_scenes(addon_prefs):
     return [level_scene_names, level_scenes, library_scene_names, library_scenes]
 
 
+
+
+def inject_blueprints_list_into_main_scene(scene):
+    print("injecting assets data")
+    root_collection = scene.collection
+    assets_list = None
+    for object in scene.objects:
+        if object.name == "assets_list"+scene.name:
+            assets_list = object
+            break
+
+    if assets_list is None:
+        assets_list = make_empty('assets_list_'+scene.name, [0,0,0], [0,0,0], [0,0,0], root_collection)
+
+
+    # find all blueprints used in a scene
+    # TODO: export a tree rather than a flat list ? because you could have potential clashing items in flat lists (amongst other issues)
+    (collection_names, collections) = get_used_collections(scene)
+    root_node = CollectionNode()
+    root_node.name = "root"
+    children_per_collection = {}
+    
+    #print("collection_names", collection_names, "collections", collections)
+    (bla, bli ) = get_sub_collections(collections, root_node, children_per_collection)
+    #print("sfdsfsdf", bla, bli, "root", root_node, "children_per_collection", children_per_collection)
+    # with sub collections
+    #    (collection_names, collections) = get_sub_collections(all_collections, root_node, children_per_collection)
+    #
+    # what about marked assets ?
+    #assets_list["blueprints_direct"] = list(collection_names)
+    assets_list["BlueprintsList"] = f"({json.dumps(dict(children_per_collection))})"
+    #'({"a":[]})'
+    #'([])'
+    #
+    #
+
+    print("assets list", assets_list["BlueprintsList"], children_per_collection)

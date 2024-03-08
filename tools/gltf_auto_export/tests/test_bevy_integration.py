@@ -20,7 +20,7 @@ def setup_data(request):
         #other_materials_path = os.path.join("../../testing", "other_materials")
 
         print("\nPerforming teardown...")
-        if os.path.exists(models_path):
+        '''if os.path.exists(models_path):
             shutil.rmtree(models_path)
 
         """if os.path.exists(materials_path):
@@ -34,7 +34,7 @@ def setup_data(request):
 
         screenshot_observed_path = os.path.join(root_path, "screenshot.png")
         if os.path.exists(screenshot_observed_path):
-            os.remove(screenshot_observed_path)
+            os.remove(screenshot_observed_path)'''
 
     request.addfinalizer(finalizer)
 

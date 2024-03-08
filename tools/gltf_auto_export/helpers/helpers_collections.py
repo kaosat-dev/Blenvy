@@ -36,16 +36,23 @@ def get_marked_collections(scene, addon_prefs):
     return (collection_names, marked_collections)
 
 # gets all collections within collections that might also be relevant
-def get_sub_collections(collections, parent, children_per_collection):
+def get_sub_collections(collections, parent=None, children_per_collection=None):
+    if parent == None:
+        parent = CollectionNode()
+    if children_per_collection == None:
+        children_per_collection = {}
+
     collection_names = set()
     used_collections = []
     
     for root_collection in collections:
-        node = Node(name=root_collection.name, parent=parent)
+        print("collections", collections)
+        node = CollectionNode(name=root_collection.name, parent=parent)
         parent.children.append(node)
 
         #print("root collection", root_collection.name)
         for collection in traverse_tree(root_collection): # TODO: filter out COLLECTIONS that have the flatten flag (unlike the flatten flag on colleciton instances themselves)
+            print("sub", collection)
             node_name = collection.name
             children_per_collection[node_name] = []
             #print("  scanning", collection.name)
@@ -53,11 +60,16 @@ def get_sub_collections(collections, parent, children_per_collection):
                 #print("FLATTEN", object.name, 'Flatten' in object)
                 if object.instance_type == 'COLLECTION' : # and not 'Flatten' in object: 
                     collection_name = object.instance_collection.name
+                    print("sub obj", collection_name)
+                    # FIXME: not sure:
+                    children_per_collection[node_name].append(collection_name)
+
                     (sub_names, sub_collections) = get_sub_collections([object.instance_collection], node, children_per_collection)
+                    print("gna", sub_names, sub_collections)
                     if len(list(sub_names)) > 0:
+                        print("toto")
                         children_per_collection[node_name]  += (list(sub_names))
                     #print("   found sub collection in use", object.name, object.instance_collection)
-
 
                     if not collection_name in collection_names: 
                         collection_names.add(collection_name)
@@ -77,7 +89,7 @@ def flatten_collection_tree(node, children_per_collection):
     children_per_collection[node.name] = list(set( children_per_collection[node.name]))
        
 
-class Node :
+class CollectionNode :
     def __init__(self, name="", parent=None):
       self.name = name
       self.children = []
@@ -93,7 +105,7 @@ def get_exportable_collections(main_scenes, library_scenes, addon_prefs):
 
     all_collections = []
     all_collection_names = []
-    root_node = Node()
+    root_node = CollectionNode()
     root_node.name = "root"
     children_per_collection = {}
 
