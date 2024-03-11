@@ -151,7 +151,7 @@ impl Plugin for BlueprintsPlugin {
                 compute_scene_aabbs.run_if(aabbs_enabled),
                 apply_deferred.run_if(aabbs_enabled),
                 apply_deferred,
-                materials_inject.run_if(materials_library_enabled),
+                (materials_inject, check_for_material_loaded, materials_inject2).chain().run_if(materials_library_enabled),
             )
                 .chain()
                 .in_set(GltfBlueprintsSet::Spawn),

@@ -51,7 +51,6 @@ pub(crate) struct OriginalChildren(pub Vec<Entity>);
 #[reflect(Component)]
 pub struct BlueprintsList(pub HashMap<String,Vec<String>>);
 
-
 #[derive(Reflect, Default, Debug)]
 pub(crate) struct BlueprintLoadTracker{
     pub name: String,
@@ -65,6 +64,21 @@ pub(crate) struct BlueprintAssetsToLoad{
     pub asset_infos: Vec<BlueprintLoadTracker>,
     pub progress: f32
 }
+
+#[derive(Default, Debug)]
+pub(crate) struct AssetLoadTracker<T:bevy::prelude::Asset>{
+    pub name: String,
+    pub id: AssetId<T>,
+    pub loaded: bool,
+    pub handle: Handle<T>
+}
+#[derive(Component, Default, Debug)]
+pub(crate) struct AssetsToLoad<T:bevy::prelude::Asset>{
+    pub all_loaded: bool,
+    pub asset_infos: Vec<AssetLoadTracker<T>>,
+    pub progress: f32
+}
+
 
 /// flag component
 #[derive(Component)]
@@ -83,10 +97,7 @@ pub(crate) fn spawn_from_blueprints(
             Option<&Parent>,
             Option<&Library>,
             Option<&Name>,
-
             Option<&BlueprintsList>,
-            // Option<&BlueprintAssetsPreloaded>
-
         ),
         (Added<BlueprintName>, Added<SpawnHere>, Without<Spawned>),
     >,
@@ -114,8 +125,8 @@ pub(crate) fn spawn_from_blueprints(
         if blueprints_list.is_some() {
             let blueprints_list = blueprints_list.unwrap();
             // println!("blueprints list {:?}", blueprints_list.0.keys());
+            let mut asset_infos:Vec<AssetLoadTracker<Gltf>> = vec![];
 
-            let mut asset_infos:Vec<BlueprintLoadTracker> = vec![];
             for (blueprint_name, _) in blueprints_list.0.iter() {
                 /*if blueprint_name == what {
                     println!("WHOLY MOLLY !")
@@ -134,22 +145,23 @@ pub(crate) fn spawn_from_blueprints(
                 let model_id = model_handle.id();
                 let loaded = asset_server.is_loaded_with_dependencies(model_id);
                 if !loaded {
-                    asset_infos.push(BlueprintLoadTracker{
+                    asset_infos.push(AssetLoadTracker {
                         name: model_path.to_string_lossy().into(),
                         id: model_id,
                         loaded: false,
                         handle: model_handle.clone()
-                    });
+                    })
                 }
             }
             // if not all assets are already loaded, inject a component to signal that we need them to be loaded
             if asset_infos.len() > 0 {
                 commands
                 .entity(entity)
-                .insert(BlueprintAssetsToLoad{
+                .insert(AssetsToLoad{
                     all_loaded: false,
                     asset_infos: asset_infos,
-                    ..Default::default()
+                    progress: 0.0
+                    //..Default::default()
                 })
                 .insert(BlueprintAssetsNotLoaded);
             }else {
@@ -163,7 +175,7 @@ pub(crate) fn spawn_from_blueprints(
 
 
 pub(crate) fn check_for_loaded(
-    mut blueprint_assets_to_load: Query<(Entity, &mut BlueprintAssetsToLoad),With<BlueprintAssetsNotLoaded>>,
+    mut blueprint_assets_to_load: Query<(Entity, &mut AssetsToLoad<Gltf>), With<BlueprintAssetsNotLoaded>>,
     asset_server: Res<AssetServer>,
     mut commands: Commands,
 ){
@@ -218,7 +230,6 @@ pub(crate) fn actually_spawn_stuff(
     children: Query<&Children>,
 ){
 
-
     for (
         entity,
         blupeprint_name,
@@ -244,7 +255,7 @@ pub(crate) fn actually_spawn_stuff(
         let model_path = Path::new(&library_path).join(Path::new(model_file_name.as_str()));
 
         info!("attempting to spawn {:?}", model_path);
-        let model_handle: Handle<Gltf> = asset_server.load(model_path);
+        let model_handle: Handle<Gltf> = asset_server.load(model_path);// FIXME: kinda weird now 
 
         let gltf = assets_gltf
             .get(&model_handle)
