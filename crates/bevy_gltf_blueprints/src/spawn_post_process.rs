@@ -6,7 +6,7 @@ use bevy::scene::SceneInstance;
 
 use super::{AnimationPlayerLink, Animations};
 use super::{SpawnHere, Spawned};
-use crate::{CopyComponents, InBlueprint, NoInBlueprint, OriginalChildren};
+use crate::{BlueprintAssetsToLoad, CopyComponents, InBlueprint, NoInBlueprint, OriginalChildren};
 
 /// this system is in charge of doing any necessary post processing after a blueprint scene has been spawned
 /// - it removes one level of useless nesting
@@ -89,6 +89,7 @@ pub(crate) fn spawned_blueprint_post_process(
         commands.entity(original).remove::<SpawnHere>();
         commands.entity(original).remove::<Spawned>();
         commands.entity(original).remove::<Handle<Scene>>();
+        commands.entity(original).remove::<BlueprintAssetsToLoad>();// also clear the sub assets tracker to free up handles, perhaps just freeing up the handles and leave the rest would be better ?
         commands.entity(root_entity).despawn_recursive();
     }
 }

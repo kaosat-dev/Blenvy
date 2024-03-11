@@ -144,7 +144,10 @@ impl Plugin for BlueprintsPlugin {
         .add_systems(
             Update,
             (
-                spawn_from_blueprints,
+                (spawn_from_blueprints,
+                check_for_loaded,
+                actually_spawn_stuff, apply_deferred).chain(),
+
                 compute_scene_aabbs.run_if(aabbs_enabled),
                 apply_deferred.run_if(aabbs_enabled),
                 apply_deferred,
