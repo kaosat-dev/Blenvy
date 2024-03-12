@@ -51,20 +51,6 @@ pub(crate) struct OriginalChildren(pub Vec<Entity>);
 #[reflect(Component)]
 pub struct BlueprintsList(pub HashMap<String,Vec<String>>);
 
-#[derive(Reflect, Default, Debug)]
-pub(crate) struct BlueprintLoadTracker{
-    pub name: String,
-    pub id: AssetId<Gltf>,
-    pub loaded: bool,
-    pub handle: Handle<Gltf>
-}
-#[derive(Component, Default, Debug)]
-pub(crate) struct BlueprintAssetsToLoad{
-    pub all_loaded: bool,
-    pub asset_infos: Vec<BlueprintLoadTracker>,
-    pub progress: f32
-}
-
 #[derive(Default, Debug)]
 pub(crate) struct AssetLoadTracker<T:bevy::prelude::Asset>{
     pub name: String,
@@ -117,7 +103,7 @@ pub(crate) fn spawn_from_blueprints(
     ) in spawn_placeholders.iter()
     {
         debug!(
-            "preparing to spawn {:?} for entity {:?}, id: {:?}, parent:{:?}",
+            "requesting to spawn {:?} for entity {:?}, id: {:?}, parent:{:?}",
             blupeprint_name.0, name, entity, original_parent
         );
 
@@ -194,7 +180,7 @@ pub(crate) fn check_for_loaded(
             }
         }
         let progress:f32 = loaded_amount as f32 / total as f32;
-        println!("progress: {}",progress);
+        // println!("progress: {}",progress);
         assets_to_load.progress = progress;
 
         if all_loaded {
@@ -242,7 +228,7 @@ pub(crate) fn actually_spawn_stuff(
     ) in spawn_placeholders.iter()
     {
         info!(
-            "need to spawn {:?} for entity {:?}, id: {:?}, parent:{:?}",
+            "attempting to spawn {:?} for entity {:?}, id: {:?}, parent:{:?}",
             blupeprint_name.0, name, entity, original_parent
         );
 
@@ -254,7 +240,7 @@ pub(crate) fn actually_spawn_stuff(
             library_override.map_or_else(|| &blueprints_config.library_folder, |l| &l.0);
         let model_path = Path::new(&library_path).join(Path::new(model_file_name.as_str()));
 
-        info!("attempting to spawn {:?}", model_path);
+        // info!("attempting to spawn {:?}", model_path);
         let model_handle: Handle<Gltf> = asset_server.load(model_path);// FIXME: kinda weird now 
 
         let gltf = assets_gltf

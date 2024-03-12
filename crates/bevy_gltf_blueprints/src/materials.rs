@@ -30,8 +30,6 @@ pub(crate) struct BlueprintMaterialAssetsLoaded;
 #[derive(Component)]
 pub(crate) struct BlueprintMaterialAssetsNotLoaded;
 
-
-
 /// system that injects / replaces materials from material library
 pub(crate) fn materials_inject(
     blueprints_config: ResMut<BluePrintsConfig>,
@@ -65,7 +63,6 @@ pub(crate) fn materials_inject(
         } else {
             let material_file_handle: Handle<Gltf> = asset_server.load(materials_path.clone());
             let material_file_id = material_file_handle.id();
-            println!("loading material {} {}", material_full_path, material_file_id);
             let mut asset_infos:Vec<AssetLoadTracker<Gltf>> = vec![];
 
             asset_infos.push(AssetLoadTracker {
@@ -103,14 +100,12 @@ pub(crate) fn check_for_material_loaded(
             let loaded = asset_server.is_loaded_with_dependencies(asset_id);
             tracker.loaded = loaded;
             if loaded {
-                println!("loaded {} {}", tracker.name, tracker.id);
                 loaded_amount += 1;
             }else{
                 all_loaded = false;
             }
         }
         let progress:f32 = loaded_amount as f32 / total as f32;
-        println!("progress (materials): {}",progress);
         assets_to_load.progress = progress;
 
         if all_loaded {
@@ -141,7 +136,6 @@ pub(crate) fn materials_inject2(
     mut commands: Commands,
 ) {
     for (material_info, children) in material_infos.iter() {
-        println!("here");
         let model_file_name = format!(
             "{}_materials_library.{}",
             &material_info.source, &blueprints_config.format
@@ -157,7 +151,7 @@ pub(crate) fn materials_inject2(
             .material_library_cache
             .contains_key(&material_full_path)
         {
-            info!("material is cached, retrieving");
+            debug!("material is cached, retrieving");
             let material = blueprints_config
                 .material_library_cache
                 .get(&material_full_path)
@@ -165,8 +159,6 @@ pub(crate) fn materials_inject2(
             material_found = Some(material);
         }else {
             let model_handle: Handle<Gltf> = asset_server.load(materials_path.clone());// FIXME: kinda weird now 
-            println!("loading material {:?} {}", materials_path, model_handle.id());
-
             let mat_gltf = assets_gltf
                 .get(model_handle.id())
                 .expect("material should have been preloaded");
