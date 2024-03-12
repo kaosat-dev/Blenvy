@@ -144,14 +144,29 @@ impl Plugin for BlueprintsPlugin {
         .add_systems(
             Update,
             (
-                (spawn_from_blueprints,
-                check_for_loaded,
-                actually_spawn_stuff, apply_deferred).chain(),
+                ( 
+                    prepare_blueprints,
+                    check_for_loaded,
+                    spawn_from_blueprints, 
+                    apply_deferred
+                )
+                    .chain(),
+                (
+                    compute_scene_aabbs,
+                    apply_deferred
+                )
+                    .chain()
+                    .run_if(aabbs_enabled),
 
-                compute_scene_aabbs.run_if(aabbs_enabled),
-                apply_deferred.run_if(aabbs_enabled),
                 apply_deferred,
-                (materials_inject, check_for_material_loaded, materials_inject2).chain().run_if(materials_library_enabled),
+                
+                (
+                    materials_inject,
+                    check_for_material_loaded,
+                    materials_inject2
+                )
+                    .chain()
+                    .run_if(materials_library_enabled),
             )
                 .chain()
                 .in_set(GltfBlueprintsSet::Spawn),

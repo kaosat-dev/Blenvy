@@ -46,7 +46,6 @@ pub struct AddToGameWorld;
 /// helper component, just to transfer child data
 pub(crate) struct OriginalChildren(pub Vec<Entity>);
 
-
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
 pub struct BlueprintsList(pub HashMap<String,Vec<String>>);
@@ -75,7 +74,7 @@ pub(crate) struct BlueprintAssetsNotLoaded;
 
 /// spawning prepare function,
 /// * also takes into account the already exisiting "override" components, ie "override components" > components from blueprint
-pub(crate) fn spawn_from_blueprints(
+pub(crate) fn prepare_blueprints(
     spawn_placeholders: Query<
         (
             Entity,
@@ -156,9 +155,13 @@ pub(crate) fn spawn_from_blueprints(
                 .insert(BlueprintAssetsLoaded);
             }
         }
+        else { // in case there are no blueprintsList
+            commands
+            .entity(entity)
+            .insert(BlueprintAssetsLoaded);
+        }
     }
 }
-
 
 pub(crate) fn check_for_loaded(
     mut blueprint_assets_to_load: Query<(Entity, &mut AssetsToLoad<Gltf>), With<BlueprintAssetsNotLoaded>>,
@@ -192,7 +195,7 @@ pub(crate) fn check_for_loaded(
     }
 }
 
-pub(crate) fn actually_spawn_stuff(
+pub(crate) fn spawn_from_blueprints(
     spawn_placeholders: Query<
     (
         Entity,
