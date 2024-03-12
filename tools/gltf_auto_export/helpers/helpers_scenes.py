@@ -73,6 +73,13 @@ def copy_hollowed_collection_into(source_collection, destination_collection, par
             """we inject the collection/blueprint name, as a component called 'BlueprintName', but we only do this in the empty, not the original object"""
             empty_obj['BlueprintName'] = '"'+collection_name+'"' if legacy_mode else '("'+collection_name+'")'
             empty_obj['SpawnHere'] = '()'
+            # we also inject a list of all sub blueprints, so that the bevy side can preload them
+            root_node = CollectionNode()
+            root_node.name = "root"
+            children_per_collection = {}
+            get_sub_collections([object.instance_collection], root_node, children_per_collection)
+            empty_obj["BlueprintsList"] = f"({json.dumps(dict(children_per_collection))})"
+            #empty_obj["Assets"] = {"Animations": [], "Materials": [], "Models":[], "Textures":[], "Audio":[], "Other":[]}
 
             # we copy custom properties over from our original object to our empty
             for component_name, component_value in object.items():
@@ -162,8 +169,7 @@ def inject_blueprints_list_into_main_scene(scene):
             break
 
     if assets_list is None:
-        assets_list = make_empty('assets_list_'+scene.name, [0,0,0], [0,0,0], [0,0,0], root_collection)
-
+        assets_list = make_empty('assets_list_'+scene.name+"_components", [0,0,0], [0,0,0], [0,0,0], root_collection)
 
     # find all blueprints used in a scene
     # TODO: export a tree rather than a flat list ? because you could have potential clashing items in flat lists (amongst other issues)
@@ -174,16 +180,12 @@ def inject_blueprints_list_into_main_scene(scene):
     
     #print("collection_names", collection_names, "collections", collections)
     (bla, bli ) = get_sub_collections(collections, root_node, children_per_collection)
-    #print("sfdsfsdf", bla, bli, "root", root_node, "children_per_collection", children_per_collection)
-    # with sub collections
-    #    (collection_names, collections) = get_sub_collections(all_collections, root_node, children_per_collection)
-    #
     # what about marked assets ?
+    # what about audio assets ?
+    # what about materials ?
+    # object['MaterialInfo'] = '(name: "'+material.name+'", source: "'+current_project_name + '")' 
+
     #assets_list["blueprints_direct"] = list(collection_names)
     assets_list["BlueprintsList"] = f"({json.dumps(dict(children_per_collection))})"
-    #'({"a":[]})'
-    #'([])'
-    #
-    #
-
+    assets_list["Materials"]= '()'
     print("assets list", assets_list["BlueprintsList"], children_per_collection)

@@ -16,7 +16,7 @@ def setup_data(request):
         root_path =  "../../testing/bevy_example"
         assets_root_path = os.path.join(root_path, "assets")
         models_path =  os.path.join(assets_root_path, "models")
-        #materials_path = os.path.join("../../testing", "materials")
+        materials_path = os.path.join(assets_root_path, "materials")
         #other_materials_path = os.path.join("../../testing", "other_materials")
 
         print("\nPerforming teardown...")
@@ -75,7 +75,8 @@ def test_export_complex(setup_data):
         export_scene_settings=True,
         export_blueprints=True,
         export_legacy_mode=False,
-        export_animations=True
+        export_animations=True,
+        export_materials_library=True
     )
     # blueprint1 => has an instance, got changed, should export
     # blueprint2 => has NO instance, but marked as asset, should export
