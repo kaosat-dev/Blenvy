@@ -48,22 +48,21 @@ pub(crate) struct OriginalChildren(pub Vec<Entity>);
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-pub struct BlueprintsList(pub HashMap<String,Vec<String>>);
+pub struct BlueprintsList(pub HashMap<String, Vec<String>>);
 
 #[derive(Default, Debug)]
-pub(crate) struct AssetLoadTracker<T:bevy::prelude::Asset>{
+pub(crate) struct AssetLoadTracker<T: bevy::prelude::Asset> {
     pub name: String,
     pub id: AssetId<T>,
     pub loaded: bool,
-    pub handle: Handle<T>
+    pub handle: Handle<T>,
 }
 #[derive(Component, Default, Debug)]
-pub(crate) struct AssetsToLoad<T:bevy::prelude::Asset>{
+pub(crate) struct AssetsToLoad<T: bevy::prelude::Asset> {
     pub all_loaded: bool,
     pub asset_infos: Vec<AssetLoadTracker<T>>,
-    pub progress: f32
+    pub progress: f32,
 }
-
 
 /// flag component
 #[derive(Component)]
@@ -91,15 +90,8 @@ pub(crate) fn prepare_blueprints(
     asset_server: Res<AssetServer>,
     blueprints_config: Res<BluePrintsConfig>,
 ) {
-    for (
-        entity,
-        blupeprint_name,
-        original_parent,
-        library_override,
-        name,
-
-        blueprints_list,
-    ) in spawn_placeholders.iter()
+    for (entity, blupeprint_name, original_parent, library_override, name, blueprints_list) in
+        spawn_placeholders.iter()
     {
         debug!(
             "requesting to spawn {:?} for entity {:?}, id: {:?}, parent:{:?}",
@@ -110,19 +102,10 @@ pub(crate) fn prepare_blueprints(
         if blueprints_list.is_some() {
             let blueprints_list = blueprints_list.unwrap();
             // println!("blueprints list {:?}", blueprints_list.0.keys());
-            let mut asset_infos:Vec<AssetLoadTracker<Gltf>> = vec![];
-
+            let mut asset_infos: Vec<AssetLoadTracker<Gltf>> = vec![];
+            let library_path =
+                library_override.map_or_else(|| &blueprints_config.library_folder, |l| &l.0);
             for (blueprint_name, _) in blueprints_list.0.iter() {
-                /*if blueprint_name == what {
-                    println!("WHOLY MOLLY !")
-                }*/
-                // println!("library path {:?}", library_path);
-                let mut library_path = &blueprints_config.library_folder; // TODO: we cannot use the overriden library path
-                // FIXME: hack
-                if blueprint_name == "World" {
-                    library_path= &library_override.unwrap().0;
-                }
-
                 let model_file_name = format!("{}.{}", &blueprint_name, &blueprints_config.format);
                 let model_path = Path::new(&library_path).join(Path::new(model_file_name.as_str()));
 
@@ -134,61 +117,60 @@ pub(crate) fn prepare_blueprints(
                         name: model_path.to_string_lossy().into(),
                         id: model_id,
                         loaded: false,
-                        handle: model_handle.clone()
+                        handle: model_handle.clone(),
                     })
                 }
             }
             // if not all assets are already loaded, inject a component to signal that we need them to be loaded
             if asset_infos.len() > 0 {
                 commands
-                .entity(entity)
-                .insert(AssetsToLoad{
-                    all_loaded: false,
-                    asset_infos: asset_infos,
-                    progress: 0.0
-                    //..Default::default()
-                })
-                .insert(BlueprintAssetsNotLoaded);
-            }else {
-                commands
-                .entity(entity)
-                .insert(BlueprintAssetsLoaded);
+                    .entity(entity)
+                    .insert(AssetsToLoad {
+                        all_loaded: false,
+                        asset_infos: asset_infos,
+                        progress: 0.0, //..Default::default()
+                    })
+                    .insert(BlueprintAssetsNotLoaded);
+            } else {
+                commands.entity(entity).insert(BlueprintAssetsLoaded);
             }
-        }
-        else { // in case there are no blueprintsList
-            commands
-            .entity(entity)
-            .insert(BlueprintAssetsLoaded);
+        } else {
+            // in case there are no blueprintsList
+            commands.entity(entity).insert(BlueprintAssetsLoaded);
         }
     }
 }
 
 pub(crate) fn check_for_loaded(
-    mut blueprint_assets_to_load: Query<(Entity, &mut AssetsToLoad<Gltf>), With<BlueprintAssetsNotLoaded>>,
+    mut blueprint_assets_to_load: Query<
+        (Entity, &mut AssetsToLoad<Gltf>),
+        With<BlueprintAssetsNotLoaded>,
+    >,
     asset_server: Res<AssetServer>,
     mut commands: Commands,
-){
-    for (entity, mut assets_to_load) in blueprint_assets_to_load.iter_mut(){
+) {
+    for (entity, mut assets_to_load) in blueprint_assets_to_load.iter_mut() {
         let mut all_loaded = true;
         let mut loaded_amount = 0;
         let total = assets_to_load.asset_infos.len();
-        for tracker in assets_to_load.asset_infos.iter_mut(){
+        for tracker in assets_to_load.asset_infos.iter_mut() {
             let asset_id = tracker.id;
             let loaded = asset_server.is_loaded_with_dependencies(asset_id);
             tracker.loaded = loaded;
             if loaded {
                 loaded_amount += 1;
-            }else{
+            } else {
                 all_loaded = false;
             }
         }
-        let progress:f32 = loaded_amount as f32 / total as f32;
+        let progress: f32 = loaded_amount as f32 / total as f32;
         // println!("progress: {}",progress);
         assets_to_load.progress = progress;
 
         if all_loaded {
             assets_to_load.all_loaded = true;
-            commands.entity(entity)
+            commands
+                .entity(entity)
                 .insert(BlueprintAssetsLoaded)
                 .remove::<BlueprintAssetsNotLoaded>();
         }
@@ -197,16 +179,20 @@ pub(crate) fn check_for_loaded(
 
 pub(crate) fn spawn_from_blueprints(
     spawn_placeholders: Query<
-    (
-        Entity,
-        &BlueprintName,
-        Option<&Transform>,
-        Option<&Parent>,
-        Option<&Library>,
-        Option<&AddToGameWorld>,
-        Option<&Name>,
-    ),
-    (With<BlueprintAssetsLoaded>, Added<BlueprintAssetsLoaded>, Without<BlueprintAssetsNotLoaded>),
+        (
+            Entity,
+            &BlueprintName,
+            Option<&Transform>,
+            Option<&Parent>,
+            Option<&Library>,
+            Option<&AddToGameWorld>,
+            Option<&Name>,
+        ),
+        (
+            With<BlueprintAssetsLoaded>,
+            Added<BlueprintAssetsLoaded>,
+            Without<BlueprintAssetsNotLoaded>,
+        ),
     >,
 
     mut commands: Commands,
@@ -217,8 +203,7 @@ pub(crate) fn spawn_from_blueprints(
     blueprints_config: Res<BluePrintsConfig>,
 
     children: Query<&Children>,
-){
-
+) {
     for (
         entity,
         blupeprint_name,
@@ -227,7 +212,6 @@ pub(crate) fn spawn_from_blueprints(
         library_override,
         add_to_world,
         name,
-
     ) in spawn_placeholders.iter()
     {
         info!(
@@ -244,7 +228,7 @@ pub(crate) fn spawn_from_blueprints(
         let model_path = Path::new(&library_path).join(Path::new(model_file_name.as_str()));
 
         // info!("attempting to spawn {:?}", model_path);
-        let model_handle: Handle<Gltf> = asset_server.load(model_path);// FIXME: kinda weird now 
+        let model_handle: Handle<Gltf> = asset_server.load(model_path); // FIXME: kinda weird now
 
         let gltf = assets_gltf
             .get(&model_handle)

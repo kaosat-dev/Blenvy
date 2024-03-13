@@ -3,7 +3,11 @@ use std::path::Path;
 use bevy::{
     asset::{AssetId, AssetServer, Assets, Handle},
     ecs::{
-        component::Component, entity::Entity, query::{Added, With}, reflect::ReflectComponent, system::{Commands, Query, Res, ResMut}
+        component::Component,
+        entity::Entity,
+        query::{Added, With},
+        reflect::ReflectComponent,
+        system::{Commands, Query, Res, ResMut},
     },
     gltf::Gltf,
     hierarchy::{Children, Parent},
@@ -59,25 +63,23 @@ pub(crate) fn materials_inject(
             commands
                 .entity(entity)
                 .insert(BlueprintMaterialAssetsLoaded);
-
         } else {
             let material_file_handle: Handle<Gltf> = asset_server.load(materials_path.clone());
             let material_file_id = material_file_handle.id();
-            let mut asset_infos:Vec<AssetLoadTracker<Gltf>> = vec![];
+            let mut asset_infos: Vec<AssetLoadTracker<Gltf>> = vec![];
 
             asset_infos.push(AssetLoadTracker {
                 name: material_full_path,
                 id: material_file_id,
                 loaded: false,
-                handle: material_file_handle.clone()
+                handle: material_file_handle.clone(),
             });
             commands
                 .entity(entity)
-                .insert(AssetsToLoad{
+                .insert(AssetsToLoad {
                     all_loaded: false,
                     asset_infos: asset_infos,
-                    progress: 0.0
-                    //..Default::default()
+                    progress: 0.0, //..Default::default()
                 })
                 .insert(BlueprintMaterialAssetsNotLoaded);
             /**/
@@ -87,41 +89,50 @@ pub(crate) fn materials_inject(
 
 // TODO, merge with check_for_loaded, make generic ?
 pub(crate) fn check_for_material_loaded(
-    mut blueprint_assets_to_load: Query<(Entity, &mut AssetsToLoad<Gltf>),With<BlueprintMaterialAssetsNotLoaded>>,
+    mut blueprint_assets_to_load: Query<
+        (Entity, &mut AssetsToLoad<Gltf>),
+        With<BlueprintMaterialAssetsNotLoaded>,
+    >,
     asset_server: Res<AssetServer>,
     mut commands: Commands,
-){
-    for (entity, mut assets_to_load) in blueprint_assets_to_load.iter_mut(){
+) {
+    for (entity, mut assets_to_load) in blueprint_assets_to_load.iter_mut() {
         let mut all_loaded = true;
         let mut loaded_amount = 0;
         let total = assets_to_load.asset_infos.len();
-        for tracker in assets_to_load.asset_infos.iter_mut(){
+        for tracker in assets_to_load.asset_infos.iter_mut() {
             let asset_id = tracker.id;
             let loaded = asset_server.is_loaded_with_dependencies(asset_id);
             tracker.loaded = loaded;
             if loaded {
                 loaded_amount += 1;
-            }else{
+            } else {
                 all_loaded = false;
             }
         }
-        let progress:f32 = loaded_amount as f32 / total as f32;
+        let progress: f32 = loaded_amount as f32 / total as f32;
         assets_to_load.progress = progress;
 
         if all_loaded {
             assets_to_load.all_loaded = true;
-            commands.entity(entity)
+            commands
+                .entity(entity)
                 .insert(BlueprintMaterialAssetsLoaded)
                 .remove::<BlueprintMaterialAssetsNotLoaded>();
         }
     }
 }
 
-
 /// system that injects / replaces materials from material library
 pub(crate) fn materials_inject2(
     mut blueprints_config: ResMut<BluePrintsConfig>,
-    material_infos: Query<(&MaterialInfo, &Children, ), (Added<BlueprintMaterialAssetsLoaded>, With<BlueprintMaterialAssetsLoaded>)>,
+    material_infos: Query<
+        (&MaterialInfo, &Children),
+        (
+            Added<BlueprintMaterialAssetsLoaded>,
+            With<BlueprintMaterialAssetsLoaded>,
+        ),
+    >,
     with_materials_and_meshes: Query<
         (),
         (
@@ -157,8 +168,8 @@ pub(crate) fn materials_inject2(
                 .get(&material_full_path)
                 .expect("we should have the material available");
             material_found = Some(material);
-        }else {
-            let model_handle: Handle<Gltf> = asset_server.load(materials_path.clone());// FIXME: kinda weird now 
+        } else {
+            let model_handle: Handle<Gltf> = asset_server.load(materials_path.clone()); // FIXME: kinda weird now
             let mat_gltf = assets_gltf
                 .get(model_handle.id())
                 .expect("material should have been preloaded");
