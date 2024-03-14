@@ -1,8 +1,8 @@
-use bevy::{prelude::*, utils::hashbrown::HashMap};
+use bevy::prelude::*;
 use bevy_gltf_blueprints::{
-    BluePrintBundle, BlueprintName, BlueprintsList, GameWorldTag, Library, SpawnHere,
+    BluePrintBundle, BlueprintName, GameWorldTag,
 };
-use bevy_gltf_worlflow_examples_common_rapier::{assets::GameAssets, GameState, InAppRunning};
+use bevy_gltf_worlflow_examples_common_rapier::{GameState, InAppRunning};
 
 use bevy_rapier3d::prelude::Velocity;
 use rand::Rng;

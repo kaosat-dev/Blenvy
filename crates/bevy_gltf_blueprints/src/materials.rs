@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use bevy::{
-    asset::{AssetId, AssetServer, Assets, Handle},
+    asset::{AssetServer, Assets, Handle},
     ecs::{
         component::Component,
         entity::Entity,
@@ -11,7 +11,7 @@ use bevy::{
     },
     gltf::Gltf,
     hierarchy::{Children, Parent},
-    log::{debug, info},
+    log::debug,
     pbr::StandardMaterial,
     reflect::Reflect,
     render::mesh::Mesh,
@@ -66,20 +66,21 @@ pub(crate) fn materials_inject(
         } else {
             let material_file_handle: Handle<Gltf> = asset_server.load(materials_path.clone());
             let material_file_id = material_file_handle.id();
-            let mut asset_infos: Vec<AssetLoadTracker<Gltf>> = vec![];
+            let asset_infos: Vec<AssetLoadTracker<Gltf>> = vec![
+                AssetLoadTracker {
+                    name: material_full_path,
+                    id: material_file_id,
+                    loaded: false,
+                    handle: material_file_handle.clone(),
+                }
+            ];
 
-            asset_infos.push(AssetLoadTracker {
-                name: material_full_path,
-                id: material_file_id,
-                loaded: false,
-                handle: material_file_handle.clone(),
-            });
             commands
                 .entity(entity)
                 .insert(AssetsToLoad {
                     all_loaded: false,
-                    asset_infos: asset_infos,
-                    progress: 0.0, //..Default::default()
+                    asset_infos,
+                    ..Default::default()
                 })
                 .insert(BlueprintMaterialAssetsNotLoaded);
             /**/

@@ -52,16 +52,23 @@ pub struct BlueprintsList(pub HashMap<String, Vec<String>>);
 
 #[derive(Default, Debug)]
 pub(crate) struct AssetLoadTracker<T: bevy::prelude::Asset> {
+    #[allow(dead_code)]
     pub name: String,
     pub id: AssetId<T>,
     pub loaded: bool,
+    #[allow(dead_code)]
     pub handle: Handle<T>,
 }
-#[derive(Component, Default, Debug)]
+#[derive(Component, Debug)]
 pub(crate) struct AssetsToLoad<T: bevy::prelude::Asset> {
     pub all_loaded: bool,
     pub asset_infos: Vec<AssetLoadTracker<T>>,
     pub progress: f32,
+}
+impl <T: bevy::prelude::Asset>Default for AssetsToLoad<T> {
+    fn default() -> Self {
+        Self { all_loaded: Default::default(), asset_infos: Default::default(), progress: Default::default() }
+    }
 }
 
 /// flag component
@@ -118,17 +125,17 @@ pub(crate) fn prepare_blueprints(
                         id: model_id,
                         loaded: false,
                         handle: model_handle.clone(),
-                    })
+                    });
                 }
             }
             // if not all assets are already loaded, inject a component to signal that we need them to be loaded
-            if asset_infos.len() > 0 {
+            if !asset_infos.is_empty() {
                 commands
                     .entity(entity)
                     .insert(AssetsToLoad {
                         all_loaded: false,
-                        asset_infos: asset_infos,
-                        progress: 0.0, //..Default::default()
+                        asset_infos,
+                        ..Default::default()
                     })
                     .insert(BlueprintAssetsNotLoaded);
             } else {
