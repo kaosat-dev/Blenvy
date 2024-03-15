@@ -99,13 +99,12 @@ impl Plugin for GamePlugin {
             .add_systems(Update, validate_export)
             .add_systems(OnEnter(AppState::MenuRunning), start_game)
             .add_systems(OnEnter(AppState::AppRunning), setup_game)
-            /*             .add_systems(Update, generate_screenshot.run_if(on_timer(Duration::from_secs_f32(0.2)))) // TODO: run once
-
             
+            .add_systems(Update, generate_screenshot.run_if(on_timer(Duration::from_secs_f32(0.2)))) // TODO: run once
             .add_systems(
                 Update,
                 exit_game.run_if(on_timer(Duration::from_secs_f32(0.5))),
-            ) // shut down the app after this time*/
+            ) // shut down the app after this time
             ;
     }
 }

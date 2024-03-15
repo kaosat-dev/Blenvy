@@ -3576,6 +3576,22 @@
       "type": "array",
       "typeInfo": "TupleStruct"
     },
+    "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintsList": {
+      "isComponent": true,
+      "isResource": false,
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<alloc::string::String, alloc::vec::Vec<alloc::string::String>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+          }
+        }
+      ],
+      "short_name": "BlueprintsList",
+      "title": "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintsList",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
     "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere": {
       "additionalProperties": false,
       "isComponent": true,
@@ -10833,6 +10849,19 @@
       "title": "bevy_utils::Uuid",
       "type": "object",
       "typeInfo": "Value"
+    },
+    "bevy_utils::hashbrown::HashMap<alloc::string::String, alloc::vec::Vec<alloc::string::String>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "additionalProperties": {
+        "type": {
+          "$ref": "#/$defs/alloc::vec::Vec<alloc::string::String>"
+        }
+      },
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "HashMap<String, Vec<String>, DefaultHashBuilder>",
+      "title": "bevy_utils::hashbrown::HashMap<alloc::string::String, alloc::vec::Vec<alloc::string::String>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Map"
     },
     "bevy_utils::smallvec::SmallVec<[bevy_ecs::entity::Entity; 8]>": {
       "isComponent": false,
