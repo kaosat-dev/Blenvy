@@ -20,21 +20,19 @@ def setup_data(request):
         #other_materials_path = os.path.join("../../testing", "other_materials")
 
         print("\nPerforming teardown...")
-        '''if os.path.exists(models_path):
+        if os.path.exists(models_path):
             shutil.rmtree(models_path)
 
-        """if os.path.exists(materials_path):
+        if os.path.exists(materials_path):
             shutil.rmtree(materials_path)
 
-        if os.path.exists(other_materials_path):
-            shutil.rmtree(other_materials_path)"""
         diagnostics_file_path = os.path.join(root_path, "bevy_diagnostics.json")
         if os.path.exists(diagnostics_file_path):
             os.remove(diagnostics_file_path)
 
         screenshot_observed_path = os.path.join(root_path, "screenshot.png")
         if os.path.exists(screenshot_observed_path):
-            os.remove(screenshot_observed_path)'''
+            os.remove(screenshot_observed_path)
 
     request.addfinalizer(finalizer)
 
@@ -96,11 +94,7 @@ def test_export_complex(setup_data):
 
     # now run bevy
     command = "cargo run --features bevy/dynamic_linking"
-    # assert getattr(propertyGroup, 'a') == 0.5714026093482971
     FNULL = open(os.devnull, 'w')    #use this if you want to suppress output to stdout from the subprocess
-    filename = "my_file.dat"
-    args = command
-    #subprocess.call(args, stdout=FNULL, stderr=FNULL, shell=False, cwd=bevy_run_exec_path)
     return_code = subprocess.call(["cargo", "run", "--features", "bevy/dynamic_linking"], cwd=root_path)
     print("RETURN CODE OF BEVY APP", return_code)
     assert return_code == 0

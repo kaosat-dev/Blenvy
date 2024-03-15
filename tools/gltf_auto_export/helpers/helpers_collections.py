@@ -46,13 +46,13 @@ def get_sub_collections(collections, parent=None, children_per_collection=None):
     used_collections = []
     
     for root_collection in collections:
-        print("collections", collections)
+        #print("collections", collections)
         node = CollectionNode(name=root_collection.name, parent=parent)
         parent.children.append(node)
 
         #print("root collection", root_collection.name)
         for collection in traverse_tree(root_collection): # TODO: filter out COLLECTIONS that have the flatten flag (unlike the flatten flag on colleciton instances themselves)
-            print("sub", collection)
+            #print("sub", collection)
             node_name = collection.name
             children_per_collection[node_name] = []
             #print("  scanning", collection.name)
@@ -60,14 +60,12 @@ def get_sub_collections(collections, parent=None, children_per_collection=None):
                 #print("FLATTEN", object.name, 'Flatten' in object)
                 if object.instance_type == 'COLLECTION' : # and not 'Flatten' in object: 
                     collection_name = object.instance_collection.name
-                    print("sub obj", collection_name)
+                    #print("sub obj", collection_name)
                     # FIXME: not sure:
                     children_per_collection[node_name].append(collection_name)
 
                     (sub_names, sub_collections) = get_sub_collections([object.instance_collection], node, children_per_collection)
-                    print("gna", sub_names, sub_collections)
                     if len(list(sub_names)) > 0:
-                        print("toto")
                         children_per_collection[node_name]  += (list(sub_names))
                     #print("   found sub collection in use", object.name, object.instance_collection)
 

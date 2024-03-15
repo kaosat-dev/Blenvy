@@ -160,7 +160,7 @@ def get_scenes(addon_prefs):
 
 
 def inject_blueprints_list_into_main_scene(scene):
-    print("injecting assets data")
+    print("injecting assets/blueprints data into scene")
     root_collection = scene.collection
     assets_list = None
     for object in scene.objects:
@@ -187,5 +187,5 @@ def inject_blueprints_list_into_main_scene(scene):
 
     #assets_list["blueprints_direct"] = list(collection_names)
     assets_list["BlueprintsList"] = f"({json.dumps(dict(children_per_collection))})"
-    assets_list["Materials"]= '()'
-    print("assets list", assets_list["BlueprintsList"], children_per_collection)
+    #assets_list["Materials"]= '()'
+    # print("assets list", assets_list["BlueprintsList"], children_per_collection)
