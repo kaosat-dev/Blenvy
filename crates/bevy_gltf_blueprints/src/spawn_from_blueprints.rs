@@ -150,7 +150,7 @@ pub(crate) fn prepare_blueprints(
                 commands.entity(entity).insert(BlueprintAssetsLoaded);
             }
         } else {
-            // in case there are no blueprintsList
+            // in case there are no blueprintsList, we revert back to the old behaviour
             commands.entity(entity).insert(BlueprintAssetsLoaded);
         }
     }
@@ -243,11 +243,14 @@ pub(crate) fn spawn_from_blueprints(
         let model_path = Path::new(&library_path).join(Path::new(model_file_name.as_str()));
 
         // info!("attempting to spawn {:?}", model_path);
-        let model_handle: Handle<Gltf> = asset_server.load(model_path); // FIXME: kinda weird now
+        let model_handle: Handle<Gltf> = asset_server.load(model_path.clone()); // FIXME: kinda weird now
 
-        let gltf = assets_gltf
-            .get(&model_handle)
-            .expect("this gltf should have been loaded");
+        let gltf = assets_gltf.get(&model_handle).unwrap_or_else(|| {
+            panic!(
+                "gltf file {:?} should have been loaded",
+                model_path.to_str()
+            )
+        });
 
         // WARNING we work under the assumtion that there is ONLY ONE named scene, and that the first one is the right one
         let main_scene_name = gltf
