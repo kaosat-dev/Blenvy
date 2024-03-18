@@ -66,14 +66,12 @@ pub(crate) fn materials_inject(
         } else {
             let material_file_handle: Handle<Gltf> = asset_server.load(materials_path.clone());
             let material_file_id = material_file_handle.id();
-            let asset_infos: Vec<AssetLoadTracker<Gltf>> = vec![
-                AssetLoadTracker {
-                    name: material_full_path,
-                    id: material_file_id,
-                    loaded: false,
-                    handle: material_file_handle.clone(),
-                }
-            ];
+            let asset_infos: Vec<AssetLoadTracker<Gltf>> = vec![AssetLoadTracker {
+                name: material_full_path,
+                id: material_file_id,
+                loaded: false,
+                handle: material_file_handle.clone(),
+            }];
 
             commands
                 .entity(entity)
