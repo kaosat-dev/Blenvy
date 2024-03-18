@@ -22,7 +22,8 @@ fn start_game(mut next_app_state: ResMut<NextState<AppState>>) {
 // if the export from Blender worked correctly, we should have animations (simplified here by using AnimationPlayerLink)
 // if the export from Blender worked correctly, we should have an Entity called "Cylinder" that has two components: UnitTest, TupleTestF32
 // if the export from Blender worked correctly, we should have an Entity called "Blueprint4_nested" that has a child called "Blueprint3" that has a "BlueprintName" component with value Blueprint3
-
+// if the export from Blender worked correctly, we should have a blueprints_list
+#[allow(clippy::too_many_arguments)]
 fn validate_export(
     parents: Query<&Parent>,
     children: Query<&Children>,
