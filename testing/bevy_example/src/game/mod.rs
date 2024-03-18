@@ -4,7 +4,7 @@ use std::{
     time::Duration,
 };
 
-use bevy_gltf_blueprints::{AnimationPlayerLink, BlueprintName};
+use bevy_gltf_blueprints::{AnimationPlayerLink, BlueprintName, BlueprintsList};
 pub use in_game::*;
 
 use bevy::{
@@ -31,6 +31,8 @@ fn validate_export(
     animation_player_links: Query<(Entity, &AnimationPlayerLink)>,
     exported_cylinder: Query<(Entity, &Name, &UnitTest, &TupleTestF32)>,
     empties_candidates: Query<(Entity, &Name, &GlobalTransform)>,
+
+    blueprints_list: Query<(Entity, &BlueprintsList)>,
 ) {
     let animations_found = !animation_player_links.is_empty();
 
@@ -69,11 +71,13 @@ fn validate_export(
         }
     }
 
+    let blueprints_list_found = !blueprints_list.is_empty();
+
     fs::write(
         "bevy_diagnostics.json",
         format!(
-            "{{ \"animations\": {},  \"cylinder_found\": {} ,  \"nested_blueprint_found\": {}, \"empty_found\": {} }}",
-            animations_found, cylinder_found, nested_blueprint_found, empty_found
+            "{{ \"animations\": {},  \"cylinder_found\": {} ,  \"nested_blueprint_found\": {}, \"empty_found\": {}, \"blueprints_list_found\": {} }}",
+            animations_found, cylinder_found, nested_blueprint_found, empty_found, blueprints_list_found
         ),
     )
     .expect("Unable to write file");
@@ -99,7 +103,6 @@ impl Plugin for GamePlugin {
             .add_systems(Update, validate_export)
             .add_systems(OnEnter(AppState::MenuRunning), start_game)
             .add_systems(OnEnter(AppState::AppRunning), setup_game)
-            
             .add_systems(Update, generate_screenshot.run_if(on_timer(Duration::from_secs_f32(0.2)))) // TODO: run once
             .add_systems(
                 Update,
