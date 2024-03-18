@@ -120,6 +120,9 @@ impl Plugin for BlueprintsPlugin {
         .register_type::<MaterialInfo>()
         .register_type::<SpawnHere>()
         .register_type::<Animations>()
+        .register_type::<BlueprintsList>()
+        .register_type::<Vec<String>>()
+        .register_type::<HashMap<String, Vec<String>>>()
         .insert_resource(BluePrintsConfig {
             format: self.format,
             library_folder: self.library_folder.clone(),
@@ -140,11 +143,24 @@ impl Plugin for BlueprintsPlugin {
         .add_systems(
             Update,
             (
-                spawn_from_blueprints,
-                compute_scene_aabbs.run_if(aabbs_enabled),
-                apply_deferred.run_if(aabbs_enabled),
+                (
+                    prepare_blueprints,
+                    check_for_loaded,
+                    spawn_from_blueprints,
+                    apply_deferred,
+                )
+                    .chain(),
+                (compute_scene_aabbs, apply_deferred)
+                    .chain()
+                    .run_if(aabbs_enabled),
                 apply_deferred,
-                materials_inject.run_if(materials_library_enabled),
+                (
+                    materials_inject,
+                    check_for_material_loaded,
+                    materials_inject2,
+                )
+                    .chain()
+                    .run_if(materials_library_enabled),
             )
                 .chain()
                 .in_set(GltfBlueprintsSet::Spawn),

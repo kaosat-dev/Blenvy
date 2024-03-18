@@ -36,7 +36,7 @@ fn main() {
 
 ```
 
-take a look at the [example]('https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_registry_export/basic/src/core/mod.rs) for more clarity
+take a look at the [example](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_registry_export/basic/src/core/mod.rs) for more clarity
 
 
 ##  Installation

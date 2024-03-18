@@ -4,7 +4,7 @@ import bpy
 from ..helpers.generate_and_export import generate_and_export
 from .export_gltf import (generate_gltf_export_preferences, export_gltf)
 from ..modules.bevy_dynamic import is_object_dynamic, is_object_static
-from ..helpers.helpers_scenes import clear_hollow_scene, copy_hollowed_collection_into
+from ..helpers.helpers_scenes import clear_hollow_scene, copy_hollowed_collection_into, inject_blueprints_list_into_main_scene, remove_blueprints_list_from_main_scene
 
 
 # export all main scenes
@@ -16,6 +16,7 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
     gltf_export_preferences = generate_gltf_export_preferences(addon_prefs)
     export_output_folder = getattr(addon_prefs,"export_output_folder")
     export_blueprints = getattr(addon_prefs,"export_blueprints")
+    legacy_mode = getattr(addon_prefs, "export_legacy_mode")
     export_separate_dynamic_and_static_objects = getattr(addon_prefs, "export_separate_dynamic_and_static_objects")
 
     gltf_output_path = os.path.join(folder_path, export_output_folder, scene.name)
@@ -29,6 +30,9 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
                        }
 
     if export_blueprints : 
+        if not legacy_mode:
+            inject_blueprints_list_into_main_scene(scene)
+
         if export_separate_dynamic_and_static_objects:
             #print("SPLIT STATIC AND DYNAMIC")
             # first export static objects
@@ -66,6 +70,9 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
     else:
         print("       exporting gltf to", gltf_output_path, ".gltf/glb")
         export_gltf(gltf_output_path, export_settings)
+
+    if not legacy_mode:
+        remove_blueprints_list_from_main_scene(scene)
 
 
 

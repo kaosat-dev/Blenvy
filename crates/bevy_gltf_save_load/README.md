@@ -36,7 +36,7 @@ Here's a minimal usage example:
 [dependencies]
 bevy="0.13"
 bevy_gltf_save_load = "0.4"
-bevy_gltf_blueprints = "0.9" // also needed
+bevy_gltf_blueprints = "0.10" // also needed
 ```
 
 ```rust no_run
@@ -133,7 +133,7 @@ pub fn setup_game(
 
 ```
 
-take a look at the [example]('https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_save_load/basic/src/game/mod.rs) for more clarity
+take a look at the [example](https://github.com/kaosat-dev/Blender_bevy_components_workflow/blob/main/examples/bevy_gltf_save_load/basic/src/game/mod.rs) for more clarity
 
 
 ##  Installation
@@ -142,12 +142,7 @@ Add the following to your `[dependencies]` section in `Cargo.toml`:
 
 ```toml
 bevy_gltf_save_load = "0.3"
-<<<<<<< HEAD
-bevy_gltf_blueprints = "0.8" // also needed, as bevy_gltf_save_load does not re-export it at this time
-=======
-bevy_gltf_blueprints = "0.6" // also needed, as bevy_gltf_save_load does not re-export it at this time
->>>>>>> 9cb9dda5d35c635d367fa81ca1a6c752cda9bc02
-
+bevy_gltf_blueprints = "0.10" // also needed, as bevy_gltf_save_load does not re-export it at this time
 ```
 
 Or use `cargo add`:
@@ -268,7 +263,7 @@ pub fn request_load(
     - ```LoadingFinished``` for loading
 
 > Note: I **highly** recomend you change states when you start/finish saving & loading, otherwise things **will** get unpredictable
-Please see [the example]('https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_save_load/basic/src/game/mod.rs#77') for this.
+Please see [the example](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_save_load/basic/src/game/mod.rs) for this.
 
 ## Additional notes
 
@@ -287,8 +282,8 @@ For convenience ```bevy_gltf_save_load``` provides two **SystemSets**
 Highly advised to get a better understanding of how things work !
 To get started I recomend looking at 
 
-- [world setup]('https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_save_load/basic/src/game/in_game.rs#13')
-- [various events & co]('https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_save_load/basic/src/game/mod.rs#77')
+- [world setup](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_save_load/basic/src/game/in_game.rs)
+- [various events & co](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_save_load/basic/src/game/mod.rs)
 
 
 All examples are here:

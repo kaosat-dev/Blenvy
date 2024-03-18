@@ -1,37 +1,25 @@
 use bevy::prelude::*;
 use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, GameWorldTag};
-use bevy_gltf_worlflow_examples_common_rapier::{assets::GameAssets, GameState, InAppRunning};
+use bevy_gltf_worlflow_examples_common_rapier::{GameState, InAppRunning};
 
 use bevy_rapier3d::prelude::Velocity;
 use rand::Rng;
 
 pub fn setup_game(
     mut commands: Commands,
-    game_assets: Res<GameAssets>,
-    models: Res<Assets<bevy::gltf::Gltf>>,
+    asset_server: Res<AssetServer>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
-    commands.insert_resource(AmbientLight {
-        color: Color::WHITE,
-        brightness: 0.2,
-    });
     // here we actually spawn our game world/level
-
     commands.spawn((
         SceneBundle {
-            // note: because of this issue https://github.com/bevyengine/bevy/issues/10436, "world" is now a gltf file instead of a scene
-            scene: models
-                .get(game_assets.world.id())
-                .expect("main level should have been loaded")
-                .scenes[0]
-                .clone(),
+            scene: asset_server.load("models/World.glb#Scene0"),
             ..default()
         },
         bevy::prelude::Name::from("world"),
         GameWorldTag,
         InAppRunning,
     ));
-
     next_game_state.set(GameState::InGame)
 }
 

@@ -11,6 +11,7 @@ impl Plugin for CorePlugin {
                 legacy_mode: false,
                 library_folder: "models/library".into(),
                 format: GltfFormat::GLB,
+                material_library: true,
                 aabbs: true,
                 ..Default::default()
             },

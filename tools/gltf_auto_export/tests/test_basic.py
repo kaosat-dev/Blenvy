@@ -19,6 +19,8 @@ def setup_data(request):
 
     def finalizer():
         print("\nPerforming teardown...")
+        get_orphan_data()
+
         if os.path.exists(models_path):
             shutil.rmtree(models_path)
 
@@ -33,9 +35,14 @@ def setup_data(request):
 
     return None
 
+
+def get_orphan_data():
+    orphan_meshes = [m.name for m in bpy.data.meshes if m.users == 0]
+    # print("orphan meshes before", orphan_meshes)
+
 def test_export_do_not_export_blueprints(setup_data):
     auto_export_operator = bpy.ops.export_scenes.auto_gltf
-
+    
     # first, configure things
     # we use the global settings for that
     export_props = {
@@ -57,7 +64,6 @@ def test_export_do_not_export_blueprints(setup_data):
 
 def test_export_custom_blueprints_path(setup_data):
     auto_export_operator = bpy.ops.export_scenes.auto_gltf
-
     # first, configure things
     # we use the global settings for that
     export_props = {
@@ -210,3 +216,27 @@ def test_export_separate_dynamic_and_static_objects(setup_data):
 
     assert os.path.exists(os.path.join(setup_data["models_path"], "World.glb")) == True
     assert os.path.exists(os.path.join(setup_data["models_path"], "World_dynamic.glb")) == True
+
+
+def test_export_should_not_generate_orphan_data(setup_data):
+    auto_export_operator = bpy.ops.export_scenes.auto_gltf
+    
+    # first, configure things
+    # we use the global settings for that
+    export_props = {
+        "main_scene_names" : ['World'],
+        "library_scene_names": ['Library']
+    }
+    stored_settings = bpy.data.texts[".gltf_auto_export_settings"] if ".gltf_auto_export_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_settings")
+    stored_settings.clear()
+    stored_settings.write(json.dumps(export_props))
+
+    auto_export_operator(
+        direct_mode=True,
+        export_output_folder="./models",
+        export_scene_settings=True,
+        export_blueprints=False,
+    )
+    assert os.path.exists(os.path.join(setup_data["models_path"], "World.glb")) == True
+    assert os.path.exists(os.path.join(setup_data["models_path"], "library", "Blueprint1.glb")) == False
+

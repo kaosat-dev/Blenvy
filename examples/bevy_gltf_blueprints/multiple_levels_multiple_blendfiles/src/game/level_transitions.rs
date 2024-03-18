@@ -76,7 +76,7 @@ pub fn trigger_level_transition(
                     } else if target_level == "Level2" {
                         level = game_assets.level2.clone().unwrap();
                     } else {
-                        level = game_assets.world.clone();
+                        level = game_assets.world.clone().unwrap();
                     }
                     info!("spawning new level");
                     commands.spawn((
