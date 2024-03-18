@@ -13,9 +13,9 @@ This crate allows you to define [Bevy](https://bevyengine.org/) components direc
 ***important*** : the plugin for processing gltf files runs in ***update*** , so you cannot use the components directly if you spawn your scene from gltf in ***setup*** (the additional components will not show up)
 
 Please see the 
- * [example](https://github.com/kaosat-dev/Blender_bevy_components_workflow/examples/basic) 
- * or use [```bevy_asset_loader```](https://github.com/NiklasEi/bevy_asset_loader) for a reliable workflow.
- * alternatively, use the [```bevy_gltf_blueprints```](https://github.com/kaosat-dev/Blender_bevy_components_workflow/blob/main/crates/bevy_gltf_blueprints) crate, build on this crate's features,
+ * [example](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_components/basic) 
+ * or use [```bevy_asset_loader```](https://github.com/NiklasEi/bevy_asset_loader) for reliable preloading of files, as this crate does not deal with loading your assets.
+ * alternatively, use the [```bevy_gltf_blueprints```](https://crates.io/crates/bevy_gltf_blueprints) crate, built on this crate's features,
   that allows you to directly spawn entities from gltf based blueprints.
 
 Here's a minimal usage example:
@@ -29,7 +29,7 @@ bevy_gltf_components = { version = "0.5"}
 ```
 
 ```rust no_run
-//too barebones of an example to be meaningfull, please see https://github.com/kaosat-dev/Blender_bevy_components_workflow/examples/basic for a real example
+//too barebones of an example to be meaningfull, please see https://github.com/kaosat-dev/Blender_bevy_components_workflow/bevy_gltf_components/examples/basic for a real example
  fn main() {
     App::new()
          .add_plugins(DefaultPlugins)
@@ -84,7 +84,7 @@ Or disable the legacy mode: (enabled by default)
 ComponentsFromGltfPlugin{legacy_mode: false}
 ```
 
-You **need** to disable legacy mode if you want to use the [```bevy_components```](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/tools_bevy_blueprints/tools/bevy_components) Blender addon + the [```bevy_registry_export crate```](https://crates.io/crates/bevy_registry_export) ! 
+You **need** to disable legacy mode if you want to use the [```bevy_components```](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/bevy_components) Blender addon + the [```bevy_registry_export crate```](https://crates.io/crates/bevy_registry_export) ! 
 As it create custom properties that are writen in real **ron** file format
 instead of a simplified version (the one in the legacy mode)
 
@@ -98,7 +98,7 @@ For example to replace your proxy components (stand-in components when you canno
 
 which should happen **AFTER** the components from the gltf files have been injected, 
 
-so ```bevy_gltf_components``` provides a **SystemSet** for that purpose:[```GltfComponentsSet```](./src/lib.rs#46)
+so ```bevy_gltf_components``` provides a **SystemSet** for that purpose:```GltfComponentsSet```
 
 Typically , the order of systems should be
 
@@ -116,7 +116,7 @@ Typically , the order of systems should be
 
 ## Examples
 
-https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/basic
+https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_components/basic
 
 
 

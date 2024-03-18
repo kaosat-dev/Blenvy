@@ -5,7 +5,7 @@
 
 # bevy_gltf_blueprints
 
-Built upon [bevy_gltf_components](https://crates.io/crates/bevy_gltf_components) this crate adds the ability to define Blueprints/Prefabs for [Bevy](https://bevyengine.org/) inside gltf files and spawn them in Bevy.
+Built on [bevy_gltf_components](https://crates.io/crates/bevy_gltf_components) this crate adds the ability to define Blueprints/Prefabs for [Bevy](https://bevyengine.org/) inside gltf files and spawn them in Bevy.
 
 * Allows you to create lightweight levels, where all assets are different gltf files and loaded after the main level is loaded
 * Allows you to spawn different entities from gtlf files at runtime in a clean manner, including simplified animation support !
@@ -15,7 +15,9 @@ A blueprint is a set of **overrideable** components + a hierarchy: ie
     * just a Gltf file with Gltf_extras specifying components 
     * a component called BlueprintName
 
-Particularly useful when using [Blender](https://www.blender.org/) as an editor for the [Bevy](https://bevyengine.org/) game engine, combined with the [Blender plugin](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/gltf_auto_export) that does a lot of the work for you 
+Particularly useful when using [Blender](https://www.blender.org/) as an editor for the [Bevy](https://bevyengine.org/) game engine, combined with the Blender add-ons that do a lot of the work for you 
+- [gltf_auto_export](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/gltf_auto_export)
+- [bevy_components](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/bevy_components) 
 
 
 ## Usage
@@ -26,7 +28,7 @@ Here's a minimal usage example:
 # Cargo.toml
 [dependencies]
 bevy="0.13"
-bevy_gltf_blueprints = { version = "0.9"} 
+bevy_gltf_blueprints = { version = "0.10"} 
 
 ```
 
@@ -64,7 +66,7 @@ fn spawn_blueprint(
 Add the following to your `[dependencies]` section in `Cargo.toml`:
 
 ```toml
-bevy_gltf_blueprints = "0.9"
+bevy_gltf_blueprints = "0.10"
 ```
 
 Or use `cargo add`:
@@ -165,12 +167,9 @@ commands.spawn((
 
 ### BluePrintBundle
 
-There is also a bundle for convenience , which just has 
+There is also a ```BluePrintBundle``` for convenience , which just has 
  * a ```BlueprintName``` component
  * a ```SpawnHere``` component
-
-[```BluePrintBundle```](./src/lib.rs#22)
-
 
 ## Additional information
 
@@ -219,7 +218,7 @@ the ordering of systems is very important !
 
 For example to replace your proxy components (stand-in components when you cannot/ do not want to use real components in the gltf file) with actual ones, which should happen **AFTER** the Blueprint based spawning, 
 
-so ```bevy_gltf_blueprints``` provides a **SystemSet** for that purpose:[```GltfBlueprintsSet```](./src/lib.rs#16)
+so ```bevy_gltf_blueprints``` provides a **SystemSet** for that purpose: ```GltfBlueprintsSet```
 
 Typically , the order of systems should be
 
@@ -281,8 +280,7 @@ pub fn animation_change_on_proximity_foxes(
 
 see https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/animation for how to set it up correctly
 
-particularly from https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/animation/game/in_game.rs#86
-onward 
+particularly from https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/animation/game/in_game.rs
 
 
 ## Materials
@@ -346,7 +344,7 @@ The main branch is compatible with the latest Bevy release, while the branch `be
 Compatibility of `bevy_gltf_blueprints` versions:
 | `bevy_gltf_blueprints` | `bevy` |
 | :--                 | :--    |
-| `0.9`               | `0.13` |
+| `0.9 - 0.10`        | `0.13` |
 | `0.3 - 0.8`         | `0.12` |
 | `0.1 - 0.2`         | `0.11` |
 | branch `main`       | `0.13` |
