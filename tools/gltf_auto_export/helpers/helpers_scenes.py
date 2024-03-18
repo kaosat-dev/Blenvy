@@ -73,13 +73,17 @@ def copy_hollowed_collection_into(source_collection, destination_collection, par
             """we inject the collection/blueprint name, as a component called 'BlueprintName', but we only do this in the empty, not the original object"""
             empty_obj['BlueprintName'] = '"'+collection_name+'"' if legacy_mode else '("'+collection_name+'")'
             empty_obj['SpawnHere'] = '()'
+
             # we also inject a list of all sub blueprints, so that the bevy side can preload them
-            root_node = CollectionNode()
-            root_node.name = "root"
-            children_per_collection = {}
-            get_sub_collections([object.instance_collection], root_node, children_per_collection)
-            empty_obj["BlueprintsList"] = f"({json.dumps(dict(children_per_collection))})"
-            #empty_obj["Assets"] = {"Animations": [], "Materials": [], "Models":[], "Textures":[], "Audio":[], "Other":[]}
+            if not legacy_mode:
+                root_node = CollectionNode()
+                root_node.name = "root"
+                children_per_collection = {}
+                print("collection stuff", original_name)
+                get_sub_collections([object.instance_collection], root_node, children_per_collection)
+                empty_obj["BlueprintsList"] = f"({json.dumps(dict(children_per_collection))})"
+                #empty_obj["Assets"] = {"Animations": [], "Materials": [], "Models":[], "Textures":[], "Audio":[], "Other":[]}
+           
 
             # we copy custom properties over from our original object to our empty
             for component_name, component_value in object.items():
@@ -163,13 +167,14 @@ def inject_blueprints_list_into_main_scene(scene):
     print("injecting assets/blueprints data into scene")
     root_collection = scene.collection
     assets_list = None
+    assets_list_name = f"assets_list_{scene.name}_components"
     for object in scene.objects:
-        if object.name == "assets_list"+scene.name:
+        if object.name == assets_list_name:
             assets_list = object
             break
 
     if assets_list is None:
-        assets_list = make_empty('assets_list_'+scene.name+"_components", [0,0,0], [0,0,0], [0,0,0], root_collection)
+        assets_list = make_empty(assets_list_name, [0,0,0], [0,0,0], [0,0,0], root_collection)
 
     # find all blueprints used in a scene
     # TODO: export a tree rather than a flat list ? because you could have potential clashing items in flat lists (amongst other issues)
@@ -179,7 +184,7 @@ def inject_blueprints_list_into_main_scene(scene):
     children_per_collection = {}
     
     #print("collection_names", collection_names, "collections", collections)
-    (bla, bli ) = get_sub_collections(collections, root_node, children_per_collection)
+    get_sub_collections(collections, root_node, children_per_collection)
     # what about marked assets ?
     # what about audio assets ?
     # what about materials ?
@@ -188,4 +193,13 @@ def inject_blueprints_list_into_main_scene(scene):
     #assets_list["blueprints_direct"] = list(collection_names)
     assets_list["BlueprintsList"] = f"({json.dumps(dict(children_per_collection))})"
     #assets_list["Materials"]= '()'
-    # print("assets list", assets_list["BlueprintsList"], children_per_collection)
+
+def remove_blueprints_list_from_main_scene(scene):
+    assets_list = None
+    assets_list_name = f"assets_list_{scene.name}_components"
+
+    for object in scene.objects:
+        if object.name == assets_list_name:
+            assets_list = object
+    if assets_list is not None:
+        bpy.data.objects.remove(assets_list, do_unlink=True)

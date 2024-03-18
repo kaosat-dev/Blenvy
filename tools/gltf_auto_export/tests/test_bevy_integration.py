@@ -83,7 +83,6 @@ def test_export_complex(setup_data):
     # blueprint5 => has NO instance, not marked as asset, should NOT export
 
     assert os.path.exists(os.path.join(models_path, "World.glb")) == True
-
     assert os.path.exists(os.path.join(models_path, "library", "Blueprint1.glb")) == True
     assert os.path.exists(os.path.join(models_path, "library", "Blueprint2.glb")) == True
     assert os.path.exists(os.path.join(models_path, "library", "Blueprint3.glb")) == True
@@ -91,6 +90,11 @@ def test_export_complex(setup_data):
     assert os.path.exists(os.path.join(models_path, "library", "Blueprint5.glb")) == False
     assert os.path.exists(os.path.join(models_path, "library", "Blueprint6_animated.glb")) == True
     assert os.path.exists(os.path.join(models_path, "library", "Blueprint7_hierarchy.glb")) == True
+
+    # 'assets_list_'+scene.name+"_components" should have been removed after the export
+    assets_list_object_name = "assets_list_"+"World"+"_components"
+    assets_list_object_present = assets_list_object_name in bpy.data.objects
+    assert assets_list_object_present == False
 
     # now run bevy
     command = "cargo run --features bevy/dynamic_linking"
@@ -105,6 +109,7 @@ def test_export_complex(setup_data):
         assert diagnostics["animations"] == True
         assert diagnostics["cylinder_found"] == True
         assert diagnostics["empty_found"] == True
+        assert diagnostics["blueprints_list_found"] == True
 
     # last but not least, do a visual compare
     screenshot_expected_path = os.path.join(root_path, "expected_screenshot.png")
