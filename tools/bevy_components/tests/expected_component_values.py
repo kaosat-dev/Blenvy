@@ -15,6 +15,7 @@ expected_custom_property_values = {'AComponentWithAnExtremlyExageratedOrMaybeNot
                   '0.0, low_frequency_boost_curvature: 0.0, prefilter_settings: (threshold: 0.0, threshold_softness: '
                   '0.0))',
  'BlueprintName': '(" ")',
+ 'BlueprintsList': '("")',
  'BorderColor': '(Rgba(red:1.0, green:1.0, blue:0.0, alpha:1.0))',
  'Button': '()',
  'CalculatedClip': '(clip: (max: Vec2(x:0.0, y:0.0), min: Vec2(x:0.0, y:0.0)))',
@@ -214,6 +215,7 @@ expected_custom_property_values_randomized = {'AComponentWithAnExtremlyExagerate
                   '0.8133212327957153, prefilter_settings: (threshold: 0.8235888481140137, threshold_softness: '
                   '0.6534725427627563))',
  'BlueprintName': '("sbnpsago")',
+ 'BlueprintsList': '("")',
  'BorderColor': '(Rgba(red:0.5714026093482971, green:0.42888906598091125, blue:0.5780913233757019, '
                 'alpha:0.20609822869300842))',
  'Button': '()',
