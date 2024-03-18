@@ -27,12 +27,26 @@ def remove_unwanted_custom_properties(object):
 
 def duplicate_object(object):
     obj_copy = object.copy()
-    if object.data:
+    # FIXME: orphan data comes from this one
+    """if object.data:
         data = object.data.copy()
-        obj_copy.data = data
+        obj_copy.data = data"""
     if object.animation_data and object.animation_data.action:
+        if obj_copy.animation_data == None:
+            obj_copy.animation_data_create()
         obj_copy.animation_data.action = object.animation_data.action.copy()
     return obj_copy
+
+# TODO: rename actions
+def copy_animation_data(source, target):
+    if source.data:
+        data = source.data.copy()
+        target.data = data
+    if source.animation_data and source.animation_data.action:
+        print("copying animation data for", source.name, target.animation_data)
+        if target.animation_data == None:
+            target.animation_data_create()
+        target.animation_data.action = source.animation_data.action.copy()
 
 #also removes unwanted custom_properties for all objects in hiearchy
 def duplicate_object_recursive(object, parent, collection):
@@ -92,11 +106,9 @@ def copy_hollowed_collection_into(source_collection, destination_collection, par
             if parent_empty is not None:
                 empty_obj.parent = parent_empty
         else:         
-           
             # we create a copy of our object and its children, to leave the original one as it is
             if object.parent == None:
                 copy = duplicate_object_recursive(object, None, destination_collection)
-
                 if parent_empty is not None:
                     copy.parent = parent_empty                
 
@@ -138,14 +150,14 @@ def clear_hollow_scene(temp_scene, original_root_collection):
     # reset original names
     restore_original_names(original_root_collection)
 
-    # remove empties (only needed when we go via ops ????)
+    # remove any data we created
     temp_root_collection = temp_scene.collection 
-    temp_scene_objects = [o for o in temp_root_collection.objects]
+    temp_scene_objects = [o for o in temp_root_collection.all_objects]
     for object in temp_scene_objects:
+        print("removing", object.name)
         bpy.data.objects.remove(object, do_unlink=True)
     # remove the temporary scene
-    bpy.data.scenes.remove(temp_scene)
-
+    bpy.data.scenes.remove(temp_scene, do_unlink=True)
 
 # convenience utility to get lists of scenes
 def get_scenes(addon_prefs):
