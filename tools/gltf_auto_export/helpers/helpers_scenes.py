@@ -28,9 +28,9 @@ def remove_unwanted_custom_properties(object):
 def duplicate_object(object):
     obj_copy = object.copy()
     # FIXME: orphan data comes from this one
-    """if object.data:
+    if object.data:
         data = object.data.copy()
-        obj_copy.data = data"""
+        obj_copy.data = data
     if object.animation_data and object.animation_data.action:
         if obj_copy.animation_data == None:
             obj_copy.animation_data_create()
@@ -39,14 +39,28 @@ def duplicate_object(object):
 
 # TODO: rename actions
 def copy_animation_data(source, target):
-    if source.data:
+    """if source.data:
         data = source.data.copy()
-        target.data = data
+        target.data = data"""
     if source.animation_data and source.animation_data.action:
+        print("source", source.animation_data.action.name)
         print("copying animation data for", source.name, target.animation_data)
+
+
         if target.animation_data == None:
             target.animation_data_create()
         target.animation_data.action = source.animation_data.action.copy()
+        # alternative method, using the build in link animation operator
+        with bpy.context.temp_override(active_object=source, selected_editable_objects=[target]): 
+            bpy.ops.object.make_links_data(type='ANIMATION')
+
+        """print("copying animation data for", source.name, target.animation_data)
+        
+        
+        properties = [p.identifier for p in source.animation_data.bl_rna.properties if not p.is_readonly]
+        for prop in properties:
+            print("copying stuff", prop)
+            setattr(target.animation_data, prop, getattr(source.animation_data, prop))"""
 
 #also removes unwanted custom_properties for all objects in hiearchy
 def duplicate_object_recursive(object, parent, collection):
@@ -97,7 +111,7 @@ def copy_hollowed_collection_into(source_collection, destination_collection, par
                 get_sub_collections([object.instance_collection], root_node, children_per_collection)
                 empty_obj["BlueprintsList"] = f"({json.dumps(dict(children_per_collection))})"
                 #empty_obj["Assets"] = {"Animations": [], "Materials": [], "Models":[], "Textures":[], "Audio":[], "Other":[]}
-           
+            copy_animation_data(object, empty_obj)
 
             # we copy custom properties over from our original object to our empty
             for component_name, component_value in object.items():
