@@ -112,6 +112,15 @@ def copy_hollowed_collection_into(source_collection, destination_collection, par
                 get_sub_collections([object.instance_collection], root_node, children_per_collection)
                 empty_obj["BlueprintsList"] = f"({json.dumps(dict(children_per_collection))})"
                 #empty_obj["Assets"] = {"Animations": [], "Materials": [], "Models":[], "Textures":[], "Audio":[], "Other":[]}
+            if object.animation_data:
+                print("I have animation data")
+                ad = object.animation_data
+                if ad.action:
+                    print(object.name,'uses',ad.action.name)
+                for t in ad.nla_tracks:
+                    for s in t.strips:
+                        print(object.name,'uses',s.action.name)
+                empty_obj['Animated'] = '()'
             copy_animation_data(object, empty_obj)
 
             # we copy custom properties over from our original object to our empty
@@ -125,7 +134,9 @@ def copy_hollowed_collection_into(source_collection, destination_collection, par
             if object.parent == None:
                 copy = duplicate_object_recursive(object, None, destination_collection)
                 if parent_empty is not None:
-                    copy.parent = parent_empty                
+                    copy.parent = parent_empty
+                if object.animation_data:
+                    copy['Animated'] = '()'
 
     # for every sub-collection of the source, copy its content into a new sub-collection of the destination
     for collection in source_collection.children:
