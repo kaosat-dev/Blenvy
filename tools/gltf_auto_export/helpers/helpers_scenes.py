@@ -28,13 +28,14 @@ def remove_unwanted_custom_properties(object):
 def duplicate_object(object):
     obj_copy = object.copy()
     # FIXME: orphan data comes from this one
-    if object.data:
+    """if object.data:
         data = object.data.copy()
-        obj_copy.data = data
-    if object.animation_data and object.animation_data.action:
+        obj_copy.data = data"""
+    copy_animation_data(object, obj_copy)
+    """if object.animation_data and object.animation_data.action:
         if obj_copy.animation_data == None:
             obj_copy.animation_data_create()
-        obj_copy.animation_data.action = object.animation_data.action.copy()
+        obj_copy.animation_data.action = object.animation_data.action.copy()"""
     return obj_copy
 
 # TODO: rename actions
@@ -43,13 +44,13 @@ def copy_animation_data(source, target):
         data = source.data.copy()
         target.data = data"""
     if source.animation_data and source.animation_data.action:
-        print("source", source.animation_data.action.name)
-        print("copying animation data for", source.name, target.animation_data)
+        print("current action name", source.animation_data.action.name)
+        print("copying animation data from", source.name, "to", target.name)
 
 
-        if target.animation_data == None:
+        """if target.animation_data == None:
             target.animation_data_create()
-        target.animation_data.action = source.animation_data.action.copy()
+        target.animation_data.action = source.animation_data.action.copy()"""
         # alternative method, using the build in link animation operator
         with bpy.context.temp_override(active_object=source, selected_editable_objects=[target]): 
             bpy.ops.object.make_links_data(type='ANIMATION')

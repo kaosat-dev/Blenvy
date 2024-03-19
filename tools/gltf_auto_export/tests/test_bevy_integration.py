@@ -57,7 +57,7 @@ def test_export_complex(setup_data):
     export_props = {
         "main_scene_names" : ['World'],
         "library_scene_names": ['Library'],
-        #"export_format":'GLTF_SEPARATE'
+        # "export_format":'GLTF_SEPARATE'
     }
     stored_settings = bpy.data.texts[".gltf_auto_export_settings"] if ".gltf_auto_export_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_settings")
     stored_settings.clear()
