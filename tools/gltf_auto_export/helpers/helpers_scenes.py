@@ -20,33 +20,24 @@ def remove_unwanted_custom_properties(object):
     for component_name in object.keys():
         if not is_component_valid(object, component_name):
             to_remove.append(component_name)
-    
     for cp in custom_properties_to_filter_out + to_remove:
         if cp in object:
             del object[cp]
 
-def duplicate_object(object):
-    obj_copy = object.copy()
-    # FIXME: orphan data comes from this one
-    """if object.data:
-        data = object.data.copy()
-        obj_copy.data = data"""
-    copy_animation_data(object, obj_copy)
-    """if object.animation_data and object.animation_data.action:
-        if obj_copy.animation_data == None:
-            obj_copy.animation_data_create()
-        obj_copy.animation_data.action = object.animation_data.action.copy()"""
-    return obj_copy
-
-# TODO: rename actions
+# TODO: rename actions ?
 def copy_animation_data(source, target):
     """if source.data:
         data = source.data.copy()
         target.data = data"""
-    if source.animation_data and source.animation_data.action:
-        print("current action name", source.animation_data.action.name)
-        print("copying animation data from", source.name, "to", target.name)
-
+    if source.animation_data and source.animation_data:
+        #print("copying animation data from", source.name, "to", target.name)
+        """print("I have animation data")
+        ad = source.animation_data
+        if ad.action:
+            print(source.name,'uses',ad.action.name)
+        for t in ad.nla_tracks:
+            for s in t.strips:
+                print(source.name,'uses',s.action.name)"""
 
         """if target.animation_data == None:
             target.animation_data_create()
@@ -54,91 +45,88 @@ def copy_animation_data(source, target):
         # alternative method, using the build in link animation operator
         with bpy.context.temp_override(active_object=source, selected_editable_objects=[target]): 
             bpy.ops.object.make_links_data(type='ANIMATION')
-
+        # we add an "animated" flag component 
+        target['Animated'] = '()'
         """print("copying animation data for", source.name, target.animation_data)
-        
-        
         properties = [p.identifier for p in source.animation_data.bl_rna.properties if not p.is_readonly]
         for prop in properties:
             print("copying stuff", prop)
             setattr(target.animation_data, prop, getattr(source.animation_data, prop))"""
 
-#also removes unwanted custom_properties for all objects in hiearchy
-def duplicate_object_recursive(object, parent, collection):
-    original_name = object.name
-    object.name = original_name + "____bak"
-    copy = duplicate_object(object)
-    copy.name = original_name
-    collection.objects.link(copy)
+def duplicate_object(object, parent, combine_mode, destination_collection, library_collections, legacy_mode, nester=""):
+    copy = None
+    if object.instance_type == 'COLLECTION' and (combine_mode == 'Split' or (combine_mode == 'EmbedExternal' and (object.instance_collection.name in library_collections)) ): 
+        #print("creating empty for", object.name, object.instance_collection.name, library_collections, combine_mode)
+        collection_name = object.instance_collection.name
+        original_name = object.name
 
-    remove_unwanted_custom_properties(copy)
+        object.name = original_name + "____bak"
+        empty_obj = make_empty(original_name, object.location, object.rotation_euler, object.scale, destination_collection)
+        """we inject the collection/blueprint name, as a component called 'BlueprintName', but we only do this in the empty, not the original object"""
+        empty_obj['BlueprintName'] = '"'+collection_name+'"' if legacy_mode else '("'+collection_name+'")'
+        empty_obj['SpawnHere'] = '()'
 
-    if parent:
+        # we also inject a list of all sub blueprints, so that the bevy side can preload them
+        if not legacy_mode:
+            root_node = CollectionNode()
+            root_node.name = "root"
+            children_per_collection = {}
+            get_sub_collections([object.instance_collection], root_node, children_per_collection)
+            empty_obj["BlueprintsList"] = f"({json.dumps(dict(children_per_collection))})"
+            #empty_obj["Assets"] = {"Animations": [], "Materials": [], "Models":[], "Textures":[], "Audio":[], "Other":[]}
+        
+        # we copy custom properties over from our original object to our empty
+        for component_name, component_value in object.items():
+            if component_name not in custom_properties_to_filter_out and is_component_valid(object, component_name): #copy only valid properties
+                empty_obj[component_name] = component_value
+        copy = empty_obj
+    else:
+        # for objects which are NOT collection instances     
+        # we create a copy of our object and its children, to leave the original one as it is
+        original_name = object.name
+        object.name = original_name + "____bak"
+        copy = object.copy()
+        copy.name = original_name
+        # FIXME: orphan data comes from this one, not even sure if this copying is needed at all
+        """if object.data:
+        data = object.data.copy()
+        obj_copy.data = data"""     
+
+        destination_collection.objects.link(copy)
+
+        """if object.parent == None:
+            if parent_empty is not None:
+                copy.parent = parent_empty
+            if object.animation_data:
+                copy['Animated'] = '()'"""
+
+    print(nester, "copy", copy)
+    # do this both for empty replacements & normal copies
+    if parent is not None:
         copy.parent = parent
+    remove_unwanted_custom_properties(copy)
+    copy_animation_data(object, copy)
 
     for child in object.children:
-        duplicate_object_recursive(child, copy, collection)
-    return copy
-
+        duplicate_object(child, copy, combine_mode, destination_collection, library_collections, legacy_mode, nester+"  ")
 
 # copies the contents of a collection into another one while replacing library instances with empties
 def copy_hollowed_collection_into(source_collection, destination_collection, parent_empty=None, filter=None, library_collections=[], addon_prefs={}):
     collection_instances_combine_mode = getattr(addon_prefs, "collection_instances_combine_mode")
     legacy_mode = getattr(addon_prefs, "export_legacy_mode")
     collection_instances_combine_mode= collection_instances_combine_mode
+
     for object in source_collection.objects:
+        if object.name.endswith("____bak"): # some objects could already have been handled, ignore them
+            continue       
         if filter is not None and filter(object) is False:
             continue
         #check if a specific collection instance does not have an ovveride for combine_mode
         combine_mode = object['_combine'] if '_combine' in object else collection_instances_combine_mode
-
-        if object.instance_type == 'COLLECTION' and (combine_mode == 'Split' or (combine_mode == 'EmbedExternal' and (object.instance_collection.name in library_collections)) ): 
-            #print("creating empty for", object.name, object.instance_collection.name, library_collections, combine_mode)
-            collection_name = object.instance_collection.name
-            original_name = object.name
-
-            object.name = original_name + "____bak"
-            empty_obj = make_empty(original_name, object.location, object.rotation_euler, object.scale, destination_collection)
-            """we inject the collection/blueprint name, as a component called 'BlueprintName', but we only do this in the empty, not the original object"""
-            empty_obj['BlueprintName'] = '"'+collection_name+'"' if legacy_mode else '("'+collection_name+'")'
-            empty_obj['SpawnHere'] = '()'
-
-            # we also inject a list of all sub blueprints, so that the bevy side can preload them
-            if not legacy_mode:
-                root_node = CollectionNode()
-                root_node.name = "root"
-                children_per_collection = {}
-                print("collection stuff", original_name)
-                get_sub_collections([object.instance_collection], root_node, children_per_collection)
-                empty_obj["BlueprintsList"] = f"({json.dumps(dict(children_per_collection))})"
-                #empty_obj["Assets"] = {"Animations": [], "Materials": [], "Models":[], "Textures":[], "Audio":[], "Other":[]}
-            if object.animation_data:
-                print("I have animation data")
-                ad = object.animation_data
-                if ad.action:
-                    print(object.name,'uses',ad.action.name)
-                for t in ad.nla_tracks:
-                    for s in t.strips:
-                        print(object.name,'uses',s.action.name)
-                empty_obj['Animated'] = '()'
-            copy_animation_data(object, empty_obj)
-
-            # we copy custom properties over from our original object to our empty
-            for component_name, component_value in object.items():
-                if component_name not in custom_properties_to_filter_out and is_component_valid(object, component_name): #copy only valid properties
-                    empty_obj[component_name] = component_value
-            if parent_empty is not None:
-                empty_obj.parent = parent_empty
-        else:         
-            # we create a copy of our object and its children, to leave the original one as it is
-            if object.parent == None:
-                copy = duplicate_object_recursive(object, None, destination_collection)
-                if parent_empty is not None:
-                    copy.parent = parent_empty
-                if object.animation_data:
-                    copy['Animated'] = '()'
-
-    # for every sub-collection of the source, copy its content into a new sub-collection of the destination
+        parent = parent_empty
+        duplicate_object(object, parent, combine_mode, destination_collection, library_collections, legacy_mode)
+        
+    # for every child-collection of the source, copy its content into a new sub-collection of the destination
     for collection in source_collection.children:
         original_name = collection.name
         collection.name = original_name + "____bak"
@@ -146,7 +134,6 @@ def copy_hollowed_collection_into(source_collection, destination_collection, par
 
         if parent_empty is not None:
             collection_placeholder.parent = parent_empty
-
         copy_hollowed_collection_into(
             source_collection = collection, 
             destination_collection = destination_collection, 
@@ -155,6 +142,8 @@ def copy_hollowed_collection_into(source_collection, destination_collection, par
             library_collections = library_collections, 
             addon_prefs=addon_prefs
         )
+
+   
     
     return {}
 
