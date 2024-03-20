@@ -5,6 +5,7 @@ import json
 import pytest
 import shutil
 
+import filecmp
 from PIL import Image
 from pixelmatch.contrib.PIL import pixelmatch
 
@@ -108,9 +109,15 @@ def test_export_complex(setup_data):
         diagnostics = json.load(diagnostics_file)
         print("diagnostics", diagnostics)
         assert diagnostics["animations"] == True
-        assert diagnostics["cylinder_found"] == True
         assert diagnostics["empty_found"] == True
         assert diagnostics["blueprints_list_found"] == True
+        assert diagnostics["exported_names_correct"] == True
+
+    with open(os.path.join(root_path, "bevy_hierarchy.json")) as hierarchy_file:
+        with open(os.path.join(os.path.dirname(__file__), "expected_bevy_hierarchy.json")) as expexted_hierarchy_file:
+            hierarchy = json.load(hierarchy_file)
+            expected = json.load(expexted_hierarchy_file)
+            assert sorted(hierarchy.items()) == sorted(expected.items())
 
     # last but not least, do a visual compare
     screenshot_expected_path = os.path.join(root_path, "expected_screenshot.png")
