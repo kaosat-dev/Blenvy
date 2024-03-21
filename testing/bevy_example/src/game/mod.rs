@@ -3,11 +3,11 @@ use std::{
     collections::HashMap, fs, time::Duration
 };
 
-use bevy_gltf_blueprints::{AnimationPlayerLink, Animations, BlueprintName, BlueprintsList};
+use bevy_gltf_blueprints::{Animated, AnimationPlayerLink, Animations, BlueprintName, BlueprintsList};
 pub use in_game::*;
 
 use bevy::{
-    ecs::query, prelude::*, render::view::screenshot::ScreenshotManager, time::common_conditions::on_timer, window::PrimaryWindow
+    ecs::query, gltf::Gltf, prelude::*, render::view::screenshot::ScreenshotManager, time::common_conditions::on_timer, window::PrimaryWindow
 };
 use bevy_gltf_worlflow_examples_common_rapier::{AppState, GameState};
 
@@ -118,17 +118,64 @@ fn exit_game(mut app_exit_events: ResMut<Events<bevy::app::AppExit>>) {
     app_exit_events.send(bevy::app::AppExit);
 }
 
-/* 
-#[derive(Resource)]
-struct Animations(Vec<Handle<AnimationClip>>);
-*/
 
-fn animations(
-    foo:Query<(Entity, &Name, &AnimationPlayer),(Added<AnimationPlayer>)>,
+#[derive(Resource)]
+struct MainAnimations(Vec<Handle<AnimationClip>>);
+
+#[derive(Resource)]
+struct AnimTest(Handle<Gltf>);
+fn setup_main_scene_animations(
     asset_server: Res<AssetServer>,
     mut commands: Commands,
 ) {
-    for bla in foo.iter() {
+    /*commands.insert_resource(MainAnimations(vec![
+        asset_server.load("models/World.glb#Blueprint1_jump"),
+        asset_server.load("models/World.glb#Blueprint1_move"),
+
+        // asset_server.load("models/library/Blueprint6_animated.glb#Run"),
+
+    ]));*/
+
+    commands.insert_resource(AnimTest(asset_server.load("models/World.glb")));
+}
+fn animations(
+    foo:Query<(Entity, &Name, &AnimationPlayer),(Added<AnimationPlayer>)>,
+    bla:Query<(Entity, &Name, &Animated),(Added<Animated>, Without<AnimationPlayerLink>)>,
+    blurp: Res<AnimTest>,
+
+    asset_server: Res<AssetServer>,
+    mut commands: Commands,
+    assets_gltf: Res<Assets<Gltf>>,
+
+) {
+
+      
+    for (entity, name, animated) in bla.iter() {
+        // println!("animated stuf {:?} on entity {}", animated, name);
+        
+        let gltf = assets_gltf.get(&blurp.0).unwrap();
+
+        let animations_list = animated;
+        let mut matching_data = true;
+        for animation_name in &animations_list.animations {
+            if !gltf.named_animations.contains_key(animation_name){
+                matching_data = false;
+                break;
+            }
+        }
+        if matching_data {
+            println!("inserting Animations components into {} ({:?})", name, entity);
+            println!("Found match {:?}", gltf.named_animations);
+            commands.entity(entity).remove::<Animations>();
+            commands.entity(entity).insert((
+                Animations {
+                    named_animations: gltf.named_animations.clone()
+                }
+            ));
+        }
+    }
+    
+    /*for bla in foo.iter() {
         let mut counter = 0;
         counter +=1;
         println!("found some animations {} {}", counter, bla.1);
@@ -142,9 +189,7 @@ fn animations(
                 named_animations:
             })*/
         }
-       
-
-    }
+    }*/
 }
 
 pub struct GamePlugin;
@@ -154,12 +199,15 @@ impl Plugin for GamePlugin {
             .add_systems(Update, validate_export)
             .add_systems(OnEnter(AppState::MenuRunning), start_game)
             .add_systems(OnEnter(AppState::AppRunning), setup_game)
-            .add_systems(Update, animations)
-            .add_systems(Update, generate_screenshot.run_if(on_timer(Duration::from_secs_f32(0.2)))) // TODO: run once
+
+            .add_systems(OnEnter(AppState::MenuRunning), setup_main_scene_animations)
+
+            .add_systems(Update, animations.run_if(in_state(AppState::AppRunning)))
+            /* .add_systems(Update, generate_screenshot.run_if(on_timer(Duration::from_secs_f32(0.2)))) // TODO: run once
             .add_systems(
                 Update,
                 exit_game.run_if(on_timer(Duration::from_secs_f32(0.5))),
-            ) // shut down the app after this time
+            ) // shut down the app after this time*/
             ;
     }
 }
