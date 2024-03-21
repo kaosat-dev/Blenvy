@@ -1,6 +1,6 @@
 [package]
 name = "bevy_gltf_blueprints"
-version = "0.10.0"
+version = "0.10.1"
 authors = ["Mark 'kaosat-dev' Moissette"]
 description = "Adds the ability to define Blueprints/Prefabs for Bevy inside gltf files and spawn them in Bevy."
 homepage = "https://github.com/kaosat-dev/Blender_bevy_components_workflow"
