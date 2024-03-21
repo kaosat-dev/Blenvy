@@ -3520,8 +3520,16 @@
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
-      "properties": {},
-      "required": [],
+      "properties": {
+        "animations": {
+          "type": {
+            "$ref": "#/$defs/alloc::vec::Vec<alloc::string::String>"
+          }
+        }
+      },
+      "required": [
+        "animations"
+      ],
       "short_name": "Animated",
       "title": "bevy_gltf_blueprints::animation::Animated",
       "type": "object",

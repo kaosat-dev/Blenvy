@@ -25,19 +25,40 @@ def remove_unwanted_custom_properties(object):
             del object[cp]
 
 # TODO: rename actions ?
+# reference https://github.com/KhronosGroup/glTF-Blender-IO/blob/main/addons/io_scene_gltf2/blender/exp/animation/gltf2_blender_gather_action.py#L481
 def copy_animation_data(source, target):
     """if source.data:
         data = source.data.copy()
         target.data = data"""
     if source.animation_data and source.animation_data:
         #print("copying animation data from", source.name, "to", target.name)
-        """print("I have animation data")
+        print("I have animation data")
         ad = source.animation_data
-        if ad.action:
-            print(source.name,'uses',ad.action.name)
-        for t in ad.nla_tracks:
-            for s in t.strips:
-                print(source.name,'uses',s.action.name)"""
+        """if ad.action:
+            print(source.name,'uses',ad.action.name)"""
+        
+        animations = []
+        blender_actions = []
+        blender_tracks = {}
+
+        # TODO: this might need to be modified/ adapted to match the standard gltf exporter settings
+        for track in ad.nla_tracks:
+            #print("track", track.name, track.active)
+            non_muted_strips = [strip for strip in track.strips if strip.action is not None and strip.mute is False]
+
+            for strip in non_muted_strips: #t.strips:
+                print("  ", source.name,'uses',strip.action.name, "active", strip.active, "action", strip.action)
+                blender_actions.append(strip.action)
+                blender_tracks[strip.action.name] = track.name
+
+        # Remove duplicate actions.
+        blender_actions = list(set(blender_actions))
+        # sort animations alphabetically (case insensitive) so they have a defined order and match Blender's Action list
+        blender_actions.sort(key = lambda a: a.name.lower())
+        
+        for action in blender_actions:
+            animations.append(blender_tracks[action.name])
+        print("animations", animations)
 
         """if target.animation_data == None:
             target.animation_data_create()
@@ -46,7 +67,7 @@ def copy_animation_data(source, target):
         with bpy.context.temp_override(active_object=source, selected_editable_objects=[target]): 
             bpy.ops.object.make_links_data(type='ANIMATION')
         # we add an "animated" flag component 
-        target['Animated'] = '()'
+        target['Animated'] = f'(animations: {animations})'.replace("'", '"') #'(animations: [])' #
         """print("copying animation data for", source.name, target.animation_data)
         properties = [p.identifier for p in source.animation_data.bl_rna.properties if not p.is_readonly]
         for prop in properties:
@@ -97,8 +118,7 @@ def duplicate_object(object, parent, combine_mode, destination_collection, libra
         """if object.parent == None:
             if parent_empty is not None:
                 copy.parent = parent_empty
-            if object.animation_data:
-                copy['Animated'] = '()'"""
+           """
 
     print(nester, "copy", copy)
     # do this both for empty replacements & normal copies

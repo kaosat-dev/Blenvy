@@ -17,4 +17,6 @@ pub struct AnimationPlayerLink(pub Entity);
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-pub struct Animated;
+pub struct Animated{
+    pub animations: Vec<String> 
+}
