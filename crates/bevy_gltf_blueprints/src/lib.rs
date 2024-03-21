@@ -19,7 +19,11 @@ pub use copy_components::*;
 use core::fmt;
 use std::path::PathBuf;
 
-use bevy::{prelude::*, render::primitives::Aabb, utils::HashMap};
+use bevy::{
+    prelude::*,
+    render::{primitives::Aabb, view::VisibilitySystems},
+    utils::HashMap,
+};
 use bevy_gltf_components::{ComponentsFromGltfPlugin, GltfComponentsSet};
 
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
@@ -166,10 +170,11 @@ impl Plugin for BlueprintsPlugin {
                 .in_set(GltfBlueprintsSet::Spawn),
         )
         .add_systems(
-            Update,
+            PostUpdate,
             (spawned_blueprint_post_process, apply_deferred)
                 .chain()
-                .in_set(GltfBlueprintsSet::AfterSpawn),
+                .in_set(GltfBlueprintsSet::AfterSpawn)
+                .before(VisibilitySystems::CheckVisibility),
         );
     }
 }
