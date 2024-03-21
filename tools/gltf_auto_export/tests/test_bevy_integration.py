@@ -30,6 +30,10 @@ def setup_data(request):
         diagnostics_file_path = os.path.join(root_path, "bevy_diagnostics.json")
         if os.path.exists(diagnostics_file_path):
             os.remove(diagnostics_file_path)
+        
+        hierarchy_file_path = os.path.join(root_path, "bevy_hierarchy.json")
+        if os.path.exists(hierarchy_file_path):
+            os.remove(hierarchy_file_path)
 
         screenshot_observed_path = os.path.join(root_path, "screenshot.png")
         if os.path.exists(screenshot_observed_path):

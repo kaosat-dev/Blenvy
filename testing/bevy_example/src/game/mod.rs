@@ -19,16 +19,10 @@ fn start_game(mut next_app_state: ResMut<NextState<AppState>>) {
 }
 
 
-#[derive(Debug)]
-struct Node {
-    value: String,
-    children: Vec<String>,
-}
-
 // if the export from Blender worked correctly, we should have animations (simplified here by using AnimationPlayerLink)
-// if the export from Blender worked correctly, we should have an Entity called "Cylinder" that has two components: UnitTest, TupleTestF32
 // if the export from Blender worked correctly, we should have an Entity called "Blueprint4_nested" that has a child called "Blueprint3" that has a "BlueprintName" component with value Blueprint3
 // if the export from Blender worked correctly, we should have a blueprints_list
+// if the export from Blender worked correctly, we should have the correct tree of entities 
 #[allow(clippy::too_many_arguments)]
 fn validate_export(
     parents: Query<&Parent>,
@@ -36,7 +30,6 @@ fn validate_export(
     names: Query<&Name>,
     blueprints: Query<(Entity, &Name, &BlueprintName)>,
     animation_player_links: Query<(Entity, &AnimationPlayerLink)>,
-    exported_cylinder: Query<(Entity, &Name, &UnitTest, &TupleTestF32)>,
     empties_candidates: Query<(Entity, &Name, &GlobalTransform)>,
 
     blueprints_list: Query<(Entity, &BlueprintsList)>,
@@ -80,11 +73,10 @@ fn validate_export(
         }
     }
 
-    // generate parent/child tree
+    // generate parent/child "tree"
     if !root.is_empty() {
         let root = root.single();
         let mut tree: HashMap<String, Vec<String>> = HashMap::new();
-        // println!("root {}", root.1);
 
         for child in children.iter_descendants(root.0) {
             let child_name:String = names.get(child).map_or(String::from("no_name"), |e| e.to_string() ); //|e| e.to_string(), || "no_name".to_string());

@@ -68,6 +68,7 @@ def copy_animation_data(source, target):
             bpy.ops.object.make_links_data(type='ANIMATION')
         # we add an "animated" flag component 
         target['Animated'] = f'(animations: {animations})'.replace("'", '"') #'(animations: [])' #
+        
         """print("copying animation data for", source.name, target.animation_data)
         properties = [p.identifier for p in source.animation_data.bl_rna.properties if not p.is_readonly]
         for prop in properties:
