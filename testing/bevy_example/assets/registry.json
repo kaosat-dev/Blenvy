@@ -2947,6 +2947,28 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_example::game::Marker1": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {},
+      "required": [],
+      "short_name": "Marker1",
+      "title": "bevy_example::game::Marker1",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_example::game::Marker2": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {},
+      "required": [],
+      "short_name": "Marker2",
+      "title": "bevy_example::game::Marker2",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "bevy_example::test_components::AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrWut": {
       "additionalProperties": false,
       "isComponent": true,
