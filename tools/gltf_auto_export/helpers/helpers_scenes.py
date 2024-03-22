@@ -208,9 +208,6 @@ def get_scenes(addon_prefs):
     
     return [level_scene_names, level_scenes, library_scene_names, library_scenes]
 
-
-
-
 def inject_blueprints_list_into_main_scene(scene):
     print("injecting assets/blueprints data into scene")
     root_collection = scene.collection
