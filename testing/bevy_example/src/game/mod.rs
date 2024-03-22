@@ -3,7 +3,7 @@ use std::{
     collections::HashMap, fs, time::Duration
 };
 
-use bevy_gltf_blueprints::{Animated, AnimationPlayerLink, Animations, BlueprintName, BlueprintsList, GltfBlueprintsSet};
+use bevy_gltf_blueprints::{Animated, BlueprintAnimationPlayerLink, BlueprintAnimations, InstanceAnimationPlayerLink, InstanceAnimations, BlueprintName, BlueprintsList, GltfBlueprintsSet};
 pub use in_game::*;
 
 use bevy::{
@@ -29,7 +29,7 @@ fn validate_export(
     children: Query<&Children>,
     names: Query<&Name>,
     blueprints: Query<(Entity, &Name, &BlueprintName)>,
-    animation_player_links: Query<(Entity, &AnimationPlayerLink)>,
+    animation_player_links: Query<(Entity, &BlueprintAnimationPlayerLink)>,
     empties_candidates: Query<(Entity, &Name, &GlobalTransform)>,
 
     blueprints_list: Query<(Entity, &BlueprintsList)>,
@@ -141,7 +141,7 @@ fn setup_main_scene_animations(
 
 fn animations(
     added_animation_players:Query<(Entity, &Name, &AnimationPlayer)>,
-    mut addded_animateds:Query<(Entity, &Name, &Animated),(Added<Animated>, Without<AnimationPlayerLink>)>,
+    addded_animateds:Query<(Entity, &Name, &Animated),(Added<Animated>)>,
 
     animtest: Res<AnimTest>,
 
@@ -171,7 +171,7 @@ fn animations(
             // FIXME: for some reason this does NOT overwrite the component ??
             
                 commands.entity(entity).insert(
-                    Animations {
+                    InstanceAnimations {
                         named_animations: gltf.named_animations.clone(),
                     },
                 );
@@ -183,7 +183,7 @@ fn animations(
             for ancestor in parents.iter_ancestors(entity) {
                 if added_animation_players.contains(ancestor) {
                     println!("found match with animationPlayer !! {:?}",names.get(ancestor));
-                    commands.entity(entity).insert(AnimationPlayerLink(ancestor));
+                    commands.entity(entity).insert(InstanceAnimationPlayerLink(ancestor));
                 }
                 // info!("{:?} is an ancestor of {:?}", ancestor, player);
             }
@@ -192,8 +192,9 @@ fn animations(
 }
 
 fn play_animations(
-    animated_marker1: Query<(&AnimationPlayerLink, &Animations), (With<Animated>, With<Marker1>)>,
-    animated_marker2: Query<(&AnimationPlayerLink, &Animations), (With<Animated>, With<Marker2>)>,
+    animated_marker1: Query<(&InstanceAnimationPlayerLink, &InstanceAnimations), (With<Animated>, With<Marker1>)>,
+    animated_marker2: Query<(&InstanceAnimationPlayerLink, &InstanceAnimations), (With<Animated>, With<Marker2>)>,
+    animated_marker3: Query<(&InstanceAnimationPlayerLink, &InstanceAnimations, &BlueprintAnimationPlayerLink, &BlueprintAnimations), (With<Animated>, With<Marker3>)>,
 
     mut animation_players: Query<&mut AnimationPlayer>,
     keycode: Res<ButtonInput<KeyCode>>,
@@ -268,6 +269,43 @@ fn play_animations(
                 .repeat();
         }
     }
+
+    // play instance animation
+    if keycode.just_pressed(KeyCode::KeyW) {
+        for (link, animations, _, _) in animated_marker3.iter() {
+            println!("animations {:?}", animations.named_animations);
+            let mut animation_player = animation_players.get_mut(link.0).unwrap();
+            let anim_name = "Blueprint8_move";
+            animation_player
+                .play_with_transition(
+                    animations
+                        .named_animations
+                        .get(anim_name)
+                        .expect("animation name should be in the list")
+                        .clone(),
+                    Duration::from_secs(5),
+                )
+                .repeat();
+        }
+    }
+    // play blueprint animation
+    if keycode.just_pressed(KeyCode::KeyX) {
+        for (_, _, link, animations) in animated_marker3.iter() {
+            println!("animations {:?}", animations.named_animations);
+            let mut animation_player = animation_players.get_mut(link.0).unwrap();
+            let anim_name = "Walk";
+            animation_player
+                .play_with_transition(
+                    animations
+                        .named_animations
+                        .get(anim_name)
+                        .expect("animation name should be in the list")
+                        .clone(),
+                    Duration::from_secs(5),
+                )
+                .repeat();
+        }
+    }
 }
 
 #[derive(Component, Reflect, Default, Debug)]
@@ -280,11 +318,18 @@ pub struct Marker1;
 /// flag component for testing
 pub struct Marker2;
 
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+/// flag component for testing
+pub struct Marker3;
+
 pub struct GamePlugin;
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<Marker1>()
             .register_type::<Marker2>()
+            .register_type::<Marker3>()
+
             .add_systems(Update, (spawn_test).run_if(in_state(GameState::InGame)))
             .add_systems(Update, validate_export)
             .add_systems(OnEnter(AppState::MenuRunning), start_game)

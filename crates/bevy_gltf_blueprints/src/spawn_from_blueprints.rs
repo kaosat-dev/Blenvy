@@ -2,7 +2,7 @@ use std::path::{Path, PathBuf};
 
 use bevy::{gltf::Gltf, prelude::*, utils::HashMap};
 
-use crate::{Animations, BluePrintsConfig};
+use crate::{BlueprintAnimations, BluePrintsConfig};
 
 /// this is a flag component for our levels/game world
 #[derive(Component)]
@@ -202,7 +202,6 @@ pub(crate) fn spawn_from_blueprints(
             Option<&Library>,
             Option<&AddToGameWorld>,
             Option<&Name>,
-            Option<&Animations>
         ),
         (
             With<BlueprintAssetsLoaded>,
@@ -228,7 +227,6 @@ pub(crate) fn spawn_from_blueprints(
         library_override,
         add_to_world,
         name,
-        animations,
     ) in spawn_placeholders.iter()
     {
         debug!(
@@ -283,15 +281,11 @@ pub(crate) fn spawn_from_blueprints(
             },
             Spawned,
             OriginalChildren(original_children),
-        ));
-
-        // only insert the animations if they are not present already: TODO ideally we want to be merging animations, though it could lead to clashes
-        if animations.is_none() {
-            commands.entity(entity).insert(Animations {
+            BlueprintAnimations { // these are animations specific to the inside of the blueprint
                 named_animations: gltf.named_animations.clone(),
-            });
-        }
-       
+            }
+        ));
+   
         if add_to_world.is_some() {
             let world = game_world
                 .get_single_mut()
