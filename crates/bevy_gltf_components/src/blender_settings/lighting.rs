@@ -1,5 +1,10 @@
 use bevy::pbr::DirectionalLightShadowMap;
 use bevy::prelude::*;
+use bevy::render::render_asset::RenderAssetUsages;
+use bevy::render::render_resource::{
+    Extent3d, TextureDimension, TextureFormat, TextureViewDescriptor, TextureViewDimension,
+};
+use std::iter;
 
 use crate::GltfComponentsSet;
 
@@ -84,14 +89,64 @@ fn process_shadowmap(
 }
 
 fn process_background_shader(
-    background_shaders: Query<&BlenderBackgroundShader, Added<BlenderBackgroundShader>>,
+    background_shaders: Query<Ref<BlenderBackgroundShader>>,
+    cameras: Query<(Entity, Ref<Camera3d>)>,
+    mut images: ResMut<Assets<Image>>,
     mut commands: Commands,
+    mut env_map_handle: Local<Option<Handle<Image>>>,
 ) {
-    for background_shader in background_shaders.iter() {
-        commands.insert_resource(AmbientLight {
-            color: background_shader.color,
-            // Just a guess, see <https://github.com/bevyengine/bevy/issues/12280>
-            brightness: background_shader.strength * 400.0,
+    let Ok(background_shader) = background_shaders.get_single() else {
+        return;
+    };
+
+    let env_map_handle = env_map_handle.get_or_insert_with(|| {
+        const SIDES_PER_CUBE: usize = 6;
+
+        let size = Extent3d {
+            width: 1,
+            height: 6,
+            depth_or_array_layers: 1,
+        };
+        let dimension = TextureDimension::D2;
+
+        let data: Vec<_> = iter::repeat(background_shader.color.as_rgba_u8())
+            .take(SIDES_PER_CUBE)
+            .flatten()
+            .collect();
+        let format = TextureFormat::Rgba8UnormSrgb;
+        let asset_usage = RenderAssetUsages::MAIN_WORLD | RenderAssetUsages::RENDER_WORLD;
+        let mut image = Image::new(size, dimension, data, format, asset_usage);
+        image.reinterpret_stacked_2d_as_array(image.height() / image.width());
+        image.texture_view_descriptor = Some(TextureViewDescriptor {
+            dimension: Some(TextureViewDimension::Cube),
+            ..default()
+        });
+        images.add(image)
+    });
+    // Don't need the handle to be &mut
+    let env_map_handle = &*env_map_handle;
+
+    if background_shader.is_added() {
+        // We're using an environment map, so we don't need the ambient light
+        commands.remove_resource::<AmbientLight>();
+    }
+
+    let is_bg_outdated = background_shader.is_changed();
+    if is_bg_outdated {
+        let color = background_shader.color * background_shader.strength;
+        commands.insert_resource(ClearColor(color));
+    }
+    let camera_entities = cameras
+        .iter()
+        .filter_map(|(entity, cam)| (is_bg_outdated || cam.is_changed()).then_some(entity));
+
+    for camera_entity in camera_entities {
+        // See https://github.com/KhronosGroup/glTF-Blender-IO/blob/8573cc0dfb612091bfc1bcf6df55c18a44b9668a/addons/io_scene_gltf2/blender/com/gltf2_blender_conversion.py#L19
+        const PBR_WATTS_TO_LUMENS : f32 = 683.0;
+        commands.entity(camera_entity).insert(EnvironmentMapLight {
+            diffuse_map: env_map_handle.clone(),
+            specular_map: env_map_handle.clone(),
+            intensity: background_shader.strength * PBR_WATTS_TO_LUMENS,
         });
     }
 }
