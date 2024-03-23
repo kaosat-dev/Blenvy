@@ -100,27 +100,29 @@ fn process_background_shader(
     };
 
     let env_map_handle = env_map_handle.get_or_insert_with(|| {
-        const SIDES_PER_CUBE: usize = 6;
-
         let size = Extent3d {
             width: 1,
             height: 6,
             depth_or_array_layers: 1,
         };
         let dimension = TextureDimension::D2;
-
+        const SIDES_PER_CUBE: usize = 6;
         let data: Vec<_> = iter::repeat(background_shader.color.as_rgba_u8())
             .take(SIDES_PER_CUBE)
             .flatten()
             .collect();
         let format = TextureFormat::Rgba8UnormSrgb;
-        let asset_usage = RenderAssetUsages::MAIN_WORLD | RenderAssetUsages::RENDER_WORLD;
+        let asset_usage = RenderAssetUsages::RENDER_WORLD;
+
         let mut image = Image::new(size, dimension, data, format, asset_usage);
+
+        // Source: https://github.com/bevyengine/bevy/blob/85b488b73d6f6e75690962fba67a144d9beb6b88/examples/3d/skybox.rs#L152-L160
         image.reinterpret_stacked_2d_as_array(image.height() / image.width());
         image.texture_view_descriptor = Some(TextureViewDescriptor {
             dimension: Some(TextureViewDimension::Cube),
             ..default()
         });
+
         images.add(image)
     });
     // Don't need the handle to be &mut
@@ -142,7 +144,7 @@ fn process_background_shader(
 
     for camera_entity in camera_entities {
         // See https://github.com/KhronosGroup/glTF-Blender-IO/blob/8573cc0dfb612091bfc1bcf6df55c18a44b9668a/addons/io_scene_gltf2/blender/com/gltf2_blender_conversion.py#L19
-        const PBR_WATTS_TO_LUMENS : f32 = 683.0;
+        const PBR_WATTS_TO_LUMENS: f32 = 683.0;
         commands.entity(camera_entity).insert(EnvironmentMapLight {
             diffuse_map: env_map_handle.clone(),
             specular_map: env_map_handle.clone(),
