@@ -29,8 +29,6 @@ pub struct InstanceAnimations {
 /// ie armature/root for animated models, which means more complex queries to trigger animations that we want to avoid
 pub struct InstanceAnimationPlayerLink(pub Entity);
 
-
-
 /// Stores Animation information: name, frame informations etc
 #[derive(Reflect, Default, Debug)]
 pub struct AnimationInfo {
