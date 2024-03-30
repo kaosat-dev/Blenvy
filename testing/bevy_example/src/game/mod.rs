@@ -3,7 +3,7 @@ use std::{
     collections::HashMap, fs, time::Duration
 };
 
-use bevy_gltf_blueprints::{Animated, AnimationMarkers, BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintName, BlueprintsList, GltfBlueprintsSet, InstanceAnimationPlayerLink, InstanceAnimations};
+use bevy_gltf_blueprints::{AnimationInfos, AnimationMarkerReached, AnimationMarkerTrackers, AnimationMarkers, BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintName, BlueprintsList, GltfBlueprintsSet, InstanceAnimationPlayerLink, InstanceAnimations};
 pub use in_game::*;
 
 use bevy::{
@@ -141,7 +141,7 @@ fn setup_main_scene_animations(
 
 fn animations(
     added_animation_players:Query<(Entity, &Name, &AnimationPlayer)>,
-    addded_animateds:Query<(Entity, &Name, &Animated),(Added<Animated>)>,
+    added_animation_infos:Query<(Entity, &Name, &AnimationInfos),(Added<AnimationInfos>)>,
 
     animtest: Res<AnimTest>,
 
@@ -150,16 +150,13 @@ fn animations(
 
     parents: Query<&Parent>,
     names: Query<&Name>,
-
 ) {
-    for (entity, name, animated) in addded_animateds.iter() {
-        // println!("animated stuf {:?} on entity {}", animated, name);
+    for (entity, name, animation_infos) in added_animation_infos.iter() {
+        //println!("animated stuf {:?} on entity {}", animation_infos, name);
         let gltf = assets_gltf.get(&animtest.0).unwrap();
-
-        let animations_list = animated;
         let mut matching_data = true;
-        for animation_name in &animations_list.animations {
-            if !gltf.named_animations.contains_key(animation_name){
+        for animation_info in &animation_infos.animations {
+            if !gltf.named_animations.contains_key(&animation_info.name){
                 matching_data = false;
                 break;
             }
@@ -167,34 +164,27 @@ fn animations(
         if matching_data {
             println!("inserting Animations components into {} ({:?})", name, entity);
             println!("Found match {:?}", gltf.named_animations);
-            // commands.entity(entity).remove::<Animations>();
-            // FIXME: for some reason this does NOT overwrite the component ??
-            
                 commands.entity(entity).insert(
                     InstanceAnimations {
                         named_animations: gltf.named_animations.clone(),
                     },
                 );
-            
-          
-            //animations.named_animations = gltf.named_animations.clone();
-            
-
             for ancestor in parents.iter_ancestors(entity) {
                 if added_animation_players.contains(ancestor) {
-                    println!("found match with animationPlayer !! {:?}",names.get(ancestor));
+                    // println!("found match with animationPlayer !! {:?}",names.get(ancestor));
                     commands.entity(entity).insert(InstanceAnimationPlayerLink(ancestor));
                 }
                 // info!("{:?} is an ancestor of {:?}", ancestor, player);
             }
         }
+        println!("");
     }
 }
 
 fn play_animations(
-    animated_marker1: Query<(&InstanceAnimationPlayerLink, &InstanceAnimations), (With<Animated>, With<Marker1>)>,
-    animated_marker2: Query<(&InstanceAnimationPlayerLink, &InstanceAnimations), (With<Animated>, With<Marker2>)>,
-    animated_marker3: Query<(&InstanceAnimationPlayerLink, &InstanceAnimations, &BlueprintAnimationPlayerLink, &BlueprintAnimations), (With<Animated>, With<Marker3>)>,
+    animated_marker1: Query<(&InstanceAnimationPlayerLink, &InstanceAnimations), (With<AnimationInfos>, With<Marker1>)>,
+    animated_marker2: Query<(&InstanceAnimationPlayerLink, &InstanceAnimations), (With<AnimationInfos>, With<Marker2>)>,
+    animated_marker3: Query<(&InstanceAnimationPlayerLink, &InstanceAnimations, &BlueprintAnimationPlayerLink, &BlueprintAnimations), (With<AnimationInfos>, With<Marker3>)>,
 
     mut animation_players: Query<&mut AnimationPlayer>,
     keycode: Res<ButtonInput<KeyCode>>,
@@ -309,35 +299,61 @@ fn play_animations(
 }
 
 fn trigger_event_based_on_animation_marker(
-    bla: Query<(Entity, &AnimationMarkers, &InstanceAnimationPlayerLink, &InstanceAnimations)>,
+    animation_infos: Query<(Entity, &AnimationMarkers, &InstanceAnimationPlayerLink, &InstanceAnimations, &AnimationInfos)>,
     animation_players: Query<&AnimationPlayer>,
-    animation_clips: Res<Assets<AnimationClip>>
+    animation_clips: Res<Assets<AnimationClip>>,
+    mut animation_marker_events: EventWriter<AnimationMarkerReached>
 ) {
-    for (entity, markers, link, animations) in bla.iter() {
+    for (entity, markers, link, animations, animation_infos) in animation_infos.iter() {
         let animation_player = animation_players.get(link.0).unwrap();
-        
         let animation_clip = animation_clips.get(animation_player.animation_clip());
 
         if animation_clip.is_some(){
+            // if marker_trackers.0.contains_key(k)
+            // marker_trackers.0
             // println!("Entity {:?} markers {:?}", entity, markers);
             // println!("Player {:?} {}", animation_player.elapsed(), animation_player.completions());
+           
+            // FIMXE: yikes ! very inneficient ! perhaps add boilerplate to the "start playing animation" code so we know what is playing
+            let animation_name = animations.named_animations.iter().find_map(|(key, value)| if value == animation_player.animation_clip(){ Some(key) }else { None});
+            if animation_name.is_some() {
+                let animation_name = animation_name.unwrap();
 
-            let animation_total_length = animation_clip.unwrap().duration();
-            let animation_total_frames = 80; // FIXME just for testing
-            // TODO: we also need to take playback speed into account
-            let time_in_animation = animation_player.elapsed() - (animation_player.completions() as f32) * animation_total_length;//(animation_player.elapsed() / (animation_player.completions() as f32 + 1.0)) ;// / animation_total_length;
-            let time_bla = (animation_total_frames as f32 / animation_total_length)  * time_in_animation ;
-            let frame = time_bla as u32;
-            // println!("time_in_animation {} out of {}, completions {}, // frame {}",time_in_animation, animation_total_length, animation_player.completions(), frame);
-            //animation_player.animation_clip()
+                let animation_length_seconds = animation_clip.unwrap().duration();
+                let animation_length_frames = animation_infos.animations.iter().find(|anim| &anim.name == animation_name).unwrap().frames_length;
+                // TODO: we also need to take playback speed into account
+                let time_in_animation = animation_player.elapsed() - (animation_player.completions() as f32) * animation_length_seconds;
+                let frame_seconds = (animation_length_frames as f32 / animation_length_seconds)  * time_in_animation ;
+                let frame = frame_seconds as u32;
 
-            let matching_animation_marker = &markers.0[&"Blueprint1_jump".to_string()];
-            if matching_animation_marker.contains_key(&frame) {
-                let matching_markers_per_frame = matching_animation_marker.get(&frame).unwrap();
-                println!("FOUND A MARKER {:?} at frame {}", matching_markers_per_frame, frame);
+
+                let matching_animation_marker = &markers.0[animation_name]; 
+                if matching_animation_marker.contains_key(&frame) {
+                    let matching_markers_per_frame = matching_animation_marker.get(&frame).unwrap();
+                    // println!("FOUND A MARKER {:?} at frame {}", matching_markers_per_frame, frame);
+                    //emit an event , something like AnimationMarkerReached(entity, animation_name, frame, marker_name)
+                    // FIXME: problem, this can fire multiple times in a row, depending on animation length , speed , etc
+                    for marker_name in matching_markers_per_frame {
+                        animation_marker_events.send(AnimationMarkerReached { 
+                            entity: entity, 
+                            animation_name: animation_name.clone(), 
+                            frame: frame, 
+                            marker_name: marker_name.clone() 
+                        });
+                    }
+                }
             }
+           
         }
-       
+    }
+}
+
+fn react_to_animation_markers(
+    mut animation_marker_events: EventReader<AnimationMarkerReached>
+)
+{
+    for event in animation_marker_events.read() {
+        println!("animation marker event {:?}", event)
     }
 }
 
@@ -374,6 +390,8 @@ impl Plugin for GamePlugin {
                 .after(GltfBlueprintsSet::AfterSpawn)
             )
             .add_systems(Update, play_animations)
+            .add_systems(Update, react_to_animation_markers)
+
             /* .add_systems(Update, generate_screenshot.run_if(on_timer(Duration::from_secs_f32(0.2)))) // TODO: run once
             .add_systems(
                 Update,

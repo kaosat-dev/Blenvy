@@ -122,14 +122,16 @@ impl Plugin for BlueprintsPlugin {
 
         .register_type::<BlueprintAnimations>()
         .register_type::<InstanceAnimations>()
-        .register_type::<Animated>()
+        .register_type::<AnimationInfo>()
+        .register_type::<AnimationInfos>()
+        .register_type::<Vec<AnimationInfo>>()
+
         .register_type::<AnimationMarkers>()
         .register_type::<HashMap<u32, Vec<String>>>()
         .register_type::<HashMap<String, HashMap<u32, Vec<String> >>>()
-
+        .add_event::<AnimationMarkerReached>()
 
         .register_type::<BlueprintsList>()
-        .register_type::<Vec<String>>()
         .register_type::<HashMap<String, Vec<String>>>()
         .insert_resource(BluePrintsConfig {
             format: self.format,
