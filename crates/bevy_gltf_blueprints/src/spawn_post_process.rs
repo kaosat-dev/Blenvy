@@ -85,7 +85,9 @@ pub(crate) fn spawned_blueprint_post_process(
                     // FIXME: stopgap solution: since we cannot use an AnimationPlayer at the root entity level
                     // and we cannot update animation clips so that the EntityPaths point to one level deeper,
                     // BUT we still want to have some marker/control at the root entity level, we add this
-                    commands.entity(original).insert(BlueprintAnimationPlayerLink(added));
+                    commands
+                        .entity(original)
+                        .insert(BlueprintAnimationPlayerLink(added));
                 }
             }
         }

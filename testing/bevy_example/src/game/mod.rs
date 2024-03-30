@@ -1,16 +1,19 @@
-pub mod in_game;
 pub mod animation;
-pub use in_game::*;
+pub mod in_game;
 pub use animation::*;
+pub use in_game::*;
 
-use std::{
-    collections::HashMap, fs, time::Duration
+use std::{collections::HashMap, fs, time::Duration};
+
+use bevy_gltf_blueprints::{
+    AnimationInfos, AnimationMarkerReached, AnimationMarkerTrackers, AnimationMarkers,
+    BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintName, BlueprintsList,
+    GltfBlueprintsSet, InstanceAnimationPlayerLink, InstanceAnimations,
 };
 
-use bevy_gltf_blueprints::{AnimationInfos, AnimationMarkerReached, AnimationMarkerTrackers, AnimationMarkers, BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintName, BlueprintsList, GltfBlueprintsSet, InstanceAnimationPlayerLink, InstanceAnimations};
-
 use bevy::{
-    ecs::query, gltf::Gltf, prelude::*, render::view::screenshot::ScreenshotManager, time::common_conditions::on_timer, window::PrimaryWindow
+    ecs::query, gltf::Gltf, prelude::*, render::view::screenshot::ScreenshotManager,
+    time::common_conditions::on_timer, window::PrimaryWindow,
 };
 use bevy_gltf_worlflow_examples_common_rapier::{AppState, GameState};
 
@@ -21,11 +24,10 @@ fn start_game(mut next_app_state: ResMut<NextState<AppState>>) {
     next_app_state.set(AppState::AppLoading);
 }
 
-
 // if the export from Blender worked correctly, we should have animations (simplified here by using AnimationPlayerLink)
 // if the export from Blender worked correctly, we should have an Entity called "Blueprint4_nested" that has a child called "Blueprint3" that has a "BlueprintName" component with value Blueprint3
 // if the export from Blender worked correctly, we should have a blueprints_list
-// if the export from Blender worked correctly, we should have the correct tree of entities 
+// if the export from Blender worked correctly, we should have the correct tree of entities
 #[allow(clippy::too_many_arguments)]
 fn validate_export(
     parents: Query<&Parent>,
@@ -36,7 +38,7 @@ fn validate_export(
     empties_candidates: Query<(Entity, &Name, &GlobalTransform)>,
 
     blueprints_list: Query<(Entity, &BlueprintsList)>,
-    root: Query<(Entity, &Name, &Children), (Without<Parent>, With<Children>)>
+    root: Query<(Entity, &Name, &Children), (Without<Parent>, With<Children>)>,
 ) {
     let animations_found = !animation_player_links.is_empty();
 
@@ -82,21 +84,22 @@ fn validate_export(
         let mut tree: HashMap<String, Vec<String>> = HashMap::new();
 
         for child in children.iter_descendants(root.0) {
-            let child_name:String = names.get(child).map_or(String::from("no_name"), |e| e.to_string() ); //|e| e.to_string(), || "no_name".to_string());
-            //println!("  child {}", child_name);
+            let child_name: String = names
+                .get(child)
+                .map_or(String::from("no_name"), |e| e.to_string()); //|e| e.to_string(), || "no_name".to_string());
+                                                                     //println!("  child {}", child_name);
             let parent = parents.get(child).unwrap();
-            let parent_name:String = names.get(parent.get()).map_or(String::from("no_name"), |e| e.to_string() ); //|e| e.to_string(), || "no_name".to_string());
-            tree.entry(parent_name).or_default().push(child_name.clone());
-        } 
+            let parent_name: String = names
+                .get(parent.get())
+                .map_or(String::from("no_name"), |e| e.to_string()); //|e| e.to_string(), || "no_name".to_string());
+            tree.entry(parent_name)
+                .or_default()
+                .push(child_name.clone());
+        }
 
         let hierarchy = to_json_string(&tree);
-        fs::write(
-            "bevy_hierarchy.json",
-            hierarchy
-        )
-        .expect("unable to write hierarchy file")
+        fs::write("bevy_hierarchy.json", hierarchy).expect("unable to write hierarchy file")
     }
-
 
     fs::write(
         "bevy_diagnostics.json",

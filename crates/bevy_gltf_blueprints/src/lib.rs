@@ -119,18 +119,15 @@ impl Plugin for BlueprintsPlugin {
         .register_type::<BlueprintName>()
         .register_type::<MaterialInfo>()
         .register_type::<SpawnHere>()
-
         .register_type::<BlueprintAnimations>()
         .register_type::<InstanceAnimations>()
         .register_type::<AnimationInfo>()
         .register_type::<AnimationInfos>()
         .register_type::<Vec<AnimationInfo>>()
-
         .register_type::<AnimationMarkers>()
         .register_type::<HashMap<u32, Vec<String>>>()
-        .register_type::<HashMap<String, HashMap<u32, Vec<String> >>>()
+        .register_type::<HashMap<String, HashMap<u32, Vec<String>>>>()
         .add_event::<AnimationMarkerReached>()
-
         .register_type::<BlueprintsList>()
         .register_type::<HashMap<String, Vec<String>>>()
         .insert_resource(BluePrintsConfig {

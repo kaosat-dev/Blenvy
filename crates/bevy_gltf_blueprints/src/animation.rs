@@ -33,23 +33,23 @@ pub struct InstanceAnimationPlayerLink(pub Entity);
 #[derive(Reflect, Default, Debug)]
 pub struct AnimationInfo {
     pub name: String,
-    pub frame_start:f32,
-    pub frame_end:f32,
-    pub frames_length:f32,
-    pub frame_start_override:f32,
-    pub frame_end_override:f32
+    pub frame_start: f32,
+    pub frame_end: f32,
+    pub frames_length: f32,
+    pub frame_start_override: f32,
+    pub frame_end_override: f32,
 }
 
 /// Stores information about animations, to make things a bit easier api wise:
 /// these components are automatically inserted by gltf_auto_export on entities that have animations
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-pub struct AnimationInfos{
-    pub animations: Vec<AnimationInfo> 
+pub struct AnimationInfos {
+    pub animations: Vec<AnimationInfo>,
 }
 
-pub struct AnimationMarker{
-    pub frame:u32,
+pub struct AnimationMarker {
+    pub frame: u32,
     pub name: String,
 }
 
@@ -57,25 +57,24 @@ pub struct AnimationMarker{
 /// it is essentiall a hashmap of AnimationName => HashMap<FrameNumber, Vec of marker names>
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-pub struct AnimationMarkers(pub HashMap<String, HashMap<u32, Vec<String> >>);
-
+pub struct AnimationMarkers(pub HashMap<String, HashMap<u32, Vec<String>>>);
 
 // FIXME: ugh, ugly, there has to be a better way to do this ?
 #[derive(Component, Default, Debug)]
-pub struct AnimationMarkerTrackers(pub HashMap<String, HashMap<u32, Vec<AnimationMarkerTracker> >>);
+pub struct AnimationMarkerTrackers(pub HashMap<String, HashMap<u32, Vec<AnimationMarkerTracker>>>);
 
 #[derive(Default, Debug)]
-pub struct AnimationMarkerTracker{
+pub struct AnimationMarkerTracker {
     // pub frame:u32,
     // pub name: String,
     // pub processed_for_cycle: bool,
-    pub prev_frame: u32
+    pub prev_frame: u32,
 }
 
 /// Event that gets triggered once a specific marker inside an animation has been reached (frame based)
 /// Provides some usefull information about which entity , wich animation, wich frame & which marker got triggered
 #[derive(Event, Debug)]
-pub struct AnimationMarkerReached{
+pub struct AnimationMarkerReached {
     pub entity: Entity,
     pub animation_name: String,
     pub frame: u32,
