@@ -3,7 +3,7 @@ use std::{
     collections::HashMap, fs, time::Duration
 };
 
-use bevy_gltf_blueprints::{Animated, BlueprintAnimationPlayerLink, BlueprintAnimations, InstanceAnimationPlayerLink, InstanceAnimations, BlueprintName, BlueprintsList, GltfBlueprintsSet};
+use bevy_gltf_blueprints::{Animated, AnimationMarkers, BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintName, BlueprintsList, GltfBlueprintsSet, InstanceAnimationPlayerLink, InstanceAnimations};
 pub use in_game::*;
 
 use bevy::{
@@ -308,6 +308,39 @@ fn play_animations(
     }
 }
 
+fn trigger_event_based_on_animation_marker(
+    bla: Query<(Entity, &AnimationMarkers, &InstanceAnimationPlayerLink, &InstanceAnimations)>,
+    animation_players: Query<&AnimationPlayer>,
+    animation_clips: Res<Assets<AnimationClip>>
+) {
+    for (entity, markers, link, animations) in bla.iter() {
+        let animation_player = animation_players.get(link.0).unwrap();
+        
+        let animation_clip = animation_clips.get(animation_player.animation_clip());
+
+        if animation_clip.is_some(){
+            // println!("Entity {:?} markers {:?}", entity, markers);
+            // println!("Player {:?} {}", animation_player.elapsed(), animation_player.completions());
+
+            let animation_total_length = animation_clip.unwrap().duration();
+            let animation_total_frames = 80; // FIXME just for testing
+            // TODO: we also need to take playback speed into account
+            let time_in_animation = animation_player.elapsed() - (animation_player.completions() as f32) * animation_total_length;//(animation_player.elapsed() / (animation_player.completions() as f32 + 1.0)) ;// / animation_total_length;
+            let time_bla = (animation_total_frames as f32 / animation_total_length)  * time_in_animation ;
+            let frame = time_bla as u32;
+            // println!("time_in_animation {} out of {}, completions {}, // frame {}",time_in_animation, animation_total_length, animation_player.completions(), frame);
+            //animation_player.animation_clip()
+
+            let matching_animation_marker = &markers.0[&"Blueprint1_jump".to_string()];
+            if matching_animation_marker.contains_key(&frame) {
+                let matching_markers_per_frame = matching_animation_marker.get(&frame).unwrap();
+                println!("FOUND A MARKER {:?} at frame {}", matching_markers_per_frame, frame);
+            }
+        }
+       
+    }
+}
+
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
 /// flag component for testing
@@ -336,7 +369,7 @@ impl Plugin for GamePlugin {
             .add_systems(OnEnter(AppState::AppRunning), setup_game)
 
             .add_systems(OnEnter(AppState::MenuRunning), setup_main_scene_animations)
-            .add_systems(Update, animations
+            .add_systems(Update, (animations, trigger_event_based_on_animation_marker)
                 .run_if(in_state(AppState::AppRunning))
                 .after(GltfBlueprintsSet::AfterSpawn)
             )

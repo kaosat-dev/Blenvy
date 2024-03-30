@@ -56,8 +56,22 @@ def copy_animation_data(source, target):
         # sort animations alphabetically (case insensitive) so they have a defined order and match Blender's Action list
         blender_actions.sort(key = lambda a: a.name.lower())
         
+        markers_per_animation = {}
         for action in blender_actions:
-            animations.append(blender_tracks[action.name])
+            animation_name = blender_tracks[action.name]
+            animations.append(animation_name)
+
+            markers_per_animation[animation_name] = {}
+
+            print("markers", action.pose_markers, "for", action.name)
+            for marker in action.pose_markers:
+
+                if marker.frame not in markers_per_animation[animation_name]:
+                    markers_per_animation[animation_name][marker.frame] = []
+                print("  marker", marker.name, marker.frame)
+               
+                markers_per_animation[animation_name][marker.frame].append(marker.name)
+
         print("animations", animations)
 
         """if target.animation_data == None:
@@ -67,13 +81,29 @@ def copy_animation_data(source, target):
         with bpy.context.temp_override(active_object=source, selected_editable_objects=[target]): 
             bpy.ops.object.make_links_data(type='ANIMATION')
         # we add an "animated" flag component 
-        target['Animated'] = f'(animations: {animations})'.replace("'", '"') #'(animations: [])' #
+        target['Animated'] = f'(animations: {animations})'.replace("'", '"')
+        
+        markers_formated = '{'
+        for animation in markers_per_animation.keys():
+            markers_formated += f'"{animation}":'
+            markers_formated += "{"
+            for frame in markers_per_animation[animation].keys():
+                markers = markers_per_animation[animation][frame]
+                markers_formated += f"{frame}:{markers}, ".replace("'", '"')
+            markers_formated += '}, '             
+        markers_formated += '}' 
+        print("markers_formated", markers_formated)
+        target["AnimationMarkers"] = f'( {markers_formated} )'
+        #'({"animation_name": {5: ["Marker_1"]} })'
+        #f'({json.dumps(markers_per_animation)})'
         
         """print("copying animation data for", source.name, target.animation_data)
         properties = [p.identifier for p in source.animation_data.bl_rna.properties if not p.is_readonly]
         for prop in properties:
             print("copying stuff", prop)
             setattr(target.animation_data, prop, getattr(source.animation_data, prop))"""
+        
+
 
 def duplicate_object(object, parent, combine_mode, destination_collection, library_collections, legacy_mode, nester=""):
     copy = None
@@ -95,6 +125,10 @@ def duplicate_object(object, parent, combine_mode, destination_collection, libra
             children_per_collection = {}
             get_sub_collections([object.instance_collection], root_node, children_per_collection)
             empty_obj["BlueprintsList"] = f"({json.dumps(dict(children_per_collection))})"
+
+            # empty_obj["AnimationMarkers"] = '({"animation_name": {5: "Marker_1"} })'
+
+            #'({5: "sdf"})'#.replace('"',"'") #f"({json.dumps(dict(animation_foo))})"
             #empty_obj["Assets"] = {"Animations": [], "Materials": [], "Models":[], "Textures":[], "Audio":[], "Other":[]}
         
         # we copy custom properties over from our original object to our empty
@@ -109,10 +143,7 @@ def duplicate_object(object, parent, combine_mode, destination_collection, libra
         object.name = original_name + "____bak"
         copy = object.copy()
         copy.name = original_name
-        # FIXME: orphan data comes from this one, not even sure if this copying is needed at all
-        """if object.data:
-        data = object.data.copy()
-        obj_copy.data = data"""     
+
 
         destination_collection.objects.link(copy)
 

@@ -35,3 +35,13 @@ pub struct InstanceAnimations {
 /// this is for convenience, because currently , Bevy's gltf parsing inserts `AnimationPlayers` "one level down"
 /// ie armature/root for animated models, which means more complex queries to trigger animations that we want to avoid
 pub struct InstanceAnimationPlayerLink(pub Entity);
+
+
+pub struct AnimationMarker{
+    pub frame:u32,
+    pub name: String,
+}
+
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+pub struct AnimationMarkers(pub HashMap<String, HashMap<u32, Vec<String> >>);

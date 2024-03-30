@@ -123,6 +123,10 @@ impl Plugin for BlueprintsPlugin {
         .register_type::<BlueprintAnimations>()
         .register_type::<InstanceAnimations>()
         .register_type::<Animated>()
+        .register_type::<AnimationMarkers>()
+        .register_type::<HashMap<u32, Vec<String>>>()
+        .register_type::<HashMap<String, HashMap<u32, Vec<String> >>>()
+
 
         .register_type::<BlueprintsList>()
         .register_type::<Vec<String>>()
