@@ -130,6 +130,7 @@ impl Plugin for GamePlugin {
         app.register_type::<Marker1>()
             .register_type::<Marker2>()
             .register_type::<Marker3>()
+            .register_type::<MarkerFox>()
 
             .add_systems(Update, (spawn_test).run_if(in_state(GameState::InGame)))
             .add_systems(Update, validate_export)
@@ -137,7 +138,7 @@ impl Plugin for GamePlugin {
             .add_systems(OnEnter(AppState::AppRunning), setup_game)
 
             .add_systems(OnEnter(AppState::MenuRunning), setup_main_scene_animations)
-            .add_systems(Update, (animations, trigger_event_based_on_animation_marker)
+            .add_systems(Update, (animations)
                 .run_if(in_state(AppState::AppRunning))
                 .after(GltfBlueprintsSet::AfterSpawn)
             )

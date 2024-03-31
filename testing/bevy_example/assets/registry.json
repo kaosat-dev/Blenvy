@@ -2993,6 +2993,17 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_example::game::animation::MarkerFox": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {},
+      "required": [],
+      "short_name": "MarkerFox",
+      "title": "bevy_example::game::animation::MarkerFox",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "bevy_example::test_components::AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrWut": {
       "additionalProperties": false,
       "isComponent": true,

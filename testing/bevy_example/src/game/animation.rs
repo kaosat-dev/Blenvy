@@ -24,6 +24,11 @@ pub struct Marker2;
 /// flag component for testing
 pub struct Marker3;
 
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+/// flag component for testing
+pub struct MarkerFox;
+
 #[derive(Resource)]
 pub struct AnimTest(Handle<Gltf>);
 
@@ -91,9 +96,32 @@ pub fn play_animations(
         (With<AnimationInfos>, With<Marker3>),
     >,
 
+    animated_fox: Query<
+    (&BlueprintAnimationPlayerLink, &BlueprintAnimations),
+    (With<MarkerFox>),
+    >,
+
     mut animation_players: Query<&mut AnimationPlayer>,
     keycode: Res<ButtonInput<KeyCode>>,
 ) {
+    if keycode.just_pressed(KeyCode::KeyP) {
+        for (link, animations) in animated_fox.iter() {
+            println!("animations {:?}", animations.named_animations);
+            let mut animation_player = animation_players.get_mut(link.0).unwrap();
+            let anim_name = "Run";
+            animation_player
+                .play_with_transition(
+                    animations
+                        .named_animations
+                        .get(anim_name)
+                        .expect("animation name should be in the list")
+                        .clone(),
+                    Duration::from_secs(5),
+                )
+                .repeat();
+        }
+    }
+
     if keycode.just_pressed(KeyCode::KeyM) {
         for (link, animations) in animated_marker1.iter() {
             println!("animations {:?}", animations.named_animations);
@@ -202,72 +230,6 @@ pub fn play_animations(
     }
 }
 
-pub fn trigger_event_based_on_animation_marker(
-    animation_infos: Query<(
-        Entity,
-        &AnimationMarkers,
-        &InstanceAnimationPlayerLink,
-        &InstanceAnimations,
-        &AnimationInfos,
-    )>,
-    animation_players: Query<&AnimationPlayer>,
-    animation_clips: Res<Assets<AnimationClip>>,
-    mut animation_marker_events: EventWriter<AnimationMarkerReached>,
-) {
-    for (entity, markers, link, animations, animation_infos) in animation_infos.iter() {
-        let animation_player = animation_players.get(link.0).unwrap();
-        let animation_clip = animation_clips.get(animation_player.animation_clip());
-
-        if animation_clip.is_some() {
-            // if marker_trackers.0.contains_key(k)
-            // marker_trackers.0
-            // println!("Entity {:?} markers {:?}", entity, markers);
-            // println!("Player {:?} {}", animation_player.elapsed(), animation_player.completions());
-
-            // FIMXE: yikes ! very inneficient ! perhaps add boilerplate to the "start playing animation" code so we know what is playing
-            let animation_name = animations.named_animations.iter().find_map(|(key, value)| {
-                if value == animation_player.animation_clip() {
-                    Some(key)
-                } else {
-                    None
-                }
-            });
-            if animation_name.is_some() {
-                let animation_name = animation_name.unwrap();
-
-                let animation_length_seconds = animation_clip.unwrap().duration();
-                let animation_length_frames = animation_infos
-                    .animations
-                    .iter()
-                    .find(|anim| &anim.name == animation_name)
-                    .unwrap()
-                    .frames_length;
-                // TODO: we also need to take playback speed into account
-                let time_in_animation = animation_player.elapsed()
-                    - (animation_player.completions() as f32) * animation_length_seconds;
-                let frame_seconds =
-                    (animation_length_frames as f32 / animation_length_seconds) * time_in_animation;
-                let frame = frame_seconds as u32;
-
-                let matching_animation_marker = &markers.0[animation_name];
-                if matching_animation_marker.contains_key(&frame) {
-                    let matching_markers_per_frame = matching_animation_marker.get(&frame).unwrap();
-                    // println!("FOUND A MARKER {:?} at frame {}", matching_markers_per_frame, frame);
-                    //emit an event , something like AnimationMarkerReached(entity, animation_name, frame, marker_name)
-                    // FIXME: problem, this can fire multiple times in a row, depending on animation length , speed , etc
-                    for marker_name in matching_markers_per_frame {
-                        animation_marker_events.send(AnimationMarkerReached {
-                            entity: entity,
-                            animation_name: animation_name.clone(),
-                            frame: frame,
-                            marker_name: marker_name.clone(),
-                        });
-                    }
-                }
-            }
-        }
-    }
-}
 
 pub fn react_to_animation_markers(
     mut animation_marker_events: EventReader<AnimationMarkerReached>,
