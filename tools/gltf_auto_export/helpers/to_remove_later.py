@@ -30,6 +30,7 @@ glTF_extension_name = "EXT_auto_export"
 # For example, a compression scheme or new image format (with no fallback included)
 # would be "required", but physics metadata or app-specific settings could be optional.
 extension_is_required = False
+from io_scene_gltf2 import (GLTF_PT_export_main, GLTF_PT_export_include)
 
 class ExampleExtensionProperties(bpy.types.PropertyGroup):
     enabled: bpy.props.BoolProperty(

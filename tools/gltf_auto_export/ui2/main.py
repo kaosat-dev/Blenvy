@@ -17,51 +17,54 @@ from ..helpers.helpers_collections import (get_exportable_collections)
 ## ui logic & co
 
 class GLTF_PT_auto_export_main(bpy.types.Panel):
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
     bl_label = ""
-    bl_parent_id = "FILE_PT_operator"
-    bl_options = {'HIDE_HEADER'}
+    #bl_options = {'HIDE_HEADER'}
+    bl_category = "Gltf auto_export"
+    bl_context = "objectmode"
 
-    @classmethod
+    """ @classmethod
     def poll(cls, context):
         sfile = context.space_data
         operator = sfile.active_operator
 
         return operator.bl_idname == "EXPORT_SCENES_OT_auto_gltf"
+        """
 
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
 
-        sfile = context.space_data
-
 class GLTF_PT_auto_export_root(bpy.types.Panel):
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
     bl_label = "Auto export"
     bl_parent_id = "GLTF_PT_auto_export_main"
     #bl_options = {'DEFAULT_CLOSED'}
 
-    @classmethod
+    """@classmethod
     def poll(cls, context):
         sfile = context.space_data
         operator = sfile.active_operator
         return operator.bl_idname == "EXPORT_SCENES_OT_auto_gltf"
+        """
 
-    def draw_header(self, context):
+    """def draw_header(self, context):
         sfile = context.space_data
         operator = sfile.active_operator
-        self.layout.prop(operator, "auto_export", text="")
+        self.layout.prop(operator, "auto_export", text="")"""
 
     def draw(self, context):
+
+        pass
         layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
 
         sfile = context.space_data
-        operator = sfile.active_operator
+        operator = layout.operator("export_scenes.auto_gltf")#bpy.ops.export_scenes.auto_gltf #sfile.active_operator
 
         layout.active = operator.auto_export
         layout.prop(operator, 'will_save_settings')
@@ -126,24 +129,25 @@ class GLTF_PT_auto_export_root(bpy.types.Panel):
         col.separator()
       
 class GLTF_PT_auto_export_blueprints(bpy.types.Panel):
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
     bl_label = "Blueprints"
-    bl_parent_id = "GLTF_PT_auto_export_root"
+    bl_parent_id = "GLTF_PT_auto_export_main"
 
-    @classmethod
+    """@classmethod
     def poll(cls, context):
         sfile = context.space_data
         operator = sfile.active_operator
 
         return operator.bl_idname == "EXPORT_SCENES_OT_auto_gltf" #"EXPORT_SCENE_OT_gltf"
+        """
 
 
-    def draw_header(self, context):
+    """def draw_header(self, context):
         layout = self.layout
         sfile = context.space_data
         operator = sfile.active_operator
-        layout.prop(operator, "export_blueprints", text="")
+        layout.prop(operator, "export_blueprints", text="")"""
 
         #self.layout.prop(operator, "auto_export", text="")
 
@@ -153,7 +157,8 @@ class GLTF_PT_auto_export_blueprints(bpy.types.Panel):
         layout.use_property_decorate = False  # No animation.
 
         sfile = context.space_data
-        operator = sfile.active_operator
+        operator = layout.operator("export_scenes.auto_gltf")#bpy.ops.export_scenes.auto_gltf #sfile.active_operator
+#sfile.active_operator
 
         layout.active = operator.export_blueprints
         
@@ -195,37 +200,35 @@ class GLTF_PT_auto_export_collections_list(bpy.types.Panel):
             row.label(text=collection.name)
 
 class GLTF_PT_auto_export_gltf(bpy.types.Panel):
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
     bl_label = "Gltf"
     bl_parent_id = "GLTF_PT_auto_export_main"
     bl_options = {'DEFAULT_CLOSED'}
 
-    @classmethod
+    """@classmethod
     def poll(cls, context):
         sfile = context.space_data
         operator = sfile.active_operator
 
         return operator.bl_idname == "EXPORT_SCENES_OT_auto_gltf" #"EXPORT_SCENE_OT_gltf"
+        """
     
     def draw(self, context):
         preferences = context.preferences
         layout = self.layout
 
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        addon_prefs = operator
-
-        # we get the addon preferences from the standard gltf exporter & use those :
-        addon_prefs_gltf = preferences.addons["io_scene_gltf2"].preferences
-
-        #self.layout.operator("EXPORT_SCENE_OT_gltf", text='glTF 2.0 (.glb/.gltf)')
-        #bpy.ops.export_scene.gltf
-
-        """for key in addon_prefs.__annotations__.keys():
-            if key not in AutoExportGltfPreferenceNames:
-                layout.prop(operator, key)"""
+        layout.label(text="MAKE SURE TO KEEP 'REMEMBER EXPORT SETTINGS' !!")
+        op = layout.operator("EXPORT_SCENE_OT_gltf", text='Gltf settings')#'glTF 2.0 (.glb/.gltf)')
+        #op.export_format = 'GLTF_SEPARATE'
+        op.use_selection=True
+        op.will_save_settings=True
+        op.use_visible=True # Export visible and hidden objects. See Object/Batch Export to skip.
+        op.use_renderable=True
+        op.use_active_collection = True
+        op.use_active_collection_with_nested=True
+        op.use_active_scene = True
+        op.filepath="dummy"
      
 class SCENE_UL_GLTF_auto_export(bpy.types.UIList):
     # The draw_item function is called for each item of the collection that is visible in the list.
@@ -260,39 +263,3 @@ class SCENE_UL_GLTF_auto_export(bpy.types.UIList):
             layout.label(text="", icon_value=icon)
 
 
-
-
-
-from io_scene_gltf2 import (ExportGLTF2, GLTF_PT_export_main,ExportGLTF2_Base, GLTF_PT_export_include)
-import io_scene_gltf2 as gltf_exporter_original
-#import io_scene_gltf2.GLTF_PT_export_data_scene as GLTF_PT_export_data_scene_original
-"""
-class GLTF_PT_export_data(gltf_exporter_original.GLTF_PT_export_data):
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
-    bl_label = "Data"
-    bl_parent_id = "GLTF_PT_auto_export_gltf"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        return operator.bl_idname == "EXPORT_SCENES_OT_auto_gltf"
-
-class GLTF_PT_export_data_scene(gltf_exporter_original.GLTF_PT_export_data_scene):
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
-    bl_label = "Scene Graph"
-    bl_parent_id = "GLTF_PT_export_data"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        sfile = context.space_data
-        operator = sfile.active_operator
-        return operator.bl_idname == "EXPORT_SCENES_OT_auto_gltf"
-    
-    def draw(self, context):
-        return super().draw(context)"""

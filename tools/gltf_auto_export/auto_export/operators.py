@@ -8,7 +8,9 @@ from ..helpers.helpers_scenes import (get_scenes)
 from ..helpers.helpers_collections import (get_exportable_collections)
 from .auto_export import auto_export
 
-class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
+from io_scene_gltf2 import (ExportGLTF2, GLTF_PT_export_main,ExportGLTF2_Base, GLTF_PT_export_include)
+
+class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper, ExportGLTF2_Base):
     """auto export gltf"""
     #bl_idname = "object.xxx"
     bl_idname = "export_scenes.auto_gltf"
