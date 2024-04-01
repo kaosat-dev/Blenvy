@@ -47,11 +47,103 @@ class AutoExportTracker(PropertyGroup):
         # all our logic is done, mark this as done
         print("EXPORT DONE")
 
+
+    @classmethod
+    def gltf_exporter_handler(cls):
+        # FOr some reason, the active operator here is always None, so using a workaround 
+        # active_operator = bpy.context.active_operator 
+        print("here", bpy.context.window_manager.was_good_operator)
+       
+        if bpy.context.window_manager.was_good_operator:
+            dummy_file_path = "/home/ckaos/projects/bevy/Blender_bevy_components_worklflow/testing/bevy_example/assets/dummy.glb"
+
+            import os
+            if os.path.exists(dummy_file_path):
+                print("dummy file exists, assuming it worked")
+                os.unlink(dummy_file_path)
+
+                # get the parameters
+                scene = bpy.context.scene
+                print("scene", scene["glTF2ExportSettings"])
+                if "glTF2ExportSettings" in scene:
+                    settings = scene["glTF2ExportSettings"]
+                    print("gltf settings", dict(settings))
+
+                # now reset the original gltf_settings
+                if getattr(cls, "existing_gltf_settings", None) != None:
+                    print("resetting original gltf settings")
+                    scene["glTF2ExportSettings"] = cls.existing_gltf_settings
+                else:
+                    print("no pre_existing settings")
+                    if "glTF2ExportSettings" in scene:
+                        del scene["glTF2ExportSettings"]
+                cls.existing_gltf_settings = None
+
+                bpy.context.window_manager.was_good_operator = False
+                return None
+            
+
+        else:
+            try:
+                bpy.app.timers.unregister(cls.gltf_exporter_handler)
+            except:pass
+            return None
+        return 1
+
     @classmethod
     def deps_update_handler(cls, scene, depsgraph):
         # print("change detection enabled", cls.change_detection_enabled)
+        active_operator = bpy.context.active_operator
+        if active_operator:
+            #print("Operator", active_operator.bl_label, active_operator.bl_idname)
+            if active_operator.bl_idname == "EXPORT_SCENE_OT_gltf" and not bpy.context.window_manager.was_good_operator:
+                try:
+                    bpy.app.timers.unregister(cls.gltf_exporter_handler)
+                except:pass
+                bpy.app.timers.register(cls.gltf_exporter_handler, first_interval=3)
+
+                # we force saving params
+                active_operator.will_save_settings = True
+
+                # we backup any existing gltf export settings, if there where any
+                scene = bpy.context.scene
+                if "glTF2ExportSettings" in scene:
+                    existing_setting = scene["glTF2ExportSettings"]
+                    cls.existing_gltf_settings = existing_setting
+                bpy.context.window_manager.was_good_operator = True
+                
+
+        else:
+            if bpy.context.window_manager.was_good_operator:
+                bpy.context.window_manager.was_good_operator = False
+            """if active_operator.bl_idname == "EXPORT_SCENE_OT_gltf":
+                scene = bpy.context.scene
+                if "glTF2ExportSettings" in scene:
+                    existing_setting = scene["glTF2ExportSettings"]
+                    cls.existing_gltf_settings = existing_setting
+                print("we just executed the correct operator")
+                active_operator.will_save_settings = True
+            else:
+                import os
+                dummy_file_path = "/home/ckaos/projects/bevy/Blender_bevy_components_worklflow/testing/bevy_example/assets/dummy.glb"
+                if os.path.exists(dummy_file_path):
+                    print("dummy file exists")
+                    os.unlink(dummy_file_path)
+                    # get the parameters
+                    scene = bpy.context.scene
+                    settings = scene["glTF2ExportSettings"]
+                    print("gltf settings", dict(settings))
+
+                    # now reset the original gltf_settings
+                    if hasattr(cls, "existing_gltf_settings"):
+                        print("resetting original gltf settings")
+                        scene["glTF2ExportSettings"] = cls.existing_gltf_settings
+                    else:
+                        del scene["glTF2ExportSettings"]"""
+
+
         if scene.name != "temp_scene":
-            #print("depsgraph_update_post", scene.name)
+            # print("depsgraph_update_post", scene.name)
             changed_scene = scene.name or ""
 
             # only deal with changes if we are no in the mids of saving/exporting
@@ -62,6 +154,7 @@ class AutoExportTracker(PropertyGroup):
 
                 # depsgraph = bpy.context.evaluated_depsgraph_get()
                 for obj in depsgraph.updates:
+                    print("depsgraph update", obj)
                     if isinstance(obj.id, bpy.types.Object):
                         # get the actual object
                         object = bpy.data.objects[obj.id.name]
@@ -84,6 +177,10 @@ class AutoExportTracker(PropertyGroup):
                 #print("changed_objects_per_scene", cls.changed_objects_per_scene)
             else:
                 cls.changed_objects_per_scene.clear()
+
+        depsgraph = bpy.context.evaluated_depsgraph_get()
+        for update in depsgraph.updates:
+            print("update", update)
 
     def disable_change_detection(self,):
         self.change_detection_enabled = False
