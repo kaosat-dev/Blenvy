@@ -163,8 +163,7 @@ class glTF2ExportUserExtension:
                 extension={"auto_export_blueprints": self.properties.auto_export_blueprints},
                 required=extension_is_required
             )
-    def pre_export_hook(self):
-        print("pre export callback")
+
 
 def glTF2_pre_export_callback(data):
     print("pre_export", data)

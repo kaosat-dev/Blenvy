@@ -328,3 +328,36 @@ def duplicate_object2(object, original_name):
             except:pass
             return None
         return 1"""
+
+
+def invoke_override(self, context, event):
+    settings = context.scene.get(self.scene_key)
+    self.will_save_settings = False
+    if settings:
+        try:
+            for (k, v) in settings.items():
+                setattr(self, k, v)
+            self.will_save_settings = True
+
+            # Update filter if user saved settings
+            if hasattr(self, 'export_format'):
+                self.filter_glob = '*.glb' if self.export_format == 'GLB' else '*.gltf'
+
+        except (AttributeError, TypeError):
+            self.report({"ERROR"}, "Loading export settings failed. Removed corrupted settings")
+            del context.scene[self.scene_key]
+
+    import sys
+    preferences = bpy.context.preferences
+    for addon_name in preferences.addons.keys():
+        try:
+            if hasattr(sys.modules[addon_name], 'glTF2ExportUserExtension') or hasattr(sys.modules[addon_name], 'glTF2ExportUserExtensions'):
+                pass #exporter_extension_panel_unregister_functors.append(sys.modules[addon_name].register_panel())
+        except Exception:
+            pass
+
+    # self.has_active_exporter_extensions = len(exporter_extension_panel_unregister_functors) > 0
+    print("ovverride")
+    wm = context.window_manager
+    wm.fileselect_add(self)
+    return {'RUNNING_MODAL'}

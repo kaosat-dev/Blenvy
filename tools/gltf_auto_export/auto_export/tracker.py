@@ -11,6 +11,10 @@ class AutoExportTracker(PropertyGroup):
     change_detection_enabled = True
     export_params_changed = False
 
+    gltf_settings_backup = None
+    last_operator = None
+    dummy_file_path = ""
+
     @classmethod
     def register(cls):
         bpy.types.WindowManager.auto_export_tracker = PointerProperty(type=AutoExportTracker)
@@ -54,9 +58,18 @@ class AutoExportTracker(PropertyGroup):
         active_operator = bpy.context.active_operator
         if active_operator:
             # print("Operator", active_operator.bl_label, active_operator.bl_idname)
-            if active_operator.bl_idname == "EXPORT_SCENE_OT_gltf" :
+            if active_operator.bl_idname == "EXPORT_SCENE_OT_gltf" and active_operator.gltf_export_id == "gltf_auto_export":
+                # we backup any existing gltf export settings, if there were any
+                scene = bpy.context.scene
+                if "glTF2ExportSettings" in scene:
+                    existing_setting = scene["glTF2ExportSettings"]
+                    bpy.context.window_manager.gltf_settings_backup = json.dumps(dict(existing_setting))
+
                 # we force saving params
                 active_operator.will_save_settings = True
+                # we set the last operator here so we can clear the specific settings (yeah for overly complex logic)
+                cls.last_operator = active_operator
+                print("active_operator", active_operator.has_active_exporter_extensions, active_operator.__annotations__.keys(), active_operator.filepath, active_operator.gltf_export_id)
             if active_operator.bl_idname == "EXPORT_SCENES_OT_auto_gltf":
                 # we force saving params
                 active_operator.will_save_settings = True
