@@ -1,173 +1,192 @@
-import bpy
-from bpy.props import (BoolProperty,
-                       IntProperty,
-                       StringProperty,
-                       EnumProperty,
-                       CollectionProperty
-                       )
 bl_info = {
-    "name": "auto_export",
-    "category": "Generic",
-    "version": (1, 0, 0),
-    "blender": (2, 80, 0),
-    'location': 'File > Export > glTF 2.0',
-    'description': 'Example addon to add a custom extension to an exported glTF file.',
-    'tracker_url': "https://github.com/KhronosGroup/glTF-Blender-IO/issues/",  # Replace with your issue tracker
-    'isDraft': False,
-    'developer': "(Your name here)", # Replace this
-    'url': 'https://your_url_here',  # Replace this
+    "name": "gltf_auto_export",
+    "author": "kaosigh",
+    "version": (0, 16, 0),
+    "blender": (3, 4, 0),
+    "location": "File > Import-Export",
+    "description": "glTF/glb auto-export",
+    "warning": "",
+    "wiki_url": "https://github.com/kaosat-dev/Blender_bevy_components_workflow",
+    "tracker_url": "https://github.com/kaosat-dev/Blender_bevy_components_workflow/issues/new",
+    "category": "Import-Export"
 }
+import bpy
+from bpy.types import Context
+from bpy.props import (StringProperty, BoolProperty, PointerProperty)
 
-# glTF extensions are named following a convention with known prefixes.
-# See: https://github.com/KhronosGroup/glTF/tree/main/extensions#about-gltf-extensions
-# also: https://github.com/KhronosGroup/glTF/blob/main/extensions/Prefixes.md
-glTF_extension_name = "EXT_auto_export"
+# from .extension import ExampleExtensionProperties, GLTF_PT_UserExtensionPanel, unregister_panel
 
-# Support for an extension is "required" if a typical glTF viewer cannot be expected
-# to load a given model without understanding the contents of the extension.
-# For example, a compression scheme or new image format (with no fallback included)
-# would be "required", but physics metadata or app-specific settings could be optional.
-extension_is_required = False
-from io_scene_gltf2 import (GLTF_PT_export_main, GLTF_PT_export_include)
+from .auto_export.operators import AutoExportGLTF
+from .auto_export.tracker import AutoExportTracker
+from .auto_export.preferences import (AutoExportGltfAddonPreferences)
 
-class ExampleExtensionProperties(bpy.types.PropertyGroup):
-    enabled: bpy.props.BoolProperty(
-        name=bl_info["name"],
-        description='Include this extension in the exported glTF file.',
-        default=True
-        )
-    
-    auto_export_main_scene_name: StringProperty(
-        name='Main scene',
-        description='The name of the main scene/level/world to auto export',
-        default='Scene'
-    )
-    auto_export_output_folder: StringProperty(
-        name='Export folder (relative)',
-        description='The root folder for all exports(relative to current file) Defaults to current folder',
-        default=''
-    )
-    auto_export_library_scene_name: StringProperty(
-        name='Library scene',
-        description='The name of the library scene to auto export',
-        default='Library'
-    )
-    # scene components
-    auto_export_scene_settings: BoolProperty(
-        name='Export scene settings',
-        description='Export scene settings ie AmbientLighting, Bloom, AO etc',
-        default=False
-    )
+from .auto_export.internals import (SceneLink,
+                        SceneLinks,
+                        CollectionToExport,
+                        CollectionsToExport,
+                        CUSTOM_PG_sceneName
+                        )
+from .ui.main import (GLTF_PT_auto_export_main,
+                      GLTF_PT_auto_export_root,
+                      GLTF_PT_auto_export_general,
+                      GLTF_PT_auto_export_scenes,
+                      GLTF_PT_auto_export_blueprints,
+                      GLTF_PT_auto_export_collections_list,
+                      GLTF_PT_auto_export_gltf,
+                      SCENE_UL_GLTF_auto_export,
 
-    # blueprint settings
-    auto_export_blueprints: BoolProperty(
-        name='Export Blueprints',
-        description='Replaces collection instances with an Empty with a BlueprintName custom property',
-        default=True
-    )
-    auto_export_blueprints_path: StringProperty(
-        name='Blueprints path',
-        description='path to export the blueprints to (relative to the Export folder)',
-        default='library'
-    )
-
-    auto_export_materials_library: BoolProperty(
-        name='Export materials library',
-        description='remove materials from blueprints and use the material library instead',
-        default=False
-    )
-    auto_export_materials_path: StringProperty(
-        name='Materials path',
-        description='path to export the materials libraries to (relative to the root folder)',
-        default='materials'
-    )
-
-def register():
-    bpy.utils.register_class(ExampleExtensionProperties)
-    bpy.types.Scene.ExampleExtensionProperties = bpy.props.PointerProperty(type=ExampleExtensionProperties)
-
-def register_panel():
-    # Register the panel on demand, we need to be sure to only register it once
-    # This is necessary because the panel is a child of the extensions panel,
-    # which may not be registered when we try to register this extension
-    try:
-        bpy.utils.register_class(GLTF_PT_UserExtensionPanel)
-    except Exception:
-        pass
-
-    # If the glTF exporter is disabled, we need to unregister the extension panel
-    # Just return a function to the exporter so it can unregister the panel
-    return unregister_panel
+                      HelloWorldOperator,
 
 
-def unregister_panel():
-    # Since panel is registered on demand, it is possible it is not registered
-    try:
-        bpy.utils.unregister_class(GLTF_PT_UserExtensionPanel)
-    except Exception:
-        pass
+                      #GLTF_PT_export_data,
+                      #GLTF_PT_export_data_scene
+                      )
+from .ui.operators import (SCENES_LIST_OT_actions)
 
 
-def unregister():
-    unregister_panel()
-    bpy.utils.unregister_class(ExampleExtensionProperties)
-    del bpy.types.Scene.ExampleExtensionProperties
+######################################################
+""" there are two places where we load settings for auto_export from:
+- in ui/main AutoExportGLTF -> invoke
+- in auto_export.py -> auto_export
+This is a workaround needed because of the way the settings are stored , perhaps there is a better way to deal with it ? ie by calling the AutoExportGLTF operator from the auto_export function ?
+"""
+from io_scene_gltf2 import (ExportGLTF2, GLTF_PT_export_main, GLTF_PT_export_include)
 
-class GLTF_PT_UserExtensionPanel(bpy.types.Panel):
 
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
-    bl_label = "Enabled"
-    bl_parent_id = "GLTF_PT_export_user_extensions"
-    bl_options = {'DEFAULT_CLOSED'}
+class Testing_PT_MainPanel(bpy.types.Panel):
+    bl_idname = "Testing_PT_MainPanel"
+    bl_label = ""
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = "Gltf auto_export"
+    bl_context = "objectmode"
 
-    @classmethod
-    def poll(cls, context):
-        sfile = context.space_data
-        operator = sfile.active_operator
-        return operator.bl_idname == "EXPORT_SCENE_OT_gltf"
 
     def draw_header(self, context):
-        props = bpy.context.scene.ExampleExtensionProperties
-        self.layout.prop(props, 'enabled')
+        layout = self.layout
+        layout.label(text="Gltf auto export ")
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
+        layout.label(text="MAKE SURE TO KEEP 'REMEMBER EXPORT SETTINGS' !!")
+        op = layout.operator("EXPORT_SCENE_OT_gltf", text='Gltf Settings')#'glTF 2.0 (.glb/.gltf)')
+        #op.export_format = 'GLTF_SEPARATE'
+        op.use_selection=True
+        op.will_save_settings=True
+        op.use_visible=True # Export visible and hidden objects. See Object/Batch Export to skip.
+        op.use_renderable=True
+        op.use_active_collection = True
+        op.use_active_collection_with_nested=True
+        op.use_active_scene = True
+        op.filepath="dummy"
 
-        props = bpy.context.scene.ExampleExtensionProperties
-        layout.active = props.enabled
 
-        props = bpy.context.scene.ExampleExtensionProperties
-        for bla in props.__annotations__:
-            layout.prop(props, bla)
+        op = layout.operator("EXPORT_SCENES_OT_auto_gltf", text="Auto Export Settings")
+        op.will_save_settings=True
+
+        #print("GLTF_PT_export_main", GLTF_PT_export_main.bl_parent_id)
 
 
-class glTF2ExportUserExtension:
+#see here for original gltf exporter infos https://github.com/KhronosGroup/glTF-Blender-IO/blob/main/addons/io_scene_gltf2/__init__.py
+classes = [
+    SceneLink,
+    SceneLinks,
+    CUSTOM_PG_sceneName,
+    SCENE_UL_GLTF_auto_export,
+    SCENES_LIST_OT_actions,
 
-    def __init__(self):
-        # We need to wait until we create the gltf2UserExtension to import the gltf2 modules
-        # Otherwise, it may fail because the gltf2 may not be loaded yet
-        from io_scene_gltf2.io.com.gltf2_io_extensions import Extension
-        self.Extension = Extension
-        self.properties = bpy.context.scene.ExampleExtensionProperties
+    AutoExportGLTF, 
+    #AutoExportGltfAddonPreferences,
 
-    def gather_node_hook(self, gltf2_object, blender_object, export_settings):
-        if self.properties.enabled:
-            if gltf2_object.extensions is None:
-                gltf2_object.extensions = {}
-            print("bla bla")
-            gltf2_object.extensions[glTF_extension_name] = self.Extension(
-                name=glTF_extension_name,
-                extension={"auto_export_blueprints": self.properties.auto_export_blueprints},
-                required=extension_is_required
-            )
-    def pre_export_hook(self):
-        print("pre export callback")
+    HelloWorldOperator,
 
-def glTF2_pre_export_callback(data):
-    print("pre_export", data)
+    CollectionToExport,
+    CollectionsToExport,
 
-def glTF2_post_export_callback(data):
-    print("post_export", data)
+    GLTF_PT_auto_export_main,
+    GLTF_PT_auto_export_root,
+    GLTF_PT_auto_export_general,
+    GLTF_PT_auto_export_scenes,
+    GLTF_PT_auto_export_blueprints,
+
+    #GLTF_PT_auto_export_collections_list,
+    #GLTF_PT_auto_export_gltf,
+    #GLTF_PT_export_data,
+    #GLTF_PT_export_data_scene,
+
+    AutoExportTracker,
+
+    Testing_PT_MainPanel,
+]
+
+def menu_func_import(self, context):
+    self.layout.operator(AutoExportGLTF.bl_idname, text="glTF auto Export (.glb/gltf)")
+from bpy.app.handlers import persistent
+
+@persistent
+def post_update(scene, depsgraph):
+    bpy.context.window_manager.auto_export_tracker.deps_update_handler( scene, depsgraph)
+
+@persistent
+def post_save(scene, depsgraph):
+    bpy.context.window_manager.auto_export_tracker.save_handler( scene, depsgraph)
+
+
+def invoke_override(self, context, event):
+    settings = context.scene.get(self.scene_key)
+    self.will_save_settings = False
+    if settings:
+        try:
+            for (k, v) in settings.items():
+                setattr(self, k, v)
+            self.will_save_settings = True
+
+            # Update filter if user saved settings
+            if hasattr(self, 'export_format'):
+                self.filter_glob = '*.glb' if self.export_format == 'GLB' else '*.gltf'
+
+        except (AttributeError, TypeError):
+            self.report({"ERROR"}, "Loading export settings failed. Removed corrupted settings")
+            del context.scene[self.scene_key]
+
+    import sys
+    preferences = bpy.context.preferences
+    for addon_name in preferences.addons.keys():
+        try:
+            if hasattr(sys.modules[addon_name], 'glTF2ExportUserExtension') or hasattr(sys.modules[addon_name], 'glTF2ExportUserExtensions'):
+                pass #exporter_extension_panel_unregister_functors.append(sys.modules[addon_name].register_panel())
+        except Exception:
+            pass
+
+    # self.has_active_exporter_extensions = len(exporter_extension_panel_unregister_functors) > 0
+    print("ovverride")
+    wm = context.window_manager
+    wm.fileselect_add(self)
+    return {'RUNNING_MODAL'}
+
+
+def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+    # for some reason, adding these directly to the tracker class in register() do not work reliably
+    bpy.app.handlers.depsgraph_update_post.append(post_update)
+    bpy.app.handlers.save_post.append(post_save)
+
+    # add our addon to the toolbar
+    bpy.types.TOPBAR_MT_file_export.append(menu_func_import)
+
+    bpy.types.WindowManager.gltf_exporter_running = BoolProperty(default=False)
+    bpy.types.WindowManager.gltf_settings_changed = BoolProperty(default=False)
+
+def unregister():
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
+    bpy.types.TOPBAR_MT_file_export.remove(menu_func_import)
+
+    bpy.app.handlers.depsgraph_update_post.remove(post_update)
+    bpy.app.handlers.save_post.remove(post_save)
+    del bpy.types.WindowManager.gltf_exporter_running
+
+
+if "gltf_auto_export" == "__main__":
+    register()

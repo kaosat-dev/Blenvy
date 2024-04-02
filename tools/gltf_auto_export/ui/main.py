@@ -1,5 +1,6 @@
+from typing import Set
 import bpy
-from bpy.types import Operator
+from bpy.types import Context, Event, Operator
 from bpy_extras.io_utils import ExportHelper
 from bpy.props import (BoolProperty,
                        IntProperty,
@@ -65,10 +66,60 @@ class GLTF_PT_auto_export_root(bpy.types.Panel):
 
         layout.active = operator.auto_export
         layout.prop(operator, 'will_save_settings')
-        layout.prop(operator, "export_change_detection")
+        
+class GLTF_PT_auto_export_general(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "General"
+    bl_parent_id = "GLTF_PT_auto_export_root"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "EXPORT_SCENES_OT_auto_gltf" #"EXPORT_SCENE_OT_gltf"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layout.active = operator.auto_export
         layout.prop(operator, "export_output_folder")
+        layout.prop(operator, "export_change_detection")
         layout.prop(operator, "export_scene_settings")
         layout.prop(operator, "export_legacy_mode")
+
+class GLTF_PT_auto_export_scenes(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Scenes"
+    bl_parent_id = "GLTF_PT_auto_export_root"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "EXPORT_SCENES_OT_auto_gltf" #"EXPORT_SCENE_OT_gltf"
+    
+    def draw_header(self, context):
+        layout = self.layout
+        sfile = context.space_data
+        operator = sfile.active_operator
+        #layout.label(text="export scenes")#layout.prop(operator, "export_blueprints", text="")
+    
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
 
         # scene selectors
         row = layout.row()
@@ -80,8 +131,9 @@ class GLTF_PT_auto_export_root(bpy.types.Panel):
         rows = 2
 
         # main/level scenes
-        layout.label(text="main scenes")
-        layout.prop(context.window_manager, "main_scene", text='')
+        row = layout.row()
+        row.label(text="main scenes")
+        row.prop(context.window_manager, "main_scene", text='')
 
         row = layout.row()
         row.template_list("SCENE_UL_GLTF_auto_export", "level scenes", source, "main_scenes", source, "main_scenes_index", rows=rows)
@@ -105,8 +157,9 @@ class GLTF_PT_auto_export_root(bpy.types.Panel):
         #col.operator("scene_list.list_action", icon='TRIA_DOWN', text="").action = 'DOWN'
 
         # library scenes
-        layout.label(text="library scenes")
-        layout.prop(context.window_manager, "library_scene", text='')
+        row = layout.row()
+        row.label(text="library scenes")
+        row.prop(context.window_manager, "library_scene", text='')
 
         row = layout.row()
         row.template_list("SCENE_UL_GLTF_auto_export", "library scenes", source, "library_scenes", source, "library_scenes_index", rows=rows)
@@ -124,7 +177,7 @@ class GLTF_PT_auto_export_root(bpy.types.Panel):
         remove_operator.action = 'REMOVE'
         remove_operator.scene_type = 'library'
         col.separator()
-      
+
 class GLTF_PT_auto_export_blueprints(bpy.types.Panel):
     bl_space_type = 'FILE_BROWSER'
     bl_region_type = 'TOOL_PROPS'
@@ -194,6 +247,37 @@ class GLTF_PT_auto_export_collections_list(bpy.types.Panel):
             row = layout.row()
             row.label(text=collection.name)
 
+
+
+class HelloWorldOperator(bpy.types.Operator):
+    bl_idname = "export_scenes.wrapper"
+    bl_label = "Minimal Operator"
+
+    def execute(self, context):
+        print("Hello World")
+        return {'FINISHED'}
+    
+    def invoke(self, context: Context, event: Event):
+        wm = context.window_manager
+        wm.fileselect_add(self)
+
+        return {'RUNNING_MODAL'}
+    
+
+    def draw(self, context: Context):
+        layout = self.layout
+        op = layout.operator("EXPORT_SCENE_OT_gltf", text='Gltf settings')#'glTF 2.0 (.glb/.gltf)')
+        op.use_selection=True
+        op.will_save_settings=True
+        op.use_visible=True # Export visible and hidden objects. See Object/Batch Export to skip.
+        op.use_renderable=True
+        op.use_active_collection = True
+        op.use_active_collection_with_nested=True
+        op.use_active_scene = True
+        op.filepath="dummy"
+        #export_scenes.auto_gltf
+
+
 class GLTF_PT_auto_export_gltf(bpy.types.Panel):
     bl_space_type = 'FILE_BROWSER'
     bl_region_type = 'TOOL_PROPS'
@@ -214,13 +298,20 @@ class GLTF_PT_auto_export_gltf(bpy.types.Panel):
 
         sfile = context.space_data
         operator = sfile.active_operator
-
         addon_prefs = operator
 
-        # we get the addon preferences from the standard gltf exporter & use those :
-        addon_prefs_gltf = preferences.addons["io_scene_gltf2"].preferences
+        op = layout.operator("EXPORT_SCENES_OT_wrapper", text='Gltf settings')#'glTF 2.0 (.glb/.gltf)')
 
-        #self.layout.operator("EXPORT_SCENE_OT_gltf", text='glTF 2.0 (.glb/.gltf)')
+        op = layout.operator("EXPORT_SCENE_OT_gltf", text='Gltf settings')#'glTF 2.0 (.glb/.gltf)')
+        #op.export_format = 'GLTF_SEPARATE'
+        op.use_selection=True
+        op.will_save_settings=True
+        op.use_visible=True # Export visible and hidden objects. See Object/Batch Export to skip.
+        op.use_renderable=True
+        op.use_active_collection = True
+        op.use_active_collection_with_nested=True
+        op.use_active_scene = True
+        op.filepath="dummy"
         #bpy.ops.export_scene.gltf
 
         """for key in addon_prefs.__annotations__.keys():

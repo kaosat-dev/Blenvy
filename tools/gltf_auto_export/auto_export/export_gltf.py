@@ -1,3 +1,4 @@
+import json
 import os
 import bpy
 
@@ -7,7 +8,7 @@ from .preferences import (AutoExportGltfPreferenceNames)
 def generate_gltf_export_preferences(addon_prefs): 
     # default values
     gltf_export_preferences = dict(
-        export_format= 'GLB', #'GLB', 'GLTF_SEPARATE', 'GLTF_EMBEDDED'
+        # export_format= 'GLB', #'GLB', 'GLTF_SEPARATE', 'GLTF_EMBEDDED'
         check_existing=False,
 
         use_selection=False,
@@ -17,41 +18,48 @@ def generate_gltf_export_preferences(addon_prefs):
         use_active_collection_with_nested=False,
         use_active_scene = False,
 
-        export_texcoords=True,
-        export_normals=True,
-        # here add draco settings
-        export_draco_mesh_compression_enable = False,
-
-        export_tangents=False,
-        #export_materials
-        export_colors=True,
-        export_attributes=True,
-        #use_mesh_edges
-        #use_mesh_vertices
         export_cameras=True,
         export_extras=True, # For custom exported properties.
         export_lights=True,
-        export_yup=True,
-        export_skins=True,
-        export_morph=False,
-        export_apply=False,
-        export_animations=False,
-        export_optimize_animation_size=False
+
+        #export_texcoords=True,
+        #export_normals=True,
+        # here add draco settings
+        #export_draco_mesh_compression_enable = False,
+
+        #export_tangents=False,
+        #export_materials
+        #export_colors=True,
+        #export_attributes=True,
+        #use_mesh_edges
+        #use_mesh_vertices
+       
+        
+        #export_yup=True,
+        #export_skins=True,
+        #export_morph=False,
+        #export_apply=False,
+        #export_animations=False,
+        #export_optimize_animation_size=False
     )
         
-
-   
-
     for key in addon_prefs.__annotations__.keys():
         if str(key) not in AutoExportGltfPreferenceNames:
             #print("overriding setting", key, "value", getattr(addon_prefs,key))
             gltf_export_preferences[key] = getattr(addon_prefs, key)
 
 
-    """standard_gltf_exporter_settings = get_standard_exporter_settings()
+    standard_gltf_exporter_settings = bpy.data.texts[".gltf_auto_export_gltf_settings"] if ".gltf_auto_export_gltf_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_gltf_settings")
+    standard_gltf_exporter_settings = json.loads(standard_gltf_exporter_settings.as_string())
+    """standard_gltf_exporter_settings = get_standard_exporter_settings()"""
     print("standard settings", standard_gltf_exporter_settings)
     
     constant_keys = [
+        'use_selection',
+        'use_visible',
+        'use_active_collection',
+        'use_active_collection_with_nested',
+        'use_active_scene',
         'export_cameras',
         'export_extras', # For custom exported properties.
         'export_lights',
@@ -61,8 +69,8 @@ def generate_gltf_export_preferences(addon_prefs):
     for key in standard_gltf_exporter_settings.keys():
         if str(key) not in constant_keys:
             gltf_export_preferences[key] =  standard_gltf_exporter_settings.get(key)
-
-    print("final export preferences", gltf_export_preferences)"""
+    print("")
+    print("final export preferences", gltf_export_preferences)
 
 
     return gltf_export_preferences

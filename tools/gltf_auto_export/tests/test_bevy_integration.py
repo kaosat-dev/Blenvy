@@ -64,9 +64,19 @@ def test_export_complex(setup_data):
         "library_scene_names": ['Library'],
         # "export_format":'GLTF_SEPARATE'
     }
-    stored_settings = bpy.data.texts[".gltf_auto_export_settings"] if ".gltf_auto_export_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_settings")
-    stored_settings.clear()
-    stored_settings.write(json.dumps(export_props))
+    gltf_settings = {
+        "export_animations": True
+    }
+
+    # store settings for the auto_export part
+    stored_auto_settings = bpy.data.texts[".gltf_auto_export_settings"] if ".gltf_auto_export_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_settings")
+    stored_auto_settings.clear()
+    stored_auto_settings.write(json.dumps(export_props))
+
+    # and store settings for the gltf part
+    stored_gltf_settings = bpy.data.texts[".gltf_auto_export_gltf_settings"] if ".gltf_auto_export_gltf_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_gltf_settings")
+    stored_gltf_settings.clear()
+    stored_gltf_settings.write(str(gltf_settings))
 
     # move the main cube
     bpy.data.objects["Cube"].location = [1, 0, 0]
@@ -79,7 +89,6 @@ def test_export_complex(setup_data):
         export_scene_settings=True,
         export_blueprints=True,
         export_legacy_mode=False,
-        export_animations=True,
         export_materials_library=True
     )
     # blueprint1 => has an instance, got changed, should export

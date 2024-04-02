@@ -1,3 +1,4 @@
+import json
 import bpy
 from bpy.types import (PropertyGroup)
 from bpy.props import (PointerProperty)
@@ -52,35 +53,47 @@ class AutoExportTracker(PropertyGroup):
     def gltf_exporter_handler(cls):
         # FOr some reason, the active operator here is always None, so using a workaround 
         # active_operator = bpy.context.active_operator 
-        print("here", bpy.context.window_manager.was_good_operator)
+        print("here", bpy.context.window_manager.gltf_exporter_running)
        
-        if bpy.context.window_manager.was_good_operator:
-            dummy_file_path = "/home/ckaos/projects/bevy/Blender_bevy_components_worklflow/testing/bevy_example/assets/dummy.glb"
+        if bpy.context.window_manager.gltf_exporter_running:
+            try:
+                dummy_file_path = "/home/ckaos/projects/bevy/Blender_bevy_components_worklflow/testing/bevy_example/assets/dummy.glb"
 
-            import os
-            if os.path.exists(dummy_file_path):
-                print("dummy file exists, assuming it worked")
-                os.unlink(dummy_file_path)
+                import os
+                if os.path.exists(dummy_file_path):
+                    print("dummy file exists, assuming it worked")
+                    os.unlink(dummy_file_path)
 
-                # get the parameters
-                scene = bpy.context.scene
-                print("scene", scene["glTF2ExportSettings"])
-                if "glTF2ExportSettings" in scene:
-                    settings = scene["glTF2ExportSettings"]
-                    print("gltf settings", dict(settings))
-
-                # now reset the original gltf_settings
-                if getattr(cls, "existing_gltf_settings", None) != None:
-                    print("resetting original gltf settings")
-                    scene["glTF2ExportSettings"] = cls.existing_gltf_settings
-                else:
-                    print("no pre_existing settings")
+                    # get the parameters
+                    scene = bpy.context.scene
                     if "glTF2ExportSettings" in scene:
-                        del scene["glTF2ExportSettings"]
-                cls.existing_gltf_settings = None
+                        settings = scene["glTF2ExportSettings"]
+                        formatted_settings = dict(settings)
 
-                bpy.context.window_manager.was_good_operator = False
-                return None
+                        export_settings = bpy.data.texts[".gltf_auto_export_gltf_settings"] if ".gltf_auto_export_gltf_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_gltf_settings")
+                        
+                        #check if params have changed
+                        bpy.context.window_manager.gltf_settings_changed = sorted(json.loads(export_settings.as_string()).items()) != sorted(formatted_settings.items())
+
+                        print("gltf NEW settings", formatted_settings, "OLD settings", export_settings, "CHANGED ?", bpy.context.window_manager.gltf_settings_changed)
+
+                        # now write new settings
+                        export_settings.clear()
+                        export_settings.write(json.dumps(formatted_settings))
+
+
+                    # now reset the original gltf_settings
+                    if getattr(cls, "existing_gltf_settings", None) != None:
+                        print("resetting original gltf settings")
+                        scene["glTF2ExportSettings"] = cls.existing_gltf_settings
+                    else:
+                        print("no pre_existing settings")
+                        if "glTF2ExportSettings" in scene:
+                            del scene["glTF2ExportSettings"]
+                    cls.existing_gltf_settings = None
+            except:pass
+            bpy.context.window_manager.gltf_exporter_running = False
+            return None
             
 
         else:
@@ -95,8 +108,9 @@ class AutoExportTracker(PropertyGroup):
         # print("change detection enabled", cls.change_detection_enabled)
         active_operator = bpy.context.active_operator
         if active_operator:
-            #print("Operator", active_operator.bl_label, active_operator.bl_idname)
-            if active_operator.bl_idname == "EXPORT_SCENE_OT_gltf" and not bpy.context.window_manager.was_good_operator:
+            print("Operator", active_operator.bl_label, active_operator.bl_idname, "bla", bpy.context.window_manager.gltf_exporter_running)
+            if active_operator.bl_idname == "EXPORT_SCENE_OT_gltf" and not bpy.context.window_manager.gltf_exporter_running:
+                print("matching")
                 try:
                     bpy.app.timers.unregister(cls.gltf_exporter_handler)
                 except:pass
@@ -110,12 +124,12 @@ class AutoExportTracker(PropertyGroup):
                 if "glTF2ExportSettings" in scene:
                     existing_setting = scene["glTF2ExportSettings"]
                     cls.existing_gltf_settings = existing_setting
-                bpy.context.window_manager.was_good_operator = True
+                bpy.context.window_manager.gltf_exporter_running = True
                 
 
         else:
-            if bpy.context.window_manager.was_good_operator:
-                bpy.context.window_manager.was_good_operator = False
+            if bpy.context.window_manager.gltf_exporter_running:
+                bpy.context.window_manager.gltf_exporter_running = False
             """if active_operator.bl_idname == "EXPORT_SCENE_OT_gltf":
                 scene = bpy.context.scene
                 if "glTF2ExportSettings" in scene:
@@ -154,7 +168,7 @@ class AutoExportTracker(PropertyGroup):
 
                 # depsgraph = bpy.context.evaluated_depsgraph_get()
                 for obj in depsgraph.updates:
-                    print("depsgraph update", obj)
+                    # print("depsgraph update", obj)
                     if isinstance(obj.id, bpy.types.Object):
                         # get the actual object
                         object = bpy.data.objects[obj.id.name]
@@ -178,9 +192,9 @@ class AutoExportTracker(PropertyGroup):
             else:
                 cls.changed_objects_per_scene.clear()
 
-        depsgraph = bpy.context.evaluated_depsgraph_get()
+        """depsgraph = bpy.context.evaluated_depsgraph_get()
         for update in depsgraph.updates:
-            print("update", update)
+            print("update", update)"""
 
     def disable_change_detection(self,):
         self.change_detection_enabled = False

@@ -1,3 +1,4 @@
+import json
 import os
 import bpy
 import traceback
@@ -33,6 +34,11 @@ def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
 
         [main_scene_names, level_scenes, library_scene_names, library_scenes] = get_scenes(addon_prefs)
 
+        # standard gltf export settings are stored differently
+        standard_gltf_exporter_settings = bpy.data.texts[".gltf_auto_export_gltf_settings"] if ".gltf_auto_export_gltf_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_gltf_settings")
+        print("standard_gltf_exporter_settings", standard_gltf_exporter_settings.as_string())
+        standard_gltf_exporter_settings = json.loads(standard_gltf_exporter_settings.as_string())
+
         print("main scenes", main_scene_names, "library_scenes", library_scene_names)
         print("export_output_folder", export_output_folder)
 
@@ -63,7 +69,8 @@ def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
             export_blueprints_path = os.path.join(folder_path, export_output_folder, getattr(addon_prefs,"export_blueprints_path")) if getattr(addon_prefs,"export_blueprints_path") != '' else folder_path
             export_levels_path = os.path.join(folder_path, export_output_folder)
 
-            gltf_extension = getattr(addon_prefs, "export_format")
+          
+            gltf_extension = standard_gltf_exporter_settings.get("export_format", 'GLB')
             gltf_extension = '.glb' if gltf_extension == 'GLB' else '.gltf'
             collections_not_on_disk = check_if_blueprints_exist(collections, export_blueprints_path, gltf_extension)
             changed_collections = []

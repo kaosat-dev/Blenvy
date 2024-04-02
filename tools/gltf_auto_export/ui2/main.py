@@ -65,8 +65,10 @@ class GLTF_PT_auto_export_root(bpy.types.Panel):
 
         sfile = context.space_data
         operator = layout.operator("export_scenes.auto_gltf")#bpy.ops.export_scenes.auto_gltf #sfile.active_operator
+        layout.prop(context.window_manager.operator_properties_last("export_scenes.auto_gltf"), "export_change_detection")
+        layout.prop(context.window_manager.operator_properties_last("export_scenes.auto_gltf"), "export_output_folder")
 
-        layout.active = operator.auto_export
+        #layout.active = operator.auto_export
         layout.prop(operator, 'will_save_settings')
         layout.prop(operator, "export_change_detection")
         layout.prop(operator, "export_output_folder")
