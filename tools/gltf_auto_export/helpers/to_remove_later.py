@@ -241,3 +241,90 @@ def duplicate_object2(object, original_name):
             new_obj.animation_data.action = object.animation_data.action.copy()
       
     return new_obj
+
+
+
+
+
+ if active_operator:
+            # print("Operator", active_operator.bl_label, active_operator.bl_idname, "bla", bpy.context.window_manager.gltf_exporter_running)
+            if active_operator.bl_idname == "EXPORT_SCENE_OT_gltf" : #and not bpy.context.window_manager.gltf_exporter_running:
+                # we force saving params
+                active_operator.will_save_settings = True
+            if active_operator.bl_idname == "EXPORT_SCENES_OT_auto_gltf":
+                # we force saving params
+                active_operator.will_save_settings = True
+
+
+                """
+                print("matching")
+                try:
+                    bpy.app.timers.unregister(cls.gltf_exporter_handler)
+                except:pass
+                bpy.app.timers.register(cls.gltf_exporter_handler, first_interval=3)
+                # we backup any existing gltf export settings, if there where any
+                scene = bpy.context.scene
+                if "glTF2ExportSettings" in scene:
+                    existing_setting = scene["glTF2ExportSettings"]
+                    cls.existing_gltf_settings = existing_setting
+                bpy.context.window_manager.gltf_exporter_running = True
+                
+
+        else:
+            if bpy.context.window_manager.gltf_exporter_running:
+                bpy.context.window_manager.gltf_exporter_running = False"""
+
+
+    """@classmethod
+    def gltf_exporter_handler(cls):
+        # FOr some reason, the active operator here is always None, so using a workaround 
+        # active_operator = bpy.context.active_operator 
+        print("here", bpy.context.window_manager.gltf_exporter_running)
+       
+        if bpy.context.window_manager.gltf_exporter_running:
+            try:
+                dummy_file_path = "/home/ckaos/projects/bevy/Blender_bevy_components_worklflow/testing/bevy_example/assets/dummy.glb"
+
+                import os
+                if os.path.exists(dummy_file_path):
+                    print("dummy file exists, assuming it worked")
+                    os.unlink(dummy_file_path)
+
+                    # get the parameters
+                    scene = bpy.context.scene
+                    if "glTF2ExportSettings" in scene:
+                        settings = scene["glTF2ExportSettings"]
+                        formatted_settings = dict(settings)
+
+                        export_settings = bpy.data.texts[".gltf_auto_export_gltf_settings"] if ".gltf_auto_export_gltf_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_gltf_settings")
+                        
+                        #check if params have changed
+                        bpy.context.window_manager.gltf_settings_changed = sorted(json.loads(export_settings.as_string()).items()) != sorted(formatted_settings.items())
+
+                        print("gltf NEW settings", formatted_settings, "OLD settings", export_settings, "CHANGED ?", bpy.context.window_manager.gltf_settings_changed)
+
+                        # now write new settings
+                        export_settings.clear()
+                        export_settings.write(json.dumps(formatted_settings))
+
+
+                    # now reset the original gltf_settings
+                    if getattr(cls, "existing_gltf_settings", None) != None:
+                        print("resetting original gltf settings")
+                        scene["glTF2ExportSettings"] = cls.existing_gltf_settings
+                    else:
+                        print("no pre_existing settings")
+                        if "glTF2ExportSettings" in scene:
+                            del scene["glTF2ExportSettings"]
+                    cls.existing_gltf_settings = None
+            except:pass
+            bpy.context.window_manager.gltf_exporter_running = False
+            return None
+            
+
+        else:
+            try:
+                bpy.app.timers.unregister(cls.gltf_exporter_handler)
+            except:pass
+            return None
+        return 1"""

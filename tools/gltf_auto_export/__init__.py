@@ -10,6 +10,9 @@ bl_info = {
     "tracker_url": "https://github.com/kaosat-dev/Blender_bevy_components_workflow/issues/new",
     "category": "Import-Export"
 }
+import os
+from pathlib import Path
+import json
 import bpy
 from bpy.types import Context
 from bpy.props import (StringProperty, BoolProperty, PointerProperty)
@@ -174,9 +177,7 @@ def register():
 
     # add our addon to the toolbar
     bpy.types.TOPBAR_MT_file_export.append(menu_func_import)
-
-    bpy.types.WindowManager.gltf_exporter_running = BoolProperty(default=False)
-    bpy.types.WindowManager.gltf_settings_changed = BoolProperty(default=False)
+    bpy.types.WindowManager.gltf_settings_backup = StringProperty(default="")
 
 def unregister():
     for cls in classes:
@@ -185,8 +186,45 @@ def unregister():
 
     bpy.app.handlers.depsgraph_update_post.remove(post_update)
     bpy.app.handlers.save_post.remove(post_save)
-    del bpy.types.WindowManager.gltf_exporter_running
 
+global gltf_settings_backup
+
+def glTF2_pre_export_callback(data):
+    pass #print("pre_export", data)
+    # we backup any existing gltf export settings, if there where any
+    scene = bpy.context.scene
+    if "glTF2ExportSettings" in scene:
+        existing_setting = scene["glTF2ExportSettings"]
+        gltf_settings_backup = existing_setting
+
+def glTF2_post_export_callback(data):
+    gltf_settings_backup = ""
+    #print("post_export", data)
+    gltf_filepath = data["gltf_filepath"]
+    filename = Path(gltf_filepath).stem
+
+    if filename == "dummy": # TODO: potentially use a hidden gltf exporter extension with an additional parameter instead of this hack
+        if os.path.exists(gltf_filepath):
+            print("removing dummy file")
+            os.unlink(gltf_filepath)
+
+        # get the parameters
+        scene = bpy.context.scene
+        if "glTF2ExportSettings" in scene:
+            settings = scene["glTF2ExportSettings"]
+            export_settings = bpy.data.texts[".gltf_auto_export_gltf_settings"] if ".gltf_auto_export_gltf_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_gltf_settings")
+            # now write new settings
+            export_settings.clear()
+            export_settings.write(json.dumps(dict(settings)))
+        # now reset the original gltf_settings
+        if gltf_settings_backup != "":
+            print("resetting original gltf settings")
+            #scene["glTF2ExportSettings"] = gltf_settings_backup
+        else:
+            print("no pre_existing settings")
+            if "glTF2ExportSettings" in scene:
+                del scene["glTF2ExportSettings"]
+        gltf_settings_backup = ""
 
 if "gltf_auto_export" == "__main__":
     register()
