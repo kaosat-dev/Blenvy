@@ -17,6 +17,39 @@ from ..helpers.helpers_collections import (get_exportable_collections)
 ######################################################
 ## ui logic & co
 
+# side panel that opens auto_export specific gltf settings & the auto export settings themselves
+class GLTF_PT_auto_export_SidePanel(bpy.types.Panel):
+    bl_idname = "GLTF_PT_auto_export_SidePanel"
+    bl_label = ""
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = "Auto Export"
+    bl_context = "objectmode"
+
+
+    def draw_header(self, context):
+        layout = self.layout
+        layout.label(text="Gltf auto export ")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.label(text="MAKE SURE TO KEEP 'REMEMBER EXPORT SETTINGS' TOGGLED !!")
+        op = layout.operator("EXPORT_SCENE_OT_gltf", text='Gltf Settings')#'glTF 2.0 (.glb/.gltf)')
+        #op.export_format = 'GLTF_SEPARATE'
+        op.use_selection=True
+        op.will_save_settings=True
+        op.use_visible=True # Export visible and hidden objects. See Object/Batch Export to skip.
+        op.use_renderable=True
+        op.use_active_collection = True
+        op.use_active_collection_with_nested=True
+        op.use_active_scene = True
+        op.filepath="____dummy____"
+        op.gltf_export_id = "gltf_auto_export" # we specify that we are in a special case
+
+        op = layout.operator("EXPORT_SCENES_OT_auto_gltf", text="Auto Export Settings")
+        #print("GLTF_PT_export_main", GLTF_PT_export_main.bl_parent_id)
+
+# main ui in the file => export 
 class GLTF_PT_auto_export_main(bpy.types.Panel):
     bl_space_type = 'FILE_BROWSER'
     bl_region_type = 'TOOL_PROPS'
@@ -246,37 +279,6 @@ class GLTF_PT_auto_export_collections_list(bpy.types.Panel):
         for collection in bpy.context.window_manager.exportedCollections:
             row = layout.row()
             row.label(text=collection.name)
-
-
-
-class HelloWorldOperator(bpy.types.Operator):
-    bl_idname = "export_scenes.wrapper"
-    bl_label = "Minimal Operator"
-
-    def execute(self, context):
-        print("Hello World")
-        return {'FINISHED'}
-    
-    def invoke(self, context: Context, event: Event):
-        wm = context.window_manager
-        wm.fileselect_add(self)
-
-        return {'RUNNING_MODAL'}
-    
-
-    def draw(self, context: Context):
-        layout = self.layout
-        op = layout.operator("EXPORT_SCENE_OT_gltf", text='Gltf settings')#'glTF 2.0 (.glb/.gltf)')
-        op.use_selection=True
-        op.will_save_settings=True
-        op.use_visible=True # Export visible and hidden objects. See Object/Batch Export to skip.
-        op.use_renderable=True
-        op.use_active_collection = True
-        op.use_active_collection_with_nested=True
-        op.use_active_scene = True
-        op.filepath="dummy"
-        #export_scenes.auto_gltf
-
 
 class GLTF_PT_auto_export_gltf(bpy.types.Panel):
     bl_space_type = 'FILE_BROWSER'

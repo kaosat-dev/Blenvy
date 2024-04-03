@@ -361,3 +361,7 @@ def invoke_override(self, context, event):
     wm = context.window_manager
     wm.fileselect_add(self)
     return {'RUNNING_MODAL'}
+
+
+
+from io_scene_gltf2 import (ExportGLTF2, GLTF_PT_export_main, GLTF_PT_export_include)

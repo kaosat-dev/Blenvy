@@ -35,61 +35,16 @@ from .ui.main import (GLTF_PT_auto_export_main,
                       GLTF_PT_auto_export_scenes,
                       GLTF_PT_auto_export_blueprints,
                       GLTF_PT_auto_export_collections_list,
-                      GLTF_PT_auto_export_gltf,
                       SCENE_UL_GLTF_auto_export,
 
-                      HelloWorldOperator,
-
-
-                      #GLTF_PT_export_data,
-                      #GLTF_PT_export_data_scene
+                      GLTF_PT_auto_export_SidePanel
                       )
 from .ui.operators import (SCENES_LIST_OT_actions)
 
 
 ######################################################
-""" there are two places where we load settings for auto_export from:
-- in ui/main AutoExportGLTF -> invoke
-- in auto_export.py -> auto_export
-This is a workaround needed because of the way the settings are stored , perhaps there is a better way to deal with it ? ie by calling the AutoExportGLTF operator from the auto_export function ?
+
 """
-from io_scene_gltf2 import (ExportGLTF2, GLTF_PT_export_main, GLTF_PT_export_include)
-
-
-class Auto_Export_SidePanel(bpy.types.Panel):
-    bl_idname = "Auto_Export_SidePanel"
-    bl_label = ""
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'UI'
-    bl_category = "Auto Export"
-    bl_context = "objectmode"
-
-
-    def draw_header(self, context):
-        layout = self.layout
-        layout.label(text="Gltf auto export ")
-
-    def draw(self, context):
-        layout = self.layout
-        layout.label(text="MAKE SURE TO KEEP 'REMEMBER EXPORT SETTINGS' !!")
-        op = layout.operator("EXPORT_SCENE_OT_gltf", text='Gltf Settings')#'glTF 2.0 (.glb/.gltf)')
-        #op.export_format = 'GLTF_SEPARATE'
-        op.use_selection=True
-        op.will_save_settings=True
-        op.use_visible=True # Export visible and hidden objects. See Object/Batch Export to skip.
-        op.use_renderable=True
-        op.use_active_collection = True
-        op.use_active_collection_with_nested=True
-        op.use_active_scene = True
-        op.filepath="____dummy____"
-        op.gltf_export_id = "gltf_auto_export" # we specify that we are in a special case
-
-        op = layout.operator("EXPORT_SCENES_OT_auto_gltf", text="Auto Export Settings")
-        #op.will_save_settings=True
-
-        #print("GLTF_PT_export_main", GLTF_PT_export_main.bl_parent_id)
-
-
 # glTF extensions are named following a convention with known prefixes.
 # See: https://github.com/KhronosGroup/glTF/tree/main/extensions#about-gltf-extensions
 # also: https://github.com/KhronosGroup/glTF/blob/main/extensions/Prefixes.md
@@ -135,8 +90,7 @@ class glTF2ExportUserExtension:
     def gather_gltf_hook(self, active_scene_idx, scenes, animations, export_settings):
         if self.properties.enabled:
             print("extension enabled")
-
-        #print("gather_gltf_hook", self, active_scene_idx, scenes, animations, export_settings)
+        #print("gather_gltf_hook", self, active_scene_idx, scenes, animations, export_settings)"""
 
 
 #see here for original gltf exporter infos https://github.com/KhronosGroup/glTF-Blender-IO/blob/main/addons/io_scene_gltf2/__init__.py
@@ -150,8 +104,6 @@ classes = [
     AutoExportGLTF, 
     #AutoExportGltfAddonPreferences,
 
-    HelloWorldOperator,
-
     CollectionToExport,
     CollectionsToExport,
 
@@ -161,10 +113,10 @@ classes = [
     GLTF_PT_auto_export_scenes,
     GLTF_PT_auto_export_blueprints,
     GLTF_PT_auto_export_collections_list,
+    GLTF_PT_auto_export_SidePanel,
 
     AutoExportTracker,
 
-    Auto_Export_SidePanel,
 ]
 
 def glTF2_pre_export_callback(data):
@@ -174,7 +126,6 @@ def glTF2_pre_export_callback(data):
 def cleanup_file():
     gltf_filepath = "/home/ckaos/projects/bevy/Blender_bevy_components_worklflow/testing/bevy_example/assets/____dummy____.glb"
     if os.path.exists(gltf_filepath):
-        print("removing dummy file", gltf_filepath)
         os.remove(gltf_filepath)
         return None
     else:
@@ -183,7 +134,6 @@ def cleanup_file():
 def glTF2_post_export_callback(data):
     #print("post_export", data)
     gltf_settings_backup = bpy.context.window_manager.gltf_settings_backup
-    print("gltf_settings_backup", gltf_settings_backup)
     gltf_filepath = data["gltf_filepath"]
     gltf_export_id = data['gltf_export_id']
     if gltf_export_id == "gltf_auto_export":
@@ -204,10 +154,8 @@ def glTF2_post_export_callback(data):
             export_settings.write(json.dumps(dict(settings)))
         # now reset the original gltf_settings
         if gltf_settings_backup != "":
-            print("resetting original gltf settings")
             scene["glTF2ExportSettings"] = json.loads(gltf_settings_backup)
         else:
-            print("no pre_existing settings")
             if "glTF2ExportSettings" in scene:
                 del scene["glTF2ExportSettings"]
         bpy.context.window_manager.gltf_settings_backup = ""
@@ -241,8 +189,8 @@ def register():
     bpy.types.TOPBAR_MT_file_export.append(menu_func_import)
     bpy.types.WindowManager.gltf_settings_backup = StringProperty(default="")
 
-    bpy.utils.register_class(AutoExportExtensionProperties)
-    bpy.types.Scene.AutoExportExtensionProperties = bpy.props.PointerProperty(type=AutoExportExtensionProperties)
+    """bpy.utils.register_class(AutoExportExtensionProperties)
+    bpy.types.Scene.AutoExportExtensionProperties = bpy.props.PointerProperty(type=AutoExportExtensionProperties)"""
 
 def unregister():
     for cls in classes:
@@ -252,7 +200,7 @@ def unregister():
     bpy.app.handlers.depsgraph_update_post.remove(post_update)
     bpy.app.handlers.save_post.remove(post_save)
 
-    bpy.utils.unregister_class(AutoExportExtensionProperties)
+    """bpy.utils.unregister_class(AutoExportExtensionProperties)"""
 
 if "gltf_auto_export" == "__main__":
     register()

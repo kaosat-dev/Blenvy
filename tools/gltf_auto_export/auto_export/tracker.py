@@ -69,7 +69,7 @@ class AutoExportTracker(PropertyGroup):
                 active_operator.will_save_settings = True
                 # we set the last operator here so we can clear the specific settings (yeah for overly complex logic)
                 cls.last_operator = active_operator
-                print("active_operator", active_operator.has_active_exporter_extensions, active_operator.__annotations__.keys(), active_operator.filepath, active_operator.gltf_export_id)
+                #print("active_operator", active_operator.has_active_exporter_extensions, active_operator.__annotations__.keys(), active_operator.filepath, active_operator.gltf_export_id)
             if active_operator.bl_idname == "EXPORT_SCENES_OT_auto_gltf":
                 # we force saving params
                 active_operator.will_save_settings = True
