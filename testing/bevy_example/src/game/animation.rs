@@ -1,13 +1,12 @@
 use std::time::Duration;
 
 use bevy_gltf_blueprints::{
-    AnimationInfos, AnimationMarkerReached, AnimationMarkerTrackers, AnimationMarkers,
-    BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintName, BlueprintsList,
-    GltfBlueprintsSet, InstanceAnimationPlayerLink, InstanceAnimations,
+    AnimationInfos, AnimationMarkerReached,
+    BlueprintAnimationPlayerLink, BlueprintAnimations,
+    InstanceAnimationPlayerLink, InstanceAnimations,
 };
 
 use bevy::{gltf::Gltf, prelude::*};
-use bevy_gltf_worlflow_examples_common_rapier::{AppState, GameState};
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]

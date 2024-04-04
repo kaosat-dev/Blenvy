@@ -6,7 +6,6 @@ pub use in_game::*;
 use std::{collections::HashMap, fs, time::Duration};
 
 use bevy_gltf_blueprints::{
-    AnimationInfos, AnimationMarkerReached, AnimationMarkerTrackers, AnimationMarkers,
     BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintName, BlueprintsList,
     GltfBlueprintsSet, InstanceAnimationPlayerLink, InstanceAnimations,
 };

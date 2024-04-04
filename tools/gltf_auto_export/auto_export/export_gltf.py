@@ -2,7 +2,6 @@ import json
 import os
 import bpy
 
-from .get_standard_exporter_settings import get_standard_exporter_settings
 from .preferences import (AutoExportGltfPreferenceNames)
 
 def generate_gltf_export_preferences(addon_prefs): 

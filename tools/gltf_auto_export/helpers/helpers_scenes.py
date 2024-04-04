@@ -80,7 +80,7 @@ def copy_animation_data(source, target):
             markers_formated += '}, '             
         markers_formated += '}' 
         target["AnimationMarkers"] = f'( {markers_formated} )'
-        
+
         """print("copying animation data for", source.name, target.animation_data)
         properties = [p.identifier for p in source.animation_data.bl_rna.properties if not p.is_readonly]
         for prop in properties:

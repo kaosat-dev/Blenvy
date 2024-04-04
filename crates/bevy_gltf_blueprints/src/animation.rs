@@ -48,9 +48,11 @@ pub struct AnimationInfos {
     pub animations: Vec<AnimationInfo>,
 }
 
+#[derive( Reflect, Default, Debug)]
 pub struct AnimationMarker {
-    pub frame: u32,
+    // pub frame: u32,
     pub name: String,
+    pub handled_for_cycle: bool,
 }
 
 /// Stores information about animation markers: practical for adding things like triggering events at specific keyframes etc
@@ -58,18 +60,6 @@ pub struct AnimationMarker {
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
 pub struct AnimationMarkers(pub HashMap<String, HashMap<u32, Vec<String>>>);
-
-// FIXME: ugh, ugly, there has to be a better way to do this ?
-#[derive(Component, Default, Debug)]
-pub struct AnimationMarkerTrackers(pub HashMap<String, HashMap<u32, Vec<AnimationMarkerTracker>>>);
-
-#[derive(Default, Debug)]
-pub struct AnimationMarkerTracker {
-    // pub frame:u32,
-    // pub name: String,
-    // pub processed_for_cycle: bool,
-    pub prev_frame: u32,
-}
 
 /// Event that gets triggered once a specific marker inside an animation has been reached (frame based)
 /// Provides some usefull information about which entity , wich animation, wich frame & which marker got triggered
@@ -132,15 +122,19 @@ pub fn trigger_instance_animation_markers_events(
                 let matching_animation_marker = &markers.0[animation_name];
                 if matching_animation_marker.contains_key(&frame) {
                     let matching_markers_per_frame = matching_animation_marker.get(&frame).unwrap();
+
+                    let foo = animation_length_seconds - time_in_animation;
+                    println!("foo {}", foo);
                     // println!("FOUND A MARKER {:?} at frame {}", matching_markers_per_frame, frame);
                     // emit an event AnimationMarkerReached(entity, animation_name, frame, marker_name)
                     // FIXME: problem, this can fire multiple times in a row, depending on animation length , speed , etc
-                    for marker_name in matching_markers_per_frame {
+                    for marker in matching_markers_per_frame {
+
                         animation_marker_events.send(AnimationMarkerReached {
                             entity: entity,
                             animation_name: animation_name.clone(),
                             frame: frame,
-                            marker_name: marker_name.clone(),
+                            marker_name: marker.clone(),
                         });
                     }
                 }
@@ -167,61 +161,67 @@ pub fn trigger_blueprint_animation_markers_events(
         let animation_clip = animation_clips.get(animation_player.animation_clip());
 
         // FIXME: horrible code
-        let mut markers:Option<&AnimationMarkers>= None;
-        let mut animation_infos:Option<&AnimationInfos>=None;
-        for (_, _markers, _animation_infos, parent) in all_animation_infos.iter(){
+        for (_, markers, animation_infos, parent) in all_animation_infos.iter(){
             if parent.get() == entity {
-                markers = Some(_markers);
-                animation_infos = Some(_animation_infos);
+                if animation_clip.is_some() {
+        
+                    // println!("Entity {:?} markers {:?}", entity, markers);
+                    // println!("Player {:?} {}", animation_player.elapsed(), animation_player.completions());
+                    // FIMXE: yikes ! very inneficient ! perhaps add boilerplate to the "start playing animation" code so we know what is playing
+                    let animation_name = animations.named_animations.iter().find_map(|(key, value)| {
+                        if value == animation_player.animation_clip() {
+                            Some(key)
+                        } else {
+                            None
+                        }
+                    });
+                    if animation_name.is_some() {
+                        let animation_name = animation_name.unwrap();
+                        let animation_length_seconds = animation_clip.unwrap().duration();
+                        let animation_length_frames = animation_infos
+                            .animations
+                            .iter()
+                            .find(|anim| &anim.name == animation_name)
+                            .unwrap()
+                            .frames_length;
+                        // TODO: we also need to take playback speed into account
+                        let time_in_animation = animation_player.elapsed()
+                            - (animation_player.completions() as f32) * animation_length_seconds;
+                        let frame_seconds =
+                            (animation_length_frames / animation_length_seconds) * time_in_animation;
+                        // println!("frame seconds {}", frame_seconds);
+                        let frame = frame_seconds.ceil() as u32; // FIXME , bad hack
+        
+                        let matching_animation_marker = &markers.0[animation_name];
+        
+                       
+                        if matching_animation_marker.contains_key(&frame) {
+                            let matching_markers_per_frame = matching_animation_marker.get(&frame).unwrap();
+                            // println!("FOUND A MARKER {:?} at frame {}", matching_markers_per_frame, frame);
+                            // emit an event AnimationMarkerReached(entity, animation_name, frame, marker_name)
+                            // FIXME: complete hack-ish solution , otherwise this can fire multiple times in a row, depending on animation length , speed , etc
+                            let diff = frame as f32 - frame_seconds;
+                            if diff < 0.03 {
+                                for marker in matching_markers_per_frame {
+                                
+                                    animation_marker_events.send(AnimationMarkerReached {
+                                        entity: entity,
+                                        animation_name: animation_name.clone(),
+                                        frame: frame,
+                                        marker_name: marker.clone(),
+                                    });
+                                }
+                            }
+                            
+                        }
+                    }
+                }  
+
+
+
                 break;
             }
         }
-        if animation_clip.is_some() && markers.is_some() && animation_infos.is_some()  {
-            let markers = markers.unwrap();
-            let animation_infos = animation_infos.unwrap();
-
-            // println!("Entity {:?} markers {:?}", entity, markers);
-            // println!("Player {:?} {}", animation_player.elapsed(), animation_player.completions());
-            // FIMXE: yikes ! very inneficient ! perhaps add boilerplate to the "start playing animation" code so we know what is playing
-            let animation_name = animations.named_animations.iter().find_map(|(key, value)| {
-                if value == animation_player.animation_clip() {
-                    Some(key)
-                } else {
-                    None
-                }
-            });
-            if animation_name.is_some() {
-                let animation_name = animation_name.unwrap();
-                let animation_length_seconds = animation_clip.unwrap().duration();
-                let animation_length_frames = animation_infos
-                    .animations
-                    .iter()
-                    .find(|anim| &anim.name == animation_name)
-                    .unwrap()
-                    .frames_length;
-                // TODO: we also need to take playback speed into account
-                let time_in_animation = animation_player.elapsed()
-                    - (animation_player.completions() as f32) * animation_length_seconds;
-                let frame_seconds =
-                    (animation_length_frames as f32 / animation_length_seconds) * time_in_animation;
-                let frame = frame_seconds as u32;
-
-                let matching_animation_marker = &markers.0[animation_name];
-                if matching_animation_marker.contains_key(&frame) {
-                    let matching_markers_per_frame = matching_animation_marker.get(&frame).unwrap();
-                    // println!("FOUND A MARKER {:?} at frame {}", matching_markers_per_frame, frame);
-                    // emit an event AnimationMarkerReached(entity, animation_name, frame, marker_name)
-                    // FIXME: problem, this can fire multiple times in a row, depending on animation length , speed , etc
-                    for marker_name in matching_markers_per_frame {
-                        animation_marker_events.send(AnimationMarkerReached {
-                            entity: entity,
-                            animation_name: animation_name.clone(),
-                            frame: frame,
-                            marker_name: marker_name.clone(),
-                        });
-                    }
-                }
-            }
-        }
+        
     }
 }
