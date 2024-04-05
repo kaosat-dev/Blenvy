@@ -205,7 +205,7 @@ def clear_hollow_scene(temp_scene, original_root_collection):
     temp_root_collection = temp_scene.collection 
     temp_scene_objects = [o for o in temp_root_collection.all_objects]
     for object in temp_scene_objects:
-        print("removing", object.name)
+        #print("removing", object.name)
         bpy.data.objects.remove(object, do_unlink=True)
     # remove the temporary scene
     bpy.data.scenes.remove(temp_scene, do_unlink=True)

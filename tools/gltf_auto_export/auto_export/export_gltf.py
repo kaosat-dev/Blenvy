@@ -69,7 +69,7 @@ def generate_gltf_export_preferences(addon_prefs):
         if str(key) not in constant_keys:
             gltf_export_preferences[key] =  standard_gltf_exporter_settings.get(key)
     print("")
-    print("final export preferences", gltf_export_preferences)
+    print("export preferences for gltf exporter", gltf_export_preferences)
 
 
     return gltf_export_preferences
