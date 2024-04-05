@@ -206,6 +206,9 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
                 params_changed = self.did_export_settings_change()
                 auto_export(changes_per_scene, params_changed, self)
             # cleanup
+            if bpy.context.window_manager.exports_count == 0: # we need this in case there was nothing to export, to make sure change detection is enabled again
+                print("YOLOOO")
+                bpy.context.window_manager.auto_export_tracker.enable_change_detection()
             #bpy.context.window_manager.auto_export_tracker.enable_change_detection()
             # FIXME: wrong logic, this should be called only in an glTF2_post_export_callback
             bpy.app.timers.register(bpy.context.window_manager.auto_export_tracker.enable_change_detection, first_interval=1)

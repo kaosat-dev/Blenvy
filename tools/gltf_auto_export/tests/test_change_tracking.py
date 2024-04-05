@@ -133,8 +133,8 @@ def test_export_changed_parameters(setup_data):
     models_library_path = os.path.join(models_path, "library")
     model_library_file_paths = list(map(lambda file_name: os.path.join(models_library_path, file_name), sorted(os.listdir(models_library_path))))
     modification_times_first = list(map(lambda file_path: os.path.getmtime(file_path), model_library_file_paths + [world_file_path]))
-    print("files", model_library_file_paths)
-    print("mod times", modification_times_first)
+    #print("files", model_library_file_paths)
+    #print("mod times", modification_times_first)
 
     auto_export_operator(
         auto_export=True,
@@ -150,7 +150,11 @@ def test_export_changed_parameters(setup_data):
     assert modification_times_no_change == modification_times_first
 
     # now move the main cube & export again
-    bpy.context.window_manager.auto_export_tracker.enable_change_detection() # FIXME: should not be needed, but ..
+    print("----------------")
+    print("main scene change")
+    print("----------------")
+
+    #py.context.window_manager.auto_export_tracker.enable_change_detection() # FIXME: should not be needed, but ..
     bpy.data.objects["Cube"].location = [1, 0, 0]
     
     auto_export_operator(
@@ -169,7 +173,10 @@ def test_export_changed_parameters(setup_data):
 
 
     # now same, but move the cube in the library
+    print("----------------")
     print("library change")
+    print("----------------")
+
     bpy.data.objects["Blueprint1_mesh"].location = [1, 2, 1]
     auto_export_operator(
         auto_export=True,
@@ -186,7 +193,11 @@ def test_export_changed_parameters(setup_data):
     modification_times_first = modification_times
 
     # now same, but using an operator
-    """ bpy.ops.transform.translate(value=(20.0, 0.0, 0.0))
+    print("----------------")
+    print("change using operator")
+    print("----------------")
+
+    bpy.ops.transform.translate(value=(20.0, 0.0, 0.0))
 
     auto_export_operator(
         auto_export=True,
@@ -200,7 +211,7 @@ def test_export_changed_parameters(setup_data):
 
     modification_times = list(map(lambda file_path: os.path.getmtime(file_path), model_library_file_paths + [world_file_path]))
     assert modification_times != modification_times_first
-    modification_times_first = modification_times"""
+    modification_times_first = modification_times
 
     
 

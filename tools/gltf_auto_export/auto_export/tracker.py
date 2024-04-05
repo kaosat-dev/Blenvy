@@ -53,7 +53,7 @@ class AutoExportTracker(PropertyGroup):
 
     @classmethod
     def deps_update_handler(cls, scene, depsgraph):
-        # print("change detection enabled", cls.change_detection_enabled)
+        print("change detection enabled", cls.change_detection_enabled)
         active_operator = bpy.context.active_operator
         if active_operator:
             # print("Operator", active_operator.bl_label, active_operator.bl_idname)
@@ -124,3 +124,9 @@ class AutoExportTracker(PropertyGroup):
         self.__class__.change_detection_enabled = True
         return None
 
+    def export_finished(self):
+        print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAHHHHHHHH export_finished")
+        bpy.context.window_manager.exports_count -= 1
+        if bpy.context.window_manager.exports_count == 0:
+            print("YOLOOO")
+            self.enable_change_detection()
