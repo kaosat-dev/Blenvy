@@ -85,6 +85,7 @@ def test_export_complex(setup_data):
     bpy.data.objects["Blueprint1_mesh"].location = [1, 2, 1]
 
     auto_export_operator(
+        auto_export=True,
         direct_mode=True,
         export_output_folder="./models",
         export_scene_settings=True,

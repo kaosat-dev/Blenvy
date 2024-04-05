@@ -365,3 +365,38 @@ def invoke_override(self, context, event):
 
 
 from io_scene_gltf2 import (ExportGLTF2, GLTF_PT_export_main, GLTF_PT_export_include)
+
+
+from io_scene_gltf2 import (ExportGLTF2, GLTF_PT_export_main,ExportGLTF2_Base, GLTF_PT_export_include)
+import io_scene_gltf2 as gltf_exporter_original
+#import io_scene_gltf2.GLTF_PT_export_data_scene as GLTF_PT_export_data_scene_original
+"""
+class GLTF_PT_export_data(gltf_exporter_original.GLTF_PT_export_data):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Data"
+    bl_parent_id = "GLTF_PT_auto_export_gltf"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "EXPORT_SCENES_OT_auto_gltf"
+
+class GLTF_PT_export_data_scene(gltf_exporter_original.GLTF_PT_export_data_scene):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Scene Graph"
+    bl_parent_id = "GLTF_PT_export_data"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+        return operator.bl_idname == "EXPORT_SCENES_OT_auto_gltf"
+    
+    def draw(self, context):
+        return super().draw(context)"""

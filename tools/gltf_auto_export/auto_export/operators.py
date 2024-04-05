@@ -179,13 +179,15 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
 
             changed = auto_settings_changed or gltf_settings_changed
         # now write the current settings to the "previous settings"
-        previous_auto_settings = bpy.data.texts[".gltf_auto_export_settings_previous"] if ".gltf_auto_export_settings_previous" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_settings_previous")
-        previous_auto_settings.clear()
-        previous_auto_settings.write(current_auto_settings.as_string()) # TODO : check if this is always valid
+        if current_auto_settings != None:
+            previous_auto_settings = bpy.data.texts[".gltf_auto_export_settings_previous"] if ".gltf_auto_export_settings_previous" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_settings_previous")
+            previous_auto_settings.clear()
+            previous_auto_settings.write(current_auto_settings.as_string()) # TODO : check if this is always valid
 
-        previous_gltf_settings = bpy.data.texts[".gltf_auto_export_gltf_settings_previous"] if ".gltf_auto_export_gltf_settings_previous" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_gltf_settings_previous")
-        previous_gltf_settings.clear()
-        previous_gltf_settings.write(current_gltf_settings.as_string())
+        if previous_gltf_settings != None:
+            previous_gltf_settings = bpy.data.texts[".gltf_auto_export_gltf_settings_previous"] if ".gltf_auto_export_gltf_settings_previous" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_gltf_settings_previous")
+            previous_gltf_settings.clear()
+            previous_gltf_settings.write(current_gltf_settings.as_string())
 
         print("changed", changed)
         return changed
@@ -206,24 +208,26 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
             print("changed FINAL: auto_settings", changed, "gltf_settings", changed_gltf_settings, "combo", changed or changed_gltf_settings)
             return changed and changed_gltf_settings"""
 
-    def execute(self, context):     
+    def execute(self, context):    
+          
         # disable change detection while the operator runs
         bpy.context.window_manager.auto_export_tracker.disable_change_detection()
         if self.direct_mode:
             self.load_settings(context)
         if self.will_save_settings:
-            print("SAVING SETTINGS")
             self.save_settings(context)
         
         changes_per_scene = context.window_manager.auto_export_tracker.changed_objects_per_scene
-        
-        #& do the export
-        if self.direct_mode: #Do not auto export when applying settings in the menu, do it on save only
-            #determine changed parameters 
-            params_changed = self.did_export_settings_change()
-            auto_export(changes_per_scene, params_changed, self)
-        # cleanup
-        bpy.app.timers.register(bpy.context.window_manager.auto_export_tracker.enable_change_detection, first_interval=1)
+        if self.auto_export: # only do the actual exporting if auto export is actually enabled
+            #& do the export
+            if self.direct_mode: #Do not auto export when applying settings in the menu, do it on save only
+                #determine changed parameters 
+                params_changed = self.did_export_settings_change()
+                auto_export(changes_per_scene, params_changed, self)
+            # cleanup
+            bpy.app.timers.register(bpy.context.window_manager.auto_export_tracker.enable_change_detection, first_interval=1)
+        else: 
+            print("auto export disabled, skipping")
         return {'FINISHED'}    
     
     def invoke(self, context, event):

@@ -64,7 +64,7 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
     auto_export: BoolProperty(
         name='Auto export',
         description='Automatically export to gltf on save',
-        default=True
+        default=False
     )
     export_main_scene_name: StringProperty(
         name='Main scene',

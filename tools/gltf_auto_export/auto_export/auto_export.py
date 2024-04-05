@@ -22,7 +22,6 @@ def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
         # Get the folder
         folder_path = os.path.dirname(file_path)
         # get the preferences for our addon
-
         #should we use change detection or not 
         export_change_detection = getattr(addon_prefs, "export_change_detection")
 

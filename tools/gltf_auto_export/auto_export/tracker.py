@@ -73,6 +73,7 @@ class AutoExportTracker(PropertyGroup):
             if active_operator.bl_idname == "EXPORT_SCENES_OT_auto_gltf":
                 # we force saving params
                 active_operator.will_save_settings = True
+                active_operator.auto_export = True
 
         if scene.name != "temp_scene":
             # print("depsgraph_update_post", scene.name)
