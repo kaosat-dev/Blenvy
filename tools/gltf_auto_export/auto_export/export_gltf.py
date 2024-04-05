@@ -51,7 +51,7 @@ def generate_gltf_export_preferences(addon_prefs):
     standard_gltf_exporter_settings = bpy.data.texts[".gltf_auto_export_gltf_settings"] if ".gltf_auto_export_gltf_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_gltf_settings")
     standard_gltf_exporter_settings = json.loads(standard_gltf_exporter_settings.as_string())
     """standard_gltf_exporter_settings = get_standard_exporter_settings()"""
-    print("standard settings", standard_gltf_exporter_settings)
+    #print("standard settings", standard_gltf_exporter_settings)
     
     constant_keys = [
         'use_selection',

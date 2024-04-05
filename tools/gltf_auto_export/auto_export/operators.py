@@ -191,7 +191,6 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         return changed
 
     def execute(self, context):    
-          
         # disable change detection while the operator runs
         bpy.context.window_manager.auto_export_tracker.disable_change_detection()
         if self.direct_mode:
@@ -207,6 +206,8 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
                 params_changed = self.did_export_settings_change()
                 auto_export(changes_per_scene, params_changed, self)
             # cleanup
+            #bpy.context.window_manager.auto_export_tracker.enable_change_detection()
+            # FIXME: wrong logic, this should be called only in an glTF2_post_export_callback
             bpy.app.timers.register(bpy.context.window_manager.auto_export_tracker.enable_change_detection, first_interval=1)
         else: 
             print("auto export disabled, skipping")

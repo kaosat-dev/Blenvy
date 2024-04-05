@@ -45,10 +45,11 @@ def setup_data(request):
 
 
 """
-- removes existing gltf files if needed
 - calls exporter on the testing scene
 - launches bevy app & checks for output
+- checks screenshot, hierarchy & diagnostics files generated on the bevy side against reference files
 - if all worked => test is a-ok
+- removes generated files
 """
 def test_export_complex(setup_data):
     root_path = "../../testing/bevy_example"
@@ -62,7 +63,6 @@ def test_export_complex(setup_data):
     export_props = {
         "main_scene_names" : ['World'],
         "library_scene_names": ['Library'],
-        # "export_format":'GLTF_SEPARATE'
     }
     gltf_settings = {
         "export_animations": True,

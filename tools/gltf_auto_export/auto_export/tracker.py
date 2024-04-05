@@ -90,7 +90,7 @@ class AutoExportTracker(PropertyGroup):
                     if isinstance(obj.id, bpy.types.Object):
                         # get the actual object
                         object = bpy.data.objects[obj.id.name]
-                        # print("changed object", obj.id.name)
+                        #print("changed object", obj.id.name)
                         cls.changed_objects_per_scene[scene.name][obj.id.name] = object
                     elif isinstance(obj.id, bpy.types.Material): # or isinstance(obj.id, bpy.types.ShaderNodeTree):
                         # print("changed material", obj.id, "scene", scene.name,)
@@ -117,7 +117,10 @@ class AutoExportTracker(PropertyGroup):
     def disable_change_detection(self,):
         self.change_detection_enabled = False
         self.__class__.change_detection_enabled = False
+        return None
+    
     def enable_change_detection(self):
         self.change_detection_enabled = True
         self.__class__.change_detection_enabled = True
+        return None
 
