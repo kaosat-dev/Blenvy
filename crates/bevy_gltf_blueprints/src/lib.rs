@@ -119,7 +119,6 @@ impl Plugin for BlueprintsPlugin {
         .register_type::<BlueprintName>()
         .register_type::<MaterialInfo>()
         .register_type::<SpawnHere>()
-        
         .register_type::<BlueprintAnimations>()
         .register_type::<InstanceAnimations>()
         .register_type::<AnimationInfo>()
@@ -128,9 +127,7 @@ impl Plugin for BlueprintsPlugin {
         .register_type::<AnimationMarkers>()
         .register_type::<HashMap<u32, Vec<String>>>()
         .register_type::<HashMap<String, HashMap<u32, Vec<String>>>>()
-
         .add_event::<AnimationMarkerReached>()
-
         .register_type::<BlueprintsList>()
         .register_type::<HashMap<String, Vec<String>>>()
         .insert_resource(BluePrintsConfig {
@@ -181,10 +178,12 @@ impl Plugin for BlueprintsPlugin {
                 .chain()
                 .in_set(GltfBlueprintsSet::AfterSpawn),
         )
-        
-        
-        .add_systems(Update, (trigger_instance_animation_markers_events, trigger_blueprint_animation_markers_events))
-        
-        ;
+        .add_systems(
+            Update,
+            (
+                trigger_instance_animation_markers_events,
+                trigger_blueprint_animation_markers_events,
+            ),
+        );
     }
 }

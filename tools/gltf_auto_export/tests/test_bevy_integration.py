@@ -134,7 +134,7 @@ def test_export_complex(setup_data):
             assert sorted(hierarchy.items()) == sorted(expected.items())
 
     # last but not least, do a visual compare
-    screenshot_expected_path = os.path.join(root_path, "expected_screenshot.png")
+    screenshot_expected_path = os.path.join(os.path.dirname(__file__), "expected_screenshot.png")
     screenshot_observed_path = os.path.join(root_path, "screenshot.png")
     img_a = Image.open(screenshot_expected_path)
     img_b = Image.open(screenshot_observed_path)

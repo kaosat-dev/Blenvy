@@ -1,8 +1,7 @@
 use std::time::Duration;
 
 use bevy_gltf_blueprints::{
-    AnimationInfos, AnimationMarkerReached,
-    BlueprintAnimationPlayerLink, BlueprintAnimations,
+    AnimationInfos, AnimationMarkerReached, BlueprintAnimationPlayerLink, BlueprintAnimations,
     InstanceAnimationPlayerLink, InstanceAnimations,
 };
 
@@ -37,7 +36,7 @@ pub fn setup_main_scene_animations(asset_server: Res<AssetServer>, mut commands:
 
 pub fn animations(
     added_animation_players: Query<(Entity, &Name, &AnimationPlayer)>,
-    added_animation_infos: Query<(Entity, &Name, &AnimationInfos), (Added<AnimationInfos>)>,
+    added_animation_infos: Query<(Entity, &Name, &AnimationInfos), Added<AnimationInfos>>,
     animtest: Res<AnimTest>,
     mut commands: Commands,
     assets_gltf: Res<Assets<Gltf>>,
@@ -95,10 +94,7 @@ pub fn play_animations(
         (With<AnimationInfos>, With<Marker3>),
     >,
 
-    animated_fox: Query<
-    (&BlueprintAnimationPlayerLink, &BlueprintAnimations),
-    (With<MarkerFox>),
-    >,
+    animated_fox: Query<(&BlueprintAnimationPlayerLink, &BlueprintAnimations), With<MarkerFox>>,
 
     mut animation_players: Query<&mut AnimationPlayer>,
     keycode: Res<ButtonInput<KeyCode>>,
@@ -228,7 +224,6 @@ pub fn play_animations(
         }
     }
 }
-
 
 pub fn react_to_animation_markers(
     mut animation_marker_events: EventReader<AnimationMarkerReached>,

@@ -48,7 +48,7 @@ pub struct AnimationInfos {
     pub animations: Vec<AnimationInfo>,
 }
 
-#[derive( Reflect, Default, Debug)]
+#[derive(Reflect, Default, Debug)]
 pub struct AnimationMarker {
     // pub frame: u32,
     pub name: String,
@@ -70,7 +70,6 @@ pub struct AnimationMarkerReached {
     pub frame: u32,
     pub marker_name: String,
 }
-
 
 /////////////////////
 
@@ -129,7 +128,6 @@ pub fn trigger_instance_animation_markers_events(
                     // emit an event AnimationMarkerReached(entity, animation_name, frame, marker_name)
                     // FIXME: problem, this can fire multiple times in a row, depending on animation length , speed , etc
                     for marker in matching_markers_per_frame {
-
                         animation_marker_events.send(AnimationMarkerReached {
                             entity: entity,
                             animation_name: animation_name.clone(),
@@ -145,11 +143,7 @@ pub fn trigger_instance_animation_markers_events(
 
 /// triggers events when a given animation marker is reached for BLUEPRINT animations
 pub fn trigger_blueprint_animation_markers_events(
-    animation_infos: Query<(
-        Entity,
-        &BlueprintAnimationPlayerLink,
-        &BlueprintAnimations,
-    )>,
+    animation_infos: Query<(Entity, &BlueprintAnimationPlayerLink, &BlueprintAnimations)>,
     // FIXME: annoying hiearchy issue yet again: the Markers & AnimationInfos are stored INSIDE the blueprint, so we need to access them differently
     all_animation_infos: Query<(Entity, &AnimationMarkers, &AnimationInfos, &Parent)>,
     animation_players: Query<&AnimationPlayer>,
@@ -161,20 +155,20 @@ pub fn trigger_blueprint_animation_markers_events(
         let animation_clip = animation_clips.get(animation_player.animation_clip());
 
         // FIXME: horrible code
-        for (_, markers, animation_infos, parent) in all_animation_infos.iter(){
+        for (_, markers, animation_infos, parent) in all_animation_infos.iter() {
             if parent.get() == entity {
                 if animation_clip.is_some() {
-        
                     // println!("Entity {:?} markers {:?}", entity, markers);
                     // println!("Player {:?} {}", animation_player.elapsed(), animation_player.completions());
                     // FIMXE: yikes ! very inneficient ! perhaps add boilerplate to the "start playing animation" code so we know what is playing
-                    let animation_name = animations.named_animations.iter().find_map(|(key, value)| {
-                        if value == animation_player.animation_clip() {
-                            Some(key)
-                        } else {
-                            None
-                        }
-                    });
+                    let animation_name =
+                        animations.named_animations.iter().find_map(|(key, value)| {
+                            if value == animation_player.animation_clip() {
+                                Some(key)
+                            } else {
+                                None
+                            }
+                        });
                     if animation_name.is_some() {
                         let animation_name = animation_name.unwrap();
                         let animation_length_seconds = animation_clip.unwrap().duration();
@@ -187,23 +181,23 @@ pub fn trigger_blueprint_animation_markers_events(
                         // TODO: we also need to take playback speed into account
                         let time_in_animation = animation_player.elapsed()
                             - (animation_player.completions() as f32) * animation_length_seconds;
-                        let frame_seconds =
-                            (animation_length_frames / animation_length_seconds) * time_in_animation;
+                        let frame_seconds = (animation_length_frames / animation_length_seconds)
+                            * time_in_animation;
                         // println!("frame seconds {}", frame_seconds);
                         let frame = frame_seconds.ceil() as u32; // FIXME , bad hack
-        
+
                         let matching_animation_marker = &markers.0[animation_name];
-        
-                       
+
                         if matching_animation_marker.contains_key(&frame) {
-                            let matching_markers_per_frame = matching_animation_marker.get(&frame).unwrap();
+                            let matching_markers_per_frame =
+                                matching_animation_marker.get(&frame).unwrap();
                             // println!("FOUND A MARKER {:?} at frame {}", matching_markers_per_frame, frame);
                             // emit an event AnimationMarkerReached(entity, animation_name, frame, marker_name)
                             // FIXME: complete hack-ish solution , otherwise this can fire multiple times in a row, depending on animation length , speed , etc
                             let diff = frame as f32 - frame_seconds;
-                            if diff < 0.03 {
+                            println!("diff {}", diff);
+                            if diff < 0.1 {
                                 for marker in matching_markers_per_frame {
-                                
                                     animation_marker_events.send(AnimationMarkerReached {
                                         entity: entity,
                                         animation_name: animation_name.clone(),
@@ -212,16 +206,12 @@ pub fn trigger_blueprint_animation_markers_events(
                                     });
                                 }
                             }
-                            
                         }
                     }
-                }  
-
-
+                }
 
                 break;
             }
         }
-        
     }
 }

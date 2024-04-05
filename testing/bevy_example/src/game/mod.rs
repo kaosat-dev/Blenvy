@@ -6,17 +6,15 @@ pub use in_game::*;
 use std::{collections::HashMap, fs, time::Duration};
 
 use bevy_gltf_blueprints::{
-    BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintName, BlueprintsList,
-    GltfBlueprintsSet, InstanceAnimationPlayerLink, InstanceAnimations,
+    BlueprintAnimationPlayerLink, BlueprintName, BlueprintsList,
+    GltfBlueprintsSet,
 };
 
 use bevy::{
-    ecs::query, gltf::Gltf, prelude::*, render::view::screenshot::ScreenshotManager,
-    time::common_conditions::on_timer, window::PrimaryWindow,
+    prelude::*, render::view::screenshot::ScreenshotManager, time::common_conditions::on_timer, window::PrimaryWindow
 };
 use bevy_gltf_worlflow_examples_common_rapier::{AppState, GameState};
 
-use crate::{TupleTestF32, UnitTest};
 use json_writer::to_json_string;
 
 fn start_game(mut next_app_state: ResMut<NextState<AppState>>) {
@@ -144,11 +142,11 @@ impl Plugin for GamePlugin {
             .add_systems(Update, play_animations)
             .add_systems(Update, react_to_animation_markers)
 
-            /* .add_systems(Update, generate_screenshot.run_if(on_timer(Duration::from_secs_f32(0.2)))) // TODO: run once
+            .add_systems(Update, generate_screenshot.run_if(on_timer(Duration::from_secs_f32(0.2)))) // TODO: run once
             .add_systems(
                 Update,
                 exit_game.run_if(on_timer(Duration::from_secs_f32(0.5))),
-            ) // shut down the app after this time*/
+            ) // shut down the app after this time
             ;
     }
 }
