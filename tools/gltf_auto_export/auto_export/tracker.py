@@ -50,7 +50,6 @@ class AutoExportTracker(PropertyGroup):
         # reset whether there have been changed objects since the last save 
         cls.changed_objects_per_scene.clear()
         # all our logic is done, mark this as done
-        print("EXPORT DONE")
 
     @classmethod
     def deps_update_handler(cls, scene, depsgraph):
