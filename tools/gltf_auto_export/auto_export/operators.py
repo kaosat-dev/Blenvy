@@ -162,7 +162,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         # if there were no setting before, it is new, we need export
         changed = False
         if previous_auto_settings == None or previous_gltf_settings == None:
-            #print("previous settings missing, exporting")
+            print("previous settings missing, exporting")
             changed = True
         else:
             auto_settings_changed = sorted(json.loads(previous_auto_settings.as_string()).items()) != sorted(json.loads(current_auto_settings.as_string()).items()) if current_auto_settings != None else False
@@ -183,7 +183,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
             previous_auto_settings.clear()
             previous_auto_settings.write(current_auto_settings.as_string()) # TODO : check if this is always valid
 
-        if previous_gltf_settings != None:
+        if current_gltf_settings != None:
             previous_gltf_settings = bpy.data.texts[".gltf_auto_export_gltf_settings_previous"] if ".gltf_auto_export_gltf_settings_previous" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_gltf_settings_previous")
             previous_gltf_settings.clear()
             previous_gltf_settings.write(current_gltf_settings.as_string())
