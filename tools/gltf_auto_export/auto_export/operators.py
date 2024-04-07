@@ -168,13 +168,13 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
             auto_settings_changed = sorted(json.loads(previous_auto_settings.as_string()).items()) != sorted(json.loads(current_auto_settings.as_string()).items()) if current_auto_settings != None else False
             gltf_settings_changed = sorted(json.loads(previous_gltf_settings.as_string()).items()) != sorted(json.loads(current_gltf_settings.as_string()).items()) if current_gltf_settings != None else False
             
-            print("auto settings previous", sorted(json.loads(previous_auto_settings.as_string()).items()))
+            """print("auto settings previous", sorted(json.loads(previous_auto_settings.as_string()).items()))
             print("auto settings current", sorted(json.loads(current_auto_settings.as_string()).items()))
             print("auto_settings_changed", auto_settings_changed)
 
             print("gltf settings previous", sorted(json.loads(previous_gltf_settings.as_string()).items()))
             print("gltf settings current", sorted(json.loads(current_gltf_settings.as_string()).items()))
-            print("gltf_settings_changed", gltf_settings_changed)
+            print("gltf_settings_changed", gltf_settings_changed)"""
 
             changed = auto_settings_changed or gltf_settings_changed
         # now write the current settings to the "previous settings"
@@ -191,6 +191,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         return changed
 
     def execute(self, context):    
+        print("execute")
         # disable change detection while the operator runs
         bpy.context.window_manager.auto_export_tracker.disable_change_detection()
         if self.direct_mode:
@@ -206,12 +207,14 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
                 params_changed = self.did_export_settings_change()
                 auto_export(changes_per_scene, params_changed, self)
             # cleanup
-            if bpy.context.window_manager.exports_count == 0: # we need this in case there was nothing to export, to make sure change detection is enabled again
-                print("YOLOOO")
-                bpy.context.window_manager.auto_export_tracker.enable_change_detection()
+            print("AUTO EXPORT DONE")
+            if bpy.context.window_manager.auto_export_tracker.exports_count == 0: # we need this in case there was nothing to export, to make sure change detection is enabled again
+                pass #print("YOLOOO")
+                #py.context.window_manager.auto_export_tracker.enable_change_detection()
+                #bpy.app.timers.register(bpy.context.window_manager.auto_export_tracker.enable_change_detection, first_interval=1)
             #bpy.context.window_manager.auto_export_tracker.enable_change_detection()
             # FIXME: wrong logic, this should be called only in an glTF2_post_export_callback
-            bpy.app.timers.register(bpy.context.window_manager.auto_export_tracker.enable_change_detection, first_interval=1)
+            #bpy.app.timers.register(bpy.context.window_manager.auto_export_tracker.enable_change_detection, first_interval=1)
         else: 
             print("auto export disabled, skipping")
         return {'FINISHED'}    

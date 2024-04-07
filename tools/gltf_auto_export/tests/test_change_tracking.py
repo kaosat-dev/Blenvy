@@ -1,8 +1,10 @@
 import bpy
 import os 
 import json
+import mathutils
 import pytest
 import shutil
+import pathlib
 
 @pytest.fixture
 def setup_data(request):
@@ -133,8 +135,19 @@ def test_export_changed_parameters(setup_data):
     models_library_path = os.path.join(models_path, "library")
     model_library_file_paths = list(map(lambda file_name: os.path.join(models_library_path, file_name), sorted(os.listdir(models_library_path))))
     modification_times_first = list(map(lambda file_path: os.path.getmtime(file_path), model_library_file_paths + [world_file_path]))
-    #print("files", model_library_file_paths)
+
+    mapped_files_to_timestamps_and_index = {}
+    for (index, file_path) in enumerate(model_library_file_paths+ [world_file_path]):
+        file_path = pathlib.Path(file_path).stem
+        mapped_files_to_timestamps_and_index[file_path] = (modification_times_first[index], index)
+    print("files", mapped_files_to_timestamps_and_index)
     #print("mod times", modification_times_first)
+
+    # export again with no changes
+    print("----------------")
+    print("no changes")
+    print("----------------")
+    bpy.context.window_manager.auto_export_tracker.enable_change_detection() # FIXME: should not be needed, but ..
 
     auto_export_operator(
         auto_export=True,
@@ -154,7 +167,7 @@ def test_export_changed_parameters(setup_data):
     print("main scene change")
     print("----------------")
 
-    #py.context.window_manager.auto_export_tracker.enable_change_detection() # FIXME: should not be needed, but ..
+    bpy.context.window_manager.auto_export_tracker.enable_change_detection() # FIXME: should not be needed, but ..
     bpy.data.objects["Cube"].location = [1, 0, 0]
     
     auto_export_operator(
@@ -169,6 +182,14 @@ def test_export_changed_parameters(setup_data):
 
     modification_times = list(map(lambda file_path: os.path.getmtime(file_path), model_library_file_paths + [world_file_path]))
     assert modification_times != modification_times_first
+    # only the "world" file should have changed
+    world_file_index = mapped_files_to_timestamps_and_index["World"][1]
+    other_files_modification_times = [value for index, value in enumerate(modification_times) if index not in [world_file_index]]
+    other_files_modification_times_first = [value for index, value in enumerate(modification_times_first) if index not in [world_file_index]]
+
+    assert modification_times[world_file_index] != modification_times_first[world_file_index]
+    assert other_files_modification_times == other_files_modification_times_first
+    # reset the comparing 
     modification_times_first = modification_times
 
 
@@ -176,6 +197,7 @@ def test_export_changed_parameters(setup_data):
     print("----------------")
     print("library change")
     print("----------------")
+    bpy.context.window_manager.auto_export_tracker.enable_change_detection() # FIXME: should not be needed, but ..
 
     bpy.data.objects["Blueprint1_mesh"].location = [1, 2, 1]
     auto_export_operator(
@@ -190,14 +212,31 @@ def test_export_changed_parameters(setup_data):
 
     modification_times = list(map(lambda file_path: os.path.getmtime(file_path), model_library_file_paths + [world_file_path]))
     assert modification_times != modification_times_first
+    # only the "world" file should have changed
+    blueprint1_file_index = mapped_files_to_timestamps_and_index["Blueprint1"][1]
+    other_files_modification_times = [value for index, value in enumerate(modification_times) if index not in [blueprint1_file_index]]
+    other_files_modification_times_first = [value for index, value in enumerate(modification_times_first) if index not in [blueprint1_file_index]]
+
+    assert modification_times[blueprint1_file_index] != modification_times_first[blueprint1_file_index]
+    assert other_files_modification_times == other_files_modification_times_first
+    # reset the comparing 
     modification_times_first = modification_times
+
+    
 
     # now same, but using an operator
     print("----------------")
     print("change using operator")
     print("----------------")
+    bpy.context.window_manager.auto_export_tracker.enable_change_detection() # FIXME: should not be needed, but ..
 
-    bpy.ops.transform.translate(value=(20.0, 0.0, 0.0))
+    with bpy.context.temp_override(active_object=bpy.data.objects["Cube"]):
+        print("translate using operator")
+    bpy.ops.transform.translate(value=mathutils.Vector((2.0, 1.0, -5.0)))
+    bpy.ops.transform.rotate(value=0.378874, constraint_axis=(False, False, True), mirror=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
+    bpy.ops.object.transform_apply()
+    bpy.ops.transform.translate(value=(0.5, 0, 0), constraint_axis=(True, False, False))
+
 
     auto_export_operator(
         auto_export=True,

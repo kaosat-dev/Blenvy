@@ -109,20 +109,23 @@ def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
 
             main_scenes_to_export = [scene_name for scene_name in main_scene_names if not export_change_detection or changed_export_parameters or scene_name in changes_per_scene.keys() or not check_if_blueprint_on_disk(scene_name, export_levels_path, gltf_extension)]
 
-            bpy.context.window_manager.exports_count = len(collections_to_export)
-            bpy.context.window_manager.exports_count += len(main_scenes_to_export)
+            bpy.context.window_manager.auto_export_tracker.exports_count = len(collections_to_export)
+            bpy.context.window_manager.auto_export_tracker.exports_count += len(main_scenes_to_export)
             if export_materials_library:
-                bpy.context.window_manager.exports_count += 1
+                bpy.context.window_manager.auto_export_tracker.exports_count += 1
 
-            print("--------------")
+            print("-------------------------------")
             print("collections:               all:", collections)
             print("collections:           changed:", changed_collections)
             print("collections: not found on disk:", collections_not_on_disk)
             print("collections:        in library:", library_collections)
             print("collections:         to export:", collections_to_export)
             print("collections:         per_scene:", collections_per_scene)
-            print("--------------")
-            print("MAIN SCENES TO EXPORT", main_scenes_to_export)
+            print("-------------------------------")
+            print("BLUEPRINTS:          to export:", collections_to_export)
+            print("-------------------------------")
+            print("MAIN SCENES:         to export:", main_scenes_to_export)
+            print("-------------------------------")
 
 
             # backup current active scene
@@ -131,19 +134,20 @@ def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
             old_selections = bpy.context.selected_objects
 
             # first export any main/level/world scenes
-            print("export MAIN scenes")
-            for scene_name in main_scene_names:
-                # we have more relaxed rules to determine if the main scenes have changed : any change is ok, (allows easier handling of changes, render settings etc)
-                do_export_main_scene = not export_change_detection or changed_export_parameters or scene_name in changes_per_scene.keys() or not check_if_blueprint_on_disk(scene_name, export_levels_path, gltf_extension)
-                if do_export_main_scene:
-                    print("     exporting scene:", scene_name)
-                    export_main_scene(bpy.data.scenes[scene_name], folder_path, addon_prefs, library_collections)
+            if len(main_scenes_to_export) > 0:
+                print("export MAIN scenes")
+                for scene_name in main_scene_names:
+                    # we have more relaxed rules to determine if the main scenes have changed : any change is ok, (allows easier handling of changes, render settings etc)
+                    do_export_main_scene = not export_change_detection or changed_export_parameters or scene_name in changes_per_scene.keys() or not check_if_blueprint_on_disk(scene_name, export_levels_path, gltf_extension)
+                    if do_export_main_scene:
+                        print("     exporting scene:", scene_name)
+                        export_main_scene(bpy.data.scenes[scene_name], folder_path, addon_prefs, library_collections)
 
 
             # now deal with blueprints/collections
             do_export_library_scene = not export_change_detection or changed_export_parameters or len(collections_to_export) > 0 # export_library_scene_name in changes_per_scene.keys()
-            print("export LIBRARY")
             if do_export_library_scene:
+                print("export LIBRARY")
                 # we only want to go through the library scenes where our collections to export are present
                 for (scene_name, collections_to_export)  in collections_per_scene.items():
                     print("     exporting collections from scene:", scene_name)
@@ -163,6 +167,8 @@ def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
         else:
             for scene_name in main_scene_names:
                 export_main_scene(bpy.data.scenes[scene_name], folder_path, addon_prefs, [])
+
+        print("we are done with all export work",bpy.context.window_manager.auto_export_tracker.change_detection_enabled)
 
     except Exception as error:
         print(traceback.format_exc())

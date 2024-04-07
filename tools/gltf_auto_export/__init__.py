@@ -116,7 +116,6 @@ classes = [
     GLTF_PT_auto_export_SidePanel,
 
     AutoExportTracker,
-
 ]
 
 def glTF2_pre_export_callback(data):
@@ -191,10 +190,6 @@ def register():
     bpy.types.TOPBAR_MT_file_export.append(menu_func_import)
     bpy.types.WindowManager.gltf_settings_backup = StringProperty(default="")
 
-    # FIXME: perhaps move this to tracker
-    bpy.types.WindowManager.exports_count = IntProperty(default=0)
-
-
     """bpy.utils.register_class(AutoExportExtensionProperties)
     bpy.types.Scene.AutoExportExtensionProperties = bpy.props.PointerProperty(type=AutoExportExtensionProperties)"""
 
@@ -207,7 +202,6 @@ def unregister():
     bpy.app.handlers.save_post.remove(post_save)
 
     """bpy.utils.unregister_class(AutoExportExtensionProperties)"""
-    del bpy.types.WindowManager.exports_count
 
 if "gltf_auto_export" == "__main__":
     register()

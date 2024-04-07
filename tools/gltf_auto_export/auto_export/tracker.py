@@ -1,7 +1,7 @@
 import json
 import bpy
 from bpy.types import (PropertyGroup)
-from bpy.props import (PointerProperty)
+from bpy.props import (PointerProperty, IntProperty)
 
 from .internals import CollectionsToExport
 
@@ -14,6 +14,12 @@ class AutoExportTracker(PropertyGroup):
     gltf_settings_backup = None
     last_operator = None
     dummy_file_path = ""
+
+    exports_count : IntProperty(
+        name='exports_count',
+        description='Number of exports in progress',
+        default=0
+    ) # type: ignore
 
     @classmethod
     def register(cls):
@@ -53,7 +59,7 @@ class AutoExportTracker(PropertyGroup):
 
     @classmethod
     def deps_update_handler(cls, scene, depsgraph):
-        print("change detection enabled", cls.change_detection_enabled)
+        print("change detection enabled", cls.change_detection_enabled, bpy.context.window_manager.auto_export_tracker.change_detection_enabled)
         active_operator = bpy.context.active_operator
         if active_operator:
             # print("Operator", active_operator.bl_label, active_operator.bl_idname)
@@ -74,8 +80,8 @@ class AutoExportTracker(PropertyGroup):
                 active_operator.will_save_settings = True
                 active_operator.auto_export = True
 
-        if scene.name != "temp_scene":
-            # print("depsgraph_update_post", scene.name)
+        if not scene.name.startswith("__temp_scene"):
+            print("depsgraph_update_post", scene.name)
             changed_scene = scene.name or ""
 
             # only deal with changes if we are no in the mids of saving/exporting
@@ -90,7 +96,8 @@ class AutoExportTracker(PropertyGroup):
                     if isinstance(obj.id, bpy.types.Object):
                         # get the actual object
                         object = bpy.data.objects[obj.id.name]
-                        #print("changed object", obj.id.name)
+                        print("changed object", obj.id.name)
+                        print("FOO","transforms", obj.is_updated_transform, "geometry", obj.is_updated_geometry)
                         cls.changed_objects_per_scene[scene.name][obj.id.name] = object
                     elif isinstance(obj.id, bpy.types.Material): # or isinstance(obj.id, bpy.types.ShaderNodeTree):
                         # print("changed material", obj.id, "scene", scene.name,)
@@ -114,19 +121,27 @@ class AutoExportTracker(PropertyGroup):
         for update in depsgraph.updates:
             print("update", update)"""
 
-    def disable_change_detection(self,):
+    def disable_change_detection(self):
+        print("disable change detection")
         self.change_detection_enabled = False
         self.__class__.change_detection_enabled = False
+
         return None
     
     def enable_change_detection(self):
+        print("enable change detection")
         self.change_detection_enabled = True
         self.__class__.change_detection_enabled = True
+        # bpy.context.window_manager.auto_export_tracker.change_detection_enabled = True
+        print("bpy.context.window_manager.auto_export_tracker.change_detection_enabled", bpy.context.window_manager.auto_export_tracker.change_detection_enabled)
         return None
 
     def export_finished(self):
         print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAHHHHHHHH export_finished")
-        bpy.context.window_manager.exports_count -= 1
-        if bpy.context.window_manager.exports_count == 0:
-            print("YOLOOO")
+        bpy.context.window_manager.auto_export_tracker.exports_count -= 1
+        if bpy.context.window_manager.auto_export_tracker.exports_count == 0:
+            #print("preparing to reset change detection")
+            #bpy.app.timers.register(bpy.context.window_manager.auto_export_tracker.enable_change_detection, first_interval=1)
+
             self.enable_change_detection()
+        return None
