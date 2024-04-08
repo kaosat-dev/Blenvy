@@ -195,11 +195,12 @@ def test_export_changed_parameters(setup_data):
 
     # now same, but move the cube in the library
     print("----------------")
-    print("library change")
+    print("library change (blueprint) ")
     print("----------------")
     bpy.context.window_manager.auto_export_tracker.enable_change_detection() # FIXME: should not be needed, but ..
 
     bpy.data.objects["Blueprint1_mesh"].location = [1, 2, 1]
+
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
@@ -212,15 +213,53 @@ def test_export_changed_parameters(setup_data):
 
     modification_times = list(map(lambda file_path: os.path.getmtime(file_path), model_library_file_paths + [world_file_path]))
     assert modification_times != modification_times_first
-    # only the "world" file should have changed
+    # the "world" file should have changed (TODO: double check: this is since changing an instances collection changes the instance too ?)
+    world_file_index = mapped_files_to_timestamps_and_index["World"][1]
+    # and the blueprint1 file too, since that is the collection we changed
     blueprint1_file_index = mapped_files_to_timestamps_and_index["Blueprint1"][1]
-    other_files_modification_times = [value for index, value in enumerate(modification_times) if index not in [blueprint1_file_index]]
-    other_files_modification_times_first = [value for index, value in enumerate(modification_times_first) if index not in [blueprint1_file_index]]
+    other_files_modification_times = [value for index, value in enumerate(modification_times) if index not in [world_file_index, blueprint1_file_index]]
+    other_files_modification_times_first = [value for index, value in enumerate(modification_times_first) if index not in [world_file_index, blueprint1_file_index]]
 
+    assert modification_times[world_file_index] != modification_times_first[world_file_index]
     assert modification_times[blueprint1_file_index] != modification_times_first[blueprint1_file_index]
     assert other_files_modification_times == other_files_modification_times_first
     # reset the comparing 
     modification_times_first = modification_times
+
+
+    # now change something in a nested blueprint
+    print("----------------")
+    print("library change (nested blueprint) ")
+    print("----------------")
+    bpy.context.window_manager.auto_export_tracker.enable_change_detection() # FIXME: should not be needed, but ..
+
+    bpy.data.objects["Blueprint3_mesh"]["test_component"] = 42
+
+    auto_export_operator(
+        auto_export=True,
+        direct_mode=True,
+        export_output_folder="./models",
+        export_scene_settings=True,
+        export_blueprints=True,
+        export_legacy_mode=False,
+        export_materials_library=False
+    )
+
+    modification_times = list(map(lambda file_path: os.path.getmtime(file_path), model_library_file_paths + [world_file_path]))
+    assert modification_times != modification_times_first
+    # the "world" file should have changed (TODO: double check: this is since changing an instances collection changes the instance too ?)
+    world_file_index = mapped_files_to_timestamps_and_index["World"][1]
+    # and the blueprint1 file too, since that is the collection we changed
+    blueprint1_file_index = mapped_files_to_timestamps_and_index["Blueprint1"][1]
+    other_files_modification_times = [value for index, value in enumerate(modification_times) if index not in [world_file_index, blueprint1_file_index]]
+    other_files_modification_times_first = [value for index, value in enumerate(modification_times_first) if index not in [world_file_index, blueprint1_file_index]]
+
+    assert modification_times[world_file_index] != modification_times_first[world_file_index]
+    assert modification_times[blueprint1_file_index] != modification_times_first[blueprint1_file_index]
+    assert other_files_modification_times == other_files_modification_times_first
+    # reset the comparing 
+    modification_times_first = modification_times
+
 
     
 

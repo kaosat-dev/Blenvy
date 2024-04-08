@@ -1,6 +1,7 @@
 import os
 import bpy
 
+from ..constants import TEMPSCENE_PREFIX
 from ..helpers.generate_and_export import generate_and_export
 from .export_gltf import (generate_gltf_export_preferences, export_gltf)
 from ..modules.bevy_dynamic import is_object_dynamic, is_object_static
@@ -38,7 +39,7 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
             # first export static objects
             generate_and_export(
                 addon_prefs, 
-                temp_scene_name="__temp_scene",
+                temp_scene_name=TEMPSCENE_PREFIX,
                 export_settings=export_settings,
                 gltf_output_path=gltf_output_path,
                 tempScene_filler= lambda temp_collection: copy_hollowed_collection_into(scene.collection, temp_collection, library_collections=library_collections, filter=is_object_static, addon_prefs=addon_prefs),
@@ -49,7 +50,7 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
             gltf_output_path = os.path.join(folder_path, export_output_folder, scene.name+ "_dynamic")
             generate_and_export(
                 addon_prefs, 
-                temp_scene_name="__temp_scene",
+                temp_scene_name=TEMPSCENE_PREFIX,
                 export_settings=export_settings,
                 gltf_output_path=gltf_output_path,
                 tempScene_filler= lambda temp_collection: copy_hollowed_collection_into(scene.collection, temp_collection, library_collections=library_collections, filter=is_object_dynamic, addon_prefs=addon_prefs),
@@ -60,7 +61,7 @@ def export_main_scene(scene, folder_path, addon_prefs, library_collections):
             #print("NO SPLIT")
             generate_and_export(
                 addon_prefs, 
-                temp_scene_name="__temp_scene",
+                temp_scene_name=TEMPSCENE_PREFIX,
                 export_settings=export_settings,
                 gltf_output_path=gltf_output_path,
                 tempScene_filler= lambda temp_collection: copy_hollowed_collection_into(scene.collection, temp_collection, library_collections=library_collections, addon_prefs=addon_prefs),

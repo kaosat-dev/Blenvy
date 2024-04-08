@@ -5,6 +5,7 @@ import traceback
 
 from .export_main_scenes import export_main_scene
 from .export_blueprints import check_if_blueprint_on_disk, check_if_blueprints_exist, export_blueprints_from_collections
+from .get_standard_exporter_settings import get_standard_exporter_settings
 
 from ..helpers.helpers_scenes import (get_scenes, )
 from ..helpers.helpers_collections import (get_collections_in_library, get_exportable_collections, get_collections_per_scene, find_collection_ascendant_target_collection)
@@ -34,9 +35,8 @@ def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
         [main_scene_names, level_scenes, library_scene_names, library_scenes] = get_scenes(addon_prefs)
 
         # standard gltf export settings are stored differently
-        standard_gltf_exporter_settings = bpy.data.texts[".gltf_auto_export_gltf_settings"] if ".gltf_auto_export_gltf_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_gltf_settings")
-        print("standard_gltf_exporter_settings", standard_gltf_exporter_settings.as_string())
-        standard_gltf_exporter_settings = json.loads(standard_gltf_exporter_settings.as_string())
+        
+        standard_gltf_exporter_settings = get_standard_exporter_settings()
 
         print("main scenes", main_scene_names, "library_scenes", library_scene_names)
         print("export_output_folder", export_output_folder)

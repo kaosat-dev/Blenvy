@@ -1,6 +1,7 @@
 import os
 import bpy
 
+from ..constants import TEMPSCENE_PREFIX
 from ..helpers.generate_and_export import generate_and_export
 from .export_gltf import (generate_gltf_export_preferences)
 from ..helpers.helpers_scenes import clear_hollow_scene, copy_hollowed_collection_into
@@ -24,7 +25,7 @@ def export_collections(collections, folder_path, library_scene, addon_prefs, glt
         collection = bpy.data.collections[collection_name]
         generate_and_export(
             addon_prefs, 
-            temp_scene_name="__temp_scene_"+collection.name,
+            temp_scene_name=TEMPSCENE_PREFIX+collection.name,
             export_settings=export_settings,
             gltf_output_path=gltf_output_path,
             tempScene_filler= lambda temp_collection: copy_hollowed_collection_into(collection, temp_collection, library_collections=library_collections, addon_prefs=addon_prefs),

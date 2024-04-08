@@ -48,6 +48,15 @@ class GLTF_PT_auto_export_SidePanel(bpy.types.Panel):
 
         op = layout.operator("EXPORT_SCENES_OT_auto_gltf", text="Auto Export Settings")
         op.auto_export = True
+
+        layout.label(text="changes since last save:")
+        changed_objects_per_scene = {}
+        for scene in context.window_manager.auto_export_tracker.changed_objects_per_scene:
+            if not scene in changed_objects_per_scene.keys():
+                changed_objects_per_scene[scene] = []
+            changed_objects_per_scene[scene]+= context.window_manager.auto_export_tracker.changed_objects_per_scene[scene].keys()
+            
+        layout.label(text=str(changed_objects_per_scene))
         #print("GLTF_PT_export_main", GLTF_PT_export_main.bl_parent_id)
 
 # main ui in the file => export 

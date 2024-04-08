@@ -47,8 +47,28 @@ def setup_data(request):
 - checks if timestamps have changed
 - if all worked => test is a-ok
 - removes generated files
-
 """
+
+
+def test_export_no_parameters(setup_data):
+    root_path = "../../testing/bevy_example"
+    assets_root_path = os.path.join(root_path, "assets")
+    models_path = os.path.join(assets_root_path, "models")
+    auto_export_operator = bpy.ops.export_scenes.auto_gltf
+
+
+    # first test exporting withouth any parameters set, this should export with default parameters gracefully
+    
+    auto_export_operator(
+        auto_export=True,
+        direct_mode=True,
+        export_output_folder="./models",
+        export_legacy_mode=False,
+        export_materials_library=True
+    )
+
+
+
 def test_export_changed_parameters(setup_data):
     root_path = "../../testing/bevy_example"
     assets_root_path = os.path.join(root_path, "assets")
@@ -76,11 +96,6 @@ def test_export_changed_parameters(setup_data):
     stored_gltf_settings = bpy.data.texts[".gltf_auto_export_gltf_settings"] if ".gltf_auto_export_gltf_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_gltf_settings")
     stored_gltf_settings.clear()
     stored_gltf_settings.write(json.dumps(gltf_settings))
-
-    # move the main cube
-    bpy.data.objects["Cube"].location = [1, 0, 0]
-    # move the cube in the library
-    bpy.data.objects["Blueprint1_mesh"].location = [1, 2, 1]
 
     auto_export_operator(
         auto_export=True,
