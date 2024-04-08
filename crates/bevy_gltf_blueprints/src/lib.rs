@@ -120,7 +120,7 @@ impl Plugin for BlueprintsPlugin {
         .register_type::<MaterialInfo>()
         .register_type::<SpawnHere>()
         .register_type::<BlueprintAnimations>()
-        .register_type::<InstanceAnimations>()
+        .register_type::<SceneAnimations>()
         .register_type::<AnimationInfo>()
         .register_type::<AnimationInfos>()
         .register_type::<Vec<AnimationInfo>>()

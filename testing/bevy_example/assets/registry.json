@@ -3676,7 +3676,7 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_gltf_blueprints::animation::InstanceAnimations": {
+    "bevy_gltf_blueprints::animation::SceneAnimations": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
@@ -3690,8 +3690,8 @@
       "required": [
         "named_animations"
       ],
-      "short_name": "InstanceAnimations",
-      "title": "bevy_gltf_blueprints::animation::InstanceAnimations",
+      "short_name": "SceneAnimations",
+      "title": "bevy_gltf_blueprints::animation::SceneAnimations",
       "type": "object",
       "typeInfo": "Struct"
     },

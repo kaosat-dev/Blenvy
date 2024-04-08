@@ -17,8 +17,8 @@ pub struct BlueprintAnimationPlayerLink(pub Entity);
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-/// storage for animations for a given entity (hierarchy), essentially a clone of gltf's `named_animations`
-pub struct InstanceAnimations {
+/// storage for scene level animations for a given entity (hierarchy), essentially a clone of gltf's `named_animations`
+pub struct SceneAnimations {
     pub named_animations: HashMap<String, Handle<AnimationClip>>,
 }
 
@@ -27,7 +27,7 @@ pub struct InstanceAnimations {
 /// so that the root entity knows which of its children contains an actualy `AnimationPlayer` component
 /// this is for convenience, because currently , Bevy's gltf parsing inserts `AnimationPlayers` "one level down"
 /// ie armature/root for animated models, which means more complex queries to trigger animations that we want to avoid
-pub struct InstanceAnimationPlayerLink(pub Entity);
+pub struct SceneAnimationPlayerLink(pub Entity);
 
 /// Stores Animation information: name, frame informations etc
 #[derive(Reflect, Default, Debug)]
@@ -78,8 +78,8 @@ pub fn trigger_instance_animation_markers_events(
     animation_infos: Query<(
         Entity,
         &AnimationMarkers,
-        &InstanceAnimationPlayerLink,
-        &InstanceAnimations,
+        &SceneAnimationPlayerLink,
+        &SceneAnimations,
         &AnimationInfos,
     )>,
     animation_players: Query<&AnimationPlayer>,

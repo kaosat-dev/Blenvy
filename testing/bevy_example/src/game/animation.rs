@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use bevy_gltf_blueprints::{
     AnimationInfos, AnimationMarkerReached, BlueprintAnimationPlayerLink, BlueprintAnimations,
-    InstanceAnimationPlayerLink, InstanceAnimations,
+    SceneAnimationPlayerLink, SceneAnimations,
 };
 
 use bevy::{gltf::Gltf, prelude::*};
@@ -58,7 +58,7 @@ pub fn animations(
                 name, entity
             );
             println!("Found match {:?}", gltf.named_animations);
-            commands.entity(entity).insert(InstanceAnimations {
+            commands.entity(entity).insert(SceneAnimations {
                 named_animations: gltf.named_animations.clone(),
             });
             for ancestor in parents.iter_ancestors(entity) {
@@ -66,7 +66,7 @@ pub fn animations(
                     // println!("found match with animationPlayer !! {:?}",names.get(ancestor));
                     commands
                         .entity(entity)
-                        .insert(InstanceAnimationPlayerLink(ancestor));
+                        .insert(SceneAnimationPlayerLink(ancestor));
                 }
                 // info!("{:?} is an ancestor of {:?}", ancestor, player);
             }
@@ -77,17 +77,17 @@ pub fn animations(
 
 pub fn play_animations(
     animated_marker1: Query<
-        (&InstanceAnimationPlayerLink, &InstanceAnimations),
+        (&SceneAnimationPlayerLink, &SceneAnimations),
         (With<AnimationInfos>, With<Marker1>),
     >,
     animated_marker2: Query<
-        (&InstanceAnimationPlayerLink, &InstanceAnimations),
+        (&SceneAnimationPlayerLink, &SceneAnimations),
         (With<AnimationInfos>, With<Marker2>),
     >,
     animated_marker3: Query<
         (
-            &InstanceAnimationPlayerLink,
-            &InstanceAnimations,
+            &SceneAnimationPlayerLink,
+            &SceneAnimations,
             &BlueprintAnimationPlayerLink,
             &BlueprintAnimations,
         ),
