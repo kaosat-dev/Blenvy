@@ -57,7 +57,7 @@ def test_export_no_parameters(setup_data):
     auto_export_operator = bpy.ops.export_scenes.auto_gltf
 
 
-    # first test exporting withouth any parameters set, this should export with default parameters gracefully
+    # first test exporting withouth any parameters set, this should not export anything
     
     auto_export_operator(
         auto_export=True,
@@ -67,7 +67,35 @@ def test_export_no_parameters(setup_data):
         export_materials_library=True
     )
 
+    world_file_path = os.path.join(models_path, "World.glb")
+    assert os.path.exists(world_file_path) != True
 
+def test_export_auto_export_parameters_only(setup_data):
+    root_path = "../../testing/bevy_example"
+    assets_root_path = os.path.join(root_path, "assets")
+    models_path = os.path.join(assets_root_path, "models")
+    auto_export_operator = bpy.ops.export_scenes.auto_gltf
+
+    export_props = {
+        "main_scene_names" : ['World'],
+        "library_scene_names": ['Library'],
+    }
+  
+    # store settings for the auto_export part
+    stored_auto_settings = bpy.data.texts[".gltf_auto_export_settings"] if ".gltf_auto_export_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_settings")
+    stored_auto_settings.clear()
+    stored_auto_settings.write(json.dumps(export_props))
+    
+    auto_export_operator(
+        auto_export=True,
+        direct_mode=True,
+        export_output_folder="./models",
+        export_legacy_mode=False,
+        export_materials_library=True
+    )
+
+    world_file_path = os.path.join(models_path, "World.glb")
+    assert os.path.exists(world_file_path) == True
 
 def test_export_changed_parameters(setup_data):
     root_path = "../../testing/bevy_example"

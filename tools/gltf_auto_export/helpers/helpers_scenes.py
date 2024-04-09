@@ -212,8 +212,8 @@ def clear_hollow_scene(temp_scene, original_root_collection):
 
 # convenience utility to get lists of scenes
 def get_scenes(addon_prefs):
-    level_scene_names= list(map(lambda scene: scene.name, getattr(addon_prefs,"main_scenes"))) # getattr(addon_prefs, "main_scene_names_compact").split(',')#
-    library_scene_names = list(map(lambda scene: scene.name, getattr(addon_prefs,"library_scenes"))) #getattr(addon_prefs, "main_scene_names_compact").split(',')#
+    level_scene_names= getattr(addon_prefs,"main_scene_names") #list(map(lambda scene: scene.name, getattr(addon_prefs,"main_scenes")))
+    library_scene_names = getattr(addon_prefs,"library_scene_names") #list(map(lambda scene: scene.name, getattr(addon_prefs,"library_scenes")))
 
     level_scene_names = list(filter(lambda name: name in bpy.data.scenes, level_scene_names))
     library_scene_names = list(filter(lambda name: name in bpy.data.scenes, library_scene_names))

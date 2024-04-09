@@ -2,13 +2,9 @@ import json
 import bpy
 from bpy.types import Operator
 from bpy_extras.io_utils import ExportHelper
-from bpy.props import (IntProperty, StringProperty)
+from bpy.props import (IntProperty)
 from .preferences import (AutoExportGltfAddonPreferences, AutoExportGltfPreferenceNames)
-from ..helpers.helpers_scenes import (get_scenes)
-from ..helpers.helpers_collections import (get_exportable_collections)
 from .auto_export import auto_export
-
-from io_scene_gltf2 import (ExportGLTF2, GLTF_PT_export_main,ExportGLTF2_Base, GLTF_PT_export_include)
 
 class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
     """auto export gltf"""
@@ -158,7 +154,6 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         
         # if there were no setting before, it is new, we need export
         changed = False
-        print("previous_auto_settings", previous_auto_settings, "previous_gltf_settings", previous_gltf_settings)
         if previous_auto_settings == None:
             print("previous settings missing, exporting")
             changed = True
@@ -167,7 +162,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
             previous_gltf_settings = bpy.data.texts.new(".gltf_auto_export_gltf_settings_previous")
             previous_gltf_settings.write(json.dumps({}))
             if current_gltf_settings == None:
-                current_gltf_settings = bpy.data.texts[".gltf_auto_export_gltf_settings"]
+                current_gltf_settings = bpy.data.texts.new(".gltf_auto_export_gltf_settings")
                 current_gltf_settings.write(json.dumps({}))
 
             changed = True
@@ -199,65 +194,35 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         return changed
 
     def execute(self, context):    
-        print("execute")
+        #print("execute")
         bpy.context.window_manager.auto_export_tracker.disable_change_detection()
         if self.direct_mode:
             self.load_settings(context)
         if self.will_save_settings:
             self.save_settings(context)
-        
-        changes_per_scene = context.window_manager.auto_export_tracker.changed_objects_per_scene
+
         if self.auto_export: # only do the actual exporting if auto export is actually enabled
+            changes_per_scene = context.window_manager.auto_export_tracker.changed_objects_per_scene
             #& do the export
-            if self.direct_mode: #Do not auto export when applying settings in the menu, do it on save only
-                # disable change detection while the operator runs
-                
+            if self.direct_mode: #Do not auto export when applying settings in the menu, do it on save only                
                 #determine changed parameters 
                 params_changed = self.did_export_settings_change()
                 auto_export(changes_per_scene, params_changed, self)
-                # cleanup
-                print("AUTO EXPORT DONE")
-            if bpy.context.window_manager.auto_export_tracker.exports_count == 0: # we need this in case there was nothing to export, to make sure change detection is enabled again
-                pass #print("YOLOOO")
-                #py.context.window_manager.auto_export_tracker.enable_change_detection()
-                #bpy.app.timers.register(bpy.context.window_manager.auto_export_tracker.enable_change_detection, first_interval=1)
-            #bpy.context.window_manager.auto_export_tracker.enable_change_detection()
-            # FIXME: wrong logic, this should be called only in an glTF2_post_export_callback
-            #bpy.app.timers.register(bpy.context.window_manager.auto_export_tracker.enable_change_detection, first_interval=1)
+                # cleanup 
+                # reset the list of changes in the tracker
+                bpy.context.window_manager.auto_export_tracker.clear_changes()
+                print("AUTO EXPORT DONE")            
+            bpy.app.timers.register(bpy.context.window_manager.auto_export_tracker.enable_change_detection, first_interval=0.1)
         else: 
             print("auto export disabled, skipping")
-
-        """if not self.direct_mode:
-            print("enabling")
-            bpy.context.window_manager.auto_export_tracker.enable_change_detection()"""
-        bpy.app.timers.register(bpy.context.window_manager.auto_export_tracker.enable_change_detection, first_interval=1)
-
         return {'FINISHED'}    
     
     def invoke(self, context, event):
-        print("invoke")
+        #print("invoke")
         bpy.context.window_manager.auto_export_tracker.disable_change_detection()
         self.load_settings(context)
-
-        addon_prefs = self
-        """[main_scene_names, level_scenes, library_scene_names, library_scenes]=get_scenes(addon_prefs)
-        (collections, _) = get_exportable_collections(level_scenes, library_scenes, addon_prefs)
-
-        try:
-            # we save this list of collections in the context
-            bpy.context.window_manager.exportedCollections.clear()
-            #TODO: add error handling for this
-            for collection_name in collections:
-                ui_info = bpy.context.window_manager.exportedCollections.add()
-                ui_info.name = collection_name
-        except Exception as error:
-            self.report({"ERROR"}, "Failed to populate list of exported collections/blueprints")"""
-     
         wm = context.window_manager
         wm.fileselect_add(self)
-
-        
-
         return {'RUNNING_MODAL'}
     
     def draw(self, context):

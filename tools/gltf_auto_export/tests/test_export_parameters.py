@@ -51,11 +51,12 @@ def test_export_do_not_export_blueprints(setup_data):
         "main_scene_names" : ['World'],
         "library_scene_names": ['Library']
     }
-    stored_settings = bpy.data.texts[".gltf_auto_export_settings"] if ".gltf_auto_export_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_settings")
-    stored_settings.clear()
-    stored_settings.write(json.dumps(export_props))
+    stored_auto_settings = bpy.data.texts[".gltf_auto_export_settings"] if ".gltf_auto_export_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_settings")
+    stored_auto_settings.clear()
+    stored_auto_settings.write(json.dumps(export_props))
 
     auto_export_operator(
+        auto_export=True,
         direct_mode=True,
         export_output_folder="./models",
         export_scene_settings=True,
@@ -75,11 +76,13 @@ def test_export_custom_blueprints_path(setup_data):
         "main_scene_names" : ['World'],
         "library_scene_names": ['Library']
     }
-    stored_settings = bpy.data.texts[".gltf_auto_export_settings"] if ".gltf_auto_export_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_settings")
-    stored_settings.clear()
-    stored_settings.write(json.dumps(export_props))
+
+    stored_auto_settings = bpy.data.texts[".gltf_auto_export_settings"] if ".gltf_auto_export_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_settings")
+    stored_auto_settings.clear()
+    stored_auto_settings.write(json.dumps(export_props))
 
     auto_export_operator(
+        auto_export=True,
         direct_mode=True,
         export_output_folder="./models",
         export_scene_settings=True,
@@ -104,6 +107,7 @@ def test_export_materials_library(setup_data):
     stored_settings.write(json.dumps(export_props))
 
     auto_export_operator(
+        auto_export=True,
         direct_mode=True,
         export_output_folder="./models",
         export_scene_settings=True,
@@ -129,6 +133,7 @@ def test_export_materials_library_custom_path(setup_data):
     stored_settings.write(json.dumps(export_props))
 
     auto_export_operator(
+        auto_export=True,
         direct_mode=True,
         export_output_folder="./models",
         export_scene_settings=True,
@@ -159,6 +164,7 @@ def test_export_collection_instances_combine_mode(setup_data): # TODO: change & 
     bpy.data.objects["Cube"]["dynamic"] = True
 
     auto_export_operator(
+        auto_export=True,
         direct_mode=True,
         export_output_folder="./models",
         export_blueprints=True,
@@ -184,6 +190,7 @@ def test_export_do_not_export_marked_assets(setup_data):
     stored_settings.write(json.dumps(export_props))
 
     auto_export_operator(
+        auto_export=True,
         direct_mode=True,
         export_output_folder="./models",
         export_scene_settings=True,
@@ -216,6 +223,7 @@ def test_export_separate_dynamic_and_static_objects(setup_data):
     bpy.data.objects["Cube"]["dynamic"] = True
 
     auto_export_operator(
+        auto_export=True,
         direct_mode=True,
         export_output_folder="./models",
         export_scene_settings=True,
@@ -242,6 +250,7 @@ def test_export_should_not_generate_orphan_data(setup_data):
     stored_settings.write(json.dumps(export_props))
 
     auto_export_operator(
+        auto_export=True,
         direct_mode=True,
         export_output_folder="./models",
         export_scene_settings=True,

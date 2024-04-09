@@ -1,19 +1,5 @@
 from typing import Set
 import bpy
-from bpy.types import Context, Event, Operator
-from bpy_extras.io_utils import ExportHelper
-from bpy.props import (BoolProperty,
-                       IntProperty,
-                       StringProperty,
-                       EnumProperty,
-                       CollectionProperty
-                       )
-
-from ..auto_export import auto_export
-
-from ..auto_export.preferences import (AutoExportGltfAddonPreferences, AutoExportGltfPreferenceNames)
-from ..helpers.helpers_scenes import (get_scenes)
-from ..helpers.helpers_collections import (get_exportable_collections)
 ######################################################
 ## ui logic & co
 
@@ -49,15 +35,41 @@ class GLTF_PT_auto_export_SidePanel(bpy.types.Panel):
         op = layout.operator("EXPORT_SCENES_OT_auto_gltf", text="Auto Export Settings")
         op.auto_export = True
 
-        layout.label(text="changes since last save:")
-        changed_objects_per_scene = {}
-        for scene in context.window_manager.auto_export_tracker.changed_objects_per_scene:
-            if not scene in changed_objects_per_scene.keys():
-                changed_objects_per_scene[scene] = []
-            changed_objects_per_scene[scene]+= context.window_manager.auto_export_tracker.changed_objects_per_scene[scene].keys()
-            
-        layout.label(text=str(changed_objects_per_scene))
-        #print("GLTF_PT_export_main", GLTF_PT_export_main.bl_parent_id)
+class GLTF_PT_auto_export_changes_list(bpy.types.Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_label = "Changes per scene since last save "
+    bl_parent_id = "GLTF_PT_auto_export_SidePanel"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        #if "auto_export_tracker" in context.window_manager:
+        changed_objects_per_scene = context.window_manager.auto_export_tracker.changed_objects_per_scene
+        for scene_name in changed_objects_per_scene:
+            layout.label(text=f'{scene_name}')
+            for object_name in list(changed_objects_per_scene[scene_name].keys()):
+                row = layout.row()
+                row.label(text=f'    {object_name}')
+
+class GLTF_PT_auto_export_collections_list(bpy.types.Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_label = "Blueprints to export"
+    bl_parent_id = "GLTF_PT_auto_export_SidePanel"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        for collection in bpy.context.window_manager.exportedCollections:
+            row = layout.row()
+            row.label(text=collection.name)
 
 # main ui in the file => export 
 class GLTF_PT_auto_export_main(bpy.types.Panel):
@@ -260,34 +272,6 @@ class GLTF_PT_auto_export_blueprints(bpy.types.Panel):
         # materials
         layout.prop(operator, "export_materials_library")
         layout.prop(operator, "export_materials_path")
-
-       
-class GLTF_PT_auto_export_collections_list(bpy.types.Panel):
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
-    bl_label = "Blueprints: Exported Collections"
-    bl_parent_id = "GLTF_PT_auto_export_blueprints"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        return operator.bl_idname == "EXPORT_SCENES_OT_auto_gltf" #"EXPORT_SCENE_OT_gltf"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
-
-        sfile = context.space_data
-        operator = sfile.active_operator
-        layout.active = operator.auto_export and operator.export_blueprints
-        
-        for collection in bpy.context.window_manager.exportedCollections:
-            row = layout.row()
-            row.label(text=collection.name)
      
 class SCENE_UL_GLTF_auto_export(bpy.types.UIList):
     # The draw_item function is called for each item of the collection that is visible in the list.

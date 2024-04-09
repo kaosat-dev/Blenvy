@@ -16,6 +16,7 @@ import json
 import bpy
 from bpy.types import Context
 from bpy.props import (StringProperty, BoolProperty, IntProperty, PointerProperty)
+import rna_prop_ui
 
 # from .extension import ExampleExtensionProperties, GLTF_PT_UserExtensionPanel, unregister_panel
 
@@ -29,7 +30,7 @@ from .auto_export.internals import (SceneLink,
                         CollectionsToExport,
                         CUSTOM_PG_sceneName
                         )
-from .ui.main import (GLTF_PT_auto_export_main,
+from .ui.main import (GLTF_PT_auto_export_changes_list, GLTF_PT_auto_export_main,
                       GLTF_PT_auto_export_root,
                       GLTF_PT_auto_export_general,
                       GLTF_PT_auto_export_scenes,
@@ -112,8 +113,9 @@ classes = [
     GLTF_PT_auto_export_general,
     GLTF_PT_auto_export_scenes,
     GLTF_PT_auto_export_blueprints,
-    GLTF_PT_auto_export_collections_list,
     GLTF_PT_auto_export_SidePanel,
+    GLTF_PT_auto_export_collections_list,
+    GLTF_PT_auto_export_changes_list,
 
     AutoExportTracker,
 ]
@@ -192,6 +194,7 @@ def register():
 
     """bpy.utils.register_class(AutoExportExtensionProperties)
     bpy.types.Scene.AutoExportExtensionProperties = bpy.props.PointerProperty(type=AutoExportExtensionProperties)"""
+    
 
 def unregister():
     for cls in classes:
