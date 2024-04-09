@@ -3,12 +3,13 @@ import json
 import bpy
 from bpy_types import Operator
 from bpy.props import (StringProperty)
-from .metadata import add_component_to_object, add_metadata_to_components_without_metadata, apply_customProperty_values_to_object_propertyGroups, apply_propertyGroup_values_to_object_customProperties_for_component, copy_propertyGroup_values_to_another_object, find_component_definition_from_short_name, remove_component_from_object
+
+from .metadata import add_component_from_custom_property, add_component_to_object, add_metadata_to_components_without_metadata, apply_customProperty_values_to_object_propertyGroups, apply_propertyGroup_values_to_object_customProperties_for_component, copy_propertyGroup_values_to_another_object, find_component_definition_from_short_name, remove_component_from_object, toggle_component
 
 class AddComponentOperator(Operator):
-    """Add component to blueprint"""
+    """Add Bevy component to object"""
     bl_idname = "object.add_bevy_component"
-    bl_label = "Add component to blueprint Operator"
+    bl_label = "Add component to object Operator"
     bl_options = {"UNDO"}
 
     component_type: StringProperty(
@@ -29,7 +30,7 @@ class AddComponentOperator(Operator):
         return {'FINISHED'}
 
 class CopyComponentOperator(Operator):
-    """Copy component from blueprint"""
+    """Copy Bevy component from object"""
     bl_idname = "object.copy_bevy_component"
     bl_label = "Copy component Operator"
     bl_options = {"UNDO"}
@@ -66,9 +67,9 @@ class CopyComponentOperator(Operator):
     
 
 class PasteComponentOperator(Operator):
-    """Paste component to blueprint"""
+    """Paste Bevy component to object"""
     bl_idname = "object.paste_bevy_component"
-    bl_label = "Paste component to blueprint Operator"
+    bl_label = "Paste component to object Operator"
     bl_options = {"UNDO"}
 
     def execute(self, context):
@@ -91,7 +92,7 @@ class PasteComponentOperator(Operator):
         return {'FINISHED'}
     
 class RemoveComponentOperator(Operator):
-    """Remove component from object"""
+    """Remove Bevy component from object"""
     bl_idname = "object.remove_bevy_component"
     bl_label = "Remove component from object Operator"
     bl_options = {"UNDO"}
@@ -117,12 +118,11 @@ class RemoveComponentOperator(Operator):
             remove_component_from_object(object, self.component_name)
         else: 
             self.report({"ERROR"}, "The object/ component to remove ("+ self.component_name +") does not exist")
-
         return {'FINISHED'}
 
 
 class RemoveComponentFromAllObjectsOperator(Operator):
-    """Remove component from all object"""
+    """Remove Bevy component from all object"""
     bl_idname = "object.remove_bevy_component_all"
     bl_label = "Remove component from all objects Operator"
     bl_options = {"UNDO"}
@@ -172,7 +172,7 @@ class RenameHelper(bpy.types.PropertyGroup):
         del bpy.types.WindowManager.bevy_component_rename_helper
 
 class OT_rename_component(Operator):
-    """Rename component"""
+    """Rename Bevy component"""
     bl_idname = "object.rename_bevy_component"
     bl_label = "rename component"
     bl_options = {"UNDO"}
@@ -270,7 +270,7 @@ class OT_rename_component(Operator):
 
 
 class GenerateComponent_From_custom_property_Operator(Operator):
-    """generate components from custom property"""
+    """Generate Bevy components from custom property"""
     bl_idname = "object.generate_bevy_component_from_custom_property"
     bl_label = "Generate component from custom_property Operator"
     bl_options = {"UNDO"}
@@ -285,8 +285,7 @@ class GenerateComponent_From_custom_property_Operator(Operator):
 
         error = False
         try:
-            add_metadata_to_components_without_metadata(object)
-            apply_customProperty_values_to_object_propertyGroups(object)
+            add_component_from_custom_property(object)
         except Exception as error:
             del object["__disable__update"] # make sure custom properties are updateable afterwards, even in the case of failure
             error = True
@@ -297,7 +296,7 @@ class GenerateComponent_From_custom_property_Operator(Operator):
 
 
 class Fix_Component_Operator(Operator):
-    """attempt to fix component"""
+    """Attempt to fix Bevy component"""
     bl_idname = "object.fix_bevy_component"
     bl_label = "Fix component (attempts to)"
     bl_options = {"UNDO"}
@@ -322,7 +321,7 @@ class Fix_Component_Operator(Operator):
         return {'FINISHED'}
 
 class Toggle_ComponentVisibility(Operator):
-    """toggles components visibility"""
+    """Toggle Bevy component's visibility"""
     bl_idname = "object.toggle_bevy_component_visibility"
     bl_label = "Toggle component visibility"
     bl_options = {"UNDO"}
@@ -334,10 +333,6 @@ class Toggle_ComponentVisibility(Operator):
 
     def execute(self, context):
         object = context.object
-        components_in_object = object.components_meta.components
-        component_meta =  next(filter(lambda component: component["name"] == self.component_name, components_in_object), None)
-        if component_meta != None: 
-            component_meta.visible = not component_meta.visible
-
+        toggle_component(object, self.component_name)
         return {'FINISHED'}
 

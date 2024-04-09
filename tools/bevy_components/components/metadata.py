@@ -1,6 +1,8 @@
 import bpy
 from bpy.props import (StringProperty, BoolProperty, PointerProperty)
 from bpy_types import (PropertyGroup)
+
+from .helpers import ping_depsgraph_update
 from ..propGroups.conversions_from_prop_group import property_group_value_to_custom_property_value
 from ..propGroups.conversions_to_prop_group import property_group_value_from_custom_property_value
 
@@ -127,6 +129,8 @@ def add_metadata_to_components_without_metadata(object):
         if component_name == "components_meta":
             continue
         upsert_component_in_object(object, component_name, registry)
+                    
+
        
 # adds a component to an object (including metadata) using the provided component definition & optional value
 def add_component_to_object(object, component_definition, value=None):
@@ -149,6 +153,8 @@ def add_component_to_object(object, component_definition, value=None):
             del object["__disable__update"]
 
         object[short_name] = value
+        ping_depsgraph_update(object)
+
        
 def upsert_component_in_object(object, component_name, registry):
     # print("upsert_component_in_object", object, "component name", component_name)
@@ -223,6 +229,8 @@ def copy_propertyGroup_values_to_another_object(source_object, target_object, co
         if field_name in source_propertyGroup:
             target_propertyGroup[field_name] = source_propertyGroup[field_name]
     apply_propertyGroup_values_to_object_customProperties(target_object)
+    ping_depsgraph_update(object)
+
 
 # TODO: move to propgroups ?
 def apply_propertyGroup_values_to_object_customProperties(object):
@@ -295,6 +303,16 @@ def remove_component_from_object(object, component_name):
             break
     for index in to_remove:
         components_metadata.remove(index)
+    ping_depsgraph_update(object)
     return True
 
-  
+def add_component_from_custom_property(object):
+    add_metadata_to_components_without_metadata(object)
+    apply_customProperty_values_to_object_propertyGroups(object)
+    ping_depsgraph_update(object)
+
+def toggle_component(object, component_name):
+    components_in_object = object.components_meta.components
+    component_meta =  next(filter(lambda component: component["name"] == component_name, components_in_object), None)
+    if component_meta != None: 
+        component_meta.visible = not component_meta.visible
