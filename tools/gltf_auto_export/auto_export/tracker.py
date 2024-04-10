@@ -1,13 +1,18 @@
 import json
+import os
 from types import SimpleNamespace
 import bpy
+
 from bpy.types import (PropertyGroup)
 from bpy.props import (PointerProperty, IntProperty, StringProperty)
+
+from .get_collections_to_export import get_collections_to_export
 
 from ..constants import TEMPSCENE_PREFIX
 from .internals import CollectionsToExport
 from ..helpers.helpers_scenes import (get_scenes)
 from ..helpers.helpers_collections import (get_exportable_collections)
+from .preferences import AutoExportGltfAddonPreferences
 
 class AutoExportTracker(PropertyGroup):
 
@@ -135,16 +140,44 @@ class AutoExportTracker(PropertyGroup):
 
         # get a list of exportable collections for display
         # keep it simple, just use Simplenamespace for compatibility with the rest of our code
-        addon_prefs = SimpleNamespace(**get_auto_exporter_settings())
-        print("addon prefs", addon_prefs)
-        addon_prefs.export_marked_assets = True
-        [_, level_scenes, _, library_scenes] = get_scenes(addon_prefs)
-        (collections, _) = get_exportable_collections(level_scenes, library_scenes, addon_prefs)
+            
+        tmp = {}
+        for k in AutoExportGltfAddonPreferences.__annotations__:
+            item = AutoExportGltfAddonPreferences.__annotations__[k]
+            print("tutu",k, item.keywords.get('default', None) )
+            default = item.keywords.get('default', None)
+            tmp[k] = default
+        auto_settings = get_auto_exporter_settings()
+        for k in auto_settings:
+            print("k", k, auto_settings[k])
+            tmp[k] = auto_settings[k]
+        tmp['__annotations__'] = tmp
+
+        # path to the current blend file
+        file_path = bpy.data.filepath
+        # Get the folder
+        folder_path = os.path.dirname(file_path)
+        export_output_folder =tmp["export_output_folder"]
+        export_models_path = os.path.join(folder_path, export_output_folder)
+        export_blueprints_path = os.path.join(folder_path, export_output_folder, tmp["export_blueprints_path"]) if tmp["export_blueprints_path"] != '' else folder_path
+        tmp["export_blueprints_path"] = export_blueprints_path
+        tmp["export_models_path"] = export_models_path
+        addon_prefs = SimpleNamespace(**tmp)
+
+        #
+
+        #addon_prefs.export_blueprints_path = export_blueprints_path
+        #addon_prefs.export_gltf_extension = gltf_extension
+        #addon_prefs.export_models_path = export_models_path
+
+
+        (collections, collections_to_export, library_collections, collections_per_scene) = get_collections_to_export(cls.changed_objects_per_scene, False, addon_prefs)
+        print("collections to export", collections_to_export)
         try:
             # we save this list of collections in the context
             bpy.context.window_manager.exportedCollections.clear()
             #TODO: add error handling for this
-            for collection_name in collections:
+            for collection_name in collections_to_export:
                 ui_info = bpy.context.window_manager.exportedCollections.add()
                 ui_info.name = collection_name
         except Exception as error:

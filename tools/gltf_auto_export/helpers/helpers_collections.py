@@ -138,24 +138,15 @@ def get_collections_per_scene(collection_names, library_scenes):
     return collections_per_scene
 
 def get_collections_in_library(library_scenes):
-    """all_collections = []
-    all_collection_names = []
-    for main_scene in main_scenes:
-        (collection_names, collections) = get_used_collections(main_scene)
-        all_collection_names = all_collection_names + list(collection_names)
-        all_collections = all_collections + collections"""
-
     # now that we have the collections that are in use by collection instances, check if those collections are actully present in the library scenes
     collections = []
     collection_names = []
     for library_scene in library_scenes:
         root_collection = library_scene.collection
-     
         for collection in traverse_tree(root_collection):
             collections.append(collection)
             collection_names.append(collection.name)
     return collection_names
-
 
 def get_collection_hierarchy(root_col, levels=1):
     """Read hierarchy of the collections in the scene"""

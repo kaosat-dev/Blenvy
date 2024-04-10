@@ -7,7 +7,7 @@ from .export_gltf import (generate_gltf_export_preferences)
 from ..helpers.helpers_scenes import clear_hollow_scene, copy_hollowed_collection_into
 
 # export collections: all the collections that have an instance in the main scene AND any marked collections, even if they do not have instances
-def export_collections(collections, folder_path, library_scene, addon_prefs, gltf_export_preferences, blueprint_hierarchy, library_collections): 
+def export_collections(collections, folder_path, addon_prefs, gltf_export_preferences, library_collections): 
    
     # save current active collection
     active_collection =  bpy.context.view_layer.active_layer_collection
@@ -35,13 +35,13 @@ def export_collections(collections, folder_path, library_scene, addon_prefs, glt
     bpy.context.view_layer.active_layer_collection = active_collection
 
 
-def export_blueprints_from_collections(collections, library_scene, folder_path, addon_prefs, blueprint_hierarchy, library_collections):
+def export_blueprints_from_collections(collections, folder_path, addon_prefs, library_collections):
     export_output_folder = getattr(addon_prefs,"export_output_folder")
     gltf_export_preferences = generate_gltf_export_preferences(addon_prefs)
     export_blueprints_path = os.path.join(folder_path, export_output_folder, getattr(addon_prefs,"export_blueprints_path")) if getattr(addon_prefs,"export_blueprints_path") != '' else folder_path
 
     try:
-        export_collections(collections, export_blueprints_path, library_scene, addon_prefs, gltf_export_preferences, blueprint_hierarchy, library_collections)
+        export_collections(collections, export_blueprints_path, addon_prefs, gltf_export_preferences, library_collections)
     except Exception as error:
         print("failed to export collections to gltf: ", error)
         raise error
