@@ -16,7 +16,7 @@ def get_collections_to_export(changes_per_scene, changed_export_parameters, addo
     (collections, blueprint_hierarchy) = get_exportable_collections(level_scenes, library_scenes, addon_prefs)
     collections_to_export = collections # just for clarity
 
-    print("export_change_detection", export_change_detection, export_gltf_extension, export_blueprints_path)
+    print("export_change_detection", export_change_detection, export_gltf_extension, export_blueprints_path, changed_export_parameters, changes_per_scene)
     
     # if the export parameters have changed, bail out early
     # we need to re_export everything if the export parameters have been changed

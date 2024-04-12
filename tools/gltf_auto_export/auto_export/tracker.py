@@ -6,6 +6,7 @@ import bpy
 from bpy.types import (PropertyGroup)
 from bpy.props import (PointerProperty, IntProperty, StringProperty)
 
+from .did_export_settings_change import did_export_settings_change
 from .get_collections_to_export import get_collections_to_export
 
 from ..constants import TEMPSCENE_PREFIX
@@ -117,7 +118,7 @@ class AutoExportTracker(PropertyGroup):
                     if isinstance(obj.id, bpy.types.Object):
                         # get the actual object
                         object = bpy.data.objects[obj.id.name]
-                        # print("  changed object", obj.id.name,"transforms", obj.is_updated_transform, "geometry", obj.is_updated_geometry)
+                        print("  changed object", obj.id.name, "changes", obj, "transforms", obj.is_updated_transform, "geometry", obj.is_updated_geometry)
                         cls.changed_objects_per_scene[scene.name][obj.id.name] = object
                     elif isinstance(obj.id, bpy.types.Material): # or isinstance(obj.id, bpy.types.ShaderNodeTree):
                         # print("  changed material", obj.id, "scene", scene.name,)
@@ -140,16 +141,16 @@ class AutoExportTracker(PropertyGroup):
 
         # get a list of exportable collections for display
         # keep it simple, just use Simplenamespace for compatibility with the rest of our code
-            
+        # TODO: debounce
+
+        export_settings_changed = did_export_settings_change()
         tmp = {}
         for k in AutoExportGltfAddonPreferences.__annotations__:
             item = AutoExportGltfAddonPreferences.__annotations__[k]
-            print("tutu",k, item.keywords.get('default', None) )
             default = item.keywords.get('default', None)
             tmp[k] = default
         auto_settings = get_auto_exporter_settings()
         for k in auto_settings:
-            print("k", k, auto_settings[k])
             tmp[k] = auto_settings[k]
         tmp['__annotations__'] = tmp
 
@@ -164,14 +165,7 @@ class AutoExportTracker(PropertyGroup):
         tmp["export_models_path"] = export_models_path
         addon_prefs = SimpleNamespace(**tmp)
 
-        #
-
-        #addon_prefs.export_blueprints_path = export_blueprints_path
-        #addon_prefs.export_gltf_extension = gltf_extension
-        #addon_prefs.export_models_path = export_models_path
-
-
-        (collections, collections_to_export, library_collections, collections_per_scene) = get_collections_to_export(cls.changed_objects_per_scene, False, addon_prefs)
+        (collections, collections_to_export, library_collections, collections_per_scene) = get_collections_to_export(cls.changed_objects_per_scene, export_settings_changed, addon_prefs)
         print("collections to export", collections_to_export)
         try:
             # we save this list of collections in the context

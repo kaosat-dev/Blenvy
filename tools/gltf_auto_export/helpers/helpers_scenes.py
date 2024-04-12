@@ -8,7 +8,7 @@ from .object_makers import (make_empty)
 custom_properties_to_filter_out = ['_combine', 'template', 'components_meta']
 
 def is_component_valid(object, component_name):
-    if "components_meta" in object:
+    if "components_meta" in object or hasattr(object, "components_meta"):
         target_components_metadata = object.components_meta.components
         component_meta = next(filter(lambda component: component["name"] == component_name, target_components_metadata), None)
         if component_meta != None:
@@ -17,7 +17,8 @@ def is_component_valid(object, component_name):
 
 def remove_unwanted_custom_properties(object):
     to_remove = []
-    for component_name in object.keys():
+    component_names = list(object.keys()) # to avoid 'IDPropertyGroup changed size during iteration' issues
+    for component_name in component_names:
         if not is_component_valid(object, component_name):
             to_remove.append(component_name)
     for cp in custom_properties_to_filter_out + to_remove:
@@ -27,7 +28,7 @@ def remove_unwanted_custom_properties(object):
 # TODO: rename actions ?
 # reference https://github.com/KhronosGroup/glTF-Blender-IO/blob/main/addons/io_scene_gltf2/blender/exp/animation/gltf2_blender_gather_action.py#L481
 def copy_animation_data(source, target):
-    if source.animation_data and source.animation_data:
+    if source.animation_data:
         ad = source.animation_data
 
         blender_actions = []
@@ -65,8 +66,27 @@ def copy_animation_data(source, target):
             target.animation_data_create()
         target.animation_data.action = source.animation_data.action.copy()"""
         # alternative method, using the built-in link animation operator
+
+        # 
+        #previous_active_object = bpy.context.view_layer.objects.active
+        """bpy.context.view_layer.objects.active = source
+
+        bpy.ops.object.select_all(action='DESELECT')
+        #Transfer data from active object to selected objects
+        target.select_set(True)   """
+
         with bpy.context.temp_override(active_object=source, selected_editable_objects=[target]): 
             bpy.ops.object.make_links_data(type='ANIMATION')
+        
+        """if target.animation_data == None:
+            target.animation_data_create()
+
+        print("copying animation data for", source.name, target.animation_data)
+        properties = [p.identifier for p in source.animation_data.bl_rna.properties if not p.is_readonly]
+        for prop in properties:
+            print("copying stuff", prop)
+            setattr(target.animation_data, prop, getattr(source.animation_data, prop))"""
+        
         # we add an "AnimationInfos" component 
         target['AnimationInfos'] = f'(animations: {animations_infos})'.replace("'","")
         
@@ -81,11 +101,7 @@ def copy_animation_data(source, target):
         markers_formated += '}' 
         target["AnimationMarkers"] = f'( {markers_formated} )'
 
-        """print("copying animation data for", source.name, target.animation_data)
-        properties = [p.identifier for p in source.animation_data.bl_rna.properties if not p.is_readonly]
-        for prop in properties:
-            print("copying stuff", prop)
-            setattr(target.animation_data, prop, getattr(source.animation_data, prop))"""
+        
         
 
 

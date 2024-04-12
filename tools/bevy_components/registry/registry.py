@@ -18,12 +18,11 @@ class MissingBevyType(bpy.types.PropertyGroup):
 
 # helper function to deal with timer
 def toggle_watcher(self, context):
-    print("toggling watcher", self.watcher_enabled, watch_schema, self, bpy.app.timers)
+    #print("toggling watcher", self.watcher_enabled, watch_schema, self, bpy.app.timers)
     if not self.watcher_enabled:
         try:
             bpy.app.timers.unregister(watch_schema)
         except Exception as error:
-            print("failed to unregister", error)
             pass
     else:
         self.watcher_active = True
@@ -236,7 +235,6 @@ class ComponentsRegistry(PropertyGroup):
         try:
             bpy.app.timers.unregister(watch_schema)
         except Exception as error:
-            print("failed to unregister", error)
             pass
 
         del bpy.types.WindowManager.components_registry

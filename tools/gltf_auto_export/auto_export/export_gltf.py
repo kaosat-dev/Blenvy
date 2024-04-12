@@ -50,7 +50,6 @@ def generate_gltf_export_preferences(addon_prefs):
 
 
     standard_gltf_exporter_settings = get_standard_exporter_settings()
-    #print("standard settings", standard_gltf_exporter_settings)
     
     constant_keys = [
         'use_selection',

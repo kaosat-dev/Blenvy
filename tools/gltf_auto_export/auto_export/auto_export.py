@@ -48,12 +48,11 @@ def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
         # here we do a bit of workaround by creating an override # TODO: do this at the "UI" level
         export_blueprints_path = os.path.join(folder_path, export_output_folder, getattr(addon_prefs,"export_blueprints_path")) if getattr(addon_prefs,"export_blueprints_path") != '' else folder_path
         #print('addon_prefs', AutoExportGltfAddonPreferences.__annotations__)#)addon_prefs.__annotations__)
-        
         if hasattr(addon_prefs, "__annotations__") :
             tmp = {}
             for k in AutoExportGltfAddonPreferences.__annotations__:
                 item = AutoExportGltfAddonPreferences.__annotations__[k]
-                print("tutu",k, item.keywords.get('default', None) )
+                #print("tutu",k, item.keywords.get('default', None) )
                 default = item.keywords.get('default', None)
                 tmp[k] = default
             

@@ -60,8 +60,6 @@ def make_material_object(name, location=[0,0,0], rotation=[0,0,0], scale=[1,1,1]
         else:
             # no slots
             object.data.materials.append(material)
-
-    #bpy.context.view_layer.objects.active = original_active_object
     return object
 
 

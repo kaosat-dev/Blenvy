@@ -18,6 +18,7 @@ from bpy.types import Context
 from bpy.props import (StringProperty, BoolProperty, IntProperty, PointerProperty)
 import rna_prop_ui
 
+
 # from .extension import ExampleExtensionProperties, GLTF_PT_UserExtensionPanel, unregister_panel
 
 from .auto_export.operators import AutoExportGLTF
@@ -41,6 +42,8 @@ from .ui.main import (GLTF_PT_auto_export_changes_list, GLTF_PT_auto_export_main
                       GLTF_PT_auto_export_SidePanel
                       )
 from .ui.operators import (SCENES_LIST_OT_actions)
+from .helpers.ping_depsgraph_update import ping_depsgraph_update
+from .helpers.generate_complete_preferences_dict import generate_complete_preferences_dict_gltf
 
 
 ######################################################
@@ -149,12 +152,18 @@ def glTF2_post_export_callback(data):
 
         # get the parameters
         scene = bpy.context.scene
+        print(dict(scene))
         if "glTF2ExportSettings" in scene:
+            print("write gltf settings")
             settings = scene["glTF2ExportSettings"]
             export_settings = bpy.data.texts[".gltf_auto_export_gltf_settings"] if ".gltf_auto_export_gltf_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_gltf_settings")
             # now write new settings
             export_settings.clear()
-            export_settings.write(json.dumps(dict(settings)))
+
+            current_gltf_settings = generate_complete_preferences_dict_gltf(dict(settings))
+            print("current_gltf_settings", current_gltf_settings)
+            export_settings.write(json.dumps(current_gltf_settings))
+            print("done writing")
         # now reset the original gltf_settings
         if gltf_settings_backup != "":
             scene["glTF2ExportSettings"] = json.loads(gltf_settings_backup)
@@ -167,6 +176,10 @@ def glTF2_post_export_callback(data):
         last_operator = bpy.context.window_manager.auto_export_tracker.last_operator
         last_operator.filepath = ""
         last_operator.gltf_export_id = ""
+
+        # AGAIN, something that does not work withouth a timer
+        bpy.app.timers.register(ping_depsgraph_update, first_interval=0.1)
+       
 
 
 def menu_func_import(self, context):
