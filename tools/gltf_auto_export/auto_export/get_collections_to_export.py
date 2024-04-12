@@ -16,7 +16,7 @@ def get_collections_to_export(changes_per_scene, changed_export_parameters, addo
     (collections, blueprint_hierarchy) = get_exportable_collections(level_scenes, library_scenes, addon_prefs)
     collections_to_export = collections # just for clarity
 
-    print("export_change_detection", export_change_detection, export_gltf_extension, export_blueprints_path, changed_export_parameters, changes_per_scene)
+    print("export_change_detection", export_change_detection, "changed_export_parameters", changed_export_parameters, "changes_per_scene", changes_per_scene)
     
     # if the export parameters have changed, bail out early
     # we need to re_export everything if the export parameters have been changed
@@ -38,7 +38,7 @@ def get_collections_to_export(changes_per_scene, changed_export_parameters, addo
         # determine which collections have changed
         for scene, objects in changes_per_scene.items():
             print("  changed scene", scene)
-            for obj_name, obj in objects.items():
+            for obj_name, obj in list(objects.items()):
                 object_collections = list(obj.users_collection) if hasattr(obj, 'users_collection') else []
                 object_collection_names = list(map(lambda collection: collection.name, object_collections))
 

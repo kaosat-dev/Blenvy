@@ -106,7 +106,7 @@ class AutoExportTracker(PropertyGroup):
         if cls.change_detection_enabled:
             # ignore anything going on with temporary scenes
             if not scene.name.startswith(TEMPSCENE_PREFIX):
-                # print("depsgraph_update_post", scene.name)
+                print("depsgraph_update_post", scene.name)
                 changed_scene = scene.name or ""
                 #print("-------------")
                 if not changed_scene in cls.changed_objects_per_scene:
@@ -118,8 +118,9 @@ class AutoExportTracker(PropertyGroup):
                     if isinstance(obj.id, bpy.types.Object):
                         # get the actual object
                         object = bpy.data.objects[obj.id.name]
-                        print("  changed object", obj.id.name, "changes", obj, "transforms", obj.is_updated_transform, "geometry", obj.is_updated_geometry)
-                        cls.changed_objects_per_scene[scene.name][obj.id.name] = object
+                        print("  changed object", obj.id.name, "changes", obj, "evalutated", obj.id.is_evaluated, "transforms", obj.is_updated_transform, "geometry", obj.is_updated_geometry)
+                        if obj.is_updated_transform or obj.is_updated_geometry:
+                            cls.changed_objects_per_scene[scene.name][obj.id.name] = object
                     elif isinstance(obj.id, bpy.types.Material): # or isinstance(obj.id, bpy.types.ShaderNodeTree):
                         # print("  changed material", obj.id, "scene", scene.name,)
                         material = bpy.data.materials[obj.id.name]
@@ -135,10 +136,18 @@ class AutoExportTracker(PropertyGroup):
                 if items == 0:
                     cls.changed_objects_per_scene.clear()
                 # print("changed_objects_per_scene", cls.changed_objects_per_scene)
-        else:
-            cls.changed_objects_per_scene.clear()
 
-
+        # filter out invalid objects
+        for scene_name in cls.changed_objects_per_scene.keys():
+            bla = {}
+            for object_name in cls.changed_objects_per_scene[scene.name]:
+                object = cls.changed_objects_per_scene[scene.name][object_name]
+                #print("sdfsd", object, object.valid)
+                #if not cls.changed_objects_per_scene[scene.name][object_name].invalid:
+                #    bla[object_name] = cls.changed_objects_per_scene[scene.name][object_name]
+            #cls.changed_objects_per_scene[scene.name]= bla
+            #cls.changed_objects_per_scene[scene_name] = [o for o in cls.changed_objects_per_scene[scene_name] if not o.invalid]
+        
         # get a list of exportable collections for display
         # keep it simple, just use Simplenamespace for compatibility with the rest of our code
         # TODO: debounce
@@ -163,8 +172,10 @@ class AutoExportTracker(PropertyGroup):
         export_blueprints_path = os.path.join(folder_path, export_output_folder, tmp["export_blueprints_path"]) if tmp["export_blueprints_path"] != '' else folder_path
         tmp["export_blueprints_path"] = export_blueprints_path
         tmp["export_models_path"] = export_models_path
+
         addon_prefs = SimpleNamespace(**tmp)
 
+        print("cls.changed_objects_per_scene", cls.changed_objects_per_scene)
         (collections, collections_to_export, library_collections, collections_per_scene) = get_collections_to_export(cls.changed_objects_per_scene, export_settings_changed, addon_prefs)
         print("collections to export", collections_to_export)
         try:

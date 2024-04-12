@@ -3,8 +3,10 @@ import bpy
 from bpy.types import Operator
 from bpy_extras.io_utils import ExportHelper
 from bpy.props import (IntProperty)
+
 from .preferences import (AutoExportGltfAddonPreferences, AutoExportGltfPreferenceNames)
 from .auto_export import auto_export
+from ..helpers.generate_complete_preferences_dict import generate_complete_preferences_dict_auto
 
 class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
     """auto export gltf"""
@@ -89,13 +91,16 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         return export_props
 
     def save_settings(self, context):
-        export_props = self.format_settings()
-        self.properties['main_scene_names'] = export_props['main_scene_names']
-        self.properties['library_scene_names'] = export_props['library_scene_names']
+        auto_export_settings = self.format_settings()
+        self.properties['main_scene_names'] = auto_export_settings['main_scene_names']
+        self.properties['library_scene_names'] = auto_export_settings['library_scene_names']
 
         stored_settings = bpy.data.texts[".gltf_auto_export_settings"] if ".gltf_auto_export_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_settings")
         stored_settings.clear()
-        stored_settings.write(json.dumps(export_props))
+
+        auto_export_settings = generate_complete_preferences_dict_auto(auto_export_settings)
+        stored_settings.write(json.dumps(auto_export_settings))
+        print("saved settings", auto_export_settings)
         #print("saving settings", bpy.data.texts[".gltf_auto_export_settings"].as_string(), "raw", json.dumps(export_props))
    
     def load_settings(self, context):
@@ -182,6 +187,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
             changed = auto_settings_changed or gltf_settings_changed
         # now write the current settings to the "previous settings"
         if current_auto_settings != None:
+            print("writing settings")
             previous_auto_settings = bpy.data.texts[".gltf_auto_export_settings_previous"] if ".gltf_auto_export_settings_previous" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_settings_previous")
             previous_auto_settings.clear()
             previous_auto_settings.write(current_auto_settings.as_string()) # TODO : check if this is always valid
@@ -198,6 +204,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         bpy.context.window_manager.auto_export_tracker.disable_change_detection()
         if self.direct_mode:
             self.load_settings(context)
+        print("toto", self.will_save_settings)
         if self.will_save_settings:
             self.save_settings(context)
 
