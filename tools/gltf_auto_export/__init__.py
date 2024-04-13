@@ -188,7 +188,11 @@ from bpy.app.handlers import persistent
 
 @persistent
 def post_update(scene, depsgraph):
-    bpy.context.window_manager.auto_export_tracker.deps_update_handler( scene, depsgraph)
+    bpy.context.window_manager.auto_export_tracker.deps_post_update_handler( scene, depsgraph)
+
+@persistent
+def pre_update(scene, depsgraph):
+    bpy.context.window_manager.auto_export_tracker.deps_pre_update_handler( scene, depsgraph)
 
 @persistent
 def post_save(scene, depsgraph):
@@ -198,6 +202,7 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
     # for some reason, adding these directly to the tracker class in register() do not work reliably
+    bpy.app.handlers.depsgraph_update_pre.append(pre_update)
     bpy.app.handlers.depsgraph_update_post.append(post_update)
     bpy.app.handlers.save_post.append(post_save)
 
@@ -214,6 +219,7 @@ def unregister():
         bpy.utils.unregister_class(cls)
     bpy.types.TOPBAR_MT_file_export.remove(menu_func_import)
 
+    bpy.app.handlers.depsgraph_update_pre.remove(pre_update)
     bpy.app.handlers.depsgraph_update_post.remove(post_update)
     bpy.app.handlers.save_post.remove(post_save)
 

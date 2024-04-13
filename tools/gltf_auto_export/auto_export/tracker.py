@@ -74,7 +74,32 @@ class AutoExportTracker(PropertyGroup):
         # all our logic is done, mark this as done
 
     @classmethod
-    def deps_update_handler(cls, scene, depsgraph):
+    def deps_pre_update_handler(cls, scene, depsgraph):
+        pass
+        #print("before depsgraph update", scene, depsgraph)
+
+        # only deal with changes if we are NOT in the mids of saving/exporting
+        """if cls.change_detection_enabled:
+            # ignore anything going on with temporary scenes
+            if not scene.name.startswith(TEMPSCENE_PREFIX):
+                print("depsgraph_update_post", scene.name)
+                changed_scene = scene.name or ""
+                #print("-------------")
+              
+                # print("cls.changed_objects_per_scene", cls.changed_objects_per_scene)
+                # depsgraph = bpy.context.evaluated_depsgraph_get()
+                for obj in depsgraph.updates:
+                    #print("depsgraph update", obj)
+                    if isinstance(obj.id, bpy.types.Object):
+                        # get the actual object
+                        object = bpy.data.objects[obj.id.name]
+                        print("  changed object", obj.id.name, "changes", obj, "evalutated", obj.id.is_evaluated, "transforms", obj.is_updated_transform, "geometry", obj.is_updated_geometry)
+                    elif isinstance(obj.id, bpy.types.Material): # or isinstance(obj.id, bpy.types.ShaderNodeTree):
+                        # print("  changed material", obj.id, "scene", scene.name,)
+                        pass"""
+
+    @classmethod
+    def deps_post_update_handler(cls, scene, depsgraph):
         # print("change detection enabled", cls.change_detection_enabled)
 
         """ops = bpy.context.window_manager.operators
@@ -96,17 +121,21 @@ class AutoExportTracker(PropertyGroup):
                 # we set the last operator here so we can clear the specific settings (yeah for overly complex logic)
                 cls.last_operator = active_operator
                 #print("active_operator", active_operator.has_active_exporter_extensions, active_operator.__annotations__.keys(), active_operator.filepath, active_operator.gltf_export_id)
+                return
+            
             if active_operator.bl_idname == "EXPORT_SCENES_OT_auto_gltf":
                 # we force saving params
                 active_operator.will_save_settings = True
                 active_operator.auto_export = True
+                # if we are using the operator, bail out for the rest
                 print("setting stuff for auto_export")
+                return
 
         # only deal with changes if we are NOT in the mids of saving/exporting
         if cls.change_detection_enabled:
             # ignore anything going on with temporary scenes
             if not scene.name.startswith(TEMPSCENE_PREFIX):
-                print("depsgraph_update_post", scene.name)
+                #print("depsgraph_update_post", scene.name)
                 changed_scene = scene.name or ""
                 #print("-------------")
                 if not changed_scene in cls.changed_objects_per_scene:
@@ -118,7 +147,7 @@ class AutoExportTracker(PropertyGroup):
                     if isinstance(obj.id, bpy.types.Object):
                         # get the actual object
                         object = bpy.data.objects[obj.id.name]
-                        print("  changed object", obj.id.name, "changes", obj, "evalutated", obj.id.is_evaluated, "transforms", obj.is_updated_transform, "geometry", obj.is_updated_geometry)
+                        #print("  changed object", obj.id.name, "changes", obj, "evalutated", obj.id.is_evaluated, "transforms", obj.is_updated_transform, "geometry", obj.is_updated_geometry)
                         if obj.is_updated_transform or obj.is_updated_geometry:
                             cls.changed_objects_per_scene[scene.name][obj.id.name] = object
                     elif isinstance(obj.id, bpy.types.Material): # or isinstance(obj.id, bpy.types.ShaderNodeTree):
@@ -175,9 +204,9 @@ class AutoExportTracker(PropertyGroup):
 
         addon_prefs = SimpleNamespace(**tmp)
 
-        print("cls.changed_objects_per_scene", cls.changed_objects_per_scene)
+        #print("cls.changed_objects_per_scene", cls.changed_objects_per_scene)
         (collections, collections_to_export, library_collections, collections_per_scene) = get_collections_to_export(cls.changed_objects_per_scene, export_settings_changed, addon_prefs)
-        print("collections to export", collections_to_export)
+        #print("collections to export", collections_to_export)
         try:
             # we save this list of collections in the context
             bpy.context.window_manager.exportedCollections.clear()

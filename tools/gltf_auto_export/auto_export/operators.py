@@ -4,9 +4,11 @@ from bpy.types import Operator
 from bpy_extras.io_utils import ExportHelper
 from bpy.props import (IntProperty)
 
+
 from .preferences import (AutoExportGltfAddonPreferences, AutoExportGltfPreferenceNames)
 from .auto_export import auto_export
 from ..helpers.generate_complete_preferences_dict import generate_complete_preferences_dict_auto
+from ..helpers.serialize_scene import serialize_scene
 
 class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
     """auto export gltf"""
@@ -16,6 +18,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
     bl_options = {'PRESET', 'UNDO'}
     # ExportHelper mixin class uses this
     filename_ext = ''
+
 
     #list of settings (other than purely gltf settings) whose change should trigger a re-generation of gltf files
     white_list = ['auto_export',
@@ -198,21 +201,85 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
             previous_gltf_settings.write(current_gltf_settings.as_string())
 
         return changed
+    
+    def did_objects_change(self):
+        previous_stored = bpy.data.texts[".TESTING"] if ".TESTING" in bpy.data.texts else None # bpy.data.texts.new(".TESTING")
+        current = serialize_scene()
+        if previous_stored == None:
+            print("setting bla")
+            previous_stored = bpy.data.texts.new(".TESTING")
+            previous_stored.write(current)
+            return {}
+        
+        
+        previous = json.loads(previous_stored.as_string())
+        current = json.loads(current)
+
+        changes_per_scene = {}
+        # TODO : how do we deal with changed scene names ???
+        for scene in current:
+            print('scene', scene)
+            changes_per_scene[scene] = {}
+            previous_object_names = list(previous[scene].keys())
+            current_object_names =list(current[scene].keys())
+            #print("previous_object_names", len(previous_object_names), previous_object_names)
+            #print("current_object_names", len(current_object_names), current_object_names)
+
+            """if len(previous_object_names) > len(current_object_names):
+                print("removed")
+            if len(current_object_names) > len(previous_object_names):
+                print("added")"""
+            added =  list(set(current_object_names) - set(previous_object_names))
+            removed = list(set(previous_object_names) - set(current_object_names))
+            print("removed", removed)
+            print("added",added)
+            for obj in added:
+                changes_per_scene[scene][obj] = bpy.data.objects[obj]
+            # TODO: how do we deal with this, as we obviously do not have data for removed objects ?
+            for obj in removed:
+                changes_per_scene[scene][obj] = None # bpy.data.objects[obj]
+
+            for object_name in list(current[scene].keys()): # todo : exclude directly added/removed objects  
+                #print("ob", object_name)
+                if object_name in previous[scene]:
+                    # print("object", object_name,"in previous scene, comparing")
+                    current_obj = current[scene][object_name]
+                    prev_obj = previous[scene][object_name]
+                    same = str(current_obj) == str(prev_obj)
+
+                    if "Camera" in object_name:
+                        pass#print("  current", current_obj, prev_obj)
+                    if "Fox" in object_name:
+                        print("  current", current_obj)
+                        print("  previou", prev_obj)
+                        print("  same?", same)
+                    #print("foo", same)
+                    if not same:
+                        changes_per_scene[scene][object_name] = bpy.data.objects[object_name]
+                    
+            """if len(current[scene]) != len(previous[scene]) :
+                print("toto")"""
+            previous_stored.clear()
+            previous_stored.write(json.dumps(current))
+        print("changes per scene alternative", changes_per_scene)
+
 
     def execute(self, context):    
         #print("execute")
         bpy.context.window_manager.auto_export_tracker.disable_change_detection()
         if self.direct_mode:
             self.load_settings(context)
-        print("toto", self.will_save_settings)
         if self.will_save_settings:
             self.save_settings(context)
 
         if self.auto_export: # only do the actual exporting if auto export is actually enabled
             changes_per_scene = context.window_manager.auto_export_tracker.changed_objects_per_scene
+            changes_per_scene_2 = self.did_objects_change()
+
             #& do the export
-            if self.direct_mode: #Do not auto export when applying settings in the menu, do it on save only                
-                #determine changed parameters 
+            if self.direct_mode: #Do not auto export when applying settings in the menu, do it on save only   
+                # determine changed objects
+                # determine changed parameters 
                 params_changed = self.did_export_settings_change()
                 auto_export(changes_per_scene, params_changed, self)
                 # cleanup 
