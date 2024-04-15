@@ -8,7 +8,7 @@ use std::time::Duration;
 use bevy::prelude::*;
 
 use bevy_gltf_blueprints::{
-    BlueprintAnimationPlayerLink, BlueprintAnimations, BluePrintBundle, BlueprintName, GameWorldTag,
+    BluePrintBundle, BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintName, GameWorldTag,
 };
 
 use super::{Fox, Robot};
@@ -90,7 +90,14 @@ pub fn spawn_test(
 // example of changing animation of entities based on proximity to the player, for "fox" entities (Tag component)
 pub fn animation_change_on_proximity_foxes(
     players: Query<&GlobalTransform, With<Player>>,
-    animated_foxes: Query<(&GlobalTransform, &BlueprintAnimationPlayerLink, &BlueprintAnimations), With<Fox>>,
+    animated_foxes: Query<
+        (
+            &GlobalTransform,
+            &BlueprintAnimationPlayerLink,
+            &BlueprintAnimations,
+        ),
+        With<Fox>,
+    >,
 
     mut animation_players: Query<&mut AnimationPlayer>,
 ) {
@@ -126,7 +133,14 @@ pub fn animation_change_on_proximity_foxes(
 // example of changing animation of entities based on proximity to the player, this time for the "robot" entities  (Tag component)
 pub fn animation_change_on_proximity_robots(
     players: Query<&GlobalTransform, With<Player>>,
-    animated_robots: Query<(&GlobalTransform, &BlueprintAnimationPlayerLink, &BlueprintAnimations), With<Robot>>,
+    animated_robots: Query<
+        (
+            &GlobalTransform,
+            &BlueprintAnimationPlayerLink,
+            &BlueprintAnimations,
+        ),
+        With<Robot>,
+    >,
 
     mut animation_players: Query<&mut AnimationPlayer>,
 ) {

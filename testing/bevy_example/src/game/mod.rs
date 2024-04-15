@@ -6,12 +6,12 @@ pub use in_game::*;
 use std::{collections::HashMap, fs, time::Duration};
 
 use bevy_gltf_blueprints::{
-    BlueprintAnimationPlayerLink, BlueprintName, BlueprintsList,
-    GltfBlueprintsSet, SceneAnimations,
+    BlueprintAnimationPlayerLink, BlueprintName, BlueprintsList, GltfBlueprintsSet, SceneAnimations,
 };
 
 use bevy::{
-    prelude::*, render::view::screenshot::ScreenshotManager, time::common_conditions::on_timer, window::PrimaryWindow
+    prelude::*, render::view::screenshot::ScreenshotManager, time::common_conditions::on_timer,
+    window::PrimaryWindow,
 };
 use bevy_gltf_worlflow_examples_common_rapier::{AppState, GameState};
 
@@ -39,7 +39,8 @@ fn validate_export(
     blueprints_list: Query<(Entity, &BlueprintsList)>,
     root: Query<(Entity, &Name, &Children), (Without<Parent>, With<Children>)>,
 ) {
-    let animations_found = !animation_player_links.is_empty() && scene_animations.into_iter().len() == 4;
+    let animations_found =
+        !animation_player_links.is_empty() && scene_animations.into_iter().len() == 4;
 
     let mut nested_blueprint_found = false;
     for (entity, name, blueprint_name) in blueprints.iter() {
