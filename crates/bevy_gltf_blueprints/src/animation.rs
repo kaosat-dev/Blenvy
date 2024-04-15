@@ -41,7 +41,7 @@ pub struct AnimationInfo {
 }
 
 /// Stores information about animations, to make things a bit easier api wise:
-/// these components are automatically inserted by gltf_auto_export on entities that have animations
+/// these components are automatically inserted by `gltf_auto_export` on entities that have animations
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
 pub struct AnimationInfos {
@@ -56,7 +56,7 @@ pub struct AnimationMarker {
 }
 
 /// Stores information about animation markers: practical for adding things like triggering events at specific keyframes etc
-/// it is essentiall a hashmap of AnimationName => HashMap<FrameNumber, Vec of marker names>
+/// it is essentiall a hashmap of `AnimationName` => `HashMap`<`FrameNumber`, Vec of marker names>
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
 pub struct AnimationMarkers(pub HashMap<String, HashMap<u32, Vec<String>>>);
@@ -115,23 +115,23 @@ pub fn trigger_instance_animation_markers_events(
                 let time_in_animation = animation_player.elapsed()
                     - (animation_player.completions() as f32) * animation_length_seconds;
                 let frame_seconds =
-                    (animation_length_frames as f32 / animation_length_seconds) * time_in_animation;
+                    (animation_length_frames / animation_length_seconds) * time_in_animation;
                 let frame = frame_seconds as u32;
 
                 let matching_animation_marker = &markers.0[animation_name];
                 if matching_animation_marker.contains_key(&frame) {
                     let matching_markers_per_frame = matching_animation_marker.get(&frame).unwrap();
 
-                    let foo = animation_length_seconds - time_in_animation;
-                    println!("foo {}", foo);
+                    // let timediff = animation_length_seconds - time_in_animation;
+                    // println!("timediff {}", timediff);
                     // println!("FOUND A MARKER {:?} at frame {}", matching_markers_per_frame, frame);
                     // emit an event AnimationMarkerReached(entity, animation_name, frame, marker_name)
                     // FIXME: problem, this can fire multiple times in a row, depending on animation length , speed , etc
                     for marker in matching_markers_per_frame {
                         animation_marker_events.send(AnimationMarkerReached {
-                            entity: entity,
+                            entity,
                             animation_name: animation_name.clone(),
-                            frame: frame,
+                            frame,
                             marker_name: marker.clone(),
                         });
                     }
@@ -199,9 +199,9 @@ pub fn trigger_blueprint_animation_markers_events(
                             if diff < 0.1 {
                                 for marker in matching_markers_per_frame {
                                     animation_marker_events.send(AnimationMarkerReached {
-                                        entity: entity,
+                                        entity,
                                         animation_name: animation_name.clone(),
-                                        frame: frame,
+                                        frame,
                                         marker_name: marker.clone(),
                                     });
                                 }

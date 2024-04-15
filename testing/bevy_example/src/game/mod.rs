@@ -7,7 +7,7 @@ use std::{collections::HashMap, fs, time::Duration};
 
 use bevy_gltf_blueprints::{
     BlueprintAnimationPlayerLink, BlueprintName, BlueprintsList,
-    GltfBlueprintsSet,
+    GltfBlueprintsSet, SceneAnimations,
 };
 
 use bevy::{
@@ -26,18 +26,20 @@ fn start_game(mut next_app_state: ResMut<NextState<AppState>>) {
 // if the export from Blender worked correctly, we should have a blueprints_list
 // if the export from Blender worked correctly, we should have the correct tree of entities
 #[allow(clippy::too_many_arguments)]
+#[allow(clippy::type_complexity)]
 fn validate_export(
     parents: Query<&Parent>,
     children: Query<&Children>,
     names: Query<&Name>,
     blueprints: Query<(Entity, &Name, &BlueprintName)>,
     animation_player_links: Query<(Entity, &BlueprintAnimationPlayerLink)>,
+    scene_animations: Query<(Entity, &SceneAnimations)>,
     empties_candidates: Query<(Entity, &Name, &GlobalTransform)>,
 
     blueprints_list: Query<(Entity, &BlueprintsList)>,
     root: Query<(Entity, &Name, &Children), (Without<Parent>, With<Children>)>,
 ) {
-    let animations_found = !animation_player_links.is_empty();
+    let animations_found = !animation_player_links.is_empty() && scene_animations.into_iter().len() == 4;
 
     let mut nested_blueprint_found = false;
     for (entity, name, blueprint_name) in blueprints.iter() {

@@ -34,6 +34,7 @@ pub fn setup_main_scene_animations(asset_server: Res<AssetServer>, mut commands:
     commands.insert_resource(AnimTest(asset_server.load("models/World.glb")));
 }
 
+#[allow(clippy::type_complexity)]
 pub fn animations(
     added_animation_players: Query<(Entity, &Name, &AnimationPlayer)>,
     added_animation_infos: Query<(Entity, &Name, &AnimationInfos), Added<AnimationInfos>>,
@@ -71,10 +72,10 @@ pub fn animations(
                 // info!("{:?} is an ancestor of {:?}", ancestor, player);
             }
         }
-        println!("");
     }
 }
 
+#[allow(clippy::type_complexity)]
 pub fn play_animations(
     animated_marker1: Query<
         (&SceneAnimationPlayerLink, &SceneAnimations),
