@@ -150,6 +150,7 @@ class AutoExportTracker(PropertyGroup):
                         #print("  changed object", obj.id.name, "changes", obj, "evalutated", obj.id.is_evaluated, "transforms", obj.is_updated_transform, "geometry", obj.is_updated_geometry)
                         if obj.is_updated_transform or obj.is_updated_geometry:
                             cls.changed_objects_per_scene[scene.name][obj.id.name] = object
+                        
                     elif isinstance(obj.id, bpy.types.Material): # or isinstance(obj.id, bpy.types.ShaderNodeTree):
                         # print("  changed material", obj.id, "scene", scene.name,)
                         material = bpy.data.materials[obj.id.name]
@@ -158,19 +159,21 @@ class AutoExportTracker(PropertyGroup):
                             for slot in obj.material_slots:
                                 if slot.material == material:
                                     cls.changed_objects_per_scene[scene.name][obj.name] = obj
-
+                #print("changed_objects_per_scene", cls.changed_objects_per_scene)
+                """for obj_name_original in cls.changed_objects_per_scene[scene_name]:
+                    if obj_name_original != ls.changed_objects_per_scene[scene_name][obj_name_original]"""
                 items = 0
                 for scene_name in cls.changed_objects_per_scene:
                     items += len(cls.changed_objects_per_scene[scene_name].keys())
                 if items == 0:
                     cls.changed_objects_per_scene.clear()
-                # print("changed_objects_per_scene", cls.changed_objects_per_scene)
+                #print("changed_objects_per_scene", cls.changed_objects_per_scene)
 
         # filter out invalid objects
-        for scene_name in cls.changed_objects_per_scene.keys():
+        """for scene_name in cls.changed_objects_per_scene.keys():
             bla = {}
             for object_name in cls.changed_objects_per_scene[scene.name]:
-                object = cls.changed_objects_per_scene[scene.name][object_name]
+                object = cls.changed_objects_per_scene[scene.name][object_name]"""
                 #print("sdfsd", object, object.valid)
                 #if not cls.changed_objects_per_scene[scene.name][object_name].invalid:
                 #    bla[object_name] = cls.changed_objects_per_scene[scene.name][object_name]
@@ -181,7 +184,7 @@ class AutoExportTracker(PropertyGroup):
         # keep it simple, just use Simplenamespace for compatibility with the rest of our code
         # TODO: debounce
 
-        export_settings_changed = did_export_settings_change()
+        """export_settings_changed = did_export_settings_change()
         tmp = {}
         for k in AutoExportGltfAddonPreferences.__annotations__:
             item = AutoExportGltfAddonPreferences.__annotations__[k]
@@ -217,7 +220,7 @@ class AutoExportTracker(PropertyGroup):
         except Exception as error:
             pass
             #self.report({"ERROR"}, "Failed to populate list of exported collections/blueprints")
-            
+            """
         """depsgraph = bpy.context.evaluated_depsgraph_get()
         for update in depsgraph.updates:
             print("update", update)"""

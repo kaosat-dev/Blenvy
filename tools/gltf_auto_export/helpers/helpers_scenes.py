@@ -214,8 +214,6 @@ def clear_hollow_scene(temp_scene, original_root_collection):
         for child_collection in collection.children:
             restore_original_names(child_collection)
     
-    # reset original names
-    restore_original_names(original_root_collection)
 
     # remove any data we created
     temp_root_collection = temp_scene.collection 
@@ -223,8 +221,12 @@ def clear_hollow_scene(temp_scene, original_root_collection):
     for object in temp_scene_objects:
         #print("removing", object.name)
         bpy.data.objects.remove(object, do_unlink=True)
+
     # remove the temporary scene
     bpy.data.scenes.remove(temp_scene, do_unlink=True)
+    
+    # reset original names
+    restore_original_names(original_root_collection)
 
 # convenience utility to get lists of scenes
 def get_scenes(addon_prefs):

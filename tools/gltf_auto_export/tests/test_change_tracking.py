@@ -304,7 +304,7 @@ def test_export_changed_parameters(setup_data):
     other_files_modification_times = [value for index, value in enumerate(modification_times) if index not in [world_file_index, blueprint1_file_index]]
     other_files_modification_times_first = [value for index, value in enumerate(modification_times_first) if index not in [world_file_index, blueprint1_file_index]]
 
-    assert modification_times[world_file_index] != modification_times_first[world_file_index]
+    assert modification_times[world_file_index] == modification_times_first[world_file_index]
     assert modification_times[blueprint1_file_index] != modification_times_first[blueprint1_file_index]
     assert other_files_modification_times == other_files_modification_times_first
     # reset the comparing 
@@ -331,25 +331,22 @@ def test_export_changed_parameters(setup_data):
 
     modification_times = list(map(lambda file_path: os.path.getmtime(file_path), model_library_file_paths + [world_file_path]))
     assert modification_times != modification_times_first
-    # the "world" file should have changed (TODO: double check: this is since changing an instances collection changes the instance too ?)
+    # the "world" file should not have changed
     world_file_index = mapped_files_to_timestamps_and_index["World"][1]
-    # and the blueprint3 file too, since that is the collection we changed
+    #  the blueprint3 file should have changed, since that is the collection we changed
     blueprint3_file_index = mapped_files_to_timestamps_and_index["Blueprint3"][1]
-    # and the blueprint4 file too, since it contains the collection we changed
+    # the blueprint4 file NOT, since, while it contains an instance of the collection we changed, the default export mode is "split"
     blueprint4_file_index = mapped_files_to_timestamps_and_index["Blueprint4_nested"][1]
 
     other_files_modification_times = [value for index, value in enumerate(modification_times) if index not in [world_file_index, blueprint3_file_index, blueprint4_file_index]]
     other_files_modification_times_first = [value for index, value in enumerate(modification_times_first) if index not in [world_file_index, blueprint3_file_index, blueprint4_file_index]]
 
-    assert modification_times[world_file_index] != modification_times_first[world_file_index]
+    assert modification_times[world_file_index] == modification_times_first[world_file_index]
     assert modification_times[blueprint3_file_index] != modification_times_first[blueprint3_file_index]
-    assert modification_times[blueprint4_file_index] != modification_times_first[blueprint4_file_index]
+    assert modification_times[blueprint4_file_index] == modification_times_first[blueprint4_file_index]
     assert other_files_modification_times == other_files_modification_times_first
     # reset the comparing 
     modification_times_first = modification_times
-
-
-    
 
     # now same, but using an operator
     print("----------------")
@@ -362,13 +359,9 @@ def test_export_changed_parameters(setup_data):
         bpy.ops.transform.translate(value=mathutils.Vector((2.0, 1.0, -5.0)))
         bpy.ops.transform.rotate(value=0.378874, constraint_axis=(False, False, True), mirror=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
         bpy.ops.object.transform_apply()
-    bpy.ops.transform.translate(value=(0.5, 0, 0), constraint_axis=(True, False, False))
+        bpy.ops.transform.translate(value=(3.5, 0, 0), constraint_axis=(True, False, False))
 
-    #force an update, as apparently all the operators above do not trigger changes ???
-    rna_prop_ui.rna_idprop_ui_create(bpy.data.objects["Cube"], "________temp", default=0)
-    rna_prop_ui.rna_idprop_ui_prop_clear(bpy.data.objects["Cube"], "________temp")
-
-
+    
     auto_export_operator(
         auto_export=True,
         direct_mode=True,

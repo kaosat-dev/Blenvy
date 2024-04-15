@@ -83,7 +83,7 @@ def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
             print("EXPORTING")
             # get blueprints/collections infos
             (collections, collections_to_export, library_collections, collections_per_scene) = get_collections_to_export(changes_per_scene, changed_export_parameters, addon_prefs)
-
+             
             # get level/main scenes infos
             (main_scenes_to_export) = get_levels_to_export(changes_per_scene, changed_export_parameters, addon_prefs)
 

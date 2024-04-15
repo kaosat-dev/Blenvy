@@ -1,8 +1,7 @@
 import json
 import numpy as np
-
 import bpy
-
+from ..constants import TEMPSCENE_PREFIX
 
 fields_to_ignore_generic = ["tag", "type", "update_tag", "use_extra_user", "use_fake_user", "user_clear", "user_of_id", "user_remap", "users",
                     'animation_data_clear', 'animation_data_create', 'asset_clear', 'asset_data', 'asset_generate_preview', 'asset_mark', 'bl_rna', 'evaluated_get',
@@ -19,18 +18,18 @@ def mesh_hash(obj):
     h = str(hash(vertices_np.tobytes()))
     return h
 
+# TODO: redo this one, this is essentially modifiec copy & pasted data, not fitting
 def animation_hash(obj):
     animation_data = obj.animation_data
     if not animation_data:
         return None
-    return None
     blender_actions = []
     blender_tracks = {}
 
     # TODO: this might need to be modified/ adapted to match the standard gltf exporter settings
     for track in animation_data.nla_tracks:
-        non_muted_strips = [strip for strip in track.strips if strip.action is not None and strip.mute is False]
-        for strip in non_muted_strips: #t.strips:
+        strips = [strip for strip in track.strips if strip.action is not None]
+        for strip in strips: 
             # print("  ", source.name,'uses',strip.action.name, "active", strip.active, "action", strip.action)
             blender_actions.append(strip.action)
             blender_tracks[strip.action.name] = track.name
@@ -54,6 +53,9 @@ def animation_hash(obj):
             if marker.frame not in markers_per_animation[animation_name]:
                 markers_per_animation[animation_name][marker.frame] = []
             markers_per_animation[animation_name][marker.frame].append(marker.name)
+
+    compact_result = hash(str((blender_actions, blender_tracks, markers_per_animation, animations_infos)))
+    return compact_result
 
 
 def camera_hash(obj):
@@ -83,7 +85,7 @@ def bones_hash(bones):
         all_field_names = dir(bone)
         fields = [getattr(bone, prop, None)  for prop in all_field_names if not prop.startswith("__") and not prop in fields_to_ignore and not prop.startswith("show_")]
         bones_result.append(fields)
-    print("fields of bone", bones_result)
+    #print("fields of bone", bones_result)
     return str(hash(str(bones_result)))
 
 # fixme: not good enough ?
@@ -104,13 +106,15 @@ def serialize_scene():
     print("serializing scene")
     data = {}
     for scene in bpy.data.scenes:
+        if scene.name.startswith(TEMPSCENE_PREFIX):
+            continue
         data[scene.name] = {}
         for object in scene.objects:
+            object = bpy.data.objects[object.name]
             #print("object", object.name, object.location)
-            transform = str((object.location, object.rotation_euler, object.scale))
-            visibility = object.visible_get()
-            
-            print("object type", object.type)
+            transform = str((object.location, object.rotation_euler, object.scale)) #str((object.matrix_world.to_translation(), object.matrix_world.to_euler('XYZ'), object.matrix_world.to_quaternion()))#
+            visibility = object.visible_get()            
+            #print("object type", object.type)
             custom_properties = {}
             for K in object.keys():
                 if K not in '_RNA_UI' and K != 'components_meta':
@@ -122,6 +126,8 @@ def serialize_scene():
             camera = camera_hash(object) if object.type == 'CAMERA' else None
             light = light_hash(object) if object.type == 'LIGHT' else None
             armature = armature_hash(object) if object.type == 'ARMATURE' else None
+            parent = object.parent.name if object.parent else None
+            collections = [collection.name for collection in object.users_collection]
 
             data[scene.name][object.name] = {
                 "name": object.name,
@@ -132,7 +138,9 @@ def serialize_scene():
                 "mesh": mesh,
                 "camera": camera,
                 "light": light,
-                "armature": armature
+                "armature": armature,
+                "parent": parent,
+                "collections": collections
             }
 
     """print("data", data)

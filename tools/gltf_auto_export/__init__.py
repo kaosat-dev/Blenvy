@@ -213,7 +213,6 @@ def register():
     """bpy.utils.register_class(AutoExportExtensionProperties)
     bpy.types.Scene.AutoExportExtensionProperties = bpy.props.PointerProperty(type=AutoExportExtensionProperties)"""
     
-
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)

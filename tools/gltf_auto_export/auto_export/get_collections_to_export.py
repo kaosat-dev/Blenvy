@@ -6,6 +6,7 @@ from ..helpers.helpers_collections import get_exportable_collections
 from ..helpers.helpers_collections import (get_collections_in_library, get_exportable_collections, get_collections_per_scene, find_collection_ascendant_target_collection)
 from ..helpers.helpers_scenes import (get_scenes, )
 
+# TODO: this should also take the split/embed mode into account: if a nested collection changes AND embed is active, its container collection should also be exported
 def get_collections_to_export(changes_per_scene, changed_export_parameters, addon_prefs):
     export_change_detection = getattr(addon_prefs, "export_change_detection")
     export_gltf_extension = getattr(addon_prefs, "export_gltf_extension", ".glb")
@@ -16,7 +17,7 @@ def get_collections_to_export(changes_per_scene, changed_export_parameters, addo
     (collections, blueprint_hierarchy) = get_exportable_collections(level_scenes, library_scenes, addon_prefs)
     collections_to_export = collections # just for clarity
 
-    print("export_change_detection", export_change_detection, "changed_export_parameters", changed_export_parameters, "changes_per_scene", changes_per_scene)
+    # print("export_change_detection", export_change_detection, "changed_export_parameters", changed_export_parameters, "changes_per_scene", changes_per_scene)
     
     # if the export parameters have changed, bail out early
     # we need to re_export everything if the export parameters have been changed
