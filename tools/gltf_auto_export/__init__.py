@@ -31,7 +31,7 @@ from .auto_export.internals import (SceneLink,
                         CollectionsToExport,
                         CUSTOM_PG_sceneName
                         )
-from .ui.main import (GLTF_PT_auto_export_changes_list, GLTF_PT_auto_export_main,
+from .ui.main import (GLTF_PT_auto_export_change_detection, GLTF_PT_auto_export_changes_list, GLTF_PT_auto_export_main,
                       GLTF_PT_auto_export_root,
                       GLTF_PT_auto_export_general,
                       GLTF_PT_auto_export_scenes,
@@ -42,7 +42,6 @@ from .ui.main import (GLTF_PT_auto_export_changes_list, GLTF_PT_auto_export_main
                       GLTF_PT_auto_export_SidePanel
                       )
 from .ui.operators import (SCENES_LIST_OT_actions)
-from .helpers.ping_depsgraph_update import ping_depsgraph_update
 from .helpers.generate_complete_preferences_dict import generate_complete_preferences_dict_gltf
 
 
@@ -114,6 +113,7 @@ classes = [
     GLTF_PT_auto_export_main,
     GLTF_PT_auto_export_root,
     GLTF_PT_auto_export_general,
+    GLTF_PT_auto_export_change_detection,
     GLTF_PT_auto_export_scenes,
     GLTF_PT_auto_export_blueprints,
     GLTF_PT_auto_export_SidePanel,
@@ -152,18 +152,14 @@ def glTF2_post_export_callback(data):
 
         # get the parameters
         scene = bpy.context.scene
-        print(dict(scene))
         if "glTF2ExportSettings" in scene:
-            print("write gltf settings")
             settings = scene["glTF2ExportSettings"]
             export_settings = bpy.data.texts[".gltf_auto_export_gltf_settings"] if ".gltf_auto_export_gltf_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_gltf_settings")
             # now write new settings
             export_settings.clear()
 
             current_gltf_settings = generate_complete_preferences_dict_gltf(dict(settings))
-            print("current_gltf_settings", current_gltf_settings)
             export_settings.write(json.dumps(current_gltf_settings))
-            print("done writing")
         # now reset the original gltf_settings
         if gltf_settings_backup != "":
             scene["glTF2ExportSettings"] = json.loads(gltf_settings_backup)
@@ -176,12 +172,7 @@ def glTF2_post_export_callback(data):
         last_operator = bpy.context.window_manager.auto_export_tracker.last_operator
         last_operator.filepath = ""
         last_operator.gltf_export_id = ""
-
-        # AGAIN, something that does not work withouth a timer
-        bpy.app.timers.register(ping_depsgraph_update, first_interval=0.1)
        
-
-
 def menu_func_import(self, context):
     self.layout.operator(AutoExportGLTF.bl_idname, text="glTF auto Export (.glb/gltf)")
 from bpy.app.handlers import persistent
@@ -191,10 +182,6 @@ def post_update(scene, depsgraph):
     bpy.context.window_manager.auto_export_tracker.deps_post_update_handler( scene, depsgraph)
 
 @persistent
-def pre_update(scene, depsgraph):
-    bpy.context.window_manager.auto_export_tracker.deps_pre_update_handler( scene, depsgraph)
-
-@persistent
 def post_save(scene, depsgraph):
     bpy.context.window_manager.auto_export_tracker.save_handler( scene, depsgraph)
 
@@ -202,7 +189,6 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
     # for some reason, adding these directly to the tracker class in register() do not work reliably
-    bpy.app.handlers.depsgraph_update_pre.append(pre_update)
     bpy.app.handlers.depsgraph_update_post.append(post_update)
     bpy.app.handlers.save_post.append(post_save)
 
@@ -210,19 +196,13 @@ def register():
     bpy.types.TOPBAR_MT_file_export.append(menu_func_import)
     bpy.types.WindowManager.gltf_settings_backup = StringProperty(default="")
 
-    """bpy.utils.register_class(AutoExportExtensionProperties)
-    bpy.types.Scene.AutoExportExtensionProperties = bpy.props.PointerProperty(type=AutoExportExtensionProperties)"""
-    
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
     bpy.types.TOPBAR_MT_file_export.remove(menu_func_import)
 
-    bpy.app.handlers.depsgraph_update_pre.remove(pre_update)
     bpy.app.handlers.depsgraph_update_post.remove(post_update)
     bpy.app.handlers.save_post.remove(post_save)
-
-    """bpy.utils.unregister_class(AutoExportExtensionProperties)"""
 
 if "gltf_auto_export" == "__main__":
     register()

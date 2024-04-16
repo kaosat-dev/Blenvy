@@ -166,7 +166,6 @@ def duplicate_object(object, parent, combine_mode, destination_collection, libra
 def copy_hollowed_collection_into(source_collection, destination_collection, parent_empty=None, filter=None, library_collections=[], addon_prefs={}):
     collection_instances_combine_mode = getattr(addon_prefs, "collection_instances_combine_mode")
     legacy_mode = getattr(addon_prefs, "export_legacy_mode")
-    collection_instances_combine_mode= collection_instances_combine_mode
 
     for object in source_collection.objects:
         if object.name.endswith("____bak"): # some objects could already have been handled, ignore them

@@ -11,6 +11,7 @@ def get_collections_to_export(changes_per_scene, changed_export_parameters, addo
     export_change_detection = getattr(addon_prefs, "export_change_detection")
     export_gltf_extension = getattr(addon_prefs, "export_gltf_extension", ".glb")
     export_blueprints_path = getattr(addon_prefs,"export_blueprints_path", "")
+    collection_instances_combine_mode = getattr(addon_prefs, "collection_instances_combine_mode")
 
     [main_scene_names, level_scenes, library_scene_names, library_scenes] = get_scenes(addon_prefs)
     # get a list of all collections actually in use

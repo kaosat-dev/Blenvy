@@ -143,9 +143,40 @@ class GLTF_PT_auto_export_general(bpy.types.Panel):
 
         layout.active = operator.auto_export
         layout.prop(operator, "export_output_folder")
-        layout.prop(operator, "export_change_detection")
         layout.prop(operator, "export_scene_settings")
         layout.prop(operator, "export_legacy_mode")
+
+
+class GLTF_PT_auto_export_change_detection(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Change detection"
+    bl_parent_id = "GLTF_PT_auto_export_root"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "EXPORT_SCENES_OT_auto_gltf" #"EXPORT_SCENE_OT_gltf"
+    def draw_header(self, context):
+        layout = self.layout
+        sfile = context.space_data
+        operator = sfile.active_operator
+        layout.prop(operator, "export_change_detection", text="")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layout.active = operator.auto_export
+        layout.prop(operator, "export_change_detection")
+
+
 
 class GLTF_PT_auto_export_scenes(bpy.types.Panel):
     bl_space_type = 'FILE_BROWSER'
@@ -250,8 +281,6 @@ class GLTF_PT_auto_export_blueprints(bpy.types.Panel):
         sfile = context.space_data
         operator = sfile.active_operator
         layout.prop(operator, "export_blueprints", text="")
-
-        #self.layout.prop(operator, "auto_export", text="")
 
     def draw(self, context):
         layout = self.layout

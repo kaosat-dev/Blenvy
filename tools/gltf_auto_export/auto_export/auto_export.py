@@ -19,7 +19,7 @@ from ..modules.export_materials import cleanup_materials, export_materials
 from ..modules.bevy_scene_components import upsert_scene_components
 
 
-"""Main function"""
+"""this is the main 'central' function for all auto export """
 def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
     # have the export parameters (not auto export, just gltf export) have changed: if yes (for example switch from glb to gltf, compression or not, animations or not etc), we need to re-export everything
     print ("changed_export_parameters", changed_export_parameters)

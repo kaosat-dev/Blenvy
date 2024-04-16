@@ -1,4 +1,5 @@
 import json
+from mathutils import Color
 import numpy as np
 import bpy
 from ..constants import TEMPSCENE_PREFIX
@@ -102,7 +103,79 @@ def armature_hash(obj):
         print("bone", bone, bone_hash(bone))"""
     return str(fields)
 
+def field_value(data):
+    pass
+
+def color(color_data):
+    # print("color", color_data, type(color_data))
+    return str(peel_value(color_data))
+
+def lineart(lineart_data):
+    fields_to_ignore = fields_to_ignore_generic
+
+    all_field_names = dir(lineart_data)
+    fields = [getattr(lineart_data, prop, None) for prop in all_field_names if not prop.startswith("__") and not prop in fields_to_ignore and not prop.startswith("show_")]
+    return str(fields)
+
+def node_tree(nodetree_data):
+    fields_to_ignore = fields_to_ignore_generic+ ['contains_tree','get_output_node', 'interface_update', 'override_template_create']
+    all_field_names = dir(nodetree_data)
+    fields = [getattr(nodetree_data, prop, None) for prop in all_field_names if not prop.startswith("__") and not prop in fields_to_ignore and not prop.startswith("show_")]
+
+    # print("node tree", fields)
+    return str(fields)
+
+
+def peel_value( value ):
+        try:
+            len( value )
+            return [ peel_value( x ) for x in value ]
+        except TypeError:
+            return value
+
+def material_hash(material):
+    fields_to_ignore = fields_to_ignore_generic
+    fields_to_convert = {'diffuse_color': color, 'line_color': color, 'lineart': lineart, 'node_tree': node_tree} # TODO: perhaps use types rather than names
+    all_field_names = dir(material)
+    fields = [getattr(material, prop, None) if not prop in fields_to_convert.keys() else fields_to_convert[prop](getattr(material, prop)) for prop in all_field_names if not prop.startswith("__") and not prop in fields_to_ignore and not prop.startswith("show_")]
+
+    type_of = [type(getattr(material, prop, None))  for prop in all_field_names if not prop.startswith("__") and not prop in fields_to_ignore and not prop.startswith("show_")]
+    names = [prop for prop in all_field_names if not prop.startswith("__") and not prop in fields_to_ignore and not prop.startswith("show_")]
+
+    tutu = [t == Color for t in type_of] # bpy.types.MaterialLineArt bpy.types.ShaderNodeTree
+    #print("fields", type_of)
+
+    """for prop in [prop for prop in all_field_names if not prop.startswith("__") and not prop in fields_to_ignore and not prop.startswith("show_")]:
+        bla = getattr(material, prop, None)
+        if hasattr(bla, "rna_type"):
+            print("YOLO", prop, bla, peel_value(bla), "type", type(bla), bla.rna_type, bla.rna_type == bpy.types.FloatProperty, type(bla) == bpy.types.bpy_prop_collection)
+            print("types", type(bla) == bpy.types.bpy_prop_collection, type(bla) == bpy.types.FloatColorAttributeValue)"""
+            
+    # print("oooooh", material, material.bl_rna.properties.items())
+
+    return str(fields)#str(hash(str(fields)))
+
+# TODO: this is partially taken from export_materials utilities, perhaps we could avoid having to fetch things multiple times ?
+def materials_hash(obj, cache):
+    # print("materials")
+    materials = []
+    for material_slot in obj.material_slots:
+        material = material_slot.material
+        cached_hash = cache['materials'].get(material.name, None)
+        if cached_hash:
+            # print("CACHHHHHED", cached_hash)
+            materials.append(cached_hash)
+        else:
+            mat = material_hash(material)
+            cache['materials'][material.name] = mat
+            materials.append(mat)
+            # print("NOT CACHHH", mat)
+
+    # materials = [material_hash(material_slot.material) if not material_slot.material.name in cache["materials"] else cache["materials"][material_slot.material.name]  for material_slot in obj.material_slots]
+    return str(hash(str(materials)))
+
 def serialize_scene(): 
+    cache = {"materials":{}}
     print("serializing scene")
     data = {}
     for scene in bpy.data.scenes:
@@ -128,6 +201,7 @@ def serialize_scene():
             armature = armature_hash(object) if object.type == 'ARMATURE' else None
             parent = object.parent.name if object.parent else None
             collections = [collection.name for collection in object.users_collection]
+            materials = materials_hash(object, cache) if len(object.material_slots) > 0 else None
 
             data[scene.name][object.name] = {
                 "name": object.name,
@@ -140,7 +214,8 @@ def serialize_scene():
                 "light": light,
                 "armature": armature,
                 "parent": parent,
-                "collections": collections
+                "collections": collections,
+                "materials": materials
             }
 
     """print("data", data)

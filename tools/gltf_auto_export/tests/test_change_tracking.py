@@ -420,11 +420,11 @@ def test_export_change_tracking_material_properties(setup_data):
         mapped_files_to_timestamps_and_index[file_path] = (modification_times_first[index], index)
 
     print("----------------")
-    print("main scene change (material)")
+    print("main scene change (material, clip)")
     print("----------------")
 
     bpy.data.materials["Material.001"].blend_method = 'CLIP'
-    
+
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
@@ -437,12 +437,82 @@ def test_export_change_tracking_material_properties(setup_data):
 
     modification_times = list(map(lambda file_path: os.path.getmtime(file_path), model_library_file_paths + [world_file_path]))
     assert modification_times != modification_times_first
-    # only the "world" file should have changed
-    world_file_index = mapped_files_to_timestamps_and_index["World"][1]
-    other_files_modification_times = [value for index, value in enumerate(modification_times) if index not in [world_file_index]]
-    other_files_modification_times_first = [value for index, value in enumerate(modification_times_first) if index not in [world_file_index]]
+    # the material is assigned to Blueprint 1 so in normal (split mode) only the "Blueprint1" file should have changed
+    blueprint1_file_index = mapped_files_to_timestamps_and_index["Blueprint1"][1]
+    # the same material is assigned to Blueprint 7 so in normal (split mode) only the "Blueprint1" file should have changed
+    blueprint7_file_index = mapped_files_to_timestamps_and_index["Blueprint7_hierarchy"][1]
 
-    assert modification_times[world_file_index] != modification_times_first[world_file_index]
+    other_files_modification_times = [value for index, value in enumerate(modification_times) if index not in [blueprint1_file_index, blueprint7_file_index]]
+    other_files_modification_times_first = [value for index, value in enumerate(modification_times_first) if index not in [blueprint1_file_index, blueprint7_file_index]]
+
+    assert modification_times[blueprint1_file_index] != modification_times_first[blueprint1_file_index]
+    assert modification_times[blueprint7_file_index] != modification_times_first[blueprint7_file_index]
+
+    assert other_files_modification_times == other_files_modification_times_first
+
+    # reset the comparing 
+    modification_times_first = modification_times
+
+    print("----------------")
+    print("main scene change (material, alpha_threshold)")
+    print("----------------")
+    bpy.data.materials["Material.001"].alpha_threshold = 0.2
+
+    auto_export_operator(
+        auto_export=True,
+        direct_mode=True,
+        export_output_folder="./models",
+        export_scene_settings=True,
+        export_blueprints=True,
+        export_legacy_mode=False,
+        export_materials_library=False
+    )
+
+    modification_times = list(map(lambda file_path: os.path.getmtime(file_path), model_library_file_paths + [world_file_path]))
+    assert modification_times != modification_times_first
+    # the material is assigned to Blueprint 1 so in normal (split mode) only the "Blueprint1" file should have changed
+    blueprint1_file_index = mapped_files_to_timestamps_and_index["Blueprint1"][1]
+    # the same material is assigned to Blueprint 7 so in normal (split mode) only the "Blueprint1" file should have changed
+    blueprint7_file_index = mapped_files_to_timestamps_and_index["Blueprint7_hierarchy"][1]
+
+    other_files_modification_times = [value for index, value in enumerate(modification_times) if index not in [blueprint1_file_index, blueprint7_file_index]]
+    other_files_modification_times_first = [value for index, value in enumerate(modification_times_first) if index not in [blueprint1_file_index, blueprint7_file_index]]
+
+    assert modification_times[blueprint1_file_index] != modification_times_first[blueprint1_file_index]
+    assert modification_times[blueprint7_file_index] != modification_times_first[blueprint7_file_index]
+    assert other_files_modification_times == other_files_modification_times_first
+
+
+     # reset the comparing 
+    modification_times_first = modification_times
+
+    print("----------------")
+    print("main scene change (material, diffuse_color)")
+    print("----------------")
+    bpy.data.materials["Material.001"].diffuse_color[0] = 0.2
+
+    auto_export_operator(
+        auto_export=True,
+        direct_mode=True,
+        export_output_folder="./models",
+        export_scene_settings=True,
+        export_blueprints=True,
+        export_legacy_mode=False,
+        export_materials_library=False
+    )
+
+    modification_times = list(map(lambda file_path: os.path.getmtime(file_path), model_library_file_paths + [world_file_path]))
+    assert modification_times != modification_times_first
+    # the material is assigned to Blueprint 1 so in normal (split mode) only the "Blueprint1" file should have changed
+    blueprint1_file_index = mapped_files_to_timestamps_and_index["Blueprint1"][1]
+    # the same material is assigned to Blueprint 7 so in normal (split mode) only the "Blueprint1" file should have changed
+    blueprint7_file_index = mapped_files_to_timestamps_and_index["Blueprint7_hierarchy"][1]
+
+    other_files_modification_times = [value for index, value in enumerate(modification_times) if index not in [blueprint1_file_index, blueprint7_file_index]]
+    other_files_modification_times_first = [value for index, value in enumerate(modification_times_first) if index not in [blueprint1_file_index, blueprint7_file_index]]
+
+    assert modification_times[blueprint1_file_index] != modification_times_first[blueprint1_file_index]
+    assert modification_times[blueprint7_file_index] != modification_times_first[blueprint7_file_index]
     assert other_files_modification_times == other_files_modification_times_first
 
 
@@ -456,7 +526,7 @@ def test_export_change_tracking_material_properties(setup_data):
 - removes generated files
 
 """
-def test_export_various_changes(setup_data):
+def test_export_various_chained_changes(setup_data):
     root_path = "../../testing/bevy_example"
     assets_root_path = os.path.join(root_path, "assets")
     models_path = os.path.join(assets_root_path, "models")
@@ -626,6 +696,7 @@ def test_export_various_changes(setup_data):
     assert modification_times[blueprint3_file_index] != modification_times_first[blueprint3_file_index]
     assert modification_times[blueprint4_file_index] == modification_times_first[blueprint4_file_index]
     assert other_files_modification_times == other_files_modification_times_first
+
     # reset the comparing 
     modification_times_first = modification_times
 
@@ -633,16 +704,14 @@ def test_export_various_changes(setup_data):
     print("----------------")
     print("change using operator")
     print("----------------")
-    bpy.context.window_manager.auto_export_tracker.enable_change_detection() # FIXME: should not be needed, but ..
 
-    with bpy.context.temp_override(active_object=bpy.data.objects["Cube"], selected_objects=[bpy.data.objects["Cube"]]):
+    with bpy.context.temp_override(active_object=bpy.data.objects["Cube"], selected_objects=[bpy.data.objects["Cube"]], scene=bpy.data.scenes["World"]):
         print("translate using operator")
         bpy.ops.transform.translate(value=mathutils.Vector((2.0, 1.0, -5.0)))
         bpy.ops.transform.rotate(value=0.378874, constraint_axis=(False, False, True), mirror=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
         bpy.ops.object.transform_apply()
         bpy.ops.transform.translate(value=(3.5, 0, 0), constraint_axis=(True, False, False))
 
-    
     auto_export_operator(
         auto_export=True,
         direct_mode=True,

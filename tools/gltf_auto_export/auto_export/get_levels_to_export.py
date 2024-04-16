@@ -7,8 +7,11 @@ def get_levels_to_export(changes_per_scene, changed_export_parameters, addon_pre
     export_change_detection = getattr(addon_prefs, "export_change_detection")
     export_gltf_extension = getattr(addon_prefs, "export_gltf_extension")
     export_models_path = getattr(addon_prefs, "export_models_path")
+    collection_instances_combine_mode = getattr(addon_prefs, "collection_instances_combine_mode")
 
     [main_scene_names, level_scenes, library_scene_names, library_scenes] = get_scenes(addon_prefs)
+
+    # TODO: IF collection_instances_combine_mode is not 'split' check for each scene if any object in changes_per_scene has an instance in the scene
 
     # print("levels export", "export_change_detection", export_change_detection, "changed_export_parameters",changed_export_parameters, "export_models_path", export_models_path, "export_gltf_extension", export_gltf_extension, "changes_per_scene", changes_per_scene)
     # determine list of main scenes to export

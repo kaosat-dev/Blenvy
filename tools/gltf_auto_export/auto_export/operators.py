@@ -237,7 +237,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
         changes_per_scene = {}
         # TODO : how do we deal with changed scene names ???
         for scene in current:
-            print('scene', scene)
+            # print('scene', scene)
             previous_object_names = list(previous[scene].keys())
             current_object_names =list(current[scene].keys())
             #print("previous_object_names", len(previous_object_names), previous_object_names)

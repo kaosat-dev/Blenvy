@@ -74,31 +74,6 @@ class AutoExportTracker(PropertyGroup):
         # all our logic is done, mark this as done
 
     @classmethod
-    def deps_pre_update_handler(cls, scene, depsgraph):
-        pass
-        #print("before depsgraph update", scene, depsgraph)
-
-        # only deal with changes if we are NOT in the mids of saving/exporting
-        """if cls.change_detection_enabled:
-            # ignore anything going on with temporary scenes
-            if not scene.name.startswith(TEMPSCENE_PREFIX):
-                print("depsgraph_update_post", scene.name)
-                changed_scene = scene.name or ""
-                #print("-------------")
-              
-                # print("cls.changed_objects_per_scene", cls.changed_objects_per_scene)
-                # depsgraph = bpy.context.evaluated_depsgraph_get()
-                for obj in depsgraph.updates:
-                    #print("depsgraph update", obj)
-                    if isinstance(obj.id, bpy.types.Object):
-                        # get the actual object
-                        object = bpy.data.objects[obj.id.name]
-                        print("  changed object", obj.id.name, "changes", obj, "evalutated", obj.id.is_evaluated, "transforms", obj.is_updated_transform, "geometry", obj.is_updated_geometry)
-                    elif isinstance(obj.id, bpy.types.Material): # or isinstance(obj.id, bpy.types.ShaderNodeTree):
-                        # print("  changed material", obj.id, "scene", scene.name,)
-                        pass"""
-
-    @classmethod
     def deps_post_update_handler(cls, scene, depsgraph):
         # print("change detection enabled", cls.change_detection_enabled)
 
