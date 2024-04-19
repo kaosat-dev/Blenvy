@@ -157,6 +157,85 @@ def test_export_change_tracking_custom_properties(setup_data):
     assert modification_times[world_file_index] != modification_times_first[world_file_index]
     assert other_files_modification_times == other_files_modification_times_first
 
+def test_export_change_tracking_custom_properties_collection_instances_combine_mode_embed(setup_data):
+    root_path = "../../testing/bevy_example"
+    assets_root_path = os.path.join(root_path, "assets")
+    models_path = os.path.join(assets_root_path, "models")
+    auto_export_operator = bpy.ops.export_scenes.auto_gltf
+
+    # with change detection
+    # first, configure things
+    # we use the global settings for that
+    export_props = {
+        "main_scene_names" : ['World'],
+        "library_scene_names": ['Library'],
+
+        "collection_instances_combine_mode":"Embed"
+    }
+  
+    # store settings for the auto_export part
+    stored_auto_settings = bpy.data.texts[".gltf_auto_export_settings"] if ".gltf_auto_export_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_settings")
+    stored_auto_settings.clear()
+    stored_auto_settings.write(json.dumps(export_props))
+
+    gltf_settings = {
+        "export_animations": False,
+        "export_optimize_animation_size": False
+    }
+    # and store settings for the gltf part
+    stored_gltf_settings = bpy.data.texts[".gltf_auto_export_gltf_settings"] if ".gltf_auto_export_gltf_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_gltf_settings")
+    stored_gltf_settings.clear()
+    stored_gltf_settings.write(json.dumps(gltf_settings))
+
+    auto_export_operator(
+        auto_export=True,
+        direct_mode=True,
+        export_output_folder="./models",
+        export_scene_settings=True,
+        export_blueprints=True,
+        export_legacy_mode=False,
+        export_materials_library=False
+    )
+
+    world_file_path = os.path.join(models_path, "World.glb")
+    assert os.path.exists(world_file_path) == True
+
+    models_library_path = os.path.join(models_path, "library")
+    model_library_file_paths = list(map(lambda file_name: os.path.join(models_library_path, file_name), sorted(os.listdir(models_library_path))))
+    modification_times_first = list(map(lambda file_path: os.path.getmtime(file_path), model_library_file_paths + [world_file_path]))
+
+    mapped_files_to_timestamps_and_index = {}
+    for (index, file_path) in enumerate(model_library_file_paths+ [world_file_path]):
+        file_path = pathlib.Path(file_path).stem
+        mapped_files_to_timestamps_and_index[file_path] = (modification_times_first[index], index)
+
+    # now add a custom property to the cube in the main scene & export again
+    print("----------------")
+    print("library change (custom property)")
+    print("----------------")
+
+    bpy.data.objects["Blueprint1_mesh"]["test_property"] = 42
+    
+    auto_export_operator(
+        auto_export=True,
+        direct_mode=True,
+        export_output_folder="./models",
+        export_scene_settings=True,
+        export_blueprints=True,
+        export_legacy_mode=False,
+        export_materials_library=False
+    )
+
+    modification_times = list(map(lambda file_path: os.path.getmtime(file_path), model_library_file_paths + [world_file_path]))
+    assert modification_times != modification_times_first
+    # only the "world" file should have changed
+    world_file_index = mapped_files_to_timestamps_and_index["World"][1]
+    other_files_modification_times = [value for index, value in enumerate(modification_times) if index not in [world_file_index]]
+    other_files_modification_times_first = [value for index, value in enumerate(modification_times_first) if index not in [world_file_index]]
+
+    assert modification_times[world_file_index] != modification_times_first[world_file_index]
+    assert other_files_modification_times == other_files_modification_times_first
+
 def test_export_change_tracking_light_properties(setup_data):
     root_path = "../../testing/bevy_example"
     assets_root_path = os.path.join(root_path, "assets")

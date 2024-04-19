@@ -174,6 +174,15 @@ def materials_hash(obj, cache):
     # materials = [material_hash(material_slot.material) if not material_slot.material.name in cache["materials"] else cache["materials"][material_slot.material.name]  for material_slot in obj.material_slots]
     return str(hash(str(materials)))
 
+def custom_properties_hash(obj):
+    custom_properties = {}
+    for property_name in obj.keys():
+        if property_name not in '_RNA_UI' and property_name != 'components_meta':
+            custom_properties[property_name] = obj[property_name]
+
+    return str(hash(str(custom_properties)))
+    
+
 def serialize_scene(): 
     cache = {"materials":{}}
     print("serializing scene")
@@ -184,16 +193,12 @@ def serialize_scene():
         data[scene.name] = {}
         for object in scene.objects:
             object = bpy.data.objects[object.name]
-            #print("object", object.name, object.location)
+
+            #loc, rot, scale = bpy.context.object.matrix_world.decompose()
+
             transform = str((object.location, object.rotation_euler, object.scale)) #str((object.matrix_world.to_translation(), object.matrix_world.to_euler('XYZ'), object.matrix_world.to_quaternion()))#
             visibility = object.visible_get()            
-            #print("object type", object.type)
-            custom_properties = {}
-            for K in object.keys():
-                if K not in '_RNA_UI' and K != 'components_meta':
-                    #print( K , "-" , object[K] )
-                    custom_properties[K] = object[K]
-            
+            custom_properties = custom_properties_hash(object) if len(object.keys()) > 0 else None
             animations = animation_hash(object)
             mesh = mesh_hash(object) if object.type == 'MESH' else None
             camera = camera_hash(object) if object.type == 'CAMERA' else None
@@ -225,5 +230,4 @@ def serialize_scene():
 
     return json.dumps(data)
 
-    #loc, rot, scale = bpy.context.object.matrix_world.decompose()
 

@@ -23,7 +23,6 @@ from ..modules.bevy_scene_components import upsert_scene_components
 def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
     # have the export parameters (not auto export, just gltf export) have changed: if yes (for example switch from glb to gltf, compression or not, animations or not etc), we need to re-export everything
     print ("changed_export_parameters", changed_export_parameters)
-    
     try:
         # path to the current blend file
         file_path = bpy.data.filepath
@@ -70,6 +69,9 @@ def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
         print("main scenes", main_scene_names, "library_scenes", library_scene_names)
         print("export_output_folder", export_output_folder)
 
+        analysis_experiment(level_scenes, library_scenes)
+
+
         if export_scene_settings:
             # inject/ update scene components
             upsert_scene_components(bpy.context.scene, bpy.context.scene.world, main_scene_names)
@@ -85,7 +87,7 @@ def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
             (collections, collections_to_export, library_collections, collections_per_scene) = get_collections_to_export(changes_per_scene, changed_export_parameters, addon_prefs)
              
             # get level/main scenes infos
-            (main_scenes_to_export) = get_levels_to_export(changes_per_scene, changed_export_parameters, addon_prefs)
+            (main_scenes_to_export) = get_levels_to_export(changes_per_scene, changed_export_parameters, collections, addon_prefs)
 
             # since materials export adds components we need to call this before blueprints are exported
             # export materials & inject materials components into relevant objects
@@ -153,3 +155,160 @@ def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
         bpy.context.window_manager.popup_menu(error_message, title="Error", icon='ERROR')
 
 
+
+
+class Blueprint:
+    def __init__(self, name):
+        self.name = name
+        self.local = True
+        self.scene = "" # Not sure, could be usefull for tracking
+
+        self.instances = []
+        self.objects = []
+        self.nested_blueprints = []
+
+        self.collection = None # should we just sublclass ?
+    
+    def __repr__(self):
+        return f'Name: {self.name} Local: {self.local} Instances: {self.instances},  Objects: {self.objects}, nested_blueprints: {self.nested_blueprints}'
+
+    def __str__(self):
+        return f'Name: "{self.name}", Local: {self.local}, Instances: {self.instances},  Objects: {self.objects}, nested_blueprints: {self.nested_blueprints}'
+
+
+
+# blueprints: any collection with either
+# - an instance
+# - marked as asset
+# - with the "auto_export" flag
+# https://blender.stackexchange.com/questions/167878/how-to-get-all-collections-of-the-current-scene
+def analysis_experiment(main_scenes, library_scenes):
+    export_marked_assets = True
+
+    blueprints = {}
+    blueprints_from_objects = {}
+    collections = []
+
+    blueprints_candidates = {}
+
+
+    # main scenes
+    blueprint_instances_per_main_scene = {}
+    internal_collection_instances = {}
+    external_collection_instances = {}
+
+    for scene in main_scenes:# should it only be main scenes ? what about collection instances inside other scenes ?
+        print("scene", scene)
+        for object in scene.objects:
+            print("object", object.name)
+            if object.instance_type == 'COLLECTION':
+                collection = object.instance_collection
+                collection_name = object.instance_collection.name
+                print("  from collection:", collection_name)
+
+                collection_from_library = False
+                for scene in library_scenes: # should be only in library scenes
+                    collection_from_library = scene.user_of_id(collection) > 0 # TODO: also check if it is an imported asset
+                    if collection_from_library:
+                        break
+
+                collection_category = internal_collection_instances if collection_from_library else external_collection_instances 
+                if not collection_name in collection_category.keys():
+                    collection_category[collection_name] = [] #.append(collection_name)
+                collection_category[collection_name].append(object)
+                # not yet added 
+                #if not collection_name in blueprints:
+                    
+
+                # blueprints[collection_name].instances.append(object)
+
+                # FIXME: this only account for direct instances of blueprints, not for any nested blueprint inside a blueprint
+                if scene.name not in blueprint_instances_per_main_scene.keys():
+                    blueprint_instances_per_main_scene[scene.name] = []
+                blueprint_instances_per_main_scene[scene.name].append(collection_name)
+                
+                """# add any indirect ones
+                # FIXME: needs to be recursive, either here or above
+                for nested_blueprint in blueprints[collection_name].nested_blueprints:
+                    if not nested_blueprint in blueprint_instances_per_main_scene[scene.name]:
+                        blueprint_instances_per_main_scene[scene.name].append(nested_blueprint)"""
+
+    for collection in bpy.data.collections: 
+        print("collection", collection, collection.name_full, "users", collection.users)
+
+        collection_from_library = False
+        for scene in library_scenes: # should be only in library scenes
+            collection_from_library = scene.user_of_id(collection) > 0
+            if collection_from_library:
+                break
+        if not collection_from_library: 
+            continue
+
+        
+        if (
+            'AutoExport' in collection and collection['AutoExport'] == True # get marked collections
+            or export_marked_assets and collection.asset_data is not None # or if you have marked collections as assets you can auto export them too
+            or collection.name in list(internal_collection_instances.keys()) # or if the collection has an instance in one of the main scenes
+            ):
+            blueprint = Blueprint(collection.name)
+            blueprint.local = True
+            blueprint.objects = [object.name for object in collection.all_objects if not object.instance_type == 'COLLECTION'] # inneficient, double loop
+            blueprint.nested_blueprints = [object.name for object in collection.all_objects if object.instance_type == 'COLLECTION'] # FIXME: not precise enough, aka "what is a blueprint"
+            blueprint.collection = collection
+            blueprint.instances = internal_collection_instances[collection.name] if collection.name in internal_collection_instances else []
+
+            blueprints[collection.name] = blueprint
+
+            # now create reverse lookup , so you can find the collection from any of its contained objects
+            for object in collection.all_objects:
+                blueprints_from_objects[object.name] = collection.name
+
+        #
+        collections.append(collection)
+
+    # add any collection that has an instance in the main scenes, but is not present in any of the scenes (IE NON LOCAL)
+    for collection_name in external_collection_instances:
+        collection = bpy.data.collections[collection_name]
+        blueprint = Blueprint(collection.name)
+        blueprint.local = False
+        blueprint.objects = [object.name for object in collection.all_objects if not object.instance_type == 'COLLECTION'] # inneficient, double loop
+        blueprint.nested_blueprints = [object.name for object in collection.all_objects if object.instance_type == 'COLLECTION'] # FIXME: not precise enough, aka "what is a blueprint"
+        blueprint.collection = collection
+        blueprint.instances = internal_collection_instances[collection.name] if collection.name in internal_collection_instances else []
+
+        blueprints[collection.name] = blueprint
+
+        # now create reverse lookup , so you can find the collection from any of its contained objects
+        for object in collection.all_objects:
+            blueprints_from_objects[object.name] = collection.name
+
+
+    # then add any nested collections
+
+    print("BLUEPRINTS")
+    for blueprint_name in blueprints:
+        print(" ", blueprints[blueprint_name])
+
+    print("BLUEPRINTS LOOKUP")
+    print(blueprints_from_objects)
+
+    print("BLUEPRINT INSTANCES PER MAIN SCENE")
+    print(blueprint_instances_per_main_scene)
+
+
+
+
+    changes_test = {'Library': {'Blueprint1_mesh': bpy.data.objects['Blueprint1_mesh']}}
+    # which main scene has been impacted by this
+    # does one of the main scenes contain an INSTANCE of an impacted blueprint
+    for scene in main_scenes:
+        changed_objects = list(changes_test["Library"].keys())
+        #bluprint_instances_in_scene = blueprint_instances_per_main_scene[scene.name]
+        #print("instances per scene", bluprint_instances_in_scene, "changed_objects", changed_objects)
+
+        changed_blueprints_with_instances_in_scene = [blueprints_from_objects[changed] for changed in changed_objects if changed in blueprints_from_objects]
+        print("changed_blueprints_with_instances_in_scene", changed_blueprints_with_instances_in_scene)
+        level_needs_export = len(changed_blueprints_with_instances_in_scene) > 0
+        if level_needs_export:
+            print("level needs export", scene.name)
+        

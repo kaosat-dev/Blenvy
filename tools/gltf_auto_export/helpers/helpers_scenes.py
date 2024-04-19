@@ -62,24 +62,13 @@ def copy_animation_data(source, target):
                     markers_per_animation[animation_name][marker.frame] = []
                 markers_per_animation[animation_name][marker.frame].append(marker.name)
 
-        """if target.animation_data == None:
-            target.animation_data_create()
-        target.animation_data.action = source.animation_data.action.copy()"""
-        # alternative method, using the built-in link animation operator
-
-        # 
-        #previous_active_object = bpy.context.view_layer.objects.active
-        """bpy.context.view_layer.objects.active = source
-
-        bpy.ops.object.select_all(action='DESELECT')
-        #Transfer data from active object to selected objects
-        target.select_set(True)   """
-
+        # best method, using the built-in link animation operator
         with bpy.context.temp_override(active_object=source, selected_editable_objects=[target]): 
             bpy.ops.object.make_links_data(type='ANIMATION')
         
         """if target.animation_data == None:
             target.animation_data_create()
+        target.animation_data.action = source.animation_data.action.copy()
 
         print("copying animation data for", source.name, target.animation_data)
         properties = [p.identifier for p in source.animation_data.bl_rna.properties if not p.is_readonly]
@@ -90,6 +79,7 @@ def copy_animation_data(source, target):
         # we add an "AnimationInfos" component 
         target['AnimationInfos'] = f'(animations: {animations_infos})'.replace("'","")
         
+        # and animation markers
         markers_formated = '{'
         for animation in markers_per_animation.keys():
             markers_formated += f'"{animation}":'
@@ -102,9 +92,6 @@ def copy_animation_data(source, target):
         target["AnimationMarkers"] = f'( {markers_formated} )'
 
         
-        
-
-
 def duplicate_object(object, parent, combine_mode, destination_collection, library_collections, legacy_mode, nester=""):
     copy = None
     if object.instance_type == 'COLLECTION' and (combine_mode == 'Split' or (combine_mode == 'EmbedExternal' and (object.instance_collection.name in library_collections)) ): 
@@ -127,7 +114,6 @@ def duplicate_object(object, parent, combine_mode, destination_collection, libra
             empty_obj["BlueprintsList"] = f"({json.dumps(dict(children_per_collection))})"
 
             # empty_obj["AnimationMarkers"] = '({"animation_name": {5: "Marker_1"} })'
-
             #'({5: "sdf"})'#.replace('"',"'") #f"({json.dumps(dict(animation_foo))})"
             #empty_obj["Assets"] = {"Animations": [], "Materials": [], "Models":[], "Textures":[], "Audio":[], "Other":[]}
         
@@ -151,8 +137,6 @@ def duplicate_object(object, parent, combine_mode, destination_collection, libra
             if parent_empty is not None:
                 copy.parent = parent_empty
            """
-
-    # print(nester, "copy", copy)
     # do this both for empty replacements & normal copies
     if parent is not None:
         copy.parent = parent

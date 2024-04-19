@@ -209,6 +209,7 @@ def set_active_collection(scene, collection_name):
 
 # find which of the library scenes the given collection stems from
 # TODO: does not seem efficient at all ?
+# TODO: remove, unused
 def get_source_scene(collection_name, library_scenes): 
     match = None
     for scene in library_scenes:

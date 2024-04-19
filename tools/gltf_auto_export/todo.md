@@ -12,6 +12,10 @@
    - [ ] look into caching for serialize scene
    - [ ] replace field name based logic with type base logic 
 
+- [ ] to make things easier overall we need a mapping of Blueprints/Collections to
+   - [ ] their instances
+   - [ ] their objects/sub collections instances etc
+
 - [ ] remove bulk of tracker related code
 - [ ] clean up
 - [x] split up change detection in settings to its own panel
