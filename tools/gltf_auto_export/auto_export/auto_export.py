@@ -214,11 +214,14 @@ def analysis_experiment(main_scenes, library_scenes):
 
                 collection_category = internal_collection_instances if collection_from_library else external_collection_instances 
                 if not collection_name in collection_category.keys():
+                    print("ADDING INSTANCE OF", collection_name, "object", object.name, "categ", collection_category)
                     collection_category[collection_name] = [] #.append(collection_name)
                 collection_category[collection_name].append(object)
-                # not yet added 
-                #if not collection_name in blueprints:
-                    
+                if not collection_from_library:
+                    for property_name in object.keys():
+                        print("stuff", property_name)
+                    for property_name in collection.keys():
+                        print("OTHER", property_name)
 
                 # blueprints[collection_name].instances.append(object)
 
@@ -253,7 +256,7 @@ def analysis_experiment(main_scenes, library_scenes):
             blueprint = Blueprint(collection.name)
             blueprint.local = True
             blueprint.objects = [object.name for object in collection.all_objects if not object.instance_type == 'COLLECTION'] # inneficient, double loop
-            blueprint.nested_blueprints = [object.name for object in collection.all_objects if object.instance_type == 'COLLECTION'] # FIXME: not precise enough, aka "what is a blueprint"
+            blueprint.nested_blueprints = [object.instance_collection.name for object in collection.all_objects if object.instance_type == 'COLLECTION'] # FIXME: not precise enough, aka "what is a blueprint"
             blueprint.collection = collection
             blueprint.instances = internal_collection_instances[collection.name] if collection.name in internal_collection_instances else []
 
@@ -272,9 +275,9 @@ def analysis_experiment(main_scenes, library_scenes):
         blueprint = Blueprint(collection.name)
         blueprint.local = False
         blueprint.objects = [object.name for object in collection.all_objects if not object.instance_type == 'COLLECTION'] # inneficient, double loop
-        blueprint.nested_blueprints = [object.name for object in collection.all_objects if object.instance_type == 'COLLECTION'] # FIXME: not precise enough, aka "what is a blueprint"
+        blueprint.nested_blueprints = [object.instance_collection.name for object in collection.all_objects if object.instance_type == 'COLLECTION'] # FIXME: not precise enough, aka "what is a blueprint"
         blueprint.collection = collection
-        blueprint.instances = internal_collection_instances[collection.name] if collection.name in internal_collection_instances else []
+        blueprint.instances = external_collection_instances[collection.name] if collection.name in external_collection_instances else []
 
         blueprints[collection.name] = blueprint
 
@@ -283,7 +286,23 @@ def analysis_experiment(main_scenes, library_scenes):
             blueprints_from_objects[object.name] = collection.name
 
 
-    # then add any nested collections
+    # then add any nested collections at root level
+    for blueprint_name in list(blueprints.keys()):
+        parent_blueprint = blueprints[blueprint_name]
+        for nested_blueprint_name in parent_blueprint.nested_blueprints:
+            if not nested_blueprint_name in blueprints.keys():
+                collection = bpy.data.collections[nested_blueprint_name]
+                blueprint = Blueprint(collection.name)
+                blueprint.local = parent_blueprint.local
+                blueprint.objects = [object.name for object in collection.all_objects if not object.instance_type == 'COLLECTION'] # inneficient, double loop
+                blueprint.nested_blueprints = [object.instance_collection.name for object in collection.all_objects if object.instance_type == 'COLLECTION'] # FIXME: not precise enough, aka "what is a blueprint"
+                blueprint.collection = collection
+                blueprint.instances = external_collection_instances[collection.name] if collection.name in external_collection_instances else []
+
+                blueprints[collection.name] = blueprint
+
+
+    blueprints = dict(sorted(blueprints.items()))
 
     print("BLUEPRINTS")
     for blueprint_name in blueprints:
@@ -298,11 +317,15 @@ def analysis_experiment(main_scenes, library_scenes):
 
 
 
-    changes_test = {'Library': {'Blueprint1_mesh': bpy.data.objects['Blueprint1_mesh']}}
+    changes_test = {'Library': {
+        'Blueprint1_mesh': bpy.data.objects['Blueprint1_mesh'], 
+        'Fox_mesh': bpy.data.objects['Fox_mesh'],
+        'External_blueprint2_Cylinder': bpy.data.objects['External_blueprint2_Cylinder']}
+    }
     # which main scene has been impacted by this
     # does one of the main scenes contain an INSTANCE of an impacted blueprint
     for scene in main_scenes:
-        changed_objects = list(changes_test["Library"].keys())
+        changed_objects = list(changes_test["Library"].keys()) # just a hack for testing
         #bluprint_instances_in_scene = blueprint_instances_per_main_scene[scene.name]
         #print("instances per scene", bluprint_instances_in_scene, "changed_objects", changed_objects)
 
@@ -311,4 +334,11 @@ def analysis_experiment(main_scenes, library_scenes):
         level_needs_export = len(changed_blueprints_with_instances_in_scene) > 0
         if level_needs_export:
             print("level needs export", scene.name)
+
+    for scene in library_scenes:
+        changed_objects = list(changes_test[scene.name].keys())
+        changed_blueprints = [blueprints_from_objects[changed] for changed in changed_objects if changed in blueprints_from_objects]
+        # we only care about local blueprints/collections
+        changed_local_blueprints = [blueprint_name for blueprint_name in changed_blueprints if blueprint_name in blueprints.keys() and blueprints[blueprint_name].local]
+        print("changed blueprints", changed_local_blueprints)
         
