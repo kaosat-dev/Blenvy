@@ -1,36 +1,36 @@
 
+import bpy
 from ..helpers.object_makers import make_empty
 
-def upsert_scene_components(scene, world, main_scene_names):
-    #should only be run in one of the main scenes
-    if scene.name not in main_scene_names:
-        return
-    root_collection = scene.collection
-    lighting_components = None
-    print("upsert scene components", scene.name, scene.objects)
-    for object in scene.objects:
-        if object.name == "lighting_components_"+scene.name:
-            lighting_components = object
-            break
+# TODO: replace this with placing scene level custom properties once support for that has been added to bevy_gltf
+def upsert_scene_components(main_scenes):
+    for scene in main_scenes:
+        lighting_components_name = f"lighting_components_{scene.name}"
+        lighting_components = bpy.data.objects.get(lighting_components_name, None)
+        if not lighting_components:
+            root_collection = scene.collection
+            lighting_components = make_empty('lighting_components_'+scene.name, [0,0,0], [0,0,0], [0,0,0], root_collection)
 
-    if lighting_components is None:
-        lighting_components = make_empty('lighting_components_'+scene.name, [0,0,0], [0,0,0], [0,0,0], root_collection)
+        if scene.world is not None:
+            lighting_components['BlenderBackgroundShader'] = ambient_color_to_component(scene.world)
+        lighting_components['BlenderShadowSettings'] = scene_shadows_to_component(scene)
 
-    if world is not None:
-        lighting_components['BlenderBackgroundShader'] = ambient_color_to_component(world)
+        if scene.eevee.use_bloom:
+            lighting_components['BloomSettings'] = scene_bloom_to_component(scene)
+        elif 'BloomSettings' in lighting_components:
+            del lighting_components['BloomSettings']
 
-    lighting_components['BlenderShadowSettings'] = scene_shadows_to_component(scene)
+        if scene.eevee.use_gtao: 
+            lighting_components['SSAOSettings'] = scene_ao_to_component(scene)
+        elif 'SSAOSettings' in lighting_components:
+            del lighting_components['SSAOSettings']
 
-
-    if scene.eevee.use_bloom:
-        lighting_components['BloomSettings'] = scene_bloom_to_component(scene)
-    elif 'BloomSettings' in lighting_components:
-        del lighting_components['BloomSettings']
-
-    if scene.eevee.use_gtao: 
-        lighting_components['SSAOSettings'] = scene_ao_to_component(scene)
-    elif 'SSAOSettings' in lighting_components:
-        del lighting_components['SSAOSettings']
+def remove_scene_components(main_scenes):
+    for scene in main_scenes:
+        lighting_components_name = f"lighting_components_{scene.name}"
+        lighting_components = bpy.data.objects.get(lighting_components_name, None)
+        if lighting_components:
+            bpy.data.objects.remove(lighting_components, do_unlink=True)
 
 
 def ambient_color_to_component(world):

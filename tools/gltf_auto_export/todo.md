@@ -13,8 +13,32 @@
    - [ ] replace field name based logic with type base logic 
 
 - [ ] to make things easier overall we need a mapping of Blueprints/Collections to
-   - [ ] their instances
-   - [ ] their objects/sub collections instances etc
+   - [x] their instances
+   - [x] their objects/sub collections instances etc
+   - [ ] a mapping of objects to the blueprints they belong to
+- [ ] things to alter/remove using the new & improved Blueprints/collections scanning and mapping
+   - [x] get_sub_collections                          => remove , but rewrite how BlueprintsList are generated
+   - [x] get_used_collections                         => remove , but rewrite how BlueprintsList are generated
+   - [x] get_exportable_collections                   => remove , but replace with new function to get exportable blueprints
+   - [x] get_collections_per_scene
+   - [x] get_collections_in_library
+   - [ ] traverse_tree                                => keep, used
+   - [x] find_layer_collection_recursive              => remove, unused
+   - [ ] recurLayerCollection                         => unclear, analyse
+   - [x] find_collection_ascendant_target_collection  => remove, double check
+   - [x] set_active_collection                        => keep, used
+   - [x] get_source_scene                             => remove, unused 
+   - [x] assets_list["BlueprintsList"]
+      BLUEPRINTS LIST {'Blueprint1': [], 'Blueprint6_animated': [], 'Blueprint4_nested': ['Blueprint3'], 'Blueprint3': [], 'Blueprint7_hierarchy': [], 'External_blueprint': [], 'External_blueprint2': ['External_blueprint3'], 'External_blueprint3': [], 'Blueprint8_animated_no_bones': []}
+
+   - [x] internal_collections => replace with "internal_collections" or "local_collections"
+   
+
+- [x] move all things that alter data "permanently" to pre-save
+   - [x] lighting/ scene components injection
+   - [x] blueprintNames ?
+   - [x] or more simple: just remove them after save as we do for others: lighting_components
+- [ ] update cleanup_materials
 
 - [ ] remove bulk of tracker related code
 - [ ] clean up

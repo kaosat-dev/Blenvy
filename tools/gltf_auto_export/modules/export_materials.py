@@ -4,7 +4,7 @@ from pathlib import Path
 
 from ..helpers.generate_and_export import generate_and_export
 
-from ..helpers.helpers_collections import (set_active_collection, traverse_tree)
+from ..helpers.helpers_collections import (traverse_tree)
 from ..auto_export.export_gltf import (export_gltf, generate_gltf_export_preferences)
 from ..helpers.object_makers import make_cube
 

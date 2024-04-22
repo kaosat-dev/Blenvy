@@ -1,6 +1,5 @@
 import json
 import bpy
-from .helpers_collections import (CollectionNode, get_sub_collections, get_used_collections, set_active_collection)
 from .object_makers import (make_empty)
 
 
@@ -92,10 +91,12 @@ def copy_animation_data(source, target):
         target["AnimationMarkers"] = f'( {markers_formated} )'
 
         
-def duplicate_object(object, parent, combine_mode, destination_collection, library_collections, legacy_mode, nester=""):
+def duplicate_object(object, parent, combine_mode, destination_collection, blueprints_data, legacy_mode, nester=""):
     copy = None
-    if object.instance_type == 'COLLECTION' and (combine_mode == 'Split' or (combine_mode == 'EmbedExternal' and (object.instance_collection.name in library_collections)) ): 
-        #print("creating empty for", object.name, object.instance_collection.name, library_collections, combine_mode)
+    internal_blueprint_names = [blueprint.name for blueprint in blueprints_data.internal_blueprints]
+
+    if object.instance_type == 'COLLECTION' and (combine_mode == 'Split' or (combine_mode == 'EmbedExternal' and (object.instance_collection.name in internal_blueprint_names)) ): 
+        #print("creating empty for", object.name, object.instance_collection.name, internal_blueprint_names, combine_mode)
         collection_name = object.instance_collection.name
         original_name = object.name
 
@@ -107,15 +108,13 @@ def duplicate_object(object, parent, combine_mode, destination_collection, libra
 
         # we also inject a list of all sub blueprints, so that the bevy side can preload them
         if not legacy_mode:
-            root_node = CollectionNode()
-            root_node.name = "root"
-            children_per_collection = {}
-            get_sub_collections([object.instance_collection], root_node, children_per_collection)
-            empty_obj["BlueprintsList"] = f"({json.dumps(dict(children_per_collection))})"
-
-            # empty_obj["AnimationMarkers"] = '({"animation_name": {5: "Marker_1"} })'
-            #'({5: "sdf"})'#.replace('"',"'") #f"({json.dumps(dict(animation_foo))})"
-            #empty_obj["Assets"] = {"Animations": [], "Materials": [], "Models":[], "Textures":[], "Audio":[], "Other":[]}
+            blueprint_name = collection_name
+            children_per_blueprint = {}
+            blueprint = blueprints_data.blueprints_per_name.get(blueprint_name, None)
+            if blueprint:
+                children_per_blueprint[blueprint_name] = blueprint.nested_blueprints
+            print("new logic blueprints list", children_per_blueprint)
+            empty_obj["BlueprintsList"] = f"({json.dumps(dict(children_per_blueprint))})"
         
         # we copy custom properties over from our original object to our empty
         for component_name, component_value in object.items():
@@ -144,10 +143,10 @@ def duplicate_object(object, parent, combine_mode, destination_collection, libra
     copy_animation_data(object, copy)
 
     for child in object.children:
-        duplicate_object(child, copy, combine_mode, destination_collection, library_collections, legacy_mode, nester+"  ")
+        duplicate_object(child, copy, combine_mode, destination_collection, blueprints_data, legacy_mode, nester+"  ")
 
 # copies the contents of a collection into another one while replacing library instances with empties
-def copy_hollowed_collection_into(source_collection, destination_collection, parent_empty=None, filter=None, library_collections=[], addon_prefs={}):
+def copy_hollowed_collection_into(source_collection, destination_collection, parent_empty=None, filter=None, blueprints_data=None, addon_prefs={}):
     collection_instances_combine_mode = getattr(addon_prefs, "collection_instances_combine_mode")
     legacy_mode = getattr(addon_prefs, "export_legacy_mode")
 
@@ -159,7 +158,7 @@ def copy_hollowed_collection_into(source_collection, destination_collection, par
         #check if a specific collection instance does not have an ovveride for combine_mode
         combine_mode = object['_combine'] if '_combine' in object else collection_instances_combine_mode
         parent = parent_empty
-        duplicate_object(object, parent, combine_mode, destination_collection, library_collections, legacy_mode)
+        duplicate_object(object, parent, combine_mode, destination_collection, blueprints_data, legacy_mode)
         
     # for every child-collection of the source, copy its content into a new sub-collection of the destination
     for collection in source_collection.children:
@@ -174,7 +173,7 @@ def copy_hollowed_collection_into(source_collection, destination_collection, par
             destination_collection = destination_collection, 
             parent_empty = collection_placeholder, 
             filter = filter,
-            library_collections = library_collections, 
+            blueprints_data = blueprints_data, 
             addon_prefs=addon_prefs
         )
 
@@ -223,44 +222,3 @@ def get_scenes(addon_prefs):
     library_scenes = list(map(lambda name: bpy.data.scenes[name], library_scene_names))
     
     return [level_scene_names, level_scenes, library_scene_names, library_scenes]
-
-def inject_blueprints_list_into_main_scene(scene):
-    print("injecting assets/blueprints data into scene")
-    root_collection = scene.collection
-    assets_list = None
-    assets_list_name = f"assets_list_{scene.name}_components"
-    for object in scene.objects:
-        if object.name == assets_list_name:
-            assets_list = object
-            break
-
-    if assets_list is None:
-        assets_list = make_empty(assets_list_name, [0,0,0], [0,0,0], [0,0,0], root_collection)
-
-    # find all blueprints used in a scene
-    # TODO: export a tree rather than a flat list ? because you could have potential clashing items in flat lists (amongst other issues)
-    (collection_names, collections) = get_used_collections(scene)
-    root_node = CollectionNode()
-    root_node.name = "root"
-    children_per_collection = {}
-    
-    #print("collection_names", collection_names, "collections", collections)
-    get_sub_collections(collections, root_node, children_per_collection)
-    # what about marked assets ?
-    # what about audio assets ?
-    # what about materials ?
-    # object['MaterialInfo'] = '(name: "'+material.name+'", source: "'+current_project_name + '")' 
-
-    #assets_list["blueprints_direct"] = list(collection_names)
-    assets_list["BlueprintsList"] = f"({json.dumps(dict(children_per_collection))})"
-    #assets_list["Materials"]= '()'
-
-def remove_blueprints_list_from_main_scene(scene):
-    assets_list = None
-    assets_list_name = f"assets_list_{scene.name}_components"
-
-    for object in scene.objects:
-        if object.name == assets_list_name:
-            assets_list = object
-    if assets_list is not None:
-        bpy.data.objects.remove(assets_list, do_unlink=True)

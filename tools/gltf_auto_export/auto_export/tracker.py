@@ -12,7 +12,6 @@ from .get_collections_to_export import get_collections_to_export
 from ..constants import TEMPSCENE_PREFIX
 from .internals import CollectionsToExport
 from ..helpers.helpers_scenes import (get_scenes)
-from ..helpers.helpers_collections import (get_exportable_collections)
 from .preferences import AutoExportGltfAddonPreferences
 
 class AutoExportTracker(PropertyGroup):
@@ -183,7 +182,7 @@ class AutoExportTracker(PropertyGroup):
         addon_prefs = SimpleNamespace(**tmp)
 
         #print("cls.changed_objects_per_scene", cls.changed_objects_per_scene)
-        (collections, collections_to_export, library_collections, collections_per_scene) = get_collections_to_export(cls.changed_objects_per_scene, export_settings_changed, addon_prefs)
+        (collections, collections_to_export, internal_collections, collections_per_scene) = get_collections_to_export(cls.changed_objects_per_scene, export_settings_changed, addon_prefs)
         #print("collections to export", collections_to_export)
         try:
             # we save this list of collections in the context
