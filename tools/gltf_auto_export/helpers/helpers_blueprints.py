@@ -215,6 +215,9 @@ def blueprints_scan(main_scenes, library_scenes, addon_prefs):
     internal_blueprints = []
     external_blueprints = []
     blueprints_per_scenes = {}
+
+    blueprint_instances_per_library_scene = {}
+
     for blueprint in blueprints_per_name.values():
         blueprints.append(blueprint)
         if blueprint.local:
@@ -223,8 +226,11 @@ def blueprints_scan(main_scenes, library_scenes, addon_prefs):
                 if not blueprint.scene.name in blueprints_per_scenes:
                     blueprints_per_scenes[blueprint.scene.name] = []
                 blueprints_per_scenes[blueprint.scene.name].append(blueprint.name) # meh
+
         else:
             external_blueprints.append(blueprint)
+
+    # we also need to have blueprint instances for 
 
     data = {
         "blueprints": blueprints,
@@ -236,10 +242,12 @@ def blueprints_scan(main_scenes, library_scenes, addon_prefs):
         "external_blueprints": external_blueprints,
         "blueprints_per_scenes": blueprints_per_scenes,
 
-        "blueprint_instances_per_main_scene": blueprint_instances_per_main_scene
+        "blueprint_instances_per_main_scene": blueprint_instances_per_main_scene,
+        "blueprint_instances_per_library_scene": blueprint_instances_per_library_scene,
+
         # not sure about these two
-        #internal_collection_instances,
-        #external_collection_instances
+        "internal_collection_instances": internal_collection_instances,
+        "external_collection_instances":external_collection_instances,
     }
 
     return SimpleNamespace(**data)

@@ -30,14 +30,16 @@
    - [x] get_source_scene                             => remove, unused 
    - [x] assets_list["BlueprintsList"]
       BLUEPRINTS LIST {'Blueprint1': [], 'Blueprint6_animated': [], 'Blueprint4_nested': ['Blueprint3'], 'Blueprint3': [], 'Blueprint7_hierarchy': [], 'External_blueprint': [], 'External_blueprint2': ['External_blueprint3'], 'External_blueprint3': [], 'Blueprint8_animated_no_bones': []}
-
    - [x] internal_collections => replace with "internal_collections" or "local_collections"
    
-
+- [ ] fix COMBINE MODE passed as int instead of enum value
 - [x] move all things that alter data "permanently" to pre-save
    - [x] lighting/ scene components injection
    - [x] blueprintNames ?
    - [x] or more simple: just remove them after save as we do for others: lighting_components
+
+   - [ ] if we want the blueprintsList / future paths of blueprints to be present inside external assets, we are going to need to keep them around, ie: inject them in pre-save & not remove them 
+
 - [ ] update cleanup_materials
 
 - [ ] remove bulk of tracker related code

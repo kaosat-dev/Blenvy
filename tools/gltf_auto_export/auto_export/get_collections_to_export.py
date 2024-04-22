@@ -27,17 +27,27 @@ def get_collections_to_export(changes_per_scene, changed_export_parameters, blue
 
         for scene in library_scenes:
             if scene.name in changes_per_scene:
-                print("scanning", scene.name)
                 changed_objects = list(changes_per_scene[scene.name].keys())
                 changed_blueprints = [blueprints_data.blueprints_from_objects[changed] for changed in changed_objects if changed in blueprints_data.blueprints_from_objects]
-                print("changed_blueprints", changed_blueprints)
                 # we only care about local blueprints/collections
                 changed_local_blueprints = [blueprint for blueprint in changed_blueprints if blueprint.name in blueprints_data.blueprints_per_name.keys() and blueprint.local]
-                print("changed_local_blueprints blueprints", changed_local_blueprints)
+                # FIXME: double check this: why are we combining these two ?
                 changed_blueprints += changed_local_blueprints
 
-        print("CHANGED BLUEPRINTS", changed_blueprints)
-    
+        # dealt with the different combine modes
+        if collection_instances_combine_mode == 1: # 0 => split (default) 1 => Embed 2 => Embed external
+            # we check for object specific overrides ...
+            filtered_changed_blueprints = []
+            for blueprint in changed_blueprints:
+                blueprint_instance = blueprints_data.internal_collection_instances.get(blueprint.name, None)
+                if blueprint_instance:
+                    combine_mode = blueprint_instance['_combine'] if '_combine' in blueprint_instance else collection_instances_combine_mode # FIXME! yikes, should be "split"
+                    print("combine mode", combine_mode)
+                    if combine_mode == 0: # we only keep changed blueprints if mode is set to split (aka if a blueprint is merged, do not export ? )
+                        # but wait, what if we have ONE instance of merge and others of split ? then we need to still split !
+                        filtered_changed_blueprints.append(blueprint)
+
+            changed_blueprints =  filtered_changed_blueprints
         blueprints_to_export =  list(set(changed_blueprints + blueprints_not_on_disk))
     
     # changed/all blueprints to export     

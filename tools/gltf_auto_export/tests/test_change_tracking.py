@@ -209,7 +209,7 @@ def test_export_change_tracking_custom_properties_collection_instances_combine_m
         file_path = pathlib.Path(file_path).stem
         mapped_files_to_timestamps_and_index[file_path] = (modification_times_first[index], index)
 
-    # now add a custom property to the cube in the main scene & export again
+    # now add a custom property to the cube in the library scene & export again
     print("----------------")
     print("library change (custom property)")
     print("----------------")

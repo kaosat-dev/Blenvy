@@ -94,7 +94,7 @@ def copy_animation_data(source, target):
 def duplicate_object(object, parent, combine_mode, destination_collection, blueprints_data, legacy_mode, nester=""):
     copy = None
     internal_blueprint_names = [blueprint.name for blueprint in blueprints_data.internal_blueprints]
-
+    print("COMBINE MODE", combine_mode)
     if object.instance_type == 'COLLECTION' and (combine_mode == 'Split' or (combine_mode == 'EmbedExternal' and (object.instance_collection.name in internal_blueprint_names)) ): 
         #print("creating empty for", object.name, object.instance_collection.name, internal_blueprint_names, combine_mode)
         collection_name = object.instance_collection.name
@@ -102,6 +102,7 @@ def duplicate_object(object, parent, combine_mode, destination_collection, bluep
 
         object.name = original_name + "____bak"
         empty_obj = make_empty(original_name, object.location, object.rotation_euler, object.scale, destination_collection)
+        
         """we inject the collection/blueprint name, as a component called 'BlueprintName', but we only do this in the empty, not the original object"""
         empty_obj['BlueprintName'] = '"'+collection_name+'"' if legacy_mode else '("'+collection_name+'")'
         empty_obj['SpawnHere'] = '()'
