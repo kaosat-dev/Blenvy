@@ -185,13 +185,13 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
             auto_settings_changed = sorted(json.loads(previous_auto_settings.as_string()).items()) != sorted(json.loads(current_auto_settings.as_string()).items()) if current_auto_settings != None else False
             gltf_settings_changed = sorted(json.loads(previous_gltf_settings.as_string()).items()) != sorted(json.loads(current_gltf_settings.as_string()).items()) if current_gltf_settings != None else False
             
-            """print("auto settings previous", sorted(json.loads(previous_auto_settings.as_string()).items()))
+            print("auto settings previous", sorted(json.loads(previous_auto_settings.as_string()).items()))
             print("auto settings current", sorted(json.loads(current_auto_settings.as_string()).items()))
             print("auto_settings_changed", auto_settings_changed)
 
             print("gltf settings previous", sorted(json.loads(previous_gltf_settings.as_string()).items()))
             print("gltf settings current", sorted(json.loads(current_gltf_settings.as_string()).items()))
-            print("gltf_settings_changed", gltf_settings_changed)"""
+            print("gltf_settings_changed", gltf_settings_changed)
 
             changed = auto_settings_changed or gltf_settings_changed
         # now write the current settings to the "previous settings"

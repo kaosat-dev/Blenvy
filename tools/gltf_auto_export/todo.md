@@ -33,6 +33,9 @@
    - [x] internal_collections => replace with "internal_collections" or "local_collections"
    
 - [ ] fix COMBINE MODE passed as int instead of enum value
+   => comes from our custom logic for add_on prefs
+- [ ] double check compares to "None" values
+
 - [x] move all things that alter data "permanently" to pre-save
    - [x] lighting/ scene components injection
    - [x] blueprintNames ?

@@ -5,21 +5,38 @@ from ..helpers.helpers_scenes import (get_scenes, )
 # IF collection_instances_combine_mode is not 'split' check for each scene if any object in changes_per_scene has an instance in the scene
 def changed_object_in_scene(scene_name, changes_per_scene, blueprints_data, collection_instances_combine_mode):
     # Embed / EmbedExternal
-    if collection_instances_combine_mode == 0: # 1 => Embed
-        return False
+    """if collection_instances_combine_mode == "Split": # 1 => Embed
+        return False"""
 
     blueprints_from_objects = blueprints_data.blueprints_from_objects
 
-    bluprint_instances_in_scene = blueprints_data.blueprint_instances_per_main_scene[scene_name]
-    changed_objects = [object_name for change in changes_per_scene.values() for object_name in change.keys()] 
-    changed_blueprints = [blueprints_from_objects[changed] for changed in changed_objects if changed in blueprints_from_objects]
-    changed_blueprints_with_instances_in_scene = [bla for bla in changed_blueprints if bla.name in bluprint_instances_in_scene]#[blueprints_from_objects[changed] for changed in changed_objects if changed in blueprints_from_objects and changed in bluprint_instances_in_scene]
-    
-    level_needs_export = len(changed_blueprints_with_instances_in_scene) > 0
-    print("changed_blueprints", changed_blueprints)
-    print("bluprint_instances_in_scene", bluprint_instances_in_scene, "changed_objects", changed_objects, "changed_blueprints_with_instances_in_scene", changed_blueprints_with_instances_in_scene)
+    blueprint_instances_in_scene = blueprints_data.blueprint_instances_per_main_scene.get(scene_name, None)
+    if blueprint_instances_in_scene is not None:
+        changed_objects = [object_name for change in changes_per_scene.values() for object_name in change.keys()] 
+        changed_blueprints = [blueprints_from_objects[changed] for changed in changed_objects if changed in blueprints_from_objects]
+        changed_blueprints_with_instances_in_scene = [blueprint for blueprint in changed_blueprints if blueprint.name in blueprint_instances_in_scene.keys()]
 
-    return level_needs_export
+
+        changed_blueprint_instances= [object for blueprint in changed_blueprints_with_instances_in_scene for object in blueprint_instances_in_scene[blueprint.name]]
+        # print("changed_blueprint_instances", changed_blueprint_instances,)
+
+        level_needs_export = False
+        for blueprint_instance in changed_blueprint_instances:
+            blueprint = blueprints_data.blueprint_name_from_instances[blueprint_instance]
+            combine_mode = blueprint_instance['_combine'] if '_combine' in blueprint_instance else collection_instances_combine_mode
+            #print("COMBINE MODE FOR OBJECT", combine_mode)
+            if combine_mode == 'Embed':
+                level_needs_export = True
+                break
+            elif combine_mode == 'EmbedExternal' and not blueprint.local:
+                level_needs_export = True
+                break
+        # changes => list of changed objects (regardless of wether they have been changed in main scene or in lib scene)
+        # wich of those objects are blueprint instances
+        # we need a list of changed objects that are blueprint instances
+
+        return level_needs_export
+    return False
 
 
 # this also takes the split/embed mode into account: if a collection instance changes AND embed is active, its container level/world should also be exported

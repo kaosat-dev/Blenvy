@@ -34,21 +34,27 @@ def get_collections_to_export(changes_per_scene, changed_export_parameters, blue
                 # FIXME: double check this: why are we combining these two ?
                 changed_blueprints += changed_local_blueprints
 
-        # dealt with the different combine modes
-        if collection_instances_combine_mode == 1: # 0 => split (default) 1 => Embed 2 => Embed external
-            # we check for object specific overrides ...
-            filtered_changed_blueprints = []
-            for blueprint in changed_blueprints:
-                blueprint_instance = blueprints_data.internal_collection_instances.get(blueprint.name, None)
-                if blueprint_instance:
-                    combine_mode = blueprint_instance['_combine'] if '_combine' in blueprint_instance else collection_instances_combine_mode # FIXME! yikes, should be "split"
-                    print("combine mode", combine_mode)
-                    if combine_mode == 0: # we only keep changed blueprints if mode is set to split (aka if a blueprint is merged, do not export ? )
-                        # but wait, what if we have ONE instance of merge and others of split ? then we need to still split !
-                        filtered_changed_blueprints.append(blueprint)
-
-            changed_blueprints =  filtered_changed_blueprints
+       
         blueprints_to_export =  list(set(changed_blueprints + blueprints_not_on_disk))
+
+
+    # filter out blueprints that are not marked & deal with the different combine modes
+    # we check for blueprint & object specific overrides ...
+    filtered_blueprints = []
+    for blueprint in blueprints_to_export:
+        if blueprint.marked:
+            filtered_blueprints.append(blueprint)
+        else:
+            blueprint_instances = blueprints_data.internal_collection_instances.get(blueprint.name, [])
+            # print("INSTANCES", blueprint_instances, blueprints_data.internal_collection_instances)
+            # marked blueprints that have changed are always exported, regardless of whether they are in use (have instances) or not 
+            for blueprint_instance in blueprint_instances:
+                combine_mode = blueprint_instance['_combine'] if '_combine' in blueprint_instance else collection_instances_combine_mode
+                if combine_mode == "Split": # we only keep changed blueprints if mode is set to split for at least one instance (aka if ALL instances of a blueprint are merged, do not export ? )  
+                    filtered_blueprints.append(blueprint)
+
+        blueprints_to_export =  list(set(filtered_blueprints))
+
     
     # changed/all blueprints to export     
     return (blueprints_to_export)

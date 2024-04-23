@@ -50,7 +50,9 @@ def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
         # here we do a bit of workaround by creating an override # TODO: do this at the "UI" level
         export_blueprints_path = os.path.join(folder_path, export_output_folder, getattr(addon_prefs,"export_blueprints_path")) if getattr(addon_prefs,"export_blueprints_path") != '' else folder_path
         #print('addon_prefs', AutoExportGltfAddonPreferences.__annotations__)#)addon_prefs.__annotations__)
-        if hasattr(addon_prefs, "__annotations__") :
+
+        print("collection_instances_combine_mode", addon_prefs.collection_instances_combine_mode)
+        """if hasattr(addon_prefs, "__annotations__") :
             tmp = {}
             for k in AutoExportGltfAddonPreferences.__annotations__:
                 item = AutoExportGltfAddonPreferences.__annotations__[k]
@@ -62,7 +64,7 @@ def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
                 tmp[k] = v
 
             addon_prefs = SimpleNamespace(**tmp) #copy.deepcopy(addon_prefs)
-            addon_prefs.__annotations__ = tmp
+            addon_prefs.__annotations__ = tmp"""
         addon_prefs.export_blueprints_path = export_blueprints_path
         addon_prefs.export_gltf_extension = gltf_extension
         addon_prefs.export_models_path = export_models_path

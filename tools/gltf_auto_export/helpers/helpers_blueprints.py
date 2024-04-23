@@ -7,6 +7,7 @@ class Blueprint:
     def __init__(self, name):
         self.name = name
         self.local = True
+        self.marked = False # If marked as asset or with auto_export flag, always export if changed
         self.scene = None # Not sure, could be usefull for tracking
 
         self.instances = []
@@ -48,6 +49,7 @@ def blueprints_scan(main_scenes, library_scenes, addon_prefs):
 
     blueprints = {}
     blueprints_from_objects = {}
+    blueprint_name_from_instances = {}
     collections = []
     
     # main scenes
@@ -55,15 +57,21 @@ def blueprints_scan(main_scenes, library_scenes, addon_prefs):
     internal_collection_instances = {}
     external_collection_instances = {}
 
+    # meh
+    def add_object_to_collection_instances(collection_name, object, internal=True):
+        collection_category = internal_collection_instances if internal else external_collection_instances
+        if not collection_name in collection_category.keys():
+            #print("ADDING INSTANCE OF", collection_name, "object", object.name, "categ", collection_category)
+            collection_category[collection_name] = [] #.append(collection_name)
+        collection_category[collection_name].append(object)
+
     for scene in main_scenes:# should it only be main scenes ? what about collection instances inside other scenes ?
-        print("scene", scene, scene.name)
         for object in scene.objects:
             #print("object", object.name)
             if object.instance_type == 'COLLECTION':
                 collection = object.instance_collection
                 collection_name = object.instance_collection.name
                 #print("  from collection:", collection_name)
-                print("scene there", scene, scene.name)
 
                 collection_from_library = False
                 for library_scene in library_scenes: # should be only in library scenes
@@ -71,12 +79,8 @@ def blueprints_scan(main_scenes, library_scenes, addon_prefs):
                     if collection_from_library:
                         break
 
-                collection_category = internal_collection_instances if collection_from_library else external_collection_instances 
-                if not collection_name in collection_category.keys():
-                    #print("ADDING INSTANCE OF", collection_name, "object", object.name, "categ", collection_category)
-                    collection_category[collection_name] = [] #.append(collection_name)
-                collection_category[collection_name].append(object)
-
+                add_object_to_collection_instances(collection_name=collection_name, object=object, internal = collection_from_library)
+                
                 # experiment with custom properties from assets stored in other blend files
                 """if not collection_from_library:
                     for property_name in object.keys():
@@ -86,11 +90,14 @@ def blueprints_scan(main_scenes, library_scenes, addon_prefs):
 
                 # blueprints[collection_name].instances.append(object)
 
-                print("bla", scene.name)
                 # FIXME: this only account for direct instances of blueprints, not for any nested blueprint inside a blueprint
                 if scene.name not in blueprint_instances_per_main_scene.keys():
-                    blueprint_instances_per_main_scene[scene.name] = []
-                blueprint_instances_per_main_scene[scene.name].append(collection_name)
+                    blueprint_instances_per_main_scene[scene.name] = {}
+                if collection_name not in blueprint_instances_per_main_scene[scene.name].keys():
+                    blueprint_instances_per_main_scene[scene.name][collection_name] = []
+                blueprint_instances_per_main_scene[scene.name][collection_name].append(object)
+
+                blueprint_name_from_instances[object] = collection_name
                 
                 """# add any indirect ones
                 # FIXME: needs to be recursive, either here or above
@@ -119,12 +126,19 @@ def blueprints_scan(main_scenes, library_scenes, addon_prefs):
             ):
             blueprint = Blueprint(collection.name)
             blueprint.local = True
+            blueprint.marked = 'AutoExport' in collection and collection['AutoExport'] == True or export_marked_assets and collection.asset_data is not None
             blueprint.objects = [object.name for object in collection.all_objects if not object.instance_type == 'COLLECTION'] # inneficient, double loop
             blueprint.nested_blueprints = [object.instance_collection.name for object in collection.all_objects if object.instance_type == 'COLLECTION'] # FIXME: not precise enough, aka "what is a blueprint"
             blueprint.collection = collection
             blueprint.instances = internal_collection_instances[collection.name] if collection.name in internal_collection_instances else []
             blueprint.scene = defined_in_scene
             blueprints[collection.name] = blueprint
+
+            # add nested collections to internal/external_collection instances 
+            # FIXME: inneficient, third loop over all_objects
+            for object in collection.all_objects:
+                if object.instance_type == 'COLLECTION':
+                    add_object_to_collection_instances(collection_name=object.instance_collection.name, object=object, internal = blueprint.local)
 
             # now create reverse lookup , so you can find the collection from any of its contained objects
             for object in collection.all_objects:
@@ -133,17 +147,23 @@ def blueprints_scan(main_scenes, library_scenes, addon_prefs):
         #
         collections.append(collection)
 
-    # add any collection that has an instance in the main scenes, but is not present in any of the scenes (IE NON LOCAL)
+    # add any collection that has an instance in the main scenes, but is not present in any of the scenes (IE NON LOCAL/ EXTERNAL)
     for collection_name in external_collection_instances:
         collection = bpy.data.collections[collection_name]
         blueprint = Blueprint(collection.name)
         blueprint.local = False
+        blueprint.marked = True #external ones are always marked, as they have to have been marked in their original file #'AutoExport' in collection and collection['AutoExport'] == True
         blueprint.objects = [object.name for object in collection.all_objects if not object.instance_type == 'COLLECTION'] # inneficient, double loop
         blueprint.nested_blueprints = [object.instance_collection.name for object in collection.all_objects if object.instance_type == 'COLLECTION'] # FIXME: not precise enough, aka "what is a blueprint"
         blueprint.collection = collection
         blueprint.instances = external_collection_instances[collection.name] if collection.name in external_collection_instances else []
-
         blueprints[collection.name] = blueprint
+
+        # add nested collections to internal/external_collection instances 
+        # FIXME: inneficient, third loop over all_objects
+        """for object in collection.all_objects:
+            if object.instance_type == 'COLLECTION':
+                add_object_to_collection_instances(collection_name=object.instance_collection.name, object=object, internal = blueprint.local)"""
 
         # now create reverse lookup , so you can find the collection from any of its contained objects
         for object in collection.all_objects:
@@ -154,6 +174,7 @@ def blueprints_scan(main_scenes, library_scenes, addon_prefs):
     # TODO: do this recursively
     for blueprint_name in list(blueprints.keys()):
         parent_blueprint = blueprints[blueprint_name]
+
         for nested_blueprint_name in parent_blueprint.nested_blueprints:
             if not nested_blueprint_name in blueprints.keys():
                 collection = bpy.data.collections[nested_blueprint_name]
@@ -166,6 +187,7 @@ def blueprints_scan(main_scenes, library_scenes, addon_prefs):
                 blueprint.scene = parent_blueprint.scene if parent_blueprint.local else None
                 blueprints[collection.name] = blueprint
 
+
                 # now create reverse lookup , so you can find the collection from any of its contained objects
                 for object in collection.all_objects:
                     blueprints_from_objects[object.name] = blueprint#collection.name
@@ -173,7 +195,7 @@ def blueprints_scan(main_scenes, library_scenes, addon_prefs):
 
     blueprints = dict(sorted(blueprints.items()))
 
-    print("BLUEPRINTS")
+    '''print("BLUEPRINTS")
     for blueprint_name in blueprints:
         print(" ", blueprints[blueprint_name])
 
@@ -181,7 +203,7 @@ def blueprints_scan(main_scenes, library_scenes, addon_prefs):
     print(blueprints_from_objects)"""
 
     print("BLUEPRINT INSTANCES PER MAIN SCENE")
-    print(blueprint_instances_per_main_scene)
+    print(blueprint_instances_per_main_scene)'''
 
 
     """changes_test = {'Library': {
@@ -247,7 +269,9 @@ def blueprints_scan(main_scenes, library_scenes, addon_prefs):
 
         # not sure about these two
         "internal_collection_instances": internal_collection_instances,
-        "external_collection_instances":external_collection_instances,
+        "external_collection_instances": external_collection_instances,
+
+        "blueprint_name_from_instances": blueprint_name_from_instances
     }
 
     return SimpleNamespace(**data)
@@ -257,7 +281,7 @@ import json
 from .object_makers import (make_empty)
 
 def inject_blueprints_list_into_main_scene(scene, blueprints_data):
-    print("injecting assets/blueprints data into scene")
+    # print("injecting assets/blueprints data into scene")
     root_collection = scene.collection
     assets_list = None
     assets_list_name = f"assets_list_{scene.name}_components"
@@ -272,13 +296,11 @@ def inject_blueprints_list_into_main_scene(scene, blueprints_data):
     blueprint_names_for_scene = blueprints_data.blueprint_instances_per_main_scene.get(scene.name, None)
     # find all blueprints used in a scene
     if blueprint_names_for_scene: # what are the blueprints used in this scene, inject those into the assets list component
-        print("blueprint_names_for_scene", blueprint_names_for_scene)
         children_per_blueprint = {}
         for blueprint_name in blueprint_names_for_scene:
             blueprint = blueprints_data.blueprints_per_name.get(blueprint_name, None)
             if blueprint:
                 children_per_blueprint[blueprint_name] = blueprint.nested_blueprints
-        print("new logic blueprints list", children_per_blueprint)
         assets_list["BlueprintsList"] = f"({json.dumps(dict(children_per_blueprint))})"
 
 def remove_blueprints_list_from_main_scene(scene):

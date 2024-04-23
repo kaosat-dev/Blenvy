@@ -94,7 +94,7 @@ def copy_animation_data(source, target):
 def duplicate_object(object, parent, combine_mode, destination_collection, blueprints_data, legacy_mode, nester=""):
     copy = None
     internal_blueprint_names = [blueprint.name for blueprint in blueprints_data.internal_blueprints]
-    print("COMBINE MODE", combine_mode)
+    # print("COMBINE MODE", combine_mode)
     if object.instance_type == 'COLLECTION' and (combine_mode == 'Split' or (combine_mode == 'EmbedExternal' and (object.instance_collection.name in internal_blueprint_names)) ): 
         #print("creating empty for", object.name, object.instance_collection.name, internal_blueprint_names, combine_mode)
         collection_name = object.instance_collection.name
@@ -114,7 +114,6 @@ def duplicate_object(object, parent, combine_mode, destination_collection, bluep
             blueprint = blueprints_data.blueprints_per_name.get(blueprint_name, None)
             if blueprint:
                 children_per_blueprint[blueprint_name] = blueprint.nested_blueprints
-            print("new logic blueprints list", children_per_blueprint)
             empty_obj["BlueprintsList"] = f"({json.dumps(dict(children_per_blueprint))})"
         
         # we copy custom properties over from our original object to our empty
@@ -123,13 +122,12 @@ def duplicate_object(object, parent, combine_mode, destination_collection, bluep
                 empty_obj[component_name] = component_value
         copy = empty_obj
     else:
-        # for objects which are NOT collection instances     
+        # for objects which are NOT collection instances or when embeding
         # we create a copy of our object and its children, to leave the original one as it is
         original_name = object.name
         object.name = original_name + "____bak"
         copy = object.copy()
         copy.name = original_name
-
 
         destination_collection.objects.link(copy)
 

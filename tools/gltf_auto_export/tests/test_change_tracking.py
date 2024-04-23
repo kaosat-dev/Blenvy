@@ -201,15 +201,28 @@ def test_export_change_tracking_custom_properties_collection_instances_combine_m
     assert os.path.exists(world_file_path) == True
 
     models_library_path = os.path.join(models_path, "library")
-    model_library_file_paths = list(map(lambda file_name: os.path.join(models_library_path, file_name), sorted(os.listdir(models_library_path))))
-    modification_times_first = list(map(lambda file_path: os.path.getmtime(file_path), model_library_file_paths + [world_file_path]))
+
+    blueprint1_file_path = os.path.join(models_library_path, "Blueprint1.glb")
+    assert os.path.exists(blueprint1_file_path) == False
+
 
     mapped_files_to_timestamps_and_index = {}
-    for (index, file_path) in enumerate(model_library_file_paths+ [world_file_path]):
+    model_library_file_paths = []
+    all_files_paths = []
+    if os.path.exists(models_library_path):
+        model_library_file_paths = list(map(lambda file_name: os.path.join(models_library_path, file_name), sorted(os.listdir(models_library_path))))
+        all_files_paths = model_library_file_paths + [world_file_path]
+    else:
+        all_files_paths = [world_file_path]
+
+    modification_times_first = list(map(lambda file_path: os.path.getmtime(file_path), all_files_paths))
+
+    for (index, file_path) in enumerate(all_files_paths):
         file_path = pathlib.Path(file_path).stem
         mapped_files_to_timestamps_and_index[file_path] = (modification_times_first[index], index)
 
     # now add a custom property to the cube in the library scene & export again
+    # this should trigger changes in the main scene as well since the mode is embed & this blueprints has an instance in the main scene
     print("----------------")
     print("library change (custom property)")
     print("----------------")
@@ -225,9 +238,13 @@ def test_export_change_tracking_custom_properties_collection_instances_combine_m
         export_legacy_mode=False,
         export_materials_library=False
     )
-
+    
     modification_times = list(map(lambda file_path: os.path.getmtime(file_path), model_library_file_paths + [world_file_path]))
     assert modification_times != modification_times_first
+
+    # there should not be a "Blueprint1" file
+    assert os.path.exists(blueprint1_file_path) == False
+
     # only the "world" file should have changed
     world_file_index = mapped_files_to_timestamps_and_index["World"][1]
     other_files_modification_times = [value for index, value in enumerate(modification_times) if index not in [world_file_index]]
@@ -235,6 +252,65 @@ def test_export_change_tracking_custom_properties_collection_instances_combine_m
 
     assert modification_times[world_file_index] != modification_times_first[world_file_index]
     assert other_files_modification_times == other_files_modification_times_first
+
+    # reset the comparing 
+    modification_times_first = modification_times
+
+
+    # now we set the _combine mode of the instance to "split", so auto_export should:
+    # * not take the changes into account in the main scene
+    # * export the blueprint (so file for Blueprint1 will be changed)
+    bpy.data.objects["Blueprint1"]["_combine"] = "Split"
+
+    # but first do an export so that the changes to _combine are not taken into account
+    auto_export_operator(
+        auto_export=True,
+        direct_mode=True,
+        export_output_folder="./models",
+        export_scene_settings=True,
+        export_blueprints=True,
+        export_legacy_mode=False,
+        export_materials_library=False
+    )
+    modification_times_first = modification_times = list(map(lambda file_path: os.path.getmtime(file_path), model_library_file_paths + [world_file_path]))
+
+    print("----------------")
+    print("library change (custom property, forced 'Split' combine mode )")
+    print("----------------")
+
+    bpy.data.objects["Blueprint1_mesh"]["test_property"] = 151
+
+    auto_export_operator(
+        auto_export=True,
+        direct_mode=True,
+        export_output_folder="./models",
+        export_scene_settings=True,
+        export_blueprints=True,
+        export_legacy_mode=False,
+        export_materials_library=False
+    )
+    
+    modification_times = list(map(lambda file_path: os.path.getmtime(file_path), model_library_file_paths + [world_file_path]))
+    assert modification_times != modification_times_first
+
+    # the "world" file should have changed
+    world_file_index = mapped_files_to_timestamps_and_index["World"][1]
+
+    # the "Blueprint1" file should now exist
+    assert os.path.exists(blueprint1_file_path) == True
+
+    # and the "Blueprint1" file too
+    #blueprint1_file_index = mapped_files_to_timestamps_and_index["Blueprint1"][1]
+
+    other_files_modification_times = [value for index, value in enumerate(modification_times) if index not in [world_file_index]]
+    other_files_modification_times_first = [value for index, value in enumerate(modification_times_first) if index not in [world_file_index]]
+
+    assert modification_times[world_file_index] != modification_times_first[world_file_index]
+    #assert modification_times[blueprint1_file_index] != modification_times_first[blueprint1_file_index]
+
+    assert other_files_modification_times == other_files_modification_times_first
+
+
 
 def test_export_change_tracking_light_properties(setup_data):
     root_path = "../../testing/bevy_example"
@@ -745,7 +821,6 @@ def test_export_various_chained_changes(setup_data):
     print("----------------")
     print("library change (nested blueprint) ")
     print("----------------")
-    bpy.context.window_manager.auto_export_tracker.enable_change_detection() # FIXME: should not be needed, but ..
 
     bpy.data.objects["Blueprint3_mesh"].location= [0, 0.1 ,2]
 

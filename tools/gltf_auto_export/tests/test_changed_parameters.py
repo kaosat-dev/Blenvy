@@ -56,9 +56,12 @@ def test_export_no_parameters(setup_data):
     models_path = os.path.join(assets_root_path, "models")
     auto_export_operator = bpy.ops.export_scenes.auto_gltf
 
+    # make sure to clear any parameters first
+    stored_auto_settings = bpy.data.texts[".gltf_auto_export_settings"] if ".gltf_auto_export_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_settings")
+    stored_auto_settings.clear()
+    stored_auto_settings.write(json.dumps({}))
 
     # first test exporting withouth any parameters set, this should not export anything
-    
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
@@ -160,8 +163,6 @@ def test_export_changed_parameters(setup_data):
     modification_times_no_change = list(map(lambda file_path: os.path.getmtime(file_path), model_library_file_paths))
     assert modification_times_no_change == modification_times_first
 
-
-
     # export again, this time changing the gltf settings
     print("third export, changed gltf parameters")
 
@@ -188,7 +189,7 @@ def test_export_changed_parameters(setup_data):
     assert modification_times_changed_gltf != modification_times_first
     modification_times_first = modification_times_changed_gltf
 
-    # now run it again, withouth changes, timestamps should be identical
+    # now run it again, without changes, timestamps should be identical
 
     auto_export_operator(
         auto_export=True,
@@ -242,11 +243,9 @@ def test_export_changed_parameters(setup_data):
         export_scene_settings=True,
         export_blueprints=True,
         export_legacy_mode=False,
-        export_materials_library=True
+        export_materials_library=False
     )
 
     modification_times_changed_gltf = list(map(lambda file_path: os.path.getmtime(file_path), model_library_file_paths))
     assert modification_times_changed_gltf == modification_times_first
     modification_times_first = modification_times_changed_gltf
-
-
