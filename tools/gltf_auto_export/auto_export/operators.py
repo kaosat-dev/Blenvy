@@ -35,7 +35,6 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
     
     #list of settings (other than purely gltf settings) whose change should trigger a re-generation of gltf files
     white_list = ['auto_export',
-        'export_main_scene_name',
         'export_output_folder',
         'export_library_scene_name',
         'export_change_detection',
@@ -50,7 +49,6 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
         'export_materials_path',
 
         'export_scene_settings'
-        'export_legacy_mode'
         ]
 
     @classmethod
@@ -306,7 +304,6 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
 
 
     def execute(self, context):    
-        print("execute", self.directory)
         bpy.context.window_manager.auto_export_tracker.disable_change_detection()
         if self.direct_mode:
             self.load_settings(context)
@@ -339,7 +336,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
         self.load_settings(context)
         wm = context.window_manager
         #wm.fileselect_add(self)
-        return context.window_manager.invoke_props_dialog(self, title="Auto export", width=600)
+        return context.window_manager.invoke_props_dialog(self, title="Auto export", width=640)
         #context.window_manager.modal_handler_add(self)    
 
         return {'RUNNING_MODAL'}
@@ -373,9 +370,8 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
             section.enabled = controls_enabled
  
             section.prop(self, "root_folder")
-            section.prop(operator, "export_output_folder")
+            section.prop(operator, "export_output_folder", text="Export Folder relative to root")
             section.prop(operator, "export_scene_settings")
-            section.prop(operator, "export_legacy_mode")
             """header, panel = layout.panel("my_panel_id", default_closed=False)
             header.label(text="Hello World")
             if panel:
@@ -439,14 +435,21 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
             section.prop(operator, "export_blueprints")
             section = section.box()
             section.enabled = controls_enabled and self.export_blueprints
+
             # collections/blueprints 
             section.prop(operator, "export_blueprints_path")
             section.prop(operator, "collection_instances_combine_mode")
             section.prop(operator, "export_marked_assets")
+            section.separator()
+
+            section.prop(operator, "export_levels_path")
             section.prop(operator, "export_separate_dynamic_and_static_objects")
             section.separator()
+
             # materials
             section.prop(operator, "export_materials_library")
+            section = section.box()
+            section.enabled = controls_enabled and self.export_materials_library
             section.prop(operator, "export_materials_path")
 
 

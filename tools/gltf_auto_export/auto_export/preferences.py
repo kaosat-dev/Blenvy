@@ -12,7 +12,6 @@ from .internals import (CUSTOM_PG_sceneName)
 
 AutoExportGltfPreferenceNames = [
     'auto_export',
-    'export_main_scene_name',
     'export_output_folder',
     'export_library_scene_name',
     'export_change_detection',
@@ -23,7 +22,6 @@ AutoExportGltfPreferenceNames = [
     'export_marked_assets',
     'collection_instances_combine_mode',
     'export_separate_dynamic_and_static_objects',
-    'export_legacy_mode',
 
     'export_materials_library',
     'export_materials_path',
@@ -65,6 +63,13 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         default=False
     ) # type: ignore
 
+
+    auto_export: BoolProperty(
+        name='Auto export',
+        description='Automatically export to gltf on save',
+        default=False
+    ) # type: ignore
+
     #### general
     # for UI only, workaround for lacking panels
     show_general_settings: BoolProperty(
@@ -77,22 +82,13 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         name = "Project Root Path",
         description="The root folder of your (Bevy) project (not assets!)",
         subtype='DIR_PATH',
+        default='../',
         update=on_export_output_folder_updated) # type: ignore
-
-    auto_export: BoolProperty(
-        name='Auto export',
-        description='Automatically export to gltf on save',
-        default=False
-    ) # type: ignore
-    export_main_scene_name: StringProperty(
-        name='Main scene',
-        description='The name of the main scene/level/world to auto export',
-        default='Scene'
-    ) # type: ignore
+    
     export_output_folder: StringProperty(
-        name='Export folder (relative)',
-        description='The root folder for all exports(relative to current file) Defaults to current folder',
-        default='',
+        name='Export folder',
+        description='The root folder for all exports(relative to the root folder/path) Defaults to "assets" ',
+        default='./assets',
         subtype='DIR_PATH',
         options={'HIDDEN'},
         update=on_export_output_folder_updated
@@ -136,11 +132,27 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         description='Replaces collection instances with an Empty with a BlueprintName custom property',
         default=True
     ) # type: ignore
+
     export_blueprints_path: StringProperty(
         name='Blueprints path',
-        description='path to export the blueprints to (relative to the Export folder)',
-        default='library',
+        description='path to export the blueprints to (relative to the export folder)',
+        default='./blueprints',
         subtype='DIR_PATH'
+    ) # type: ignore
+
+    export_levels_path: StringProperty(
+        name='Levels path',
+        description='path to export the levels (main scenes) to (relative to the export folder)',
+        default='./levels',
+        subtype='DIR_PATH'
+    ) # type: ignore
+
+    export_separate_dynamic_and_static_objects: BoolProperty(
+        name="Export levels' dynamic and static objects seperatly",
+        description="""For MAIN scenes only (aka levels), toggle this to generate 2 files per level: 
+            - one with all dynamic data: collection or instances marked as dynamic/ saveable
+            - one with all static data: anything else that is NOT marked as dynamic""",
+        default=False
     ) # type: ignore
 
     export_materials_library: BoolProperty(
@@ -150,8 +162,8 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
     ) # type: ignore
     export_materials_path: StringProperty(
         name='Materials path',
-        description='path to export the materials libraries to (relative to the root folder)',
-        default='materials',
+        description='path to export the materials libraries to (relative to the export folder)',
+        default='./materials',
         subtype='DIR_PATH'
     ) # type: ignore
 
@@ -177,20 +189,6 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
     export_marked_assets: BoolProperty(
         name='Auto export marked assets',
         description='Collections that have been marked as assets will be systematically exported, even if not in use in another scene',
-        default=True
-    ) # type: ignore
-
-    export_separate_dynamic_and_static_objects: BoolProperty(
-        name='Export dynamic and static objects seperatly',
-        description="""For MAIN scenes only (aka levels), toggle this to generate 2 files per level: 
-            - one with all dynamic data: collection or instances marked as dynamic/ saveable
-            - one with all static data: anything else that is NOT marked as dynamic""",
-        default=False
-    ) # type: ignore
-
-    export_legacy_mode: BoolProperty(
-        name='Legacy mode for Bevy',
-        description='Toggle this if you want to be compatible with bevy_gltf_blueprints/components < 0.8',
         default=True
     ) # type: ignore
 

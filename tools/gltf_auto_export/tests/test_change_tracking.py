@@ -114,7 +114,6 @@ def test_export_change_tracking_custom_properties(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=False
     )
 
@@ -143,7 +142,6 @@ def test_export_change_tracking_custom_properties(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=False
     )
 
@@ -193,7 +191,6 @@ def test_export_change_tracking_custom_properties_collection_instances_combine_m
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=False
     )
 
@@ -235,7 +232,6 @@ def test_export_change_tracking_custom_properties_collection_instances_combine_m
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=False
     )
     
@@ -269,7 +265,6 @@ def test_export_change_tracking_custom_properties_collection_instances_combine_m
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=False
     )
     modification_times_first = modification_times = list(map(lambda file_path: os.path.getmtime(file_path), model_library_file_paths + [world_file_path]))
@@ -286,7 +281,6 @@ def test_export_change_tracking_custom_properties_collection_instances_combine_m
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=False
     )
     
@@ -346,7 +340,6 @@ def test_export_change_tracking_light_properties(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=False
     )
 
@@ -374,7 +367,6 @@ def test_export_change_tracking_light_properties(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=False
     )
 
@@ -403,7 +395,6 @@ def test_export_change_tracking_light_properties(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=False
     )
 
@@ -432,7 +423,6 @@ def test_export_change_tracking_light_properties(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=False
     )
 
@@ -481,7 +471,6 @@ def test_export_change_tracking_camera_properties(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=False
     )
 
@@ -509,7 +498,6 @@ def test_export_change_tracking_camera_properties(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=False
     )
 
@@ -558,7 +546,6 @@ def test_export_change_tracking_material_properties(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=False
     )
 
@@ -586,7 +573,6 @@ def test_export_change_tracking_material_properties(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=False
     )
 
@@ -619,7 +605,6 @@ def test_export_change_tracking_material_properties(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=False
     )
 
@@ -652,7 +637,6 @@ def test_export_change_tracking_material_properties(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=False
     )
 
@@ -715,7 +699,6 @@ def test_export_various_chained_changes(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=False
     )
 
@@ -745,7 +728,6 @@ def test_export_various_chained_changes(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=False
     )
 
@@ -766,7 +748,6 @@ def test_export_various_chained_changes(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=False
     )
 
@@ -797,7 +778,6 @@ def test_export_various_chained_changes(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=False
     )
 
@@ -830,7 +810,6 @@ def test_export_various_chained_changes(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=False
     )
 
@@ -872,7 +851,6 @@ def test_export_various_chained_changes(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=False
     )
 

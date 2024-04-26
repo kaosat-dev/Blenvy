@@ -144,7 +144,6 @@ class GLTF_PT_auto_export_general(bpy.types.Panel):
         layout.active = operator.auto_export
         layout.prop(operator, "export_output_folder")
         layout.prop(operator, "export_scene_settings")
-        layout.prop(operator, "export_legacy_mode")
 
 
 class GLTF_PT_auto_export_change_detection(bpy.types.Panel):

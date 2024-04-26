@@ -66,7 +66,6 @@ def test_export_no_parameters(setup_data):
         auto_export=True,
         direct_mode=True,
         export_output_folder="./models",
-        export_legacy_mode=False,
         export_materials_library=True
     )
 
@@ -93,7 +92,6 @@ def test_export_auto_export_parameters_only(setup_data):
         auto_export=True,
         direct_mode=True,
         export_output_folder="./models",
-        export_legacy_mode=False,
         export_materials_library=True
     )
 
@@ -134,7 +132,6 @@ def test_export_changed_parameters(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=True
     )
 
@@ -156,7 +153,6 @@ def test_export_changed_parameters(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=True
     )
 
@@ -181,7 +177,6 @@ def test_export_changed_parameters(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=True
     )
 
@@ -197,7 +192,6 @@ def test_export_changed_parameters(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=True
     )
 
@@ -226,7 +220,6 @@ def test_export_changed_parameters(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=False
     )
 
@@ -242,7 +235,6 @@ def test_export_changed_parameters(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_legacy_mode=False,
         export_materials_library=False
     )
 
