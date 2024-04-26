@@ -27,28 +27,31 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
     #filename_ext = ''
     #filepath: bpy.props.StringProperty(subtype="FILE_PATH", default="") # type: ignore
 
-    # Filters folders
-    filter_folder: BoolProperty(
-        default=True,
-        options={"HIDDEN"}
-        ) # type: ignore
-    
     #list of settings (other than purely gltf settings) whose change should trigger a re-generation of gltf files
-    white_list = ['auto_export',
+    white_list = [
+        'auto_export',
+        'export_root_folder',
         'export_output_folder',
-        'export_library_scene_name',
         'export_change_detection',
+        'export_scene_settings',
+
+        'main_scenes',
+        'library_scenes',
+        'main_scenes_index',
+        'library_scenes_index',
+        'main_scene_names',
+        'library_scene_names',
+
         'export_blueprints',
         'export_blueprints_path',
-
         'export_marked_assets',
         'collection_instances_combine_mode',
+
+        'export_levels_path',
         'export_separate_dynamic_and_static_objects',
 
         'export_materials_library',
         'export_materials_path',
-
-        'export_scene_settings'
         ]
 
     @classmethod
@@ -369,9 +372,10 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
             section = layout.box()
             section.enabled = controls_enabled
  
-            section.prop(self, "root_folder")
+            section.prop(self, "export_root_folder")
             section.prop(operator, "export_output_folder", text="Export Folder relative to root")
             section.prop(operator, "export_scene_settings")
+            section.prop(operator, "export_change_detection")
             """header, panel = layout.panel("my_panel_id", default_closed=False)
             header.label(text="Hello World")
             if panel:

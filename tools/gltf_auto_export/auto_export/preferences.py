@@ -11,39 +11,38 @@ from bpy.props import (BoolProperty,
 from .internals import (CUSTOM_PG_sceneName)
 
 AutoExportGltfPreferenceNames = [
+    'will_save_settings',
+    'direct_mode',# specific to main auto_export operator
+
     'auto_export',
+    'export_root_folder',
     'export_output_folder',
-    'export_library_scene_name',
     'export_change_detection',
-
-    'export_blueprints',
-    'export_blueprints_path',
-
-    'export_marked_assets',
-    'collection_instances_combine_mode',
-    'export_separate_dynamic_and_static_objects',
-
-    'export_materials_library',
-    'export_materials_path',
-
     'export_scene_settings',
 
     'main_scenes',
     'library_scenes',
     'main_scenes_index',
     'library_scenes_index',
-
-    'direct_mode',# specific to main auto_export operator
     'main_scene_names',
     'library_scene_names',
-    'previous_export_settings',
-    'will_save_settings',
+
+    'export_blueprints',
+    'export_blueprints_path',
+    'export_marked_assets',
+    'collection_instances_combine_mode',
+
+    'export_levels_path',
+    'export_separate_dynamic_and_static_objects',
+
+    'export_materials_library',
+    'export_materials_path',
 ]
 
 def on_export_output_folder_updated(self, context):
-    #self.root_folder = os.path.relpath(self.root_folder)
-    #self.export_output_folder = os.path.join(self.root_folder, self.export_output_folder)
-    print("on_foo_updated", self.root_folder, self.export_output_folder)
+    #self.export_root_folder = os.path.relpath(self.export_root_folder)
+    #self.export_output_folder = os.path.join(self.export_root_folder, self.export_output_folder)
+    print("on_foo_updated", self.export_root_folder, self.export_output_folder)
 
 class AutoExportGltfAddonPreferences(AddonPreferences):
     # this must match the add-on name, use '__package__'
@@ -78,7 +77,7 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         default=True
     ) # type: ignore
 
-    root_folder: StringProperty(
+    export_root_folder: StringProperty(
         name = "Project Root Path",
         description="The root folder of your (Bevy) project (not assets!)",
         subtype='DIR_PATH',
@@ -102,16 +101,12 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         default=True
     ) # type: ignore 
 
-    export_library_scene_name: StringProperty(
-        name='Library scene',
-        description='The name of the library scene to auto export',
-        default='Library'
-    ) # type: ignore
     export_change_detection: BoolProperty(
         name='Change detection',
         description='Use change detection to determine what/if should be exported',
         default=True
     ) # type: ignore
+
     # scene components
     export_scene_settings: BoolProperty(
         name='Export scene settings',
