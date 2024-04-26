@@ -2,8 +2,9 @@ import json
 import bpy
 from bpy.types import Operator
 from bpy_extras.io_utils import ExportHelper
-from bpy.props import (IntProperty)
+from bpy.props import (IntProperty, StringProperty, BoolProperty)
 
+#from ..ui.main import GLTF_PT_auto_export_general, GLTF_PT_auto_export_main, GLTF_PT_auto_export_root
 
 from .preferences import (AutoExportGltfAddonPreferences, AutoExportGltfPreferenceNames)
 from .auto_export import auto_export
@@ -16,16 +17,22 @@ def bubble_up_changes(object, changes_per_scene):
         bubble_up_changes(object.parent, changes_per_scene)
 
 
-class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
+class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
     """auto export gltf"""
     #bl_idname = "object.xxx"
     bl_idname = "export_scenes.auto_gltf"
     bl_label = "Apply settings"
     bl_options = {'PRESET'} # we do not add UNDO otherwise it leads to an invisible operation that resets the state of the saved serialized scene, breaking compares for normal undo/redo operations
     # ExportHelper mixin class uses this
-    filename_ext = ''
+    #filename_ext = ''
+    #filepath: bpy.props.StringProperty(subtype="FILE_PATH", default="") # type: ignore
 
-
+    # Filters folders
+    filter_folder: BoolProperty(
+        default=True,
+        options={"HIDDEN"}
+        ) # type: ignore
+    
     #list of settings (other than purely gltf settings) whose change should trigger a re-generation of gltf files
     white_list = ['auto_export',
         'export_main_scene_name',
@@ -299,7 +306,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
 
 
     def execute(self, context):    
-        #print("execute")
+        print("execute", self.directory)
         bpy.context.window_manager.auto_export_tracker.disable_change_detection()
         if self.direct_mode:
             self.load_settings(context)
@@ -327,14 +334,121 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences, ExportHelper):
     
     def invoke(self, context, event):
         #print("invoke")
+
         bpy.context.window_manager.auto_export_tracker.disable_change_detection()
         self.load_settings(context)
         wm = context.window_manager
-        wm.fileselect_add(self)
+        #wm.fileselect_add(self)
+        return context.window_manager.invoke_props_dialog(self, title="Auto export", width=600)
+        #context.window_manager.modal_handler_add(self)    
+
         return {'RUNNING_MODAL'}
     
+    """def modal(self, context, event):
+                    
+        if event.type == 'SPACE':
+            wm = context.window_manager
+            wm.invoke_popup(self)
+            #wm.invoke_props_dialog(self)
+
+        if event.type in {'ESC'}:
+            return {'CANCELLED'}
+
+        return {'RUNNING_MODAL'}"""
+    
+    
     def draw(self, context):
-        pass
+        layout = self.layout
+        operator = self
+
+        controls_enabled = self.auto_export
+        
+        layout.prop(self, "auto_export")
+        layout.separator()
+
+        toggle_icon = "TRIA_DOWN" if self.show_general_settings else "TRIA_RIGHT"
+        layout.prop(self, "show_general_settings", text="General", icon=toggle_icon)
+        if self.show_general_settings:
+            section = layout.box()
+            section.enabled = controls_enabled
+ 
+            section.prop(self, "root_folder")
+            section.prop(operator, "export_output_folder")
+            section.prop(operator, "export_scene_settings")
+            section.prop(operator, "export_legacy_mode")
+            """header, panel = layout.panel("my_panel_id", default_closed=False)
+            header.label(text="Hello World")
+            if panel:
+                panel.label(text="Success")"""
+            
+        # main/level scenes
+        toggle_icon = "TRIA_DOWN" if self.show_scene_settings else "TRIA_RIGHT"
+        layout.prop(operator, "show_scene_settings", text="Scenes", icon=toggle_icon)
+        if self.show_scene_settings:
+            section = layout.box()
+            section.enabled = controls_enabled
+            rows = 2
+            row = section.row()
+            row.label(text="main scenes")
+            row.prop(context.window_manager, "main_scene", text='')
+
+            row = section.row()
+            row.template_list("SCENE_UL_GLTF_auto_export", "level scenes", operator, "main_scenes", operator, "main_scenes_index", rows=rows)
+
+            col = row.column(align=True)
+            sub_row = col.row()
+            add_operator = sub_row.operator("scene_list.list_action", icon='ADD', text="")
+            add_operator.action = 'ADD'
+            add_operator.scene_type = 'level'
+            #add_operator.operator = operator
+            sub_row.enabled = context.window_manager.main_scene is not None
+
+            sub_row = col.row()
+            remove_operator = sub_row.operator("scene_list.list_action", icon='REMOVE', text="")
+            remove_operator.action = 'REMOVE'
+            remove_operator.scene_type = 'level'
+            col.separator()
+
+            # library scenes
+            row = section.row()
+            row.label(text="library scenes")
+            row.prop(context.window_manager, "library_scene", text='')
+
+            row = section.row()
+            row.template_list("SCENE_UL_GLTF_auto_export", "library scenes", operator, "library_scenes", operator, "library_scenes_index", rows=rows)
+
+            col = row.column(align=True)
+            sub_row = col.row()
+            add_operator = sub_row.operator("scene_list.list_action", icon='ADD', text="")
+            add_operator.action = 'ADD'
+            add_operator.scene_type = 'library'
+            sub_row.enabled = context.window_manager.library_scene is not None
+
+
+            sub_row = col.row()
+            remove_operator = sub_row.operator("scene_list.list_action", icon='REMOVE', text="")
+            remove_operator.action = 'REMOVE'
+            remove_operator.scene_type = 'library'
+            col.separator()
+
+        toggle_icon = "TRIA_DOWN" if self.show_blueprint_settings else "TRIA_RIGHT"
+        layout.prop(operator, "show_blueprint_settings", text="Blueprints", icon=toggle_icon)
+        if self.show_blueprint_settings:
+            section = layout.box()
+            section.enabled = controls_enabled
+            section.prop(operator, "export_blueprints")
+            section = section.box()
+            section.enabled = controls_enabled and self.export_blueprints
+            # collections/blueprints 
+            section.prop(operator, "export_blueprints_path")
+            section.prop(operator, "collection_instances_combine_mode")
+            section.prop(operator, "export_marked_assets")
+            section.prop(operator, "export_separate_dynamic_and_static_objects")
+            section.separator()
+            # materials
+            section.prop(operator, "export_materials_library")
+            section.prop(operator, "export_materials_path")
+
 
     def cancel(self, context):
         print("cancel")

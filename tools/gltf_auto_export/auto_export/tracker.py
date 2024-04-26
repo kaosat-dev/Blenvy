@@ -10,7 +10,7 @@ from .did_export_settings_change import did_export_settings_change
 from .get_collections_to_export import get_collections_to_export
 
 from ..constants import TEMPSCENE_PREFIX
-from .internals import CollectionsToExport
+from .internals import BlueprintsToExport
 from ..helpers.helpers_scenes import (get_scenes)
 from .preferences import AutoExportGltfAddonPreferences
 
@@ -40,7 +40,7 @@ class AutoExportTracker(PropertyGroup):
     def register(cls):
         bpy.types.WindowManager.auto_export_tracker = PointerProperty(type=AutoExportTracker)
         # register list of exportable collections
-        bpy.types.WindowManager.exportedCollections = bpy.props.CollectionProperty(type=CollectionsToExport)
+        bpy.types.WindowManager.exportedCollections = bpy.props.CollectionProperty(type=BlueprintsToExport)
 
         # setup handlers for updates & saving
         #bpy.app.handlers.save_post.append(cls.save_handler)

@@ -15,7 +15,7 @@ class CUSTOM_PG_sceneName(bpy.types.PropertyGroup):
 class CollectionToExport(bpy.types.PropertyGroup):
     name: bpy.props.StringProperty(name="")
 
-class CollectionsToExport(bpy.types.PropertyGroup):
+class BlueprintsToExport(bpy.types.PropertyGroup):
     name = bpy.props.StringProperty(name="List of collections to export", default="Unknown")
     items: bpy.props.CollectionProperty(type = CollectionToExport)
 

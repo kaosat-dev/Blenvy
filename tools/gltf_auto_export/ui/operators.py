@@ -14,13 +14,13 @@ class SCENES_LIST_OT_actions(Operator):
             ('UP', "Up", ""),
             ('DOWN', "Down", ""),
             ('REMOVE', "Remove", ""),
-            ('ADD', "Add", "")))
+            ('ADD', "Add", ""))) # type: ignore
     
 
     scene_type: bpy.props.StringProperty()#TODO: replace with enum
 
     def invoke(self, context, event):
-        source = context.space_data.active_operator
+        source = context.active_operator
         target_name = "library_scenes"
         target_index = "library_scenes_index"
         if self.scene_type == "level":

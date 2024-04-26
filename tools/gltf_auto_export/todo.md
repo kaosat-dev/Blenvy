@@ -32,7 +32,7 @@
       BLUEPRINTS LIST {'Blueprint1': [], 'Blueprint6_animated': [], 'Blueprint4_nested': ['Blueprint3'], 'Blueprint3': [], 'Blueprint7_hierarchy': [], 'External_blueprint': [], 'External_blueprint2': ['External_blueprint3'], 'External_blueprint3': [], 'Blueprint8_animated_no_bones': []}
    - [x] internal_collections => replace with "internal_collections" or "local_collections"
    
-- [ ] fix COMBINE MODE passed as int instead of enum value
+- [x] fix COMBINE MODE passed as int instead of enum value
    => comes from our custom logic for add_on prefs
 - [ ] double check compares to "None" values
 

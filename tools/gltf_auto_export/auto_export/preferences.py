@@ -1,6 +1,6 @@
 
+import os
 from bpy.types import AddonPreferences
-
 from bpy.props import (BoolProperty,
                        IntProperty,
                        StringProperty,
@@ -42,6 +42,11 @@ AutoExportGltfPreferenceNames = [
     'will_save_settings',
 ]
 
+def on_export_output_folder_updated(self, context):
+    #self.root_folder = os.path.relpath(self.root_folder)
+    #self.export_output_folder = os.path.join(self.root_folder, self.export_output_folder)
+    print("on_foo_updated", self.root_folder, self.export_output_folder)
+
 class AutoExportGltfAddonPreferences(AddonPreferences):
     # this must match the add-on name, use '__package__'
     # when defining this in a submodule of a python package.
@@ -53,68 +58,102 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         name='Remember Export Settings',
         description='Store glTF export settings in the Blender project',
         default=True
-    )
+    ) # type: ignore
     
     # use when operator is called directly, works a bit differently than inside the ui
     direct_mode: BoolProperty(
         default=False
-    )
+    ) # type: ignore
 
-    ####
+    #### general
+    # for UI only, workaround for lacking panels
+    show_general_settings: BoolProperty(
+        name="show_general settings",
+        description="show/hide general settings (UI only: has no impact on exports)",
+        default=True
+    ) # type: ignore
+
+    root_folder: StringProperty(
+        name = "Project Root Path",
+        description="The root folder of your (Bevy) project (not assets!)",
+        subtype='DIR_PATH',
+        update=on_export_output_folder_updated) # type: ignore
+
     auto_export: BoolProperty(
         name='Auto export',
         description='Automatically export to gltf on save',
         default=False
-    )
+    ) # type: ignore
     export_main_scene_name: StringProperty(
         name='Main scene',
         description='The name of the main scene/level/world to auto export',
         default='Scene'
-    )
+    ) # type: ignore
     export_output_folder: StringProperty(
         name='Export folder (relative)',
         description='The root folder for all exports(relative to current file) Defaults to current folder',
-        default=''
-    )
+        default='',
+        subtype='DIR_PATH',
+        options={'HIDDEN'},
+        update=on_export_output_folder_updated
+    ) # type: ignore
+
+    # scenes 
+    # for UI only, workaround for lacking panels
+    show_scene_settings: BoolProperty(
+        name="show scene settings",
+        description="show/hide scene settings (UI only: has no impact on exports)",
+        default=True
+    ) # type: ignore 
+
     export_library_scene_name: StringProperty(
         name='Library scene',
         description='The name of the library scene to auto export',
         default='Library'
-    )
+    ) # type: ignore
     export_change_detection: BoolProperty(
         name='Change detection',
         description='Use change detection to determine what/if should be exported',
         default=True
-    )
+    ) # type: ignore
     # scene components
     export_scene_settings: BoolProperty(
         name='Export scene settings',
         description='Export scene settings ie AmbientLighting, Bloom, AO etc',
         default=False
-    )
+    ) # type: ignore
 
     # blueprint settings
+    # for UI only, workaround for lacking panels
+    show_blueprint_settings: BoolProperty(
+        name="show blueprint settings",
+        description="show/hide blueprint settings (UI only: has no impact on exports)",
+        default=True
+    ) # type: ignore
+
     export_blueprints: BoolProperty(
         name='Export Blueprints',
         description='Replaces collection instances with an Empty with a BlueprintName custom property',
         default=True
-    )
+    ) # type: ignore
     export_blueprints_path: StringProperty(
         name='Blueprints path',
         description='path to export the blueprints to (relative to the Export folder)',
-        default='library'
-    )
+        default='library',
+        subtype='DIR_PATH'
+    ) # type: ignore
 
     export_materials_library: BoolProperty(
         name='Export materials library',
         description='remove materials from blueprints and use the material library instead',
         default=False
-    )
+    ) # type: ignore
     export_materials_path: StringProperty(
         name='Materials path',
         description='path to export the materials libraries to (relative to the root folder)',
-        default='materials'
-    )
+        default='materials',
+        subtype='DIR_PATH'
+    ) # type: ignore
 
     """ combine mode can be 
               - 'Split' (default): replace with an empty, creating links to sub blueprints 
@@ -133,13 +172,13 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
            #('Inject', 'Inject', 'inject components from sub collection instances into the curent object')
         ),
         default='Split'
-    )
+    ) # type: ignore
 
     export_marked_assets: BoolProperty(
         name='Auto export marked assets',
         description='Collections that have been marked as assets will be systematically exported, even if not in use in another scene',
         default=True
-    )
+    ) # type: ignore
 
     export_separate_dynamic_and_static_objects: BoolProperty(
         name='Export dynamic and static objects seperatly',
@@ -147,16 +186,16 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
             - one with all dynamic data: collection or instances marked as dynamic/ saveable
             - one with all static data: anything else that is NOT marked as dynamic""",
         default=False
-    )
+    ) # type: ignore
 
     export_legacy_mode: BoolProperty(
         name='Legacy mode for Bevy',
         description='Toggle this if you want to be compatible with bevy_gltf_blueprints/components < 0.8',
         default=True
-    )
+    ) # type: ignore
 
-    main_scenes: CollectionProperty(name="main scenes", type=CUSTOM_PG_sceneName)
-    main_scenes_index: IntProperty(name = "Index for main scenes list", default = 0)
+    main_scenes: CollectionProperty(name="main scenes", type=CUSTOM_PG_sceneName) # type: ignore
+    main_scenes_index: IntProperty(name = "Index for main scenes list", default = 0) # type: ignore
 
-    library_scenes: CollectionProperty(name="library scenes", type=CUSTOM_PG_sceneName)
-    library_scenes_index: IntProperty(name = "Index for library scenes list", default = 0)
+    library_scenes: CollectionProperty(name="library scenes", type=CUSTOM_PG_sceneName) # type: ignore
+    library_scenes_index: IntProperty(name = "Index for library scenes list", default = 0) # type: ignore

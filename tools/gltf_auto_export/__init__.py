@@ -28,7 +28,7 @@ from .auto_export.preferences import (AutoExportGltfAddonPreferences)
 from .auto_export.internals import (SceneLink,
                         SceneLinks,
                         CollectionToExport,
-                        CollectionsToExport,
+                        BlueprintsToExport,
                         CUSTOM_PG_sceneName
                         )
 from .ui.main import (GLTF_PT_auto_export_change_detection, GLTF_PT_auto_export_changes_list, GLTF_PT_auto_export_main,
@@ -36,7 +36,7 @@ from .ui.main import (GLTF_PT_auto_export_change_detection, GLTF_PT_auto_export_
                       GLTF_PT_auto_export_general,
                       GLTF_PT_auto_export_scenes,
                       GLTF_PT_auto_export_blueprints,
-                      GLTF_PT_auto_export_collections_list,
+                      GLTF_PT_auto_export_blueprints_list,
                       SCENE_UL_GLTF_auto_export,
 
                       GLTF_PT_auto_export_SidePanel
@@ -108,7 +108,7 @@ classes = [
     #AutoExportGltfAddonPreferences,
 
     CollectionToExport,
-    CollectionsToExport,
+    BlueprintsToExport,
 
     GLTF_PT_auto_export_main,
     GLTF_PT_auto_export_root,
@@ -117,7 +117,7 @@ classes = [
     GLTF_PT_auto_export_scenes,
     GLTF_PT_auto_export_blueprints,
     GLTF_PT_auto_export_SidePanel,
-    GLTF_PT_auto_export_collections_list,
+    GLTF_PT_auto_export_blueprints_list,
     GLTF_PT_auto_export_changes_list,
 
     AutoExportTracker,

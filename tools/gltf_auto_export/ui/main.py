@@ -55,7 +55,7 @@ class GLTF_PT_auto_export_changes_list(bpy.types.Panel):
                 row = layout.row()
                 row.label(text=f'    {object_name}')
 
-class GLTF_PT_auto_export_collections_list(bpy.types.Panel):
+class GLTF_PT_auto_export_blueprints_list(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "Blueprints to export"
