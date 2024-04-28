@@ -13,7 +13,7 @@ pub fn setup_game(
     // here we actually spawn our game world/level
     commands.spawn((
         SceneBundle {
-            scene: asset_server.load("models/World.glb#Scene0"),
+            scene: asset_server.load("levels/World.glb#Scene0"),
             ..default()
         },
         bevy::prelude::Name::from("world"),

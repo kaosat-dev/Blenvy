@@ -31,7 +31,7 @@ pub struct MarkerFox;
 pub struct AnimTest(Handle<Gltf>);
 
 pub fn setup_main_scene_animations(asset_server: Res<AssetServer>, mut commands: Commands) {
-    commands.insert_resource(AnimTest(asset_server.load("models/World.glb")));
+    commands.insert_resource(AnimTest(asset_server.load("levels/World.glb")));
 }
 
 #[allow(clippy::type_complexity)]

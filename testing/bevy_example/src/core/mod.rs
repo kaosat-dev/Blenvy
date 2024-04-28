@@ -9,7 +9,7 @@ impl Plugin for CorePlugin {
             ExportRegistryPlugin::default(),
             BlueprintsPlugin {
                 legacy_mode: false,
-                library_folder: "models/library".into(),
+                library_folder: "blueprints".into(),
                 format: GltfFormat::GLB,
                 material_library: true,
                 aabbs: true,
