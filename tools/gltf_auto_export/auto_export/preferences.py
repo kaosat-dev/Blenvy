@@ -14,12 +14,16 @@ AutoExportGltfPreferenceNames = [
     'will_save_settings',
     'direct_mode',# specific to main auto_export operator
 
+    'show_general_settings',
     'auto_export',
     'export_root_folder',
     'export_output_folder',
-    'export_change_detection',
     'export_scene_settings',
 
+    'show_change_detection_settings',
+    'export_change_detection',
+
+    'show_scene_settings',
     'main_scenes',
     'library_scenes',
     'main_scenes_index',
@@ -27,6 +31,7 @@ AutoExportGltfPreferenceNames = [
     'main_scene_names',
     'library_scene_names',
 
+    'show_blueprint_settings',
     'export_blueprints',
     'export_blueprints_path',
     'export_marked_assets',
@@ -80,17 +85,31 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
     export_root_folder: StringProperty(
         name = "Project Root Path",
         description="The root folder of your (Bevy) project (not assets!)",
-        subtype='DIR_PATH',
-        default='../',
-        update=on_export_output_folder_updated) # type: ignore
+        # subtype='DIR_PATH',
+        default='../'
+        #update=on_export_output_folder_updated) # type: ignore
+    )
     
     export_output_folder: StringProperty(
         name='Export folder',
         description='The root folder for all exports(relative to the root folder/path) Defaults to "assets" ',
         default='./assets',
-        subtype='DIR_PATH',
-        options={'HIDDEN'},
-        update=on_export_output_folder_updated
+        #subtype='DIR_PATH',
+        options={'HIDDEN'}
+        # update=on_export_output_folder_updated
+    ) # type: ignore
+
+    # for UI only, workaround for lacking panels
+    show_change_detection_settings: BoolProperty(
+        name="show change detection settings",
+        description="show/hide change detection settings (UI only: has no impact on exports)",
+        default=True
+    ) # type: ignore 
+
+    export_change_detection: BoolProperty(
+        name='Change detection',
+        description='Use change detection to determine what/if should be exported',
+        default=True
     ) # type: ignore
 
     # scenes 
@@ -100,12 +119,6 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         description="show/hide scene settings (UI only: has no impact on exports)",
         default=True
     ) # type: ignore 
-
-    export_change_detection: BoolProperty(
-        name='Change detection',
-        description='Use change detection to determine what/if should be exported',
-        default=True
-    ) # type: ignore
 
     # scene components
     export_scene_settings: BoolProperty(
@@ -124,22 +137,22 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
 
     export_blueprints: BoolProperty(
         name='Export Blueprints',
-        description='Replaces collection instances with an Empty with a BlueprintName custom property',
+        description='Replaces collection instances with an Empty with a BlueprintName custom property, and enabled a lot more features !',
         default=True
     ) # type: ignore
 
     export_blueprints_path: StringProperty(
         name='Blueprints path',
         description='path to export the blueprints to (relative to the export folder)',
-        default='./blueprints',
-        subtype='DIR_PATH'
+        default='assets/blueprints',
+        #subtype='DIR_PATH'
     ) # type: ignore
 
     export_levels_path: StringProperty(
         name='Levels path',
         description='path to export the levels (main scenes) to (relative to the export folder)',
-        default='./levels',
-        subtype='DIR_PATH'
+        default='assets/levels',
+        #subtype='DIR_PATH'
     ) # type: ignore
 
     export_separate_dynamic_and_static_objects: BoolProperty(
@@ -155,11 +168,12 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         description='remove materials from blueprints and use the material library instead',
         default=False
     ) # type: ignore
+
     export_materials_path: StringProperty(
         name='Materials path',
         description='path to export the materials libraries to (relative to the export folder)',
-        default='./materials',
-        subtype='DIR_PATH'
+        default='assets/materials',
+        #subtype='DIR_PATH'
     ) # type: ignore
 
     """ combine mode can be 

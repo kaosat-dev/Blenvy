@@ -4,6 +4,8 @@ from bpy.types import Operator
 from bpy_extras.io_utils import ExportHelper
 from bpy.props import (IntProperty, StringProperty, BoolProperty)
 
+from ..ui.operators import OT_OpenFolderbrowser, draw_folder_browser
+
 #from ..ui.main import GLTF_PT_auto_export_general, GLTF_PT_auto_export_main, GLTF_PT_auto_export_root
 
 from .preferences import (AutoExportGltfAddonPreferences, AutoExportGltfPreferenceNames)
@@ -35,10 +37,6 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
         'export_change_detection',
         'export_scene_settings',
 
-        'main_scenes',
-        'library_scenes',
-        'main_scenes_index',
-        'library_scenes_index',
         'main_scene_names',
         'library_scene_names',
 
@@ -108,6 +106,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
         return export_props
 
     def save_settings(self, context):
+        print("save settings")
         auto_export_settings = self.format_settings()
         self.properties['main_scene_names'] = auto_export_settings['main_scene_names']
         self.properties['library_scene_names'] = auto_export_settings['library_scene_names']
@@ -121,7 +120,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
         #print("saving settings", bpy.data.texts[".gltf_auto_export_settings"].as_string(), "raw", json.dumps(export_props))
    
     def load_settings(self, context):
-        # print("loading settings")
+        print("loading settings")
         settings = None
         try:
             settings = bpy.data.texts[".gltf_auto_export_settings"].as_string()
@@ -160,6 +159,8 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
                 print("error", error)
                 self.report({"ERROR"}, "Loading export settings failed. Removed corrupted settings")
                 bpy.data.texts.remove(bpy.data.texts[".gltf_auto_export_settings"])
+        else:
+            self.will_save_settings = True
 
     """
     This should ONLY be run when actually doing exports/aka calling auto_export function, because we only care about the difference in settings between EXPORTS
@@ -312,7 +313,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
             self.load_settings(context)
         if self.will_save_settings:
             self.save_settings(context)
-
+        #print("self", self.auto_export)
         if self.auto_export: # only do the actual exporting if auto export is actually enabled
             #changes_per_scene = context.window_manager.auto_export_tracker.changed_objects_per_scene
 
@@ -334,14 +335,11 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
     
     def invoke(self, context, event):
         #print("invoke")
-
         bpy.context.window_manager.auto_export_tracker.disable_change_detection()
         self.load_settings(context)
         wm = context.window_manager
         #wm.fileselect_add(self)
         return context.window_manager.invoke_props_dialog(self, title="Auto export", width=640)
-        #context.window_manager.modal_handler_add(self)    
-
         return {'RUNNING_MODAL'}
     
     """def modal(self, context, event):
@@ -372,15 +370,25 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
             section = layout.box()
             section.enabled = controls_enabled
  
-            section.prop(self, "export_root_folder")
-            section.prop(operator, "export_output_folder", text="Export Folder relative to root")
+            draw_folder_browser(section, "Export root folder", self.export_root_folder, "export_root_folder")
+            row = section.row()
+            draw_folder_browser(row, "Assets Folder (non blueprints mode only)", self.export_root_folder, "export_output_folder")
+            row.enabled = not self.export_blueprints
+            section.prop(operator, "export_blueprints")
             section.prop(operator, "export_scene_settings")
-            section.prop(operator, "export_change_detection")
+
             """header, panel = layout.panel("my_panel_id", default_closed=False)
             header.label(text="Hello World")
             if panel:
                 panel.label(text="Success")"""
             
+        toggle_icon = "TRIA_DOWN" if self.show_change_detection_settings else "TRIA_RIGHT"
+        layout.prop(operator, "show_change_detection_settings", text="Change Detection", icon=toggle_icon)
+        if self.show_change_detection_settings:
+            section = layout.box()
+            section.enabled = controls_enabled
+            section.prop(operator, "export_change_detection", text="Use change detection")
+
         # main/level scenes
         toggle_icon = "TRIA_DOWN" if self.show_scene_settings else "TRIA_RIGHT"
         layout.prop(operator, "show_scene_settings", text="Scenes", icon=toggle_icon)
@@ -436,17 +444,19 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
         if self.show_blueprint_settings:
             section = layout.box()
             section.enabled = controls_enabled
-            section.prop(operator, "export_blueprints")
             section = section.box()
             section.enabled = controls_enabled and self.export_blueprints
 
             # collections/blueprints 
-            section.prop(operator, "export_blueprints_path")
+            draw_folder_browser(section, "Blueprints folder", self.export_root_folder, "export_blueprints_path")
+            #section.prop(operator, "export_blueprints_path")
             section.prop(operator, "collection_instances_combine_mode")
             section.prop(operator, "export_marked_assets")
             section.separator()
 
-            section.prop(operator, "export_levels_path")
+            draw_folder_browser(section, "Levels folder", self.export_root_folder, "export_levels_path")
+            #section.prop(operator, "export_levels_path")
+
             section.prop(operator, "export_separate_dynamic_and_static_objects")
             section.separator()
 
@@ -454,7 +464,8 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
             section.prop(operator, "export_materials_library")
             section = section.box()
             section.enabled = controls_enabled and self.export_materials_library
-            section.prop(operator, "export_materials_path")
+            draw_folder_browser(section, 'Materials folder', self.export_root_folder, "export_materials_path")
+            #section.prop(operator, "export_materials_path")
 
 
     def cancel(self, context):

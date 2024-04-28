@@ -81,3 +81,86 @@ class SCENES_LIST_OT_actions(Operator):
         return {"FINISHED"}
 
 
+import os
+from bpy_extras.io_utils import ImportHelper
+
+class OT_OpenFolderbrowser(Operator, ImportHelper):
+    """Browse for registry json file"""
+    bl_idname = "generic.open_folderbrowser" 
+    bl_label = "Select folder" 
+
+    # Define this to tell 'fileselect_add' that we want a directoy
+    directory: bpy.props.StringProperty(
+        name="Outdir Path",
+        description="selected folder"
+        # subtype='DIR_PATH' is not needed to specify the selection mode.
+        # But this will be anyway a directory path.
+        ) # type: ignore
+
+    # Filters folders
+    filter_folder: bpy.props.BoolProperty(
+        default=True,
+        options={"HIDDEN"}
+        ) # type: ignore
+    
+    target_property: bpy.props.StringProperty(
+        name="target_property",
+        options={'HIDDEN'}
+    ) # type: ignore
+    
+    def execute(self, context): 
+        """Do something with the selected file(s)."""
+        operator = context.active_operator
+        new_path = self.directory
+        target_path_name = self.target_property
+
+        # path to the current blend file
+        blend_file_path = bpy.data.filepath
+        # Get the folder
+        blend_file_folder_path = os.path.dirname(blend_file_path)
+        print("blend_file_folder_path", blend_file_folder_path)
+
+        print("new_path", self.directory, self.target_property, operator)
+
+        path_names = ['export_output_folder', 'export_blueprints_path', 'export_levels_path', 'export_materials_path']
+        export_root_folder = operator.export_root_folder
+        #export_root_path_absolute = os.path.join(blend_file_folder_path, export_root_folder)
+
+        if target_path_name == 'export_root_folder':
+            print("changing root new_path")
+            # we need to change all other relative paths before setting the new absolute path
+            for path_name in path_names:
+                # get absolute path
+                relative_path = getattr(operator, path_name, None)
+                if relative_path is not None:
+                    absolute_path = os.path.join(export_root_folder, relative_path)
+                    print("absolute path for", path_name, absolute_path)
+                    relative_path = os.path.relpath(absolute_path, new_path)
+                    setattr(operator, path_name, relative_path)
+
+            # store the root path as relative to the current blend file
+            setattr(operator, target_path_name, new_path)
+
+        else:
+            relative_path = os.path.relpath(new_path, export_root_folder)
+            setattr(operator, target_path_name, relative_path)
+
+        #filename, extension = os.path.splitext(self.filepath) 
+      
+        
+        return {'FINISHED'}
+    
+def draw_folder_browser(layout, label, value, target_property):
+    row = layout.row()
+    row.label(text=label)
+
+    '''box = row.box()
+    box.scale_y = 0.5
+    box.label(text=value)'''
+
+    col = row.column()
+    col.enabled = False
+    col.prop(bpy.context.active_operator, target_property, text="")
+
+    folder_selector = row.operator(OT_OpenFolderbrowser.bl_idname, icon="FILE_FOLDER", text="")
+    folder_selector.target_property = target_property #"export_root_folder"

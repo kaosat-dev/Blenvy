@@ -36,6 +36,8 @@
    => comes from our custom logic for add_on prefs
 - [ ] double check compares to "None" values
 
+- [ ] add tests for relative/absolute paths
+
 - [x] move all things that alter data "permanently" to pre-save
    - [x] lighting/ scene components injection
    - [x] blueprintNames ?

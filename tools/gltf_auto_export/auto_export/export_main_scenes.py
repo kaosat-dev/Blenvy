@@ -1,5 +1,6 @@
 import os
 import bpy
+from pathlib import Path
 
 from ..constants import TEMPSCENE_PREFIX
 from ..helpers.generate_and_export import generate_and_export
@@ -9,17 +10,19 @@ from ..helpers.helpers_scenes import clear_hollow_scene, copy_hollowed_collectio
 from ..helpers.helpers_blueprints import inject_blueprints_list_into_main_scene, remove_blueprints_list_from_main_scene
 
 # export all main scenes
-def export_main_scenes(scenes, folder_path, addon_prefs): 
+def export_main_scenes(scenes, blend_file_path, addon_prefs): 
     for scene in scenes:
-        export_main_scene(scene, folder_path, addon_prefs)
+        export_main_scene(scene, blend_file_path, addon_prefs)
 
-def export_main_scene(scene, folder_path, addon_prefs, blueprints_data): 
+def export_main_scene(scene, blend_file_path, addon_prefs, blueprints_data): 
     gltf_export_preferences = generate_gltf_export_preferences(addon_prefs)
+    export_root_folder = getattr(addon_prefs, "export_root_folder")
     export_output_folder = getattr(addon_prefs,"export_output_folder")
+    export_levels_path = getattr(addon_prefs,"export_levels_path")
+
     export_blueprints = getattr(addon_prefs,"export_blueprints")
     export_separate_dynamic_and_static_objects = getattr(addon_prefs, "export_separate_dynamic_and_static_objects")
 
-    gltf_output_path = os.path.join(folder_path, export_output_folder, scene.name)
     export_settings = { **gltf_export_preferences, 
                        'use_active_scene': True, 
                        'use_active_collection':True, 
@@ -30,7 +33,8 @@ def export_main_scene(scene, folder_path, addon_prefs, blueprints_data):
                        }
 
     if export_blueprints : 
-        
+        gltf_output_path = os.path.join(export_levels_path, scene.name)
+
         inject_blueprints_list_into_main_scene(scene, blueprints_data)
 
         if export_separate_dynamic_and_static_objects:
@@ -46,7 +50,7 @@ def export_main_scene(scene, folder_path, addon_prefs, blueprints_data):
             )
 
             # then export all dynamic objects
-            gltf_output_path = os.path.join(folder_path, export_output_folder, scene.name+ "_dynamic")
+            gltf_output_path = os.path.join(export_levels_path, scene.name+ "_dynamic")
             generate_and_export(
                 addon_prefs, 
                 temp_scene_name=TEMPSCENE_PREFIX,
@@ -68,6 +72,7 @@ def export_main_scene(scene, folder_path, addon_prefs, blueprints_data):
             )
 
     else:
+        gltf_output_path = os.path.join(export_root_folder, export_output_folder, scene.name)
         print("       exporting gltf to", gltf_output_path, ".gltf/glb")
         export_gltf(gltf_output_path, export_settings)
 

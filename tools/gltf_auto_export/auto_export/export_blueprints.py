@@ -7,10 +7,10 @@ from .export_gltf import (generate_gltf_export_preferences)
 from ..helpers.helpers_scenes import clear_hollow_scene, copy_hollowed_collection_into
 
    
-def export_blueprints(blueprints, folder_path, addon_prefs, blueprints_data):
-    export_output_folder = getattr(addon_prefs,"export_output_folder")
+def export_blueprints(blueprints, blend_file_path, addon_prefs, blueprints_data):
+    export_blueprints_path = getattr(addon_prefs,"export_blueprints_path")
     gltf_export_preferences = generate_gltf_export_preferences(addon_prefs)
-    export_blueprints_path = os.path.join(folder_path, export_output_folder, getattr(addon_prefs,"export_blueprints_path")) if getattr(addon_prefs,"export_blueprints_path") != '' else folder_path
+    
     try:
         # save current active collection
         active_collection =  bpy.context.view_layer.active_layer_collection

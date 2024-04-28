@@ -41,7 +41,7 @@ from .ui.main import (GLTF_PT_auto_export_change_detection, GLTF_PT_auto_export_
 
                       GLTF_PT_auto_export_SidePanel
                       )
-from .ui.operators import (SCENES_LIST_OT_actions)
+from .ui.operators import (OT_OpenFolderbrowser, SCENES_LIST_OT_actions)
 from .helpers.generate_complete_preferences_dict import generate_complete_preferences_dict_gltf
 
 
@@ -104,6 +104,8 @@ classes = [
     SCENE_UL_GLTF_auto_export,
     SCENES_LIST_OT_actions,
 
+
+    OT_OpenFolderbrowser,
     AutoExportGLTF, 
     #AutoExportGltfAddonPreferences,
 
@@ -118,8 +120,6 @@ classes = [
     GLTF_PT_auto_export_blueprints,
     GLTF_PT_auto_export_SidePanel,
     GLTF_PT_auto_export_blueprints_list,
-    GLTF_PT_auto_export_changes_list,
-
     AutoExportTracker,
 ]
 

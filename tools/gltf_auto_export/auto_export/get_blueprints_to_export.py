@@ -1,10 +1,10 @@
 import bpy
-
+import os
 from ..helpers.helpers_scenes import (get_scenes, )
 from ..helpers.helpers_blueprints import find_blueprints_not_on_disk
 
 # TODO: this should also take the split/embed mode into account: if a nested collection changes AND embed is active, its container collection should also be exported
-def get_collections_to_export(changes_per_scene, changed_export_parameters, blueprints_data, addon_prefs):
+def get_blueprints_to_export(changes_per_scene, changed_export_parameters, blueprints_data, addon_prefs):
     export_change_detection = getattr(addon_prefs, "export_change_detection")
     export_gltf_extension = getattr(addon_prefs, "export_gltf_extension", ".glb")
     export_blueprints_path = getattr(addon_prefs,"export_blueprints_path", "")

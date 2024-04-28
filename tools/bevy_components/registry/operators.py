@@ -181,6 +181,7 @@ class OT_OpenFilebrowser(Operator, ImportHelper):
         default='*.json', 
         options={'HIDDEN'} 
     ) # type: ignore
+    
     def execute(self, context): 
         """Do something with the selected file(s)."""
         #filename, extension = os.path.splitext(self.filepath) 

@@ -7,7 +7,7 @@ from bpy.types import (PropertyGroup)
 from bpy.props import (PointerProperty, IntProperty, StringProperty)
 
 from .did_export_settings_change import did_export_settings_change
-from .get_collections_to_export import get_collections_to_export
+from .get_blueprints_to_export import get_blueprints_to_export
 
 from ..constants import TEMPSCENE_PREFIX
 from .internals import BlueprintsToExport
@@ -182,7 +182,7 @@ class AutoExportTracker(PropertyGroup):
         addon_prefs = SimpleNamespace(**tmp)
 
         #print("cls.changed_objects_per_scene", cls.changed_objects_per_scene)
-        (collections, collections_to_export, internal_collections, collections_per_scene) = get_collections_to_export(cls.changed_objects_per_scene, export_settings_changed, addon_prefs)
+        (collections, collections_to_export, internal_collections, collections_per_scene) = get_blueprints_to_export(cls.changed_objects_per_scene, export_settings_changed, addon_prefs)
         #print("collections to export", collections_to_export)
         try:
             # we save this list of collections in the context

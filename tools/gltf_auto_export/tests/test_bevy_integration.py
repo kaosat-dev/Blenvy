@@ -13,14 +13,32 @@ from pixelmatch.contrib.PIL import pixelmatch
 def setup_data(request):
     print("\nSetting up resources...")
 
+    root_path =  "../../testing/bevy_example"
+    assets_root_path = os.path.join(root_path, "assets")
+    blueprints_path =  os.path.join(assets_root_path, "blueprints")
+    levels_path =  os.path.join(assets_root_path, "levels")
+
+    models_path =  os.path.join(assets_root_path, "models")
+    materials_path = os.path.join(assets_root_path, "materials")
+    yield {
+        "root_path": root_path, 
+        "models_path": models_path,
+        "blueprints_path": blueprints_path, 
+        "levels_path": levels_path, 
+        "materials_path":materials_path 
+        }
+
     def finalizer():
-        root_path =  "../../testing/bevy_example"
-        assets_root_path = os.path.join(root_path, "assets")
-        models_path =  os.path.join(assets_root_path, "models")
-        materials_path = os.path.join(assets_root_path, "materials")
+       
         #other_materials_path = os.path.join("../../testing", "other_materials")
 
         print("\nPerforming teardown...")
+        if os.path.exists(blueprints_path):
+            shutil.rmtree(blueprints_path)
+
+        if os.path.exists(levels_path):
+            shutil.rmtree(levels_path)
+
         if os.path.exists(models_path):
             shutil.rmtree(models_path)
 
@@ -52,9 +70,7 @@ def setup_data(request):
 - removes generated files
 """
 def test_export_complex(setup_data):
-    root_path = "../../testing/bevy_example"
-    assets_root_path = os.path.join(root_path, "assets")
-    models_path = os.path.join(assets_root_path, "models")
+    root_path = setup_data["root_path"]
     auto_export_operator = bpy.ops.export_scenes.auto_gltf
 
     # with change detection
@@ -87,7 +103,11 @@ def test_export_complex(setup_data):
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
-        export_output_folder="./models",
+        export_root_folder = os.path.abspath(root_path),
+        #export_blueprints_path = os.path.join("assets", "models", "library"),
+        export_output_folder = os.path.join("assets", "models"), #"./models",
+        #export_levels_path = os.path.join("assets", "models"),
+
         export_scene_settings=True,
         export_blueprints=True,
         export_materials_library=True
@@ -98,14 +118,14 @@ def test_export_complex(setup_data):
     # blueprint4 => has an instance, with nested blueprint3, should export
     # blueprint5 => has NO instance, not marked as asset, should NOT export
 
-    assert os.path.exists(os.path.join(models_path, "World.glb")) == True
-    assert os.path.exists(os.path.join(models_path, "library", "Blueprint1.glb")) == True
-    assert os.path.exists(os.path.join(models_path, "library", "Blueprint2.glb")) == True
-    assert os.path.exists(os.path.join(models_path, "library", "Blueprint3.glb")) == True
-    assert os.path.exists(os.path.join(models_path, "library", "Blueprint4_nested.glb")) == True
-    assert os.path.exists(os.path.join(models_path, "library", "Blueprint5.glb")) == False
-    assert os.path.exists(os.path.join(models_path, "library", "Blueprint6_animated.glb")) == True
-    assert os.path.exists(os.path.join(models_path, "library", "Blueprint7_hierarchy.glb")) == True
+    assert os.path.exists(os.path.join(setup_data["levels_path"], "World.glb")) == True
+    assert os.path.exists(os.path.join(setup_data["blueprints_path"], "Blueprint1.glb")) == True
+    assert os.path.exists(os.path.join(setup_data["blueprints_path"], "Blueprint2.glb")) == True
+    assert os.path.exists(os.path.join(setup_data["blueprints_path"], "Blueprint3.glb")) == True
+    assert os.path.exists(os.path.join(setup_data["blueprints_path"], "Blueprint4_nested.glb")) == True
+    assert os.path.exists(os.path.join(setup_data["blueprints_path"], "Blueprint5.glb")) == False
+    assert os.path.exists(os.path.join(setup_data["blueprints_path"], "Blueprint6_animated.glb")) == True
+    assert os.path.exists(os.path.join(setup_data["blueprints_path"], "Blueprint7_hierarchy.glb")) == True
 
     # 'assets_list_'+scene.name+"_components" should have been removed after the export
     assets_list_object_name = "assets_list_"+"World"+"_components"
