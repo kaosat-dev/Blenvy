@@ -4,18 +4,38 @@ import json
 import pytest
 import shutil
 
+from .test_helpers import prepare_auto_export
+
 @pytest.fixture
 def setup_data(request):
     print("\nSetting up resources...")
+    root_path =  "../../testing/bevy_example"
+    assets_root_path = os.path.join(root_path, "assets")
+    blueprints_path =  os.path.join(assets_root_path, "blueprints")
+    levels_path =  os.path.join(assets_root_path, "levels")
+
+    models_path =  os.path.join(assets_root_path, "models")
+    materials_path = os.path.join(assets_root_path, "materials")
+
+    #other_materials_path = os.path.join("../../testing", "other_materials")
+    yield {
+        "root_path": root_path, 
+        "models_path": models_path,
+        "blueprints_path": blueprints_path, 
+        "levels_path": levels_path, 
+        "materials_path":materials_path 
+    }
 
     def finalizer():
-        root_path =  "../../testing/bevy_example"
-        assets_root_path = os.path.join(root_path, "assets")
-        models_path =  os.path.join(assets_root_path, "models")
-        materials_path = os.path.join(assets_root_path, "materials")
-        #other_materials_path = os.path.join("../../testing", "other_materials")
+       
 
         print("\nPerforming teardown...")
+        if os.path.exists(blueprints_path):
+            shutil.rmtree(blueprints_path)
+
+        if os.path.exists(levels_path):
+            shutil.rmtree(levels_path)
+
         if os.path.exists(models_path):
             shutil.rmtree(models_path)
 
@@ -49,11 +69,7 @@ def setup_data(request):
 - removes generated files
 """
 
-
 def test_export_no_parameters(setup_data):
-    root_path = "../../testing/bevy_example"
-    assets_root_path = os.path.join(root_path, "assets")
-    models_path = os.path.join(assets_root_path, "models")
     auto_export_operator = bpy.ops.export_scenes.auto_gltf
 
     # make sure to clear any parameters first
@@ -61,23 +77,20 @@ def test_export_no_parameters(setup_data):
     stored_auto_settings.clear()
     stored_auto_settings.write(json.dumps({}))
 
-    # first test exporting withouth any parameters set, this should not export anything
+    # first test exporting without any parameters set, this should not export anything
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
+        export_materials_library=True,
+        export_root_folder = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
-        export_materials_library=True
     )
 
-    world_file_path = os.path.join(models_path, "World.glb")
+    world_file_path = os.path.join(setup_data["levels_path"], "World.glb")
     assert os.path.exists(world_file_path) != True
 
 def test_export_auto_export_parameters_only(setup_data):
-    root_path = "../../testing/bevy_example"
-    assets_root_path = os.path.join(root_path, "assets")
-    models_path = os.path.join(assets_root_path, "models")
     auto_export_operator = bpy.ops.export_scenes.auto_gltf
-
     export_props = {
         "main_scene_names" : ['World'],
         "library_scene_names": ['Library'],
@@ -91,17 +104,15 @@ def test_export_auto_export_parameters_only(setup_data):
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
+        export_root_folder = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
         export_materials_library=True
     )
 
-    world_file_path = os.path.join(models_path, "World.glb")
+    world_file_path = os.path.join(setup_data["levels_path"], "World.glb")
     assert os.path.exists(world_file_path) == True
 
 def test_export_changed_parameters(setup_data):
-    root_path = "../../testing/bevy_example"
-    assets_root_path = os.path.join(root_path, "assets")
-    models_path = os.path.join(assets_root_path, "models")
     auto_export_operator = bpy.ops.export_scenes.auto_gltf
 
     # with change detection
@@ -129,27 +140,26 @@ def test_export_changed_parameters(setup_data):
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
+        export_root_folder = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
         export_materials_library=True
     )
 
-    world_file_path = os.path.join(models_path, "World.glb")
+    world_file_path = os.path.join(setup_data["levels_path"], "World.glb")
     assert os.path.exists(world_file_path) == True
 
-    models_library_path = os.path.join(models_path, "library")
-    model_library_file_paths = list(map(lambda file_name: os.path.join(models_library_path, file_name), sorted(os.listdir(models_library_path))))
+    blueprints_path = setup_data["blueprints_path"]
+    model_library_file_paths = list(map(lambda file_name: os.path.join(blueprints_path, file_name), sorted(os.listdir(blueprints_path))))
     modification_times_first = list(map(lambda file_path: os.path.getmtime(file_path), model_library_file_paths))
-    print("files", model_library_file_paths)
-    print("mod times", modification_times_first)
-
 
     # export again, with no param changes: this should NOT export anything again, ie, modification times should be the same
     print("second export")
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
+        export_root_folder = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
@@ -174,6 +184,7 @@ def test_export_changed_parameters(setup_data):
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
+        export_root_folder = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
@@ -189,6 +200,7 @@ def test_export_changed_parameters(setup_data):
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
+        export_root_folder = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
@@ -217,6 +229,7 @@ def test_export_changed_parameters(setup_data):
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
+        export_root_folder = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
@@ -232,6 +245,7 @@ def test_export_changed_parameters(setup_data):
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
+        export_root_folder = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
