@@ -244,6 +244,7 @@ class ComponentsRegistry(PropertyGroup):
         # cleanup previous data if any
         self.propGroupIdCounter = 0
         self.short_names_to_propgroup_names.clear()
+        self.long_names_to_propgroup_names.clear()
         self.missing_types_list.clear()
         self.type_infos.clear()
         self.type_infos_missing.clear()
@@ -330,10 +331,11 @@ class ComponentsRegistry(PropertyGroup):
         default=0
     ) # type: ignore
     
-    short_names_to_propgroup_names = {}
+    short_names_to_propgroup_names = {} # TODO; double check if needed, remove otherwise
+    long_names_to_propgroup_names = {}
 
     # generate propGroup name from nesting level & shortName: each shortName + nesting is unique
-    def generate_propGroup_name(self, nesting, shortName):
+    def generate_propGroup_name(self, nesting, shortName, longName):
         #print("gen propGroup name for", shortName, nesting)
         #if shortName in self.short_names_to_propgroup_names and len(nesting) == 0:
         #    return self.get_propertyGroupName_from_shortName(shortName)
@@ -342,12 +344,21 @@ class ComponentsRegistry(PropertyGroup):
 
         propGroupIndex = str(self.propGroupIdCounter)
         propGroupName = propGroupIndex + "_ui"
-        key = str(nesting) + shortName if len(nesting) > 0 else shortName
-        self.short_names_to_propgroup_names[key] = propGroupName
+
+        # 
+        """key = str(nesting) + shortName if len(nesting) > 0 else shortName
+        self.short_names_to_propgroup_names[key] = propGroupName"""
+        # FIXME:
+        key = str(nesting) + longName if len(nesting) > 0 else longName
+        self.long_names_to_propgroup_names[longName] = propGroupName
         return propGroupName
 
     def get_propertyGroupName_from_shortName(self, shortName):
         return self.short_names_to_propgroup_names.get(shortName, None)
+    
+    def get_propertyGroupName_from_longName(self, longName):
+        return self.long_names_to_propgroup_names.get(longName, None)
+
 
     ###########
 

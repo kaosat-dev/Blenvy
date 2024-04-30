@@ -151,14 +151,18 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
 
 
             components_in_object = object.components_meta.components
-            for component_name in sorted(dict(object)) : # sorted by component name, practical
+            components_bla = json.loads(object["bevy_components"]) if "bevy_components" in object else '{}'
+            #print("components_names", dict(components_bla).keys())
+
+            for component_name in sorted(dict(components_bla)) : # sorted by component name, practical
+                #print("component_name", component_name)
                 if component_name == "components_meta": 
                     continue
                 # anything withouth metadata gets skipped, we only want to see real components, not all custom props
-                component_meta =  next(filter(lambda component: component["name"] == component_name, components_in_object), None)
+                component_meta =  next(filter(lambda component: component["long_name"] == component_name, components_in_object), None)
                 if component_meta == None: 
                     continue
-
+                
                 component_invalid = getattr(component_meta, "invalid")
                 invalid_details = getattr(component_meta, "invalid_details")
                 component_visible = getattr(component_meta, "visible")
@@ -173,9 +177,13 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
                 row.label(text=component_name)
 
                 # we fetch the matching ui property group
-                root_propertyGroup_name =  registry.get_propertyGroupName_from_shortName(component_name)
+                root_propertyGroup_name =  registry.get_propertyGroupName_from_longName(component_name)
+                print("root_propertyGroup_name", root_propertyGroup_name)
+                print("component_meta", component_meta, component_invalid)
+
                 if root_propertyGroup_name:
                     propertyGroup = getattr(component_meta, root_propertyGroup_name, None)
+                    print("propertyGroup", propertyGroup)
                     if propertyGroup:
                         # if the component has only 0 or 1 field names, display inline, otherwise change layout
                         single_field = len(propertyGroup.field_names) < 2

@@ -72,11 +72,13 @@ def get_component_metadata_by_short_name(object, short_name):
 
 # remove no longer valid metadata from object
 def cleanup_invalid_metadata(object):
+    bevy_components = json.loads(object['bevy_components']) if 'bevy_components' in object else {}
     components_metadata = object.components_meta.components
     to_remove = []
     for index, component_meta in enumerate(components_metadata):
         short_name = component_meta.name
-        if short_name not in object.keys():
+        long_name = component_meta.long_name
+        if long_name not in bevy_components.keys():
             print("component:", short_name, "present in metadata, but not in object")
             to_remove.append(index)
     for index in to_remove:
@@ -131,20 +133,34 @@ def add_metadata_to_components_without_metadata(object):
         upsert_component_in_object(object, component_name, registry)
                     
 
-       
+import json
+def inject_component(object, long_name, value):
+    if not 'bevy_components' in object:
+        object['bevy_components'] = '{}'
+    previous = json.loads(object['bevy_components'])
+    previous[long_name] = value
+    object['bevy_components'] = json.dumps(previous)
+    #object['bevy_components'][long_name] = value # Sigh, this does not work, hits Blender's 63 char length limit
+
+def bla_component(object, long_name):
+    if 'bevy_components' in object:
+        current = json.loads(object['bevy_components'])
+        del current[long_name]
+        object['bevy_components'] = json.dumps(current)
+
 # adds a component to an object (including metadata) using the provided component definition & optional value
 def add_component_to_object(object, component_definition, value=None):
     cleanup_invalid_metadata(object)
     if object is not None:
         # print("add_component_to_object", component_definition)
         long_name = component_definition["title"]
-        short_name = component_definition["short_name"]
         registry = bpy.context.window_manager.components_registry
         if not registry.has_type_infos():
             raise Exception('registry type infos have not been loaded yet or are missing !')
         definition = registry.type_infos[long_name]
+        print("HEAAAY", value)
         # now we use our pre_generated property groups to set the initial value of our custom property
-        (_, propertyGroup) = upsert_component_in_object(object, component_name=short_name, registry=registry)
+        (_, propertyGroup) = upsert_component_in_object(object, long_name=long_name, registry=registry)
         if value == None:
             value = property_group_value_to_custom_property_value(propertyGroup, definition, registry, None)
         else: # we have provided a value, that is a raw , custom property value, to set the value of the propertyGroup
@@ -152,22 +168,25 @@ def add_component_to_object(object, component_definition, value=None):
             property_group_value_from_custom_property_value(propertyGroup, definition, registry, value)
             del object["__disable__update"]
 
-        object[short_name] = value
-        ping_depsgraph_update(object)
+        # object[short_name] = value
+        print("ADDING VAALUEEE", value)
+        inject_component(object, long_name, value)
+        #ping_depsgraph_update(object)
 
        
-def upsert_component_in_object(object, component_name, registry):
+def upsert_component_in_object(object, long_name, registry):
     # print("upsert_component_in_object", object, "component name", component_name)
     # TODO: upsert this part too ?
     target_components_metadata = object.components_meta.components
-    component_definition = find_component_definition_from_short_name(component_name)
+    print("target_components_metadata", target_components_metadata)
+    component_definition = registry.type_infos.get(long_name, None)
     if component_definition != None:
         short_name = component_definition["short_name"]
         long_name = component_definition["title"]
-        property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
+        property_group_name = registry.get_propertyGroupName_from_longName(long_name)
         propertyGroup = None
 
-        component_meta = next(filter(lambda component: component["name"] == short_name, target_components_metadata), None)
+        component_meta = next(filter(lambda component: component["long_name"] == long_name, target_components_metadata), None)
         if not component_meta:
             component_meta = target_components_metadata.add()
             component_meta.name = short_name
@@ -285,7 +304,7 @@ def apply_customProperty_values_to_object_propertyGroups(object):
 
 # removes the given component from the object: removes both the custom property and the matching metadata from the object
 def remove_component_from_object(object, component_name):
-    del object[component_name]
+    bla_component(object, component_name)
 
     components_metadata = getattr(object, "components_meta", None)
     if components_metadata == None:
@@ -294,8 +313,8 @@ def remove_component_from_object(object, component_name):
     components_metadata = components_metadata.components
     to_remove = []
     for index, component_meta in enumerate(components_metadata):
-        short_name = component_meta.name
-        if short_name == component_name:
+        long_name = component_meta.long_name
+        if long_name == component_name:
             to_remove.append(index)
             break
     for index in to_remove:

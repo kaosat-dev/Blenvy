@@ -12,14 +12,26 @@ class ComponentDefinitionsList(bpy.types.PropertyGroup):
         items = []
         type_infos = context.window_manager.components_registry.type_infos
         short_names = context.window_manager.components_registry.short_names_to_long_names
-        for short_name in sorted(short_names.keys()):
+        """for short_name in sorted(short_names.keys()):
             long_name = short_names[short_name]
             definition = type_infos[long_name]
             is_component = definition['isComponent']  if "isComponent" in definition else False
 
             if self.filter in short_name and is_component:
                 if not 'Handle' in short_name and not "Cow" in short_name and not "AssetId" in short_name and short_name not in self.exclude: # FIXME: hard coded, seems wrong
+                    items.append((long_name, short_name, long_name))"""
+
+
+        for long_name in type_infos.keys():
+            definition = type_infos[long_name]
+            short_name = definition["short_name"]
+            is_component = definition['isComponent']  if "isComponent" in definition else False
+
+            if self.filter in short_name and is_component:
+                if not 'Handle' in short_name and not "Cow" in short_name and not "AssetId" in short_name and short_name not in self.exclude: # FIXME: hard coded, seems wrong
                     items.append((long_name, short_name, long_name))
+
+        items.sort(key=lambda a: a[1])
         return items
 
     @classmethod
