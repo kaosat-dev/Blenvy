@@ -58,7 +58,7 @@ class GLTF_PT_auto_export_changes_list(bpy.types.Panel):
 class GLTF_PT_auto_export_blueprints_list(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_label = "Blueprints to export"
+    bl_label = "Blueprints"
     bl_parent_id = "GLTF_PT_auto_export_SidePanel"
     bl_options = {'DEFAULT_CLOSED'}
 

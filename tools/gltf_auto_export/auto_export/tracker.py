@@ -1,12 +1,9 @@
 import json
-import os
-from types import SimpleNamespace
 import bpy
 
 from bpy.types import (PropertyGroup)
 from bpy.props import (PointerProperty, IntProperty, StringProperty)
 
-from .did_export_settings_change import did_export_settings_change
 from .get_blueprints_to_export import get_blueprints_to_export
 
 from ..constants import TEMPSCENE_PREFIX
@@ -157,47 +154,6 @@ class AutoExportTracker(PropertyGroup):
         # get a list of exportable collections for display
         # keep it simple, just use Simplenamespace for compatibility with the rest of our code
         # TODO: debounce
-
-        """export_settings_changed = did_export_settings_change()
-        tmp = {}
-        for k in AutoExportGltfAddonPreferences.__annotations__:
-            item = AutoExportGltfAddonPreferences.__annotations__[k]
-            default = item.keywords.get('default', None)
-            tmp[k] = default
-        auto_settings = get_auto_exporter_settings()
-        for k in auto_settings:
-            tmp[k] = auto_settings[k]
-        tmp['__annotations__'] = tmp
-
-        # path to the current blend file
-        file_path = bpy.data.filepath
-        # Get the folder
-        folder_path = os.path.dirname(file_path)
-        export_output_folder =tmp["export_output_folder"]
-        export_models_path = os.path.join(folder_path, export_output_folder)
-        export_blueprints_path = os.path.join(folder_path, export_output_folder, tmp["export_blueprints_path"]) if tmp["export_blueprints_path"] != '' else folder_path
-        tmp["export_blueprints_path"] = export_blueprints_path
-        tmp["export_models_path"] = export_models_path
-
-        addon_prefs = SimpleNamespace(**tmp)
-
-        #print("cls.changed_objects_per_scene", cls.changed_objects_per_scene)
-        (collections, collections_to_export, internal_collections, collections_per_scene) = get_blueprints_to_export(cls.changed_objects_per_scene, export_settings_changed, addon_prefs)
-        #print("collections to export", collections_to_export)
-        try:
-            # we save this list of collections in the context
-            bpy.context.window_manager.exportedCollections.clear()
-            #TODO: add error handling for this
-            for collection_name in collections_to_export:
-                ui_info = bpy.context.window_manager.exportedCollections.add()
-                ui_info.name = collection_name
-        except Exception as error:
-            pass
-            #self.report({"ERROR"}, "Failed to populate list of exported collections/blueprints")
-            """
-        """depsgraph = bpy.context.evaluated_depsgraph_get()
-        for update in depsgraph.updates:
-            print("update", update)"""
 
     def disable_change_detection(self):
         #print("disable change detection")
