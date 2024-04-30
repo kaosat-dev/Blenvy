@@ -115,11 +115,11 @@ UI:
     - [x] check if output "string" in custom properties are correct
 
     - gltf_auto_export
-        - [ ] add support for "enabled" flag
+        - [x] add support for "enabled" flag
         - [ ] add special components 
                 - "AutoExport" => Needed
                 - "Dynamic" ? naah wait that should be exported by the Bevy side
-        - [ ] filter out Components_meta ??
+        - [x] filter out Components_meta ??
         - [x] add legacy mode to the persisted parameters
 
     - bevy_gltf_components:

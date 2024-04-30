@@ -36,7 +36,6 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
         let reflect_components = ronstring_to_reflect_component(
             &extra.value,
             &type_registry,
-            gltf_components_config.legacy_mode,
         );
 
         // we assign the components specified /xxx_components objects to their parent node

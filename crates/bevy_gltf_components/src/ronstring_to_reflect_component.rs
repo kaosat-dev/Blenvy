@@ -10,7 +10,6 @@ use super::capitalize_first_letter;
 pub fn ronstring_to_reflect_component(
     ron_string: &str,
     type_registry: &TypeRegistry,
-    simplified_types: bool,
 ) -> Vec<(Box<dyn Reflect>, TypeRegistration)> {
     let lookup: HashMap<String, Value> = ron::from_str(ron_string).unwrap();
     let mut components: Vec<(Box<dyn Reflect>, TypeRegistration)> = Vec::new();
@@ -30,72 +29,7 @@ pub fn ronstring_to_reflect_component(
             type_registry.get_with_short_type_path(capitalized_type_name.as_str())
         {
             debug!("TYPE INFO {:?}", type_registration.type_info());
-            if simplified_types {
-                if let TypeInfo::TupleStruct(info) = type_registration.type_info() {
-                    // we handle tupple strucs with only one field differently, as Blender's custom properties with custom ui (float, int, bool, etc) always give us a tupple struct
-                    if info.field_len() == 1 {
-                        let field = info
-                            .field_at(0)
-                            .expect("we should always have at least one field here");
-                        let field_name = field.type_path();
-                        let mut formated = parsed_value.clone();
-                        match field_name {
-                            "f32" => {
-                                formated = parsed_value.parse::<f32>().unwrap().to_string();
-                            }
-                            "f64" => {
-                                formated = parsed_value.parse::<f64>().unwrap().to_string();
-                            }
-                            "u8" => {
-                                formated = parsed_value.parse::<u8>().unwrap().to_string();
-                            }
-                            "u16" => {
-                                formated = parsed_value.parse::<u16>().unwrap().to_string();
-                            }
-                            "u32" => {
-                                formated = parsed_value.parse::<u32>().unwrap().to_string();
-                            }
-                            "u64" => {
-                                formated = parsed_value.parse::<u64>().unwrap().to_string();
-                            }
-                            "u128" => {
-                                formated = parsed_value.parse::<u128>().unwrap().to_string();
-                            }
-                            "glam::Vec2" => {
-                                let parsed: Vec<f32> = ron::from_str(&parsed_value).unwrap();
-                                formated = format!("(x:{},y:{})", parsed[0], parsed[1]);
-                            }
-                            "glam::Vec3" => {
-                                let parsed: Vec<f32> = ron::from_str(&parsed_value).unwrap();
-                                formated =
-                                    format!("(x:{},y:{},z:{})", parsed[0], parsed[1], parsed[2]);
-                            }
-                            "bevy_render::color::Color" => {
-                                let parsed: Vec<f32> = ron::from_str(&parsed_value).unwrap();
-                                if parsed.len() == 3 {
-                                    formated = format!(
-                                        "Rgba(red:{},green:{},blue:{}, alpha: 1.0)",
-                                        parsed[0], parsed[1], parsed[2]
-                                    );
-                                }
-                                if parsed.len() == 4 {
-                                    formated = format!(
-                                        "Rgba(red:{},green:{},blue:{}, alpha:{})",
-                                        parsed[0], parsed[1], parsed[2], parsed[3]
-                                    );
-                                }
-                            }
-                            _ => {}
-                        }
 
-                        parsed_value = format!("({formated})");
-                    }
-                }
-
-                if parsed_value.is_empty() {
-                    parsed_value = "()".to_string();
-                }
-            }
             let ron_string = format!(
                 "{{ \"{}\":{} }}",
                 type_registration.type_info().type_path(),

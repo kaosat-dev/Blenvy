@@ -47,6 +47,12 @@
 
 - [ ] update cleanup_materials
 
+- [x] remove legacy mode
+   - [x] from auto_export
+   - [x] from rust code
+   - [x] from examples
+   - [x] added notes & workaround information in docs
+
 - [ ] remove bulk of tracker related code
 - [ ] clean up
 - [x] split up change detection in settings to its own panel

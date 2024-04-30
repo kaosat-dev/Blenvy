@@ -8,7 +8,6 @@ impl Plugin for CorePlugin {
         app.add_plugins((
             ExportRegistryPlugin::default(),
             BlueprintsPlugin {
-                legacy_mode: false,
                 library_folder: "blueprints".into(),
                 format: GltfFormat::GLB,
                 material_library: true,

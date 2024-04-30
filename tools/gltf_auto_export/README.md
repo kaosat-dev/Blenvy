@@ -120,12 +120,6 @@ This issue has been resolved in v0.9.
 
     - materials path: where to export materials to
 
-    - Legacy mode for bevy: the export of custom properties is slightly different
-       when using bevy_gltf_components or bevy_gltf_blueprints with ```legacy_mode``` turned on (the default currently), toggle this on to keep using the older variant
-       
-       > tldr: legacy mode in this add on should match your use of legacy mode on the Bevy side
-       > if you use the ```bevy_components``` add-on **legacy mode** should be turned **OFF**
-
 * and your standard gltf export parameters in the **gltf** panel
 
     ![blender addon use2](./docs/blender_addon_use2.png)

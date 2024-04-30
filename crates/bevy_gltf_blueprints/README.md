@@ -306,24 +306,6 @@ see https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/exa
 Generating optimised blueprints and material libraries can be automated using the latests version of the [Blender plugin](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/gltf_auto_export)
 
 
-## Legacy mode
-
-Starting in version 0.7 there is a new parameter ```legacy_mode``` for backwards compatibility
-
-To disable the legacy mode: (enabled by default)
-
-```rust no_run
-BlueprintsPlugin{legacy_mode: false}
-```
-
-
-You **need** to disable legacy mode if you want to use the [```bevy_components```](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/tools_bevy_blueprints/tools/bevy_components) Blender addon + the [```bevy_registry_export crate```](https://crates.io/crates/bevy_registry_export) ! 
-As it create custom properties that are writen in real **ron** file format instead of a simplified version (the one in the legacy mode)
-
-
-> Note: the legacy mode support will be dropped in future versions, and the default behaviour will be NO legacy mode
-
-
 ## Examples
 
 https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/basic

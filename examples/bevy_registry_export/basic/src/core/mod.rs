@@ -11,7 +11,6 @@ impl Plugin for CorePlugin {
                 ..Default::default()
             },
             BlueprintsPlugin {
-                legacy_mode: false,
                 library_folder: "models/library".into(),
                 format: GltfFormat::GLB,
                 aabbs: true,
