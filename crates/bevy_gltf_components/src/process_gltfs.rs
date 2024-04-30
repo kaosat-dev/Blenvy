@@ -13,7 +13,7 @@ use bevy::{
     utils::HashMap,
 };
 
-use crate::{ronstring_to_reflect_component, GltfComponentsConfig, GltfProcessed};
+use crate::{ronstring_to_reflect_component, GltfProcessed};
 
 /// main function: injects components into each entity in gltf files that have `gltf_extras`, using reflection
 pub fn add_components_from_gltf_extras(world: &mut World) {
@@ -22,7 +22,7 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
     let mut entity_components: HashMap<Entity, Vec<(Box<dyn Reflect>, TypeRegistration)>> =
         HashMap::new();
 
-    let gltf_components_config = world.resource::<GltfComponentsConfig>();
+    // let gltf_components_config = world.resource::<GltfComponentsConfig>();
 
     for (entity, name, extra, parent) in extras.iter(world) {
         debug!(
@@ -33,10 +33,7 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
         let type_registry: &AppTypeRegistry = world.resource();
         let type_registry = type_registry.read();
 
-        let reflect_components = ronstring_to_reflect_component(
-            &extra.value,
-            &type_registry,
-        );
+        let reflect_components = ronstring_to_reflect_component(&extra.value, &type_registry);
 
         // we assign the components specified /xxx_components objects to their parent node
         let mut target_entity = entity;

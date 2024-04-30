@@ -2960,6 +2960,22 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_example::dupe_components::EnumTest": {
+      "isComponent": true,
+      "isResource": false,
+      "oneOf": [
+        "Metal",
+        "Wood",
+        "Rock",
+        "Cloth",
+        "Squishy",
+        "None"
+      ],
+      "short_name": "EnumTest",
+      "title": "bevy_example::dupe_components::EnumTest",
+      "type": "string",
+      "typeInfo": "Enum"
+    },
     "bevy_example::game::animation::Marker1": {
       "additionalProperties": false,
       "isComponent": true,

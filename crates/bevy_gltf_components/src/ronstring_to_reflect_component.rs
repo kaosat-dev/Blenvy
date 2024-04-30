@@ -1,6 +1,6 @@
 use bevy::log::{debug, warn};
 use bevy::reflect::serde::UntypedReflectDeserializer;
-use bevy::reflect::{Reflect, TypeInfo, TypeRegistration, TypeRegistry};
+use bevy::reflect::{Reflect, TypeRegistration, TypeRegistry};
 use bevy::utils::HashMap;
 use ron::Value;
 use serde::de::DeserializeSeed;
@@ -17,7 +17,7 @@ pub fn ronstring_to_reflect_component(
         let type_string = key.replace("component: ", "").trim().to_string();
         let capitalized_type_name = capitalize_first_letter(type_string.as_str());
 
-        let mut parsed_value: String;
+        let parsed_value: String;
         match value.clone() {
             Value::String(str) => {
                 parsed_value = str;

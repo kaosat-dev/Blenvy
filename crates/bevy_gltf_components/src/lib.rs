@@ -10,13 +10,7 @@ pub use process_gltfs::*;
 pub mod blender_settings;
 
 use bevy::{
-    app::Startup,
-    ecs::{
-        component::Component,
-        reflect::ReflectComponent,
-        system::{Res, Resource},
-    },
-    log::warn,
+    ecs::{component::Component, reflect::ReflectComponent, system::Resource},
     prelude::{App, IntoSystemConfigs, Plugin, SystemSet, Update},
     reflect::Reflect,
 };
@@ -68,15 +62,13 @@ pub enum GltfComponentsSet {
 #[derive(Clone, Resource)]
 pub struct GltfComponentsConfig {}
 
-pub struct ComponentsFromGltfPlugin {
-}
+pub struct ComponentsFromGltfPlugin {}
 
 impl Default for ComponentsFromGltfPlugin {
     fn default() -> Self {
-        Self { }
+        Self {}
     }
 }
-
 
 impl Plugin for ComponentsFromGltfPlugin {
     fn build(&self, app: &mut App) {

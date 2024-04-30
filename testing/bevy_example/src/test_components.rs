@@ -1,3 +1,4 @@
+use crate::dupe_components;
 use bevy::{
     pbr::{ExtendedMaterial, MaterialExtension},
     prelude::*,
@@ -164,6 +165,7 @@ impl Plugin for ComponentsTestPlugin {
             .register_type::<TupleVec2>()
             .register_type::<TupleVec3>()
             .register_type::<EnumTest>()
+            .register_type::<dupe_components::EnumTest>()
             .register_type::<TupleTestColor>()
             .register_type::<TupleVec>()
             .register_type::<Vec<String>>()

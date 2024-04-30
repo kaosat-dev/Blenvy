@@ -7,6 +7,7 @@ use crate::core::*;
 mod game;
 use game::*;
 
+mod dupe_components;
 mod test_components;
 use test_components::*;
 
