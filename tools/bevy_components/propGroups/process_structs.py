@@ -13,15 +13,21 @@ def process_structs(registry, definition, properties, update, nesting, nesting_l
     nesting = nesting + [short_name]
     nesting_long_names = nesting_long_names + [long_name]
 
+    if short_name == "HashmapTestSimple":
+        print("Struct", short_name)
     for property_name in properties.keys():
         ref_name = properties[property_name]["type"]["$ref"].replace("#/$defs/", "")
-        
+        if short_name == "HashmapTestSimple":
+            print("ref name", ref_name)
         if ref_name in type_infos:
             original = type_infos[ref_name]
             original_type_name = original["title"]
             is_value_type = original_type_name in value_types_defaults
             value = value_types_defaults[original_type_name] if is_value_type else None
             default_values[property_name] = value
+
+            if short_name == "HashmapTestSimple":
+                print("original",original, original_type_name, is_value_type, value)
 
             if is_value_type:
                 if original_type_name in blender_property_mapping:

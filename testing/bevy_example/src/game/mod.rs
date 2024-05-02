@@ -145,11 +145,11 @@ impl Plugin for GamePlugin {
             .add_systems(Update, play_animations)
             .add_systems(Update, react_to_animation_markers)
 
-            .add_systems(Update, generate_screenshot.run_if(on_timer(Duration::from_secs_f32(0.2)))) // TODO: run once
+             /*.add_systems(Update, generate_screenshot.run_if(on_timer(Duration::from_secs_f32(0.2)))) // TODO: run once
             .add_systems(
                 Update,
                 exit_game.run_if(on_timer(Duration::from_secs_f32(0.5))),
-            ) // shut down the app after this time
+            ) // shut down the app after this time*/
             ;
     }
 }

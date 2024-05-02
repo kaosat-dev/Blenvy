@@ -8,13 +8,16 @@ from bpy_types import PropertyGroup
 
 # this helper creates a "fake"/wrapper property group that is NOT a real type in the registry
 # usefull for things like value types in list items etc
-def generate_wrapper_propertyGroup(short_name, item_long_name, definition, registry, update):
+def generate_wrapper_propertyGroup(wrapped_type_long_name_name, item_long_name, definition_link, registry, update):
     value_types_defaults = registry.value_types_defaults 
     blender_property_mapping = registry.blender_property_mapping
     is_item_value_type = item_long_name in value_types_defaults
 
-    wrapper_name = "wrapper_" + short_name
+    wrapper_name = "wrapper_" + wrapped_type_long_name_name
+    print("WRAPPER NAME", wrapper_name)
 
+
+    # FIXME: this is not a correct generic value for hashmaps !!?
     wrapper_definition = {
         "isComponent": False,
         "isResource": False,
@@ -22,16 +25,20 @@ def generate_wrapper_propertyGroup(short_name, item_long_name, definition, regis
         "prefixItems": [
             {
                 "type": {
-                    "$ref": definition
+                    "$ref": definition_link
                 }
             }
         ],
-        "short_name": wrapper_name,
+        "short_name": wrapper_name, # FIXME !!!
         "title": wrapper_name,
         "type": "array",
         "typeInfo": "TupleStruct"
     }
+
+    # we generate a very small 'hash' for the component name
+    property_group_name = registry.generate_propGroup_name(nesting=[], longName=wrapper_name)
     registry.add_custom_type(wrapper_name, wrapper_definition)
+
 
     blender_property = StringProperty(default="", update=update)
     if item_long_name in blender_property_mapping:
@@ -51,9 +58,9 @@ def generate_wrapper_propertyGroup(short_name, item_long_name, definition, regis
         '__annotations__': wrapper_annotations,
         'tupple_or_struct': "tupple",
         'field_names': ['0'], 
-        **dict(with_properties = False, with_items= True, with_enum= False, with_list= False, short_name= wrapper_name, type_name=wrapper_name),
+        **dict(with_properties = False, with_items= True, with_enum= False, with_list= False, with_map =False, short_name=wrapper_name, type_name=wrapper_name),
     }
-    property_group_class = type(wrapper_name, (PropertyGroup,), property_group_params)
+    property_group_class = type(property_group_name, (PropertyGroup,), property_group_params)
     bpy.utils.register_class(property_group_class)
 
     return property_group_class

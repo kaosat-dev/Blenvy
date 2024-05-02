@@ -5,6 +5,7 @@ from . import process_structs
 from . import process_tupples
 from . import process_enum
 from . import process_list
+from . import process_map
 
 def process_component(registry, definition, update, extras=None, nesting = [], nesting_long_names = []):
     component_name = definition['title']
@@ -18,6 +19,7 @@ def process_component(registry, definition, update, extras=None, nesting = [], n
     has_prefixItems = len(prefixItems) > 0
     is_enum = type_info == "Enum"
     is_list = type_info == "List"
+    is_map = type_info == "Map"
 
     # print("processing", short_name, component_name, type_def, type_info)
 
@@ -28,6 +30,7 @@ def process_component(registry, definition, update, extras=None, nesting = [], n
     with_items = False
     with_enum = False
     with_list = False
+    with_map = False
 
 
     if has_properties:
@@ -47,6 +50,10 @@ def process_component(registry, definition, update, extras=None, nesting = [], n
     if is_list:
         __annotations__ = __annotations__ | process_list.process_list(registry, definition, update, nesting, nesting_long_names)
         with_list= True
+
+    if is_map:
+        __annotations__ = __annotations__ | process_map.process_map(registry, definition, update, nesting, nesting_long_names)
+        with_map = True
     
     field_names = []
     for a in __annotations__:
@@ -64,7 +71,7 @@ def process_component(registry, definition, update, extras=None, nesting = [], n
         '__annotations__': __annotations__,
         'tupple_or_struct': tupple_or_struct,
         'field_names': field_names, 
-        **dict(with_properties = with_properties, with_items= with_items, with_enum= with_enum, with_list= with_list, short_name= short_name),
+        **dict(with_properties = with_properties, with_items= with_items, with_enum= with_enum, with_list= with_list, with_map = with_map, short_name= short_name),
         'root_component': root_component
     }
     #FIXME: YIKES, but have not found another way: 
@@ -74,7 +81,7 @@ def process_component(registry, definition, update, extras=None, nesting = [], n
         -BasicTest => the registration & update callback of this one overwrites the first "basicTest"
     have not found a cleaner workaround so far
     """
-    property_group_name = registry.generate_propGroup_name(nesting, short_name, component_name)
+    property_group_name = registry.generate_propGroup_name(nesting, component_name)
     (property_group_pointer, property_group_class) = property_group_from_infos(property_group_name, property_group_params)
     # add our component propertyGroup to the registry
     registry.register_component_propertyGroup(property_group_name, property_group_pointer)

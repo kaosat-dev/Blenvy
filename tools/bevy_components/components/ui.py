@@ -8,6 +8,7 @@ from .operators import AddComponentOperator, CopyComponentOperator, Fix_Componen
 def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None):
     is_enum = getattr(propertyGroup, "with_enum")
     is_list = getattr(propertyGroup, "with_list") 
+    is_map = getattr(propertyGroup, "with_map")
     #nesting = nesting + [current_short_name] # we need this convoluted "nested path strings " workaround so that operators working on a given
     # item in our components hierarchy can get the correct propertyGroup by STRINGS because of course, we cannot pass objects to operators...sigh
 
@@ -80,6 +81,43 @@ def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None):
         row = buttons_column.row()
         op = row.operator('generic_list.list_action', icon='TRIA_DOWN', text="")
         op.action = 'DOWN'
+        op.component_name = rootName
+        op.property_group_path = json.dumps(nesting)
+
+    elif is_map:
+        keys_list = getattr(propertyGroup, "list")
+        values_list = getattr(propertyGroup, "values_list")
+        box = layout.box()
+        row = box.row()
+        row.label(text="key")
+        row.label(text="value")
+        #values_setter = getattr(propertyGroup, "values_setter")
+        # draw_propertyGroup(values_setter, row, nesting, rootName)
+
+        split = box.split(factor=0.9)
+        list_column, buttons_column = (split.column(),split.column())
+        list_column = list_column.box()
+
+        for index, item  in enumerate(keys_list):
+            row = list_column.row()
+            #row.label(text=str(index))
+            draw_propertyGroup(item, row, nesting, rootName)
+
+            value = values_list[index]
+            draw_propertyGroup(value, row, nesting, rootName)
+
+
+        #various control buttons
+        buttons_column.separator()
+        row = buttons_column.row()
+        op = row.operator('generic_map.map_action', icon='ADD', text="")
+        op.action = 'ADD'
+        op.component_name = rootName
+        op.property_group_path = json.dumps(nesting)
+
+        row = buttons_column.row()
+        op = row.operator('generic_map.map_action', icon='REMOVE', text="")
+        op.action = 'REMOVE'
         op.component_name = rootName
         op.property_group_path = json.dumps(nesting)
 

@@ -214,3 +214,6 @@ Restructuring of storage of components
 - [x] marking of invalid root propgroups/components should be based on long name
 - [ ] overhaul & check each prop group type's use of short names => long names
     - [ ] lists
+
+- [ ] in conversions from propgroups
+        component_name = definition["short_name"]

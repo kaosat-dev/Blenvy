@@ -152,6 +152,43 @@ impl MaterialExtension for MyExtension {
     }
 }
 
+
+use bevy::utils::HashMap;
+
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+pub struct HashmapTestSimple {
+    pub named_animations: HashMap<String, String>,
+}
+
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+pub struct HashmapTestStringFloat {
+    pub named_animations: HashMap<String, f32>,
+}
+
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+pub struct HashmapTestIntString {
+    pub named_animations: HashMap<u32, String>,
+}
+
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+pub struct HashmapTestIntColor {
+    pub inner: HashMap<u32, Color>,
+}
+
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+pub struct HashmapTestStringColor {
+    pub inner: HashMap<String, Color>,
+}
+
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+pub struct HashmapTestStringColorFlat(HashMap<String, Color>);
+
 pub struct ComponentsTestPlugin;
 impl Plugin for ComponentsTestPlugin {
     fn build(&self, app: &mut App) {
@@ -185,6 +222,20 @@ impl Plugin for ComponentsTestPlugin {
             .register_type::<Vec<f32>>()
             // .register_type::<AAAAddedCOMPONENT>()
             .register_type::<AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrWut>()
+            .register_type::<HashMap<String, String>>()
+            .register_type::<HashmapTestSimple>()
+            .register_type::<HashMap<String, f32>>()
+            .register_type::<HashmapTestStringFloat>()
+            .register_type::<HashMap<u32, String>>()
+            .register_type::<HashmapTestIntString>()
+
+            .register_type::<HashMap<u32, Color>>()
+            .register_type::<HashmapTestIntColor>()
+
+            .register_type::<HashMap<String, Color>>()
+            .register_type::<HashmapTestStringColor>()
+            .register_type::<HashmapTestStringColorFlat>()
+
             .add_plugins(MaterialPlugin::<
                 ExtendedMaterial<StandardMaterial, MyExtension>,
             >::default());

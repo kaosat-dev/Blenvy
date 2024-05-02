@@ -24,6 +24,7 @@ from .registry.ui import (BEVY_COMPONENTS_PT_Configuration, BEVY_COMPONENTS_PT_A
 
 from .components.metadata import (ComponentMetadata, ComponentsMeta)
 from .components.lists import GENERIC_LIST_OT_actions, Generic_LIST_OT_AddItem, Generic_LIST_OT_RemoveItem, Generic_LIST_OT_SelectItem
+from .components.maps import GENERIC_MAP_OT_actions
 from .components.definitions_list import (ComponentDefinitionsList, ClearComponentDefinitionsList)
 from .components.ui import (BEVY_COMPONENTS_PT_ComponentsPanel)
 
@@ -122,7 +123,9 @@ classes = [
     Generic_LIST_OT_SelectItem,
     Generic_LIST_OT_AddItem,
     Generic_LIST_OT_RemoveItem,
-    GENERIC_LIST_OT_actions
+    GENERIC_LIST_OT_actions,
+
+    GENERIC_MAP_OT_actions
 ]
 
 from bpy.app.handlers import persistent

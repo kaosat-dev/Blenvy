@@ -5,8 +5,8 @@ conversion_tables = {
 
     "char": lambda value: '"'+value+'"',
     "str": lambda value: '"'+value+'"',
-    "alloc::string::String": lambda value: '"'+value+'"',
-    "alloc::borrow::Cow<str>": lambda value: '"'+value+'"',
+    "alloc::string::String": lambda value: '"'+str(value)+'"',
+    "alloc::borrow::Cow<str>": lambda value: '"'+str(value)+'"',
 
     "glam::Vec2": lambda value: "Vec2(x:"+str(value[0])+ ", y:"+str(value[1])+")",
     "glam::DVec2": lambda value: "DVec2(x:"+str(value[0])+ ", y:"+str(value[1])+")",
@@ -28,20 +28,22 @@ conversion_tables = {
 #converts the value of a property group(no matter its complexity) into a single custom property value
 # this is more or less a glorified "to_ron()" method (not quite but close to)
 def property_group_value_to_custom_property_value(property_group, definition, registry, parent=None, value=None):
-    component_name = definition["short_name"]
+    component_name = definition["short_name"] # FIXME: we should operate based on long names
     type_info = definition["typeInfo"] if "typeInfo" in definition else None
     type_def = definition["type"] if "type" in definition else None
     type_name = definition["title"]
     is_value_type = type_name in conversion_tables
-    #print("computing custom property", component_name, type_info, type_def, type_name)
+    print("computing custom property: component name:", component_name, "type_info", type_info, "type_def", type_def, "type_name", type_name)
 
     if is_value_type:
         value = conversion_tables[type_name](value)
     elif type_info == "Struct":
+        print("generating string for struct")
         values = {}
         if len(property_group.field_names) ==0:
             value = '()'
         else:
+            print("toto", type_def, definition, property_group)
             for index, field_name in enumerate(property_group.field_names):
                 item_type_name = definition["properties"][field_name]["type"]["$ref"].replace("#/$defs/", "")
                 item_definition = registry.type_infos[item_type_name] if item_type_name in registry.type_infos else None
@@ -74,8 +76,10 @@ def property_group_value_to_custom_property_value(property_group, definition, re
     elif type_info == "TupleStruct":
         values = {}
         for index, field_name in enumerate(property_group.field_names):
+            #print("toto", index, definition["prefixItems"][index]["type"]["$ref"])
             item_type_name = definition["prefixItems"][index]["type"]["$ref"].replace("#/$defs/", "")
             item_definition = registry.type_infos[item_type_name] if item_type_name in registry.type_infos else None
+            # print("here", item_type_name, item_definition)
 
             value = getattr(property_group, field_name)
             is_property_group = isinstance(value, PropertyGroup)
@@ -88,6 +92,7 @@ def property_group_value_to_custom_property_value(property_group, definition, re
         
         value = tuple(e for e in list(values.values()))
     elif type_info == "Enum":
+        # TODO: perhaps use a mapping of (long) component name to a short ID , like we do in get_propertyGroupName_from_longName
         selected = getattr(property_group, component_name)
 
         if type_def == "object":
@@ -134,6 +139,38 @@ def property_group_value_to_custom_property_value(property_group, definition, re
             else:
                 item_value = '""'
             value.append(item_value) 
+
+    elif type_info == "Map":
+        print("MAAAAAP", property_group)
+        keys_list = getattr(property_group, "list", {})
+        values_list = getattr(property_group, "values_list")
+        value = {}
+        for index, key in enumerate(keys_list):
+            # first get the keys
+            key_type_name = getattr(key, "type_name")
+            definition = registry.type_infos[key_type_name] if key_type_name in registry.type_infos else None
+            if definition != None:
+                key_value = property_group_value_to_custom_property_value(key, definition, registry, component_name, None)
+                if key_type_name.startswith("wrapper_"): #if we have a "fake" tupple for aka for value types, we need to remove one nested level
+                    key_value = key_value[0]
+            else:
+                key_value = '""'
+            # and then the values
+            val = values_list[index]
+            value_type_name = getattr(val, "type_name")
+            definition = registry.type_infos[value_type_name] if value_type_name in registry.type_infos else None
+            print("value definition", definition)
+            if definition != None:
+                val_value = property_group_value_to_custom_property_value(val, definition, registry, component_name, None)
+                if value_type_name.startswith("wrapper_"): #if we have a "fake" tupple for aka for value types, we need to remove one nested level
+                    val_value = val_value[0]
+            else:
+                val_value = '""'
+
+
+            value[key_value] = val_value
+        print("MAP VALUES", value)
+
     else:
         value = conversion_tables[type_name](value) if is_value_type else value
         value = '""' if isinstance(value, PropertyGroup) else value
@@ -145,7 +182,7 @@ def property_group_value_to_custom_property_value(property_group, definition, re
     if parent == None:
         value = str(value).replace("'",  "")
         value = value.replace(",)",")")
-        value = value.replace("{", "(").replace("}", ")")
+        value = value.replace("{", "(").replace("}", ")") # FIXME: deal with hashmaps
         value = value.replace("True", "true").replace("False", "false")
     return value
 

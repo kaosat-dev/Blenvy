@@ -336,7 +336,7 @@ class ComponentsRegistry(PropertyGroup):
     long_names_to_propgroup_names = {}
 
     # generate propGroup name from nesting level & shortName: each shortName + nesting is unique
-    def generate_propGroup_name(self, nesting, shortName, longName):
+    def generate_propGroup_name(self, nesting, longName):
         #print("gen propGroup name for", shortName, nesting)
         #if shortName in self.short_names_to_propgroup_names and len(nesting) == 0:
         #    return self.get_propertyGroupName_from_shortName(shortName)
@@ -359,7 +359,9 @@ class ComponentsRegistry(PropertyGroup):
     
     def get_propertyGroupName_from_longName(self, longName):
         return self.long_names_to_propgroup_names.get(longName, None)
-
+    
+    def long_name_to_key():
+        pass
 
     ###########
 

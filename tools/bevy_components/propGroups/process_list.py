@@ -9,6 +9,9 @@ def process_list(registry, definition, update, nesting=[], nesting_long_names=[]
     short_name = definition["short_name"]
     long_name = definition["title"]
     ref_name = definition["items"]["type"]["$ref"].replace("#/$defs/", "")
+
+    nesting = nesting+[short_name]
+    nesting_long_names = nesting_long_names + [long_name]
     
     item_definition = type_infos[ref_name]
     item_long_name = item_definition["title"]
@@ -18,13 +21,10 @@ def process_list(registry, definition, update, nesting=[], nesting_long_names=[]
     property_group_class = None
     #if the content of the list is a unit type, we need to generate a fake wrapper, otherwise we cannot use layout.prop(group, "propertyName") as there is no propertyName !
     if is_item_value_type:
-        property_group_class = generate_wrapper_propertyGroup(short_name, item_long_name, definition["items"]["type"]["$ref"],registry, update)
+        property_group_class = generate_wrapper_propertyGroup(long_name, item_long_name, definition["items"]["type"]["$ref"], registry, update)
     else:
         (_, list_content_group_class) = process_component.process_component(registry, item_definition, update, {"nested": True, "type_name": item_long_name}, nesting)
         property_group_class = list_content_group_class
-
-    nesting = nesting+[short_name]
-    nesting_long_names = nesting_long_names + [long_name]
 
     item_collection = CollectionProperty(type=property_group_class)
 
