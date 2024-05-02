@@ -22,8 +22,7 @@ from .registry.registry import ComponentsRegistry,MissingBevyType
 from .registry.operators import (COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT, COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT, OT_select_component_name_to_replace, OT_select_object, ReloadRegistryOperator, OT_OpenFilebrowser)
 from .registry.ui import (BEVY_COMPONENTS_PT_Configuration, BEVY_COMPONENTS_PT_AdvancedToolsPanel, BEVY_COMPONENTS_PT_MissingTypesPanel, MISSING_TYPES_UL_List)
 
-from .components.metadata import (ComponentMetadata, ComponentsMeta, ensure_metadata_for_all_objects)
-from .propGroups.prop_groups import (generate_propertyGroups_for_components)
+from .components.metadata import (ComponentMetadata, ComponentsMeta)
 from .components.lists import GENERIC_LIST_OT_actions, Generic_LIST_OT_AddItem, Generic_LIST_OT_RemoveItem, Generic_LIST_OT_SelectItem
 from .components.definitions_list import (ComponentDefinitionsList, ClearComponentDefinitionsList)
 from .components.ui import (BEVY_COMPONENTS_PT_ComponentsPanel)

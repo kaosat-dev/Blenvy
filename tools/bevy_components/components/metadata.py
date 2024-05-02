@@ -10,51 +10,51 @@ class ComponentMetadata(bpy.types.PropertyGroup):
     name : bpy.props.StringProperty(
         name = "name",
         default = ""
-    )
+    ) # type: ignore
 
     long_name : bpy.props.StringProperty(
         name = "long name",
         default = ""
-    )
+    ) # type: ignore
 
     type_name : bpy.props.StringProperty(
         name = "Type",
         default = ""
-    )
+    ) # type: ignore
 
     values: bpy.props.StringProperty(
         name = "Value",
         default = ""
-    )
+    ) # type: ignore
 
     enabled: BoolProperty(
         name="enabled",
         description="component enabled",
         default=True
-    )
+    ) # type: ignore
 
     invalid: BoolProperty(
         name="invalid",
         description="component is invalid, because of missing registration/ other issues",
         default=False
-    )
+    ) # type: ignore
 
     invalid_details: StringProperty(
         name="invalid details",
         description="detailed information about why the component is invalid",
         default=""
-    )
+    ) # type: ignore
 
     visible: BoolProperty( # REALLY dislike doing this for UI control, but ok hack for now
         default=True
-    )
+    ) # type: ignore
 
 class ComponentsMeta(PropertyGroup):
     infos_per_component:  StringProperty(
         name="infos per component",
         description="component"
-    )
-    components: bpy.props.CollectionProperty(type = ComponentMetadata)  
+    ) # type: ignore
+    components: bpy.props.CollectionProperty(type = ComponentMetadata)  # type: ignore
 
     @classmethod
     def register(cls):
@@ -72,7 +72,9 @@ def get_component_metadata_by_short_name(object, short_name):
 
 # remove no longer valid metadata from object
 def cleanup_invalid_metadata(object):
-    bevy_components = json.loads(object['bevy_components']) if 'bevy_components' in object else {}
+    bevy_components = get_bevy_components(object)
+    if len(bevy_components.keys()) == 0: # no components, bail out
+        return
     components_metadata = object.components_meta.components
     to_remove = []
     for index, component_meta in enumerate(components_metadata):
@@ -92,6 +94,10 @@ def find_component_definition_from_short_name(short_name):
     if long_name != None:
         return registry.type_infos.get(long_name, None)
     return None
+
+def find_component_definition_from_long_name(long_name):
+    registry = bpy.context.window_manager.components_registry
+    return registry.type_infos.get(long_name, None)
 
 # FIXME: feels a bit heavy duty, should only be done
 # if the components panel is active ?
@@ -123,31 +129,45 @@ def do_object_custom_properties_have_missing_metadata(object):
     return missing_metadata
 
 
-# adds metadata to object only if it is missing
-def add_metadata_to_components_without_metadata(object):
-    registry = bpy.context.window_manager.components_registry
-
-    for component_name in dict(object) :
-        if component_name == "components_meta":
-            continue
-        upsert_component_in_object(object, component_name, registry)
-                    
-
 import json
-def inject_component(object, long_name, value):
+def upsert_bevy_component(object, long_name, value):
     if not 'bevy_components' in object:
         object['bevy_components'] = '{}'
-    previous = json.loads(object['bevy_components'])
-    previous[long_name] = value
-    object['bevy_components'] = json.dumps(previous)
+    bevy_components = json.loads(object['bevy_components'])
+    bevy_components[long_name] = value
+    object['bevy_components'] = json.dumps(bevy_components)
     #object['bevy_components'][long_name] = value # Sigh, this does not work, hits Blender's 63 char length limit
 
-def bla_component(object, long_name):
+def remove_bevy_component(object, long_name):
     if 'bevy_components' in object:
         current = json.loads(object['bevy_components'])
         del current[long_name]
         object['bevy_components'] = json.dumps(current)
 
+def get_bevy_components(object):
+    if 'bevy_components' in object:
+        bevy_components = json.loads(object['bevy_components'])
+        return bevy_components
+    return {}
+
+def get_bevy_component_value_by_long_name(object, long_name):
+    bevy_components = get_bevy_components(object)
+    if len(bevy_components.keys()) == 0 :
+        return None
+    return bevy_components.get(long_name, None)
+
+def is_bevy_component_in_object(object, long_name):
+    return get_bevy_component_value_by_long_name(object, long_name) is not None
+
+# adds metadata to object only if it is missing
+def add_metadata_to_components_without_metadata(object):
+    registry = bpy.context.window_manager.components_registry
+
+    for component_name in get_bevy_components(object) :
+        if component_name == "components_meta":
+            continue
+        upsert_component_in_object(object, component_name, registry)
+                    
 # adds a component to an object (including metadata) using the provided component definition & optional value
 def add_component_to_object(object, component_definition, value=None):
     cleanup_invalid_metadata(object)
@@ -158,7 +178,6 @@ def add_component_to_object(object, component_definition, value=None):
         if not registry.has_type_infos():
             raise Exception('registry type infos have not been loaded yet or are missing !')
         definition = registry.type_infos[long_name]
-        print("HEAAAY", value)
         # now we use our pre_generated property groups to set the initial value of our custom property
         (_, propertyGroup) = upsert_component_in_object(object, long_name=long_name, registry=registry)
         if value == None:
@@ -170,7 +189,7 @@ def add_component_to_object(object, component_definition, value=None):
 
         # object[short_name] = value
         print("ADDING VAALUEEE", value)
-        inject_component(object, long_name, value)
+        upsert_bevy_component(object, long_name, value)
         #ping_depsgraph_update(object)
 
        
@@ -226,14 +245,14 @@ def copy_propertyGroup_values_to_another_object(source_object, target_object, co
     if source_object == None or target_object == None or component_name == None:
         raise Exception('missing input data, cannot copy component propertryGroup')
     
-    component_definition = find_component_definition_from_short_name(component_name)
-    short_name = component_definition["short_name"]
-    property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
+    component_definition = find_component_definition_from_long_name(component_name)
+    long_name = component_name
+    property_group_name = registry.get_propertyGroupName_from_longName(long_name)
 
     registry = bpy.context.window_manager.components_registry
 
     source_components_metadata = source_object.components_meta.components
-    source_componentMeta = next(filter(lambda component: component["name"] == short_name, source_components_metadata), None)
+    source_componentMeta = next(filter(lambda component: component["long_name"] == long_name, source_components_metadata), None)
     # matching component means we already have this type of component 
     source_propertyGroup = getattr(source_componentMeta, property_group_name)
 
@@ -241,28 +260,27 @@ def copy_propertyGroup_values_to_another_object(source_object, target_object, co
     (_, target_propertyGroup) = upsert_component_in_object(target_object, component_name, registry)
     # add to object
     value = property_group_value_to_custom_property_value(target_propertyGroup, component_definition, registry, None)
-    target_object[short_name] = value
+    upsert_bevy_component(target_object, long_name, value)
 
     # copy the values over 
     for field_name in source_propertyGroup.field_names:
         if field_name in source_propertyGroup:
             target_propertyGroup[field_name] = source_propertyGroup[field_name]
     apply_propertyGroup_values_to_object_customProperties(target_object)
-    ping_depsgraph_update(object)
 
 
 # TODO: move to propgroups ?
 def apply_propertyGroup_values_to_object_customProperties(object):
     cleanup_invalid_metadata(object)
     registry = bpy.context.window_manager.components_registry
-    for component_name in dict(object) :
-        if component_name == "components_meta":
-            continue
+    for component_name in get_bevy_components(object) :
+        """if component_name == "components_meta":
+            continue"""
         (_, propertyGroup) =  upsert_component_in_object(object, component_name, registry)
-        component_definition = find_component_definition_from_short_name(component_name)
+        component_definition = find_component_definition_from_long_name(component_name)
         if component_definition != None:
             value = property_group_value_to_custom_property_value(propertyGroup, component_definition, registry, None)
-            object[component_name] = value
+            upsert_bevy_component(object=object, long_name=component_name, value=value)
 
 # apply component value(s) to custom property of a single component
 def apply_propertyGroup_values_to_object_customProperties_for_component(object, component_name):
@@ -304,7 +322,7 @@ def apply_customProperty_values_to_object_propertyGroups(object):
 
 # removes the given component from the object: removes both the custom property and the matching metadata from the object
 def remove_component_from_object(object, component_name):
-    bla_component(object, component_name)
+    remove_bevy_component(object, component_name)
 
     components_metadata = getattr(object, "components_meta", None)
     if components_metadata == None:
@@ -319,16 +337,14 @@ def remove_component_from_object(object, component_name):
             break
     for index in to_remove:
         components_metadata.remove(index)
-    ping_depsgraph_update(object)
     return True
 
 def add_component_from_custom_property(object):
     add_metadata_to_components_without_metadata(object)
     apply_customProperty_values_to_object_propertyGroups(object)
-    ping_depsgraph_update(object)
 
 def toggle_component(object, component_name):
     components_in_object = object.components_meta.components
-    component_meta =  next(filter(lambda component: component["name"] == component_name, components_in_object), None)
+    component_meta =  next(filter(lambda component: component["long_name"] == component_name, components_in_object), None)
     if component_meta != None: 
         component_meta.visible = not component_meta.visible

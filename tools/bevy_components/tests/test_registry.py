@@ -16,7 +16,7 @@ def test_blend(setup_data):
     object = bpy.context.object
 
     target_components_metadata = object.components_meta.components
-    component_meta = next(filter(lambda component: component["name"] == short_name, target_components_metadata), None)
+    component_meta = next(filter(lambda component: component["long_name"] == short_name, target_components_metadata), None)
     propertyGroup = getattr(component_meta, property_group_name, None)
 
 

@@ -39,7 +39,7 @@ def test_components_should_generate_correct_custom_properties(setup_data):
             property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
 
             target_components_metadata = object.components_meta.components
-            component_meta = next(filter(lambda component: component["name"] == short_name, target_components_metadata), None)
+            component_meta = next(filter(lambda component: component["long_name"] == short_name, target_components_metadata), None)
             propertyGroup = getattr(component_meta, property_group_name, None)
             added_components.append(component_type)
             custom_property_values[short_name] = object[short_name]
@@ -87,7 +87,7 @@ def test_components_should_generate_correct_custom_properties_with_randomized_va
             property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
 
             target_components_metadata = object.components_meta.components
-            component_meta = next(filter(lambda component: component["name"] == short_name, target_components_metadata), None)
+            component_meta = next(filter(lambda component: component["long_name"] == short_name, target_components_metadata), None)
             propertyGroup = getattr(component_meta, property_group_name, None)
             component_values_shuffler(seed= 10, property_group=propertyGroup, definition=definition, registry=registry)
 
@@ -136,7 +136,7 @@ def test_components_should_generate_correct_propertyGroup_values_from_custom_pro
             property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
 
             target_components_metadata = object.components_meta.components
-            component_meta = next(filter(lambda component: component["name"] == short_name, target_components_metadata), None)
+            component_meta = next(filter(lambda component: component["long_name"] == short_name, target_components_metadata), None)
             propertyGroup = getattr(component_meta, property_group_name, None)
             added_components.append(component_type)
             # randomise values
@@ -195,7 +195,7 @@ def test_remove_components(setup_data):
             object = bpy.context.object
 
             target_components_metadata = object.components_meta.components
-            component_meta = next(filter(lambda component: component["name"] == short_name, target_components_metadata), None)
+            component_meta = next(filter(lambda component: component["long_name"] == short_name, target_components_metadata), None)
             propertyGroup = getattr(component_meta, property_group_name, None)
             # print("propertyGroup", propertyGroup, propertyGroup.field_names)
             added_components.append(component_type)
@@ -231,7 +231,7 @@ def test_copy_paste_components(setup_data):
     object = context.object
 
     target_components_metadata = object.components_meta.components
-    component_meta = next(filter(lambda component: component["name"] == short_name, target_components_metadata), None)
+    component_meta = next(filter(lambda component: component["long_name"] == short_name, target_components_metadata), None)
     propertyGroup = getattr(component_meta, property_group_name, None)
 
     setattr(propertyGroup, propertyGroup.field_names[0], 25.0)
@@ -246,7 +246,7 @@ def test_copy_paste_components(setup_data):
     # change name
     new_cube.name = "TargetCube"
     target_components_metadata = new_cube.components_meta.components
-    component_meta = next(filter(lambda component: component["name"] == short_name, target_components_metadata), None)
+    component_meta = next(filter(lambda component: component["long_name"] == short_name, target_components_metadata), None)
 
     # first check that there is no component currently
     assert component_meta == None
@@ -255,7 +255,7 @@ def test_copy_paste_components(setup_data):
     paste_component_operator()
 
     target_components_metadata = new_cube.components_meta.components
-    component_meta = next(filter(lambda component: component["name"] == short_name, target_components_metadata), None)
+    component_meta = next(filter(lambda component: component["long_name"] == short_name, target_components_metadata), None)
 
     # now after pasting to the new object, it should have component meta
     assert component_meta != None

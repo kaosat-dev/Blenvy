@@ -10,19 +10,19 @@ class Generic_LIST_OT_AddItem(Operator):
     property_group_path: StringProperty(
         name="property group path",
         description="",
-    )
+    ) # type: ignore
 
     component_name: StringProperty(
         name="component name",
         description="",
-    )
+    ) # type: ignore
 
     def execute(self, context): 
         print("")
         object = context.object
         # information is stored in component meta
         components_in_object = object.components_meta.components
-        component_meta =  next(filter(lambda component: component["name"] == self.component_name, components_in_object), None)
+        component_meta =  next(filter(lambda component: component["long_name"] == self.component_name, components_in_object), None)
 
         propertyGroup = component_meta
         for path_item in json.loads(self.property_group_path):
@@ -47,19 +47,19 @@ class Generic_LIST_OT_RemoveItem(Operator):
     property_group_path: StringProperty(
         name="property group path",
         description="",
-    )
+    ) # type: ignore
 
     component_name: StringProperty(
         name="component name",
         description="",
-    )
+    ) # type: ignore
     def execute(self, context): 
         print("remove from list", context.object)
 
         object = context.object
         # information is stored in component meta
         components_in_object = object.components_meta.components
-        component_meta =  next(filter(lambda component: component["name"] == self.component_name, components_in_object), None)
+        component_meta =  next(filter(lambda component: component["long_name"] == self.component_name, components_in_object), None)
 
         propertyGroup = component_meta
         for path_item in json.loads(self.property_group_path):
@@ -81,14 +81,14 @@ class Generic_LIST_OT_SelectItem(Operator):
     property_group_path: StringProperty(
         name="property group path",
         description="",
-    )
+    ) # type: ignore
 
     component_name: StringProperty(
         name="component name",
         description="",
-    )
+    ) # type: ignore
 
-    selection_index: IntProperty()
+    selection_index: IntProperty() # type: ignore
 
     def execute(self, context): 
         print("select in list", context.object)
@@ -96,7 +96,7 @@ class Generic_LIST_OT_SelectItem(Operator):
         object = context.object
         # information is stored in component meta
         components_in_object = object.components_meta.components
-        component_meta =  next(filter(lambda component: component["name"] == self.component_name, components_in_object), None)
+        component_meta =  next(filter(lambda component: component["long_name"] == self.component_name, components_in_object), None)
 
         propertyGroup = component_meta
         for path_item in json.loads(self.property_group_path):
@@ -121,23 +121,23 @@ class GENERIC_LIST_OT_actions(Operator):
             ('UP', "Up", ""),
             ('DOWN', "Down", ""),
             ('REMOVE', "Remove", ""),
-            ('ADD', "Add", "")))
+            ('ADD', "Add", ""))) # type: ignore
     
     property_group_path: StringProperty(
         name="property group path",
         description="",
-    )
+    ) # type: ignore
 
     component_name: StringProperty(
         name="component name",
         description="",
-    )
+    ) # type: ignore
 
     def invoke(self, context, event):
         object = context.object
         # information is stored in component meta
         components_in_object = object.components_meta.components
-        component_meta =  next(filter(lambda component: component["name"] == self.component_name, components_in_object), None)
+        component_meta =  next(filter(lambda component: component["long_name"] == self.component_name, components_in_object), None)
 
         propertyGroup = component_meta
         for path_item in json.loads(self.property_group_path):

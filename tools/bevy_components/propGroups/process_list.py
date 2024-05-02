@@ -2,11 +2,12 @@ from bpy.props import (StringProperty, IntProperty, CollectionProperty)
 from .utils import generate_wrapper_propertyGroup
 from . import process_component
 
-def process_list(registry, definition, update, nesting=[]):
+def process_list(registry, definition, update, nesting=[], nesting_long_names=[]):
     value_types_defaults = registry.value_types_defaults 
     type_infos = registry.type_infos
 
     short_name = definition["short_name"]
+    long_name = definition["title"]
     ref_name = definition["items"]["type"]["$ref"].replace("#/$defs/", "")
     
     item_definition = type_infos[ref_name]
@@ -23,6 +24,8 @@ def process_list(registry, definition, update, nesting=[]):
         property_group_class = list_content_group_class
 
     nesting = nesting+[short_name]
+    nesting_long_names = nesting_long_names + [long_name]
+
     item_collection = CollectionProperty(type=property_group_class)
 
     item_short_name = item_short_name if not is_item_value_type else  "wrapper_" + item_short_name

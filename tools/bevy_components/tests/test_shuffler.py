@@ -19,7 +19,7 @@ def test_shuffler(setup_data):
 
     property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
     target_components_metadata = object.components_meta.components
-    component_meta = next(filter(lambda component: component["name"] == short_name, target_components_metadata), None)
+    component_meta = next(filter(lambda component: component["long_name"] == short_name, target_components_metadata), None)
     propertyGroup = getattr(component_meta, property_group_name, None)
 
     definition = type_infos[component_type]
@@ -38,7 +38,7 @@ def test_shuffler(setup_data):
 
     property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
     target_components_metadata = object.components_meta.components
-    component_meta = next(filter(lambda component: component["name"] == short_name, target_components_metadata), None)
+    component_meta = next(filter(lambda component: component["long_name"] == short_name, target_components_metadata), None)
     propertyGroup = getattr(component_meta, property_group_name, None)
 
     definition = type_infos[component_type]
@@ -57,7 +57,7 @@ def test_shuffler(setup_data):
 
     property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
     target_components_metadata = object.components_meta.components
-    component_meta = next(filter(lambda component: component["name"] == short_name, target_components_metadata), None)
+    component_meta = next(filter(lambda component: component["long_name"] == short_name, target_components_metadata), None)
     propertyGroup = getattr(component_meta, property_group_name, None)
 
     definition = type_infos[component_type]
@@ -75,7 +75,7 @@ def test_shuffler(setup_data):
 
     property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
     target_components_metadata = object.components_meta.components
-    component_meta = next(filter(lambda component: component["name"] == short_name, target_components_metadata), None)
+    component_meta = next(filter(lambda component: component["long_name"] == short_name, target_components_metadata), None)
     propertyGroup = getattr(component_meta, property_group_name, None)
 
     definition = type_infos[component_type]
@@ -95,7 +95,7 @@ def test_shuffler(setup_data):
 
     property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
     target_components_metadata = object.components_meta.components
-    component_meta = next(filter(lambda component: component["name"] == short_name, target_components_metadata), None)
+    component_meta = next(filter(lambda component: component["long_name"] == short_name, target_components_metadata), None)
     propertyGroup = getattr(component_meta, property_group_name, None)
 
     definition = type_infos[component_type]
@@ -113,7 +113,7 @@ def test_shuffler(setup_data):
 
     property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
     target_components_metadata = object.components_meta.components
-    component_meta = next(filter(lambda component: component["name"] == short_name, target_components_metadata), None)
+    component_meta = next(filter(lambda component: component["long_name"] == short_name, target_components_metadata), None)
     propertyGroup = getattr(component_meta, property_group_name, None)
 
     definition = type_infos[component_type]
@@ -130,7 +130,7 @@ def test_shuffler(setup_data):
 
     property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
     target_components_metadata = object.components_meta.components
-    component_meta = next(filter(lambda component: component["name"] == short_name, target_components_metadata), None)
+    component_meta = next(filter(lambda component: component["long_name"] == short_name, target_components_metadata), None)
     propertyGroup = getattr(component_meta, property_group_name, None)
 
     definition = type_infos[component_type]
@@ -148,7 +148,7 @@ def test_shuffler(setup_data):
 
     property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
     target_components_metadata = object.components_meta.components
-    component_meta = next(filter(lambda component: component["name"] == short_name, target_components_metadata), None)
+    component_meta = next(filter(lambda component: component["long_name"] == short_name, target_components_metadata), None)
     propertyGroup = getattr(component_meta, property_group_name, None)
 
     definition = type_infos[component_type]

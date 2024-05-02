@@ -9,7 +9,7 @@ from .setup_data import setup_data
 # small helpers
 def get_component_metadata(object, component_name):
     target_components_metadata = object.components_meta.components
-    component_meta = next(filter(lambda component: component["name"] == component_name, target_components_metadata), None)
+    component_meta = next(filter(lambda component: component["long_name"] == component_name, target_components_metadata), None)
     return component_meta
 
 def get_component_propGroup(registry, component_name, component_meta):

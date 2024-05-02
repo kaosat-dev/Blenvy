@@ -3,6 +3,7 @@ from .conversions_from_prop_group import property_group_value_to_custom_property
 from .process_component import process_component
 from .utils import update_calback_helper
 
+import json
 ## main callback function, fired whenever any property changes, no matter the nesting level
 def update_component(self, context, definition, component_name):
     registry = bpy.context.window_manager.components_registry
@@ -14,12 +15,17 @@ def update_component(self, context, definition, component_name):
     print("")
     print("update in component", component_name, self, "current_object", current_object.name)
     components_in_object = current_object.components_meta.components
-    component_meta =  next(filter(lambda component: component["name"] == component_name, components_in_object), None)
+    component_meta =  next(filter(lambda component: component["long_name"] == component_name, components_in_object), None)
+    print("component_meta", component_meta)
+
     if component_meta != None:
-        property_group_name = registry.get_propertyGroupName_from_shortName(component_name)
-        self = getattr(component_meta, property_group_name)
+        property_group_name = registry.get_propertyGroupName_from_longName(component_name)
+        property_group = getattr(component_meta, property_group_name)
         # we use our helper to set the values
-        context.object[component_name] = property_group_value_to_custom_property_value(self, definition, registry, None)
+        object = context.object
+        previous = json.loads(object['bevy_components'])
+        previous[component_name] = property_group_value_to_custom_property_value(property_group, definition, registry, None)
+        object['bevy_components'] = json.dumps(previous)
 
 
 def generate_propertyGroups_for_components():
@@ -31,9 +37,8 @@ def generate_propertyGroups_for_components():
 
     for component_name in type_infos:
         definition = type_infos[component_name]
-        short_name = definition["short_name"]
         is_component = definition['isComponent'] if "isComponent" in definition else False
-        root_property_name = short_name if is_component else None
+        root_property_name = component_name if is_component else None
         process_component(registry, definition, update_calback_helper(definition, update_component, root_property_name), None, [])
         
     # if we had to add any wrapper types on the fly, process them now

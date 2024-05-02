@@ -6,7 +6,7 @@ from . import process_tupples
 from . import process_enum
 from . import process_list
 
-def process_component(registry, definition, update, extras=None, nesting = []):
+def process_component(registry, definition, update, extras=None, nesting = [], nesting_long_names = []):
     component_name = definition['title']
     short_name = definition["short_name"]
     type_info = definition["typeInfo"] if "typeInfo" in definition else None
@@ -31,21 +31,21 @@ def process_component(registry, definition, update, extras=None, nesting = []):
 
 
     if has_properties:
-        __annotations__ = __annotations__ | process_structs.process_structs(registry, definition, properties, update, nesting)
+        __annotations__ = __annotations__ | process_structs.process_structs(registry, definition, properties, update, nesting, nesting_long_names)
         with_properties = True
         tupple_or_struct = "struct"
 
     if has_prefixItems:
-        __annotations__ = __annotations__ | process_tupples.process_tupples(registry, definition, prefixItems, update, nesting)
+        __annotations__ = __annotations__ | process_tupples.process_tupples(registry, definition, prefixItems, update, nesting, nesting_long_names)
         with_items = True
         tupple_or_struct = "tupple"
 
     if is_enum:
-        __annotations__ = __annotations__ | process_enum.process_enum(registry, definition, update, nesting)
+        __annotations__ = __annotations__ | process_enum.process_enum(registry, definition, update, nesting, nesting_long_names)
         with_enum = True
 
     if is_list:
-        __annotations__ = __annotations__ | process_list.process_list(registry, definition, update, nesting)
+        __annotations__ = __annotations__ | process_list.process_list(registry, definition, update, nesting, nesting_long_names)
         with_list= True
     
     field_names = []
@@ -56,7 +56,7 @@ def process_component(registry, definition, update, extras=None, nesting = []):
     extras = extras if extras is not None else {
         "type_name": component_name
     }
-    root_component = nesting[0] if len(nesting) > 0 else component_name
+    root_component = nesting_long_names[0] if len(nesting_long_names) > 0 else component_name
     # print("DONE:",short_name,"__annotations__", __annotations__)
     # print("")
     property_group_params = {

@@ -4,7 +4,7 @@ import bpy
 from bpy_types import Operator
 from bpy.props import (StringProperty)
 
-from .metadata import add_component_from_custom_property, add_component_to_object, add_metadata_to_components_without_metadata, apply_customProperty_values_to_object_propertyGroups, apply_propertyGroup_values_to_object_customProperties_for_component, copy_propertyGroup_values_to_another_object, find_component_definition_from_short_name, remove_component_from_object, toggle_component
+from .metadata import add_component_from_custom_property, add_component_to_object, add_metadata_to_components_without_metadata, apply_customProperty_values_to_object_propertyGroups, apply_propertyGroup_values_to_object_customProperties_for_component, copy_propertyGroup_values_to_another_object, find_component_definition_from_short_name, get_bevy_component_value_by_long_name, get_bevy_components, is_bevy_component_in_object, remove_component_from_object, toggle_component
 
 class AddComponentOperator(Operator):
     """Add Bevy component to object"""
@@ -36,7 +36,7 @@ class CopyComponentOperator(Operator):
     bl_options = {"UNDO"}
 
     source_component_name: StringProperty(
-        name="source component_name",
+        name="source component_name (long)",
         description="name of the component to copy",
     ) # type: ignore
 
@@ -80,10 +80,10 @@ class PasteComponentOperator(Operator):
             self.report({"ERROR"}, "The source object to copy a component from does not exist")
         else:
             component_name = context.window_manager.copied_source_component_name
-            if not component_name in source_object:
+            component_value = get_bevy_component_value_by_long_name(source_object, component_name)
+            if component_value is None:
                 self.report({"ERROR"}, "The source component to copy from does not exist")
             else:
-                component_value = source_object[component_name]
                 print("pasting component to object: component name:", str(component_name), "component value:" + str(component_value))
                 print (context.object)
                 registry = context.window_manager.components_registry
@@ -114,10 +114,15 @@ class RemoveComponentOperator(Operator):
         else:
             object = bpy.data.objects[self.object_name]
         print("removing component ", self.component_name, "from object  '"+object.name+"'")
-        if object is not None and 'bevy_components' in object and self.component_name in object['bevy_components']:
-            remove_component_from_object(object, self.component_name)
+
+        if object is not None and 'bevy_components' in object :
+            component_value = get_bevy_component_value_by_long_name(object, self.component_name)
+            if component_value is not None:
+                remove_component_from_object(object, self.component_name)
+            else :
+                self.report({"ERROR"}, "The component to remove ("+ self.component_name +") does not exist")
         else: 
-            self.report({"ERROR"}, "The object/ component to remove ("+ self.component_name +") does not exist")
+            self.report({"ERROR"}, "The object to remove ("+ self.component_name +") from does not exist")
         return {'FINISHED'}
 
 
@@ -145,7 +150,7 @@ class RemoveComponentFromAllObjectsOperator(Operator):
         total = len(bpy.data.objects)
         for index, object in enumerate(bpy.data.objects):
             if len(object.keys()) > 0:
-                if object is not None and self.component_name in object: 
+                if object is not None and is_bevy_component_in_object(object, self.component_name): 
                     remove_component_from_object(object, self.component_name)
             
             progress = index / total
@@ -222,7 +227,7 @@ class OT_rename_component(Operator):
                         components_metadata = getattr(object, "components_meta", None)
                         if components_metadata:
                             components_metadata = components_metadata.components
-                            component_meta =  next(filter(lambda component: component["name"] == new_name, components_metadata), None)
+                            component_meta =  next(filter(lambda component: component["long_name"] == new_name, components_metadata), None)
                             if component_meta:
                                 component_meta.invalid = True
                                 component_meta.invalid_details = "unknow issue when renaming/transforming component, please remove it & add it back again"
@@ -240,7 +245,7 @@ class OT_rename_component(Operator):
                         components_metadata = getattr(object, "components_meta", None)
                         if components_metadata:
                             components_metadata = components_metadata.components
-                            component_meta =  next(filter(lambda component: component["name"] == new_name, components_metadata), None)
+                            component_meta =  next(filter(lambda component: component["long_name"] == new_name, components_metadata), None)
                             if component_meta:
                                 component_meta.invalid = True
                                 component_meta.invalid_details = "wrong custom property value, overwrite them by changing the values in the ui or change them & regenerate"

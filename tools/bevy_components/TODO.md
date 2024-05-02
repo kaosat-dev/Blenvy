@@ -207,3 +207,10 @@ UI:
 
 - [x] clean up reloading of registry settings
 - [x] clean up file watcher
+
+
+=========================================
+Restructuring of storage of components
+- [x] marking of invalid root propgroups/components should be based on long name
+- [ ] overhaul & check each prop group type's use of short names => long names
+    - [ ] lists

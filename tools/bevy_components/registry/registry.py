@@ -317,6 +317,7 @@ class ComponentsRegistry(PropertyGroup):
             self.type_infos[type_name] = self.custom_types_to_add[type_name]
         self.custom_types_to_add.clear()
 
+    # add an invalid component to the list (long name)
     def add_invalid_component(self, component_name):
         self.invalid_components.append(component_name)
 
@@ -350,7 +351,7 @@ class ComponentsRegistry(PropertyGroup):
         self.short_names_to_propgroup_names[key] = propGroupName"""
         # FIXME:
         key = str(nesting) + longName if len(nesting) > 0 else longName
-        self.long_names_to_propgroup_names[longName] = propGroupName
+        self.long_names_to_propgroup_names[key] = propGroupName
         return propGroupName
 
     def get_propertyGroupName_from_shortName(self, shortName):

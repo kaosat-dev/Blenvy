@@ -52,7 +52,6 @@ def generate_wrapper_propertyGroup(short_name, item_long_name, definition, regis
         'tupple_or_struct': "tupple",
         'field_names': ['0'], 
         **dict(with_properties = False, with_items= True, with_enum= False, with_list= False, short_name= wrapper_name, type_name=wrapper_name),
-        #'root_component': root_component
     }
     property_group_class = type(wrapper_name, (PropertyGroup,), property_group_params)
     bpy.utils.register_class(property_group_class)

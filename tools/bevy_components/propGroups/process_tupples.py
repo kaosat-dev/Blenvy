@@ -1,13 +1,15 @@
 from bpy.props import (StringProperty)
 from . import process_component
 
-def process_tupples(registry, definition, prefixItems, update, nesting=[]):
+def process_tupples(registry, definition, prefixItems, update, nesting=[], nesting_long_names=[]):
     value_types_defaults = registry.value_types_defaults 
     blender_property_mapping = registry.blender_property_mapping
     type_infos = registry.type_infos
+    long_name = definition["title"]
     short_name = definition["short_name"]
 
     nesting = nesting+[short_name]
+    nesting_long_names = nesting_long_names + [long_name]
     __annotations__ = {}
 
     default_values = []
@@ -46,7 +48,7 @@ def process_tupples(registry, definition, prefixItems, update, nesting=[]):
             __annotations__[property_name] = StringProperty(default="N/A")
             registry.add_missing_typeInfo(ref_name)
             # the root component also becomes invalid (in practice it is not always a component, but good enough)
-            registry.add_invalid_component(nesting[0])
+            registry.add_invalid_component(nesting_long_names[0])
 
 
     return __annotations__

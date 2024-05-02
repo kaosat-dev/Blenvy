@@ -47,12 +47,12 @@ class ComponentDefinitionsList(bpy.types.PropertyGroup):
         description="list",
         # items argument required to initialize, just filled with empty values
         items = add_component_to_ui_list,
-    )
+    ) # type: ignore
     filter: StringProperty(
         name="component filter",
         description="filter for the components list",
         options={'TEXTEDIT_UPDATE'}
-    )
+    ) # type: ignore
 
 
 class ClearComponentDefinitionsList(bpy.types.Operator):
