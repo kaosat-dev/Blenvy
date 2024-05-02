@@ -56,23 +56,17 @@ fn process_lights(
     for (mut light, blender_light_shadows) in directional_lights.iter_mut() {
         if let Some(blender_light_shadows) = blender_light_shadows {
             light.shadows_enabled = blender_light_shadows.enabled;
-        } else {
-            light.shadows_enabled = true;
         }
     }
     for (mut light, blender_light_shadows) in spot_lights.iter_mut() {
         if let Some(blender_light_shadows) = blender_light_shadows {
             light.shadows_enabled = blender_light_shadows.enabled;
-        } else {
-            light.shadows_enabled = true;
         }
     }
 
     for (mut light, blender_light_shadows) in point_lights.iter_mut() {
         if let Some(blender_light_shadows) = blender_light_shadows {
             light.shadows_enabled = blender_light_shadows.enabled;
-        } else {
-            light.shadows_enabled = true;
         }
     }
 }
