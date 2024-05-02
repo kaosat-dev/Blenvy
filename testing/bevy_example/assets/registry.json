@@ -3168,6 +3168,117 @@
       "type": "string",
       "typeInfo": "Enum"
     },
+    "bevy_example::test_components::HashmapTestIntColor": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "inner": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<u32, bevy_render::color::Color, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+          }
+        }
+      },
+      "required": [
+        "inner"
+      ],
+      "short_name": "HashmapTestIntColor",
+      "title": "bevy_example::test_components::HashmapTestIntColor",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_example::test_components::HashmapTestIntString": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "named_animations": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<u32, alloc::string::String, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+          }
+        }
+      },
+      "required": [
+        "named_animations"
+      ],
+      "short_name": "HashmapTestIntString",
+      "title": "bevy_example::test_components::HashmapTestIntString",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_example::test_components::HashmapTestSimple": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "named_animations": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<alloc::string::String, alloc::string::String, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+          }
+        }
+      },
+      "required": [
+        "named_animations"
+      ],
+      "short_name": "HashmapTestSimple",
+      "title": "bevy_example::test_components::HashmapTestSimple",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_example::test_components::HashmapTestStringColor": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "inner": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<alloc::string::String, bevy_render::color::Color, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+          }
+        }
+      },
+      "required": [
+        "inner"
+      ],
+      "short_name": "HashmapTestStringColor",
+      "title": "bevy_example::test_components::HashmapTestStringColor",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_example::test_components::HashmapTestStringColorFlat": {
+      "isComponent": true,
+      "isResource": false,
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<alloc::string::String, bevy_render::color::Color, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+          }
+        }
+      ],
+      "short_name": "HashmapTestStringColorFlat",
+      "title": "bevy_example::test_components::HashmapTestStringColorFlat",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
+    "bevy_example::test_components::HashmapTestStringFloat": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "named_animations": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<alloc::string::String, f32, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+          }
+        }
+      },
+      "required": [
+        "named_animations"
+      ],
+      "short_name": "HashmapTestStringFloat",
+      "title": "bevy_example::test_components::HashmapTestStringFloat",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "bevy_example::test_components::NestedTupleStuff": {
       "isComponent": true,
       "isResource": false,
@@ -11026,6 +11137,19 @@
       "type": "object",
       "typeInfo": "Value"
     },
+    "bevy_utils::hashbrown::HashMap<alloc::string::String, alloc::string::String, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "additionalProperties": {
+        "type": {
+          "$ref": "#/$defs/alloc::string::String"
+        }
+      },
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "HashMap<String, String, DefaultHashBuilder>",
+      "title": "bevy_utils::hashbrown::HashMap<alloc::string::String, alloc::string::String, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Map"
+    },
     "bevy_utils::hashbrown::HashMap<alloc::string::String, alloc::vec::Vec<alloc::string::String>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
       "additionalProperties": {
         "type": {
@@ -11036,6 +11160,19 @@
       "isResource": false,
       "short_name": "HashMap<String, Vec<String>, DefaultHashBuilder>",
       "title": "bevy_utils::hashbrown::HashMap<alloc::string::String, alloc::vec::Vec<alloc::string::String>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Map"
+    },
+    "bevy_utils::hashbrown::HashMap<alloc::string::String, bevy_render::color::Color, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "additionalProperties": {
+        "type": {
+          "$ref": "#/$defs/bevy_render::color::Color"
+        }
+      },
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "HashMap<String, Color, DefaultHashBuilder>",
+      "title": "bevy_utils::hashbrown::HashMap<alloc::string::String, bevy_render::color::Color, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
       "type": "object",
       "typeInfo": "Map"
     },
@@ -11052,6 +11189,32 @@
       "type": "object",
       "typeInfo": "Map"
     },
+    "bevy_utils::hashbrown::HashMap<alloc::string::String, f32, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "additionalProperties": {
+        "type": {
+          "$ref": "#/$defs/f32"
+        }
+      },
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "HashMap<String, f32, DefaultHashBuilder>",
+      "title": "bevy_utils::hashbrown::HashMap<alloc::string::String, f32, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Map"
+    },
+    "bevy_utils::hashbrown::HashMap<u32, alloc::string::String, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "additionalProperties": {
+        "type": {
+          "$ref": "#/$defs/alloc::string::String"
+        }
+      },
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "HashMap<u32, String, DefaultHashBuilder>",
+      "title": "bevy_utils::hashbrown::HashMap<u32, alloc::string::String, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Map"
+    },
     "bevy_utils::hashbrown::HashMap<u32, alloc::vec::Vec<alloc::string::String>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
       "additionalProperties": {
         "type": {
@@ -11062,6 +11225,19 @@
       "isResource": false,
       "short_name": "HashMap<u32, Vec<String>, DefaultHashBuilder>",
       "title": "bevy_utils::hashbrown::HashMap<u32, alloc::vec::Vec<alloc::string::String>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Map"
+    },
+    "bevy_utils::hashbrown::HashMap<u32, bevy_render::color::Color, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "additionalProperties": {
+        "type": {
+          "$ref": "#/$defs/bevy_render::color::Color"
+        }
+      },
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "HashMap<u32, Color, DefaultHashBuilder>",
+      "title": "bevy_utils::hashbrown::HashMap<u32, bevy_render::color::Color, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
       "type": "object",
       "typeInfo": "Map"
     },
