@@ -5,9 +5,6 @@ from ..helpers.helpers_scenes import (get_scenes, )
 # IF collection_instances_combine_mode is not 'split' check for each scene if any object in changes_per_scene has an instance in the scene
 def changed_object_in_scene(scene_name, changes_per_scene, blueprints_data, collection_instances_combine_mode):
     # Embed / EmbedExternal
-    """if collection_instances_combine_mode == "Split": # 1 => Embed
-        return False"""
-
     blueprints_from_objects = blueprints_data.blueprints_from_objects
 
     blueprint_instances_in_scene = blueprints_data.blueprint_instances_per_main_scene.get(scene_name, None)
@@ -34,7 +31,6 @@ def changed_object_in_scene(scene_name, changes_per_scene, blueprints_data, coll
         # changes => list of changed objects (regardless of wether they have been changed in main scene or in lib scene)
         # wich of those objects are blueprint instances
         # we need a list of changed objects that are blueprint instances
-
         return level_needs_export
     return False
 

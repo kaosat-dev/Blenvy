@@ -178,10 +178,10 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
         # if there were no setting before, it is new, we need export
         changed = False
         if previous_auto_settings == None:
-            print("previous settings missing, exporting")
+            #print("previous settings missing, exporting")
             changed = True
         elif previous_gltf_settings == None:
-            print("previous gltf settings missing, exporting")
+            #print("previous gltf settings missing, exporting")
             previous_gltf_settings = bpy.data.texts.new(".gltf_auto_export_gltf_settings_previous")
             previous_gltf_settings.write(json.dumps({}))
             if current_gltf_settings == None:
@@ -194,18 +194,17 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
             auto_settings_changed = sorted(json.loads(previous_auto_settings.as_string()).items()) != sorted(json.loads(current_auto_settings.as_string()).items()) if current_auto_settings != None else False
             gltf_settings_changed = sorted(json.loads(previous_gltf_settings.as_string()).items()) != sorted(json.loads(current_gltf_settings.as_string()).items()) if current_gltf_settings != None else False
             
-            print("auto settings previous", sorted(json.loads(previous_auto_settings.as_string()).items()))
+            """print("auto settings previous", sorted(json.loads(previous_auto_settings.as_string()).items()))
             print("auto settings current", sorted(json.loads(current_auto_settings.as_string()).items()))
             print("auto_settings_changed", auto_settings_changed)
 
             print("gltf settings previous", sorted(json.loads(previous_gltf_settings.as_string()).items()))
             print("gltf settings current", sorted(json.loads(current_gltf_settings.as_string()).items()))
-            print("gltf_settings_changed", gltf_settings_changed)
+            print("gltf_settings_changed", gltf_settings_changed)"""
 
             changed = auto_settings_changed or gltf_settings_changed
         # now write the current settings to the "previous settings"
         if current_auto_settings != None:
-            print("writing settings")
             previous_auto_settings = bpy.data.texts[".gltf_auto_export_settings_previous"] if ".gltf_auto_export_settings_previous" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_settings_previous")
             previous_auto_settings.clear()
             previous_auto_settings.write(current_auto_settings.as_string()) # TODO : check if this is always valid
@@ -294,15 +293,9 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
                         changes_per_scene[scene][object_name] = bpy.data.objects[object_name]
                         bubble_up_changes(bpy.data.objects[object_name], changes_per_scene[scene])
                         # now bubble up for instances & parents
-                        
-
-                    
-            
             previous_stored.clear()
             previous_stored.write(json.dumps(current))
 
-        
-            
         print("changes per scene alternative", changes_per_scene)
         return changes_per_scene
 
