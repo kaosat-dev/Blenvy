@@ -31,8 +31,7 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
         );
 
         let type_registry: &AppTypeRegistry = world.resource();
-        let type_registry = type_registry.read();
-
+        let type_registry = type_registry.read();        
         let reflect_components = ronstring_to_reflect_component(&extra.value, &type_registry);
 
         // we assign the components specified /xxx_components objects to their parent node
