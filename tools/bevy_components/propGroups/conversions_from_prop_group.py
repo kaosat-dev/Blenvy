@@ -33,7 +33,7 @@ def property_group_value_to_custom_property_value(property_group, definition, re
     type_def = definition["type"] if "type" in definition else None
     type_name = definition["title"]
     is_value_type = type_name in conversion_tables
-    print("computing custom property: component name:", component_name, "type_info", type_info, "type_def", type_def, "type_name", type_name)
+    # print("computing custom property: component name:", component_name, "type_info", type_info, "type_def", type_def, "type_name", type_name)
 
     if is_value_type:
         value = conversion_tables[type_name](value)
@@ -139,7 +139,6 @@ def property_group_value_to_custom_property_value(property_group, definition, re
             value.append(item_value) 
 
     elif type_info == "Map":
-        print("MAAAAAP", property_group)
         keys_list = getattr(property_group, "list", {})
         values_list = getattr(property_group, "values_list")
         value = {}
@@ -157,7 +156,6 @@ def property_group_value_to_custom_property_value(property_group, definition, re
             val = values_list[index]
             value_type_name = getattr(val, "type_name")
             definition = registry.type_infos[value_type_name] if value_type_name in registry.type_infos else None
-            print("value definition", definition)
             if definition != None:
                 val_value = property_group_value_to_custom_property_value(val, definition, registry, component_name, None)
                 if value_type_name.startswith("wrapper_"): #if we have a "fake" tupple for aka for value types, we need to remove one nested level
@@ -165,10 +163,8 @@ def property_group_value_to_custom_property_value(property_group, definition, re
             else:
                 val_value = '""'
 
-
             value[key_value] = val_value
-        print("MAP VALUES", value)
-
+        value = str(value).replace('{','@').replace('}','²') # FIXME: eeek !!
     else:
         value = conversion_tables[type_name](value) if is_value_type else value
         value = '""' if isinstance(value, PropertyGroup) else value
@@ -178,9 +174,11 @@ def property_group_value_to_custom_property_value(property_group, definition, re
         value = value.replace("'", "")
 
     if parent == None:
+        print("transforming value", value, definition)
         value = str(value).replace("'",  "")
         value = value.replace(",)",")")
         value = value.replace("{", "(").replace("}", ")") # FIXME: deal with hashmaps
         value = value.replace("True", "true").replace("False", "false")
+        value = value.replace('@', '{').replace('²', '}')
     return value
 

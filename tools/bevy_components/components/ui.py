@@ -86,51 +86,45 @@ def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None):
 
     elif is_map:
         root = layout.row().column()
-        """box = root.box()
-        box.label(text="test")
-        root.separator()
+        if hasattr(propertyGroup, "list"): # TODO: improve handling of non drawable UI
+            keys_list = getattr(propertyGroup, "list")
+            values_list = getattr(propertyGroup, "values_list")
+            box = root.box()
+            row = box.row()
+            row.label(text="Add entry:")
+            keys_setter = getattr(propertyGroup, "keys_setter")
+            draw_propertyGroup(keys_setter, row, nesting, rootName)
 
-        box = root.box()
-        box.label(text="test2")"""
+            values_setter = getattr(propertyGroup, "values_setter")
+            draw_propertyGroup(values_setter, row, nesting, rootName)
 
-        keys_list = getattr(propertyGroup, "list")
-        values_list = getattr(propertyGroup, "values_list")
-        box = root.box()
-        row = box.row()
-        row.label(text="Add entry:")
-        keys_setter = getattr(propertyGroup, "keys_setter")
-        draw_propertyGroup(keys_setter, row, nesting, rootName)
-
-        values_setter = getattr(propertyGroup, "values_setter")
-        draw_propertyGroup(values_setter, row, nesting, rootName)
-
-        op = row.operator('generic_map.map_action', icon='ADD', text="")
-        op.action = 'ADD'
-        op.component_name = rootName
-        op.property_group_path = json.dumps(nesting)
-
-        box = root.box()
-        split = box.split(factor=0.9)
-        list_column, buttons_column = (split.column(),split.column())
-        list_column = list_column.box()
-
-        for index, item  in enumerate(keys_list):
-            row = list_column.row()
-            draw_propertyGroup(item, row, nesting, rootName)
-
-            value = values_list[index]
-            draw_propertyGroup(value, row, nesting, rootName)
-
-            op = row.operator('generic_map.map_action', icon='REMOVE', text="")
-            op.action = 'REMOVE'
+            op = row.operator('generic_map.map_action', icon='ADD', text="")
+            op.action = 'ADD'
             op.component_name = rootName
             op.property_group_path = json.dumps(nesting)
-            op.target_index = index
+
+            box = root.box()
+            split = box.split(factor=0.9)
+            list_column, buttons_column = (split.column(),split.column())
+            list_column = list_column.box()
+
+            for index, item  in enumerate(keys_list):
+                row = list_column.row()
+                draw_propertyGroup(item, row, nesting, rootName)
+
+                value = values_list[index]
+                draw_propertyGroup(value, row, nesting, rootName)
+
+                op = row.operator('generic_map.map_action', icon='REMOVE', text="")
+                op.action = 'REMOVE'
+                op.component_name = rootName
+                op.property_group_path = json.dumps(nesting)
+                op.target_index = index
 
 
-        #various control buttons
-        buttons_column.separator()
-        row = buttons_column.row()
+            #various control buttons
+            buttons_column.separator()
+            row = buttons_column.row()
         
 
     else: 
@@ -232,8 +226,8 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
 
                 # we fetch the matching ui property group
                 root_propertyGroup_name =  registry.get_propertyGroupName_from_longName(component_name)
-                """print("root_propertyGroup_name", root_propertyGroup_name)
-                print("component_meta", component_meta, component_invalid)"""
+                """print("root_propertyGroup_name", root_propertyGroup_name)"""
+                print("component_meta", component_meta, component_invalid)
 
                 if root_propertyGroup_name:
                     propertyGroup = getattr(component_meta, root_propertyGroup_name, None)

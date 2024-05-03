@@ -217,3 +217,7 @@ Restructuring of storage of components
 
 - [ ] in conversions from propgroups
         component_name = definition["short_name"]
+
+- Hashmap Support
+    - [ ] fix parsing of keys's type either on Bevy side (prefered, unlikely to be possible) or on the Blender side 
+    - [ ] handle missing types in registry for keys & values

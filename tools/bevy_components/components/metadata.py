@@ -225,7 +225,7 @@ def upsert_component_in_object(object, long_name, registry):
         
         # now deal with property groups details
         if propertyGroup != None:
-            if short_name in registry.invalid_components:
+            if long_name in registry.invalid_components:
                 component_meta.enabled = False
                 component_meta.invalid = True
                 component_meta.invalid_details = "component contains fields that are not in the schema, disabling"
