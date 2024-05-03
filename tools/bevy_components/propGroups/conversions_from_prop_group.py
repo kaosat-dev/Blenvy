@@ -38,12 +38,10 @@ def property_group_value_to_custom_property_value(property_group, definition, re
     if is_value_type:
         value = conversion_tables[type_name](value)
     elif type_info == "Struct":
-        print("generating string for struct")
         values = {}
         if len(property_group.field_names) ==0:
             value = '()'
         else:
-            print("toto", type_def, definition, property_group)
             for index, field_name in enumerate(property_group.field_names):
                 item_type_name = definition["properties"][field_name]["type"]["$ref"].replace("#/$defs/", "")
                 item_definition = registry.type_infos[item_type_name] if item_type_name in registry.type_infos else None

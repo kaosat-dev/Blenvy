@@ -85,55 +85,71 @@ def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None):
         op.property_group_path = json.dumps(nesting)
 
     elif is_map:
+        root = layout.row().column()
+        """box = root.box()
+        box.label(text="test")
+        root.separator()
+
+        box = root.box()
+        box.label(text="test2")"""
+
         keys_list = getattr(propertyGroup, "list")
         values_list = getattr(propertyGroup, "values_list")
-        box = layout.box()
+        box = root.box()
         row = box.row()
-        row.label(text="key")
-        row.label(text="value")
-        #values_setter = getattr(propertyGroup, "values_setter")
-        # draw_propertyGroup(values_setter, row, nesting, rootName)
+        row.label(text="Add entry:")
+        keys_setter = getattr(propertyGroup, "keys_setter")
+        draw_propertyGroup(keys_setter, row, nesting, rootName)
 
+        values_setter = getattr(propertyGroup, "values_setter")
+        draw_propertyGroup(values_setter, row, nesting, rootName)
+
+        op = row.operator('generic_map.map_action', icon='ADD', text="")
+        op.action = 'ADD'
+        op.component_name = rootName
+        op.property_group_path = json.dumps(nesting)
+
+        box = root.box()
         split = box.split(factor=0.9)
         list_column, buttons_column = (split.column(),split.column())
         list_column = list_column.box()
 
         for index, item  in enumerate(keys_list):
             row = list_column.row()
-            #row.label(text=str(index))
             draw_propertyGroup(item, row, nesting, rootName)
 
             value = values_list[index]
             draw_propertyGroup(value, row, nesting, rootName)
 
+            op = row.operator('generic_map.map_action', icon='REMOVE', text="")
+            op.action = 'REMOVE'
+            op.component_name = rootName
+            op.property_group_path = json.dumps(nesting)
+            op.target_index = index
+
 
         #various control buttons
         buttons_column.separator()
         row = buttons_column.row()
-        op = row.operator('generic_map.map_action', icon='ADD', text="")
-        op.action = 'ADD'
-        op.component_name = rootName
-        op.property_group_path = json.dumps(nesting)
-
-        row = buttons_column.row()
-        op = row.operator('generic_map.map_action', icon='REMOVE', text="")
-        op.action = 'REMOVE'
-        op.component_name = rootName
-        op.property_group_path = json.dumps(nesting)
+        
 
     else: 
         for fname in field_names:
-            subrow = layout.row()
+            #subrow = layout.row()
             nestedPropertyGroup = getattr(propertyGroup, fname)
             nested = getattr(nestedPropertyGroup, "nested", False)
             display_name = fname if propertyGroup.tupple_or_struct == "struct" else ""
 
             if nested:
                 layout.separator()
+                layout.separator()
+
                 layout.label(text=display_name) #  this is the name of the field/sub field
                 layout.separator()
-                draw_propertyGroup(nestedPropertyGroup, subrow.column(), nesting + [fname], rootName )
+                subrow = layout.row()
+                draw_propertyGroup(nestedPropertyGroup, subrow, nesting + [fname], rootName )
             else:
+                subrow = layout.row()
                 subrow.prop(propertyGroup, fname, text=display_name)
                 subrow.separator()
 
@@ -226,8 +242,8 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
                         # if the component has only 0 or 1 field names, display inline, otherwise change layout
                         single_field = len(propertyGroup.field_names) < 2
                         prop_group_location = box.row(align=True).column()
-                        if single_field:
-                            prop_group_location = row.column(align=True)#.split(factor=0.9)#layout.row(align=False)
+                        """if single_field:
+                            prop_group_location = row.column(align=True)#.split(factor=0.9)#layout.row(align=False)"""
                         
                         if component_visible:
                             if component_invalid:

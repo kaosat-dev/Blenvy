@@ -14,10 +14,7 @@ def generate_wrapper_propertyGroup(wrapped_type_long_name_name, item_long_name, 
     is_item_value_type = item_long_name in value_types_defaults
 
     wrapper_name = "wrapper_" + wrapped_type_long_name_name
-    print("WRAPPER NAME", wrapper_name)
 
-
-    # FIXME: this is not a correct generic value for hashmaps !!?
     wrapper_definition = {
         "isComponent": False,
         "isResource": False,
