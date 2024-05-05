@@ -5,10 +5,10 @@ def process_tupples(registry, definition, prefixItems, update, nesting=[], nesti
     value_types_defaults = registry.value_types_defaults 
     blender_property_mapping = registry.blender_property_mapping
     type_infos = registry.type_infos
-    long_name = definition["title"]
+    long_name = definition["long_name"]
     short_name = definition["short_name"]
 
-    nesting = nesting+[short_name]
+    nesting = nesting + [short_name]
     nesting_long_names = nesting_long_names + [long_name]
     __annotations__ = {}
 
@@ -21,16 +21,16 @@ def process_tupples(registry, definition, prefixItems, update, nesting=[], nesti
        
         if ref_name in type_infos:
             original = type_infos[ref_name]
-            original_type_name = original["title"]
-            is_value_type = original_type_name in value_types_defaults
+            original_long_name = original["long_name"]
+            is_value_type = original_long_name in value_types_defaults
 
-            value = value_types_defaults[original_type_name] if is_value_type else None
+            value = value_types_defaults[original_long_name] if is_value_type else None
             default_values.append(value)
             prefix_infos.append(original)
 
             if is_value_type:
-                if original_type_name in blender_property_mapping:
-                    blender_property_def = blender_property_mapping[original_type_name]
+                if original_long_name in blender_property_mapping:
+                    blender_property_def = blender_property_mapping[original_long_name]
                     blender_property = blender_property_def["type"](
                         **blender_property_def["presets"],# we inject presets first
                         name = property_name, 
@@ -40,8 +40,8 @@ def process_tupples(registry, definition, prefixItems, update, nesting=[], nesti
                   
                     __annotations__[property_name] = blender_property
             else:
-                original_long_name = original["title"]
-                (sub_component_group, _) = process_component.process_component(registry, original, update, {"nested": True, "type_name": original_long_name}, nesting)
+                original_long_name = original["long_name"]
+                (sub_component_group, _) = process_component.process_component(registry, original, update, {"nested": True, "long_name": original_long_name}, nesting)
                 __annotations__[property_name] = sub_component_group
         else: 
             # component not found in type_infos, generating placeholder

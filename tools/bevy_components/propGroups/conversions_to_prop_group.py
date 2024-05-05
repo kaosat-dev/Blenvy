@@ -171,43 +171,34 @@ def is_def_value_type(definition, registry):
     if definition == None:
         return True
     value_types_defaults = registry.value_types_defaults
-    type_name = definition["title"]
-    is_value_type = type_name in value_types_defaults
+    long_name = definition["long_name"]
+    is_value_type = long_name in value_types_defaults
     return is_value_type
 
 #converts the value of a single custom property into a value (values) of a property group 
 def property_group_value_from_custom_property_value(property_group, definition, registry, value, nesting = []):
     value_types_defaults = registry.value_types_defaults
-
     type_info = definition["typeInfo"] if "typeInfo" in definition else None
     type_def = definition["type"] if "type" in definition else None
     properties = definition["properties"] if "properties" in definition else {}
     prefixItems = definition["prefixItems"] if "prefixItems" in definition else []
-    has_properties = len(properties.keys()) > 0
-    has_prefixItems = len(prefixItems) > 0
-    is_enum = type_info == "Enum"
-    is_list = type_info == "List"
-    type_name = definition["title"]
+    long_name = definition["long_name"]
 
-    #is_value_type = type_def in value_types_defaults or type_name in value_types_defaults
-    is_value_type = type_name in value_types_defaults
+    #is_value_type = type_def in value_types_defaults or long_name in value_types_defaults
+    is_value_type = long_name in value_types_defaults
     nesting = nesting + [definition["short_name"]]
 
-    """print(" ")
-    print("raw value", value, "nesting", nesting)
-    print("nesting", len(nesting))
-    print("definition", definition)"""
 
     if is_value_type:
         value = value.replace("(", "").replace(")", "")# FIXME: temporary, incoherent use of nesting levels between parse_tuplestruct_string & parse_struct_string
-        value = type_mappings[type_name](value) if type_name in type_mappings else value
+        value = type_mappings[long_name](value) if long_name in type_mappings else value
         return value
     elif type_info == "Struct":
         if len(property_group.field_names) != 0 :
             custom_property_values = parse_struct_string(value, start_nesting=1 if value.startswith("(") else 0)
             for index, field_name in enumerate(property_group.field_names):
-                item_type_name = definition["properties"][field_name]["type"]["$ref"].replace("#/$defs/", "")
-                item_definition = registry.type_infos[item_type_name] if item_type_name in registry.type_infos else None
+                item_long_name = definition["properties"][field_name]["type"]["$ref"].replace("#/$defs/", "")
+                item_definition = registry.type_infos[item_long_name] if item_long_name in registry.type_infos else None
 
                 custom_prop_value = custom_property_values[field_name]
                 #print("field name", field_name, "value", custom_prop_value)
@@ -232,8 +223,8 @@ def property_group_value_from_custom_property_value(property_group, definition, 
         custom_property_values = parse_tuplestruct_string(value, start_nesting=1 if len(nesting) == 1 else 1)
 
         for index, field_name in enumerate(property_group.field_names):
-            item_type_name = definition["prefixItems"][index]["type"]["$ref"].replace("#/$defs/", "")
-            item_definition = registry.type_infos[item_type_name] if item_type_name in registry.type_infos else None
+            item_long_name = definition["prefixItems"][index]["type"]["$ref"].replace("#/$defs/", "")
+            item_definition = registry.type_infos[item_long_name] if item_long_name in registry.type_infos else None
             
             custom_property_value = custom_property_values[index]
 
@@ -248,8 +239,8 @@ def property_group_value_from_custom_property_value(property_group, definition, 
     elif type_info == "TupleStruct":
         custom_property_values = parse_tuplestruct_string(value, start_nesting=1 if len(nesting) == 1 else 0)
         for index, field_name in enumerate(property_group.field_names):
-            item_type_name = definition["prefixItems"][index]["type"]["$ref"].replace("#/$defs/", "")
-            item_definition = registry.type_infos[item_type_name] if item_type_name in registry.type_infos else None
+            item_long_name = definition["prefixItems"][index]["type"]["$ref"].replace("#/$defs/", "")
+            item_definition = registry.type_infos[item_long_name] if item_long_name in registry.type_infos else None
 
             custom_prop_value = custom_property_values[index]
 
@@ -301,23 +292,21 @@ def property_group_value_from_custom_property_value(property_group, definition, 
 
     elif type_info == "List":
         item_list = getattr(property_group, "list")
-        item_type_name = getattr(property_group, "type_name_short")
-        custom_property_values = parse_tuplestruct_string(value, start_nesting=2 if item_type_name.startswith("wrapper_") and value.startswith('(') else 1) # TODO : the additional check here is wrong, there is an issue somewhere in higher level stuff
+        item_long_name = getattr(property_group, "long_name")
+        custom_property_values = parse_tuplestruct_string(value, start_nesting=2 if item_long_name.startswith("wrapper_") and value.startswith('(') else 1) # TODO : the additional check here is wrong, there is an issue somewhere in higher level stuff
         # clear list first
         item_list.clear()
-        #print("custom_property_values", custom_property_values, "value", value, "item_type_name", item_type_name)
-
         for raw_value in custom_property_values:
             new_entry = item_list.add()   
-            item_type_name = getattr(new_entry, "type_name") # we get the REAL type name
-            definition = registry.type_infos[item_type_name] if item_type_name in registry.type_infos else None
+            item_long_name = getattr(new_entry, "long_name") # we get the REAL type name
+            definition = registry.type_infos[item_long_name] if item_long_name in registry.type_infos else None
 
             if definition != None:
                 property_group_value_from_custom_property_value(new_entry, definition, registry, value=raw_value, nesting=nesting)            
     else:
         try:
             value = value.replace("(", "").replace(")", "")# FIXME: temporary, incoherent use of nesting levels between parse_tuplestruct_string & parse_struct_string
-            value = type_mappings[type_name](value) if type_name in type_mappings else value
+            value = type_mappings[long_name](value) if long_name in type_mappings else value
             return value
         except:
             pass

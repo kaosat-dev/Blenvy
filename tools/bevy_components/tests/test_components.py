@@ -23,9 +23,9 @@ def test_components_should_generate_correct_custom_properties(setup_data):
 
     custom_property_values = {}
     
-    for type_name in type_infos:
-        definition = type_infos[type_name]
-        component_type = definition["title"]
+    for long_name in type_infos:
+        definition = type_infos[long_name]
+        component_type = definition["long_name"]
         short_name = definition["short_name"]
         is_component = definition['isComponent']  if "isComponent" in definition else False
         if not is_component:
@@ -72,9 +72,9 @@ def test_components_should_generate_correct_custom_properties_with_randomized_va
 
     custom_property_values = {}
     
-    for type_name in type_infos:
-        definition = type_infos[type_name]
-        component_type = definition["title"]
+    for long_name in type_infos:
+        definition = type_infos[long_name]
+        component_type = definition["long_name"]
         short_name = definition["short_name"]
         is_component = definition['isComponent']  if "isComponent" in definition else False
         if not is_component:
@@ -121,9 +121,9 @@ def test_components_should_generate_correct_propertyGroup_values_from_custom_pro
     added_components = []
     failing_components = []
 
-    for type_name in type_infos:
-        definition = type_infos[type_name]
-        component_type = definition["title"]
+    for long_name in type_infos:
+        definition = type_infos[long_name]
+        component_type = definition["long_name"]
         short_name = definition["short_name"]
         is_component = definition['isComponent']  if "isComponent" in definition else False
         if not is_component:
@@ -178,9 +178,9 @@ def test_remove_components(setup_data):
     addable_components = []
     added_components = []
 
-    for type_name in type_infos:
-        definition = type_infos[type_name]
-        component_type = definition["title"]
+    for long_name in type_infos:
+        definition = type_infos[long_name]
+        component_type = definition["long_name"]
         short_name = definition["short_name"]
         is_component = definition['isComponent']  if "isComponent" in definition else False
         if not is_component:

@@ -4,7 +4,7 @@ from . import process_component
 def process_enum(registry, definition, update, nesting, nesting_long_names):
     blender_property_mapping = registry.blender_property_mapping
     short_name = definition["short_name"]
-    long_name = definition["title"]
+    long_name = definition["long_name"]
 
     type_def = definition["type"] if "type" in definition else None
     values = definition["oneOf"]
@@ -21,9 +21,9 @@ def process_enum(registry, definition, update, nesting, nesting_long_names):
         labels = []
         additional_annotations = {}
         for item in values:
-            item_name = item["title"]
+            item_name = item["long_name"]
             item_short_name = item["short_name"] if "short_name" in item else item_name
-            variant_name = "variant_"+item_short_name
+            variant_name = "variant_" + item_short_name
             labels.append(item_name)
 
             if "prefixItems" in item:

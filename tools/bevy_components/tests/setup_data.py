@@ -17,8 +17,8 @@ def setup_data(request):
         object = bpy.context.object
         remove_component_operator = bpy.ops.object.remove_bevy_component
 
-        for type_name in type_infos:
-            definition = type_infos[type_name]
+        for long_name in type_infos:
+            definition = type_infos[long_name]
             component_name = definition["short_name"]
             if component_name in object:
                 try:

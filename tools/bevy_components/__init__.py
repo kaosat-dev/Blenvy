@@ -28,19 +28,6 @@ from .components.maps import GENERIC_MAP_OT_actions
 from .components.definitions_list import (ComponentDefinitionsList, ClearComponentDefinitionsList)
 from .components.ui import (BEVY_COMPONENTS_PT_ComponentsPanel)
 
-
-# just a test, remove
-def scan_item(item, nesting=0):
-    try:
-        for sub in dict(item).keys():
-            print("--", sub, getattr(item[sub], "type_name", None), item[sub], nesting)
-            try:
-                scan_item(item[sub], nesting+1)
-            except: 
-                pass
-    except:
-        pass
-
 class BEVY_COMPONENTS_PT_MainPanel(bpy.types.Panel):
     bl_idname = "BEVY_COMPONENTS_PT_MainPanel"
     bl_label = ""

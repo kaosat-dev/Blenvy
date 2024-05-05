@@ -28,7 +28,7 @@ pub fn export_types(world: &mut World) {
         writer,
         &json!({
             "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "title": "bevy component registry schema",
+            "long_name": "bevy component registry schema",
             "$defs": schemas,
         }),
     )
@@ -41,6 +41,7 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
     let t = reg.type_info();
     let binding = t.type_path_table();
     let short_name = binding.short_path();
+    println!("T YOOO {:?}", t);
     let mut schema = match t {
         TypeInfo::Struct(info) => {
             let properties = info
@@ -57,7 +58,7 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
             json!({
                 "type": "object",
                 "typeInfo": "Struct",
-                "title": t.type_path(),
+                "long_name": t.type_path(),
                 "properties": properties,
                 "additionalProperties": false,
                 "required": info
@@ -75,7 +76,7 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
                 json!({
                     "type": "string",
                     "typeInfo": "Enum",
-                    "title": t.type_path(),
+                    "long_name": t.type_path(),
                     "oneOf": info
                         .iter()
                         .map(|variant| match variant {
@@ -94,12 +95,12 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
                     VariantInfo::Struct(v) => json!({
                         "type": "object",
                         "typeInfo": "Struct",
-                        "title": v.name(),
+                        "long_name": v.name(),
                         "short_name": v.name().split("::").last().unwrap_or(v.name()),
                         "properties": v
                             .iter()
                             .enumerate()
-                            .map(|(variant_idx, field)| (field.name().to_owned(), add_min_max(json!({"type": typ(field.type_path()), "title": field.name()}), reg, field_idx, Some(variant_idx))))
+                            .map(|(variant_idx, field)| (field.name().to_owned(), add_min_max(json!({"type": typ(field.type_path()), "long_name": field.name()}), reg, field_idx, Some(variant_idx))))
                             .collect::<Map<_, _>>(),
                         "additionalProperties": false,
                         "required": v
@@ -111,7 +112,7 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
                     VariantInfo::Tuple(v) => json!({
                         "type": "array",
                         "typeInfo": "Tuple",
-                        "title": v.name(),
+                        "long_name": v.name(),
                         "short_name":v.name(),
                         "prefixItems": v
                             .iter()
@@ -121,7 +122,7 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
                         "items": false,
                     }),
                     VariantInfo::Unit(v) => json!({
-                        "title": v.name(),
+                        "long_name": v.name(),
                     }),
                 })
                 .collect::<Vec<_>>();
@@ -129,13 +130,13 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
                 json!({
                     "type": "object",
                     "typeInfo": "Enum",
-                    "title": t.type_path(),
+                    "long_name": t.type_path(),
                     "oneOf": variants,
                 })
             }
         }
         TypeInfo::TupleStruct(info) => json!({
-            "title": t.type_path(),
+            "long_name": t.type_path(),
             "type": "array",
             "typeInfo": "TupleStruct",
             "prefixItems": info
@@ -147,26 +148,26 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
         }),
         TypeInfo::List(info) => {
             json!({
-                "title": t.type_path(),
+                "long_name": t.type_path(),
                 "type": "array",
                 "typeInfo": "List",
                 "items": json!({"type": typ(info.item_type_path_table().path())}),
             })
         }
         TypeInfo::Array(info) => json!({
-            "title": t.type_path(),
+            "long_name": t.type_path(),
             "type": "array",
             "typeInfo": "Array",
             "items": json!({"type": typ(info.item_type_path_table().path())}),
         }),
         TypeInfo::Map(info) => json!({
-            "title": t.type_path(),
+            "long_name": t.type_path(),
             "type": "object",
             "typeInfo": "Map",
             "additionalProperties": json!({"type": typ(info.value_type_path_table().path())}),
         }),
         TypeInfo::Tuple(info) => json!({
-            "title": t.type_path(),
+            "long_name": t.type_path(),
             "type": "array",
             "typeInfo": "Tuple",
             "prefixItems": info
@@ -177,7 +178,7 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
             "items": false,
         }),
         TypeInfo::Value(info) => json!({
-            "title": t.type_path(),
+            "long_name": t.type_path(),
             "type": map_json_type(info.type_path()),
             "typeInfo": "Value",
         }),

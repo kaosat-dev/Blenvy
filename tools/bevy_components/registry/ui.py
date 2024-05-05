@@ -92,7 +92,7 @@ class BEVY_COMPONENTS_PT_AdvancedToolsPanel(bpy.types.Panel):
 
         col = row.column()
         operator = col.operator(OT_rename_component.bl_idname, text="", icon="SHADERFX") #rename
-        new_name = registry.type_infos[available_components.list]['short_name'] if available_components.list in registry.type_infos else ""
+        new_name = registry.type_infos[available_components.list]['long_name'] if available_components.list in registry.type_infos else ""
         operator.original_name = component_name
         operator.target_objects = json.dumps([object.name])
         operator.new_name = new_name
@@ -285,7 +285,7 @@ class MISSING_TYPES_UL_List(UIList):
         default=False,
         options=set(),
         description="Reverse name filtering",
-    )
+    ) # type: ignore
 
     use_order_name = bpy.props.BoolProperty(name="Name", default=False, options=set(),
                                             description="Sort groups by their name (case-insensitive)")
@@ -303,7 +303,7 @@ class MISSING_TYPES_UL_List(UIList):
         print("filter, order", items, self, dict(self))
         if self.filter_name:
             print("ssdfs", self.filter_name)
-            filtered= helper_funcs.filter_items_by_name(self.filter_name, self.bitflag_filter_item, items, "type_name", reverse=self.use_filter_name_reverse)
+            filtered= helper_funcs.filter_items_by_name(self.filter_name, self.bitflag_filter_item, items, "long_name", reverse=self.use_filter_name_reverse)
 
         if not filtered:
             filtered = [self.bitflag_filter_item] * len(items)
@@ -320,9 +320,9 @@ class MISSING_TYPES_UL_List(UIList):
             row = layout.row()
             #row.enabled = False
             #row.alert = True
-            row.prop(item, "type_name", text="")
+            row.prop(item, "long_name", text="")
 
         elif self.layout_type in {'GRID'}: 
             layout.alignment = 'CENTER' 
             row = layout.row()
-            row.prop(item, "type_name", text="")
+            row.prop(item, "long_name", text="")

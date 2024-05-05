@@ -74,8 +74,8 @@ def is_def_value_type(definition, registry):
     if definition == None:
         return True
     value_types_defaults = registry.value_types_defaults
-    type_name = definition["title"]
-    is_value_type = type_name in value_types_defaults
+    long_name = definition["long_name"]
+    is_value_type = long_name in value_types_defaults
     return is_value_type
 
 # see https://docs.python.org/3/library/random.html
@@ -93,19 +93,19 @@ def component_values_shuffler(seed=1, property_group=None, definition=None, regi
     has_prefixItems = len(prefixItems) > 0
     is_enum = type_info == "Enum"
     is_list = type_info == "List"
-    type_name = definition["title"]
+    long_name = definition["long_name"]
 
-    #is_value_type = type_def in value_types_defaults or type_name in value_types_defaults
-    is_value_type = type_name in value_types_defaults
+    #is_value_type = type_def in value_types_defaults or long_name in value_types_defaults
+    is_value_type = long_name in value_types_defaults
 
     if is_value_type:
-        fieldValue = type_mappings[type_name]() 
+        fieldValue = type_mappings[long_name]() 
         return fieldValue 
 
     elif type_info == "Struct":
         for index, field_name in enumerate(property_group.field_names):
-            item_type_name = definition["properties"][field_name]["type"]["$ref"].replace("#/$defs/", "")
-            item_definition = registry.type_infos[item_type_name] if item_type_name in registry.type_infos else None
+            item_long_name = definition["properties"][field_name]["type"]["$ref"].replace("#/$defs/", "")
+            item_definition = registry.type_infos[item_long_name] if item_long_name in registry.type_infos else None
 
             value = getattr(property_group, field_name)
             is_property_group = isinstance(value, PropertyGroup)
@@ -123,8 +123,8 @@ def component_values_shuffler(seed=1, property_group=None, definition=None, regi
         #print("tup")
 
         for index, field_name in enumerate(property_group.field_names):
-            item_type_name = definition["prefixItems"][index]["type"]["$ref"].replace("#/$defs/", "")
-            item_definition = registry.type_infos[item_type_name] if item_type_name in registry.type_infos else None
+            item_long_name = definition["prefixItems"][index]["type"]["$ref"].replace("#/$defs/", "")
+            item_definition = registry.type_infos[item_long_name] if item_long_name in registry.type_infos else None
 
             value = getattr(property_group, field_name)
             is_property_group = isinstance(value, PropertyGroup)
@@ -142,8 +142,8 @@ def component_values_shuffler(seed=1, property_group=None, definition=None, regi
     elif type_info == "TupleStruct":
         #print("tupstruct")
         for index, field_name in enumerate(property_group.field_names):
-            item_type_name = definition["prefixItems"][index]["type"]["$ref"].replace("#/$defs/", "")
-            item_definition = registry.type_infos[item_type_name] if item_type_name in registry.type_infos else None
+            item_long_name = definition["prefixItems"][index]["type"]["$ref"].replace("#/$defs/", "")
+            item_definition = registry.type_infos[item_long_name] if item_long_name in registry.type_infos else None
 
             value = getattr(property_group, field_name)
             is_property_group = isinstance(value, PropertyGroup)
@@ -158,7 +158,7 @@ def component_values_shuffler(seed=1, property_group=None, definition=None, regi
                 setattr(property_group , field_name, value)
         
     elif type_info == "Enum":
-        available_variants = definition["oneOf"] if type_def != "object" else list(map(lambda x: x["title"], definition["oneOf"]))
+        available_variants = definition["oneOf"] if type_def != "object" else list(map(lambda x: x["long_name"], definition["oneOf"]))
         selected = random.choice(available_variants) 
 
         # set selected variant
@@ -193,14 +193,14 @@ def component_values_shuffler(seed=1, property_group=None, definition=None, regi
         item_list = getattr(property_group, "list")
         item_list.clear()
 
-        item_type_name = getattr(property_group, "type_name_short")
+        item_long_name = getattr(property_group, "long_name")
         number_of_list_items_to_add =  random.randint(1, 2)
 
         for i in range(0, number_of_list_items_to_add):
             new_entry = item_list.add()   
-            item_type_name = getattr(new_entry, "type_name") # we get the REAL type name
+            item_long_name = getattr(new_entry, "long_name") # we get the REAL type name
 
-            definition = registry.type_infos[item_type_name] if item_type_name in registry.type_infos else None
+            definition = registry.type_infos[item_long_name] if item_long_name in registry.type_infos else None
 
             if definition != None:
                 component_values_shuffler(seed, new_entry, definition, registry, parent=component_name)
@@ -208,7 +208,7 @@ def component_values_shuffler(seed=1, property_group=None, definition=None, regi
                 pass
     else:
         print("something else")
-        fieldValue = type_mappings[type_name]() if type_name in type_mappings else 'None'
+        fieldValue = type_mappings[long_name]() if long_name in type_mappings else 'None'
         return fieldValue 
 
     #return value

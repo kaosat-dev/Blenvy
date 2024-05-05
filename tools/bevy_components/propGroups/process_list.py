@@ -7,15 +7,14 @@ def process_list(registry, definition, update, nesting=[], nesting_long_names=[]
     type_infos = registry.type_infos
 
     short_name = definition["short_name"]
-    long_name = definition["title"]
+    long_name = definition["long_name"]
     ref_name = definition["items"]["type"]["$ref"].replace("#/$defs/", "")
 
     nesting = nesting+[short_name]
     nesting_long_names = nesting_long_names + [long_name]
     
     item_definition = type_infos[ref_name]
-    item_long_name = item_definition["title"]
-    item_short_name = item_definition["short_name"]
+    item_long_name = item_definition["long_name"]
     is_item_value_type = item_long_name in value_types_defaults
 
     property_group_class = None
@@ -23,16 +22,16 @@ def process_list(registry, definition, update, nesting=[], nesting_long_names=[]
     if is_item_value_type:
         property_group_class = generate_wrapper_propertyGroup(long_name, item_long_name, definition["items"]["type"]["$ref"], registry, update)
     else:
-        (_, list_content_group_class) = process_component.process_component(registry, item_definition, update, {"nested": True, "type_name": item_long_name}, nesting)
+        (_, list_content_group_class) = process_component.process_component(registry, item_definition, update, {"nested": True, "long_name": item_long_name}, nesting)
         property_group_class = list_content_group_class
 
     item_collection = CollectionProperty(type=property_group_class)
 
-    item_short_name = item_short_name if not is_item_value_type else  "wrapper_" + item_short_name
+    item_long_name = item_long_name if not is_item_value_type else  "wrapper_" + item_long_name
     __annotations__ = {
         "list": item_collection,
         "list_index": IntProperty(name = "Index for list", default = 0,  update=update),
-        "type_name_short": StringProperty(default=item_short_name)
+        "long_name": StringProperty(default=item_long_name)
     }
 
     return __annotations__

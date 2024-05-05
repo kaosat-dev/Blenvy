@@ -48,7 +48,7 @@ UI:
             * Cuboid(Vec3)
             * Sphere(radius)
 - [x] deal with enums variants that do not have any data: ex   {
-          "title": "Mesh"
+          "long_name": "Mesh"
         }
 
 - [x] remove / change use of ComponentDefinitionsList 
@@ -82,7 +82,7 @@ UI:
 - [x] change custom property => propGroup to convert RON => Json first => obsolete
 - [x] cleanup process_lists
 
-- [x] fix issues with enum variants with only a title
+- [x] fix issues with enum variants with only a long_name
 
 - [x] display single item enums inline, others in a seperate row
 
@@ -217,6 +217,7 @@ Restructuring of storage of components
 
 - [ ] in conversions from propgroups
         component_name = definition["short_name"]
+- [ ] fix is_component_valid that is used in gltf_auto_export
 
 - Hashmap Support
     - [ ] fix parsing of keys's type either on Bevy side (prefered, unlikely to be possible) or on the Blender side 

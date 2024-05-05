@@ -12,7 +12,7 @@ from ..components.metadata import ComponentMetadata, ensure_metadata_for_all_obj
 
 # helper class to store missing bevy types information
 class MissingBevyType(bpy.types.PropertyGroup):
-    type_name: bpy.props.StringProperty(
+    long_name: bpy.props.StringProperty(
         name="type",
     ) # type: ignore
 
@@ -211,7 +211,6 @@ class ComponentsRegistry(PropertyGroup):
     type_infos = {}
     type_infos_missing = []
     component_propertyGroups = {}
-    short_names_to_long_names = {}
     custom_types_to_add = {}
     invalid_components = []
 
@@ -243,13 +242,11 @@ class ComponentsRegistry(PropertyGroup):
         print("load schema", self)
         # cleanup previous data if any
         self.propGroupIdCounter = 0
-        self.short_names_to_propgroup_names.clear()
         self.long_names_to_propgroup_names.clear()
         self.missing_types_list.clear()
         self.type_infos.clear()
         self.type_infos_missing.clear()
         self.component_propertyGroups.clear()
-        self.short_names_to_long_names.clear()
         self.custom_types_to_add.clear()
         self.invalid_components.clear()
 
@@ -297,24 +294,20 @@ class ComponentsRegistry(PropertyGroup):
     def register_component_propertyGroup(self, name, propertyGroup):
         self.component_propertyGroups[name] = propertyGroup
 
-    #for practicality, we add an entry for a reverse lookup (short => long name, since we already have long_name => short_name with the keys of the raw registry)
-    def add_shortName_to_longName(self, short_name, long_name):
-        self.short_names_to_long_names[short_name] = long_name
-
     # to be able to give the user more feedback on any missin/unregistered types in their schema file
-    def add_missing_typeInfo(self, type_name):
-        if not type_name in self.type_infos_missing:
-            self.type_infos_missing.append(type_name)
+    def add_missing_typeInfo(self, long_name):
+        if not long_name in self.type_infos_missing:
+            self.type_infos_missing.append(long_name)
             setattr(self, "missing_type_infos", str(self.type_infos_missing))
             item = self.missing_types_list.add()
-            item.type_name = type_name
+            item.long_name = long_name
 
-    def add_custom_type(self, type_name, type_definition):
-        self.custom_types_to_add[type_name] = type_definition
+    def add_custom_type(self, long_name, type_definition):
+        self.custom_types_to_add[long_name] = type_definition
 
     def process_custom_types(self):
-        for type_name in self.custom_types_to_add:
-            self.type_infos[type_name] = self.custom_types_to_add[type_name]
+        for long_name in self.custom_types_to_add:
+            self.type_infos[long_name] = self.custom_types_to_add[long_name]
         self.custom_types_to_add.clear()
 
     # add an invalid component to the list (long name)
@@ -332,30 +325,19 @@ class ComponentsRegistry(PropertyGroup):
         default=0
     ) # type: ignore
     
-    short_names_to_propgroup_names = {} # TODO; double check if needed, remove otherwise
     long_names_to_propgroup_names = {}
 
     # generate propGroup name from nesting level & shortName: each shortName + nesting is unique
     def generate_propGroup_name(self, nesting, longName):
         #print("gen propGroup name for", shortName, nesting)
-        #if shortName in self.short_names_to_propgroup_names and len(nesting) == 0:
-        #    return self.get_propertyGroupName_from_shortName(shortName)
-        
         self.propGroupIdCounter += 1
 
         propGroupIndex = str(self.propGroupIdCounter)
         propGroupName = propGroupIndex + "_ui"
 
-        # 
-        """key = str(nesting) + shortName if len(nesting) > 0 else shortName
-        self.short_names_to_propgroup_names[key] = propGroupName"""
-        # FIXME:
         key = str(nesting) + longName if len(nesting) > 0 else longName
         self.long_names_to_propgroup_names[key] = propGroupName
         return propGroupName
-
-    def get_propertyGroupName_from_shortName(self, shortName):
-        return self.short_names_to_propgroup_names.get(shortName, None)
     
     def get_propertyGroupName_from_longName(self, longName):
         return self.long_names_to_propgroup_names.get(longName, None)

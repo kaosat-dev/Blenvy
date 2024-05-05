@@ -2,23 +2,19 @@ import json
 import bpy
 
 from ..registry.operators import COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT
-from .metadata import do_object_custom_properties_have_missing_metadata
+from .metadata import do_object_custom_properties_have_missing_metadata, get_bevy_components
 from .operators import AddComponentOperator, CopyComponentOperator, Fix_Component_Operator, RemoveComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, Toggle_ComponentVisibility
    
 def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None):
     is_enum = getattr(propertyGroup, "with_enum")
     is_list = getattr(propertyGroup, "with_list") 
     is_map = getattr(propertyGroup, "with_map")
-    #nesting = nesting + [current_short_name] # we need this convoluted "nested path strings " workaround so that operators working on a given
     # item in our components hierarchy can get the correct propertyGroup by STRINGS because of course, we cannot pass objects to operators...sigh
 
     # if it is an enum, the first field name is always the list of enum variants, the others are the variants
     field_names = propertyGroup.field_names
     #print("")
     #print("drawing", propertyGroup, nesting, "component_name", rootName)
-    #type_name = getattr(propertyGroup, "type_name", None)#propertyGroup.type_name if "type_name" in propertyGroup else ""
-    #print("type name", type_name)
-    #print("name", propertyGroup.name, "name2", getattr(propertyGroup, "name"), "short_name", getattr(propertyGroup, "short_name", None), "nesting", nesting)
     if is_enum:
         subrow = layout.row()
         display_name = field_names[0] if propertyGroup.tupple_or_struct == "struct" else ""
@@ -39,9 +35,7 @@ def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None):
                 # if an enum variant is not a propertyGroup
                 break
     elif is_list:
-        #print("show list", propertyGroup, dict(propertyGroup), propertyGroup.type_name)
         item_list = getattr(propertyGroup, "list")
-        item_type = getattr(propertyGroup, "type_name_short")
         list_index = getattr(propertyGroup, "list_index")
         box = layout.box()
         split = box.split(factor=0.9)
@@ -199,10 +193,9 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
 
 
             components_in_object = object.components_meta.components
-            components_bla = json.loads(object["bevy_components"]) if "bevy_components" in object else '{}'
             #print("components_names", dict(components_bla).keys())
 
-            for component_name in sorted(dict(components_bla)) : # sorted by component name, practical
+            for component_name in sorted(get_bevy_components(object)) : # sorted by component name, practical
                 #print("component_name", component_name)
                 if component_name == "components_meta": 
                     continue

@@ -27,7 +27,7 @@ def generate_wrapper_propertyGroup(wrapped_type_long_name_name, item_long_name, 
             }
         ],
         "short_name": wrapper_name, # FIXME !!!
-        "title": wrapper_name,
+        "long_name": wrapper_name,
         "type": "array",
         "typeInfo": "TupleStruct"
     }
@@ -55,7 +55,7 @@ def generate_wrapper_propertyGroup(wrapped_type_long_name_name, item_long_name, 
         '__annotations__': wrapper_annotations,
         'tupple_or_struct': "tupple",
         'field_names': ['0'], 
-        **dict(with_properties = False, with_items= True, with_enum= False, with_list= False, with_map =False, short_name=wrapper_name, type_name=wrapper_name),
+        **dict(with_properties = False, with_items= True, with_enum= False, with_list= False, with_map =False, short_name=wrapper_name, long_name=wrapper_name),
     }
     property_group_class = type(property_group_name, (PropertyGroup,), property_group_params)
     bpy.utils.register_class(property_group_class)

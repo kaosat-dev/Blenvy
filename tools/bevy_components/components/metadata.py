@@ -2,23 +2,17 @@ import bpy
 from bpy.props import (StringProperty, BoolProperty, PointerProperty)
 from bpy_types import (PropertyGroup)
 
-from .helpers import ping_depsgraph_update
 from ..propGroups.conversions_from_prop_group import property_group_value_to_custom_property_value
 from ..propGroups.conversions_to_prop_group import property_group_value_from_custom_property_value
 
 class ComponentMetadata(bpy.types.PropertyGroup):
-    name : bpy.props.StringProperty(
+    short_name : bpy.props.StringProperty(
         name = "name",
         default = ""
     ) # type: ignore
 
     long_name : bpy.props.StringProperty(
         name = "long name",
-        default = ""
-    ) # type: ignore
-
-    type_name : bpy.props.StringProperty(
-        name = "Type",
         default = ""
     ) # type: ignore
 
@@ -64,12 +58,6 @@ class ComponentsMeta(PropertyGroup):
     def unregister(cls):
         del bpy.types.Object.components_meta
 
-# We need a collection property of components PER object
-def get_component_metadata_by_short_name(object, short_name):
-    if not "components_meta" in object:
-        return None
-    return next(filter(lambda component: component["name"] == short_name, object.components_meta.components), None)
-
 # remove no longer valid metadata from object
 def cleanup_invalid_metadata(object):
     bevy_components = get_bevy_components(object)
@@ -78,23 +66,15 @@ def cleanup_invalid_metadata(object):
     components_metadata = object.components_meta.components
     to_remove = []
     for index, component_meta in enumerate(components_metadata):
-        short_name = component_meta.name
         long_name = component_meta.long_name
         if long_name not in bevy_components.keys():
-            print("component:", short_name, "present in metadata, but not in object")
+            print("component:", long_name, "present in metadata, but not in object")
             to_remove.append(index)
     for index in to_remove:
         components_metadata.remove(index)
 
 
-# returns a component definition ( an entry in registry's type_infos) with matching short name or None if nothing has been found
-def find_component_definition_from_short_name(short_name):
-    registry = bpy.context.window_manager.components_registry
-    long_name = registry.short_names_to_long_names.get(short_name, None)
-    if long_name != None:
-        return registry.type_infos.get(long_name, None)
-    return None
-
+# returns a component definition ( an entry in registry's type_infos) with matching long name or None if nothing has been found
 def find_component_definition_from_long_name(long_name):
     registry = bpy.context.window_manager.components_registry
     return registry.type_infos.get(long_name, None)
@@ -114,14 +94,14 @@ def do_object_custom_properties_have_missing_metadata(object):
     components_metadata = components_metadata.components
 
     missing_metadata = False
-    for component_name in dict(object) :
+    for component_name in get_bevy_components(object) :
         if component_name == "components_meta":
             continue
-        component_meta =  next(filter(lambda component: component["name"] == component_name, components_metadata), None)
+        component_meta =  next(filter(lambda component: component["long_name"] == component_name, components_metadata), None)
         if component_meta == None: 
             # current component has no metadata but is there even a compatible type in the registry ?
             # if not ignore it
-            component_definition = find_component_definition_from_short_name(component_name)
+            component_definition = find_component_definition_from_long_name(component_name)
             if component_definition != None:
                 missing_metadata = True
                 break
@@ -173,7 +153,7 @@ def add_component_to_object(object, component_definition, value=None):
     cleanup_invalid_metadata(object)
     if object is not None:
         # print("add_component_to_object", component_definition)
-        long_name = component_definition["title"]
+        long_name = component_definition["long_name"]
         registry = bpy.context.window_manager.components_registry
         if not registry.has_type_infos():
             raise Exception('registry type infos have not been loaded yet or are missing !')
@@ -201,7 +181,7 @@ def upsert_component_in_object(object, long_name, registry):
     component_definition = registry.type_infos.get(long_name, None)
     if component_definition != None:
         short_name = component_definition["short_name"]
-        long_name = component_definition["title"]
+        long_name = component_definition["long_name"]
         property_group_name = registry.get_propertyGroupName_from_longName(long_name)
         propertyGroup = None
 
@@ -286,13 +266,13 @@ def apply_propertyGroup_values_to_object_customProperties(object):
 def apply_propertyGroup_values_to_object_customProperties_for_component(object, component_name):
     registry = bpy.context.window_manager.components_registry
     (_, propertyGroup) =  upsert_component_in_object(object, component_name, registry)
-    component_definition = find_component_definition_from_short_name(component_name)
+    component_definition = find_component_definition_from_long_name(component_name)
     if component_definition != None:
         value = property_group_value_to_custom_property_value(propertyGroup, component_definition, registry, None)
         object[component_name] = value
     
     components_metadata = object.components_meta.components
-    componentMeta = next(filter(lambda component: component["name"] == component_name, components_metadata), None)
+    componentMeta = next(filter(lambda component: component["long_name"] == component_name, components_metadata), None)
     if componentMeta:
         componentMeta.invalid = False
         componentMeta.invalid_details = ""
@@ -301,14 +281,14 @@ def apply_propertyGroup_values_to_object_customProperties_for_component(object, 
 def apply_customProperty_values_to_object_propertyGroups(object):
     print("apply custom properties to ", object.name)
     registry = bpy.context.window_manager.components_registry
-    for component_name in dict(object) :
+    for component_name in get_bevy_components(object) :
         if component_name == "components_meta":
             continue
-        component_definition = find_component_definition_from_short_name(component_name)
+        component_definition = find_component_definition_from_long_name(component_name)
         if component_definition != None:
-            property_group_name = registry.get_propertyGroupName_from_shortName(component_name)
+            property_group_name = registry.get_propertyGroupName_from_longName(component_name)
             components_metadata = object.components_meta.components
-            source_componentMeta = next(filter(lambda component: component["name"] == component_name, components_metadata), None)
+            source_componentMeta = next(filter(lambda component: component["long_name"] == component_name, components_metadata), None)
             # matching component means we already have this type of component 
             propertyGroup = getattr(source_componentMeta, property_group_name, None)
             customProperty_value = object[component_name]

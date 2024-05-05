@@ -4,7 +4,7 @@ import bpy
 from bpy_types import Operator
 from bpy.props import (StringProperty)
 
-from .metadata import add_component_from_custom_property, add_component_to_object, add_metadata_to_components_without_metadata, apply_customProperty_values_to_object_propertyGroups, apply_propertyGroup_values_to_object_customProperties_for_component, copy_propertyGroup_values_to_another_object, find_component_definition_from_short_name, get_bevy_component_value_by_long_name, get_bevy_components, is_bevy_component_in_object, remove_component_from_object, toggle_component
+from .metadata import add_component_from_custom_property, add_component_to_object, add_metadata_to_components_without_metadata, apply_customProperty_values_to_object_propertyGroups, apply_propertyGroup_values_to_object_customProperties_for_component, copy_propertyGroup_values_to_another_object, get_bevy_component_value_by_long_name, get_bevy_components, is_bevy_component_in_object, remove_component_from_object, toggle_component
 
 class AddComponentOperator(Operator):
     """Add Bevy component to object"""
@@ -236,7 +236,7 @@ class OT_rename_component(Operator):
                         
                     try:
                         # attempt conversion
-                        long_name = registry.short_names_to_long_names[new_name]
+                        long_name = new_name
                         component_definition = type_infos[long_name]
                         add_component_to_object(object, component_definition, object[new_name])
                     except Exception as error:
