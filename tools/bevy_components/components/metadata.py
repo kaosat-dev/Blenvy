@@ -120,9 +120,17 @@ def upsert_bevy_component(object, long_name, value):
 
 def remove_bevy_component(object, long_name):
     if 'bevy_components' in object:
-        current = json.loads(object['bevy_components'])
-        del current[long_name]
-        object['bevy_components'] = json.dumps(current)
+        bevy_components = json.loads(object['bevy_components'])
+        del bevy_components[long_name]
+        object['bevy_components'] = json.dumps(bevy_components)
+
+def rename_bevy_component(object, original_long_name, new_long_name):
+    if 'bevy_components' in object:
+        bevy_components = json.loads(object['bevy_components'])
+        original_component = bevy_components.get(original_long_name, None)
+        bevy_components[new_long_name] = original_component
+        del bevy_components[original_long_name]
+        object['bevy_components'] = json.dumps(bevy_components)
 
 def get_bevy_components(object):
     if 'bevy_components' in object:

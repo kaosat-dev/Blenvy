@@ -4,7 +4,7 @@ import bpy
 from bpy_types import Operator
 from bpy.props import (StringProperty)
 
-from .metadata import add_component_from_custom_property, add_component_to_object, add_metadata_to_components_without_metadata, apply_customProperty_values_to_object_propertyGroups, apply_propertyGroup_values_to_object_customProperties_for_component, copy_propertyGroup_values_to_another_object, get_bevy_component_value_by_long_name, get_bevy_components, is_bevy_component_in_object, remove_component_from_object, toggle_component
+from .metadata import add_component_from_custom_property, add_component_to_object, apply_propertyGroup_values_to_object_customProperties_for_component, copy_propertyGroup_values_to_another_object, get_bevy_component_value_by_long_name, get_bevy_components, is_bevy_component_in_object, remove_component_from_object, rename_bevy_component, toggle_component
 
 class AddComponentOperator(Operator):
     """Add Bevy component to object"""
@@ -214,11 +214,11 @@ class OT_rename_component(Operator):
         if original_name != '' and new_name != '' and original_name != new_name and len(target_objects) > 0:
             for index, object_name in enumerate(target_objects):
                 object = bpy.data.objects[object_name]
-                if object and original_name in object:
+                if object and original_name in get_bevy_components(object):
                     
                     # copy data to new component, remove the old one
                     try: 
-                        object[new_name] = object[original_name]
+                        rename_bevy_component(object=object, original_long_name=original_name, new_long_name=new_name)
                         remove_component_from_object(object, original_name)
                     except Exception as error:
                         if '__disable__update' in object:
@@ -238,7 +238,7 @@ class OT_rename_component(Operator):
                         # attempt conversion
                         long_name = new_name
                         component_definition = type_infos[long_name]
-                        add_component_to_object(object, component_definition, object[new_name])
+                        add_component_to_object(object, component_definition, get_bevy_component_value_by_long_name(new_name))
                     except Exception as error:
                         if '__disable__update' in object:
                             del object["__disable__update"] # make sure custom properties are updateable afterwards, even in the case of failure
@@ -269,7 +269,6 @@ class OT_rename_component(Operator):
         self.original_name = ""
         context.window_manager.bevy_component_rename_helper.original_name = ""
         context.window_manager.components_rename_progress = -1.0
-
 
         return {'FINISHED'}
 
