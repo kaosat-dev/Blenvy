@@ -110,6 +110,7 @@ def do_object_custom_properties_have_missing_metadata(object):
 
 
 import json
+
 def upsert_bevy_component(object, long_name, value):
     if not 'bevy_components' in object:
         object['bevy_components'] = '{}'

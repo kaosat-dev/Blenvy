@@ -6,17 +6,16 @@ def test_blend(setup_data):
     registry.schemaPath = setup_data["schema_path"]
     bpy.ops.object.reload_registry()
 
-    short_name = "BasicTest"
-    component_type = registry.short_names_to_long_names[short_name]
+    long_name = "bevy_example::test_components::BasicTest"
 
     add_component_operator = bpy.ops.object.add_bevy_component
-    add_component_operator(component_type=component_type)
+    add_component_operator(component_type=long_name)
 
-    property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
+    property_group_name = registry.get_propertyGroupName_from_longName(long_name)
     object = bpy.context.object
 
     target_components_metadata = object.components_meta.components
-    component_meta = next(filter(lambda component: component["long_name"] == short_name, target_components_metadata), None)
+    component_meta = next(filter(lambda component: component["long_name"] == long_name, target_components_metadata), None)
     propertyGroup = getattr(component_meta, property_group_name, None)
 
 

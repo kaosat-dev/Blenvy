@@ -238,7 +238,7 @@ class OT_rename_component(Operator):
                         # attempt conversion
                         long_name = new_name
                         component_definition = type_infos[long_name]
-                        add_component_to_object(object, component_definition, get_bevy_component_value_by_long_name(new_name))
+                        add_component_to_object(object, component_definition, get_bevy_component_value_by_long_name(object, new_name))
                     except Exception as error:
                         if '__disable__update' in object:
                             del object["__disable__update"] # make sure custom properties are updateable afterwards, even in the case of failure

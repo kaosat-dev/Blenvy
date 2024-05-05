@@ -5,6 +5,7 @@ from ..propGroups.conversions_to_prop_group import property_group_value_from_cus
 from ..propGroups.conversions_from_prop_group import property_group_value_to_custom_property_value
 from .component_values_shuffler import component_values_shuffler
 from .expected_component_values import (expected_custom_property_values, expected_custom_property_values_randomized)
+from ..components.metadata import get_bevy_component_value_by_long_name, get_bevy_components, upsert_bevy_component
 
 from .setup_data import setup_data
 
@@ -25,25 +26,24 @@ def test_components_should_generate_correct_custom_properties(setup_data):
     
     for long_name in type_infos:
         definition = type_infos[long_name]
-        component_type = definition["long_name"]
-        short_name = definition["short_name"]
+        long_name = definition["long_name"]
         is_component = definition['isComponent']  if "isComponent" in definition else False
         if not is_component:
             continue
 
-        addable_components.append(component_type)
+        addable_components.append(long_name)
 
         try:
-            add_component_operator(component_type=component_type)
+            add_component_operator(component_type=long_name)
 
-            property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
+            property_group_name = registry.get_propertyGroupName_from_longName(long_name)
 
             target_components_metadata = object.components_meta.components
-            component_meta = next(filter(lambda component: component["long_name"] == short_name, target_components_metadata), None)
+            component_meta = next(filter(lambda component: component["long_name"] == long_name, target_components_metadata), None)
             propertyGroup = getattr(component_meta, property_group_name, None)
-            added_components.append(component_type)
-            custom_property_values[short_name] = object[short_name]
-            assert object[short_name] == expected_custom_property_values[short_name]
+            added_components.append(long_name)
+            custom_property_values[long_name] = get_bevy_component_value_by_long_name(object, long_name)
+            assert get_bevy_component_value_by_long_name(object, long_name) == expected_custom_property_values[long_name]
 
         except Exception as error:
             errors.append(error)
@@ -74,30 +74,29 @@ def test_components_should_generate_correct_custom_properties_with_randomized_va
     
     for long_name in type_infos:
         definition = type_infos[long_name]
-        component_type = definition["long_name"]
-        short_name = definition["short_name"]
+        long_name = definition["long_name"]
         is_component = definition['isComponent']  if "isComponent" in definition else False
         if not is_component:
             continue
 
-        addable_components.append(component_type)
+        addable_components.append(long_name)
 
         try:
-            add_component_operator(component_type=component_type)
-            property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
+            add_component_operator(component_type=long_name)
+            property_group_name = registry.get_propertyGroupName_from_longName(long_name)
 
             target_components_metadata = object.components_meta.components
-            component_meta = next(filter(lambda component: component["long_name"] == short_name, target_components_metadata), None)
+            component_meta = next(filter(lambda component: component["long_name"] == long_name, target_components_metadata), None)
             propertyGroup = getattr(component_meta, property_group_name, None)
             component_values_shuffler(seed= 10, property_group=propertyGroup, definition=definition, registry=registry)
 
-            added_components.append(component_type)
-            custom_property_values[short_name] = object[short_name]
-            assert object[short_name] == expected_custom_property_values_randomized[short_name]
+            added_components.append(long_name)
+            custom_property_values[long_name] = get_bevy_component_value_by_long_name(object, long_name)
+            assert get_bevy_component_value_by_long_name(object, long_name) == expected_custom_property_values_randomized[long_name]
 
         except Exception as error:
             errors.append(error)
-            error_components.append(short_name)
+            error_components.append(long_name)
 
     pp = pprint.PrettyPrinter(depth=14, width=120)
     print("CUSTOM PROPERTY VALUES")
@@ -123,42 +122,41 @@ def test_components_should_generate_correct_propertyGroup_values_from_custom_pro
 
     for long_name in type_infos:
         definition = type_infos[long_name]
-        component_type = definition["long_name"]
-        short_name = definition["short_name"]
+        long_name = definition["long_name"]
         is_component = definition['isComponent']  if "isComponent" in definition else False
         if not is_component:
             continue
 
-        addable_components.append(component_type)
+        addable_components.append(long_name)
 
         try:
-            add_component_operator(component_type=component_type)
-            property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
+            add_component_operator(component_type=long_name)
+            property_group_name = registry.get_propertyGroupName_from_longName(long_name)
 
             target_components_metadata = object.components_meta.components
-            component_meta = next(filter(lambda component: component["long_name"] == short_name, target_components_metadata), None)
+            component_meta = next(filter(lambda component: component["long_name"] == long_name, target_components_metadata), None)
             propertyGroup = getattr(component_meta, property_group_name, None)
-            added_components.append(component_type)
+            added_components.append(long_name)
             # randomise values
             component_values_shuffler(seed= 10, property_group=propertyGroup, definition=definition, registry=registry)
-            custom_property_value = object[short_name]
+            custom_property_value = object[long_name]
 
             # first check if custom property value matches what we expect
-            assert custom_property_value == expected_custom_property_values_randomized[short_name]
+            assert custom_property_value == expected_custom_property_values_randomized[long_name]
 
             # we update propgroup values from custom property values
             property_group_value_from_custom_property_value(propertyGroup, definition, registry, custom_property_value, nesting = [])
             # and then generate it back
             custom_property_value_regen = property_group_value_to_custom_property_value(propertyGroup, definition, registry, None)
-            assert custom_property_value_regen == expected_custom_property_values_randomized[short_name]
+            assert custom_property_value_regen == expected_custom_property_values_randomized[long_name]
 
-            # custom_property_values[short_name] = object[short_name]
-            #assert object[short_name] == expected_custom_property_values[short_name]
-            #print("CUSTOM PROPERTY ", object[short_name])
+            # custom_property_values[long_name] = object[long_name]
+            #assert object[long_name] == expected_custom_property_values[long_name]
+            #print("CUSTOM PROPERTY ", object[long_name])
 
         except Exception as error:
             errors.append(error)
-            failing_components.append(short_name)
+            failing_components.append(long_name)
 
     for index, error in enumerate(errors):
         print("ERROR", error, failing_components[index])
@@ -180,25 +178,24 @@ def test_remove_components(setup_data):
 
     for long_name in type_infos:
         definition = type_infos[long_name]
-        component_type = definition["long_name"]
-        short_name = definition["short_name"]
+        long_name = definition["long_name"]
         is_component = definition['isComponent']  if "isComponent" in definition else False
         if not is_component:
             continue
 
-        addable_components.append(component_type)
+        addable_components.append(long_name)
 
         try:
-            add_component_operator(component_type=component_type)
+            add_component_operator(component_type=long_name)
 
-            property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
+            property_group_name = registry.get_propertyGroupName_from_longName(long_name)
             object = bpy.context.object
 
             target_components_metadata = object.components_meta.components
-            component_meta = next(filter(lambda component: component["long_name"] == short_name, target_components_metadata), None)
+            component_meta = next(filter(lambda component: component["long_name"] == long_name, target_components_metadata), None)
             propertyGroup = getattr(component_meta, property_group_name, None)
             # print("propertyGroup", propertyGroup, propertyGroup.field_names)
-            added_components.append(component_type)
+            added_components.append(long_name)
         except Exception as error:
             errors.append(error)
     assert len(errors) == 0
@@ -206,8 +203,8 @@ def test_remove_components(setup_data):
     # now test component removal
     errors.clear()
     remove_component_operator = bpy.ops.object.remove_bevy_component
-    for component_type in added_components:
-        component_name = type_infos[component_type]["short_name"]
+    for long_name in added_components:
+        component_name = type_infos[long_name]
         try:
             remove_component_operator(component_name=component_name)
         except Exception as error:
@@ -220,24 +217,23 @@ def test_copy_paste_components(setup_data):
     registry.schemaPath = setup_data["schema_path"]
     bpy.ops.object.reload_registry()
 
-    short_name = "BasicTest"
-    component_type = registry.short_names_to_long_names[short_name]
+    long_name = "BasicTest"
 
     # SOURCE object setup
     add_component_operator = bpy.ops.object.add_bevy_component
-    add_component_operator(component_type=component_type)
+    add_component_operator(component_type=long_name)
 
-    property_group_name = registry.get_propertyGroupName_from_shortName(short_name)
+    property_group_name = registry.get_propertyGroupName_from_longName(long_name)
     object = context.object
 
     target_components_metadata = object.components_meta.components
-    component_meta = next(filter(lambda component: component["long_name"] == short_name, target_components_metadata), None)
+    component_meta = next(filter(lambda component: component["long_name"] == long_name, target_components_metadata), None)
     propertyGroup = getattr(component_meta, property_group_name, None)
 
     setattr(propertyGroup, propertyGroup.field_names[0], 25.0)
 
     copy_component_operator = bpy.ops.object.copy_bevy_component
-    copy_component_operator(source_component_name=short_name, source_object_name=object.name)
+    copy_component_operator(source_component_name=long_name, source_object_name=object.name)
 
     # ---------------------------------------
     # TARGET object 
@@ -246,7 +242,7 @@ def test_copy_paste_components(setup_data):
     # change name
     new_cube.name = "TargetCube"
     target_components_metadata = new_cube.components_meta.components
-    component_meta = next(filter(lambda component: component["long_name"] == short_name, target_components_metadata), None)
+    component_meta = next(filter(lambda component: component["long_name"] == long_name, target_components_metadata), None)
 
     # first check that there is no component currently
     assert component_meta == None
@@ -255,7 +251,7 @@ def test_copy_paste_components(setup_data):
     paste_component_operator()
 
     target_components_metadata = new_cube.components_meta.components
-    component_meta = next(filter(lambda component: component["long_name"] == short_name, target_components_metadata), None)
+    component_meta = next(filter(lambda component: component["long_name"] == long_name, target_components_metadata), None)
 
     # now after pasting to the new object, it should have component meta
     assert component_meta != None

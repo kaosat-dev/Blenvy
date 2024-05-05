@@ -4,6 +4,8 @@ import bpy
 import pprint
 import pytest
 
+from ..components.metadata import get_bevy_components, upsert_bevy_component
+
 from .setup_data import setup_data
 
 # small helpers
@@ -15,7 +17,7 @@ def get_component_metadata(object, component_name):
 def get_component_propGroup(registry, component_name, component_meta):
     # component_type = registry.short_names_to_long_names[component_name]
     # add_component_operator = bpy.ops.object.add_bevy_component
-    property_group_name = registry.get_propertyGroupName_from_shortName(component_name)
+    property_group_name = registry.get_propertyGroupName_from_longName(component_name)
     propertyGroup = getattr(component_meta, property_group_name, None)
     return propertyGroup
 
@@ -29,9 +31,9 @@ def test_rename_component_single_unit_struct(setup_data):
     object = bpy.context.object
 
 
-    source_component_name = "SomeOldUnitStruct"
-    target_component_name = "UnitTest"
-    object[source_component_name] = '()'
+    source_component_name = "bevy_example::test_components::SomeOldUnitStruct"
+    target_component_name = "bevy_example::test_components::UnitTest"
+    upsert_bevy_component(object, source_component_name, '()')
 
     rename_component_operator(original_name=source_component_name, new_name=target_component_name, target_objects=json.dumps([object.name]))
 
@@ -39,7 +41,7 @@ def test_rename_component_single_unit_struct(setup_data):
     is_new_component_in_object = target_component_name in object
     assert is_old_component_in_object == False
     assert is_new_component_in_object == True
-    assert object[target_component_name] == '()'
+    assert get_bevy_components(object, target_component_name) == '()'
     assert get_component_propGroup(registry, target_component_name, get_component_metadata(object, target_component_name)) != None
 
     
@@ -52,8 +54,8 @@ def test_rename_component_single_complex_struct(setup_data):
     object = bpy.context.object
 
 
-    source_component_name = "ProxyCollider"
-    target_component_name = "Collider"
+    source_component_name = "bevy_example::test_components::ProxyCollider"
+    target_component_name = "bevy_example::test_components::Collider"
     object[source_component_name] = 'Capsule(Vec3(x:1.0, y:2.0, z:0.0), Vec3(x:0.0, y:0.0, z:0.0), 3.0)'
 
     rename_component_operator(original_name=source_component_name, new_name=target_component_name, target_objects=json.dumps([object.name]))
