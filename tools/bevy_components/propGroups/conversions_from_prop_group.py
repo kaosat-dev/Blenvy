@@ -28,12 +28,11 @@ conversion_tables = {
 #converts the value of a property group(no matter its complexity) into a single custom property value
 # this is more or less a glorified "to_ron()" method (not quite but close to)
 def property_group_value_to_custom_property_value(property_group, definition, registry, parent=None, value=None):
-    print('definition', definition)
     long_name = definition["long_name"]
     type_info = definition["typeInfo"] if "typeInfo" in definition else None
     type_def = definition["type"] if "type" in definition else None
     is_value_type = long_name in conversion_tables
-    # print("computing custom property: component name:", long_name, "type_info", type_info, "type_def", type_def)
+    print("computing custom property: component name:", long_name, "type_info", type_info, "type_def", type_def, "value", value)
 
     if is_value_type:
         value = conversion_tables[long_name](value)
@@ -89,11 +88,7 @@ def property_group_value_to_custom_property_value(property_group, definition, re
         
         value = tuple(e for e in list(values.values()))
     elif type_info == "Enum":
-        short_name = definition["short_name"]
-        print("ENUM", definition, property_group.field_names, long_name)
-        # TODO: perhaps use a mapping of (long) component name to a short ID , like we do in get_propertyGroupName_from_longName
-        selected = getattr(property_group, short_name)
-
+        selected = getattr(property_group, "selection")
         if type_def == "object":
             selection_index = property_group.field_names.index("variant_"+selected)
             variant_name = property_group.field_names[selection_index]
@@ -174,7 +169,6 @@ def property_group_value_to_custom_property_value(property_group, definition, re
         value = value.replace("'", "")
 
     if parent == None:
-        print("transforming value", value, definition)
         value = str(value).replace("'",  "")
         value = value.replace(",)",")")
         value = value.replace("{", "(").replace("}", ")") # FIXME: deal with hashmaps

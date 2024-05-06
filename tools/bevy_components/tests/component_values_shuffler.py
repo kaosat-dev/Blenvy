@@ -162,7 +162,7 @@ def component_values_shuffler(seed=1, property_group=None, definition=None, regi
         selected = random.choice(available_variants) 
 
         # set selected variant
-        setattr(property_group , component_name, selected)
+        setattr(property_group , "selection", selected)
 
         if type_def == "object":
             selection_index = property_group.field_names.index("variant_"+selected)

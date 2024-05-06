@@ -212,14 +212,18 @@ UI:
 =========================================
 Restructuring of storage of components
 - [x] marking of invalid root propgroups/components should be based on long name
-- [ ] overhaul & check each prop group type's use of short names => long names
-    - [ ] lists
-- [ ] property_name = short_name in process enum: will likely require to use another indirection helper to keep the propery names short
+- [x] overhaul & check each prop group type's use of short names => long names
+    - [x] lists
+- [x] property_name = short_name in process enum: will likely require to use another indirection helper to keep the propery names short
 
 - [x] in conversions from propgroups
         component_name = definition["short_name"]
 - [ ] fix is_component_valid that is used in gltf_auto_export
+- [x] update all tests
 
 - Hashmap Support
-    - [ ] fix parsing of keys's type either on Bevy side (prefered, unlikely to be possible) or on the Blender side 
+    - [x] fix parsing of keys's type either on Bevy side (prefered) or on the Blender side 
+    - [x] fix weird issue with missing "0" property when adding new entry in empty hashmap => happens only if the values for the "setter" have never been set
     - [ ] handle missing types in registry for keys & values
+
+- Add correct upgrade handling from individual component to bevy_components

@@ -53,7 +53,7 @@ def test_components_should_generate_correct_custom_properties(setup_data):
     pp.pprint(custom_property_values)
 
     assert len(errors) == 0
-    assert len(added_components) == 159
+    assert len(added_components) == 173
 
     
 def test_components_should_generate_correct_custom_properties_with_randomized_values(setup_data):
@@ -104,7 +104,7 @@ def test_components_should_generate_correct_custom_properties_with_randomized_va
 
     print("error_components", error_components)
     assert len(errors) == 0
-    assert len(added_components) == 159
+    assert len(added_components) == 173
 
 def test_components_should_generate_correct_propertyGroup_values_from_custom_properties(setup_data):
     registry = bpy.context.window_manager.components_registry
@@ -139,7 +139,7 @@ def test_components_should_generate_correct_propertyGroup_values_from_custom_pro
             added_components.append(long_name)
             # randomise values
             component_values_shuffler(seed= 10, property_group=propertyGroup, definition=definition, registry=registry)
-            custom_property_value = object[long_name]
+            custom_property_value = get_bevy_component_value_by_long_name(object, long_name)
 
             # first check if custom property value matches what we expect
             assert custom_property_value == expected_custom_property_values_randomized[long_name]
@@ -161,7 +161,7 @@ def test_components_should_generate_correct_propertyGroup_values_from_custom_pro
     for index, error in enumerate(errors):
         print("ERROR", error, failing_components[index])
     assert len(errors) == 0
-    assert len(added_components) == 159
+    assert len(added_components) == 173
 
 
 def test_remove_components(setup_data):
@@ -187,13 +187,7 @@ def test_remove_components(setup_data):
 
         try:
             add_component_operator(component_type=long_name)
-
-            property_group_name = registry.get_propertyGroupName_from_longName(long_name)
             object = bpy.context.object
-
-            target_components_metadata = object.components_meta.components
-            component_meta = next(filter(lambda component: component["long_name"] == long_name, target_components_metadata), None)
-            propertyGroup = getattr(component_meta, property_group_name, None)
             # print("propertyGroup", propertyGroup, propertyGroup.field_names)
             added_components.append(long_name)
         except Exception as error:
@@ -204,9 +198,8 @@ def test_remove_components(setup_data):
     errors.clear()
     remove_component_operator = bpy.ops.object.remove_bevy_component
     for long_name in added_components:
-        component_name = type_infos[long_name]
         try:
-            remove_component_operator(component_name=component_name)
+            remove_component_operator(component_name=long_name)
         except Exception as error:
             errors.append(error)
     assert len(errors) == 0
@@ -217,7 +210,7 @@ def test_copy_paste_components(setup_data):
     registry.schemaPath = setup_data["schema_path"]
     bpy.ops.object.reload_registry()
 
-    long_name = "BasicTest"
+    long_name = "bevy_example::test_components::BasicTest"
 
     # SOURCE object setup
     add_component_operator = bpy.ops.object.add_bevy_component

@@ -64,7 +64,7 @@ def test_shuffler(setup_data):
     assert get_bevy_component_value_by_long_name(object, long_name) == 'StructLike(a: 0.41416797041893005, b: 38, c: "ljfywwrv")'
 
     # And another complex component
-    long_name = "bevy_example::test_components::AnimationPlayer"
+    long_name = "bevy_animation::AnimationPlayer"
     add_component_operator(component_type=long_name)
 
     property_group_name = registry.get_propertyGroupName_from_longName(long_name)
@@ -116,7 +116,7 @@ def test_shuffler(setup_data):
     assert get_bevy_component_value_by_long_name(object, long_name) == '([0.8066907525062561, 0.9604947566986084])'
 
     # And another complex component
-    long_name = "bevy_example::test_components::SkinnedMesh"
+    long_name = "bevy_render::mesh::mesh::skinning::SkinnedMesh"
     add_component_operator(component_type=long_name)
 
     property_group_name = registry.get_propertyGroupName_from_longName(long_name)
@@ -133,7 +133,7 @@ def test_shuffler(setup_data):
     
 
     # And another complex component
-    long_name = "bevy_example::test_components::CameraRenderGraph"
+    long_name = "bevy_render::camera::camera::CameraRenderGraph"
     add_component_operator(component_type=long_name)
 
     property_group_name = registry.get_propertyGroupName_from_longName(long_name)

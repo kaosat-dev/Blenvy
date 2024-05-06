@@ -4,7 +4,7 @@ import bpy
 import pprint
 import pytest
 
-from ..components.metadata import get_bevy_components, upsert_bevy_component
+from ..components.metadata import get_bevy_component_value_by_long_name, get_bevy_components, is_bevy_component_in_object, upsert_bevy_component
 
 from .setup_data import setup_data
 
@@ -37,11 +37,11 @@ def test_rename_component_single_unit_struct(setup_data):
 
     rename_component_operator(original_name=source_component_name, new_name=target_component_name, target_objects=json.dumps([object.name]))
 
-    is_old_component_in_object = source_component_name in object
-    is_new_component_in_object = target_component_name in object
+    is_old_component_in_object = is_bevy_component_in_object(object, source_component_name)
+    is_new_component_in_object = is_bevy_component_in_object(object, target_component_name)
     assert is_old_component_in_object == False
     assert is_new_component_in_object == True
-    assert get_bevy_components(object, target_component_name) == '()'
+    assert get_bevy_component_value_by_long_name(object, target_component_name) == '()'
     assert get_component_propGroup(registry, target_component_name, get_component_metadata(object, target_component_name)) != None
 
     
@@ -55,16 +55,16 @@ def test_rename_component_single_complex_struct(setup_data):
 
 
     source_component_name = "bevy_example::test_components::ProxyCollider"
-    target_component_name = "bevy_example::test_components::Collider"
-    object[source_component_name] = 'Capsule(Vec3(x:1.0, y:2.0, z:0.0), Vec3(x:0.0, y:0.0, z:0.0), 3.0)'
+    target_component_name = "bevy_gltf_worlflow_examples_common_rapier::physics::physics_replace_proxies::Collider"
+    upsert_bevy_component(object, source_component_name, 'Capsule(Vec3(x:1.0, y:2.0, z:0.0), Vec3(x:0.0, y:0.0, z:0.0), 3.0)')
 
     rename_component_operator(original_name=source_component_name, new_name=target_component_name, target_objects=json.dumps([object.name]))
 
-    is_old_component_in_object = source_component_name in object
-    is_new_component_in_object = target_component_name in object
+    is_old_component_in_object = is_bevy_component_in_object(object, source_component_name)
+    is_new_component_in_object = is_bevy_component_in_object(object, target_component_name)
     assert is_old_component_in_object == False
     assert is_new_component_in_object == True
-    assert object[target_component_name] == 'Capsule(Vec3(x:1.0, y:2.0, z:0.0), Vec3(x:0.0, y:0.0, z:0.0), 3.0)'
+    assert get_bevy_component_value_by_long_name(object, target_component_name) == 'Capsule(Vec3(x:1.0, y:2.0, z:0.0), Vec3(x:0.0, y:0.0, z:0.0), 3.0)'
     assert get_component_propGroup(registry, target_component_name, get_component_metadata(object, target_component_name)) != None
 
 
@@ -75,22 +75,22 @@ def test_rename_component_bulk(setup_data):
 
     rename_component_operator = bpy.ops.object.rename_bevy_component
 
-    source_component_name = "SomeOldUnitStruct"
-    target_component_name = "UnitTest"
+    source_component_name = "bevy_example::test_components::SomeOldUnitStruct"
+    target_component_name = "bevy_example::test_components::UnitTest"
     objects_names = []
     for object in bpy.data.objects:
-        object[source_component_name] = '()'
+        upsert_bevy_component(object, source_component_name, '()')
         objects_names.append(object.name)
 
     # bulk rename
     rename_component_operator(original_name=source_component_name, new_name=target_component_name, target_objects=json.dumps(objects_names))
 
     for object in bpy.data.objects:
-        is_old_component_in_object = source_component_name in object
-        is_new_component_in_object = target_component_name in object
+        is_old_component_in_object = is_bevy_component_in_object(object, source_component_name)
+        is_new_component_in_object = is_bevy_component_in_object(object, target_component_name)
         assert is_old_component_in_object == False
         assert is_new_component_in_object == True
-        assert object[target_component_name] == '()'
+        assert get_bevy_component_value_by_long_name(object, target_component_name) == '()'
         assert get_component_propGroup(registry, target_component_name, get_component_metadata(object, target_component_name)) != None
 
 def test_rename_component_single_error_handling(setup_data):
@@ -102,9 +102,9 @@ def test_rename_component_single_error_handling(setup_data):
     object = bpy.context.object
 
 
-    source_component_name = "SomeOldUnitStruct"
-    target_component_name = "UnitTest"
-    object[source_component_name] = 'Capsule(Vec3(x:1.0, y:2.0, z:0.0), Vec3(x:0.0, y:0.0, z:0.0), 3.0)'
+    source_component_name = "bevy_example::test_components::SomeOldUnitStruct"
+    target_component_name = "bevy_example::test_components::UnitTest"
+    upsert_bevy_component(object, source_component_name, 'Capsule(Vec3(x:1.0, y:2.0, z:0.0), Vec3(x:0.0, y:0.0, z:0.0), 3.0)')
 
     expected_error = f'Error: Failed to rename component: Errors:["wrong custom property values to generate target component: object: \'{object.name}\', error: input string too big for a unit struct"]\n'
     expected_error = re.escape(expected_error)
@@ -113,11 +113,11 @@ def test_rename_component_single_error_handling(setup_data):
     
     target_component_metadata = get_component_metadata(object, target_component_name)
 
-    is_old_component_in_object = source_component_name in object
-    is_new_component_in_object = target_component_name in object
+    is_old_component_in_object = is_bevy_component_in_object(object, source_component_name)
+    is_new_component_in_object = is_bevy_component_in_object(object, target_component_name)
     assert is_old_component_in_object == False
     assert is_new_component_in_object == True
-    assert object[target_component_name] == 'Capsule(Vec3(x:1.0, y:2.0, z:0.0), Vec3(x:0.0, y:0.0, z:0.0), 3.0)'
+    assert get_bevy_component_value_by_long_name(object, target_component_name) == 'Capsule(Vec3(x:1.0, y:2.0, z:0.0), Vec3(x:0.0, y:0.0, z:0.0), 3.0)'
     assert get_component_propGroup(registry, target_component_name, target_component_metadata) != None
     assert target_component_metadata.invalid == True
     
@@ -132,9 +132,9 @@ def test_rename_component_single_error_handling_clean_errors(setup_data):
     object = bpy.context.object
 
 
-    source_component_name = "SomeOldUnitStruct"
-    target_component_name = "UnitTest"
-    object[source_component_name] = 'Capsule(Vec3(x:1.0, y:2.0, z:0.0), Vec3(x:0.0, y:0.0, z:0.0), 3.0)'
+    source_component_name = "bevy_example::test_components::SomeOldUnitStruct"
+    target_component_name = "bevy_example::test_components::UnitTest"
+    upsert_bevy_component(object, source_component_name, 'Capsule(Vec3(x:1.0, y:2.0, z:0.0), Vec3(x:0.0, y:0.0, z:0.0), 3.0)')
 
     expected_error = f'Error: Failed to rename component: Errors:["wrong custom property values to generate target component: object: \'{object.name}\', error: input string too big for a unit struct"]\n'
     expected_error = re.escape(expected_error)
@@ -143,11 +143,11 @@ def test_rename_component_single_error_handling_clean_errors(setup_data):
     
     target_component_metadata = get_component_metadata(object, target_component_name)
 
-    is_old_component_in_object = source_component_name in object
-    is_new_component_in_object = target_component_name in object
+    is_old_component_in_object = is_bevy_component_in_object(object, source_component_name)
+    is_new_component_in_object = is_bevy_component_in_object(object, target_component_name)
     assert is_old_component_in_object == False
     assert is_new_component_in_object == True
-    assert object[target_component_name] == 'Capsule(Vec3(x:1.0, y:2.0, z:0.0), Vec3(x:0.0, y:0.0, z:0.0), 3.0)'
+    assert get_bevy_component_value_by_long_name(object, target_component_name) == 'Capsule(Vec3(x:1.0, y:2.0, z:0.0), Vec3(x:0.0, y:0.0, z:0.0), 3.0)'
     assert get_component_propGroup(registry, target_component_name, target_component_metadata) != None
     assert target_component_metadata.invalid == True
     

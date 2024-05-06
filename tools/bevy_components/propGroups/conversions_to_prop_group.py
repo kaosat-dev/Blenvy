@@ -268,7 +268,7 @@ def property_group_value_from_custom_property_value(property_group, definition, 
             selection_index = property_group.field_names.index(chosen_variant_name)
             variant_definition = definition["oneOf"][selection_index-1]
             # first we set WHAT variant is selected
-            setattr(property_group, field_names[0], chosen_variant_raw)
+            setattr(property_group, "selection", chosen_variant_raw)
 
             # and then we set the value of the variant
             if "prefixItems" in variant_definition:

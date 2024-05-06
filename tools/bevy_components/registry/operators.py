@@ -118,10 +118,10 @@ class COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT(Operator):
                 bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)
             except:pass # ony run in ui
 
-        except Exception as error:
+        except Exception as error_message:
             del object["__disable__update"] # make sure custom properties are updateable afterwards, even in the case of failure
             error = True
-            self.report({'ERROR'}, "Failed to update propertyGroup values from custom property: Error:" + str(error))
+            self.report({'ERROR'}, "Failed to update propertyGroup values from custom property: Error:" + str(error_message))
         if not error:
             self.report({'INFO'}, "Sucessfully generated UI values for custom properties for selected object")
         context.window_manager.components_from_custom_properties_progress = -1.0

@@ -20,7 +20,7 @@ def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None):
         display_name = field_names[0] if propertyGroup.tupple_or_struct == "struct" else ""
         subrow.prop(propertyGroup, field_names[0], text=display_name)
         subrow.separator()
-        selection = getattr(propertyGroup, field_names[0])
+        selection = getattr(propertyGroup, "selection")
 
         for fname in field_names[1:]:
             if fname == "variant_" + selection:

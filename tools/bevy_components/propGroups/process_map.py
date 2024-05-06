@@ -12,8 +12,8 @@ def process_map(registry, definition, update, nesting=[], nesting_long_names=[])
     nesting = nesting + [short_name]
     nesting_long_names = nesting_long_names + [long_name]
 
-    value_ref_name = definition["additionalProperties"]["type"]["$ref"].replace("#/$defs/", "")
-    key_ref_name = long_name.split(',')[0].split('<')[1]# FIXME: hack !!!
+    value_ref_name = definition["valueType"]["type"]["$ref"].replace("#/$defs/", "")
+    key_ref_name = definition["keyType"]["type"]["$ref"].replace("#/$defs/", "")
 
     #print("definition", definition)
     __annotations__ = {}
@@ -21,11 +21,11 @@ def process_map(registry, definition, update, nesting=[], nesting_long_names=[])
         key_definition = type_infos[key_ref_name]
         original_long_name = key_definition["long_name"]
         is_key_value_type = original_long_name in value_types_defaults
-        definition_link = f"#/$defs/{key_ref_name}"
+        definition_link = definition["keyType"]["type"]["$ref"]
 
         #if the content of the list is a unit type, we need to generate a fake wrapper, otherwise we cannot use layout.prop(group, "propertyName") as there is no propertyName !
         if is_key_value_type:
-            keys_property_group_class = generate_wrapper_propertyGroup(f"{long_name}_values", original_long_name, definition_link, registry, update)
+            keys_property_group_class = generate_wrapper_propertyGroup(f"{long_name}_keys", original_long_name, definition_link, registry, update)
         else:
             (_, list_content_group_class) = process_component.process_component(registry, key_definition, update, {"nested": True, "long_name": original_long_name}, nesting, nesting_long_names)
             keys_property_group_class = list_content_group_class
@@ -42,11 +42,11 @@ def process_map(registry, definition, update, nesting=[], nesting_long_names=[])
         value_definition = type_infos[value_ref_name]
         original_long_name = value_definition["long_name"]
         is_value_value_type = original_long_name in value_types_defaults
-        definition_link = definition["additionalProperties"]["type"]["$ref"]#f"#/$defs/{value_ref_name}"
+        definition_link = definition["valueType"]["type"]["$ref"]
 
         #if the content of the list is a unit type, we need to generate a fake wrapper, otherwise we cannot use layout.prop(group, "propertyName") as there is no propertyName !
         if is_value_value_type:
-            values_property_group_class = generate_wrapper_propertyGroup(f"{long_name}_keys", original_long_name, definition_link, registry, update)
+            values_property_group_class = generate_wrapper_propertyGroup(f"{long_name}_values", original_long_name, definition_link, registry, update)
         else:
             (_, list_content_group_class) = process_component.process_component(registry, value_definition, update, {"nested": True, "long_name": original_long_name}, nesting, nesting_long_names)
             values_property_group_class = list_content_group_class
@@ -66,7 +66,7 @@ def process_map(registry, definition, update, nesting=[], nesting_long_names=[])
             "list": keys_collection,
             "list_index": IntProperty(name = "Index for keys", default = 0,  update=update),
             "keys_setter":keys_property_group_pointer,
-
+            
             "values_list": values_collection,
             "values_list_index": IntProperty(name = "Index for values", default = 0,  update=update),
             "values_setter":values_property_group_pointer,

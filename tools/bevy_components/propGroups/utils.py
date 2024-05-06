@@ -40,6 +40,8 @@ def generate_wrapper_propertyGroup(wrapped_type_long_name_name, item_long_name, 
     blender_property = StringProperty(default="", update=update)
     if item_long_name in blender_property_mapping:
         value = value_types_defaults[item_long_name] if is_item_value_type else None
+        print("AAAAAAAAAAAAH", wrapped_type_long_name_name, value)
+
         blender_property_def = blender_property_mapping[item_long_name]
         blender_property = blender_property_def["type"](
             **blender_property_def["presets"],# we inject presets first

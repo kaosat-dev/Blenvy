@@ -122,16 +122,11 @@ def upsert_bevy_component(object, long_name, value):
 def remove_bevy_component(object, long_name):
     if 'bevy_components' in object:
         bevy_components = json.loads(object['bevy_components'])
-        del bevy_components[long_name]
-        object['bevy_components'] = json.dumps(bevy_components)
-
-def rename_bevy_component(object, original_long_name, new_long_name):
-    if 'bevy_components' in object:
-        bevy_components = json.loads(object['bevy_components'])
-        original_component = bevy_components.get(original_long_name, None)
-        bevy_components[new_long_name] = original_component
-        del bevy_components[original_long_name]
-        object['bevy_components'] = json.dumps(bevy_components)
+        if long_name in bevy_components:
+            del bevy_components[long_name]
+            object['bevy_components'] = json.dumps(bevy_components)
+    if long_name in object:
+        del object[long_name]
 
 def get_bevy_components(object):
     if 'bevy_components' in object:
@@ -176,17 +171,12 @@ def add_component_to_object(object, component_definition, value=None):
             property_group_value_from_custom_property_value(propertyGroup, definition, registry, value)
             del object["__disable__update"]
 
-        # object[short_name] = value
-        print("ADDING VAALUEEE", value)
         upsert_bevy_component(object, long_name, value)
-        #ping_depsgraph_update(object)
-
        
 def upsert_component_in_object(object, long_name, registry):
     # print("upsert_component_in_object", object, "component name", component_name)
     # TODO: upsert this part too ?
     target_components_metadata = object.components_meta.components
-    print("target_components_metadata", target_components_metadata)
     component_definition = registry.type_infos.get(long_name, None)
     if component_definition != None:
         short_name = component_definition["short_name"]
@@ -197,7 +187,7 @@ def upsert_component_in_object(object, long_name, registry):
         component_meta = next(filter(lambda component: component["long_name"] == long_name, target_components_metadata), None)
         if not component_meta:
             component_meta = target_components_metadata.add()
-            component_meta.name = short_name
+            component_meta.short_name = short_name
             component_meta.long_name = long_name
             propertyGroup = getattr(component_meta, property_group_name, None)
         else: # this one has metadata but we check that the relevant property group is present
@@ -300,7 +290,7 @@ def apply_customProperty_values_to_object_propertyGroups(object):
             source_componentMeta = next(filter(lambda component: component["long_name"] == component_name, components_metadata), None)
             # matching component means we already have this type of component 
             propertyGroup = getattr(source_componentMeta, property_group_name, None)
-            customProperty_value = object[component_name]
+            customProperty_value = get_bevy_component_value_by_long_name(object, component_name)
             #value = property_group_value_to_custom_property_value(propertyGroup, component_definition, registry, None)
             
             object["__disable__update"] = True # disable update callback while we set the values of the propertyGroup "tree" (as a propertyGroup can contain other propertyGroups) 
@@ -311,8 +301,10 @@ def apply_customProperty_values_to_object_propertyGroups(object):
 
 # removes the given component from the object: removes both the custom property and the matching metadata from the object
 def remove_component_from_object(object, component_name):
+    # remove the component value
     remove_bevy_component(object, component_name)
 
+    # now remove the component's metadata
     components_metadata = getattr(object, "components_meta", None)
     if components_metadata == None:
         return False
@@ -331,6 +323,19 @@ def remove_component_from_object(object, component_name):
 def add_component_from_custom_property(object):
     add_metadata_to_components_without_metadata(object)
     apply_customProperty_values_to_object_propertyGroups(object)
+
+def rename_component(object, original_long_name, new_long_name):
+    registry = bpy.context.window_manager.components_registry
+    type_infos = registry.type_infos
+    component_definition = type_infos[new_long_name]
+
+    component_ron_value = get_bevy_component_value_by_long_name(object=object, long_name=original_long_name)
+    if component_ron_value is None and original_long_name in object:
+        component_ron_value = object[original_long_name]
+
+    remove_component_from_object(object, original_long_name)
+    add_component_to_object(object, component_definition, component_ron_value)
+
 
 def toggle_component(object, component_name):
     components_in_object = object.components_meta.components

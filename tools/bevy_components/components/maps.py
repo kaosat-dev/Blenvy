@@ -2,6 +2,8 @@ import json
 from bpy_types import Operator, UIList
 from bpy.props import (StringProperty, EnumProperty, PointerProperty, FloatVectorProperty, IntProperty)
 
+from ..propGroups.conversions_from_prop_group import property_group_value_to_custom_property_value
+
 class GENERIC_MAP_OT_actions(Operator):
     """Move items up and down, add and remove"""
     bl_idname = "generic_map.map_action"
@@ -46,7 +48,6 @@ class GENERIC_MAP_OT_actions(Operator):
 
         key_setter = getattr(propertyGroup, "keys_setter")
         value_setter = getattr(propertyGroup, "values_setter")
-    
 
         if self.action == 'DOWN' and index < len(keys_list) - 1:
             #item_next = scn.rule_list[index + 1].name
@@ -67,23 +68,23 @@ class GENERIC_MAP_OT_actions(Operator):
 
         if self.action == 'ADD':
             print("keys_list", keys_list)
+            
+            # first we gather all key/value pairs
             hashmap = {}
             for index, key in enumerate(keys_list):
                 key_entry = {}
                 for field_name in key.field_names:
-                    print("field name", field_name, key)
-                    key_entry[field_name] = key[field_name]
+                    key_entry[field_name] = getattr(key, field_name, None)
                 value_entry = {}
                 for field_name in values_list[index].field_names:
                     value_entry[field_name] = values_list[index][field_name]
-                
-                hashmap[json.dumps(key_entry)] = index #{"value": json.dumps(value_entry), "index": index}
+                hashmap[json.dumps(key_entry)] = index
             print("hashmap", hashmap )
 
-            # we need to find the index of a specific value
+            # then we need to find the index of a specific value if it exists
             key_entry = {}
             for field_name in key_setter.field_names:
-                key_entry[field_name] = key_setter[field_name]
+                key_entry[field_name] = getattr(key_setter, field_name, None)
             key_to_add = json.dumps(key_entry)
             existing_index = hashmap.get(key_to_add, None)
             print("existing_index", existing_index)
@@ -93,12 +94,18 @@ class GENERIC_MAP_OT_actions(Operator):
                 key = keys_list.add()
                 # copy the values over 
                 for field_name in key_setter.field_names:
-                    key[field_name] = key_setter[field_name]
+                    val = getattr(key_setter, field_name, None)
+                    if val is not None:
+                        key[field_name] = val
+                    # TODO: add error handling
 
                 value = values_list.add()
                 # copy the values over 
                 for field_name in value_setter.field_names:
-                    value[field_name] = value_setter[field_name]
+                    val = getattr(value_setter, field_name, None)
+                    if val is not None:
+                        value[field_name] = val 
+                    # TODO: add error handling
                 
                 propertyGroup.list_index = index + 1 # we use this to force the change detection
                 propertyGroup.values_index = index + 1 # we use this to force the change detection

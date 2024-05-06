@@ -4,7 +4,7 @@ import bpy
 from bpy_types import Operator
 from bpy.props import (StringProperty)
 
-from .metadata import add_component_from_custom_property, add_component_to_object, apply_propertyGroup_values_to_object_customProperties_for_component, copy_propertyGroup_values_to_another_object, get_bevy_component_value_by_long_name, get_bevy_components, is_bevy_component_in_object, remove_component_from_object, rename_bevy_component, toggle_component
+from .metadata import add_component_from_custom_property, add_component_to_object, apply_propertyGroup_values_to_object_customProperties_for_component, copy_propertyGroup_values_to_another_object, get_bevy_component_value_by_long_name, get_bevy_components, is_bevy_component_in_object, remove_component_from_object, rename_component, toggle_component
 
 class AddComponentOperator(Operator):
     """Add Bevy component to object"""
@@ -214,31 +214,10 @@ class OT_rename_component(Operator):
         if original_name != '' and new_name != '' and original_name != new_name and len(target_objects) > 0:
             for index, object_name in enumerate(target_objects):
                 object = bpy.data.objects[object_name]
-                if object and original_name in get_bevy_components(object):
-                    
-                    # copy data to new component, remove the old one
-                    try: 
-                        rename_bevy_component(object=object, original_long_name=original_name, new_long_name=new_name)
-                        remove_component_from_object(object, original_name)
-                    except Exception as error:
-                        if '__disable__update' in object:
-                            del object["__disable__update"] # make sure custom properties are updateable afterwards, even in the case of failure
-                        # get metadata
-                        components_metadata = getattr(object, "components_meta", None)
-                        if components_metadata:
-                            components_metadata = components_metadata.components
-                            component_meta =  next(filter(lambda component: component["long_name"] == new_name, components_metadata), None)
-                            if component_meta:
-                                component_meta.invalid = True
-                                component_meta.invalid_details = "unknow issue when renaming/transforming component, please remove it & add it back again"
-
-                        errors.append( "failed to copy old component value to new component: object: '" + object.name + "', error: " + str(error))
-                        
+                if object and original_name in get_bevy_components(object) or original_name in object:
                     try:
                         # attempt conversion
-                        long_name = new_name
-                        component_definition = type_infos[long_name]
-                        add_component_to_object(object, component_definition, get_bevy_component_value_by_long_name(object, new_name))
+                        rename_component(object=object, original_long_name=original_name, new_long_name=new_name)
                     except Exception as error:
                         if '__disable__update' in object:
                             del object["__disable__update"] # make sure custom properties are updateable afterwards, even in the case of failure

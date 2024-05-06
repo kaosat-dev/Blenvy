@@ -131,7 +131,6 @@ class BEVY_COMPONENTS_PT_AdvancedToolsPanel(bpy.types.Panel):
                     components_metadata = object.components_meta.components
                     comp_names = []
                     for index, component_meta in enumerate(components_metadata):
-                        short_name = component_meta.name
                         long_name = component_meta.long_name
                         if component_meta.invalid:
                             self.draw_invalid_or_unregistered(layout, "Invalid", long_name, object)
@@ -146,7 +145,7 @@ class BEVY_COMPONENTS_PT_AdvancedToolsPanel(bpy.types.Panel):
                         comp_names.append(long_name) 
 
                     for custom_property in object.keys():
-                        if custom_property != 'components_meta' and custom_property not in comp_names:
+                        if custom_property != 'components_meta' and custom_property != 'bevy_components' and custom_property not in comp_names:
                             self.draw_invalid_or_unregistered(layout, "Unregistered", custom_property, object)
 
                             if not object.name in objects_with_invalid_components:
