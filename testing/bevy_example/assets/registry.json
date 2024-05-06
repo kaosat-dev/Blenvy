@@ -11138,108 +11138,148 @@
       "typeInfo": "Value"
     },
     "bevy_utils::hashbrown::HashMap<alloc::string::String, alloc::string::String, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
-      "additionalProperties": {
+      "isComponent": false,
+      "isResource": false,
+      "keyType": {
         "type": {
           "$ref": "#/$defs/alloc::string::String"
         }
       },
-      "isComponent": false,
-      "isResource": false,
       "long_name": "bevy_utils::hashbrown::HashMap<alloc::string::String, alloc::string::String, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
       "short_name": "HashMap<String, String, DefaultHashBuilder>",
       "type": "object",
-      "typeInfo": "Map"
+      "typeInfo": "Map",
+      "valueType": {
+        "type": {
+          "$ref": "#/$defs/alloc::string::String"
+        }
+      }
     },
     "bevy_utils::hashbrown::HashMap<alloc::string::String, alloc::vec::Vec<alloc::string::String>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
-      "additionalProperties": {
-        "type": {
-          "$ref": "#/$defs/alloc::vec::Vec<alloc::string::String>"
-        }
-      },
       "isComponent": false,
       "isResource": false,
-      "long_name": "bevy_utils::hashbrown::HashMap<alloc::string::String, alloc::vec::Vec<alloc::string::String>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
-      "short_name": "HashMap<String, Vec<String>, DefaultHashBuilder>",
-      "type": "object",
-      "typeInfo": "Map"
-    },
-    "bevy_utils::hashbrown::HashMap<alloc::string::String, bevy_render::color::Color, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
-      "additionalProperties": {
-        "type": {
-          "$ref": "#/$defs/bevy_render::color::Color"
-        }
-      },
-      "isComponent": false,
-      "isResource": false,
-      "long_name": "bevy_utils::hashbrown::HashMap<alloc::string::String, bevy_render::color::Color, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
-      "short_name": "HashMap<String, Color, DefaultHashBuilder>",
-      "type": "object",
-      "typeInfo": "Map"
-    },
-    "bevy_utils::hashbrown::HashMap<alloc::string::String, bevy_utils::hashbrown::HashMap<u32, alloc::vec::Vec<alloc::string::String>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
-      "additionalProperties": {
-        "type": {
-          "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<u32, alloc::vec::Vec<alloc::string::String>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
-        }
-      },
-      "isComponent": false,
-      "isResource": false,
-      "long_name": "bevy_utils::hashbrown::HashMap<alloc::string::String, bevy_utils::hashbrown::HashMap<u32, alloc::vec::Vec<alloc::string::String>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
-      "short_name": "HashMap<String, HashMap<u32, Vec<String>, DefaultHashBuilder>, DefaultHashBuilder>",
-      "type": "object",
-      "typeInfo": "Map"
-    },
-    "bevy_utils::hashbrown::HashMap<alloc::string::String, f32, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
-      "additionalProperties": {
-        "type": {
-          "$ref": "#/$defs/f32"
-        }
-      },
-      "isComponent": false,
-      "isResource": false,
-      "long_name": "bevy_utils::hashbrown::HashMap<alloc::string::String, f32, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
-      "short_name": "HashMap<String, f32, DefaultHashBuilder>",
-      "type": "object",
-      "typeInfo": "Map"
-    },
-    "bevy_utils::hashbrown::HashMap<u32, alloc::string::String, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
-      "additionalProperties": {
+      "keyType": {
         "type": {
           "$ref": "#/$defs/alloc::string::String"
         }
       },
-      "isComponent": false,
-      "isResource": false,
-      "long_name": "bevy_utils::hashbrown::HashMap<u32, alloc::string::String, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
-      "short_name": "HashMap<u32, String, DefaultHashBuilder>",
+      "long_name": "bevy_utils::hashbrown::HashMap<alloc::string::String, alloc::vec::Vec<alloc::string::String>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "short_name": "HashMap<String, Vec<String>, DefaultHashBuilder>",
       "type": "object",
-      "typeInfo": "Map"
-    },
-    "bevy_utils::hashbrown::HashMap<u32, alloc::vec::Vec<alloc::string::String>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
-      "additionalProperties": {
+      "typeInfo": "Map",
+      "valueType": {
         "type": {
           "$ref": "#/$defs/alloc::vec::Vec<alloc::string::String>"
         }
-      },
+      }
+    },
+    "bevy_utils::hashbrown::HashMap<alloc::string::String, bevy_render::color::Color, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
       "isComponent": false,
       "isResource": false,
-      "long_name": "bevy_utils::hashbrown::HashMap<u32, alloc::vec::Vec<alloc::string::String>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
-      "short_name": "HashMap<u32, Vec<String>, DefaultHashBuilder>",
+      "keyType": {
+        "type": {
+          "$ref": "#/$defs/alloc::string::String"
+        }
+      },
+      "long_name": "bevy_utils::hashbrown::HashMap<alloc::string::String, bevy_render::color::Color, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "short_name": "HashMap<String, Color, DefaultHashBuilder>",
       "type": "object",
-      "typeInfo": "Map"
-    },
-    "bevy_utils::hashbrown::HashMap<u32, bevy_render::color::Color, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
-      "additionalProperties": {
+      "typeInfo": "Map",
+      "valueType": {
         "type": {
           "$ref": "#/$defs/bevy_render::color::Color"
         }
-      },
+      }
+    },
+    "bevy_utils::hashbrown::HashMap<alloc::string::String, bevy_utils::hashbrown::HashMap<u32, alloc::vec::Vec<alloc::string::String>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
       "isComponent": false,
       "isResource": false,
+      "keyType": {
+        "type": {
+          "$ref": "#/$defs/alloc::string::String"
+        }
+      },
+      "long_name": "bevy_utils::hashbrown::HashMap<alloc::string::String, bevy_utils::hashbrown::HashMap<u32, alloc::vec::Vec<alloc::string::String>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "short_name": "HashMap<String, HashMap<u32, Vec<String>, DefaultHashBuilder>, DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Map",
+      "valueType": {
+        "type": {
+          "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<u32, alloc::vec::Vec<alloc::string::String>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+        }
+      }
+    },
+    "bevy_utils::hashbrown::HashMap<alloc::string::String, f32, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "isComponent": false,
+      "isResource": false,
+      "keyType": {
+        "type": {
+          "$ref": "#/$defs/alloc::string::String"
+        }
+      },
+      "long_name": "bevy_utils::hashbrown::HashMap<alloc::string::String, f32, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "short_name": "HashMap<String, f32, DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Map",
+      "valueType": {
+        "type": {
+          "$ref": "#/$defs/f32"
+        }
+      }
+    },
+    "bevy_utils::hashbrown::HashMap<u32, alloc::string::String, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "isComponent": false,
+      "isResource": false,
+      "keyType": {
+        "type": {
+          "$ref": "#/$defs/u32"
+        }
+      },
+      "long_name": "bevy_utils::hashbrown::HashMap<u32, alloc::string::String, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "short_name": "HashMap<u32, String, DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Map",
+      "valueType": {
+        "type": {
+          "$ref": "#/$defs/alloc::string::String"
+        }
+      }
+    },
+    "bevy_utils::hashbrown::HashMap<u32, alloc::vec::Vec<alloc::string::String>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "isComponent": false,
+      "isResource": false,
+      "keyType": {
+        "type": {
+          "$ref": "#/$defs/u32"
+        }
+      },
+      "long_name": "bevy_utils::hashbrown::HashMap<u32, alloc::vec::Vec<alloc::string::String>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "short_name": "HashMap<u32, Vec<String>, DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Map",
+      "valueType": {
+        "type": {
+          "$ref": "#/$defs/alloc::vec::Vec<alloc::string::String>"
+        }
+      }
+    },
+    "bevy_utils::hashbrown::HashMap<u32, bevy_render::color::Color, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "isComponent": false,
+      "isResource": false,
+      "keyType": {
+        "type": {
+          "$ref": "#/$defs/u32"
+        }
+      },
       "long_name": "bevy_utils::hashbrown::HashMap<u32, bevy_render::color::Color, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
       "short_name": "HashMap<u32, Color, DefaultHashBuilder>",
       "type": "object",
-      "typeInfo": "Map"
+      "typeInfo": "Map",
+      "valueType": {
+        "type": {
+          "$ref": "#/$defs/bevy_render::color::Color"
+        }
+      }
     },
     "bevy_utils::smallvec::SmallVec<[bevy_ecs::entity::Entity; 8]>": {
       "isComponent": false,
