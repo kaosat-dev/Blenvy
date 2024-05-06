@@ -20,9 +20,18 @@ pub fn export_types(world: &mut World) {
     println!("registry_save_path {}", registry_save_path.display());
     let writer = File::create(registry_save_path).expect("should have created schema file");
 
+    let components_to_filter_out = &config.component_filter.clone();
+    let resources_to_filter_out = &config.resource_filter.clone();
+
     let types = world.resource_mut::<AppTypeRegistry>();
     let types = types.read();
-    let schemas = types.iter().map(export_type).collect::<Map<_, _>>();
+    let schemas = types.iter()
+        .filter(|type_info| {
+            let type_id = type_info.type_id();
+            return components_to_filter_out.is_allowed_by_id(type_id) && resources_to_filter_out.is_allowed_by_id(type_id);
+        })
+        .map(export_type)
+        .collect::<Map<_, _>>();
 
     serde_json::to_writer_pretty(
         writer,
@@ -41,7 +50,6 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
     let t = reg.type_info();
     let binding = t.type_path_table();
     let short_name = binding.short_path();
-    println!("T YOOO {:?}", t);
     let mut schema = match t {
         TypeInfo::Struct(info) => {
             let properties = info
@@ -164,7 +172,8 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
             "long_name": t.type_path(),
             "type": "object",
             "typeInfo": "Map",
-            "additionalProperties": json!({"type": typ(info.value_type_path_table().path())}),
+            "valueType": json!({"type": typ(info.value_type_path_table().path())}),
+            "keyType": json!({"type": typ(info.key_type_path_table().path())}),
         }),
         TypeInfo::Tuple(info) => json!({
             "long_name": t.type_path(),
