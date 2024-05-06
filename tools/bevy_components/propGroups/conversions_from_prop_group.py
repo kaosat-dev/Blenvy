@@ -32,7 +32,7 @@ def property_group_value_to_custom_property_value(property_group, definition, re
     type_info = definition["typeInfo"] if "typeInfo" in definition else None
     type_def = definition["type"] if "type" in definition else None
     is_value_type = long_name in conversion_tables
-    print("computing custom property: component name:", long_name, "type_info", type_info, "type_def", type_def, "value", value)
+    # print("computing custom property: component name:", long_name, "type_info", type_info, "type_def", type_def, "value", value)
 
     if is_value_type:
         value = conversion_tables[long_name](value)

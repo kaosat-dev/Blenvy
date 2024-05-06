@@ -16,7 +16,6 @@ def update_component(self, context, definition, component_name):
     print("update in component", component_name, self, "current_object", current_object.name)
     components_in_object = current_object.components_meta.components
     component_meta =  next(filter(lambda component: component["long_name"] == component_name, components_in_object), None)
-    print("component_meta", component_meta)
 
     if component_meta != None:
         property_group_name = registry.get_propertyGroupName_from_longName(component_name)
