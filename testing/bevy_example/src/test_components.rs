@@ -189,6 +189,15 @@ pub struct HashmapTestStringColor {
 #[reflect(Component)]
 pub struct HashmapTestStringColorFlat(HashMap<String, Color>);
 
+
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+pub struct ComponentAToFilterOut;
+
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+pub struct ComponentBToFilterOut;
+
 pub struct ComponentsTestPlugin;
 impl Plugin for ComponentsTestPlugin {
     fn build(&self, app: &mut App) {
@@ -235,6 +244,9 @@ impl Plugin for ComponentsTestPlugin {
             .register_type::<HashMap<String, Color>>()
             .register_type::<HashmapTestStringColor>()
             .register_type::<HashmapTestStringColorFlat>()
+
+            .register_type::<ComponentAToFilterOut>()
+            .register_type::<ComponentBToFilterOut>()
 
             .add_plugins(MaterialPlugin::<
                 ExtendedMaterial<StandardMaterial, MyExtension>,
