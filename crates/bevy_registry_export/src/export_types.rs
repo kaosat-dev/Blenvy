@@ -25,10 +25,12 @@ pub fn export_types(world: &mut World) {
 
     let types = world.resource_mut::<AppTypeRegistry>();
     let types = types.read();
-    let schemas = types.iter()
+    let schemas = types
+        .iter()
         .filter(|type_info| {
             let type_id = type_info.type_id();
-            return components_to_filter_out.is_allowed_by_id(type_id) && resources_to_filter_out.is_allowed_by_id(type_id);
+            return components_to_filter_out.is_allowed_by_id(type_id)
+                && resources_to_filter_out.is_allowed_by_id(type_id);
         })
         .map(export_type)
         .collect::<Map<_, _>>();

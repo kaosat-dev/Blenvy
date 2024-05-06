@@ -15,8 +15,6 @@ pub fn ronstring_to_reflect_component(
     let mut components: Vec<(Box<dyn Reflect>, TypeRegistration)> = Vec::new();
     // println!("ron_string {:?}", ron_string);
     for (name, value) in lookup.into_iter() {
-        
-        
         let parsed_value: String;
         match value.clone() {
             Value::String(str) => {
@@ -28,24 +26,30 @@ pub fn ronstring_to_reflect_component(
         if name.as_str() == "bevy_components" {
             bevy_components_string_to_components(parsed_value, type_registry, &mut components)
         } else {
-            components_string_to_components(name, value, parsed_value, type_registry, &mut components)
+            components_string_to_components(
+                name,
+                value,
+                parsed_value,
+                type_registry,
+                &mut components,
+            )
         }
     }
     components
 }
 
 fn components_string_to_components(
-    name: String, 
+    name: String,
     value: Value,
     parsed_value: String,
     type_registry: &TypeRegistry,
-    components: &mut Vec<(Box<dyn Reflect>, TypeRegistration)> 
-){
+    components: &mut Vec<(Box<dyn Reflect>, TypeRegistration)>,
+) {
     let type_string = name.replace("component: ", "").trim().to_string();
     let capitalized_type_name = capitalize_first_letter(type_string.as_str());
 
     if let Some(type_registration) =
-    type_registry.get_with_short_type_path(capitalized_type_name.as_str())
+        type_registry.get_with_short_type_path(capitalized_type_name.as_str())
     {
         debug!("TYPE INFO {:?}", type_registration.type_info());
 
@@ -87,8 +91,8 @@ fn components_string_to_components(
 fn bevy_components_string_to_components(
     parsed_value: String,
     type_registry: &TypeRegistry,
-    components: &mut Vec<(Box<dyn Reflect>, TypeRegistration)> 
-){
+    components: &mut Vec<(Box<dyn Reflect>, TypeRegistration)>,
+) {
     let lookup: HashMap<String, Value> = ron::from_str(&parsed_value).unwrap();
     for (key, value) in lookup.into_iter() {
         let parsed_value: String;
@@ -99,9 +103,7 @@ fn bevy_components_string_to_components(
             _ => parsed_value = ron::to_string(&value).unwrap().to_string(),
         }
 
-        if let Some(type_registration) =
-            type_registry.get_with_type_path(key.as_str())
-        {
+        if let Some(type_registration) = type_registry.get_with_type_path(key.as_str()) {
             debug!("TYPE INFO {:?}", type_registration.type_info());
 
             let ron_string = format!(

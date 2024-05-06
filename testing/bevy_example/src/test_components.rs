@@ -152,7 +152,6 @@ impl MaterialExtension for MyExtension {
     }
 }
 
-
 use bevy::utils::HashMap;
 
 #[derive(Component, Reflect, Default, Debug)]
@@ -188,7 +187,6 @@ pub struct HashmapTestStringColor {
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
 pub struct HashmapTestStringColorFlat(HashMap<String, Color>);
-
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
@@ -237,17 +235,13 @@ impl Plugin for ComponentsTestPlugin {
             .register_type::<HashmapTestStringFloat>()
             .register_type::<HashMap<u32, String>>()
             .register_type::<HashmapTestIntString>()
-
             .register_type::<HashMap<u32, Color>>()
             .register_type::<HashmapTestIntColor>()
-
             .register_type::<HashMap<String, Color>>()
             .register_type::<HashmapTestStringColor>()
             .register_type::<HashmapTestStringColorFlat>()
-
             .register_type::<ComponentAToFilterOut>()
             .register_type::<ComponentBToFilterOut>()
-
             .add_plugins(MaterialPlugin::<
                 ExtendedMaterial<StandardMaterial, MyExtension>,
             >::default());
