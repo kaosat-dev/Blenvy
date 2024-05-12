@@ -52,6 +52,10 @@ from .blueprints.operators import OT_select_blueprint
 from .helpers.generate_complete_preferences_dict import generate_complete_preferences_dict_gltf
 
 
+from .blenvy.ui import BLENVY_PT_SidePanel
+from .blenvy.blenvy_manager import BlenvyManager
+from .blenvy.operators import OT_switch_bevy_tooling
+
 ######################################################
 
 """
@@ -126,6 +130,14 @@ classes = [
     GLTF_PT_auto_export_SidePanel,
     AutoExportTracker,
 
+   
+
+
+    BlenvyManager,
+    OT_switch_bevy_tooling,
+    BLENVY_PT_SidePanel,
+
+
     AssetsRegistry,
     OT_add_bevy_asset,
     OT_remove_bevy_asset,
@@ -134,7 +146,6 @@ classes = [
     BlueprintsRegistry,
     OT_select_blueprint,
     GLTF_PT_auto_export_blueprints_list,
-
 ]
 
 def glTF2_pre_export_callback(data):

@@ -4,8 +4,12 @@ class GLTF_PT_auto_export_blueprints_list(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "Blueprints"
-    bl_parent_id = "GLTF_PT_auto_export_SidePanel"
+    bl_parent_id = "BLENVY_PT_SidePanel"
     bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.window_manager.blenvy.mode == 'BLUEPRINTS'
 
     def draw(self, context):
         layout = self.layout
