@@ -360,6 +360,7 @@ def inject_blueprints_list_into_main_scene(scene, blueprints_data, addon_prefs):
 
     assets_list_name = f"assets_{scene.name}"
     assets_list_data = {"blueprints": json.dumps(blueprint_assets_list), "sounds":[], "images":[]}
+    scene["assets"] = json.dumps(blueprint_assets_list)
 
     print("blueprint assets", blueprint_assets_list)
     add_scene_property(scene, assets_list_name, assets_list_data)

@@ -1,4 +1,5 @@
 import bpy
+import json
 
 class GLTF_PT_auto_export_assets(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
@@ -34,8 +35,15 @@ class GLTF_PT_auto_export_assets(bpy.types.Panel):
         row.label(text="Type")
         row.label(text="Path")
         row.label(text="Remove")
-
-        for asset in asset_registry.assets_list:
+        #print("FOO", json.dumps([{"name":"foo", "type":"MODEL", "path":"bla", "internal":True}]))
+        # [{"name": "trigger_sound", "type": "AUDIO", "path": "assets/audio/trigger.mp3", "internal": true}]
+        assets_list = []
+        if context.collection is not None and context.collection.name == 'Scene Collection':
+            assets_list = json.loads(context.scene.get('assets')) #asset_registry.assets_list
+        else:
+            if 'assets' in context.collection:
+                assets_list = json.loads(context.collection.get('assets'))
+        for asset in assets_list:
             row = layout.row()
             row.label(text=asset["name"])
             row.label(text=asset["type"])
@@ -45,3 +53,5 @@ class GLTF_PT_auto_export_assets(bpy.types.Panel):
                 remove_asset.asset_path = asset["path"]
             else:
                 row.label(text="")
+
+        #
