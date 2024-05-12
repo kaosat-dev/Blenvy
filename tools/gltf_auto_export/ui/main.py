@@ -55,22 +55,6 @@ class GLTF_PT_auto_export_changes_list(bpy.types.Panel):
                 row = layout.row()
                 row.label(text=f'    {object_name}')
 
-class GLTF_PT_auto_export_blueprints_list(bpy.types.Panel):
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'UI'
-    bl_label = "Blueprints"
-    bl_parent_id = "GLTF_PT_auto_export_SidePanel"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
-
-        for collection in bpy.context.window_manager.exportedCollections:
-            row = layout.row()
-            row.label(text=collection.name)
-
 # main ui in the file => export 
 class GLTF_PT_auto_export_main(bpy.types.Panel):
     bl_space_type = 'FILE_BROWSER'

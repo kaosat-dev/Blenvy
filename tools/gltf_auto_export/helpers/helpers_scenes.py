@@ -9,7 +9,7 @@ custom_properties_to_filter_out = ['_combine', 'template', 'components_meta']
 def is_component_valid(object, component_name):
     if "components_meta" in object or hasattr(object, "components_meta"):
         target_components_metadata = object.components_meta.components
-        component_meta = next(filter(lambda component: component["name"] == component_name, target_components_metadata), None)
+        component_meta = next(filter(lambda component: component["long_name"] == component_name, target_components_metadata), None)
         if component_meta != None:
             return component_meta.enabled and not component_meta.invalid
     return True
@@ -105,6 +105,7 @@ def duplicate_object(object, parent, combine_mode, destination_collection, bluep
         
         """we inject the collection/blueprint name, as a component called 'BlueprintName', but we only do this in the empty, not the original object"""
         empty_obj['BlueprintName'] = '("'+collection_name+'")'
+        empty_obj["BlueprintPath"] = ''
         empty_obj['SpawnHere'] = '()'
 
         # we also inject a list of all sub blueprints, so that the bevy side can preload them

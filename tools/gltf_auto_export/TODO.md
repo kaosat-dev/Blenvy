@@ -56,3 +56,18 @@
 - [ ] remove bulk of tracker related code
 - [ ] clean up
 - [x] split up change detection in settings to its own panel
+
+
+
+
+Change storage of 'blueprint' assets : (from BlueprintsList)
+ - store at the SCENE level: a list/map of assets 
+   - asset name + asset path
+   - the asset PATH is determined by the export output folder parameters
+   - make asset storage generic enough to allow adding additional asset types
+   - get inspired by bevy_asset_loader ?
+
+Assets:
+ - [ ] store assets 
+   - [ ] per main scene for level/world assets
+   - [ ] per blueprint for blueprint in lib scene

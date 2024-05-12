@@ -158,6 +158,7 @@ def blueprints_scan(main_scenes, library_scenes, addon_prefs):
         blueprint.collection = collection
         blueprint.instances = external_collection_instances[collection.name] if collection.name in external_collection_instances else []
         blueprints[collection.name] = blueprint
+        #print("EXTERNAL COLLECTION", collection, dict(collection))
 
         # add nested collections to internal/external_collection instances 
         # FIXME: inneficient, third loop over all_objects
@@ -280,11 +281,95 @@ def blueprints_scan(main_scenes, library_scenes, addon_prefs):
 import json
 from .object_makers import (make_empty)
 
-def inject_blueprints_list_into_main_scene(scene, blueprints_data):
-    # print("injecting assets/blueprints data into scene")
+
+def add_scene_property(scene, property_name, property_data):
     root_collection = scene.collection
-    assets_list = None
+    scene_property = None
+    for object in scene.objects:
+        if object.name == property_name:
+            scene_property = object
+            break
+    
+    if scene_property is None:
+        scene_property = make_empty(property_name, [0,0,0], [0,0,0], [0,0,0], root_collection)
+
+    for key in property_data.keys():
+        scene_property[key] = property_data[key]
+
+
+def inject_blueprints_list_into_main_scene(scene, blueprints_data, addon_prefs):
+    export_root_folder = getattr(addon_prefs, "export_root_folder")
+    export_output_folder = getattr(addon_prefs,"export_output_folder")
+    export_levels_path = getattr(addon_prefs,"export_levels_path")
+    export_blueprints_path = getattr(addon_prefs, "export_blueprints_path")
+    export_gltf_extension = getattr(addon_prefs, "export_gltf_extension")
+
+    # print("injecting assets/blueprints data into scene")
     assets_list_name = f"assets_list_{scene.name}_components"
+    assets_list_data = {}
+
+
+    # FIXME: temporary hack
+    for blueprint in blueprints_data.blueprints:
+        bpy.context.window_manager.blueprints_registry.add_blueprint(blueprint)
+
+    blueprint_instance_names_for_scene = blueprints_data.blueprint_instances_per_main_scene.get(scene.name, None)
+    # find all blueprints used in a scene
+    blueprints_in_scene = []
+    if blueprint_instance_names_for_scene: # what are the blueprints used in this scene, inject those into the assets list component
+        children_per_blueprint = {}
+        for blueprint_name in blueprint_instance_names_for_scene:
+            blueprint = blueprints_data.blueprints_per_name.get(blueprint_name, None)
+            if blueprint:
+                children_per_blueprint[blueprint_name] = blueprint.nested_blueprints
+                blueprints_in_scene += blueprint.nested_blueprints
+        assets_list_data["BlueprintsList"] = f"({json.dumps(dict(children_per_blueprint))})"
+        print(blueprint_instance_names_for_scene)
+    add_scene_property(scene, assets_list_name, assets_list_data)
+
+
+    relative_blueprints_path = os.path.relpath(export_blueprints_path, export_root_folder)
+
+    blueprint_assets_list = []
+    if blueprint_instance_names_for_scene:
+        for blueprint_name in blueprint_instance_names_for_scene:
+            blueprint = blueprints_data.blueprints_per_name.get(blueprint_name, None)
+            if blueprint is not None: 
+                print("BLUEPRINT", blueprint)
+                blueprint_exported_path = None
+                if blueprint.local:
+                    blueprint_exported_path = os.path.join(relative_blueprints_path, f"{blueprint.name}{export_gltf_extension}")
+                else:
+                    # get the injected path of the external blueprints
+                    blueprint_exported_path = blueprint.collection['Export_path'] if 'Export_path' in blueprint.collection else None
+                    print("foo", dict(blueprint.collection))
+                if blueprint_exported_path is not None:
+                    blueprint_assets_list.append({"name": blueprint.name, "path": blueprint_exported_path, "type": "MODEL", "internal": True})
+                
+
+    # fetch images/textures
+    # see https://blender.stackexchange.com/questions/139859/how-to-get-absolute-file-path-for-linked-texture-image
+    textures = []
+    for ob in bpy.data.objects:
+        if ob.type == "MESH":
+            for mat_slot in ob.material_slots:
+                if mat_slot.material:
+                    if mat_slot.material.node_tree:
+                        textures.extend([x.image.filepath for x in mat_slot.material.node_tree.nodes if x.type=='TEX_IMAGE'])
+    print("textures", textures)
+
+    assets_list_name = f"assets_{scene.name}"
+    assets_list_data = {"blueprints": json.dumps(blueprint_assets_list), "sounds":[], "images":[]}
+
+    print("blueprint assets", blueprint_assets_list)
+    add_scene_property(scene, assets_list_name, assets_list_data)
+    for blueprint in blueprint_assets_list:
+        bpy.context.window_manager.assets_registry.add_asset(**blueprint)
+
+
+    '''root_collection = scene.collection
+
+    assets_list = None
     for object in scene.objects:
         if object.name == assets_list_name:
             assets_list = object
@@ -301,7 +386,7 @@ def inject_blueprints_list_into_main_scene(scene, blueprints_data):
             blueprint = blueprints_data.blueprints_per_name.get(blueprint_name, None)
             if blueprint:
                 children_per_blueprint[blueprint_name] = blueprint.nested_blueprints
-        assets_list["BlueprintsList"] = f"({json.dumps(dict(children_per_blueprint))})"
+        assets_list["BlueprintsList"] = f"({json.dumps(dict(children_per_blueprint))})"'''
 
 def remove_blueprints_list_from_main_scene(scene):
     assets_list = None

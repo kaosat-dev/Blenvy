@@ -2,6 +2,15 @@
 import bpy
 from bpy.types import Operator
 
+
+class ASSETS_LIST_OT_actions(Operator):
+    """Add / remove etc assets"""
+    bl_idname = "asset_list.list_action"
+    bl_label = "Asset Actions"
+    bl_description = "Move items up and down, add and remove"
+    bl_options = {'REGISTER'}
+    
+
 class SCENES_LIST_OT_actions(Operator):
     """Move items up and down, add and remove"""
     bl_idname = "scene_list.list_action"

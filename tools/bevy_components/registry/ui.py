@@ -150,8 +150,8 @@ class BEVY_COMPONENTS_PT_AdvancedToolsPanel(bpy.types.Panel):
 
                             if not object.name in objects_with_invalid_components:
                                 objects_with_invalid_components.append(object.name)
-                            if not long_name in invalid_component_names:
-                                invalid_component_names.append(custom_property)
+                            """if not long_name in invalid_component_names:
+                                invalid_component_names.append(custom_property)""" # FIXME
         layout.separator()
         layout.separator()
         original_name = bpy.context.window_manager.bevy_component_rename_helper.original_name

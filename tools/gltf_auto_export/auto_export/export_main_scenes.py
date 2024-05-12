@@ -9,11 +9,6 @@ from ..modules.bevy_dynamic import is_object_dynamic, is_object_static
 from ..helpers.helpers_scenes import clear_hollow_scene, copy_hollowed_collection_into
 from ..helpers.helpers_blueprints import inject_blueprints_list_into_main_scene, remove_blueprints_list_from_main_scene
 
-# export all main scenes
-def export_main_scenes(scenes, blend_file_path, addon_prefs): 
-    for scene in scenes:
-        export_main_scene(scene, blend_file_path, addon_prefs)
-
 def export_main_scene(scene, blend_file_path, addon_prefs, blueprints_data): 
     gltf_export_preferences = generate_gltf_export_preferences(addon_prefs)
     export_root_folder = getattr(addon_prefs, "export_root_folder")
@@ -35,8 +30,8 @@ def export_main_scene(scene, blend_file_path, addon_prefs, blueprints_data):
     if export_blueprints : 
         gltf_output_path = os.path.join(export_levels_path, scene.name)
 
-        inject_blueprints_list_into_main_scene(scene, blueprints_data)
-
+        inject_blueprints_list_into_main_scene(scene, blueprints_data, addon_prefs)
+        return
         if export_separate_dynamic_and_static_objects:
             #print("SPLIT STATIC AND DYNAMIC")
             # first export static objects

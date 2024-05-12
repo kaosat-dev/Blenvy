@@ -226,4 +226,4 @@ Restructuring of storage of components
     - [x] fix weird issue with missing "0" property when adding new entry in empty hashmap => happens only if the values for the "setter" have never been set
     - [ ] handle missing types in registry for keys & values
 
-- Add correct upgrade handling from individual component to bevy_components
+- [ ] Add correct upgrade handling from individual component to bevy_components

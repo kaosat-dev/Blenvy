@@ -11,12 +11,11 @@ bl_info = {
     "category": "Import-Export"
 }
 import os
-from pathlib import Path
 import json
 import bpy
-from bpy.types import Context
 from bpy.props import (StringProperty, BoolProperty, IntProperty, PointerProperty)
-import rna_prop_ui
+
+
 
 
 # from .extension import ExampleExtensionProperties, GLTF_PT_UserExtensionPanel, unregister_panel
@@ -36,12 +35,20 @@ from .ui.main import (GLTF_PT_auto_export_change_detection, GLTF_PT_auto_export_
                       GLTF_PT_auto_export_general,
                       GLTF_PT_auto_export_scenes,
                       GLTF_PT_auto_export_blueprints,
-                      GLTF_PT_auto_export_blueprints_list,
                       SCENE_UL_GLTF_auto_export,
 
                       GLTF_PT_auto_export_SidePanel
                       )
 from .ui.operators import (OT_OpenFolderbrowser, SCENES_LIST_OT_actions)
+
+from .assets.ui import GLTF_PT_auto_export_assets
+from .assets.assets_registry import AssetsRegistry
+from .assets.operators import OT_add_bevy_asset, OT_remove_bevy_asset
+
+from .blueprints.ui import GLTF_PT_auto_export_blueprints_list
+from .blueprints.blueprints_registry import BlueprintsRegistry
+from .blueprints.operators import OT_select_blueprint
+
 from .helpers.generate_complete_preferences_dict import generate_complete_preferences_dict_gltf
 
 
@@ -104,10 +111,8 @@ classes = [
     SCENE_UL_GLTF_auto_export,
     SCENES_LIST_OT_actions,
 
-
     OT_OpenFolderbrowser,
     AutoExportGLTF, 
-    #AutoExportGltfAddonPreferences,
 
     CollectionToExport,
     BlueprintsToExport,
@@ -119,8 +124,17 @@ classes = [
     GLTF_PT_auto_export_scenes,
     GLTF_PT_auto_export_blueprints,
     GLTF_PT_auto_export_SidePanel,
-    GLTF_PT_auto_export_blueprints_list,
     AutoExportTracker,
+
+    AssetsRegistry,
+    OT_add_bevy_asset,
+    OT_remove_bevy_asset,
+    GLTF_PT_auto_export_assets,
+
+    BlueprintsRegistry,
+    OT_select_blueprint,
+    GLTF_PT_auto_export_blueprints_list,
+
 ]
 
 def glTF2_pre_export_callback(data):

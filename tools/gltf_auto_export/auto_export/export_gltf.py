@@ -74,4 +74,4 @@ def export_gltf (path, export_settings):
     settings = {**export_settings, "filepath": path}
     # print("export settings",settings)
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    bpy.ops.export_scene.gltf(**settings)
+    #bpy.ops.export_scene.gltf(**settings)
