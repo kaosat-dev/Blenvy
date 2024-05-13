@@ -16,8 +16,6 @@ import bpy
 from bpy.props import (StringProperty, BoolProperty, IntProperty, PointerProperty)
 
 
-
-
 # from .extension import ExampleExtensionProperties, GLTF_PT_UserExtensionPanel, unregister_panel
 
 from .auto_export.operators import AutoExportGLTF
@@ -41,20 +39,12 @@ from .ui.main import (GLTF_PT_auto_export_change_detection, GLTF_PT_auto_export_
                       )
 from .ui.operators import (OT_OpenFolderbrowser, SCENES_LIST_OT_actions)
 
-from .assets.ui import GLTF_PT_auto_export_assets
-from .assets.assets_registry import AssetsRegistry
-from .assets.operators import OT_add_bevy_asset, OT_remove_bevy_asset
 
-from .blueprints.ui import GLTF_PT_auto_export_blueprints_list
-from .blueprints.blueprints_registry import BlueprintsRegistry
-from .blueprints.operators import OT_select_blueprint
 
 from .helpers.generate_complete_preferences_dict import generate_complete_preferences_dict_gltf
 
 
-from .blenvy.ui import BLENVY_PT_SidePanel
-from .blenvy.blenvy_manager import BlenvyManager
-from .blenvy.operators import OT_switch_bevy_tooling
+
 
 ######################################################
 
@@ -129,23 +119,6 @@ classes = [
     GLTF_PT_auto_export_blueprints,
     GLTF_PT_auto_export_SidePanel,
     AutoExportTracker,
-
-   
-
-
-    BlenvyManager,
-    OT_switch_bevy_tooling,
-    BLENVY_PT_SidePanel,
-
-
-    AssetsRegistry,
-    OT_add_bevy_asset,
-    OT_remove_bevy_asset,
-    GLTF_PT_auto_export_assets,
-
-    BlueprintsRegistry,
-    OT_select_blueprint,
-    GLTF_PT_auto_export_blueprints_list,
 ]
 
 def glTF2_pre_export_callback(data):
