@@ -4,7 +4,7 @@ import bpy
 import pprint
 import pytest
 
-from ..components.metadata import get_bevy_component_value_by_long_name, get_bevy_components, is_bevy_component_in_object, upsert_bevy_component
+from ..bevy_components.components.metadata import get_bevy_component_value_by_long_name, get_bevy_components, is_bevy_component_in_object, upsert_bevy_component
 
 from .setup_data import setup_data
 

@@ -1,4 +1,4 @@
-from ..propGroups.conversions_to_prop_group import parse_struct_string, parse_tuplestruct_string
+from ..bevy_components.propGroups.conversions_to_prop_group import parse_struct_string, parse_tuplestruct_string
 
 
 def test_parse_tuplestruct_string():

@@ -1,6 +1,6 @@
 import bpy
 from .component_values_shuffler import component_values_shuffler
-from ..components.metadata import get_bevy_component_value_by_long_name, get_bevy_components, upsert_bevy_component
+from ..bevy_components.components.metadata import get_bevy_component_value_by_long_name, get_bevy_components, upsert_bevy_component
 from .setup_data import setup_data
 
 def test_shuffler(setup_data):

@@ -1,11 +1,11 @@
 import bpy
 import pprint
 
-from ..propGroups.conversions_to_prop_group import property_group_value_from_custom_property_value
-from ..propGroups.conversions_from_prop_group import property_group_value_to_custom_property_value
+from ..bevy_components.propGroups.conversions_to_prop_group import property_group_value_from_custom_property_value
+from ..bevy_components.propGroups.conversions_from_prop_group import property_group_value_to_custom_property_value
 from .component_values_shuffler import component_values_shuffler
 from .expected_component_values import (expected_custom_property_values, expected_custom_property_values_randomized)
-from ..components.metadata import get_bevy_component_value_by_long_name, get_bevy_components, upsert_bevy_component
+from ..bevy_components.components.metadata import get_bevy_component_value_by_long_name, get_bevy_components, upsert_bevy_component
 
 from .setup_data import setup_data
 
