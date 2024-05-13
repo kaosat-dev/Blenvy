@@ -68,6 +68,7 @@ class AssetsRegistry(PropertyGroup):
                 ('MODEL', "Model", ""),
                 ('AUDIO', "Audio", ""),
                 ('IMAGE', "Image", ""),
+                ('TEXT', "Text", ""),
                 )
     ) # type: ignore
 

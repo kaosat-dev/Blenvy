@@ -1,5 +1,5 @@
 import bpy
-import json
+from ..settings import load_settings
 
 ######################################################
 ## ui logic & co
@@ -27,11 +27,10 @@ class BLENVY_PT_SidePanel(bpy.types.Panel):
         library_scene_active = False
         active_collection = context.collection
 
-        current_auto_settings = bpy.data.texts[".gltf_auto_export_settings"] if ".gltf_auto_export_settings" in bpy.data.texts else None
-        current_gltf_settings = bpy.data.texts[".gltf_auto_export_gltf_settings"] if ".gltf_auto_export_gltf_settings" in bpy.data.texts else None
-
+        current_auto_settings = load_settings(".gltf_auto_export_settings")
+        current_gltf_settings = load_settings(".gltf_auto_export_gltf_settings")
+        
         if current_auto_settings is not None:
-            current_auto_settings = json.loads(current_auto_settings.as_string())
             #print("current_auto_settings", current_auto_settings)
             main_scene_names = current_auto_settings["main_scene_names"]
             library_scene_names = current_auto_settings["library_scene_names"]

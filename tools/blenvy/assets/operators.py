@@ -2,7 +2,9 @@ import os
 import json
 import bpy
 from bpy_types import (Operator)
-from bpy.props import (StringProperty, EnumProperty)
+from bpy.props import (BoolProperty, StringProperty, EnumProperty)
+
+from ..settings import load_settings
 
 class OT_add_bevy_asset(Operator):
     """Add asset"""
@@ -20,6 +22,7 @@ class OT_add_bevy_asset(Operator):
                 ('MODEL', "Model", ""),
                 ('AUDIO', "Audio", ""),
                 ('IMAGE', "Image", ""),
+                ('TEXT', "Text", ""),
                 )
         ) # type: ignore
 
@@ -29,26 +32,39 @@ class OT_add_bevy_asset(Operator):
         subtype='FILE_PATH'
     ) # type: ignore
 
-    def execute(self, context):
-        assets_list = []
-        blueprint_assets = False
-        if context.collection is not None and context.collection.name == 'Scene Collection':
-            assets_list = json.loads(context.scene.get('assets'))
-            blueprint_assets = False
-        else:
-            if 'assets' in context.collection:
-                assets_list = json.loads(context.collection.get('assets'))
-            blueprint_assets = True
+    # what are we targetting
+    target_type: EnumProperty(
+        name="target type",
+        description="type of the target: scene or blueprint to add an asset to",
+        items=(
+            ('SCENE', "Scene", ""),
+            ('BLUEPRINT', "Blueprint", ""),
+            ),
+    ) # type: ignore
 
-        in_list = [asset for asset in assets_list if (asset["path"] == self.asset_path)]
+    target_name: StringProperty(
+        name="target name",
+        description="name of the target blueprint or scene to add asset to"
+    ) # type: ignore
+
+    def execute(self, context):
+        assets = []
+        blueprint_assets = self.target_type == 'BLUEPRINT'
+        print("FOOO", self.target_name, self.target_type)
+        if blueprint_assets:
+            assets = json.loads(bpy.data.collections[self.target_name].get('assets')) if 'assets' in bpy.data.collections[self.target_name] else []
+        else:
+            assets = json.loads(bpy.data.scenes[self.target_name].get('assets')) if 'assets' in bpy.data.scenes[self.target_name] else []
+
+        in_list = [asset for asset in assets if (asset["path"] == self.asset_path)]
         in_list = len(in_list) > 0
         if not in_list:
-            assets_list.append({"name": self.asset_name, "type": self.asset_type, "path": self.asset_path, "internal": False})
+            assets.append({"name": self.asset_name, "type": self.asset_type, "path": self.asset_path, "internal": False})
 
         if blueprint_assets:
-            context.collection["assets"] = json.dumps(assets_list)
+            bpy.data.collections[self.target_name]["assets"] = json.dumps(assets)
         else:
-            context.scene["assets"] = json.dumps(assets_list)
+            bpy.data.scenes[self.target_name]["assets"] = json.dumps(assets)
         #context.window_manager.assets_registry.add_asset(self.asset_name, self.asset_type, self.asset_path, False)
         return {'FINISHED'}
     
@@ -65,21 +81,72 @@ class OT_remove_bevy_asset(Operator):
         subtype='FILE_PATH'
     ) # type: ignore
 
-    def execute(self, context):
-        assets_list = []
-        blueprint_assets = False
-        if context.collection is not None and context.collection.name == 'Scene Collection':
-            assets_list = json.loads(context.scene.get('assets'))
-            blueprint_assets = False
-        else:
-            if 'assets' in context.collection:
-                assets_list = json.loads(context.collection.get('assets'))
-            blueprint_assets = True
 
-        assets_list = [asset for asset in assets_list if (asset["path"] != self.asset_path)]
+    clear_all: BoolProperty (
+        name="clear all assets",
+        description="clear all assets",
+        default=False
+    ) # type: ignore
+
+    # what are we targetting
+    target_type: EnumProperty(
+        name="target type",
+        description="type of the target: scene or blueprint to add an asset to",
+        items=(
+            ('SCENE', "Scene", ""),
+            ('BLUEPRINT', "Blueprint", ""),
+            ),
+    ) # type: ignore
+
+    target_name: StringProperty(
+        name="target name",
+        description="name of the target blueprint or scene to add asset to"
+    ) # type: ignore
+
+
+    def execute(self, context):
+        assets = []
+        blueprint_assets = self.target_type == 'BLUEPRINT'
         if blueprint_assets:
-            context.collection["assets"] = json.dumps(assets_list)
+            assets = json.loads(bpy.data.collections[self.target_name].get('assets')) if 'assets' in bpy.data.collections[self.target_name] else []
         else:
-            context.scene["assets"] = json.dumps(assets_list)
+            assets = json.loads(bpy.data.scenes[self.target_name].get('assets')) if 'assets' in bpy.data.scenes[self.target_name] else []
+
+        assets = [asset for asset in assets if (asset["path"] != self.asset_path)]
+        if blueprint_assets:
+            bpy.data.collections[self.target_name]["assets"] = json.dumps(assets)
+        else:
+            bpy.data.scenes[self.target_name]["assets"] = json.dumps(assets)
         #context.window_manager.assets_registry.remove_asset(self.asset_path)
+        return {'FINISHED'}
+    
+
+import os
+from bpy_extras.io_utils import ImportHelper
+
+class OT_Add_asset_filebrowser(Operator, ImportHelper):
+    """Browse for asset files"""
+    bl_idname = "asset.open_filebrowser" 
+    bl_label = "Select asset file" 
+
+    # Define this to tell 'fileselect_add' that we want a directoy
+    filepath: bpy.props.StringProperty(
+        name="asset Path",
+        description="selected file",
+        subtype='FILE_PATH',
+        ) # type: ignore
+    
+    # Filters files
+    filter_glob: StringProperty(options={'HIDDEN'}, default='*.jpg;*.jpeg;*.png;*.bmp') # type: ignore
+
+    def execute(self, context):         
+        current_auto_settings = load_settings(".gltf_auto_export_settings")
+        export_root_folder = current_auto_settings.get("export_root_folder")
+        asset_path = os.path.relpath(self.filepath, export_root_folder)
+
+        assets_registry = context.window_manager.assets_registry
+        assets_registry.asset_path_selector = asset_path
+
+        print("SELECTED ASSET PATH", asset_path)
+        
         return {'FINISHED'}

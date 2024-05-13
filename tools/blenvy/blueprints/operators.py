@@ -34,3 +34,4 @@ class OT_select_blueprint(Operator):
                     o.select_set(True)"""
 
         return {'FINISHED'}
+    
