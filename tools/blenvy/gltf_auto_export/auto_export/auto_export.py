@@ -33,9 +33,8 @@ def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
         blend_file_path = os.path.dirname(file_path)
 
         # get the preferences for our addon
-        export_root_folder = getattr(addon_prefs, "export_root_folder")
-        export_output_folder = getattr(addon_prefs,"export_output_folder")
-        export_models_path = os.path.join(blend_file_path, export_output_folder)
+        export_root_path = getattr(addon_prefs, "export_root_path")
+        export_assets_path = getattr(addon_prefs,"export_assets_path")
 
         #should we use change detection or not 
         export_change_detection = getattr(addon_prefs, "export_change_detection")
@@ -49,12 +48,6 @@ def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
         standard_gltf_exporter_settings = get_standard_exporter_settings()
         gltf_extension = standard_gltf_exporter_settings.get("export_format", 'GLB')
         gltf_extension = '.glb' if gltf_extension == 'GLB' else '.gltf'
-
-        # generate the actual complete output path
-        export_blueprints_path = os.path.join(blend_file_path, export_root_folder, getattr(addon_prefs,"export_blueprints_path"))
-        export_levels_path = os.path.join(blend_file_path, export_root_folder, getattr(addon_prefs, "export_levels_path"))
-
-        print("export_blueprints_path", export_blueprints_path)
        
         # here we do a bit of workaround by creating an override # TODO: do this at the "UI" level
         print("collection_instances_combine_mode", addon_prefs.collection_instances_combine_mode)
@@ -71,15 +64,17 @@ def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
 
             addon_prefs = SimpleNamespace(**tmp) #copy.deepcopy(addon_prefs)
             addon_prefs.__annotations__ = tmp"""
-        addon_prefs.export_blueprints_path = export_blueprints_path
-        addon_prefs.export_levels_path = export_levels_path
+        # generate the actual complete output paths
+        addon_prefs.export_assets_path_full = os.path.join(blend_file_path, export_root_path, export_assets_path)
+        addon_prefs.export_blueprints_path_full = os.path.join(addon_prefs.export_assets_path_full, getattr(addon_prefs,"export_blueprints_path"))
+        addon_prefs.export_levels_path_full = os.path.join(addon_prefs.export_assets_path_full, getattr(addon_prefs,"export_levels_path"))
+        addon_prefs.export_materials_path = os.path.join(addon_prefs.export_assets_path_full, getattr(addon_prefs,"export_materials_path"))
         addon_prefs.export_gltf_extension = gltf_extension
-        addon_prefs.export_models_path = export_models_path
 
         [main_scene_names, level_scenes, library_scene_names, library_scenes] = get_scenes(addon_prefs)
 
         print("main scenes", main_scene_names, "library_scenes", library_scene_names)
-        print("export_output_folder", export_output_folder)
+        print("export_assets_path", export_assets_path)
 
         blueprints_data = blueprints_scan(level_scenes, library_scenes, addon_prefs)
         blueprints_per_scene = blueprints_data.blueprints_per_scenes

@@ -32,8 +32,8 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
     #list of settings (other than purely gltf settings) whose change should trigger a re-generation of gltf files
     white_list = [
         'auto_export',
-        'export_root_folder',
-        'export_output_folder',
+        'export_root_path',
+        'export_assets_path',
         'export_change_detection',
         'export_scene_settings',
 
@@ -363,11 +363,9 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
             section = layout.box()
             section.enabled = controls_enabled
  
-            draw_folder_browser(section, "Export root folder", self.export_root_folder, "export_root_folder")
+            draw_folder_browser(section, "Export root folder", self.export_root_path, "export_root_path")
             row = section.row()
-            draw_folder_browser(row, "Assets Folder (non blueprints mode only)", self.export_root_folder, "export_output_folder")
-            row.enabled = not self.export_blueprints
-            section.prop(operator, "export_blueprints")
+            draw_folder_browser(row, "Assets Folder", self.export_root_path, "export_assets_path")
             section.prop(operator, "export_scene_settings")
 
             """header, panel = layout.panel("my_panel_id", default_closed=False)
@@ -437,17 +435,19 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
         if self.show_blueprint_settings:
             section = layout.box()
             section.enabled = controls_enabled
+            section.prop(operator, "export_blueprints")
+
             section = section.box()
             section.enabled = controls_enabled and self.export_blueprints
 
             # collections/blueprints 
-            draw_folder_browser(section, "Blueprints folder", self.export_root_folder, "export_blueprints_path")
+            draw_folder_browser(section, "Blueprints folder", self.export_root_path, "export_blueprints_path")
             #section.prop(operator, "export_blueprints_path")
             section.prop(operator, "collection_instances_combine_mode")
             section.prop(operator, "export_marked_assets")
             section.separator()
 
-            draw_folder_browser(section, "Levels folder", self.export_root_folder, "export_levels_path")
+            draw_folder_browser(section, "Levels folder", self.export_root_path, "export_levels_path")
             #section.prop(operator, "export_levels_path")
 
             section.prop(operator, "export_separate_dynamic_and_static_objects")
@@ -457,7 +457,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
             section.prop(operator, "export_materials_library")
             section = section.box()
             section.enabled = controls_enabled and self.export_materials_library
-            draw_folder_browser(section, 'Materials folder', self.export_root_folder, "export_materials_path")
+            draw_folder_browser(section, 'Materials folder', self.export_root_path, "export_materials_path")
             #section.prop(operator, "export_materials_path")
 
 

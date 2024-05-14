@@ -298,8 +298,8 @@ def add_scene_property(scene, property_name, property_data):
 
 
 def inject_blueprints_list_into_main_scene(scene, blueprints_data, addon_prefs):
-    export_root_folder = getattr(addon_prefs, "export_root_folder")
-    export_output_folder = getattr(addon_prefs,"export_output_folder")
+    export_root_path = getattr(addon_prefs, "export_root_path")
+    export_assets_path = getattr(addon_prefs,"export_assets_path")
     export_levels_path = getattr(addon_prefs,"export_levels_path")
     export_blueprints_path = getattr(addon_prefs, "export_blueprints_path")
     export_gltf_extension = getattr(addon_prefs, "export_gltf_extension")
@@ -328,7 +328,8 @@ def inject_blueprints_list_into_main_scene(scene, blueprints_data, addon_prefs):
     add_scene_property(scene, assets_list_name, assets_list_data)
 
 
-    relative_blueprints_path = os.path.relpath(export_blueprints_path, export_root_folder)
+    blueprints_path_full = os.path.join(export_assets_path, export_blueprints_path)
+    relative_blueprints_path = os.path.relpath(export_blueprints_path, export_root_path)
 
     blueprint_assets_list = []
     if blueprint_instance_names_for_scene:
@@ -338,7 +339,7 @@ def inject_blueprints_list_into_main_scene(scene, blueprints_data, addon_prefs):
                 print("BLUEPRINT", blueprint)
                 blueprint_exported_path = None
                 if blueprint.local:
-                    blueprint_exported_path = os.path.join(relative_blueprints_path, f"{blueprint.name}{export_gltf_extension}")
+                    blueprint_exported_path = os.path.join(export_blueprints_path, f"{blueprint.name}{export_gltf_extension}")
                 else:
                     # get the injected path of the external blueprints
                     blueprint_exported_path = blueprint.collection['Export_path'] if 'Export_path' in blueprint.collection else None

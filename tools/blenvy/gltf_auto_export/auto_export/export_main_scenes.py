@@ -11,9 +11,8 @@ from ..helpers.helpers_blueprints import inject_blueprints_list_into_main_scene,
 
 def export_main_scene(scene, blend_file_path, addon_prefs, blueprints_data): 
     gltf_export_preferences = generate_gltf_export_preferences(addon_prefs)
-    export_root_folder = getattr(addon_prefs, "export_root_folder")
-    export_output_folder = getattr(addon_prefs,"export_output_folder")
-    export_levels_path = getattr(addon_prefs,"export_levels_path")
+    export_assets_path_full = getattr(addon_prefs,"export_assets_path_full")
+    export_levels_path_full = getattr(addon_prefs,"export_levels_path_full")
 
     export_blueprints = getattr(addon_prefs,"export_blueprints")
     export_separate_dynamic_and_static_objects = getattr(addon_prefs, "export_separate_dynamic_and_static_objects")
@@ -28,7 +27,7 @@ def export_main_scene(scene, blend_file_path, addon_prefs, blueprints_data):
                        }
 
     if export_blueprints : 
-        gltf_output_path = os.path.join(export_levels_path, scene.name)
+        gltf_output_path = os.path.join(export_levels_path_full, scene.name)
 
         inject_blueprints_list_into_main_scene(scene, blueprints_data, addon_prefs)
         return
@@ -45,7 +44,7 @@ def export_main_scene(scene, blend_file_path, addon_prefs, blueprints_data):
             )
 
             # then export all dynamic objects
-            gltf_output_path = os.path.join(export_levels_path, scene.name+ "_dynamic")
+            gltf_output_path = os.path.join(export_levels_path_full, scene.name+ "_dynamic")
             generate_and_export(
                 addon_prefs, 
                 temp_scene_name=TEMPSCENE_PREFIX,
@@ -67,7 +66,7 @@ def export_main_scene(scene, blend_file_path, addon_prefs, blueprints_data):
             )
 
     else:
-        gltf_output_path = os.path.join(export_root_folder, export_output_folder, scene.name)
+        gltf_output_path = os.path.join(export_assets_path_full, scene.name)
         print("       exporting gltf to", gltf_output_path, ".gltf/glb")
         export_gltf(gltf_output_path, export_settings)
 

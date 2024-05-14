@@ -15,6 +15,7 @@ import bpy
 from bpy.app.handlers import persistent
 from bpy.props import (StringProperty)
 
+
 # components management 
 from .bevy_components.components.operators import CopyComponentOperator, Fix_Component_Operator, OT_rename_component, RemoveComponentFromAllObjectsOperator, RemoveComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, AddComponentOperator, RenameHelper, Toggle_ComponentVisibility
 
@@ -29,6 +30,7 @@ from .bevy_components.components.definitions_list import (ComponentDefinitionsLi
 from .bevy_components.components.ui import (BEVY_COMPONENTS_PT_ComponentsPanel)
 
 # auto export
+from .gltf_auto_export import gltf_post_export_callback
 from .gltf_auto_export.auto_export.operators import AutoExportGLTF
 from .gltf_auto_export.auto_export.tracker import AutoExportTracker
 from .gltf_auto_export.auto_export.preferences import (AutoExportGltfAddonPreferences)
@@ -65,10 +67,15 @@ from .core.ui import BLENVY_PT_SidePanel
 from .core.blenvy_manager import BlenvyManager
 from .core.operators import OT_switch_bevy_tooling
 
+
+# this needs to be here, as it is how Blender's gltf exporter callbacks are defined, at the add-on root level
+def glTF2_post_export_callback(data):
+    gltf_post_export_callback(data)
+    
+
 classes = [
     # blenvy
     BLENVY_PT_SidePanel,
-
 
     # bevy components
     AddComponentOperator,  
@@ -181,6 +188,3 @@ def unregister():
     bpy.app.handlers.load_post.remove(post_load)
     bpy.app.handlers.depsgraph_update_post.remove(post_update)
     bpy.app.handlers.save_post.remove(post_save)
-
-
-print("TOTO")

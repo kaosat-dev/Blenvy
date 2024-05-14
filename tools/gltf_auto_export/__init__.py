@@ -121,10 +121,6 @@ classes = [
     AutoExportTracker,
 ]
 
-def glTF2_pre_export_callback(data):
-    #print("pre_export", data)
-    pass
-
 def cleanup_file():
     gltf_filepath = "/home/ckaos/projects/bevy/Blender_bevy_components_worklflow/testing/bevy_example/assets/____dummy____.glb"
     if os.path.exists(gltf_filepath):

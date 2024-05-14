@@ -50,7 +50,6 @@ class OT_add_bevy_asset(Operator):
     def execute(self, context):
         assets = []
         blueprint_assets = self.target_type == 'BLUEPRINT'
-        print("FOOO", self.target_name, self.target_type)
         if blueprint_assets:
             assets = json.loads(bpy.data.collections[self.target_name].get('assets')) if 'assets' in bpy.data.collections[self.target_name] else []
         else:
@@ -60,12 +59,16 @@ class OT_add_bevy_asset(Operator):
         in_list = len(in_list) > 0
         if not in_list:
             assets.append({"name": self.asset_name, "type": self.asset_type, "path": self.asset_path, "internal": False})
+            # reset controls
+            context.window_manager.assets_registry.asset_name_selector = ""
+            context.window_manager.assets_registry.asset_type_selector = "MODEL"
+            context.window_manager.assets_registry.asset_path_selector = ""
 
         if blueprint_assets:
             bpy.data.collections[self.target_name]["assets"] = json.dumps(assets)
         else:
             bpy.data.scenes[self.target_name]["assets"] = json.dumps(assets)
-        #context.window_manager.assets_registry.add_asset(self.asset_name, self.asset_type, self.asset_path, False)
+
         return {'FINISHED'}
     
 
@@ -141,8 +144,13 @@ class OT_Add_asset_filebrowser(Operator, ImportHelper):
 
     def execute(self, context):         
         current_auto_settings = load_settings(".gltf_auto_export_settings")
-        export_root_folder = current_auto_settings.get("export_root_folder")
-        asset_path = os.path.relpath(self.filepath, export_root_folder)
+        export_root_path = current_auto_settings.get("export_root_path", "../")
+        export_assets_path = current_auto_settings.get("export_assets_path", "assets")
+        # FIXME: not sure
+        print("export_root_path", export_root_path, "export_assets_path", export_assets_path)
+        export_assets_path_absolute = os.path.join(export_root_path, export_assets_path)
+        asset_path = os.path.relpath(self.filepath, export_assets_path_absolute)
+
 
         assets_registry = context.window_manager.assets_registry
         assets_registry.asset_path_selector = asset_path

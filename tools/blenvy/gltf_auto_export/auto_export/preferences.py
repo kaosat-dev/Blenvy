@@ -16,8 +16,8 @@ AutoExportGltfPreferenceNames = [
 
     'show_general_settings',
     'auto_export',
-    'export_root_folder',
-    'export_output_folder',
+    'export_root_path',
+    'export_assets_path',
     'export_scene_settings',
 
     'show_change_detection_settings',
@@ -45,9 +45,9 @@ AutoExportGltfPreferenceNames = [
 ]
 
 def on_export_output_folder_updated(self, context):
-    #self.export_root_folder = os.path.relpath(self.export_root_folder)
-    #self.export_output_folder = os.path.join(self.export_root_folder, self.export_output_folder)
-    print("on_foo_updated", self.export_root_folder, self.export_output_folder)
+    #self.export_root_path = os.path.relpath(self.export_root_path)
+    #self.export_assets_path = os.path.join(self.export_root_path, self.export_assets_path)
+    print("on_foo_updated", self.export_root_path, self.export_assets_path)
 
 class AutoExportGltfAddonPreferences(AddonPreferences):
     # this must match the add-on name, use '__package__'
@@ -82,7 +82,7 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         default=True
     ) # type: ignore
 
-    export_root_folder: StringProperty(
+    export_root_path: StringProperty(
         name = "Project Root Path",
         description="The root folder of your (Bevy) project (not assets!)",
         # subtype='DIR_PATH',
@@ -90,7 +90,7 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         #update=on_export_output_folder_updated) # type: ignore
     )
     
-    export_output_folder: StringProperty(
+    export_assets_path: StringProperty(
         name='Export folder',
         description='The root folder for all exports(relative to the root folder/path) Defaults to "assets" ',
         default='./assets',
@@ -143,15 +143,15 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
 
     export_blueprints_path: StringProperty(
         name='Blueprints path',
-        description='path to export the blueprints to (relative to the export folder)',
-        default='assets/blueprints',
+        description='path to export the blueprints to (relative to the assets folder)',
+        default='blueprints',
         #subtype='DIR_PATH'
     ) # type: ignore
 
     export_levels_path: StringProperty(
         name='Levels path',
-        description='path to export the levels (main scenes) to (relative to the export folder)',
-        default='assets/levels',
+        description='path to export the levels (main scenes) to (relative to the assets folder)',
+        default='levels',
         #subtype='DIR_PATH'
     ) # type: ignore
 
@@ -171,8 +171,8 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
 
     export_materials_path: StringProperty(
         name='Materials path',
-        description='path to export the materials libraries to (relative to the export folder)',
-        default='assets/materials',
+        description='path to export the materials libraries to (relative to the assets folder)',
+        default='materials',
         #subtype='DIR_PATH'
     ) # type: ignore
 

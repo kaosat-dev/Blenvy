@@ -128,21 +128,25 @@ class OT_OpenFolderbrowser(Operator, ImportHelper):
         # Get the folder
         blend_file_folder_path = os.path.dirname(blend_file_path)
         print("blend_file_folder_path", blend_file_folder_path)
-
         print("new_path", self.directory, self.target_property, operator)
 
-        path_names = ['export_output_folder', 'export_blueprints_path', 'export_levels_path', 'export_materials_path']
-        export_root_folder = operator.export_root_folder
-        #export_root_path_absolute = os.path.join(blend_file_folder_path, export_root_folder)
+        path_names = ['export_assets_path', 'export_blueprints_path', 'export_levels_path', 'export_materials_path']
+        export_root_path = operator.export_root_path
+        export_assets_path = operator.export_assets_path
+        #export_root_path_absolute = os.path.join(blend_file_folder_path, export_root_path)
+        export_assets_path_full = os.path.join(blend_file_folder_path, export_root_path, export_assets_path)
+        print("export_assets_path_full", export_assets_path_full)
 
-        if target_path_name == 'export_root_folder':
-            print("changing root new_path")
+        #new_root_path = os.path.join(blend_file_folder_path, new_path)
+        if target_path_name == 'export_root_path':
+            new_root_path_relative = os.path.relpath(new_path, blend_file_folder_path)
+            print("changing root new_path to", self.directory, blend_file_folder_path, new_root_path_relative)
             # we need to change all other relative paths before setting the new absolute path
             for path_name in path_names:
                 # get absolute path
                 relative_path = getattr(operator, path_name, None)
                 if relative_path is not None:
-                    absolute_path = os.path.join(export_root_folder, relative_path)
+                    absolute_path = os.path.join(export_assets_path_full, relative_path)
                     print("absolute path for", path_name, absolute_path)
                     relative_path = os.path.relpath(absolute_path, new_path)
                     setattr(operator, path_name, relative_path)
@@ -151,7 +155,7 @@ class OT_OpenFolderbrowser(Operator, ImportHelper):
             setattr(operator, target_path_name, new_path)
 
         else:
-            relative_path = os.path.relpath(new_path, export_root_folder)
+            relative_path = os.path.relpath(new_path, export_assets_path_full)
             setattr(operator, target_path_name, relative_path)
 
         #filename, extension = os.path.splitext(self.filepath) 
@@ -172,4 +176,4 @@ def draw_folder_browser(layout, label, value, target_property):
     col.prop(bpy.context.active_operator, target_property, text="")
 
     folder_selector = row.operator(OT_OpenFolderbrowser.bl_idname, icon="FILE_FOLDER", text="")
-    folder_selector.target_property = target_property #"export_root_folder"
+    folder_selector.target_property = target_property #"export_root_path"

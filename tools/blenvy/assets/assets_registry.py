@@ -8,13 +8,13 @@ from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorP
 
 
 def get_assets(scene, blueprints_data, addon_prefs):
-    export_root_folder = getattr(addon_prefs, "export_root_folder")
+    export_root_path = getattr(addon_prefs, "export_root_path")
     export_output_folder = getattr(addon_prefs,"export_output_folder")
     export_levels_path = getattr(addon_prefs,"export_levels_path")
     export_blueprints_path = getattr(addon_prefs, "export_blueprints_path")
     export_gltf_extension = getattr(addon_prefs, "export_gltf_extension")
 
-    relative_blueprints_path = os.path.relpath(export_blueprints_path, export_root_folder)
+    relative_blueprints_path = os.path.relpath(export_blueprints_path, export_root_path)
     blueprint_instance_names_for_scene = blueprints_data.blueprint_instances_per_main_scene.get(scene.name, None)
 
     blueprint_assets_list = []

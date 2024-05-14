@@ -143,15 +143,15 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
 
     export_blueprints_path: StringProperty(
         name='Blueprints path',
-        description='path to export the blueprints to (relative to the export folder)',
-        default='assets/blueprints',
+        description='path to export the blueprints to (relative to the assets folder)',
+        default='blueprints',
         #subtype='DIR_PATH'
     ) # type: ignore
 
     export_levels_path: StringProperty(
         name='Levels path',
-        description='path to export the levels (main scenes) to (relative to the export folder)',
-        default='assets/levels',
+        description='path to export the levels (main scenes) to (relative to the assets folder)',
+        default='levels',
         #subtype='DIR_PATH'
     ) # type: ignore
 
@@ -172,7 +172,7 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
     export_materials_path: StringProperty(
         name='Materials path',
         description='path to export the materials libraries to (relative to the export folder)',
-        default='assets/materials',
+        default='materials',
         #subtype='DIR_PATH'
     ) # type: ignore
 

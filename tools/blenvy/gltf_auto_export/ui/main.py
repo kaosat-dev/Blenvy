@@ -131,7 +131,7 @@ class GLTF_PT_auto_export_general(bpy.types.Panel):
         operator = sfile.active_operator
 
         layout.active = operator.auto_export
-        layout.prop(operator, "export_output_folder")
+        layout.prop(operator, "export_assets_path")
         layout.prop(operator, "export_scene_settings")
 
 

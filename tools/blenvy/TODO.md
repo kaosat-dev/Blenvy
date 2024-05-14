@@ -1,0 +1,11 @@
+Auto export
+ - [ ] the original blueprints & levels path are now left as is, and there is an auto injection of xxxpath_full for absolute paths
+    - [ ] replace all uses of the paths with the correct ones above
+        - [x] levels
+        - [x] blueprints
+        - [ ] materials
+ - [x] move out the UI for "assets" folder out of "blueprints condition"
+ - [ ] fix asset path calculations
+     - root path => relative to blend file path
+     - asset path => relative to root path
+     - blueprints/levels/blueprints path => relative to assets path

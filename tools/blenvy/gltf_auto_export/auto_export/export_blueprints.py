@@ -8,7 +8,7 @@ from ..helpers.helpers_scenes import clear_hollow_scene, copy_hollowed_collectio
 
    
 def export_blueprints(blueprints, blend_file_path, addon_prefs, blueprints_data):
-    export_blueprints_path = getattr(addon_prefs,"export_blueprints_path")
+    export_blueprints_path_full = getattr(addon_prefs,"export_blueprints_path_full")
     gltf_export_preferences = generate_gltf_export_preferences(addon_prefs)
     
     try:
@@ -18,7 +18,7 @@ def export_blueprints(blueprints, blend_file_path, addon_prefs, blueprints_data)
 
         for blueprint in blueprints:
             print("exporting collection", blueprint.name)
-            gltf_output_path = os.path.join(export_blueprints_path, blueprint.name)
+            gltf_output_path = os.path.join(export_blueprints_path_full, blueprint.name)
             export_settings = { **gltf_export_preferences, 'use_active_scene': True, 'use_active_collection': True, 'use_active_collection_with_nested':True}
             
             # if we are using the material library option, do not export materials, use placeholder instead

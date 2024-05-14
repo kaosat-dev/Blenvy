@@ -93,7 +93,7 @@ def clear_materials_scene(temp_scene):
 def export_materials(collections, library_scenes, folder_path, addon_prefs):
     gltf_export_preferences = generate_gltf_export_preferences(addon_prefs)
     export_materials_path = getattr(addon_prefs,"export_materials_path")
-    export_root_folder = getattr(addon_prefs, "export_root_folder")
+    export_root_path = getattr(addon_prefs, "export_root_path")
 
 
     used_material_names = get_all_materials(collections, library_scenes)
@@ -108,7 +108,7 @@ def export_materials(collections, library_scenes, folder_path, addon_prefs):
                     'export_apply':True
                     }
                     
-    gltf_output_path = os.path.join(export_root_folder, export_materials_path, current_project_name + "_materials_library")
+    gltf_output_path = os.path.join(export_root_path, export_materials_path, current_project_name + "_materials_library")
 
     print("       exporting Materials to", gltf_output_path, ".gltf/glb")
 
