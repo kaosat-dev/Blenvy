@@ -13,7 +13,6 @@ class GLTF_PT_auto_export_SidePanel(bpy.types.Panel):
     bl_context = "objectmode"
     bl_parent_id = "BLENVY_PT_SidePanel"
 
-
     @classmethod
     def poll(cls, context):
         return context.window_manager.blenvy.mode == 'SETTINGS'
@@ -39,26 +38,6 @@ class GLTF_PT_auto_export_SidePanel(bpy.types.Panel):
 
         op = layout.operator("EXPORT_SCENES_OT_auto_gltf", text="Auto Export Settings")
         op.auto_export = True
-
-class GLTF_PT_auto_export_changes_list(bpy.types.Panel):
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'UI'
-    bl_label = "Changes per scene since last save "
-    bl_parent_id = "GLTF_PT_auto_export_SidePanel"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
-
-        #if "auto_export_tracker" in context.window_manager:
-        changed_objects_per_scene = context.window_manager.auto_export_tracker.changed_objects_per_scene
-        for scene_name in changed_objects_per_scene:
-            layout.label(text=f'{scene_name}')
-            for object_name in list(changed_objects_per_scene[scene_name].keys()):
-                row = layout.row()
-                row.label(text=f'    {object_name}')
 
 # main ui in the file => export 
 class GLTF_PT_auto_export_main(bpy.types.Panel):

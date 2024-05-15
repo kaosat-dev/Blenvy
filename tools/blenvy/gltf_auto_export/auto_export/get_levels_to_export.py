@@ -1,5 +1,5 @@
 import bpy
-from ..helpers.helpers_blueprints import check_if_blueprint_on_disk
+from ...blueprints.blueprint_helpers import check_if_blueprint_on_disk
 from ..helpers.helpers_scenes import (get_scenes, )
 
 # IF collection_instances_combine_mode is not 'split' check for each scene if any object in changes_per_scene has an instance in the scene

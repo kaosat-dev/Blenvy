@@ -26,8 +26,11 @@ class GLTF_PT_auto_export_blueprints_list(bpy.types.Panel):
             row.label(text=blueprint.name)
 
             if blueprint.local:
+                
                 select_blueprint = row.operator(operator="blueprint.select", text="", icon="RESTRICT_SELECT_OFF")
-                select_blueprint.blueprint_collection_name = blueprint.collection.name
+                
+                if blueprint.collection and blueprint.collection.name:
+                    select_blueprint.blueprint_collection_name = blueprint.collection.name
                 select_blueprint.blueprint_scene_name = blueprint.scene.name
 
                 assets = json.loads(blueprint.collection["assets"]) if "assets" in blueprint.collection else []
@@ -35,8 +38,6 @@ class GLTF_PT_auto_export_blueprints_list(bpy.types.Panel):
                 draw_assets(layout=layout, name=blueprint.name, title="Assets", asset_registry=asset_registry, assets=assets, target_type="BLUEPRINT", target_name=blueprint.name)
 
             else:
+                assets = json.loads(blueprint.collection["assets"]) if "assets" in blueprint.collection else []
+                draw_assets(layout=layout, name=blueprint.name, title="Assets", asset_registry=asset_registry, assets=assets, target_type="BLUEPRINT", target_name=blueprint.name, editable=False)
                 row.label(text="External")
-
-        for collection in bpy.context.window_manager.exportedCollections:
-            row = layout.row()
-            row.label(text=collection.name)

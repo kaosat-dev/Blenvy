@@ -1,12 +1,12 @@
 import json
 import bpy
-from .object_makers import (make_empty)
+from ...core.object_makers import (make_empty)
 
 
 # these are mostly for when using this add-on together with the bevy_components add-on
 custom_properties_to_filter_out = ['_combine', 'template', 'components_meta']
 
-def is_component_valid(object, component_name):
+def is_component_valid_and_enabled(object, component_name):
     if "components_meta" in object or hasattr(object, "components_meta"):
         target_components_metadata = object.components_meta.components
         component_meta = next(filter(lambda component: component["long_name"] == component_name, target_components_metadata), None)
@@ -18,7 +18,7 @@ def remove_unwanted_custom_properties(object):
     to_remove = []
     component_names = list(object.keys()) # to avoid 'IDPropertyGroup changed size during iteration' issues
     for component_name in component_names:
-        if not is_component_valid(object, component_name):
+        if not is_component_valid_and_enabled(object, component_name):
             to_remove.append(component_name)
     for cp in custom_properties_to_filter_out + to_remove:
         if cp in object:
@@ -118,7 +118,7 @@ def duplicate_object(object, parent, combine_mode, destination_collection, bluep
         
         # we copy custom properties over from our original object to our empty
         for component_name, component_value in object.items():
-            if component_name not in custom_properties_to_filter_out and is_component_valid(object, component_name): #copy only valid properties
+            if component_name not in custom_properties_to_filter_out and is_component_valid_and_enabled(object, component_name): #copy only valid properties
                 empty_obj[component_name] = component_value
         copy = empty_obj
     else:
@@ -174,9 +174,6 @@ def copy_hollowed_collection_into(source_collection, destination_collection, par
             blueprints_data = blueprints_data, 
             addon_prefs=addon_prefs
         )
-
-   
-    
     return {}
 
 # clear & remove "hollow scene"

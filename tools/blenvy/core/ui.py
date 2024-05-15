@@ -3,6 +3,20 @@ from ..settings import load_settings
 
 ######################################################
 ## ui logic & co
+def draw_folder_browser(layout, label, prop_origin, target_property):
+    row = layout.row()
+    row.label(text=label)
+
+    '''box = row.box()
+    box.scale_y = 0.5
+    box.label(text=value)'''
+
+    col = row.column()
+    col.enabled = False
+    col.prop(prop_origin, target_property, text="")
+
+    folder_selector = row.operator("generic.open_folderbrowser", icon="FILE_FOLDER", text="")
+    folder_selector.target_property = target_property #"export_root_path"
 
 # side panel
 class BLENVY_PT_SidePanel(bpy.types.Panel):
@@ -66,6 +80,21 @@ class BLENVY_PT_SidePanel(bpy.types.Panel):
         layout.label(text="Library scene active: "+ str(library_scene_active))
         layout.label(text=blenvy.mode)"""
 
+
+        if blenvy.mode == "SETTINGS":
+            header, panel = layout.panel("auto_export", default_closed=False)
+            header.label(text="Common")
+            if panel:
+                row = panel.row()
+                draw_folder_browser(layout=row, label="Root Folder", prop_origin=blenvy, target_property="export_root_path")
+                row = panel.row()
+                draw_folder_browser(layout=row, label="Assets Folder", prop_origin=blenvy, target_property="export_assets_path")
+                row = panel.row()
+                draw_folder_browser(layout=row, label="Blueprints Folder", prop_origin=blenvy, target_property="export_blueprints_path")
+                row = panel.row()
+                draw_folder_browser(layout=row, label="Levels Folder", prop_origin=blenvy, target_property="export_levels_path")
+                row = panel.row()
+                draw_folder_browser(layout=row, label="Materials Folder", prop_origin=blenvy, target_property="export_materials_path")
         """if blenvy.mode == "SETTINGS":
             header, panel = layout.panel("auto_export", default_closed=False)
             header.label(text="Auto Export")

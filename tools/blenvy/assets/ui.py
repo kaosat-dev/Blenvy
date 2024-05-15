@@ -1,31 +1,32 @@
 import bpy
-import json
+from .asset_helpers import get_assets
 
 
-def draw_assets(layout, name, title, asset_registry, assets, target_type, target_name):
+def draw_assets(layout, name, title, asset_registry, assets, target_type, target_name, editable=True):
     header, panel = layout.box().panel(f"assets{name}", default_closed=False)
     header.label(text=title)
     if panel:
-        row = panel.row()
-        row.prop(asset_registry, "asset_name_selector", text="")
-        row.prop(asset_registry, "asset_type_selector", text="")
-        asset_selector = row.operator(operator="asset.open_filebrowser", text="", icon="FILE_FOLDER")
-        
-        if asset_registry.asset_type_selector == 'IMAGE':
-            asset_selector.filter_glob = '*.jpg;*.jpeg;*.png;*.bmp'
-        if asset_registry.asset_type_selector == 'MODEL':
-            asset_selector.filter_glob="*.glb;*.gltf"
-        if asset_registry.asset_type_selector == 'TEXT':
-            asset_selector.filter_glob="*.txt;*.md;*.ron;*.json"
-        if asset_registry.asset_type_selector == 'AUDIO':
-            asset_selector.filter_glob="*.mp3;*.wav;*.flac"
+        if editable:
+            row = panel.row()
+            row.prop(asset_registry, "asset_name_selector", text="")
+            row.prop(asset_registry, "asset_type_selector", text="")
+            asset_selector = row.operator(operator="asset.open_filebrowser", text="", icon="FILE_FOLDER")
+            
+            if asset_registry.asset_type_selector == 'IMAGE':
+                asset_selector.filter_glob = '*.jpg;*.jpeg;*.png;*.bmp'
+            if asset_registry.asset_type_selector == 'MODEL':
+                asset_selector.filter_glob="*.glb;*.gltf"
+            if asset_registry.asset_type_selector == 'TEXT':
+                asset_selector.filter_glob="*.txt;*.md;*.ron;*.json"
+            if asset_registry.asset_type_selector == 'AUDIO':
+                asset_selector.filter_glob="*.mp3;*.wav;*.flac"
 
-        add_asset = row.operator(operator="bevyassets.add", text="", icon="ADD")
-        add_asset.target_type = target_type
-        add_asset.target_name = target_name
-        add_asset.asset_name = asset_registry.asset_name_selector
-        add_asset.asset_type = asset_registry.asset_type_selector
-        add_asset.asset_path = asset_registry.asset_path_selector
+            add_asset = row.operator(operator="bevyassets.add", text="", icon="ADD")
+            add_asset.target_type = target_type
+            add_asset.target_name = target_name
+            add_asset.asset_name = asset_registry.asset_name_selector
+            add_asset.asset_type = asset_registry.asset_type_selector
+            add_asset.asset_path = asset_registry.asset_path_selector
 
         #assets = json.loads(blueprint.collection["assets"]) if "assets" in blueprint.collection else []
         for asset in assets:
@@ -33,7 +34,7 @@ def draw_assets(layout, name, title, asset_registry, assets, target_type, target
             row.label(text=asset["name"])
             row.label(text=asset["type"])
             row.label(text=asset["path"])
-            if not asset["internal"]:
+            if not asset["internal"] and editable:
                 remove_asset = row.operator(operator="bevyassets.remove", text="", icon="TRASH")
                 remove_asset.target_type = target_type
                 remove_asset.target_name = target_name
@@ -41,7 +42,7 @@ def draw_assets(layout, name, title, asset_registry, assets, target_type, target
             else:
                 row.label(text="")
 
-class GLTF_PT_auto_export_assets(bpy.types.Panel):
+class Blenvy_assets(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = ""
@@ -74,6 +75,6 @@ class GLTF_PT_auto_export_assets(bpy.types.Panel):
         if panel:
             for scene in bpy.data.scenes:
                 if scene.name != "Library": # FIXME: hack for testing
-                    assets = json.loads(scene.get('assets')) if 'assets' in scene else []
+                    direct_assets = get_assets(scene)
                     row = panel.row()
-                    draw_assets(layout=row, name=scene.name, title=f"{scene.name} Assets", asset_registry=asset_registry, assets=assets, target_type="SCENE", target_name=scene.name)
+                    draw_assets(layout=row, name=scene.name, title=f"{scene.name} Assets", asset_registry=asset_registry, assets=direct_assets, target_type="SCENE", target_name=scene.name)

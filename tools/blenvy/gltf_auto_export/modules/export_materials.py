@@ -3,10 +3,9 @@ import bpy
 from pathlib import Path
 
 from ..helpers.generate_and_export import generate_and_export
-
 from ..helpers.helpers_collections import (traverse_tree)
 from ..auto_export.export_gltf import (export_gltf, generate_gltf_export_preferences)
-from ..helpers.object_makers import make_cube
+from ...core.object_makers import make_cube
 
 # get materials per object, and injects the materialInfo component
 def get_materials(object):
@@ -90,11 +89,9 @@ def clear_materials_scene(temp_scene):
 
 # exports the materials used inside the current project:
 # the name of the output path is <materials_folder>/<name_of_your_blend_file>_materials_library.gltf/glb
-def export_materials(collections, library_scenes, folder_path, addon_prefs):
+def export_materials(collections, library_scenes, addon_prefs):
     gltf_export_preferences = generate_gltf_export_preferences(addon_prefs)
-    export_materials_path = getattr(addon_prefs,"export_materials_path")
-    export_root_path = getattr(addon_prefs, "export_root_path")
-
+    export_materials_path_full = getattr(addon_prefs,"export_materials_path_full")
 
     used_material_names = get_all_materials(collections, library_scenes)
     current_project_name = Path(bpy.context.blend_data.filepath).stem
@@ -108,7 +105,7 @@ def export_materials(collections, library_scenes, folder_path, addon_prefs):
                     'export_apply':True
                     }
                     
-    gltf_output_path = os.path.join(export_root_path, export_materials_path, current_project_name + "_materials_library")
+    gltf_output_path = os.path.join(export_materials_path_full, current_project_name + "_materials_library")
 
     print("       exporting Materials to", gltf_output_path, ".gltf/glb")
 

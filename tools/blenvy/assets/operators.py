@@ -4,6 +4,7 @@ import bpy
 from bpy_types import (Operator)
 from bpy.props import (BoolProperty, StringProperty, EnumProperty)
 
+from ..core.path_helpers import absolute_path_from_blend_file
 from ..settings import load_settings
 
 class OT_add_bevy_asset(Operator):
@@ -148,9 +149,10 @@ class OT_Add_asset_filebrowser(Operator, ImportHelper):
         export_assets_path = current_auto_settings.get("export_assets_path", "assets")
         # FIXME: not sure
         print("export_root_path", export_root_path, "export_assets_path", export_assets_path)
-        export_assets_path_absolute = os.path.join(export_root_path, export_assets_path)
-        asset_path = os.path.relpath(self.filepath, export_assets_path_absolute)
+        export_assets_path_absolute = absolute_path_from_blend_file(os.path.join(export_root_path, export_assets_path))
 
+        asset_path = os.path.relpath(self.filepath, export_assets_path_absolute)
+        print("asset path", asset_path)
 
         assets_registry = context.window_manager.assets_registry
         assets_registry.asset_path_selector = asset_path

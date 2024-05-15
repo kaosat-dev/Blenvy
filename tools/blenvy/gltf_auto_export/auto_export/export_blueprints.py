@@ -7,7 +7,7 @@ from .export_gltf import (generate_gltf_export_preferences)
 from ..helpers.helpers_scenes import clear_hollow_scene, copy_hollowed_collection_into
 
    
-def export_blueprints(blueprints, blend_file_path, addon_prefs, blueprints_data):
+def export_blueprints(blueprints, addon_prefs, blueprints_data):
     export_blueprints_path_full = getattr(addon_prefs,"export_blueprints_path_full")
     gltf_export_preferences = generate_gltf_export_preferences(addon_prefs)
     
@@ -26,6 +26,7 @@ def export_blueprints(blueprints, blend_file_path, addon_prefs, blueprints_data)
                 export_settings['export_materials'] = 'PLACEHOLDER'
 
             collection = bpy.data.collections[blueprint.name]
+            # do the actual export
             generate_and_export(
                 addon_prefs, 
                 temp_scene_name=TEMPSCENE_PREFIX+collection.name,

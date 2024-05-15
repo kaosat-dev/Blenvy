@@ -308,7 +308,6 @@ def inject_blueprints_list_into_main_scene(scene, blueprints_data, addon_prefs):
     assets_list_name = f"assets_list_{scene.name}_components"
     assets_list_data = {}
 
-
     # FIXME: temporary hack
     for blueprint in blueprints_data.blueprints:
         bpy.context.window_manager.blueprints_registry.add_blueprint(blueprint)
@@ -325,7 +324,7 @@ def inject_blueprints_list_into_main_scene(scene, blueprints_data, addon_prefs):
                 blueprints_in_scene += blueprint.nested_blueprints
         assets_list_data["BlueprintsList"] = f"({json.dumps(dict(children_per_blueprint))})"
         print(blueprint_instance_names_for_scene)
-    add_scene_property(scene, assets_list_name, assets_list_data)
+    #add_scene_property(scene, assets_list_name, assets_list_data)
 
 
     relative_blueprints_path = os.path.relpath(export_blueprints_path, export_root_folder)
@@ -346,7 +345,6 @@ def inject_blueprints_list_into_main_scene(scene, blueprints_data, addon_prefs):
                 if blueprint_exported_path is not None:
                     blueprint_assets_list.append({"name": blueprint.name, "path": blueprint_exported_path, "type": "MODEL", "internal": True})
                 
-
     # fetch images/textures
     # see https://blender.stackexchange.com/questions/139859/how-to-get-absolute-file-path-for-linked-texture-image
     textures = []

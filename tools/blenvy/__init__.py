@@ -33,7 +33,6 @@ from .bevy_components.components.ui import (BEVY_COMPONENTS_PT_ComponentsPanel)
 from .gltf_auto_export import gltf_post_export_callback
 from .gltf_auto_export.auto_export.operators import AutoExportGLTF
 from .gltf_auto_export.auto_export.tracker import AutoExportTracker
-from .gltf_auto_export.auto_export.preferences import (AutoExportGltfAddonPreferences)
 
 from .gltf_auto_export.auto_export.internals import (SceneLink,
                         SceneLinks,
@@ -41,7 +40,7 @@ from .gltf_auto_export.auto_export.internals import (SceneLink,
                         BlueprintsToExport,
                         CUSTOM_PG_sceneName
                         )
-from .gltf_auto_export.ui.main import (GLTF_PT_auto_export_change_detection, GLTF_PT_auto_export_changes_list, GLTF_PT_auto_export_main,
+from .gltf_auto_export.ui.main import (GLTF_PT_auto_export_change_detection, GLTF_PT_auto_export_main,
                       GLTF_PT_auto_export_root,
                       GLTF_PT_auto_export_general,
                       GLTF_PT_auto_export_scenes,
@@ -53,7 +52,7 @@ from .gltf_auto_export.ui.main import (GLTF_PT_auto_export_change_detection, GLT
 from .gltf_auto_export.ui.operators import (OT_OpenFolderbrowser, SCENES_LIST_OT_actions)
 
 # asset management
-from .assets.ui import GLTF_PT_auto_export_assets
+from .assets.ui import Blenvy_assets
 from .assets.assets_registry import AssetsRegistry
 from .assets.operators import OT_Add_asset_filebrowser, OT_add_bevy_asset, OT_remove_bevy_asset
 
@@ -151,7 +150,7 @@ classes = [
     OT_add_bevy_asset,
     OT_remove_bevy_asset,
     OT_Add_asset_filebrowser,
-    GLTF_PT_auto_export_assets,
+    Blenvy_assets,
 
     BlueprintsRegistry,
     OT_select_blueprint,

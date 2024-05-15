@@ -67,7 +67,3 @@ Change storage of 'blueprint' assets : (from BlueprintsList)
    - make asset storage generic enough to allow adding additional asset types
    - get inspired by bevy_asset_loader ?
 
-Assets:
- - [ ] store assets 
-   - [ ] per main scene for level/world assets
-   - [ ] per blueprint for blueprint in lib scene

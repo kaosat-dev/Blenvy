@@ -130,7 +130,7 @@ class OT_OpenFolderbrowser(Operator, ImportHelper):
         print("blend_file_folder_path", blend_file_folder_path)
         print("new_path", self.directory, self.target_property, operator)
 
-        path_names = ['export_assets_path', 'export_blueprints_path', 'export_levels_path', 'export_materials_path']
+        asset_path_names = ['export_assets_path', 'export_blueprints_path', 'export_levels_path', 'export_materials_path']
         export_root_path = operator.export_root_path
         export_assets_path = operator.export_assets_path
         #export_root_path_absolute = os.path.join(blend_file_folder_path, export_root_path)
@@ -142,10 +142,11 @@ class OT_OpenFolderbrowser(Operator, ImportHelper):
             new_root_path_relative = os.path.relpath(new_path, blend_file_folder_path)
             print("changing root new_path to", self.directory, blend_file_folder_path, new_root_path_relative)
             # we need to change all other relative paths before setting the new absolute path
-            for path_name in path_names:
-                # get absolute path
+            for path_name in asset_path_names:
+                # get current relative path
                 relative_path = getattr(operator, path_name, None)
                 if relative_path is not None:
+                    # and now get absolute path of asset_path 
                     absolute_path = os.path.join(export_assets_path_full, relative_path)
                     print("absolute path for", path_name, absolute_path)
                     relative_path = os.path.relpath(absolute_path, new_path)
@@ -153,7 +154,8 @@ class OT_OpenFolderbrowser(Operator, ImportHelper):
 
             # store the root path as relative to the current blend file
             setattr(operator, target_path_name, new_path)
-
+        elif target_path_name == 'export_assets_path':
+            pass
         else:
             relative_path = os.path.relpath(new_path, export_assets_path_full)
             setattr(operator, target_path_name, relative_path)

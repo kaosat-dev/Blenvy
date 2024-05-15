@@ -6,9 +6,7 @@ from pathlib import Path
 from bpy_types import (PropertyGroup)
 from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorProperty, IntProperty, IntVectorProperty, EnumProperty, PointerProperty, CollectionProperty)
 
-
 # this is where we store the information for all available Blueprints
-#
 class BlueprintsRegistry(PropertyGroup):
     blueprints_data = {}
     blueprints_list = []
