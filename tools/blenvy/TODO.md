@@ -33,8 +33,11 @@ Assets:
    - [x] per blueprint for blueprint in lib scene
  - [ ] UI:
     - [x] we need to display all direct assets (stored in the scene)
-    - [ ] indirect assets:
-        - [ ] the assets of local blueprints
+    - [ ] indirect assets: 
+        - QUESTION : do we want to include them in the list of assets per level ? 
+            -  this would enable pre-loading ALL the assets, but is not ideal in most other cases
+            - so add an option ?
+        - [ ] the assets of local blueprints 
 
 
 Blueprints:
@@ -42,3 +45,11 @@ Blueprints:
         - list of assets
         - export path
     - [ ] blueprint selection for nested blueprints is broken
+
+
+General issues:
+ - there is no safeguard for naming collisions for naming across blender files
+ - this can cause an issue for assets list "parent" 
+ - "parents" can only be blueprints
+    - they normally need/have unique export paths (otherwise, user error, perhaps show it ?)
+    - perhaps a simple hashing of the parent's path would be enought 

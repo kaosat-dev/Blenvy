@@ -80,6 +80,7 @@ def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
         inject_export_path_into_internal_blueprints(internal_blueprints=blueprints_data.internal_blueprints, export_blueprints_path=export_blueprints_path, gltf_extension=gltf_extension)
         for blueprint in blueprints_data.blueprints:
             bpy.context.window_manager.blueprints_registry.add_blueprint(blueprint)
+        bpy.context.window_manager.blueprints_registry.add_blueprints_data()
 
         if export_scene_settings:
             # inject/ update scene components

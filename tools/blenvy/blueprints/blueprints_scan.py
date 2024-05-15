@@ -110,7 +110,7 @@ def blueprints_scan(main_scenes, library_scenes, addon_prefs):
         #
         collections.append(collection)
 
-    # add any collection that has an instance in the main scenes, but is not present in any of the scenes (IE NON LOCAL/ EXTERNAL)
+    # EXTERNAL COLLECTIONS: add any collection that has an instance in the main scenes, but is not present in any of the scenes (IE NON LOCAL/ EXTERNAL)
     for collection_name in external_collection_instances:
         collection = bpy.data.collections[collection_name]
         blueprint = Blueprint(collection.name)

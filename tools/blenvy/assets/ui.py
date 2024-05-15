@@ -1,4 +1,6 @@
+from types import SimpleNamespace
 import bpy
+from .assets_scan import get_main_scene_assets_tree
 from .asset_helpers import get_assets
 
 
@@ -42,6 +44,8 @@ def draw_assets(layout, name, title, asset_registry, assets, target_type, target
             else:
                 row.label(text="")
 
+    return panel
+
 class Blenvy_assets(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -52,29 +56,37 @@ class Blenvy_assets(bpy.types.Panel):
     def poll(cls, context):
         return context.window_manager.blenvy.mode == 'ASSETS'
     
-    """def draw_header(self, context):
-        layout = self.layout
-        name = ""
-        if context.collection is not None and context.collection.name == 'Scene Collection':
-            name = f"WORLD/LEVEL: {context.scene.name}" 
-        else:
-            name = f"BLUEPRINT: {context.collection.name}"
-        layout.label(text=f"Assets For {name}")"""
-
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
 
+        layout.operator(operator="bevyassets.test")
+
         asset_registry = context.window_manager.assets_registry
-        
+        blueprints_registry = context.window_manager.blueprints_registry
+        blueprints_registry.add_blueprints_data()
+        blueprints_data = blueprints_registry.blueprints_data
+
         name = "world"
         header, panel = layout.box().panel(f"assets{name}", default_closed=False)
         header.label(text="World/Level Assets")
 
+        settings = {"export_blueprints_path": "blueprints", "export_gltf_extension": ".glb"}
+        settings = SimpleNamespace(**settings)
+
         if panel:
             for scene in bpy.data.scenes:
                 if scene.name != "Library": # FIXME: hack for testing
+                    get_main_scene_assets_tree(scene, blueprints_data, settings)
+
                     direct_assets = get_assets(scene)
                     row = panel.row()
-                    draw_assets(layout=row, name=scene.name, title=f"{scene.name} Assets", asset_registry=asset_registry, assets=direct_assets, target_type="SCENE", target_name=scene.name)
+                    scene_assets_panel = draw_assets(layout=row, name=scene.name, title=f"{scene.name} Assets", asset_registry=asset_registry, assets=direct_assets, target_type="SCENE", target_name=scene.name)
+                    if scene.name in blueprints_data.blueprint_instances_per_main_scene:
+                        for blueprint_name in blueprints_data.blueprint_instances_per_main_scene[scene.name].keys():
+                            blueprint = blueprints_data.blueprints_per_name[blueprint_name]
+                            blueprint_assets = get_assets(blueprint.collection)
+                            if scene_assets_panel:
+                                row = scene_assets_panel.row()
+                                draw_assets(layout=row, name=blueprint.name, title=f"{blueprint.name} Assets", asset_registry=asset_registry, assets=blueprint_assets, target_type="BLUEPRINT", target_name=blueprint.name)

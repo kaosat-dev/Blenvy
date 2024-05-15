@@ -4,6 +4,8 @@ import bpy
 from bpy_types import (Operator)
 from bpy.props import (BoolProperty, StringProperty, EnumProperty)
 
+from .assets_scan import get_main_scene_assets_tree
+
 from ..core.path_helpers import absolute_path_from_blend_file
 from ..settings import load_settings
 
@@ -159,4 +161,27 @@ class OT_Add_asset_filebrowser(Operator, ImportHelper):
 
         print("SELECTED ASSET PATH", asset_path)
         
+        return {'FINISHED'}
+    
+
+
+from types import SimpleNamespace
+
+class OT_test_bevy_assets(Operator):
+    """Test assets"""
+    bl_idname = "bevyassets.test"
+    bl_label = "test bevy assets"
+    bl_options = {"UNDO"}
+
+    def execute(self, context):
+        blueprints_registry = context.window_manager.blueprints_registry
+        blueprints_registry.add_blueprints_data()
+        blueprints_data = blueprints_registry.blueprints_data
+
+        settings = {"export_blueprints_path": "blueprints", "export_gltf_extension": ".glb"}
+        settings = SimpleNamespace(**settings)
+        for scene in bpy.data.scenes:
+                if scene.name != "Library":
+                    assets_hierarchy = get_main_scene_assets_tree(scene, blueprints_data, settings)
+                    scene["assets_hierarchy"] = json.dumps(assets_hierarchy)
         return {'FINISHED'}
