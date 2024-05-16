@@ -46,6 +46,9 @@ Blueprints:
         - export path
     - [ ] blueprint selection for nested blueprints is broken
 
+    - [ ] scan & inject on load
+    - [ ] scan & inject on save
+
 
 General issues:
  - there is no safeguard for naming collisions for naming across blender files

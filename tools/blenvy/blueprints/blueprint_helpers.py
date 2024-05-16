@@ -37,19 +37,6 @@ def inject_blueprints_list_into_main_scene(scene, blueprints_data, addon_prefs):
     assets_list_data = {}
 
     blueprint_instance_names_for_scene = blueprints_data.blueprint_instances_per_main_scene.get(scene.name, None)
-    # find all blueprints used in a scene
-    blueprints_in_scene = []
-    if blueprint_instance_names_for_scene: # what are the blueprints used in this scene, inject those into the assets list component
-        children_per_blueprint = {}
-        for blueprint_name in blueprint_instance_names_for_scene:
-            blueprint = blueprints_data.blueprints_per_name.get(blueprint_name, None)
-            if blueprint:
-                children_per_blueprint[blueprint_name] = blueprint.nested_blueprints
-                blueprints_in_scene += blueprint.nested_blueprints
-        assets_list_data["BlueprintsList"] = f"({json.dumps(dict(children_per_blueprint))})"
-        print(blueprint_instance_names_for_scene)
-    # add_scene_property(scene, assets_list_name, assets_list_data)
-
     blueprint_assets_list = []
     if blueprint_instance_names_for_scene:
         for blueprint_name in blueprint_instance_names_for_scene:
@@ -67,25 +54,15 @@ def inject_blueprints_list_into_main_scene(scene, blueprints_data, addon_prefs):
                     blueprint_assets_list.append({"name": blueprint.name, "path": blueprint_exported_path, "type": "MODEL", "internal": True})
                 
 
-    # fetch images/textures
-    # see https://blender.stackexchange.com/questions/139859/how-to-get-absolute-file-path-for-linked-texture-image
-    textures = []
-    for ob in bpy.data.objects:
-        if ob.type == "MESH":
-            for mat_slot in ob.material_slots:
-                if mat_slot.material:
-                    if mat_slot.material.node_tree:
-                        textures.extend([x.image.filepath for x in mat_slot.material.node_tree.nodes if x.type=='TEX_IMAGE'])
-    print("textures", textures)
+  
 
     assets_list_name = f"assets_{scene.name}"
-    assets_list_data = {"blueprints": json.dumps(blueprint_assets_list), "sounds":[], "images":[]}
     scene["assets"] = json.dumps(blueprint_assets_list)
 
     print("blueprint assets", blueprint_assets_list)
-    add_scene_property(scene, assets_list_name, assets_list_data)
+    """add_scene_property(scene, assets_list_name, assets_list_data)
     for blueprint in blueprint_assets_list:
-        bpy.context.window_manager.assets_registry.add_asset(**blueprint)
+        bpy.context.window_manager.assets_registry.add_asset(**blueprint)"""
 
 def remove_blueprints_list_from_main_scene(scene):
     assets_list = None

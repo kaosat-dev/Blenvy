@@ -29,7 +29,7 @@ def export_main_scene(scene, blend_file_path, addon_prefs, blueprints_data):
     if export_blueprints : 
         gltf_output_path = os.path.join(export_levels_path_full, scene.name)
 
-        inject_blueprints_list_into_main_scene(scene, blueprints_data, addon_prefs)
+        #inject_blueprints_list_into_main_scene(scene, blueprints_data, addon_prefs)
         return
         if export_separate_dynamic_and_static_objects:
             #print("SPLIT STATIC AND DYNAMIC")

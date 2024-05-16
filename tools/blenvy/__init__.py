@@ -53,7 +53,7 @@ from .gltf_auto_export.ui.operators import (OT_OpenFolderbrowser, SCENES_LIST_OT
 
 # asset management
 from .assets.ui import Blenvy_assets
-from .assets.assets_registry import AssetsRegistry
+from .assets.assets_registry import Asset, AssetsRegistry
 from .assets.operators import OT_Add_asset_filebrowser, OT_add_bevy_asset, OT_remove_bevy_asset, OT_test_bevy_assets
 
 # blueprints management
@@ -146,6 +146,7 @@ classes = [
     BlenvyManager,
     OT_switch_bevy_tooling,
 
+    Asset,
     AssetsRegistry,
     OT_add_bevy_asset,
     OT_remove_bevy_asset,
