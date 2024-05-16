@@ -15,16 +15,15 @@ pub fn ronstring_to_reflect_component(
     let mut components: Vec<(Box<dyn Reflect>, TypeRegistration)> = Vec::new();
     // println!("ron_string {:?}", ron_string);
     for (name, value) in lookup.into_iter() {
-        let parsed_value: String;
-        match value.clone() {
+        let parsed_value: String = match value.clone() {
             Value::String(str) => {
-                parsed_value = str;
+                str
             }
-            _ => parsed_value = ron::to_string(&value).unwrap().to_string(),
-        }
+            _ => ron::to_string(&value).unwrap().to_string(),
+        };
 
         if name.as_str() == "bevy_components" {
-            bevy_components_string_to_components(parsed_value, type_registry, &mut components)
+            bevy_components_string_to_components(parsed_value, type_registry, &mut components);
         } else {
             components_string_to_components(
                 name,
@@ -32,7 +31,7 @@ pub fn ronstring_to_reflect_component(
                 parsed_value,
                 type_registry,
                 &mut components,
-            )
+            );
         }
     }
     components
@@ -95,13 +94,12 @@ fn bevy_components_string_to_components(
 ) {
     let lookup: HashMap<String, Value> = ron::from_str(&parsed_value).unwrap();
     for (key, value) in lookup.into_iter() {
-        let parsed_value: String;
-        match value.clone() {
+        let parsed_value: String = match value.clone() {
             Value::String(str) => {
-                parsed_value = str;
+                str
             }
-            _ => parsed_value = ron::to_string(&value).unwrap().to_string(),
-        }
+            _ => ron::to_string(&value).unwrap().to_string(),
+        };
 
         if let Some(type_registration) = type_registry.get_with_type_path(key.as_str()) {
             debug!("TYPE INFO {:?}", type_registration.type_info());

@@ -62,13 +62,8 @@ pub enum GltfComponentsSet {
 #[derive(Clone, Resource)]
 pub struct GltfComponentsConfig {}
 
+#[derive(Default)]
 pub struct ComponentsFromGltfPlugin {}
-
-impl Default for ComponentsFromGltfPlugin {
-    fn default() -> Self {
-        Self {}
-    }
-}
 
 impl Plugin for ComponentsFromGltfPlugin {
     fn build(&self, app: &mut App) {

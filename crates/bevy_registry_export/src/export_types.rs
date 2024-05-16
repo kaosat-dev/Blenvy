@@ -17,7 +17,6 @@ pub fn export_types(world: &mut World) {
 
     let asset_root = world.resource::<AssetRoot>();
     let registry_save_path = Path::join(&asset_root.0, &config.save_path);
-    println!("registry_save_path {}", registry_save_path.display());
     let writer = File::create(registry_save_path).expect("should have created schema file");
 
     let components_to_filter_out = &config.component_filter.clone();
@@ -29,8 +28,8 @@ pub fn export_types(world: &mut World) {
         .iter()
         .filter(|type_info| {
             let type_id = type_info.type_id();
-            return components_to_filter_out.is_allowed_by_id(type_id)
-                && resources_to_filter_out.is_allowed_by_id(type_id);
+            components_to_filter_out.is_allowed_by_id(type_id)
+                && resources_to_filter_out.is_allowed_by_id(type_id)
         })
         .map(export_type)
         .collect::<Map<_, _>>();
