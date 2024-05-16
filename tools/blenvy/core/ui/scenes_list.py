@@ -15,7 +15,6 @@ class SCENE_UL_Blenvy(bpy.types.UIList):
     #   Note: as index and flt_flag are optional arguments, you do not have to use/declare them here if you don't
     #         need them.
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname):
-        print("DRAW STUFF", self)
         ob = data
         # draw_item must handle the three layout types... Usually 'DEFAULT' and 'COMPACT' can share the same code.
         if self.layout_type in {'DEFAULT', 'COMPACT'}:
