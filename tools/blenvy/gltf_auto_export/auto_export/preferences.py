@@ -8,8 +8,6 @@ from bpy.props import (BoolProperty,
                        CollectionProperty
                        )
 
-from .internals import (CUSTOM_PG_sceneName)
-
 AutoExportGltfPreferenceNames = [
     'will_save_settings',
     'direct_mode',# specific to main auto_export operator
@@ -201,8 +199,3 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         default=True
     ) # type: ignore
 
-    main_scenes: CollectionProperty(name="main scenes", type=CUSTOM_PG_sceneName) # type: ignore
-    main_scenes_index: IntProperty(name = "Index for main scenes list", default = 0) # type: ignore
-
-    library_scenes: CollectionProperty(name="library scenes", type=CUSTOM_PG_sceneName) # type: ignore
-    library_scenes_index: IntProperty(name = "Index for library scenes list", default = 0) # type: ignore

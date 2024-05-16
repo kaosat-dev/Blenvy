@@ -4,12 +4,7 @@ import bpy
 from bpy.types import (PropertyGroup)
 from bpy.props import (PointerProperty, IntProperty, StringProperty)
 
-from .get_blueprints_to_export import get_blueprints_to_export
-
 from ..constants import TEMPSCENE_PREFIX
-from .internals import BlueprintsToExport
-from ..helpers.helpers_scenes import (get_scenes)
-from .preferences import AutoExportGltfAddonPreferences
 
 class AutoExportTracker(PropertyGroup):
 
@@ -36,8 +31,6 @@ class AutoExportTracker(PropertyGroup):
     @classmethod
     def register(cls):
         bpy.types.WindowManager.auto_export_tracker = PointerProperty(type=AutoExportTracker)
-        # register list of exportable collections
-        bpy.types.WindowManager.exportedCollections = bpy.props.CollectionProperty(type=BlueprintsToExport)
 
         # setup handlers for updates & saving
         #bpy.app.handlers.save_post.append(cls.save_handler)
@@ -53,7 +46,6 @@ class AutoExportTracker(PropertyGroup):
             bpy.app.handlers.save_post.remove(cls.save_handler)
         except:pass"""
         del bpy.types.WindowManager.auto_export_tracker
-        del bpy.types.WindowManager.exportedCollections
 
     @classmethod
     def save_handler(cls, scene, depsgraph):

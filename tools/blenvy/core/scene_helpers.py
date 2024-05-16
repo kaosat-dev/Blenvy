@@ -1,3 +1,12 @@
+import bpy
+from .object_makers import make_empty
+
+
+class SceneSelector(bpy.types.PropertyGroup):
+    name: bpy.props.StringProperty() # type: ignore
+    display: bpy.props.BoolProperty() # type: ignore
+
+
 def add_scene_property(scene, scene_component_name, property_data, limit_to=None):
     root_collection = scene.collection
     scene_property = None

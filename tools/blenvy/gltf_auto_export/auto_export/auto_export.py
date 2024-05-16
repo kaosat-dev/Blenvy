@@ -109,10 +109,10 @@ def auto_export(changes_per_scene, changed_export_parameters, addon_prefs):
             bpy.context.window_manager.auto_export_tracker.exports_total = exports_total
             bpy.context.window_manager.auto_export_tracker.exports_count = exports_total
 
-            bpy.context.window_manager.exportedCollections.clear()
+            """bpy.context.window_manager.exportedCollections.clear()
             for  blueprint in blueprints_to_export:
                 bla = bpy.context.window_manager.exportedCollections.add()
-                bla.name = blueprint.name
+                bla.name = blueprint.name"""
             print("-------------------------------")
             #print("collections:               all:", collections)
             #print("collections: not found on disk:", collections_not_on_disk)

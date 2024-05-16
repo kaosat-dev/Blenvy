@@ -1,7 +1,8 @@
 import bpy
-from ..settings import load_settings
+from ...settings import load_settings
 
 ######################################################
+
 ## ui logic & co
 def draw_folder_browser(layout, label, prop_origin, target_property):
     row = layout.row()
@@ -80,7 +81,6 @@ class BLENVY_PT_SidePanel(bpy.types.Panel):
         layout.label(text="Library scene active: "+ str(library_scene_active))
         layout.label(text=blenvy.mode)"""
 
-
         if blenvy.mode == "SETTINGS":
             header, panel = layout.panel("auto_export", default_closed=False)
             header.label(text="Common")
@@ -95,6 +95,55 @@ class BLENVY_PT_SidePanel(bpy.types.Panel):
                 draw_folder_browser(layout=row, label="Levels Folder", prop_origin=blenvy, target_property="export_levels_path")
                 row = panel.row()
                 draw_folder_browser(layout=row, label="Materials Folder", prop_origin=blenvy, target_property="export_materials_path")
+
+                panel.separator()
+                # scenes selection
+                section = panel
+                rows = 2
+                row = section.row()
+                row.label(text="main scenes")
+                row.prop(context.window_manager, "main_scene", text='')
+
+                row = section.row()
+                row.template_list("SCENE_UL_Blenvy", "level scenes", blenvy, "main_scenes", blenvy, "main_scenes_index", rows=rows)
+
+                col = row.column(align=True)
+                sub_row = col.row()
+                add_operator = sub_row.operator("scene_list.list_action", icon='ADD', text="")
+                add_operator.action = 'ADD'
+                add_operator.scene_type = 'level'
+                #add_operator.operator = operator
+                sub_row.enabled = context.window_manager.main_scene is not None
+
+                sub_row = col.row()
+                remove_operator = sub_row.operator("scene_list.list_action", icon='REMOVE', text="")
+                remove_operator.action = 'REMOVE'
+                remove_operator.scene_type = 'level'
+                col.separator()
+
+                # library scenes
+                row = section.row()
+                row.label(text="library scenes")
+                row.prop(context.window_manager, "library_scene", text='')
+
+                row = section.row()
+                row.template_list("SCENE_UL_Blenvy", "library scenes", blenvy, "library_scenes", blenvy, "library_scenes_index", rows=rows)
+
+                col = row.column(align=True)
+                sub_row = col.row()
+                add_operator = sub_row.operator("scene_list.list_action", icon='ADD', text="")
+                add_operator.action = 'ADD'
+                add_operator.scene_type = 'library'
+                sub_row.enabled = context.window_manager.library_scene is not None
+
+
+                sub_row = col.row()
+                remove_operator = sub_row.operator("scene_list.list_action", icon='REMOVE', text="")
+                remove_operator.action = 'REMOVE'
+                remove_operator.scene_type = 'library'
+                col.separator()
+
+              
         """if blenvy.mode == "SETTINGS":
             header, panel = layout.panel("auto_export", default_closed=False)
             header.label(text="Auto Export")

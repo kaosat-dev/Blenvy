@@ -1,11 +1,6 @@
 import json
 import bpy
 from bpy.types import Operator
-from bpy_extras.io_utils import ExportHelper
-from bpy.props import (IntProperty, StringProperty, BoolProperty)
-
-from ..ui.operators import OT_OpenFolderbrowser, draw_folder_browser
-
 #from ..ui.main import GLTF_PT_auto_export_general, GLTF_PT_auto_export_main, GLTF_PT_auto_export_root
 
 from .preferences import (AutoExportGltfAddonPreferences, AutoExportGltfPreferenceNames)
@@ -54,29 +49,11 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
 
     @classmethod
     def register(cls):
-        bpy.types.WindowManager.main_scene = bpy.props.PointerProperty(type=bpy.types.Scene, name="main scene", description="main_scene_picker", poll=cls.is_scene_ok)
-        bpy.types.WindowManager.library_scene = bpy.props.PointerProperty(type=bpy.types.Scene, name="library scene", description="library_scene_picker", poll=cls.is_scene_ok)
-        
-        bpy.types.WindowManager.main_scenes_list_index = IntProperty(name = "Index for main scenes list", default = 0)
-        bpy.types.WindowManager.library_scenes_list_index = IntProperty(name = "Index for library scenes list", default = 0)
-
-        cls.main_scenes_index = 0
-        cls.library_scenes_index = 0
+       pass
 
     @classmethod
     def unregister(cls):
-        del bpy.types.WindowManager.main_scene
-        del bpy.types.WindowManager.library_scene
-
-        del bpy.types.WindowManager.main_scenes_list_index
-        del bpy.types.WindowManager.library_scenes_list_index
-
-    def is_scene_ok(self, scene):
-        try:
-            operator = bpy.context.space_data.active_operator
-            return scene.name not in operator.main_scenes and scene.name not in operator.library_scenes
-        except:
-            return True
+       pass
 
     def format_settings(self):
         # find all props to save
@@ -362,73 +339,13 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
         if self.show_general_settings:
             section = layout.box()
             section.enabled = controls_enabled
- 
-            draw_folder_browser(section, "Export root folder", self.export_root_path, "export_root_path")
-            row = section.row()
-            draw_folder_browser(row, "Assets Folder", self.export_root_path, "export_assets_path")
-            section.prop(operator, "export_scene_settings")
-
-            """header, panel = layout.panel("my_panel_id", default_closed=False)
-            header.label(text="Hello World")
-            if panel:
-                panel.label(text="Success")"""
-            
+            section.prop(operator, "export_scene_settings")            
         toggle_icon = "TRIA_DOWN" if self.show_change_detection_settings else "TRIA_RIGHT"
         layout.prop(operator, "show_change_detection_settings", text="Change Detection", icon=toggle_icon)
         if self.show_change_detection_settings:
             section = layout.box()
             section.enabled = controls_enabled
             section.prop(operator, "export_change_detection", text="Use change detection")
-
-        # main/level scenes
-        toggle_icon = "TRIA_DOWN" if self.show_scene_settings else "TRIA_RIGHT"
-        layout.prop(operator, "show_scene_settings", text="Scenes", icon=toggle_icon)
-        if self.show_scene_settings:
-            section = layout.box()
-            section.enabled = controls_enabled
-            rows = 2
-            row = section.row()
-            row.label(text="main scenes")
-            row.prop(context.window_manager, "main_scene", text='')
-
-            row = section.row()
-            row.template_list("SCENE_UL_GLTF_auto_export", "level scenes", operator, "main_scenes", operator, "main_scenes_index", rows=rows)
-
-            col = row.column(align=True)
-            sub_row = col.row()
-            add_operator = sub_row.operator("scene_list.list_action", icon='ADD', text="")
-            add_operator.action = 'ADD'
-            add_operator.scene_type = 'level'
-            #add_operator.operator = operator
-            sub_row.enabled = context.window_manager.main_scene is not None
-
-            sub_row = col.row()
-            remove_operator = sub_row.operator("scene_list.list_action", icon='REMOVE', text="")
-            remove_operator.action = 'REMOVE'
-            remove_operator.scene_type = 'level'
-            col.separator()
-
-            # library scenes
-            row = section.row()
-            row.label(text="library scenes")
-            row.prop(context.window_manager, "library_scene", text='')
-
-            row = section.row()
-            row.template_list("SCENE_UL_GLTF_auto_export", "library scenes", operator, "library_scenes", operator, "library_scenes_index", rows=rows)
-
-            col = row.column(align=True)
-            sub_row = col.row()
-            add_operator = sub_row.operator("scene_list.list_action", icon='ADD', text="")
-            add_operator.action = 'ADD'
-            add_operator.scene_type = 'library'
-            sub_row.enabled = context.window_manager.library_scene is not None
-
-
-            sub_row = col.row()
-            remove_operator = sub_row.operator("scene_list.list_action", icon='REMOVE', text="")
-            remove_operator.action = 'REMOVE'
-            remove_operator.scene_type = 'library'
-            col.separator()
 
         toggle_icon = "TRIA_DOWN" if self.show_blueprint_settings else "TRIA_RIGHT"
         layout.prop(operator, "show_blueprint_settings", text="Blueprints", icon=toggle_icon)
@@ -441,14 +358,9 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
             section.enabled = controls_enabled and self.export_blueprints
 
             # collections/blueprints 
-            draw_folder_browser(section, "Blueprints folder", self.export_root_path, "export_blueprints_path")
-            #section.prop(operator, "export_blueprints_path")
             section.prop(operator, "collection_instances_combine_mode")
             section.prop(operator, "export_marked_assets")
             section.separator()
-
-            draw_folder_browser(section, "Levels folder", self.export_root_path, "export_levels_path")
-            #section.prop(operator, "export_levels_path")
 
             section.prop(operator, "export_separate_dynamic_and_static_objects")
             section.separator()
@@ -457,7 +369,6 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
             section.prop(operator, "export_materials_library")
             section = section.box()
             section.enabled = controls_enabled and self.export_materials_library
-            draw_folder_browser(section, 'Materials folder', self.export_root_path, "export_materials_path")
             #section.prop(operator, "export_materials_path")
 
 
