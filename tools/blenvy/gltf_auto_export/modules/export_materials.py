@@ -2,26 +2,11 @@ import os
 import bpy
 from pathlib import Path
 
-from ..helpers.generate_and_export import generate_and_export
-from ..helpers.helpers_collections import (traverse_tree)
-from ..auto_export.export_gltf import (export_gltf, generate_gltf_export_preferences)
+from ...core.helpers_collections import (traverse_tree)
 from ...core.object_makers import make_cube
-
-# get materials per object, and injects the materialInfo component
-def get_materials(object):
-    material_slots = object.material_slots
-    used_materials_names = []
-    #materials_per_object = {}
-    current_project_name = Path(bpy.context.blend_data.filepath).stem
-
-    for m in material_slots:
-        material = m.material
-        # print("    slot", m, "material", material)
-        used_materials_names.append(material.name)
-        # TODO:, also respect slots & export multiple materials if applicable ! 
-        object['MaterialInfo'] = '(name: "'+material.name+'", source: "'+current_project_name + '")' 
-
-    return used_materials_names
+from ...materials.materials_helpers import get_all_materials
+from ..helpers.generate_and_export import generate_and_export
+from ..auto_export.export_gltf import (generate_gltf_export_preferences)
 
 def clear_material_info(collection_names, library_scenes):
     for scene in library_scenes:
@@ -32,21 +17,6 @@ def clear_material_info(collection_names, library_scenes):
                     if 'MaterialInfo' in dict(object): # FIXME: hasattr does not work ????
                         del object["MaterialInfo"]
                    
-
-def get_all_materials(collection_names, library_scenes): 
-    #print("collecton", layerColl, "otot", layerColl.all_objects) #all_objects
-    used_material_names = []
-    for scene in library_scenes:
-        root_collection = scene.collection
-        for cur_collection in traverse_tree(root_collection):
-            if cur_collection.name in collection_names:
-                for object in cur_collection.all_objects:
-                    used_material_names = used_material_names + get_materials(object)
-    # we only want unique names
-    used_material_names = list(set(used_material_names))
-    return used_material_names
-
-
 # creates a new object with the applied material, for the material library
 def make_material_object(name, location=[0,0,0], rotation=[0,0,0], scale=[1,1,1], material=None, collection=None): 
     #original_active_object = bpy.context.active_object
