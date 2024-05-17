@@ -146,7 +146,7 @@ def duplicate_object(object, parent, combine_mode, destination_collection, bluep
 
 # copies the contents of a collection into another one while replacing library instances with empties
 def copy_hollowed_collection_into(source_collection, destination_collection, parent_empty=None, filter=None, blueprints_data=None, addon_prefs={}):
-    collection_instances_combine_mode = getattr(addon_prefs, "collection_instances_combine_mode")
+    collection_instances_combine_mode = getattr(addon_prefs.auto_export, "collection_instances_combine_mode")
 
     for object in source_collection.objects:
         if object.name.endswith("____bak"): # some objects could already have been handled, ignore them
@@ -210,6 +210,10 @@ def get_scenes(addon_prefs):
     level_scene_names= getattr(addon_prefs, "main_scene_names", []) #list(map(lambda scene: scene.name, getattr(addon_prefs,"main_scenes")))
     library_scene_names = getattr(addon_prefs, "library_scene_names", []) #list(map(lambda scene: scene.name, getattr(addon_prefs,"library_scenes")))
 
+    level_scene_names= list(map(lambda scene: scene.name, getattr(addon_prefs,"main_scenes")))
+    library_scene_names = list(map(lambda scene: scene.name, getattr(addon_prefs,"library_scenes")))
+
+    print("level_scene_names", level_scene_names)
     level_scene_names = list(filter(lambda name: name in bpy.data.scenes, level_scene_names))
     library_scene_names = list(filter(lambda name: name in bpy.data.scenes, library_scene_names))
 

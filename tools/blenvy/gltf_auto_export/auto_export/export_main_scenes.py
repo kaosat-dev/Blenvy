@@ -14,8 +14,8 @@ def export_main_scene(scene, blend_file_path, addon_prefs, blueprints_data):
     export_assets_path_full = getattr(addon_prefs,"export_assets_path_full")
     export_levels_path_full = getattr(addon_prefs,"export_levels_path_full")
 
-    export_blueprints = getattr(addon_prefs,"export_blueprints")
-    export_separate_dynamic_and_static_objects = getattr(addon_prefs, "export_separate_dynamic_and_static_objects")
+    export_blueprints = getattr(addon_prefs.auto_export,"export_blueprints")
+    export_separate_dynamic_and_static_objects = getattr(addon_prefs.auto_export, "export_separate_dynamic_and_static_objects")
 
     export_settings = { **gltf_export_preferences, 
                        'use_active_scene': True, 

@@ -7,6 +7,8 @@ import blenvy.gltf_auto_export.settings as auto_export_settings
 
 def update_scene_lists(self, context):                
     blenvy = self# context.window_manager.blenvy
+    blenvy.main_scene_names = [scene.name for scene in blenvy.main_scenes] # FIXME: unsure
+    blenvy.library_scene_names = [scene.name for scene in blenvy.library_scenes] # FIXME: unsure
     upsert_settings(blenvy.settings_save_path, {"common_main_scene_names": [scene.name for scene in blenvy.main_scenes]})
     upsert_settings(blenvy.settings_save_path, {"common_library_scene_names": [scene.name for scene in blenvy.library_scenes]})
 
@@ -74,13 +76,15 @@ class BlenvyManager(PropertyGroup):
 
     main_scenes: CollectionProperty(name="main scenes", type=SceneSelector) # type: ignore
     main_scenes_index: IntProperty(name = "Index for main scenes list", default = 0, update=update_scene_lists) # type: ignore
+    main_scene_names = [] # FIXME: unsure
 
     library_scenes: CollectionProperty(name="library scenes", type=SceneSelector) # type: ignore
     library_scenes_index: IntProperty(name = "Index for library scenes list", default = 0, update=update_scene_lists) # type: ignore
-   
+    library_scene_names = [] # FIXME: unsure
+
     # sub ones
     auto_export: PointerProperty(type=auto_export_settings.AutoExportSettings) # type: ignore
-    #components: PointerProperty(type=auto_export_settings.AutoExportSettings) # type: ignore
+    #components: PointerProperty(type=bevy_component_settings.ComponentSettings) # type: ignore
 
     def is_scene_ok(self, scene):
         try:
