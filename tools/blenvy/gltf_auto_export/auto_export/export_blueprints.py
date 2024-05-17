@@ -8,13 +8,13 @@ from ..helpers.helpers_scenes import clear_hollow_scene, copy_hollowed_collectio
 
    
 def export_blueprints(blueprints, addon_prefs, blueprints_data):
-    export_blueprints_path_full = getattr(addon_prefs,"export_blueprints_path_full")
+    export_blueprints_path_full = getattr(addon_prefs, "export_blueprints_path_full")
     gltf_export_preferences = generate_gltf_export_preferences(addon_prefs)
     
     try:
         # save current active collection
         active_collection =  bpy.context.view_layer.active_layer_collection
-        export_materials_library = getattr(addon_prefs,"export_materials_library")
+        export_materials_library = getattr(addon_prefs.auto_export, "export_materials_library")
 
         for blueprint in blueprints:
             print("exporting collection", blueprint.name)

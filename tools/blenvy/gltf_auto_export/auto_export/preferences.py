@@ -19,7 +19,7 @@ AutoExportGltfPreferenceNames = [
     'export_scene_settings',
 
     'show_change_detection_settings',
-    'export_change_detection',
+    'change_detection',
 
     'show_scene_settings',
     'main_scenes',
@@ -104,7 +104,7 @@ class AutoExportGltfAddonPreferences(AddonPreferences):
         default=True
     ) # type: ignore 
 
-    export_change_detection: BoolProperty(
+    change_detection: BoolProperty(
         name='Change detection',
         description='Use change detection to determine what/if should be exported',
         default=True

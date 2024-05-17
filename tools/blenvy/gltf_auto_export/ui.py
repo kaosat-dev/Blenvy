@@ -29,7 +29,7 @@ def draw_settings_ui(layout, auto_export_settings):
     if panel:
         section = panel.box()
         section.enabled = controls_enabled
-        section.prop(auto_export_settings, "export_change_detection", text="Use change detection")
+        section.prop(auto_export_settings, "change_detection", text="Use change detection")
 
     header, panel = layout.panel("Blueprints", default_closed=False)
     header.label(text="Blueprints")

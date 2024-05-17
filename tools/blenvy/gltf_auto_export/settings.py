@@ -3,11 +3,6 @@ from bpy_types import (PropertyGroup)
 from bpy.props import (EnumProperty, PointerProperty, StringProperty, BoolProperty, CollectionProperty, IntProperty)
 
 class AutoExportSettings(PropertyGroup):
-    # use when operator is called directly, works a bit differently than inside the ui
-    direct_mode: BoolProperty(
-        default=False
-    ) # type: ignore
-
     auto_export: BoolProperty(
         name='Auto export',
         description='Automatically export to gltf on save',
@@ -15,7 +10,7 @@ class AutoExportSettings(PropertyGroup):
     ) # type: ignore
 
     #### general
-    export_change_detection: BoolProperty(
+    change_detection: BoolProperty(
         name='Change detection',
         description='Use change detection to determine what/if should be exported',
         default=True

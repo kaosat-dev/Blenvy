@@ -48,11 +48,16 @@ Blueprints:
 
     - [ ] scan & inject on load
     - [ ] scan & inject on save
+    - [ ] decide where & when to do & store blueprints data
 
 General things to solve:
  - [x] save settings
  - [x] load settings
     - [ ] add_blueprints_data
+
+- [ ] rename all path stuff using the old naming convention : "export_blueprints_path_full"
+- [ ] generate the full paths directly when setting them in the UI  
+    - [ ] problem : how to deal with defaults: do it on start/load ?
 
 General issues:
  - there is no safeguard for naming collisions for naming across blender files

@@ -5,20 +5,20 @@ from ...blueprints.blueprint_helpers import find_blueprints_not_on_disk
 
 # TODO: this should also take the split/embed mode into account: if a nested collection changes AND embed is active, its container collection should also be exported
 def get_blueprints_to_export(changes_per_scene, changed_export_parameters, blueprints_data, addon_prefs):
-    export_change_detection = getattr(addon_prefs, "export_change_detection")
     export_gltf_extension = getattr(addon_prefs, "export_gltf_extension", ".glb")
     export_blueprints_path_full = getattr(addon_prefs,"export_blueprints_path_full", "")
-    collection_instances_combine_mode = getattr(addon_prefs, "collection_instances_combine_mode")
+    change_detection = getattr(addon_prefs.auto_export, "change_detection")
+    collection_instances_combine_mode = getattr(addon_prefs.auto_export, "collection_instances_combine_mode")
 
     [main_scene_names, level_scenes, library_scene_names, library_scenes] = get_scenes(addon_prefs)
     internal_blueprints = blueprints_data.internal_blueprints
     blueprints_to_export = internal_blueprints # just for clarity
 
-    # print("export_change_detection", export_change_detection, "changed_export_parameters", changed_export_parameters, "changes_per_scene", changes_per_scene)
+    # print("change_detection", change_detection, "changed_export_parameters", changed_export_parameters, "changes_per_scene", changes_per_scene)
     
     # if the export parameters have changed, bail out early
     # we need to re_export everything if the export parameters have been changed
-    if export_change_detection and not changed_export_parameters:
+    if change_detection and not changed_export_parameters:
         changed_blueprints = []
 
         # first check if all collections have already been exported before (if this is the first time the exporter is run

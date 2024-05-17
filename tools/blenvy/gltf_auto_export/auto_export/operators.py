@@ -22,7 +22,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
         'auto_export',
         'project_root_path',
         'assets_path',
-        'export_change_detection',
+        'change_detection',
         'export_scene_settings',
 
         'main_scene_names',
@@ -132,6 +132,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
     This should ONLY be run when actually doing exports/aka calling auto_export function, because we only care about the difference in settings between EXPORTS
     """
     def did_export_settings_change(self):
+        return True
         # compare both the auto export settings & the gltf settings
         previous_auto_settings = bpy.data.texts[".gltf_auto_export_settings_previous"] if ".gltf_auto_export_settings_previous" in bpy.data.texts else None
         previous_gltf_settings = bpy.data.texts[".gltf_auto_export_gltf_settings_previous"] if ".gltf_auto_export_gltf_settings_previous" in bpy.data.texts else None
@@ -183,39 +184,41 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
         return changed
     
     def did_objects_change(self):
-        pass
+        # FIXME: add it back
+        return {}
 
-    def execute(self, context):    
+    def execute(self, context):
+        print("execute auto export", context.window_manager.blenvy.auto_export) 
+        blenvy = context.window_manager.blenvy
+        auto_export_settings = blenvy.auto_export
         bpy.context.window_manager.auto_export_tracker.disable_change_detection()
         if self.direct_mode:
             self.load_settings(context)
         if self.will_save_settings:
             self.save_settings(context)
         #print("self", self.auto_export)
-        if self.auto_export: # only do the actual exporting if auto export is actually enabled
+        if auto_export_settings.auto_export: # only do the actual exporting if auto export is actually enabled
+            print("auto export")
             #changes_per_scene = context.window_manager.auto_export_tracker.changed_objects_per_scene
             #& do the export
-            if self.direct_mode: #Do not auto export when applying settings in the menu, do it on save only   
-                # determine changed objects
-                changes_per_scene = self.did_objects_change()
-                # determine changed parameters 
-                params_changed = self.did_export_settings_change()
-                auto_export(changes_per_scene, params_changed, self)
-                # cleanup 
-                # reset the list of changes in the tracker
-                bpy.context.window_manager.auto_export_tracker.clear_changes()
-                print("AUTO EXPORT DONE")            
+            # determine changed objects
+            changes_per_scene = self.did_objects_change()
+            # determine changed parameters 
+            params_changed = self.did_export_settings_change()
+            auto_export(changes_per_scene, params_changed, blenvy)
+            # cleanup 
+            # reset the list of changes in the tracker
+            bpy.context.window_manager.auto_export_tracker.clear_changes()
+            print("AUTO EXPORT DONE")            
             bpy.app.timers.register(bpy.context.window_manager.auto_export_tracker.enable_change_detection, first_interval=0.1)
         else: 
             print("auto export disabled, skipping")
         return {'FINISHED'}    
     
     def invoke(self, context, event):
-        #print("invoke")
+        print("invoke")
         bpy.context.window_manager.auto_export_tracker.disable_change_detection()
         self.load_settings(context)
-        wm = context.window_manager
-        #wm.fileselect_add(self)
         return context.window_manager.invoke_props_dialog(self, title="Auto export", width=640)
     
     def cancel(self, context):
