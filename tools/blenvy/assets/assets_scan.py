@@ -5,13 +5,13 @@ import bpy
 from .asset_helpers import does_asset_exist, get_user_assets, get_user_assets_as_list
 
 def scan_assets(scene, blueprints_data, addon_prefs):
-    export_root_path = getattr(addon_prefs, "export_root_path")
+    project_root_path = getattr(addon_prefs, "project_root_path")
     export_output_folder = getattr(addon_prefs,"export_output_folder")
-    export_levels_path = getattr(addon_prefs,"export_levels_path")
-    export_blueprints_path = getattr(addon_prefs, "export_blueprints_path")
+    levels_path = getattr(addon_prefs,"levels_path")
+    blueprints_path = getattr(addon_prefs, "blueprints_path")
     export_gltf_extension = getattr(addon_prefs, "export_gltf_extension")
 
-    relative_blueprints_path = os.path.relpath(export_blueprints_path, export_root_path)
+    relative_blueprints_path = os.path.relpath(blueprints_path, project_root_path)
     blueprint_instance_names_for_scene = blueprints_data.blueprint_instances_per_main_scene.get(scene.name, None)
 
     blueprint_assets_list = []
@@ -62,7 +62,7 @@ def get_userTextures():
     print("textures", textures)
 
 def get_blueprint_assets_tree(blueprint, blueprints_data, parent, addon_prefs):
-    export_blueprints_path = getattr(addon_prefs, "export_blueprints_path")
+    blueprints_path = getattr(addon_prefs, "blueprints_path")
     export_gltf_extension = getattr(addon_prefs, "export_gltf_extension")
     assets_list = []
     
@@ -72,7 +72,7 @@ def get_blueprint_assets_tree(blueprint, blueprints_data, parent, addon_prefs):
         if child_blueprint:
             blueprint_exported_path = None
             if blueprint.local:
-                blueprint_exported_path = os.path.join(export_blueprints_path, f"{child_blueprint.name}{export_gltf_extension}")
+                blueprint_exported_path = os.path.join(blueprints_path, f"{child_blueprint.name}{export_gltf_extension}")
             else:
                 # get the injected path of the external blueprints
                 blueprint_exported_path = child_blueprint.collection['export_path'] if 'export_path' in child_blueprint.collection else None
@@ -91,7 +91,7 @@ def get_blueprint_assets_tree(blueprint, blueprints_data, parent, addon_prefs):
     return assets_list
 
 def get_main_scene_assets_tree(main_scene, blueprints_data, addon_prefs):
-    export_blueprints_path =  getattr(addon_prefs, "export_blueprints_path")
+    blueprints_path =  getattr(addon_prefs, "blueprints_path")
     export_gltf_extension = getattr(addon_prefs, "export_gltf_extension")
     blueprint_instance_names_for_scene = blueprints_data.blueprint_instances_per_main_scene.get(main_scene.name, None)
 
@@ -102,7 +102,7 @@ def get_main_scene_assets_tree(main_scene, blueprints_data, addon_prefs):
             if blueprint is not None: 
                 blueprint_exported_path = None
                 if blueprint.local:
-                    blueprint_exported_path = os.path.join(export_blueprints_path, f"{blueprint.name}{export_gltf_extension}")
+                    blueprint_exported_path = os.path.join(blueprints_path, f"{blueprint.name}{export_gltf_extension}")
                 else:
                     # get the injected path of the external blueprints
                     blueprint_exported_path = blueprint.collection['export_path'] if 'export_path' in blueprint.collection else None

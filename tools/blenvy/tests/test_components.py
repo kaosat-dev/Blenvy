@@ -11,7 +11,7 @@ from .setup_data import setup_data
 
 def test_components_should_generate_correct_custom_properties(setup_data):
     registry = bpy.context.window_manager.components_registry
-    registry.schemaPath = setup_data["schema_path"]
+    registry.schemaPath = setup_data["components_schemaPath"]
     bpy.ops.object.reload_registry()
 
     type_infos = registry.type_infos
@@ -58,7 +58,7 @@ def test_components_should_generate_correct_custom_properties(setup_data):
     
 def test_components_should_generate_correct_custom_properties_with_randomized_values(setup_data):
     registry = bpy.context.window_manager.components_registry
-    registry.schemaPath = setup_data["schema_path"]
+    registry.schemaPath = setup_data["components_schemaPath"]
     bpy.ops.object.reload_registry()
 
     type_infos = registry.type_infos
@@ -108,7 +108,7 @@ def test_components_should_generate_correct_custom_properties_with_randomized_va
 
 def test_components_should_generate_correct_propertyGroup_values_from_custom_properties(setup_data):
     registry = bpy.context.window_manager.components_registry
-    registry.schemaPath = setup_data["schema_path"]
+    registry.schemaPath = setup_data["components_schemaPath"]
     bpy.ops.object.reload_registry()
 
     type_infos = registry.type_infos
@@ -166,7 +166,7 @@ def test_components_should_generate_correct_propertyGroup_values_from_custom_pro
 
 def test_remove_components(setup_data):
     registry = bpy.context.window_manager.components_registry
-    registry.schemaPath = setup_data["schema_path"]
+    registry.schemaPath = setup_data["components_schemaPath"]
     bpy.ops.object.reload_registry()
 
     type_infos = registry.type_infos
@@ -207,7 +207,7 @@ def test_remove_components(setup_data):
 def test_copy_paste_components(setup_data):
     context = bpy.context
     registry = context.window_manager.components_registry
-    registry.schemaPath = setup_data["schema_path"]
+    registry.schemaPath = setup_data["components_schemaPath"]
     bpy.ops.object.reload_registry()
 
     long_name = "bevy_example::test_components::BasicTest"

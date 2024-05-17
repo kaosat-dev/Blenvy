@@ -24,7 +24,7 @@ def get_component_propGroup(registry, component_name, component_meta):
 
 def test_rename_component_single_unit_struct(setup_data):
     registry = bpy.context.window_manager.components_registry
-    registry.schemaPath = setup_data["schema_path"]
+    registry.schemaPath = setup_data["components_schemaPath"]
     bpy.ops.object.reload_registry()
 
     rename_component_operator = bpy.ops.object.rename_bevy_component
@@ -47,7 +47,7 @@ def test_rename_component_single_unit_struct(setup_data):
     
 def test_rename_component_single_complex_struct(setup_data):
     registry = bpy.context.window_manager.components_registry
-    registry.schemaPath = setup_data["schema_path"]
+    registry.schemaPath = setup_data["components_schemaPath"]
     bpy.ops.object.reload_registry()
 
     rename_component_operator = bpy.ops.object.rename_bevy_component
@@ -70,7 +70,7 @@ def test_rename_component_single_complex_struct(setup_data):
 
 def test_rename_component_bulk(setup_data):
     registry = bpy.context.window_manager.components_registry
-    registry.schemaPath = setup_data["schema_path"]
+    registry.schemaPath = setup_data["components_schemaPath"]
     bpy.ops.object.reload_registry()
 
     rename_component_operator = bpy.ops.object.rename_bevy_component
@@ -95,7 +95,7 @@ def test_rename_component_bulk(setup_data):
 
 def test_rename_component_single_error_handling(setup_data):
     registry = bpy.context.window_manager.components_registry
-    registry.schemaPath = setup_data["schema_path"]
+    registry.schemaPath = setup_data["components_schemaPath"]
     bpy.ops.object.reload_registry()
 
     rename_component_operator = bpy.ops.object.rename_bevy_component
@@ -125,7 +125,7 @@ def test_rename_component_single_error_handling(setup_data):
 
 def test_rename_component_single_error_handling_clean_errors(setup_data):
     registry = bpy.context.window_manager.components_registry
-    registry.schemaPath = setup_data["schema_path"]
+    registry.schemaPath = setup_data["components_schemaPath"]
     bpy.ops.object.reload_registry()
 
     rename_component_operator = bpy.ops.object.rename_bevy_component

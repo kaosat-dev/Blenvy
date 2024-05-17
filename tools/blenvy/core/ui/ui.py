@@ -1,6 +1,8 @@
 import bpy
-from ...settings import load_settings
-
+import blenvy.bevy_components.ui as components_ui
+import blenvy.gltf_auto_export.ui as auto_export_ui
+from blenvy.settings import load_settings
+# from ...bevy_components.components import ui# as components_ui
 ######################################################
 
 ## ui logic & co
@@ -17,7 +19,7 @@ def draw_folder_browser(layout, label, prop_origin, target_property):
     col.prop(prop_origin, target_property, text="")
 
     folder_selector = row.operator("generic.open_folderbrowser", icon="FILE_FOLDER", text="")
-    folder_selector.target_property = target_property #"export_root_path"
+    folder_selector.target_property = target_property #"project_root_path"
 
 # side panel
 class BLENVY_PT_SidePanel(bpy.types.Panel):
@@ -42,7 +44,7 @@ class BLENVY_PT_SidePanel(bpy.types.Panel):
         library_scene_active = False
         active_collection = context.collection
 
-        current_auto_settings = load_settings(".gltf_auto_export_settings")
+        """current_auto_settings = load_settings(".gltf_auto_export_settings")
         current_gltf_settings = load_settings(".gltf_auto_export_gltf_settings")
         
         if current_auto_settings is not None:
@@ -51,8 +53,7 @@ class BLENVY_PT_SidePanel(bpy.types.Panel):
             library_scene_names = current_auto_settings["library_scene_names"]
 
             world_scene_active = context.scene.name in main_scene_names
-            library_scene_active = context.scene.name in library_scene_names
-
+            library_scene_active = context.scene.name in library_scene_names"""
 
         # Now to actual drawing of the UI
         target = row.box() if active_mode == 'COMPONENTS' else row
@@ -82,19 +83,19 @@ class BLENVY_PT_SidePanel(bpy.types.Panel):
         layout.label(text=blenvy.mode)"""
 
         if blenvy.mode == "SETTINGS":
-            header, panel = layout.panel("auto_export", default_closed=False)
+            header, panel = layout.panel("common", default_closed=False)
             header.label(text="Common")
             if panel:
                 row = panel.row()
-                draw_folder_browser(layout=row, label="Root Folder", prop_origin=blenvy, target_property="export_root_path")
+                draw_folder_browser(layout=row, label="Root Folder", prop_origin=blenvy, target_property="project_root_path")
                 row = panel.row()
-                draw_folder_browser(layout=row, label="Assets Folder", prop_origin=blenvy, target_property="export_assets_path")
+                draw_folder_browser(layout=row, label="Assets Folder", prop_origin=blenvy, target_property="assets_path")
                 row = panel.row()
-                draw_folder_browser(layout=row, label="Blueprints Folder", prop_origin=blenvy, target_property="export_blueprints_path")
+                draw_folder_browser(layout=row, label="Blueprints Folder", prop_origin=blenvy, target_property="blueprints_path")
                 row = panel.row()
-                draw_folder_browser(layout=row, label="Levels Folder", prop_origin=blenvy, target_property="export_levels_path")
+                draw_folder_browser(layout=row, label="Levels Folder", prop_origin=blenvy, target_property="levels_path")
                 row = panel.row()
-                draw_folder_browser(layout=row, label="Materials Folder", prop_origin=blenvy, target_property="export_materials_path")
+                draw_folder_browser(layout=row, label="Materials Folder", prop_origin=blenvy, target_property="materials_path")
 
                 panel.separator()
                 # scenes selection
@@ -111,14 +112,14 @@ class BLENVY_PT_SidePanel(bpy.types.Panel):
                 sub_row = col.row()
                 add_operator = sub_row.operator("scene_list.list_action", icon='ADD', text="")
                 add_operator.action = 'ADD'
-                add_operator.scene_type = 'level'
+                add_operator.scene_type = 'LEVEL'
                 #add_operator.operator = operator
                 sub_row.enabled = context.window_manager.main_scene is not None
 
                 sub_row = col.row()
                 remove_operator = sub_row.operator("scene_list.list_action", icon='REMOVE', text="")
                 remove_operator.action = 'REMOVE'
-                remove_operator.scene_type = 'level'
+                remove_operator.scene_type = 'LEVEL'
                 col.separator()
 
                 # library scenes
@@ -133,41 +134,24 @@ class BLENVY_PT_SidePanel(bpy.types.Panel):
                 sub_row = col.row()
                 add_operator = sub_row.operator("scene_list.list_action", icon='ADD', text="")
                 add_operator.action = 'ADD'
-                add_operator.scene_type = 'library'
+                add_operator.scene_type = 'LIBRARY'
                 sub_row.enabled = context.window_manager.library_scene is not None
 
 
                 sub_row = col.row()
                 remove_operator = sub_row.operator("scene_list.list_action", icon='REMOVE', text="")
                 remove_operator.action = 'REMOVE'
-                remove_operator.scene_type = 'library'
+                remove_operator.scene_type = 'LIBRARY'
                 col.separator()
 
-              
-        """if blenvy.mode == "SETTINGS":
+            header, panel = layout.panel("components", default_closed=False)
+            header.label(text="Components")
+            if panel:
+                components_ui.draw_settings_ui(panel, context.window_manager.components_registry)
+
             header, panel = layout.panel("auto_export", default_closed=False)
             header.label(text="Auto Export")
             if panel:
-                layout = panel
-                layout.label(text="MAKE SURE TO KEEP 'REMEMBER EXPORT SETTINGS' TOGGLED !!")
-                op = layout.operator("EXPORT_SCENE_OT_gltf", text='Gltf Settings')#'glTF 2.0 (.glb/.gltf)')
-                #op.export_format = 'GLTF_SEPARATE'
-                op.use_selection=True
-                op.will_save_settings=True
-                op.use_visible=True # Export visible and hidden objects. See Object/Batch Export to skip.
-                op.use_renderable=True
-                op.use_active_collection = True
-                op.use_active_collection_with_nested=True
-                op.use_active_scene = True
-                op.filepath="____dummy____"
-                op.gltf_export_id = "gltf_auto_export" # we specify that we are in a special case
-
-                op = layout.operator("EXPORT_SCENES_OT_auto_gltf", text="Auto Export Settings")
-                op.auto_export = True"""
-
-        """header, panel = layout.panel("components", default_closed=False)
-        header.label(text="Components")
-        if panel:
-            panel.label(text="YOOO")"""
+                auto_export_ui.draw_settings_ui(panel, blenvy.auto_export)
 
 

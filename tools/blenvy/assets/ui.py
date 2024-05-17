@@ -80,7 +80,7 @@ class Blenvy_assets(bpy.types.Panel):
         header, panel = layout.box().panel(f"assets{name}", default_closed=False)
         header.label(text="World/Level Assets")
 
-        settings = {"export_blueprints_path": "blueprints", "export_gltf_extension": ".glb"}
+        settings = {"blueprints_path": "blueprints", "export_gltf_extension": ".glb"}
         settings = SimpleNamespace(**settings)
 
         if panel:

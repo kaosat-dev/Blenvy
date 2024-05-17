@@ -20,16 +20,16 @@ def check_if_blueprint_on_disk(scene_name, folder_path, extension):
     print("level", scene_name, "found", found, "path", gltf_output_path)
     return found
 
-def inject_export_path_into_internal_blueprints(internal_blueprints, export_blueprints_path, gltf_extension):
+def inject_export_path_into_internal_blueprints(internal_blueprints, blueprints_path, gltf_extension):
     for blueprint in internal_blueprints:
-        blueprint_exported_path = os.path.join(export_blueprints_path, f"{blueprint.name}{gltf_extension}")
+        blueprint_exported_path = os.path.join(blueprints_path, f"{blueprint.name}{gltf_extension}")
         blueprint.collection["export_path"] = blueprint_exported_path
 
 def inject_blueprints_list_into_main_scene(scene, blueprints_data, addon_prefs):
-    export_root_path = getattr(addon_prefs, "export_root_path")
-    export_assets_path = getattr(addon_prefs,"export_assets_path")
-    export_levels_path = getattr(addon_prefs,"export_levels_path")
-    export_blueprints_path = getattr(addon_prefs, "export_blueprints_path")
+    project_root_path = getattr(addon_prefs, "project_root_path")
+    assets_path = getattr(addon_prefs,"assets_path")
+    levels_path = getattr(addon_prefs,"levels_path")
+    blueprints_path = getattr(addon_prefs, "blueprints_path")
     export_gltf_extension = getattr(addon_prefs, "export_gltf_extension")
 
     # print("injecting assets/blueprints data into scene")
@@ -45,7 +45,7 @@ def inject_blueprints_list_into_main_scene(scene, blueprints_data, addon_prefs):
                 print("BLUEPRINT", blueprint)
                 blueprint_exported_path = None
                 if blueprint.local:
-                    blueprint_exported_path = os.path.join(export_blueprints_path, f"{blueprint.name}{export_gltf_extension}")
+                    blueprint_exported_path = os.path.join(blueprints_path, f"{blueprint.name}{export_gltf_extension}")
                 else:
                     # get the injected path of the external blueprints
                     blueprint_exported_path = blueprint.collection['Export_path'] if 'Export_path' in blueprint.collection else None
@@ -61,8 +61,7 @@ def inject_blueprints_list_into_main_scene(scene, blueprints_data, addon_prefs):
 
     print("blueprint assets", blueprint_assets_list)
     """add_scene_property(scene, assets_list_name, assets_list_data)
-    for blueprint in blueprint_assets_list:
-        bpy.context.window_manager.assets_registry.add_asset(**blueprint)"""
+    """
 
 def remove_blueprints_list_from_main_scene(scene):
     assets_list = None

@@ -6,13 +6,6 @@ from bpy.types import Operator
 from .preferences import (AutoExportGltfAddonPreferences, AutoExportGltfPreferenceNames)
 from .auto_export import auto_export
 from ..helpers.generate_complete_preferences_dict import generate_complete_preferences_dict_auto
-from ..helpers.serialize_scene import serialize_scene
-
-def bubble_up_changes(object, changes_per_scene):
-    if object.parent:
-        changes_per_scene[object.parent.name] = bpy.data.objects[object.parent.name]
-        bubble_up_changes(object.parent, changes_per_scene)
-
 
 class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
     """auto export gltf"""
@@ -27,8 +20,8 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
     #list of settings (other than purely gltf settings) whose change should trigger a re-generation of gltf files
     white_list = [
         'auto_export',
-        'export_root_path',
-        'export_assets_path',
+        'project_root_path',
+        'assets_path',
         'export_change_detection',
         'export_scene_settings',
 
@@ -36,15 +29,15 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
         'library_scene_names',
 
         'export_blueprints',
-        'export_blueprints_path',
+        'blueprints_path',
         'export_marked_assets',
         'collection_instances_combine_mode',
 
-        'export_levels_path',
+        'levels_path',
         'export_separate_dynamic_and_static_objects',
 
         'export_materials_library',
-        'export_materials_path',
+        'materials_path',
         ]
 
     @classmethod
@@ -78,16 +71,12 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
                 export_props[k] = value
         # we add main & library scene names to our preferences
         
-        export_props['main_scene_names'] = list(map(lambda scene_data: scene_data.name, getattr(self,"main_scenes")))
-        export_props['library_scene_names'] = list(map(lambda scene_data: scene_data.name, getattr(self,"library_scenes")))
         return export_props
 
     def save_settings(self, context):
         print("save settings")
         auto_export_settings = self.format_settings()
-        self.properties['main_scene_names'] = auto_export_settings['main_scene_names']
-        self.properties['library_scene_names'] = auto_export_settings['library_scene_names']
-
+        
         stored_settings = bpy.data.texts[".gltf_auto_export_settings"] if ".gltf_auto_export_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_settings")
         stored_settings.clear()
 
@@ -194,88 +183,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
         return changed
     
     def did_objects_change(self):
-        # sigh... you need to save & reset the frame otherwise it saves the values AT THE CURRENT FRAME WHICH CAN DIFFER ACROSS SCENES
-        current_frames = [scene.frame_current for scene in bpy.data.scenes]
-        for scene in bpy.data.scenes:
-            scene.frame_set(0)
-
-        current_scene = bpy.context.window.scene
-        bpy.context.window.scene = bpy.data.scenes[0]
-        #serialize scene at frame 0
-        """with bpy.context.temp_override(scene=bpy.data.scenes[1]):
-            bpy.context.scene.frame_set(0)"""
-        current = serialize_scene()
-        bpy.context.window.scene = current_scene
-
-        # reset previous frames
-        for (index, scene) in enumerate(bpy.data.scenes):
-            scene.frame_set(int(current_frames[index]))
-
-        previous_stored = bpy.data.texts[".TESTING"] if ".TESTING" in bpy.data.texts else None # bpy.data.texts.new(".TESTING")
-        if previous_stored == None:
-            previous_stored = bpy.data.texts.new(".TESTING")
-            previous_stored.write(current)
-            return {}
-        previous = json.loads(previous_stored.as_string())
-        current = json.loads(current)
-
-        changes_per_scene = {}
-        # TODO : how do we deal with changed scene names ???
-        for scene in current:
-            # print('scene', scene)
-            previous_object_names = list(previous[scene].keys())
-            current_object_names =list(current[scene].keys())
-            #print("previous_object_names", len(previous_object_names), previous_object_names)
-            #print("current_object_names", len(current_object_names), current_object_names)
-
-            """if len(previous_object_names) > len(current_object_names):
-                print("removed")
-            if len(current_object_names) > len(previous_object_names):
-                print("added")"""
-            added =  list(set(current_object_names) - set(previous_object_names))
-            removed = list(set(previous_object_names) - set(current_object_names))
-            """print("removed", removed)
-            print("added",added)"""
-            for obj in added:
-                if not scene in changes_per_scene:
-                    changes_per_scene[scene] = {}
-                changes_per_scene[scene][obj] = bpy.data.objects[obj]
-            # TODO: how do we deal with this, as we obviously do not have data for removed objects ?
-            for obj in removed:
-                if not scene in changes_per_scene:
-                    changes_per_scene[scene] = {}
-                changes_per_scene[scene][obj] = None # bpy.data.objects[obj]
-
-            for object_name in list(current[scene].keys()): # todo : exclude directly added/removed objects  
-                #print("ob", object_name)
-                if object_name in previous[scene]:
-                    # print("object", object_name,"in previous scene, comparing")
-                    current_obj = current[scene][object_name]
-                    prev_obj = previous[scene][object_name]
-                    same = str(current_obj) == str(prev_obj)
-
-                    if "Camera" in object_name:
-                        pass#print("  current", current_obj, prev_obj)
-                    """if "Fox" in object_name:
-                        print("  current", current_obj)
-                        print("  previou", prev_obj)
-                        print("  same?", same)"""
-                    #print("foo", same)
-                    if not same:
-                        """ print("  current", current_obj)
-                        print("  previou", prev_obj)"""
-                        if not scene in changes_per_scene:
-                            changes_per_scene[scene] = {}
-
-                        changes_per_scene[scene][object_name] = bpy.data.objects[object_name]
-                        bubble_up_changes(bpy.data.objects[object_name], changes_per_scene[scene])
-                        # now bubble up for instances & parents
-            previous_stored.clear()
-            previous_stored.write(json.dumps(current))
-
-        print("changes per scene alternative", changes_per_scene)
-        return changes_per_scene
-
+        pass
 
     def execute(self, context):    
         bpy.context.window_manager.auto_export_tracker.disable_change_detection()
@@ -286,7 +194,6 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
         #print("self", self.auto_export)
         if self.auto_export: # only do the actual exporting if auto export is actually enabled
             #changes_per_scene = context.window_manager.auto_export_tracker.changed_objects_per_scene
-
             #& do the export
             if self.direct_mode: #Do not auto export when applying settings in the menu, do it on save only   
                 # determine changed objects
@@ -310,68 +217,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
         wm = context.window_manager
         #wm.fileselect_add(self)
         return context.window_manager.invoke_props_dialog(self, title="Auto export", width=640)
-        return {'RUNNING_MODAL'}
     
-    """def modal(self, context, event):
-                    
-        if event.type == 'SPACE':
-            wm = context.window_manager
-            wm.invoke_popup(self)
-            #wm.invoke_props_dialog(self)
-
-        if event.type in {'ESC'}:
-            return {'CANCELLED'}
-
-        return {'RUNNING_MODAL'}"""
-    
-    
-    def draw(self, context):
-        layout = self.layout
-        operator = self
-
-        controls_enabled = self.auto_export
-        
-        layout.prop(self, "auto_export")
-        layout.separator()
-
-        toggle_icon = "TRIA_DOWN" if self.show_general_settings else "TRIA_RIGHT"
-        layout.prop(self, "show_general_settings", text="General", icon=toggle_icon)
-        if self.show_general_settings:
-            section = layout.box()
-            section.enabled = controls_enabled
-            section.prop(operator, "export_scene_settings")            
-        toggle_icon = "TRIA_DOWN" if self.show_change_detection_settings else "TRIA_RIGHT"
-        layout.prop(operator, "show_change_detection_settings", text="Change Detection", icon=toggle_icon)
-        if self.show_change_detection_settings:
-            section = layout.box()
-            section.enabled = controls_enabled
-            section.prop(operator, "export_change_detection", text="Use change detection")
-
-        toggle_icon = "TRIA_DOWN" if self.show_blueprint_settings else "TRIA_RIGHT"
-        layout.prop(operator, "show_blueprint_settings", text="Blueprints", icon=toggle_icon)
-        if self.show_blueprint_settings:
-            section = layout.box()
-            section.enabled = controls_enabled
-            section.prop(operator, "export_blueprints")
-
-            section = section.box()
-            section.enabled = controls_enabled and self.export_blueprints
-
-            # collections/blueprints 
-            section.prop(operator, "collection_instances_combine_mode")
-            section.prop(operator, "export_marked_assets")
-            section.separator()
-
-            section.prop(operator, "export_separate_dynamic_and_static_objects")
-            section.separator()
-
-            # materials
-            section.prop(operator, "export_materials_library")
-            section = section.box()
-            section.enabled = controls_enabled and self.export_materials_library
-            #section.prop(operator, "export_materials_path")
-
-
     def cancel(self, context):
         print("cancel")
         #bpy.context.window_manager.auto_export_tracker.enable_change_detection()

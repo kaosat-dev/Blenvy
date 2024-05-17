@@ -80,7 +80,7 @@ def test_export_do_not_export_blueprints(setup_data):
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
-        export_root_path = os.path.abspath(setup_data["root_path"]),
+        project_root_path = os.path.abspath(setup_data["root_path"]),
         export_output_folder="assets/models",
         export_scene_settings=True,
         export_blueprints=False,
@@ -107,11 +107,11 @@ def test_export_custom_blueprints_path(setup_data):
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
-        export_root_path = os.path.abspath(setup_data["root_path"]),
+        project_root_path = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_blueprints_path = "assets/other_blueprints"
+        blueprints_path = "assets/other_blueprints"
     )
     assert os.path.exists(os.path.join(setup_data["levels_path"], "World.glb")) == True
     assert os.path.exists(os.path.join(setup_data["root_path"],"assets", "other_blueprints", "Blueprint1.glb")) == True
@@ -133,7 +133,7 @@ def test_export_materials_library(setup_data):
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
-        export_root_path = os.path.abspath(setup_data["root_path"]),
+        project_root_path = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
@@ -160,12 +160,12 @@ def test_export_materials_library_custom_path(setup_data):
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
-        export_root_path = os.path.abspath(setup_data["root_path"]),
+        project_root_path = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
         export_materials_library = True,
-        export_materials_path="assets/other_materials"
+        materials_path="assets/other_materials"
     )
 
     assert os.path.exists(os.path.join(setup_data["blueprints_path"], "Blueprint1.glb")) == True
@@ -192,7 +192,7 @@ def test_export_collection_instances_combine_mode(setup_data): # There is more i
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
-        export_root_path = os.path.abspath(setup_data["root_path"]),
+        project_root_path = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
         export_blueprints=True,
         collection_instances_combine_mode = 'Embed'
@@ -219,7 +219,7 @@ def test_export_do_not_export_marked_assets(setup_data):
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
-        export_root_path = os.path.abspath(setup_data["root_path"]),
+        project_root_path = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
@@ -253,7 +253,7 @@ def test_export_separate_dynamic_and_static_objects(setup_data):
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
-        export_root_path = os.path.abspath(setup_data["root_path"]),
+        project_root_path = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
@@ -281,7 +281,7 @@ def test_export_should_not_generate_orphan_data(setup_data):
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
-        export_root_path = os.path.abspath(setup_data["root_path"]),
+        project_root_path = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,

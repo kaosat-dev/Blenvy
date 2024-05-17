@@ -173,9 +173,9 @@ class COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL(Operator):
         context.window_manager.components_from_custom_properties_progress_all = -1.0
         return {'FINISHED'}
 
-class OT_OpenFilebrowser(Operator, ImportHelper):
+class OT_OpenSchemaFileBrowser(Operator, ImportHelper):
     """Browse for registry json file"""
-    bl_idname = "generic.open_filebrowser" 
+    bl_idname = "blenvy.open_schemafilebrowser" 
     bl_label = "Open the file browser" 
 
     filter_glob: StringProperty( 
@@ -194,7 +194,8 @@ class OT_OpenFilebrowser(Operator, ImportHelper):
         registry = context.window_manager.components_registry
         registry.schemaPath = relative_path
 
-        upsert_settings(registry.settings_save_path, {"schemaPath": relative_path})
+        blenvy = context.window_manager.blenvy
+        upsert_settings(blenvy.settings_save_path, {"components_schemaPath": relative_path})
         
         return {'FINISHED'}
     

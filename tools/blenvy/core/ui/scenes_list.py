@@ -46,16 +46,21 @@ class SCENES_LIST_OT_actions(Operator):
             ('UP', "Up", ""),
             ('DOWN', "Down", ""),
             ('REMOVE', "Remove", ""),
-            ('ADD', "Add", ""))) # type: ignore
+            ('ADD', "Add", ""))
+    ) # type: ignore
+
+    scene_type: bpy.props.EnumProperty(
+        items=(
+            ('LEVEL', "Level", ""),
+            ('LIBRARY', "Library", ""),
+        )
+    ) # type: ignore
     
-
-    scene_type: bpy.props.StringProperty()# type: ignore #TODO: replace with enum
-
     def invoke(self, context, event):
         source = context.window_manager.blenvy
         target_name = "library_scenes"
         target_index = "library_scenes_index"
-        if self.scene_type == "level":
+        if self.scene_type == "LEVEL":
             target_name = "main_scenes"
             target_index = "main_scenes_index"
         
@@ -82,13 +87,14 @@ class SCENES_LIST_OT_actions(Operator):
 
             elif self.action == 'REMOVE':
                 info = 'Item "%s" removed from list' % (target[idx].name)
-                setattr(source, target_index, current_index -1 )
                 target.remove(idx)
+
+                setattr(source, target_index, current_index -1 )
                 self.report({'INFO'}, info)
 
         if self.action == 'ADD':
             new_scene_name = None
-            if self.scene_type == "level":
+            if self.scene_type == "LEVEL":
                 if context.window_manager.main_scene:
                     new_scene_name = context.window_manager.main_scene.name
             else:
@@ -96,17 +102,17 @@ class SCENES_LIST_OT_actions(Operator):
                     new_scene_name = context.window_manager.library_scene.name
             if new_scene_name:
                 item = target.add()
-                item.name = new_scene_name#f"Rule {idx +1}"
+                item.name = new_scene_name
 
-                if self.scene_type == "level":
+                if self.scene_type == "LEVEL":
                     context.window_manager.main_scene = None
                 else:
                     context.window_manager.library_scene = None
 
-                #name = f"Rule {idx +1}"
-                #target.append({"name": name})
                 setattr(source, target_index, len(target) - 1)
-                #source[target_index] = len(target) - 1
+
+                
+
                 info = '"%s" added to list' % (item.name)
                 self.report({'INFO'}, info)
         

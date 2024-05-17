@@ -5,7 +5,7 @@ Auto export
         - [x] blueprints
         - [x] materials
  - [x] move out the UI for "assets" folder out of "blueprints condition"
- - [ ] fix asset path calculations
+ - [x] fix asset path calculations
      - root path => relative to blend file path
      - asset path => relative to root path
      - blueprints/levels/blueprints path => relative to assets path
@@ -49,6 +49,10 @@ Blueprints:
     - [ ] scan & inject on load
     - [ ] scan & inject on save
 
+General things to solve:
+ - [x] save settings
+ - [x] load settings
+    - [ ] add_blueprints_data
 
 General issues:
  - there is no safeguard for naming collisions for naming across blender files

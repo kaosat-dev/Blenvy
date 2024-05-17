@@ -15,11 +15,12 @@ import bpy
 from bpy.app.handlers import persistent
 from bpy.props import (StringProperty)
 
+
 # components management 
 from .bevy_components.components.operators import CopyComponentOperator, Fix_Component_Operator, OT_rename_component, RemoveComponentFromAllObjectsOperator, RemoveComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, AddComponentOperator, RenameHelper, Toggle_ComponentVisibility
 
 from .bevy_components.registry.registry import ComponentsRegistry,MissingBevyType
-from .bevy_components.registry.operators import (COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT, COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT, OT_select_component_name_to_replace, OT_select_object, ReloadRegistryOperator, OT_OpenFilebrowser)
+from .bevy_components.registry.operators import (COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT, COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT, OT_select_component_name_to_replace, OT_select_object, ReloadRegistryOperator, OT_OpenSchemaFileBrowser)
 from .bevy_components.registry.ui import (BEVY_COMPONENTS_PT_Configuration, BEVY_COMPONENTS_PT_AdvancedToolsPanel, BEVY_COMPONENTS_PT_MissingTypesPanel, MISSING_TYPES_UL_List)
 
 from .bevy_components.components.metadata import (ComponentMetadata, ComponentsMeta)
@@ -32,12 +33,8 @@ from .bevy_components.components.ui import (BEVY_COMPONENTS_PT_ComponentsPanel)
 from .gltf_auto_export import gltf_post_export_callback
 from .gltf_auto_export.auto_export.operators import AutoExportGLTF
 from .gltf_auto_export.auto_export.tracker import AutoExportTracker
-from .gltf_auto_export.ui.main import (GLTF_PT_auto_export_change_detection, GLTF_PT_auto_export_main,
-                      GLTF_PT_auto_export_root,
-                      GLTF_PT_auto_export_general,
-                      GLTF_PT_auto_export_blueprints,
-                      GLTF_PT_auto_export_SidePanel
-                      )
+from .gltf_auto_export.settings import AutoExportSettings
+
 # asset management
 from .assets.ui import Blenvy_assets
 from .assets.assets_registry import Asset, AssetsRegistry
@@ -54,7 +51,7 @@ from .core.operators import OT_switch_bevy_tooling
 from .core.scene_helpers import (SceneSelector)
 from .core.ui.ui import (BLENVY_PT_SidePanel)
 from .core.ui.scenes_list import SCENES_LIST_OT_actions, SCENE_UL_Blenvy
-from .core.ui.folder_browser import OT_OpenFolderbrowser
+from .core.ui.folder_browser import OT_OpenAssetsFolderBrowser
 
 
 # this needs to be here, as it is how Blender's gltf exporter callbacks are defined, at the add-on root level
@@ -67,7 +64,7 @@ classes = [
     SceneSelector,
     SCENE_UL_Blenvy,
     SCENES_LIST_OT_actions,
-    OT_OpenFolderbrowser,
+    OT_OpenAssetsFolderBrowser,
 
     # blenvy
     BLENVY_PT_SidePanel,
@@ -92,7 +89,7 @@ classes = [
     MissingBevyType,
     ComponentsRegistry,
 
-    OT_OpenFilebrowser,
+    OT_OpenSchemaFileBrowser,
     ReloadRegistryOperator,
     COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL,
     COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT,
@@ -105,7 +102,7 @@ classes = [
     
     BEVY_COMPONENTS_PT_ComponentsPanel,
     BEVY_COMPONENTS_PT_AdvancedToolsPanel,
-    BEVY_COMPONENTS_PT_Configuration,
+    #BEVY_COMPONENTS_PT_Configuration,
     MISSING_TYPES_UL_List,
     BEVY_COMPONENTS_PT_MissingTypesPanel,
 
@@ -118,15 +115,8 @@ classes = [
 
     # gltf auto export
     AutoExportGLTF, 
-
-
-    GLTF_PT_auto_export_main,
-    GLTF_PT_auto_export_root,
-    GLTF_PT_auto_export_general,
-    GLTF_PT_auto_export_change_detection,
-    GLTF_PT_auto_export_blueprints,
-    GLTF_PT_auto_export_SidePanel,
     AutoExportTracker,
+    AutoExportSettings,
 
     # blenvy
     BlenvyManager,
@@ -157,8 +147,11 @@ def post_save(scene, depsgraph):
 @persistent
 def post_load(file_name):
     registry = bpy.context.window_manager.components_registry
-    if registry != None:
+    if registry  is not None:
         registry.load_settings()
+    blenvy = bpy.context.window_manager.blenvy
+    if blenvy is not None:
+        blenvy.load_settings()
 
 def register():
     for cls in classes:

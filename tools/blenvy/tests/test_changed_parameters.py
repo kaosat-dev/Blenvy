@@ -82,7 +82,7 @@ def test_export_no_parameters(setup_data):
         auto_export=True,
         direct_mode=True,
         export_materials_library=True,
-        export_root_path = os.path.abspath(setup_data["root_path"]),
+        project_root_path = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
     )
 
@@ -104,7 +104,7 @@ def test_export_auto_export_parameters_only(setup_data):
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
-        export_root_path = os.path.abspath(setup_data["root_path"]),
+        project_root_path = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
         export_materials_library=True
     )
@@ -140,7 +140,7 @@ def test_export_changed_parameters(setup_data):
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
-        export_root_path = os.path.abspath(setup_data["root_path"]),
+        project_root_path = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
@@ -159,7 +159,7 @@ def test_export_changed_parameters(setup_data):
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
-        export_root_path = os.path.abspath(setup_data["root_path"]),
+        project_root_path = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
@@ -184,7 +184,7 @@ def test_export_changed_parameters(setup_data):
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
-        export_root_path = os.path.abspath(setup_data["root_path"]),
+        project_root_path = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
@@ -200,7 +200,7 @@ def test_export_changed_parameters(setup_data):
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
-        export_root_path = os.path.abspath(setup_data["root_path"]),
+        project_root_path = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
@@ -229,7 +229,7 @@ def test_export_changed_parameters(setup_data):
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
-        export_root_path = os.path.abspath(setup_data["root_path"]),
+        project_root_path = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
@@ -245,7 +245,7 @@ def test_export_changed_parameters(setup_data):
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
-        export_root_path = os.path.abspath(setup_data["root_path"]),
+        project_root_path = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,

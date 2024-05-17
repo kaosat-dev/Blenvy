@@ -53,10 +53,10 @@ def test_export_external_blueprints(setup_data):
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
-        export_root_path = os.path.abspath(root_path),
-        #export_blueprints_path = os.path.join("assets", "models", "library"),
+        project_root_path = os.path.abspath(root_path),
+        #blueprints_path = os.path.join("assets", "models", "library"),
         #export_output_folder = os.path.join("assets", "models"), #"./models",
-        #export_levels_path = os.path.join("assets", "models"),
+        #levels_path = os.path.join("assets", "models"),
 
         export_scene_settings=False,
         export_blueprints=True,

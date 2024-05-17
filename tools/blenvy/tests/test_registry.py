@@ -3,7 +3,7 @@ from .setup_data import setup_data
 
 def test_blend(setup_data):
     registry = bpy.context.window_manager.components_registry
-    registry.schemaPath = setup_data["schema_path"]
+    registry.schemaPath = setup_data["components_schemaPath"]
     bpy.ops.object.reload_registry()
 
     long_name = "bevy_example::test_components::BasicTest"

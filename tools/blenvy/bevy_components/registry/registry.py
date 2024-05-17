@@ -283,8 +283,7 @@ class ComponentsRegistry(PropertyGroup):
         settings = load_settings(self.settings_save_path)
 
         if settings!= None:
-            print("settings", settings)
-            self.schemaPath = settings["schemaPath"]
+            self.schemaPath = settings["components_schemaPath"]
             self.load_schema()
             generate_propertyGroups_for_components()
             ensure_metadata_for_all_objects()

@@ -7,7 +7,7 @@ from ..components.operators import OT_rename_component, RemoveComponentFromAllOb
 from .operators import(
     COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL, 
     COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT, 
-    OT_OpenFilebrowser,
+    OT_OpenSchemaFileBrowser,
     OT_select_component_name_to_replace,
     OT_select_object, ReloadRegistryOperator, 
     COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL, 
@@ -39,7 +39,7 @@ class BEVY_COMPONENTS_PT_Configuration(bpy.types.Panel):
         col.enabled = False
         col.prop(registry, "schemaPath", text="Registry Schema path")
         col = row.column()
-        col.operator(OT_OpenFilebrowser.bl_idname, text="Browse for registry schema file (json)")
+        col.operator(OT_OpenSchemaFileBrowser.bl_idname, text="Browse for registry schema file (json)")
 
         layout.separator()
         layout.operator(ReloadRegistryOperator.bl_idname, text="reload registry" , icon="FILE_REFRESH")

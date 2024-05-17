@@ -6,8 +6,8 @@ from bpy.types import Operator
 
 from ...core.path_helpers import absolute_path_from_blend_file    
 
-class OT_OpenFolderbrowser(Operator, ImportHelper):
-    """Browse for registry json file"""
+class OT_OpenAssetsFolderBrowser(Operator, ImportHelper):
+    """Assets folder's browser"""
     bl_idname = "generic.open_folderbrowser" 
     bl_label = "Select folder" 
 
@@ -41,31 +41,31 @@ class OT_OpenFolderbrowser(Operator, ImportHelper):
         # Get the folder
         blend_file_folder_path = os.path.dirname(blend_file_path)
         #print("blend_file_folder_path", blend_file_folder_path)
-        print("new_path", self.directory, self.target_property, operator)
+        #print("new_path", self.directory, self.target_property, operator)
 
-        asset_path_names = ['export_blueprints_path', 'export_levels_path', 'export_materials_path']
-        export_root_path = absolute_path_from_blend_file(operator.export_root_path)
-        export_assets_path = operator.export_assets_path
-        export_assets_path_full = absolute_path_from_blend_file(os.path.join(export_root_path, export_assets_path)) #os.path.join(blend_file_folder_path, export_root_path, export_assets_path)
-        print("export_assets_path_full", export_assets_path_full)
+        asset_path_names = ['blueprints_path', 'levels_path', 'materials_path']
+        project_root_path = absolute_path_from_blend_file(operator.project_root_path)
+        assets_path = operator.assets_path
+        export_assets_path_full = absolute_path_from_blend_file(os.path.join(project_root_path, assets_path)) #os.path.join(blend_file_folder_path, project_root_path, assets_path)
+        #print("export_assets_path_full", export_assets_path_full)
 
         #new_root_path = os.path.join(blend_file_folder_path, new_path)
-        if target_path_name == 'export_root_path':
+        if target_path_name == 'project_root_path':
             new_root_path_relative = os.path.relpath(new_path, blend_file_folder_path)
             new_root_path_absolute = new_path
 
-            print("new_root_path_relative", new_root_path_relative, new_root_path_absolute)
+            #print("new_root_path_relative", new_root_path_relative, new_root_path_absolute)
             # first change the asset's path
-            old_assets_paths_relative = getattr(operator, "export_assets_path", None)
+            old_assets_paths_relative = getattr(operator, "assets_path", None)
             if old_assets_paths_relative is not None:
-                old_assets_paths_absolute = os.path.abspath(os.path.join(export_root_path, old_assets_paths_relative))
+                old_assets_paths_absolute = os.path.abspath(os.path.join(project_root_path, old_assets_paths_relative))
                 new_assets_path_relative = os.path.relpath(old_assets_paths_absolute, new_root_path_absolute)
                 new_assets_path_absolute = os.path.abspath(os.path.join(new_root_path_absolute, new_assets_path_relative))
 
-                print("old_assets_paths_absolute", old_assets_paths_absolute)
+                """print("old_assets_paths_absolute", old_assets_paths_absolute)
                 print("new_assets_path_relative", new_assets_path_relative)
-                print("new_assets_path_absolute", new_assets_path_absolute)
-                setattr(operator, "export_assets_path", new_assets_path_relative)
+                print("new_assets_path_absolute", new_assets_path_absolute)"""
+                setattr(operator, "assets_path", new_assets_path_relative)
 
                 # we need to change all other relative paths (root => assets => blueprints/levels/materials etc)
                 for path_name in asset_path_names:
@@ -80,8 +80,8 @@ class OT_OpenFolderbrowser(Operator, ImportHelper):
 
             # store the root path as relative to the current blend file
             setattr(operator, target_path_name, new_root_path_relative)
-        elif target_path_name == 'export_assets_path':
-            new_assets_path_relative = os.path.relpath(new_path, export_root_path)
+        elif target_path_name == 'assets_path':
+            new_assets_path_relative = os.path.relpath(new_path, project_root_path)
             new_assets_path_absolute = new_path
             # we need to change all other relative paths (root => assets => blueprints/levels/materials etc)
             for path_name in asset_path_names:
@@ -98,7 +98,4 @@ class OT_OpenFolderbrowser(Operator, ImportHelper):
             relative_path = os.path.relpath(new_path, export_assets_path_full)
             setattr(operator, target_path_name, relative_path)
 
-        #filename, extension = os.path.splitext(self.filepath) 
-      
-        
         return {'FINISHED'}

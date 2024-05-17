@@ -145,11 +145,11 @@ class OT_Add_asset_filebrowser(Operator, ImportHelper):
 
     def execute(self, context):         
         current_auto_settings = load_settings(".gltf_auto_export_settings")
-        export_root_path = current_auto_settings.get("export_root_path", "../")
-        export_assets_path = current_auto_settings.get("export_assets_path", "assets")
+        project_root_path = current_auto_settings.get("project_root_path", "../")
+        assets_path = current_auto_settings.get("assets_path", "assets")
         # FIXME: not sure
-        print("export_root_path", export_root_path, "export_assets_path", export_assets_path)
-        export_assets_path_absolute = absolute_path_from_blend_file(os.path.join(export_root_path, export_assets_path))
+        print("project_root_path", project_root_path, "assets_path", assets_path)
+        export_assets_path_absolute = absolute_path_from_blend_file(os.path.join(project_root_path, assets_path))
 
         asset_path = os.path.relpath(self.filepath, export_assets_path_absolute)
         print("asset path", asset_path)
@@ -203,7 +203,7 @@ class OT_test_bevy_assets(Operator):
         blueprints_registry.add_blueprints_data()
         blueprints_data = blueprints_registry.blueprints_data
 
-        settings = {"export_blueprints_path": "blueprints", "export_gltf_extension": ".glb"}
+        settings = {"blueprints_path": "blueprints", "export_gltf_extension": ".glb"}
         settings = SimpleNamespace(**settings)
         for scene in bpy.data.scenes:
                 if scene.name != "Library":

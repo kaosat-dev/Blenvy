@@ -29,7 +29,7 @@ def run_auto_export(setup_data):
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
-        export_root_path = os.path.abspath(setup_data["root_path"]),
+        project_root_path = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
