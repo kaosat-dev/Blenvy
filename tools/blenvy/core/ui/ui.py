@@ -98,7 +98,18 @@ class BLENVY_PT_SidePanel(bpy.types.Panel):
                 draw_folder_browser(layout=row, label="Materials Folder", prop_origin=blenvy, target_property="materials_path")
 
                 panel.separator()
+
+
                 # scenes selection
+                if len(blenvy.main_scenes) == 0 and len(blenvy.library_scenes) == 0:
+                    row = panel.row()
+                    row.alert = True
+                    panel.alert = True
+                    row.label(text="NO library or main scenes specified! at least one main scene or library scene is required!")
+                    row = panel.row()
+                    row.label(text="Please select and add one using the UI below")
+
+
                 section = panel
                 rows = 2
                 row = section.row()
@@ -143,7 +154,7 @@ class BLENVY_PT_SidePanel(bpy.types.Panel):
                 remove_operator.action = 'REMOVE'
                 remove_operator.scene_type = 'LIBRARY'
                 col.separator()
-
+            
             header, panel = layout.panel("components", default_closed=False)
             header.label(text="Components")
             if panel:

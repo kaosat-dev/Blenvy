@@ -1,6 +1,7 @@
 def draw_settings_ui(layout, auto_export_settings):
     controls_enabled = auto_export_settings.auto_export
         
+    layout.label(text="Auto exports gltf files every time you save your project")
     layout.prop(auto_export_settings, "auto_export")
     layout.separator()
 
