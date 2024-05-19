@@ -37,8 +37,7 @@ Assets:
         - QUESTION : do we want to include them in the list of assets per level ? 
             -  this would enable pre-loading ALL the assets, but is not ideal in most other cases
             - so add an option ?
-        - [] the assets of local blueprints 
-
+        - [ ] the assets of local blueprints 
 
 Blueprints:
     - [x] on save: write IN THE COLLECTION PROPERTIES
@@ -50,14 +49,17 @@ Blueprints:
     - [ ] scan & inject on save
     - [ ] decide where & when to do & store blueprints data
 
+Components:
+    - [ ] add support for adding components to collections
+
 General things to solve:
  - [x] save settings
  - [x] load settings
     - [ ] add_blueprints_data
 
-- [ ] rename all path stuff using the old naming convention : "export_blueprints_path_full"
-- [ ] generate the full paths directly when setting them in the UI  
-    - [ ] problem : how to deal with defaults: do it on start/load ?
+- [x] rename all path stuff using the old naming convention : "blueprints_path_full"
+- [x] generate the full paths directly when setting them in the UI  
+    - [x] problem : how to deal with defaults: do it on start/load ?
 
 General issues:
  - there is no safeguard for naming collisions for naming across blender files

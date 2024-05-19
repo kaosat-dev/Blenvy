@@ -38,7 +38,7 @@ def changed_object_in_scene(scene_name, changes_per_scene, blueprints_data, coll
 # this also takes the split/embed mode into account: if a collection instance changes AND embed is active, its container level/world should also be exported
 def get_levels_to_export(changes_per_scene, changed_export_parameters, blueprints_data, addon_prefs):
     export_gltf_extension = getattr(addon_prefs, "export_gltf_extension")
-    export_levels_path_full = getattr(addon_prefs, "export_levels_path_full")
+    levels_path_full = getattr(addon_prefs, "levels_path_full")
 
     change_detection = getattr(addon_prefs.auto_export, "change_detection")
     collection_instances_combine_mode = getattr(addon_prefs.auto_export, "collection_instances_combine_mode")
@@ -47,6 +47,6 @@ def get_levels_to_export(changes_per_scene, changed_export_parameters, blueprint
  
     # determine list of main scenes to export
     # we have more relaxed rules to determine if the main scenes have changed : any change is ok, (allows easier handling of changes, render settings etc)
-    main_scenes_to_export = [scene_name for scene_name in main_scene_names if not change_detection or changed_export_parameters or scene_name in changes_per_scene.keys() or changed_object_in_scene(scene_name, changes_per_scene, blueprints_data, collection_instances_combine_mode) or not check_if_blueprint_on_disk(scene_name, export_levels_path_full, export_gltf_extension) ]
+    main_scenes_to_export = [scene_name for scene_name in main_scene_names if not change_detection or changed_export_parameters or scene_name in changes_per_scene.keys() or changed_object_in_scene(scene_name, changes_per_scene, blueprints_data, collection_instances_combine_mode) or not check_if_blueprint_on_disk(scene_name, levels_path_full, export_gltf_extension) ]
 
     return (main_scenes_to_export)

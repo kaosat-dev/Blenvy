@@ -61,7 +61,7 @@ def clear_materials_scene(temp_scene):
 # the name of the output path is <materials_folder>/<name_of_your_blend_file>_materials_library.gltf/glb
 def export_materials(collections, library_scenes, addon_prefs):
     gltf_export_preferences = generate_gltf_export_preferences(addon_prefs)
-    export_materials_path_full = getattr(addon_prefs,"export_materials_path_full")
+    materials_path_full = getattr(addon_prefs,"materials_path_full")
 
     used_material_names = get_all_materials(collections, library_scenes)
     current_project_name = Path(bpy.context.blend_data.filepath).stem
@@ -75,7 +75,7 @@ def export_materials(collections, library_scenes, addon_prefs):
                     'export_apply':True
                     }
                     
-    gltf_output_path = os.path.join(export_materials_path_full, current_project_name + "_materials_library")
+    gltf_output_path = os.path.join(materials_path_full, current_project_name + "_materials_library")
 
     print("       exporting Materials to", gltf_output_path, ".gltf/glb")
 

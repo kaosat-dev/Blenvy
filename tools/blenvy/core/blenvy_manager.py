@@ -1,3 +1,4 @@
+import os
 import bpy
 from bpy_types import (PropertyGroup)
 from bpy.props import (EnumProperty, PointerProperty, StringProperty, CollectionProperty, IntProperty)
@@ -13,13 +14,13 @@ def update_scene_lists(self, context):
     upsert_settings(blenvy.settings_save_path, {"common_library_scene_names": [scene.name for scene in blenvy.library_scenes]})
 
 def update_asset_folders(self, context):
-    blenvy = context.window_manager.blenvy
+    blenvy = self # context.window_manager.blenvy
     asset_path_names = ['project_root_path', 'assets_path', 'blueprints_path', 'levels_path', 'materials_path']
     for asset_path_name in asset_path_names:
         upsert_settings(blenvy.settings_save_path, {asset_path_name: getattr(blenvy, asset_path_name)})
 
 def update_mode(self, context):
-    blenvy = self # context.window_manager.blenvy
+    blenvy = self
     upsert_settings(blenvy.settings_save_path, {"mode": blenvy.mode })
 
 class BlenvyManager(PropertyGroup):
@@ -37,12 +38,16 @@ class BlenvyManager(PropertyGroup):
         update=update_mode
     ) # type: ignore
     
-
     project_root_path: StringProperty(
         name = "Project Root Path",
         description="The root folder of your (Bevy) project (not assets!)",
         default='../',
         update= update_asset_folders
+    ) # type: ignore
+
+    # computed property for the absolute path of assets
+    project_root_path_full: StringProperty(
+        get=lambda self: os.path.abspath(os.path.join(os.path.dirname(bpy.data.filepath), self.project_root_path))
     ) # type: ignore
 
     assets_path: StringProperty(
@@ -52,12 +57,22 @@ class BlenvyManager(PropertyGroup):
         options={'HIDDEN'},
         update= update_asset_folders
     ) # type: ignore
+    
+    # computed property for the absolute path of assets
+    assets_path_full: StringProperty(
+        get=lambda self: os.path.abspath(os.path.join(os.path.dirname(bpy.data.filepath), self.project_root_path, self.assets_path))
+    ) # type: ignore
 
     blueprints_path: StringProperty(
         name='Blueprints path',
         description='path to export the blueprints to (relative to the assets folder)',
         default='blueprints',
         update= update_asset_folders
+    ) # type: ignore
+
+    # computed property for the absolute path of blueprints
+    blueprints_path_full: StringProperty(
+        get=lambda self: os.path.abspath(os.path.join(os.path.dirname(bpy.data.filepath), self.project_root_path, self.assets_path, self.blueprints_path))
     ) # type: ignore
 
     levels_path: StringProperty(
@@ -67,11 +82,21 @@ class BlenvyManager(PropertyGroup):
         update= update_asset_folders
     ) # type: ignore
 
+    # computed property for the absolute path of blueprints
+    levels_path_full: StringProperty(
+        get=lambda self: os.path.abspath(os.path.join(os.path.dirname(bpy.data.filepath), self.project_root_path, self.assets_path, self.levels_path))
+    ) # type: ignore
+
     materials_path: StringProperty(
         name='Materials path',
         description='path to export the materials libraries to (relative to the assets folder)',
         default='materials',
         update= update_asset_folders
+    ) # type: ignore
+
+    # computed property for the absolute path of blueprints
+    materials_path_full: StringProperty(
+        get=lambda self: os.path.abspath(os.path.join(os.path.dirname(bpy.data.filepath), self.project_root_path, self.assets_path, self.materials_path))
     ) # type: ignore
 
     main_scenes: CollectionProperty(name="main scenes", type=SceneSelector) # type: ignore

@@ -44,6 +44,11 @@ class BLENVY_PT_SidePanel(bpy.types.Panel):
         library_scene_active = False
         active_collection = context.collection
 
+        print("BLA", blenvy.assets_path_full)
+        print("BLA", blenvy.blueprints_path_full)
+        print("BLA", blenvy.levels_path_full)
+        print("BLA", blenvy.materials_path_full)
+
         """current_auto_settings = load_settings(".gltf_auto_export_settings")
         current_gltf_settings = load_settings(".gltf_auto_export_gltf_settings")
         

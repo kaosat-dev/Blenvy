@@ -4,7 +4,7 @@ import os
 from bpy_extras.io_utils import ImportHelper
 from bpy.types import Operator
 
-from ...core.path_helpers import absolute_path_from_blend_file    
+from ..path_helpers import absolute_path_from_blend_file    
 
 class OT_OpenAssetsFolderBrowser(Operator, ImportHelper):
     """Assets folder's browser"""
@@ -46,8 +46,8 @@ class OT_OpenAssetsFolderBrowser(Operator, ImportHelper):
         asset_path_names = ['blueprints_path', 'levels_path', 'materials_path']
         project_root_path = absolute_path_from_blend_file(operator.project_root_path)
         assets_path = operator.assets_path
-        export_assets_path_full = absolute_path_from_blend_file(os.path.join(project_root_path, assets_path)) #os.path.join(blend_file_folder_path, project_root_path, assets_path)
-        #print("export_assets_path_full", export_assets_path_full)
+        assets_path_full = absolute_path_from_blend_file(os.path.join(project_root_path, assets_path)) #os.path.join(blend_file_folder_path, project_root_path, assets_path)
+        #print("assets_path_full", assets_path_full)
 
         #new_root_path = os.path.join(blend_file_folder_path, new_path)
         if target_path_name == 'project_root_path':
@@ -74,7 +74,7 @@ class OT_OpenAssetsFolderBrowser(Operator, ImportHelper):
                     if relative_path is not None:
                         # and now get absolute path of asset_path 
                         # compute 'old' absolute path
-                        old_absolute_path = os.path.abspath(os.path.join(export_assets_path_full, relative_path))
+                        old_absolute_path = os.path.abspath(os.path.join(assets_path_full, relative_path))
                         relative_path = os.path.relpath(old_absolute_path, new_assets_path_absolute)
                         setattr(operator, path_name, relative_path)
 
@@ -89,13 +89,13 @@ class OT_OpenAssetsFolderBrowser(Operator, ImportHelper):
                 relative_path = getattr(operator, path_name, None)
                 if relative_path is not None:
                     # compute 'old' absolute path
-                    old_absolute_path = os.path.abspath(os.path.join(export_assets_path_full, relative_path))
+                    old_absolute_path = os.path.abspath(os.path.join(assets_path_full, relative_path))
                     relative_path = os.path.relpath(old_absolute_path, new_assets_path_absolute)
                     setattr(operator, path_name, relative_path)
 
             setattr(operator, target_path_name, new_assets_path_relative)
         else:
-            relative_path = os.path.relpath(new_path, export_assets_path_full)
+            relative_path = os.path.relpath(new_path, assets_path_full)
             setattr(operator, target_path_name, relative_path)
 
         return {'FINISHED'}

@@ -51,7 +51,7 @@ from .core.operators import OT_switch_bevy_tooling
 from .core.scene_helpers import (SceneSelector)
 from .core.ui.ui import (BLENVY_PT_SidePanel)
 from .core.ui.scenes_list import SCENES_LIST_OT_actions, SCENE_UL_Blenvy
-from .core.ui.folder_browser import OT_OpenAssetsFolderBrowser
+from .core.ui.assets_folder_browser import OT_OpenAssetsFolderBrowser
 
 
 # this needs to be here, as it is how Blender's gltf exporter callbacks are defined, at the add-on root level
