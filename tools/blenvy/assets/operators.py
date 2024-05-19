@@ -199,16 +199,16 @@ class OT_test_bevy_assets(Operator):
     bl_options = {"UNDO"}
 
     def execute(self, context):
+        blenvy = context.window_manager.blenvy
         blueprints_registry = context.window_manager.blueprints_registry
         blueprints_registry.add_blueprints_data()
         blueprints_data = blueprints_registry.blueprints_data
 
         settings = {"blueprints_path": "blueprints", "export_gltf_extension": ".glb"}
         settings = SimpleNamespace(**settings)
-        for scene in bpy.data.scenes:
-                if scene.name != "Library":
-                    assets_hierarchy = get_main_scene_assets_tree(scene, blueprints_data, settings)
-                    scene["assets"] = json.dumps(assets_hierarchy)
-                    write_ron_assets_file(scene.name, assets_hierarchy, internal_only=False)
+        for scene in blenvy.main_scenes:
+            assets_hierarchy = get_main_scene_assets_tree(scene, blueprints_data, settings)
+            scene["assets"] = json.dumps(assets_hierarchy)
+            write_ron_assets_file(scene.name, assets_hierarchy, internal_only=False)
 
         return {'FINISHED'}

@@ -68,6 +68,7 @@ class Blenvy_assets(bpy.types.Panel):
         layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
+        blenvy = context.window_manager.blenvy
 
         layout.operator(operator="bevyassets.test")
 
@@ -84,18 +85,16 @@ class Blenvy_assets(bpy.types.Panel):
         settings = SimpleNamespace(**settings)
 
         if panel:
-            for scene in bpy.data.scenes:
-                if scene.name != "Library": # FIXME: hack for testing
-                    #get_main_scene_assets_tree(scene, blueprints_data, settings)
-
-                    user_assets = get_user_assets(scene)
-                    row = panel.row()
-                    scene_assets_panel = draw_assets(layout=row, name=scene.name, title=f"{scene.name} Assets", asset_registry=asset_registry, user_assets=user_assets, target_type="SCENE", target_name=scene.name)
-                    """if scene.name in blueprints_data.blueprint_instances_per_main_scene:
-                        for blueprint_name in blueprints_data.blueprint_instances_per_main_scene[scene.name].keys():
-                            blueprint = blueprints_data.blueprints_per_name[blueprint_name]
-                            blueprint_assets = get_user_assets(blueprint.collection)
-                            if scene_assets_panel:
-                                row = scene_assets_panel.row()
-                                draw_assets(layout=row, name=blueprint.name, title=f"{blueprint.name} Assets", asset_registry=asset_registry, assets=blueprint_assets, target_type="BLUEPRINT", target_name=blueprint.name)
+            for scene in blenvy.main_scenes:
+                #get_main_scene_assets_tree(scene, blueprints_data, settings)
+                user_assets = get_user_assets(scene)
+                row = panel.row()
+                scene_assets_panel = draw_assets(layout=row, name=scene.name, title=f"{scene.name} Assets", asset_registry=asset_registry, user_assets=user_assets, target_type="SCENE", target_name=scene.name)
+                """if scene.name in blueprints_data.blueprint_instances_per_main_scene:
+                    for blueprint_name in blueprints_data.blueprint_instances_per_main_scene[scene.name].keys():
+                        blueprint = blueprints_data.blueprints_per_name[blueprint_name]
+                        blueprint_assets = get_user_assets(blueprint.collection)
+                        if scene_assets_panel:
+                            row = scene_assets_panel.row()
+                            draw_assets(layout=row, name=blueprint.name, title=f"{blueprint.name} Assets", asset_registry=asset_registry, assets=blueprint_assets, target_type="BLUEPRINT", target_name=blueprint.name)
 """
