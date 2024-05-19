@@ -44,10 +44,10 @@ class BLENVY_PT_SidePanel(bpy.types.Panel):
         library_scene_active = False
         active_collection = context.collection
 
-        print("BLA", blenvy.assets_path_full)
+        """print("BLA", blenvy.assets_path_full)
         print("BLA", blenvy.blueprints_path_full)
         print("BLA", blenvy.levels_path_full)
-        print("BLA", blenvy.materials_path_full)
+        print("BLA", blenvy.materials_path_full)"""
 
         # Now to actual drawing of the UI
         target = row.box() if active_mode == 'COMPONENTS' else row

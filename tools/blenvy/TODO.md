@@ -50,7 +50,22 @@ Blueprints:
     - [ ] decide where & when to do & store blueprints data
 
 Components:
-    - [ ] add support for adding components to collections
+    - [x] add support for adding components to collections
+    - [ ] upgrade all operators:
+        - [x] add 
+        - [x] remove
+        - [x] copy & paste
+        - [ ] OT_rename_component
+        - [ ] Fix_Component_Operator
+    - [ ] add handling for core::ops::Range<f32> & other ranges
+    - [ ] fix is_component_valid that is used in gltf_auto_export
+    - Hashmap Support
+        - [x] fix parsing of keys's type either on Bevy side (prefered) or on the Blender side 
+        - [x] fix weird issue with missing "0" property when adding new entry in empty hashmap => happens only if the values for the "setter" have never been set
+        - [ ] handle missing types in registry for keys & values
+
+    - [ ] Add correct upgrade handling from individual component to bevy_components
+
 
 General things to solve:
  - [x] save settings

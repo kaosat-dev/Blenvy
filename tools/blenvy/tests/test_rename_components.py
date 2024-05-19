@@ -4,7 +4,7 @@ import bpy
 import pprint
 import pytest
 
-from ..bevy_components.components.metadata import get_bevy_component_value_by_long_name, get_bevy_components, is_bevy_component_in_object, upsert_bevy_component
+from ..bevy_components.components.metadata import get_bevy_component_value_by_long_name, get_bevy_components, is_bevy_component_in_item, upsert_bevy_component
 
 from .setup_data import setup_data
 
@@ -37,8 +37,8 @@ def test_rename_component_single_unit_struct(setup_data):
 
     rename_component_operator(original_name=source_component_name, new_name=target_component_name, target_objects=json.dumps([object.name]))
 
-    is_old_component_in_object = is_bevy_component_in_object(object, source_component_name)
-    is_new_component_in_object = is_bevy_component_in_object(object, target_component_name)
+    is_old_component_in_object = is_bevy_component_in_item(object, source_component_name)
+    is_new_component_in_object = is_bevy_component_in_item(object, target_component_name)
     assert is_old_component_in_object == False
     assert is_new_component_in_object == True
     assert get_bevy_component_value_by_long_name(object, target_component_name) == '()'
@@ -60,8 +60,8 @@ def test_rename_component_single_complex_struct(setup_data):
 
     rename_component_operator(original_name=source_component_name, new_name=target_component_name, target_objects=json.dumps([object.name]))
 
-    is_old_component_in_object = is_bevy_component_in_object(object, source_component_name)
-    is_new_component_in_object = is_bevy_component_in_object(object, target_component_name)
+    is_old_component_in_object = is_bevy_component_in_item(object, source_component_name)
+    is_new_component_in_object = is_bevy_component_in_item(object, target_component_name)
     assert is_old_component_in_object == False
     assert is_new_component_in_object == True
     assert get_bevy_component_value_by_long_name(object, target_component_name) == 'Capsule(Vec3(x:1.0, y:2.0, z:0.0), Vec3(x:0.0, y:0.0, z:0.0), 3.0)'
@@ -86,8 +86,8 @@ def test_rename_component_bulk(setup_data):
     rename_component_operator(original_name=source_component_name, new_name=target_component_name, target_objects=json.dumps(objects_names))
 
     for object in bpy.data.objects:
-        is_old_component_in_object = is_bevy_component_in_object(object, source_component_name)
-        is_new_component_in_object = is_bevy_component_in_object(object, target_component_name)
+        is_old_component_in_object = is_bevy_component_in_item(object, source_component_name)
+        is_new_component_in_object = is_bevy_component_in_item(object, target_component_name)
         assert is_old_component_in_object == False
         assert is_new_component_in_object == True
         assert get_bevy_component_value_by_long_name(object, target_component_name) == '()'
@@ -113,8 +113,8 @@ def test_rename_component_single_error_handling(setup_data):
     
     target_component_metadata = get_component_metadata(object, target_component_name)
 
-    is_old_component_in_object = is_bevy_component_in_object(object, source_component_name)
-    is_new_component_in_object = is_bevy_component_in_object(object, target_component_name)
+    is_old_component_in_object = is_bevy_component_in_item(object, source_component_name)
+    is_new_component_in_object = is_bevy_component_in_item(object, target_component_name)
     assert is_old_component_in_object == False
     assert is_new_component_in_object == True
     assert get_bevy_component_value_by_long_name(object, target_component_name) == 'Capsule(Vec3(x:1.0, y:2.0, z:0.0), Vec3(x:0.0, y:0.0, z:0.0), 3.0)'
@@ -143,8 +143,8 @@ def test_rename_component_single_error_handling_clean_errors(setup_data):
     
     target_component_metadata = get_component_metadata(object, target_component_name)
 
-    is_old_component_in_object = is_bevy_component_in_object(object, source_component_name)
-    is_new_component_in_object = is_bevy_component_in_object(object, target_component_name)
+    is_old_component_in_object = is_bevy_component_in_item(object, source_component_name)
+    is_new_component_in_object = is_bevy_component_in_item(object, target_component_name)
     assert is_old_component_in_object == False
     assert is_new_component_in_object == True
     assert get_bevy_component_value_by_long_name(object, target_component_name) == 'Capsule(Vec3(x:1.0, y:2.0, z:0.0), Vec3(x:0.0, y:0.0, z:0.0), 3.0)'

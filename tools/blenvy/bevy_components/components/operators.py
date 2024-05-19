@@ -4,12 +4,13 @@ import bpy
 from bpy_types import Operator
 from bpy.props import (StringProperty)
 
-from .metadata import add_component_from_custom_property, add_component_to_object, apply_propertyGroup_values_to_object_customProperties_for_component, copy_propertyGroup_values_to_another_object, get_bevy_component_value_by_long_name, get_bevy_components, is_bevy_component_in_object, remove_component_from_object, rename_component, toggle_component
+from .metadata import add_component_from_custom_property, add_component_to_item, apply_propertyGroup_values_to_item_customProperties_for_component, copy_propertyGroup_values_to_another_item, get_bevy_component_value_by_long_name, get_bevy_components, is_bevy_component_in_item, remove_component_from_item, rename_component, toggle_component
+from ..utils import get_selected_object_or_collection
 
 class AddComponentOperator(Operator):
-    """Add Bevy component to object"""
+    """Add Bevy component to object/collection"""
     bl_idname = "object.add_bevy_component"
-    bl_label = "Add component to object Operator"
+    bl_label = "Add component to object/collection Operator"
     bl_options = {"UNDO"}
 
     component_type: StringProperty(
@@ -18,14 +19,14 @@ class AddComponentOperator(Operator):
     ) # type: ignore
 
     def execute(self, context):
-        object = context.object
-        print("adding component ", self.component_type, "to object  '"+object.name+"'")
+        target = get_selected_object_or_collection(context)
+        print("adding component ", self.component_type, "to target  '"+target.name+"'")
     
         has_component_type = self.component_type != ""
-        if has_component_type and object != None:
+        if has_component_type and target != None:
             type_infos = context.window_manager.components_registry.type_infos
             component_definition = type_infos[self.component_type]
-            add_component_to_object(object, component_definition)
+            add_component_to_item(target, component_definition)
 
         return {'FINISHED'}
 
@@ -40,28 +41,36 @@ class CopyComponentOperator(Operator):
         description="name of the component to copy",
     ) # type: ignore
 
-    source_object_name: StringProperty(
-        name="source object name",
-        description="name of the object to copy the component from",
+    source_item_name: StringProperty(
+        name="source item name",
+        description="name of the object/collection to copy the component from",
+    ) # type: ignore
+
+    source_item_type: StringProperty(
+        name="source item type",
+        description="type of the object/collection to copy the component from",
     ) # type: ignore
 
     @classmethod
     def register(cls):
         bpy.types.WindowManager.copied_source_component_name = StringProperty()
-        bpy.types.WindowManager.copied_source_object = StringProperty()
+        bpy.types.WindowManager.copied_source_item_name = StringProperty()
+        bpy.types.WindowManager.copied_source_item_type = StringProperty()
 
     @classmethod
     def unregister(cls):
         del bpy.types.WindowManager.copied_source_component_name
-        del bpy.types.WindowManager.copied_source_object
-      
+        del bpy.types.WindowManager.copied_source_item_name
+        del bpy.types.WindowManager.copied_source_item_type
+
 
     def execute(self, context):
-        if self.source_component_name != '' and self.source_object_name != "":
+        if self.source_component_name != '' and self.source_item_name != "" and self.source_item_type != "":
             context.window_manager.copied_source_component_name = self.source_component_name
-            context.window_manager.copied_source_object = self.source_object_name
+            context.window_manager.copied_source_item_name = self.source_item_name
+            context.window_manager.copied_source_item_type = self.source_item_type
         else:
-            self.report({"ERROR"}, "The source object name / component name to copy a component from have not been specified")
+            self.report({"ERROR"}, "The source object/collection name or component name to copy a component from have not been specified")
 
         return {'FINISHED'}
     
@@ -73,28 +82,32 @@ class PasteComponentOperator(Operator):
     bl_options = {"UNDO"}
 
     def execute(self, context):
-        source_object_name = context.window_manager.copied_source_object
-        source_object = bpy.data.objects.get(source_object_name, None)
-        print("source object", source_object)
-        if source_object == None:
+        source_item_name = context.window_manager.copied_source_item_name
+        source_item_type = context.window_manager.copied_source_item_type
+        if source_item_type == 'Object':
+            source_item = bpy.data.objects.get(source_item_name, None)
+        elif source_item_type == 'Collection':
+            source_item = bpy.data.collections.get(source_item_name, None)
+
+        if source_item == None:
             self.report({"ERROR"}, "The source object to copy a component from does not exist")
         else:
             component_name = context.window_manager.copied_source_component_name
-            component_value = get_bevy_component_value_by_long_name(source_object, component_name)
+            component_value = get_bevy_component_value_by_long_name(source_item, component_name)
             if component_value is None:
                 self.report({"ERROR"}, "The source component to copy from does not exist")
             else:
-                print("pasting component to object: component name:", str(component_name), "component value:" + str(component_value))
-                print (context.object)
+                print("pasting component to item:", source_item, "component name:", str(component_name), "component value:" + str(component_value))
                 registry = context.window_manager.components_registry
-                copy_propertyGroup_values_to_another_object(source_object, context.object, component_name, registry)
+                target_item = get_selected_object_or_collection(context)
+                copy_propertyGroup_values_to_another_item(source_item, target_item, component_name, registry)
 
         return {'FINISHED'}
     
 class RemoveComponentOperator(Operator):
-    """Remove Bevy component from object"""
+    """Remove Bevy component from object/collection"""
     bl_idname = "object.remove_bevy_component"
-    bl_label = "Remove component from object Operator"
+    bl_label = "Remove component from object/collection Operator"
     bl_options = {"UNDO"}
 
     component_name: StringProperty(
@@ -102,34 +115,44 @@ class RemoveComponentOperator(Operator):
         description="component to delete",
     ) # type: ignore
 
-    object_name: StringProperty(
+    item_name: StringProperty(
         name="object name",
         description="object whose component to delete",
         default=""
     ) # type: ignore
 
-    def execute(self, context):
-        if self.object_name == "":
-            object = context.object
-        else:
-            object = bpy.data.objects[self.object_name]
-        print("removing component ", self.component_name, "from object  '"+object.name+"'")
+    item_type: StringProperty(
+        name="item type",
+        description="type of the object/collection to delete",
+    ) # type: ignore
 
-        if object is not None and 'bevy_components' in object :
-            component_value = get_bevy_component_value_by_long_name(object, self.component_name)
+    def execute(self, context):
+        target = None
+        if self.item_name == "":
+            self.report({"ERROR"}, "The target to remove ("+ self.component_name +") from does not exist")
+        else:
+            if self.item_type == 'Object':
+                target = bpy.data.objects[self.item_name]
+            elif self.item_type == 'Collection':
+                target = bpy.data.collections[self.item_name]
+
+        print("removing component ", self.component_name, "from object  '"+target.name+"'")
+
+        if target is not None and 'bevy_components' in target :
+            component_value = get_bevy_component_value_by_long_name(target, self.component_name)
             if component_value is not None:
-                remove_component_from_object(object, self.component_name)
+                remove_component_from_item(target, self.component_name)
             else :
                 self.report({"ERROR"}, "The component to remove ("+ self.component_name +") does not exist")
         else: 
-            self.report({"ERROR"}, "The object to remove ("+ self.component_name +") from does not exist")
+            self.report({"ERROR"}, "The target to remove ("+ self.component_name +") from does not exist")
         return {'FINISHED'}
 
 
-class RemoveComponentFromAllObjectsOperator(Operator):
-    """Remove Bevy component from all object"""
+class RemoveComponentFromAllItemsOperator(Operator):
+    """Remove Bevy component from all items"""
     bl_idname = "object.remove_bevy_component_all"
-    bl_label = "Remove component from all objects Operator"
+    bl_label = "Remove component from all items Operator"
     bl_options = {"UNDO"}
 
     component_name: StringProperty(
@@ -146,17 +169,28 @@ class RemoveComponentFromAllObjectsOperator(Operator):
         del bpy.types.WindowManager.components_remove_progress
 
     def execute(self, context):
-        print("removing component ", self.component_name, "from all objects")
-        total = len(bpy.data.objects)
+        print("removing component ", self.component_name, "from all objects/collections")
+        total = len(bpy.data.objects) + len(bpy.data.collections)
         for index, object in enumerate(bpy.data.objects):
             if len(object.keys()) > 0:
-                if object is not None and is_bevy_component_in_object(object, self.component_name): 
-                    remove_component_from_object(object, self.component_name)
+                if object is not None and is_bevy_component_in_item(object, self.component_name): 
+                    remove_component_from_item(object, self.component_name)
             
             progress = index / total
             context.window_manager.components_remove_progress = progress
             # now force refresh the ui
             bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)
+
+        for index, collection in enumerate(bpy.data.collections):
+            if len(collection.keys()) > 0:
+                if collection is not None and is_bevy_component_in_item(collection, self.component_name): 
+                    remove_component_from_item(collection, self.component_name)
+            
+            progress = index / total
+            context.window_manager.components_remove_progress = progress
+            # now force refresh the ui
+            bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)
+        
         context.window_manager.components_remove_progress = -1.0
 
         return {'FINISHED'}
@@ -212,8 +246,8 @@ class OT_rename_component(Operator):
         total = len(target_objects)
 
         if original_name != '' and new_name != '' and original_name != new_name and len(target_objects) > 0:
-            for index, object_name in enumerate(target_objects):
-                object = bpy.data.objects[object_name]
+            for index, item_name in enumerate(target_objects):
+                object = bpy.data.objects[item_name]
                 if object and original_name in get_bevy_components(object) or original_name in object:
                     try:
                         # attempt conversion
@@ -293,7 +327,7 @@ class Fix_Component_Operator(Operator):
         object = context.object
         error = False
         try:
-            apply_propertyGroup_values_to_object_customProperties_for_component(object, self.component_name)
+            apply_propertyGroup_values_to_item_customProperties_for_component(object, self.component_name)
         except Exception as error:
             if "__disable__update" in object:
                 del object["__disable__update"] # make sure custom properties are updateable afterwards, even in the case of failure
@@ -315,7 +349,7 @@ class Toggle_ComponentVisibility(Operator):
     ) # type: ignore
 
     def execute(self, context):
-        object = context.object
-        toggle_component(object, self.component_name)
+        target = get_selected_object_or_collection(context)
+        toggle_component(target, self.component_name)
         return {'FINISHED'}
 

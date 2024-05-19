@@ -226,7 +226,7 @@ def test_copy_paste_components(setup_data):
     setattr(propertyGroup, propertyGroup.field_names[0], 25.0)
 
     copy_component_operator = bpy.ops.object.copy_bevy_component
-    copy_component_operator(source_component_name=long_name, source_object_name=object.name)
+    copy_component_operator(source_component_name=long_name, source_item_name=object.name)
 
     # ---------------------------------------
     # TARGET object 

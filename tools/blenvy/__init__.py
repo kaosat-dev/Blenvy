@@ -17,7 +17,7 @@ from bpy.props import (StringProperty)
 
 
 # components management 
-from .bevy_components.components.operators import CopyComponentOperator, Fix_Component_Operator, OT_rename_component, RemoveComponentFromAllObjectsOperator, RemoveComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, AddComponentOperator, RenameHelper, Toggle_ComponentVisibility
+from .bevy_components.components.operators import CopyComponentOperator, Fix_Component_Operator, OT_rename_component, RemoveComponentFromAllItemsOperator, RemoveComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, AddComponentOperator, RenameHelper, Toggle_ComponentVisibility
 
 from .bevy_components.registry.registry import ComponentsRegistry,MissingBevyType
 from .bevy_components.registry.operators import (COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT, COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT, OT_select_component_name_to_replace, OT_select_object, ReloadRegistryOperator, OT_OpenSchemaFileBrowser)
@@ -74,7 +74,7 @@ classes = [
     CopyComponentOperator,
     PasteComponentOperator,
     RemoveComponentOperator,
-    RemoveComponentFromAllObjectsOperator,
+    RemoveComponentFromAllItemsOperator,
     Fix_Component_Operator,
     OT_rename_component,
     RenameHelper,

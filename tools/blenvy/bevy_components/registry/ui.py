@@ -3,7 +3,7 @@ import bpy
 from bpy_types import (UIList)
 from bpy.props import (StringProperty)
 
-from ..components.operators import OT_rename_component, RemoveComponentFromAllObjectsOperator, RemoveComponentOperator
+from ..components.operators import OT_rename_component, RemoveComponentFromAllItemsOperator, RemoveComponentOperator
 from .operators import(
     COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL, 
     COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT, 
@@ -197,7 +197,7 @@ class BEVY_COMPONENTS_PT_AdvancedToolsPanel(bpy.types.Panel):
         col = row.column()
         remove_components_progress = context.window_manager.components_remove_progress
         if remove_components_progress == -1.0:
-            operator = row.operator(RemoveComponentFromAllObjectsOperator.bl_idname, text="", icon="X")
+            operator = row.operator(RemoveComponentFromAllItemsOperator.bl_idname, text="", icon="X")
             operator.component_name = context.window_manager.bevy_component_rename_helper.original_name
             col.enabled = registry_has_type_infos and original_name != ""
         else:

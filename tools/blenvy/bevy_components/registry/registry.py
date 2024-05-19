@@ -8,7 +8,7 @@ from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorP
 
 from ...settings import load_settings
 from ..propGroups.prop_groups import generate_propertyGroups_for_components
-from ..components.metadata import ComponentMetadata, ensure_metadata_for_all_objects
+from ..components.metadata import ComponentMetadata, ensure_metadata_for_all_items
 
 # helper class to store missing bevy types information
 class MissingBevyType(bpy.types.PropertyGroup):
@@ -286,7 +286,7 @@ class ComponentsRegistry(PropertyGroup):
             self.schemaPath = settings["components_schemaPath"]
             self.load_schema()
             generate_propertyGroups_for_components()
-            ensure_metadata_for_all_objects()
+            ensure_metadata_for_all_items()
 
 
     # we keep a list of component propertyGroup around 

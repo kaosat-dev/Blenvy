@@ -1,8 +1,9 @@
 import json
 import bpy
 
+from ..utils import get_selection_type
 from ..registry.operators import COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT
-from .metadata import do_object_custom_properties_have_missing_metadata, get_bevy_components
+from .metadata import do_item_custom_properties_have_missing_metadata, get_bevy_components
 from .operators import AddComponentOperator, CopyComponentOperator, Fix_Component_Operator, RemoveComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, Toggle_ComponentVisibility
    
 def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None):
@@ -158,11 +159,24 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
 
     def draw_header(self, context):
         layout = self.layout
-        name = context.object.name if context.object != None else ''
-        layout.label(text="Components For "+ name)
+        name = ""
+        target_type = ""
+        object = next(iter(context.selected_objects), None)
+        collection = context.collection
+        if object is not None:
+            name = object.name
+            target_type = "Object"
+        elif collection is not None:
+            name = collection.name
+            target_type = "Collection"
+        # name = context.object.name if context.object != None else ''
+        layout.label(text=f"Components for {name} ({target_type})")
+
+        print("object", context.object, "active", context.active_object, "objects", context.selected_objects)
 
     def draw(self, context):
-        object = context.object
+        object = next(iter(context.selected_objects), None)
+        collection = context.collection
         layout = self.layout
 
         # we get & load our component registry
@@ -171,109 +185,118 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
         registry_has_type_infos = registry.has_type_infos()
 
         if object is not None:
-            row = layout.row(align=True)
-            row.prop(available_components, "list", text="Component")
-            row.prop(available_components, "filter",text="Filter")
-
-            # add components
-            row = layout.row(align=True)
-            op = row.operator(AddComponentOperator.bl_idname, text="Add", icon="ADD")
-            op.component_type = available_components.list
-            row.enabled = available_components.list != ''
-
-            layout.separator()
-
-            # paste components
-            row = layout.row(align=True)
-            row.operator(PasteComponentOperator.bl_idname, text="Paste component ("+bpy.context.window_manager.copied_source_component_name+")", icon="PASTEDOWN")
-            row.enabled = registry_has_type_infos and context.window_manager.copied_source_object != ''
-
-            layout.separator()
-
-            # upgrate custom props to components
-            upgradeable_customProperties = registry.has_type_infos() and do_object_custom_properties_have_missing_metadata(context.object)
-            if upgradeable_customProperties:
-                row = layout.row(align=True)
-                op = row.operator(GenerateComponent_From_custom_property_Operator.bl_idname, text="generate components from custom properties" , icon="LOOP_FORWARDS") 
-                layout.separator()
-
-
-            components_in_object = object.components_meta.components
-            #print("components_names", dict(components_bla).keys())
-
-            for component_name in sorted(get_bevy_components(object)) : # sorted by component name, practical
-                #print("component_name", component_name)
-                if component_name == "components_meta": 
-                    continue
-                # anything withouth metadata gets skipped, we only want to see real components, not all custom props
-                component_meta =  next(filter(lambda component: component["long_name"] == component_name, components_in_object), None)
-                if component_meta == None: 
-                    continue
-                
-                component_invalid = getattr(component_meta, "invalid")
-                invalid_details = getattr(component_meta, "invalid_details")
-                component_visible = getattr(component_meta, "visible")
-                single_field = False
-
-                # our whole row 
-                box = layout.box() 
-                row = box.row(align=True)
-                # "header"
-                row.alert = component_invalid
-                row.prop(component_meta, "enabled", text="")
-                row.label(text=component_name)
-
-                # we fetch the matching ui property group
-                root_propertyGroup_name =  registry.get_propertyGroupName_from_longName(component_name)
-                """print("root_propertyGroup_name", root_propertyGroup_name)"""
-                print("component_meta", component_meta, component_invalid)
-
-                if root_propertyGroup_name:
-                    propertyGroup = getattr(component_meta, root_propertyGroup_name, None)
-                    """print("propertyGroup", propertyGroup)"""
-                    if propertyGroup:
-                        # if the component has only 0 or 1 field names, display inline, otherwise change layout
-                        single_field = len(propertyGroup.field_names) < 2
-                        prop_group_location = box.row(align=True).column()
-                        """if single_field:
-                            prop_group_location = row.column(align=True)#.split(factor=0.9)#layout.row(align=False)"""
-                        
-                        if component_visible:
-                            if component_invalid:
-                                error_message = invalid_details if component_invalid else "Missing component UI data, please reload registry !"
-                                prop_group_location.label(text=error_message)
-                            draw_propertyGroup(propertyGroup, prop_group_location, [root_propertyGroup_name], component_name)
-                        else :
-                            row.label(text="details hidden, click on toggle to display")
-                    else:
-                        error_message = invalid_details if component_invalid else "Missing component UI data, please reload registry !"
-                        row.label(text=error_message)
-
-                # "footer" with additional controls
-                if component_invalid:
-                    if root_propertyGroup_name:
-                        propertyGroup = getattr(component_meta, root_propertyGroup_name, None)
-                        if propertyGroup:
-                            unit_struct = len(propertyGroup.field_names) == 0
-                            if unit_struct: 
-                                op = row.operator(Fix_Component_Operator.bl_idname, text="", icon="SHADERFX")
-                                op.component_name = component_name
-                                row.separator()
-
-                op = row.operator(RemoveComponentOperator.bl_idname, text="", icon="X")
-                op.component_name = component_name
-                row.separator()
-                
-                op = row.operator(CopyComponentOperator.bl_idname, text="", icon="COPYDOWN")
-                op.source_component_name = component_name
-                op.source_object_name = object.name
-                row.separator()
-                
-                #if not single_field:
-                toggle_icon = "TRIA_DOWN" if component_visible else "TRIA_RIGHT"
-                op = row.operator(Toggle_ComponentVisibility.bl_idname, text="", icon=toggle_icon)
-                op.component_name = component_name
-                #row.separator()
-
+            draw_component_ui(layout, object, registry, available_components, registry_has_type_infos, context)
+        elif collection is not None:
+            draw_component_ui(layout, collection, registry, available_components, registry_has_type_infos, context)
         else: 
             layout.label(text ="Select an object to edit its components")      
+
+
+
+def draw_component_ui(layout, object_or_collection, registry, available_components, registry_has_type_infos, context):
+    row = layout.row(align=True)
+    row.prop(available_components, "list", text="Component")
+    row.prop(available_components, "filter",text="Filter")
+
+    # add components
+    row = layout.row(align=True)
+    op = row.operator(AddComponentOperator.bl_idname, text="Add", icon="ADD")
+    op.component_type = available_components.list
+    row.enabled = available_components.list != ''
+
+    layout.separator()
+
+    # paste components
+    row = layout.row(align=True)
+    row.operator(PasteComponentOperator.bl_idname, text="Paste component ("+bpy.context.window_manager.copied_source_component_name+")", icon="PASTEDOWN")
+    row.enabled = registry_has_type_infos and context.window_manager.copied_source_item_name != ''
+
+    layout.separator()
+
+    # upgrate custom props to components
+    upgradeable_customProperties = registry.has_type_infos() and do_item_custom_properties_have_missing_metadata(object_or_collection)
+    if upgradeable_customProperties:
+        row = layout.row(align=True)
+        op = row.operator(GenerateComponent_From_custom_property_Operator.bl_idname, text="generate components from custom properties" , icon="LOOP_FORWARDS") 
+        layout.separator()
+
+
+    components_in_object = object_or_collection.components_meta.components
+    #print("components_names", dict(components_bla).keys())
+
+    for component_name in sorted(get_bevy_components(object_or_collection)) : # sorted by component name, practical
+        #print("component_name", component_name)
+        if component_name == "components_meta": 
+            continue
+        # anything withouth metadata gets skipped, we only want to see real components, not all custom props
+        component_meta =  next(filter(lambda component: component["long_name"] == component_name, components_in_object), None)
+        if component_meta == None: 
+            continue
+        
+        component_invalid = getattr(component_meta, "invalid")
+        invalid_details = getattr(component_meta, "invalid_details")
+        component_visible = getattr(component_meta, "visible")
+        single_field = False
+
+        # our whole row 
+        box = layout.box() 
+        row = box.row(align=True)
+        # "header"
+        row.alert = component_invalid
+        row.prop(component_meta, "enabled", text="")
+        row.label(text=component_name)
+
+        # we fetch the matching ui property group
+        root_propertyGroup_name =  registry.get_propertyGroupName_from_longName(component_name)
+        """print("root_propertyGroup_name", root_propertyGroup_name)"""
+        print("component_meta", component_meta, component_invalid)
+
+        if root_propertyGroup_name:
+            propertyGroup = getattr(component_meta, root_propertyGroup_name, None)
+            """print("propertyGroup", propertyGroup)"""
+            if propertyGroup:
+                # if the component has only 0 or 1 field names, display inline, otherwise change layout
+                single_field = len(propertyGroup.field_names) < 2
+                prop_group_location = box.row(align=True).column()
+                """if single_field:
+                    prop_group_location = row.column(align=True)#.split(factor=0.9)#layout.row(align=False)"""
+                
+                if component_visible:
+                    if component_invalid:
+                        error_message = invalid_details if component_invalid else "Missing component UI data, please reload registry !"
+                        prop_group_location.label(text=error_message)
+                    draw_propertyGroup(propertyGroup, prop_group_location, [root_propertyGroup_name], component_name)
+                else :
+                    row.label(text="details hidden, click on toggle to display")
+            else:
+                error_message = invalid_details if component_invalid else "Missing component UI data, please reload registry !"
+                row.label(text=error_message)
+
+        # "footer" with additional controls
+        if component_invalid:
+            if root_propertyGroup_name:
+                propertyGroup = getattr(component_meta, root_propertyGroup_name, None)
+                if propertyGroup:
+                    unit_struct = len(propertyGroup.field_names) == 0
+                    if unit_struct: 
+                        op = row.operator(Fix_Component_Operator.bl_idname, text="", icon="SHADERFX")
+                        op.component_name = component_name
+                        row.separator()
+
+        op = row.operator(RemoveComponentOperator.bl_idname, text="", icon="X")
+        op.component_name = component_name
+        op.item_name = object_or_collection.name
+        op.item_type = get_selection_type(object_or_collection)
+        row.separator()
+        
+        op = row.operator(CopyComponentOperator.bl_idname, text="", icon="COPYDOWN")
+        op.source_component_name = component_name
+        op.source_item_name = object_or_collection.name
+        op.source_item_type = get_selection_type(object_or_collection)
+        row.separator()
+        
+        #if not single_field:
+        toggle_icon = "TRIA_DOWN" if component_visible else "TRIA_RIGHT"
+        op = row.operator(Toggle_ComponentVisibility.bl_idname, text="", icon=toggle_icon)
+        op.component_name = component_name
+        #row.separator()

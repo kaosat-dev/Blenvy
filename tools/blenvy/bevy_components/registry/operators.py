@@ -6,7 +6,7 @@ from bpy_extras.io_utils import ImportHelper
 
 from ...settings import upsert_settings
 
-from ..components.metadata import apply_customProperty_values_to_object_propertyGroups, apply_propertyGroup_values_to_object_customProperties, ensure_metadata_for_all_objects
+from ..components.metadata import apply_customProperty_values_to_item_propertyGroups, apply_propertyGroup_values_to_item_customProperties, ensure_metadata_for_all_items
 from ..propGroups.prop_groups import generate_propertyGroups_for_components
 
 class ReloadRegistryOperator(Operator):
@@ -27,7 +27,7 @@ class ReloadRegistryOperator(Operator):
         print("")
         print("")
         print("")
-        ensure_metadata_for_all_objects()
+        ensure_metadata_for_all_items()
 
         # now force refresh the ui
         for area in context.screen.areas: 
@@ -57,7 +57,7 @@ class COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL(Operator):
         total = len(bpy.data.objects)
 
         for index, object in enumerate(bpy.data.objects):
-            apply_propertyGroup_values_to_object_customProperties(object)
+            apply_propertyGroup_values_to_item_customProperties(object)
             progress = index / total
             context.window_manager.custom_properties_from_components_progress_all = progress
             # now force refresh the ui
@@ -86,7 +86,7 @@ class COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT(Operator):
         context.window_manager.custom_properties_from_components_progress = 0.5
         # now force refresh the ui
         bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)
-        apply_propertyGroup_values_to_object_customProperties(object)
+        apply_propertyGroup_values_to_item_customProperties(object)
 
         context.window_manager.custom_properties_from_components_progress = -1.0
         return {'FINISHED'}
@@ -111,7 +111,7 @@ class COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT(Operator):
         object = context.object
         error = False
         try:
-            apply_customProperty_values_to_object_propertyGroups(object)
+            apply_customProperty_values_to_item_propertyGroups(object)
             progress = 0.5
             context.window_manager.components_from_custom_properties_progress = progress
             try:
@@ -153,7 +153,7 @@ class COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL(Operator):
         for index, object in enumerate(bpy.data.objects):
           
             try:
-                apply_customProperty_values_to_object_propertyGroups(object)
+                apply_customProperty_values_to_item_propertyGroups(object)
             except Exception as error:
                 del object["__disable__update"] # make sure custom properties are updateable afterwards, even in the case of failure
                 errors.append( "object: '" + object.name + "', error: " + str(error))
