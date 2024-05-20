@@ -13,9 +13,10 @@ def cleanup_file():
     
 def gltf_post_export_callback(data):
     #print("post_export", data)
+    blenvy = bpy.context.window_manager.blenvy
     bpy.context.window_manager.auto_export_tracker.export_finished()
 
-    gltf_settings_backup = bpy.context.window_manager.gltf_settings_backup
+    gltf_settings_backup = blenvy.auto_export.gltf_settings_backup
     gltf_filepath = data["gltf_filepath"]
     gltf_export_id = data['gltf_export_id']
     if gltf_export_id == "gltf_auto_export":
@@ -30,7 +31,7 @@ def gltf_post_export_callback(data):
         scene = bpy.context.scene
         if "glTF2ExportSettings" in scene:
             settings = scene["glTF2ExportSettings"]
-            export_settings = bpy.data.texts[".gltf_auto_export_gltf_settings"] if ".gltf_auto_export_gltf_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_gltf_settings")
+            export_settings = bpy.data.texts[".blenvy_gltf_settings"] if ".blenvy_gltf_settings" in bpy.data.texts else bpy.data.texts.new(".blenvy_gltf_settings")
             # now write new settings
             export_settings.clear()
 
@@ -42,7 +43,7 @@ def gltf_post_export_callback(data):
         else:
             if "glTF2ExportSettings" in scene:
                 del scene["glTF2ExportSettings"]
-        bpy.context.window_manager.gltf_settings_backup = ""
+        blenvy.auto_export.gltf_settings_backup = ""
        
         # the absurd length one has to go through to RESET THE OPERATOR because it has global state !!!!! AAAAAHHH
         last_operator = bpy.context.window_manager.auto_export_tracker.last_operator

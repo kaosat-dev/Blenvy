@@ -71,3 +71,10 @@ class AutoExportSettings(PropertyGroup):
         description='Collections that have been marked as assets will be systematically exported, even if not in use in another scene',
         default=True
     ) # type: ignore
+
+
+    # special property for gltf settings
+    gltf_settings_backup: StringProperty(
+        name="gltf settings backup",
+        description="backup for existing gltf settings so that we can restore them"
+    ) # type: ignore

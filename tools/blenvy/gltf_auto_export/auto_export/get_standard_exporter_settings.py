@@ -2,7 +2,7 @@ import bpy
 import json
 
 def get_standard_exporter_settings():
-    standard_gltf_exporter_settings = bpy.data.texts[".gltf_auto_export_gltf_settings"] if ".gltf_auto_export_gltf_settings" in bpy.data.texts else None
+    standard_gltf_exporter_settings = bpy.data.texts[".blenvy_gltf_settings"] if ".blenvy_gltf_settings" in bpy.data.texts else None
     if standard_gltf_exporter_settings != None:
         try:
             standard_gltf_exporter_settings = json.loads(standard_gltf_exporter_settings.as_string())

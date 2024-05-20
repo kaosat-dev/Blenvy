@@ -4,6 +4,8 @@ import bpy
 from bpy.types import (PropertyGroup)
 from bpy.props import (PointerProperty, IntProperty, StringProperty)
 
+from .prepare_and_export import prepare_and_export
+
 from ..constants import TEMPSCENE_PREFIX
 
 class AutoExportTracker(PropertyGroup):
@@ -51,9 +53,7 @@ class AutoExportTracker(PropertyGroup):
     def save_handler(cls, scene, depsgraph):
         print("-------------")
         print("saved", bpy.data.filepath)
-        # auto_export(changes_per_scene, export_parameters_changed)
-        bpy.ops.export_scenes.auto_gltf(direct_mode= True)
-
+        prepare_and_export()
         # (re)set a few things after exporting
         # reset wether the gltf export paramters were changed since the last save 
         cls.export_params_changed = False

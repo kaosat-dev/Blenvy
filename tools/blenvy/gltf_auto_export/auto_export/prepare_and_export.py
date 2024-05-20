@@ -1,27 +1,26 @@
 import bpy
 
-from . import project_diff
+from .project_diff import get_changes_per_scene, project_diff, serialize_current
 from ...settings import are_settings_identical
-from . import auto_export
+from .auto_export import auto_export
+from .settings_diff import get_setting_changes
 
 # prepare export by gather the changes to the scenes & settings
-def prepare_export():
+def prepare_and_export():
     blenvy = bpy.context.window_manager.blenvy
     bpy.context.window_manager.auto_export_tracker.disable_change_detection()
     auto_export_settings = blenvy.auto_export
     if auto_export_settings.auto_export: # only do the actual exporting if auto export is actually enabled
+
         # determine changed objects
-        previous_serialized_scene = None
-        current_serialized_scene = None
-        changes_per_scene = project_diff(previous_serialized_scene, current_serialized_scene)
+        per_scene_changes = get_changes_per_scene()
         # determine changed parameters 
-        previous_settings = None
-        current_settings = None
-        params_changed = are_settings_identical(previous_settings, current_settings)
+        setting_changes = get_setting_changes()
         # do the actual export
-        auto_export(changes_per_scene, params_changed, blenvy)
+        auto_export(per_scene_changes, setting_changes, blenvy)
 
         # cleanup 
+        # TODO: these are likely obsolete
         # reset the list of changes in the tracker
         bpy.context.window_manager.auto_export_tracker.clear_changes()
         print("AUTO EXPORT DONE")            

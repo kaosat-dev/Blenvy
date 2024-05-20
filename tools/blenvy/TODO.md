@@ -9,6 +9,7 @@ Auto export
      - root path => relative to blend file path
      - asset path => relative to root path
      - blueprints/levels/blueprints path => relative to assets path
+ - [ ] add error handling for de/serialization of project, so that in case of error, the previous saved serialized project is thrown away
 
 
 - move out some parameters from auto export to a higher level (as they are now used in multiple places)
@@ -82,3 +83,4 @@ General issues:
  - "parents" can only be blueprints
     - they normally need/have unique export paths (otherwise, user error, perhaps show it ?)
     - perhaps a simple hashing of the parent's path would be enought 
+ - addon-prefs => settings

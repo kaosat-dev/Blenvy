@@ -228,6 +228,6 @@ def serialize_scene():
     print("")
     print("data json", json.dumps(data))"""
 
-    return json.dumps(data)
+    return data # json.dumps(data)
 
 

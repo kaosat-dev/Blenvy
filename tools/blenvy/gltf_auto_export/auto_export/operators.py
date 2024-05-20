@@ -135,10 +135,10 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
         return True
         # compare both the auto export settings & the gltf settings
         previous_auto_settings = bpy.data.texts[".gltf_auto_export_settings_previous"] if ".gltf_auto_export_settings_previous" in bpy.data.texts else None
-        previous_gltf_settings = bpy.data.texts[".gltf_auto_export_gltf_settings_previous"] if ".gltf_auto_export_gltf_settings_previous" in bpy.data.texts else None
+        previous_gltf_settings = bpy.data.texts[".blenvy_gltf_settings_previous"] if ".blenvy_gltf_settings_previous" in bpy.data.texts else None
 
         current_auto_settings = bpy.data.texts[".gltf_auto_export_settings"] if ".gltf_auto_export_settings" in bpy.data.texts else None
-        current_gltf_settings = bpy.data.texts[".gltf_auto_export_gltf_settings"] if ".gltf_auto_export_gltf_settings" in bpy.data.texts else None
+        current_gltf_settings = bpy.data.texts[".blenvy_gltf_settings"] if ".blenvy_gltf_settings" in bpy.data.texts else None
 
         #check if params have changed
         
@@ -149,10 +149,10 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
             changed = True
         elif previous_gltf_settings == None:
             #print("previous gltf settings missing, exporting")
-            previous_gltf_settings = bpy.data.texts.new(".gltf_auto_export_gltf_settings_previous")
+            previous_gltf_settings = bpy.data.texts.new(".blenvy_gltf_settings_previous")
             previous_gltf_settings.write(json.dumps({}))
             if current_gltf_settings == None:
-                current_gltf_settings = bpy.data.texts.new(".gltf_auto_export_gltf_settings")
+                current_gltf_settings = bpy.data.texts.new(".blenvy_gltf_settings")
                 current_gltf_settings.write(json.dumps({}))
 
             changed = True
@@ -177,7 +177,7 @@ class AutoExportGLTF(Operator, AutoExportGltfAddonPreferences):#, ExportHelper):
             previous_auto_settings.write(current_auto_settings.as_string()) # TODO : check if this is always valid
 
         if current_gltf_settings != None:
-            previous_gltf_settings = bpy.data.texts[".gltf_auto_export_gltf_settings_previous"] if ".gltf_auto_export_gltf_settings_previous" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_gltf_settings_previous")
+            previous_gltf_settings = bpy.data.texts[".blenvy_gltf_settings_previous"] if ".blenvy_gltf_settings_previous" in bpy.data.texts else bpy.data.texts.new(".blenvy_gltf_settings_previous")
             previous_gltf_settings.clear()
             previous_gltf_settings.write(current_gltf_settings.as_string())
 

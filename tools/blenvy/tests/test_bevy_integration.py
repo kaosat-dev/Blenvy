@@ -91,7 +91,7 @@ def test_export_complex(setup_data):
     stored_auto_settings.write(json.dumps(export_props))
 
     # and store settings for the gltf part
-    stored_gltf_settings = bpy.data.texts[".gltf_auto_export_gltf_settings"] if ".gltf_auto_export_gltf_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_gltf_settings")
+    stored_gltf_settings = bpy.data.texts[".blenvy_gltf_settings"] if ".blenvy_gltf_settings" in bpy.data.texts else bpy.data.texts.new(".blenvy_gltf_settings")
     stored_gltf_settings.clear()
     stored_gltf_settings.write(json.dumps(gltf_settings))
 

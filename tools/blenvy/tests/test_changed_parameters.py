@@ -133,7 +133,7 @@ def test_export_changed_parameters(setup_data):
         "export_optimize_animation_size": False
     }
     # and store settings for the gltf part
-    stored_gltf_settings = bpy.data.texts[".gltf_auto_export_gltf_settings"] if ".gltf_auto_export_gltf_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_gltf_settings")
+    stored_gltf_settings = bpy.data.texts[".blenvy_gltf_settings"] if ".blenvy_gltf_settings" in bpy.data.texts else bpy.data.texts.new(".blenvy_gltf_settings")
     stored_gltf_settings.clear()
     stored_gltf_settings.write(json.dumps(gltf_settings))
 
@@ -177,7 +177,7 @@ def test_export_changed_parameters(setup_data):
         "export_optimize_animation_size": True
     }
 
-    stored_gltf_settings = bpy.data.texts[".gltf_auto_export_gltf_settings"] if ".gltf_auto_export_gltf_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_gltf_settings")
+    stored_gltf_settings = bpy.data.texts[".blenvy_gltf_settings"] if ".blenvy_gltf_settings" in bpy.data.texts else bpy.data.texts.new(".blenvy_gltf_settings")
     stored_gltf_settings.clear()
     stored_gltf_settings.write(json.dumps(gltf_settings))
 
