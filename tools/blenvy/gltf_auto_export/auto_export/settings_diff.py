@@ -1,6 +1,6 @@
 import bpy
 
-from ...settings import are_settings_identical, load_settings
+from ...settings import are_settings_identical, load_settings, upsert_settings
 
 # which settings are specific to auto_export # TODO: can we infer this ?
 auto_export_parameter_names = [
@@ -27,10 +27,19 @@ def get_setting_changes():
 
     previous_export_settings = load_settings(".blenvy_export_settings_previous")
     current_export_settings = load_settings(".blenvy_export_settings")
-    auto_export_settings_changed = not are_settings_identical(previous_export_settings, current_export_settings)
+    export_settings_changed = not are_settings_identical(previous_export_settings, current_export_settings)
 
+    # if there were no setting before, it is new, we need export
+    if previous_gltf_settings is None:
+         pass
+    if previous_export_settings is None:
+         pass
+    
+    # write the new settings to the old settings
+    upsert_settings(".blenvy_gltf_settings_previous", current_gltf_settings)
+    upsert_settings(".blenvy_export_settings_previous", current_gltf_settings)
 
-    return {}
+    return gltf_settings_changed or export_settings_changed
 
 def did_export_settings_change(self):
         return True

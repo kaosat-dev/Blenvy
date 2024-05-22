@@ -46,7 +46,7 @@ def generate_gltf_export_preferences(addon_prefs):
     for key in addon_prefs.__annotations__.keys():
         if str(key) not in AutoExportGltfPreferenceNames:
             #print("overriding setting", key, "value", getattr(addon_prefs,key))
-            gltf_export_preferences[key] = getattr(addon_prefs, key)
+            pass#gltf_export_preferences[key] = getattr(addon_prefs, key)
 
 
     standard_gltf_exporter_settings = get_standard_exporter_settings()
@@ -74,4 +74,4 @@ def export_gltf (path, export_settings):
     settings = {**export_settings, "filepath": path}
     # print("export settings",settings)
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    #bpy.ops.export_scene.gltf(**settings)
+    bpy.ops.export_scene.gltf(**settings)

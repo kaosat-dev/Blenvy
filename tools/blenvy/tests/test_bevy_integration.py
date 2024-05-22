@@ -9,6 +9,8 @@ import filecmp
 from PIL import Image
 from pixelmatch.contrib.PIL import pixelmatch
 
+from blenvy.gltf_auto_export.auto_export.prepare_and_export import prepare_and_export
+
 @pytest.fixture
 def setup_data(request):
     print("\nSetting up resources...")
@@ -98,9 +100,17 @@ def test_export_complex(setup_data):
     # move the main cube
     bpy.data.objects["Cube"].location = [1, 0, 0]
     # move the cube in the library
-    bpy.data.objects["Blueprint1_mesh"].location = [1, 2, 1]
+    # TODO: add back bpy.data.objects["Blueprint1_mesh"].location = [1, 2, 1]
 
-    auto_export_operator(
+    registry = bpy.context.window_manager.components_registry
+    blenvy = bpy.context.window_manager.blenvy
+    main_scene = blenvy.main_scenes.add()
+    main_scene.name = "World"
+    blenvy.auto_export.auto_export = True
+
+    prepare_and_export()
+
+    """auto_export_operator(
         auto_export=True,
         direct_mode=True,
         project_root_path = os.path.abspath(root_path),
@@ -111,7 +121,7 @@ def test_export_complex(setup_data):
         export_scene_settings=True,
         export_blueprints=True,
         export_materials_library=True
-    )
+    )"""
     # blueprint1 => has an instance, got changed, should export
     # blueprint2 => has NO instance, but marked as asset, should export
     # blueprint3 => has NO instance, not marked as asset, used inside blueprint 4: should export

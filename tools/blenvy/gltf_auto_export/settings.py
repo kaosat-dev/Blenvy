@@ -72,9 +72,19 @@ class AutoExportSettings(PropertyGroup):
         default=True
     ) # type: ignore
 
+    dry_run: EnumProperty(
+        name="dry run",
+        description="debug/ develop helper to enable everything but the actual exporting of files",
+        items=(
+            ("NO_EXPORT", "No export", "do not actually export gltf files"),
+            ("NO_PREPARE", "No prepare", "do not actually export gltf files AND do not prepare the exports either (ie no creating fake scenes etc)"),
+        )
+    ) # type: ignore
 
     # special property for gltf settings
     gltf_settings_backup: StringProperty(
         name="gltf settings backup",
         description="backup for existing gltf settings so that we can restore them"
     ) # type: ignore
+
+
