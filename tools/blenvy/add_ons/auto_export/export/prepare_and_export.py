@@ -1,7 +1,6 @@
 import bpy
 
 from .project_diff import get_changes_per_scene, project_diff, serialize_current
-from ...settings import are_settings_identical
 from .auto_export import auto_export
 from .settings_diff import get_setting_changes
 

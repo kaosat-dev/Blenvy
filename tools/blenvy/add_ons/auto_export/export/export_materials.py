@@ -2,9 +2,9 @@ import os
 import bpy
 from pathlib import Path
 
-from ...core.helpers_collections import (traverse_tree)
-from ...core.object_makers import make_cube
-from ...materials.materials_helpers import get_all_materials
+from blenvy.core.helpers_collections import (traverse_tree)
+from blenvy.core.object_makers import make_cube
+from blenvy.materials.materials_helpers import get_all_materials
 from ..helpers.generate_and_export import generate_and_export
 from .export_gltf import (generate_gltf_export_preferences)
 

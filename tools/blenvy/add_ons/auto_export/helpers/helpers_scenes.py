@@ -1,6 +1,6 @@
 import json
 import bpy
-from ...core.object_makers import (make_empty)
+from blenvy.core.object_makers import (make_empty)
 
 
 # these are mostly for when using this add-on together with the bevy_components add-on

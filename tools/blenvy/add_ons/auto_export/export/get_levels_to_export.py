@@ -1,6 +1,5 @@
-import bpy
-from ...core.scene_helpers import get_main_and_library_scenes
-from ...blueprints.blueprint_helpers import check_if_blueprint_on_disk
+from blenvy.core.scene_helpers import get_main_and_library_scenes
+from blenvy.blueprints.blueprint_helpers import check_if_blueprint_on_disk
 
 # IF collection_instances_combine_mode is not 'split' check for each scene if any object in changes_per_scene has an instance in the scene
 def changed_object_in_scene(scene_name, changes_per_scene, blueprints_data, collection_instances_combine_mode):

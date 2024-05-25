@@ -1,13 +1,13 @@
 import os
 import bpy
 from pathlib import Path
+from blenvy.blueprints.blueprint_helpers import inject_blueprints_list_into_main_scene, remove_blueprints_list_from_main_scene
 
 from ..constants import TEMPSCENE_PREFIX
 from ..helpers.generate_and_export import generate_and_export
 from .export_gltf import (generate_gltf_export_preferences, export_gltf)
 from ..modules.bevy_dynamic import is_object_dynamic, is_object_static
 from ..helpers.helpers_scenes import clear_hollow_scene, copy_hollowed_collection_into
-from ...blueprints.blueprint_helpers import inject_blueprints_list_into_main_scene, remove_blueprints_list_from_main_scene
 
 def export_main_scene(scene, blend_file_path, settings, blueprints_data): 
     gltf_export_preferences = generate_gltf_export_preferences(settings)

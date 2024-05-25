@@ -1,6 +1,6 @@
 import bpy
+from blenvy.core.helpers_collections import (set_active_collection)
 from ..export.export_gltf import export_gltf
-from ...core.helpers_collections import (set_active_collection)
 
 """ 
 generates a temporary scene, fills it with data, cleans up after itself

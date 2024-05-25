@@ -1,6 +1,6 @@
 
-from ...core.scene_helpers import get_main_and_library_scenes
-from ...blueprints.blueprint_helpers import find_blueprints_not_on_disk
+from blenvy.core.scene_helpers import get_main_and_library_scenes
+from blenvy.blueprints.blueprint_helpers import find_blueprints_not_on_disk
 
 # TODO: this should also take the split/embed mode into account: if a nested collection changes AND embed is active, its container collection should also be exported
 def get_blueprints_to_export(changes_per_scene, changed_export_parameters, blueprints_data, settings):

@@ -1,6 +1,6 @@
 
 import bpy
-from ...core.object_makers import make_empty
+from blenvy.core.object_makers import make_empty
 
 # TODO: replace this with placing scene level custom properties once support for that has been added to bevy_gltf
 def upsert_scene_components(main_scenes):

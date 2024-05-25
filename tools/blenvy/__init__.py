@@ -17,22 +17,20 @@ from bpy.props import (StringProperty)
 
 
 # components management 
-from .bevy_components.components.operators import CopyComponentOperator, Fix_Component_Operator, OT_rename_component, RemoveComponentFromAllItemsOperator, RemoveComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, AddComponentOperator, RenameHelper, Toggle_ComponentVisibility
-
-from .bevy_components.registry.registry import ComponentsRegistry,MissingBevyType
-from .bevy_components.registry.operators import (COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT, COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT, OT_select_component_name_to_replace, OT_select_object, ReloadRegistryOperator, OT_OpenSchemaFileBrowser)
-from .bevy_components.registry.ui import (BEVY_COMPONENTS_PT_Configuration, BEVY_COMPONENTS_PT_AdvancedToolsPanel, BEVY_COMPONENTS_PT_MissingTypesPanel, MISSING_TYPES_UL_List)
-
-from .bevy_components.components.metadata import (ComponentMetadata, ComponentsMeta)
-from .bevy_components.components.lists import GENERIC_LIST_OT_actions, Generic_LIST_OT_AddItem, Generic_LIST_OT_RemoveItem, Generic_LIST_OT_SelectItem
-from .bevy_components.components.maps import GENERIC_MAP_OT_actions
-from .bevy_components.components.definitions_list import (ComponentDefinitionsList, ClearComponentDefinitionsList)
-from .bevy_components.components.ui import (BEVY_COMPONENTS_PT_ComponentsPanel)
+from .add_ons.bevy_components.components.operators import CopyComponentOperator, Fix_Component_Operator, OT_rename_component, RemoveComponentFromAllItemsOperator, RemoveComponentOperator, GenerateComponent_From_custom_property_Operator, PasteComponentOperator, AddComponentOperator, RenameHelper, Toggle_ComponentVisibility
+from .add_ons.bevy_components.registry.registry import ComponentsRegistry,MissingBevyType
+from .add_ons.bevy_components.registry.operators import (COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT, COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL, COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT, OT_select_component_name_to_replace, OT_select_object, ReloadRegistryOperator, OT_OpenSchemaFileBrowser)
+from .add_ons.bevy_components.registry.ui import (BEVY_COMPONENTS_PT_Configuration, BEVY_COMPONENTS_PT_AdvancedToolsPanel, BEVY_COMPONENTS_PT_MissingTypesPanel, MISSING_TYPES_UL_List)
+from .add_ons.bevy_components.components.metadata import (ComponentMetadata, ComponentsMeta)
+from .add_ons.bevy_components.components.lists import GENERIC_LIST_OT_actions, Generic_LIST_OT_AddItem, Generic_LIST_OT_RemoveItem, Generic_LIST_OT_SelectItem
+from .add_ons.bevy_components.components.maps import GENERIC_MAP_OT_actions
+from .add_ons.bevy_components.components.definitions_list import (ComponentDefinitionsList, ClearComponentDefinitionsList)
+from .add_ons.bevy_components.components.ui import (BEVY_COMPONENTS_PT_ComponentsPanel)
 
 # auto export
-from .auto_export import gltf_post_export_callback
-from .auto_export.export.tracker import AutoExportTracker
-from .auto_export.settings import AutoExportSettings
+from .add_ons.auto_export import gltf_post_export_callback
+from .add_ons.auto_export.export.tracker import AutoExportTracker
+from .add_ons.auto_export.settings import AutoExportSettings
 
 # asset management
 from .assets.ui import Blenvy_assets

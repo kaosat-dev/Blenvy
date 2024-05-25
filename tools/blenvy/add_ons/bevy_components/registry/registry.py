@@ -6,7 +6,7 @@ from pathlib import Path
 from bpy_types import (PropertyGroup)
 from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorProperty, IntProperty, IntVectorProperty, EnumProperty, PointerProperty, CollectionProperty)
 
-from ...settings import load_settings
+from blenvy.settings import load_settings
 from ..propGroups.prop_groups import generate_propertyGroups_for_components
 from ..components.metadata import ComponentMetadata, ensure_metadata_for_all_items
 

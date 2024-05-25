@@ -1,6 +1,6 @@
 import bpy
 
-from ...settings import are_settings_identical, load_settings, upsert_settings
+from blenvy.settings import are_settings_identical, load_settings, upsert_settings
 
 # which settings are specific to auto_export # TODO: can we infer this ?
 auto_export_parameter_names = [

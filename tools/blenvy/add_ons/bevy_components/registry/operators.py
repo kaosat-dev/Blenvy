@@ -4,7 +4,7 @@ from bpy_types import (Operator)
 from bpy.props import (StringProperty)
 from bpy_extras.io_utils import ImportHelper
 
-from ...settings import upsert_settings
+from blenvy.settings import upsert_settings
 
 from ..components.metadata import apply_customProperty_values_to_item_propertyGroups, apply_propertyGroup_values_to_item_customProperties, ensure_metadata_for_all_items
 from ..propGroups.prop_groups import generate_propertyGroups_for_components
