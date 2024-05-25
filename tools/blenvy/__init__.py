@@ -30,9 +30,9 @@ from .bevy_components.components.definitions_list import (ComponentDefinitionsLi
 from .bevy_components.components.ui import (BEVY_COMPONENTS_PT_ComponentsPanel)
 
 # auto export
-from .gltf_auto_export import gltf_post_export_callback
-from .gltf_auto_export.auto_export.tracker import AutoExportTracker
-from .gltf_auto_export.settings import AutoExportSettings
+from .auto_export import gltf_post_export_callback
+from .auto_export.export.tracker import AutoExportTracker
+from .auto_export.settings import AutoExportSettings
 
 # asset management
 from .assets.ui import Blenvy_assets

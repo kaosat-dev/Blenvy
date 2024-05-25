@@ -11,7 +11,7 @@ from .get_standard_exporter_settings import get_standard_exporter_settings
 
 from .export_main_scenes import export_main_scene
 from .export_blueprints import export_blueprints
-from ..modules.export_materials import cleanup_materials, export_materials
+from .export_materials import cleanup_materials, export_materials
 from ..modules.bevy_scene_components import remove_scene_components, upsert_scene_components
 
 from ...blueprints.blueprints_scan import blueprints_scan

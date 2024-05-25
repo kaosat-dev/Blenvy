@@ -9,7 +9,7 @@ import filecmp
 from PIL import Image
 from pixelmatch.contrib.PIL import pixelmatch
 
-from blenvy.gltf_auto_export.auto_export.prepare_and_export import prepare_and_export
+from blenvy.auto_export.export.prepare_and_export import prepare_and_export
 
 @pytest.fixture
 def setup_data(request):

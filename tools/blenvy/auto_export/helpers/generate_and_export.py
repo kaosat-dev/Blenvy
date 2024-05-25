@@ -1,5 +1,5 @@
 import bpy
-from ..auto_export.export_gltf import export_gltf
+from ..export.export_gltf import export_gltf
 from ...core.helpers_collections import (set_active_collection)
 
 """ 

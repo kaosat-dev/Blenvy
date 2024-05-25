@@ -4,7 +4,7 @@ from bpy_types import (PropertyGroup)
 from bpy.props import (EnumProperty, PointerProperty, StringProperty, CollectionProperty, IntProperty)
 from .scene_helpers import SceneSelector
 from ..settings import upsert_settings, load_settings
-import blenvy.gltf_auto_export.settings as auto_export_settings
+import blenvy.auto_export.settings as auto_export_settings
 
 def update_scene_lists(self, context):                
     blenvy = self# context.window_manager.blenvy

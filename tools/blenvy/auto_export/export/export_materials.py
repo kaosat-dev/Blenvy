@@ -6,7 +6,7 @@ from ...core.helpers_collections import (traverse_tree)
 from ...core.object_makers import make_cube
 from ...materials.materials_helpers import get_all_materials
 from ..helpers.generate_and_export import generate_and_export
-from ..auto_export.export_gltf import (generate_gltf_export_preferences)
+from .export_gltf import (generate_gltf_export_preferences)
 
 def clear_material_info(collection_names, library_scenes):
     for scene in library_scenes:
