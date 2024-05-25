@@ -3,9 +3,8 @@ import os
 import bpy
 
 from .get_standard_exporter_settings import get_standard_exporter_settings
-from .preferences import (AutoExportGltfPreferenceNames)
 
-def generate_gltf_export_preferences(addon_prefs): 
+def generate_gltf_export_preferences(settings): 
     # default values
     gltf_export_preferences = dict(
         # export_format= 'GLB', #'GLB', 'GLTF_SEPARATE', 'GLTF_EMBEDDED'
@@ -43,10 +42,10 @@ def generate_gltf_export_preferences(addon_prefs):
         #export_optimize_animation_size=False
     )
         
-    for key in addon_prefs.__annotations__.keys():
+    """for key in settings.__annotations__.keys():
         if str(key) not in AutoExportGltfPreferenceNames:
-            #print("overriding setting", key, "value", getattr(addon_prefs,key))
-            pass#gltf_export_preferences[key] = getattr(addon_prefs, key)
+            #print("overriding setting", key, "value", getattr(settings,key))
+            pass#gltf_export_preferences[key] = getattr(settings, key)"""
 
 
     standard_gltf_exporter_settings = get_standard_exporter_settings()
@@ -70,8 +69,8 @@ def generate_gltf_export_preferences(addon_prefs):
 
 
 #https://docs.blender.org/api/current/bpy.ops.export_scene.html#bpy.ops.export_scene.gltf
-def export_gltf (path, export_settings):
-    settings = {**export_settings, "filepath": path}
+def export_gltf (path, gltf_export_settings):
+    settings = {**gltf_export_settings, "filepath": path}
     # print("export settings",settings)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     bpy.ops.export_scene.gltf(**settings)

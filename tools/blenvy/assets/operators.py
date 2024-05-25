@@ -52,7 +52,6 @@ class OT_add_bevy_asset(Operator):
     ) # type: ignore
 
     def execute(self, context):
-        assets = []
         blueprint_assets = self.target_type == 'BLUEPRINT'
         target = None
         if blueprint_assets:
@@ -61,7 +60,9 @@ class OT_add_bevy_asset(Operator):
             target = bpy.data.scenes[self.target_name]
         assets = get_user_assets(target)
         asset = {"name": self.asset_name, "type": self.asset_type, "path": self.asset_path}
+        print('assets', assets, target)
         if not does_asset_exist(target, asset):
+            print("add asset", target, asset)
             upsert_asset(target, asset)
 
             #assets.append({"name": self.asset_name, "type": self.asset_type, "path": self.asset_path, "internal": False})
@@ -202,7 +203,7 @@ class OT_test_bevy_assets(Operator):
         blenvy = context.window_manager.blenvy
         settings = blenvy
         blueprints_registry = context.window_manager.blueprints_registry
-        blueprints_registry.add_blueprints_data()
+        blueprints_registry.refresh_blueprints()
         blueprints_data = blueprints_registry.blueprints_data
 
         for scene in blenvy.main_scenes:

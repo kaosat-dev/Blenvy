@@ -74,7 +74,7 @@ class Blenvy_assets(bpy.types.Panel):
 
         asset_registry = context.window_manager.assets_registry
         blueprints_registry = context.window_manager.blueprints_registry
-        blueprints_registry.add_blueprints_data()
+        #blueprints_registry.refresh_blueprints()
         blueprints_data = blueprints_registry.blueprints_data
 
         name = "world"
@@ -85,9 +85,12 @@ class Blenvy_assets(bpy.types.Panel):
         settings = SimpleNamespace(**settings)
 
         if panel:
-            for scene in blenvy.main_scenes:
+            #print("dfs")
+            for scene_selector in blenvy.main_scenes:
+                scene = bpy.data.scenes[scene_selector.name]
                 #get_main_scene_assets_tree(scene, blueprints_data, settings)
                 user_assets = get_user_assets(scene)
+                #print("user assets", user_assets, scene)
                 row = panel.row()
                 scene_assets_panel = draw_assets(layout=row, name=scene.name, title=f"{scene.name} Assets", asset_registry=asset_registry, user_assets=user_assets, target_type="SCENE", target_name=scene.name)
                 """if scene.name in blueprints_data.blueprint_instances_per_main_scene:

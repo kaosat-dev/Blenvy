@@ -3,6 +3,8 @@ import bpy
 from bpy_types import (UIList)
 from bpy.props import (StringProperty)
 
+from ..utils import get_selection_type
+
 from ..components.operators import OT_rename_component, RemoveComponentFromAllItemsOperator, RemoveComponentOperator
 from .operators import(
     COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL, 
@@ -78,7 +80,7 @@ class BEVY_COMPONENTS_PT_AdvancedToolsPanel(bpy.types.Panel):
             col.label(text=item)
 
 
-    def draw_invalid_or_unregistered(self, layout, status, component_name, object):
+    def draw_invalid_or_unregistered(self, layout, status, component_name, target):
         available_components = bpy.context.window_manager.components_list
         registry = bpy.context.window_manager.components_registry 
         registry_has_type_infos = registry.has_type_infos()
@@ -89,8 +91,8 @@ class BEVY_COMPONENTS_PT_AdvancedToolsPanel(bpy.types.Panel):
         col.label(text=component_name)
 
         col = row.column()
-        operator = col.operator(OT_select_object.bl_idname, text=object.name)
-        operator.object_name = object.name
+        operator = col.operator("object.select", text=target.name)
+        operator.target_name = target.name
 
         col = row.column()
         col.label(text=status)
@@ -99,22 +101,24 @@ class BEVY_COMPONENTS_PT_AdvancedToolsPanel(bpy.types.Panel):
         col.prop(available_components, "list", text="")
 
         col = row.column()
-        operator = col.operator(OT_rename_component.bl_idname, text="", icon="SHADERFX") #rename
+        operator = col.operator("object.rename_bevy_component", text="", icon="SHADERFX") #rename
         new_name = registry.type_infos[available_components.list]['long_name'] if available_components.list in registry.type_infos else ""
         operator.original_name = component_name
-        operator.target_objects = json.dumps([object.name])
+        operator.target_objects = json.dumps([target.name])
         operator.new_name = new_name
         col.enabled = registry_has_type_infos and component_name != "" and component_name != new_name
 
 
         col = row.column()
-        operator = col.operator(RemoveComponentOperator.bl_idname, text="", icon="X")
-        operator.object_name = object.name
+        operator = col.operator("object.remove_bevy_component", text="", icon="X")
+        operator.item_name = target.name
         operator.component_name = component_name
+        operator.item_type = get_selection_type(target)
+
 
         col = row.column()
         col = row.column()
-        operator = col.operator(OT_select_component_name_to_replace.bl_idname, text="", icon="EYEDROPPER") #text="select for rename", 
+        operator = col.operator("object.select_component_name_to_replace", text="", icon="EYEDROPPER") #text="select for rename", 
         operator.component_name = component_name
 
     def draw(self, context):

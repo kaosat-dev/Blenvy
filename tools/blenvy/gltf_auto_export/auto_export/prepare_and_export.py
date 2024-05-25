@@ -8,8 +8,8 @@ from .settings_diff import get_setting_changes
 # prepare export by gather the changes to the scenes & settings
 def prepare_and_export():
     print("prepare and export")
-    blenvy = bpy.context.window_manager.blenvy
     bpy.context.window_manager.auto_export_tracker.disable_change_detection()
+    blenvy = bpy.context.window_manager.blenvy
     auto_export_settings = blenvy.auto_export
     if auto_export_settings.auto_export: # only do the actual exporting if auto export is actually enabled
 

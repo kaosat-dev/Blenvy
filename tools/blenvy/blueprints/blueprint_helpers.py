@@ -25,12 +25,12 @@ def inject_export_path_into_internal_blueprints(internal_blueprints, blueprints_
         blueprint_exported_path = os.path.join(blueprints_path, f"{blueprint.name}{gltf_extension}")
         blueprint.collection["export_path"] = blueprint_exported_path
 
-def inject_blueprints_list_into_main_scene(scene, blueprints_data, addon_prefs):
-    project_root_path = getattr(addon_prefs, "project_root_path")
-    assets_path = getattr(addon_prefs,"assets_path")
-    levels_path = getattr(addon_prefs,"levels_path")
-    blueprints_path = getattr(addon_prefs, "blueprints_path")
-    export_gltf_extension = getattr(addon_prefs, "export_gltf_extension")
+def inject_blueprints_list_into_main_scene(scene, blueprints_data, settings):
+    project_root_path = getattr(settings, "project_root_path")
+    assets_path = getattr(settings,"assets_path")
+    levels_path = getattr(settings,"levels_path")
+    blueprints_path = getattr(settings, "blueprints_path")
+    export_gltf_extension = getattr(settings, "export_gltf_extension")
 
     # print("injecting assets/blueprints data into scene")
     assets_list_name = f"assets_list_{scene.name}_components"

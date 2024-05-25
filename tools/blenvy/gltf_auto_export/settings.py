@@ -76,9 +76,11 @@ class AutoExportSettings(PropertyGroup):
         name="dry run",
         description="debug/ develop helper to enable everything but the actual exporting of files",
         items=(
+            ("DISABLED", "Disabled","Run exports normally (no Dry run)"),
             ("NO_EXPORT", "No export", "do not actually export gltf files"),
             ("NO_PREPARE", "No prepare", "do not actually export gltf files AND do not prepare the exports either (ie no creating fake scenes etc)"),
-        )
+        ),
+        default="DISABLED"
     ) # type: ignore
 
     # special property for gltf settings

@@ -14,15 +14,18 @@ class GLTF_PT_auto_export_blueprints_list(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.window_manager.blenvy.mode == 'BLUEPRINTS'
+        return context.window_manager.blenvy.mode == 'BLUEPRINTS' if 'blenvy' in context.window_manager else False
 
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
         asset_registry = context.window_manager.assets_registry
+        blueprint_registry = context.window_manager.blueprints_registry
 
-        for blueprint in context.window_manager.blueprints_registry.blueprints_list:
+        blueprint_registry.refresh_blueprints()
+
+        for blueprint in blueprint_registry.blueprints_data.blueprints:
             row = layout.row()
             row.label(icon="RIGHTARROW")
             row.label(text=blueprint.name)

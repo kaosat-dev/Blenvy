@@ -6,11 +6,11 @@ from ...core.helpers_collections import (set_active_collection)
 generates a temporary scene, fills it with data, cleans up after itself
     * named using temp_scene_name 
     * filled using the tempScene_filler
-    * written on disk to gltf_output_path, with the gltf export parameters in export_settings
+    * written on disk to gltf_output_path, with the gltf export parameters in gltf_export_settings
     * cleaned up using tempScene_cleaner
 
 """
-def generate_and_export(addon_prefs, export_settings, gltf_output_path, temp_scene_name="__temp_scene", tempScene_filler=None, tempScene_cleaner=None): 
+def generate_and_export(settings, gltf_export_settings, gltf_output_path, temp_scene_name="__temp_scene", tempScene_filler=None, tempScene_cleaner=None): 
 
     temp_scene = bpy.data.scenes.new(name=temp_scene_name)
     temp_root_collection = temp_scene.collection
@@ -41,7 +41,8 @@ def generate_and_export(addon_prefs, export_settings, gltf_output_path, temp_sce
         scene_filler_data = tempScene_filler(temp_root_collection)
         # export the temporary scene
         try:
-            export_gltf(gltf_output_path, export_settings)
+            if settings.auto_export.dry_run == "DISABLED":
+                export_gltf(gltf_output_path, gltf_export_settings)
         except Exception as error:
             print("failed to export gltf !", error)
             raise error

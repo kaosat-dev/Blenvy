@@ -1,16 +1,15 @@
-import bpy
-import os
-from ..helpers.helpers_scenes import (get_scenes, )
+
+from ...core.scene_helpers import get_main_and_library_scenes
 from ...blueprints.blueprint_helpers import find_blueprints_not_on_disk
 
 # TODO: this should also take the split/embed mode into account: if a nested collection changes AND embed is active, its container collection should also be exported
-def get_blueprints_to_export(changes_per_scene, changed_export_parameters, blueprints_data, addon_prefs):
-    export_gltf_extension = getattr(addon_prefs, "export_gltf_extension", ".glb")
-    blueprints_path_full = getattr(addon_prefs,"blueprints_path_full", "")
-    change_detection = getattr(addon_prefs.auto_export, "change_detection")
-    collection_instances_combine_mode = getattr(addon_prefs.auto_export, "collection_instances_combine_mode")
+def get_blueprints_to_export(changes_per_scene, changed_export_parameters, blueprints_data, settings):
+    export_gltf_extension = getattr(settings, "export_gltf_extension", ".glb")
+    blueprints_path_full = getattr(settings,"blueprints_path_full", "")
+    change_detection = getattr(settings.auto_export, "change_detection")
+    collection_instances_combine_mode = getattr(settings.auto_export, "collection_instances_combine_mode")
 
-    [main_scene_names, level_scenes, library_scene_names, library_scenes] = get_scenes(addon_prefs)
+    [main_scene_names, level_scenes, library_scene_names, library_scenes] = get_main_and_library_scenes(settings)
     internal_blueprints = blueprints_data.internal_blueprints
     blueprints_to_export = internal_blueprints # just for clarity
 

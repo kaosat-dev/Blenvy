@@ -31,7 +31,6 @@ from .bevy_components.components.ui import (BEVY_COMPONENTS_PT_ComponentsPanel)
 
 # auto export
 from .gltf_auto_export import gltf_post_export_callback
-from .gltf_auto_export.auto_export.operators import AutoExportGLTF
 from .gltf_auto_export.auto_export.tracker import AutoExportTracker
 from .gltf_auto_export.settings import AutoExportSettings
 
@@ -114,7 +113,6 @@ classes = [
     GENERIC_MAP_OT_actions,
 
     # gltf auto export
-    AutoExportGLTF, 
     AutoExportTracker,
     AutoExportSettings,
 
@@ -146,6 +144,7 @@ def post_save(scene, depsgraph):
 
 @persistent
 def post_load(file_name):
+    print("POST LOAD")
     registry = bpy.context.window_manager.components_registry
     if registry  is not None:
         registry.load_settings()

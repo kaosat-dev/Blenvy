@@ -132,6 +132,7 @@ class BlenvyManager(PropertyGroup):
         del bpy.types.WindowManager.library_scene
 
     def load_settings(self):
+        print("LOAD SETTINGS")
         settings = load_settings(self.settings_save_path)
         if settings is not None:
             if "mode" in settings:

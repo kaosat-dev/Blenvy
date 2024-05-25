@@ -145,8 +145,8 @@ def duplicate_object(object, parent, combine_mode, destination_collection, bluep
         duplicate_object(child, copy, combine_mode, destination_collection, blueprints_data, nester+"  ")
 
 # copies the contents of a collection into another one while replacing library instances with empties
-def copy_hollowed_collection_into(source_collection, destination_collection, parent_empty=None, filter=None, blueprints_data=None, addon_prefs={}):
-    collection_instances_combine_mode = getattr(addon_prefs.auto_export, "collection_instances_combine_mode")
+def copy_hollowed_collection_into(source_collection, destination_collection, parent_empty=None, filter=None, blueprints_data=None, settings={}):
+    collection_instances_combine_mode = getattr(settings.auto_export, "collection_instances_combine_mode")
 
     for object in source_collection.objects:
         if object.name.endswith("____bak"): # some objects could already have been handled, ignore them
@@ -172,7 +172,7 @@ def copy_hollowed_collection_into(source_collection, destination_collection, par
             parent_empty = collection_placeholder, 
             filter = filter,
             blueprints_data = blueprints_data, 
-            addon_prefs=addon_prefs
+            settings=settings
         )
     return {}
 
@@ -204,20 +204,3 @@ def clear_hollow_scene(temp_scene, original_root_collection):
     
     # reset original names
     restore_original_names(original_root_collection)
-
-# convenience utility to get lists of scenes
-def get_scenes(addon_prefs):
-    level_scene_names= getattr(addon_prefs, "main_scene_names", []) #list(map(lambda scene: scene.name, getattr(addon_prefs,"main_scenes")))
-    library_scene_names = getattr(addon_prefs, "library_scene_names", []) #list(map(lambda scene: scene.name, getattr(addon_prefs,"library_scenes")))
-
-    level_scene_names= list(map(lambda scene: scene.name, getattr(addon_prefs,"main_scenes")))
-    library_scene_names = list(map(lambda scene: scene.name, getattr(addon_prefs,"library_scenes")))
-
-    print("level_scene_names", level_scene_names)
-    level_scene_names = list(filter(lambda name: name in bpy.data.scenes, level_scene_names))
-    library_scene_names = list(filter(lambda name: name in bpy.data.scenes, library_scene_names))
-
-    level_scenes = list(map(lambda name: bpy.data.scenes[name], level_scene_names))
-    library_scenes = list(map(lambda name: bpy.data.scenes[name], library_scene_names))
-    
-    return [level_scene_names, level_scenes, library_scene_names, library_scenes]

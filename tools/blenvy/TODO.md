@@ -71,7 +71,7 @@ Components:
 General things to solve:
  - [x] save settings
  - [x] load settings
-    - [ ] add_blueprints_data
+    - [ ] add blueprints data
 
 - [x] rename all path stuff using the old naming convention : "blueprints_path_full"
 - [x] generate the full paths directly when setting them in the UI  
@@ -83,6 +83,5 @@ General issues:
  - "parents" can only be blueprints
     - they normally need/have unique export paths (otherwise, user error, perhaps show it ?)
     - perhaps a simple hashing of the parent's path would be enought 
- - [ ] addon-prefs => settings
-
- - [ ] generate_gltf_export_preferences => should not use add-on prefs at all ? since we are not overriding gltf settings that way anymore ?
+ - [x] addon-prefs => settings
+ - [x] generate_gltf_export_preferences => should not use add-on prefs at all ? since we are not overriding gltf settings that way anymore ?

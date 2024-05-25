@@ -4,12 +4,12 @@ import bpy
 
 from .asset_helpers import does_asset_exist, get_user_assets, get_user_assets_as_list
 
-def scan_assets(scene, blueprints_data, addon_prefs):
-    project_root_path = getattr(addon_prefs, "project_root_path")
-    export_output_folder = getattr(addon_prefs,"export_output_folder")
-    levels_path = getattr(addon_prefs,"levels_path")
-    blueprints_path = getattr(addon_prefs, "blueprints_path")
-    export_gltf_extension = getattr(addon_prefs, "export_gltf_extension")
+def scan_assets(scene, blueprints_data, settings):
+    project_root_path = getattr(settings, "project_root_path")
+    export_output_folder = getattr(settings,"export_output_folder")
+    levels_path = getattr(settings,"levels_path")
+    blueprints_path = getattr(settings, "blueprints_path")
+    export_gltf_extension = getattr(settings, "export_gltf_extension")
 
     relative_blueprints_path = os.path.relpath(blueprints_path, project_root_path)
     blueprint_instance_names_for_scene = blueprints_data.blueprint_instances_per_main_scene.get(scene.name, None)
@@ -61,9 +61,9 @@ def get_userTextures():
                         textures.extend([x.image.filepath for x in mat_slot.material.node_tree.nodes if x.type=='TEX_IMAGE'])
     print("textures", textures)
 
-def get_blueprint_assets_tree(blueprint, blueprints_data, parent, addon_prefs):
-    blueprints_path = getattr(addon_prefs, "blueprints_path")
-    export_gltf_extension = getattr(addon_prefs, "export_gltf_extension")
+def get_blueprint_assets_tree(blueprint, blueprints_data, parent, settings):
+    blueprints_path = getattr(settings, "blueprints_path")
+    export_gltf_extension = getattr(settings, "export_gltf_extension")
     assets_list = []
     
 
@@ -80,7 +80,7 @@ def get_blueprint_assets_tree(blueprint, blueprints_data, parent, addon_prefs):
                 assets_list.append({"name": child_blueprint.name, "path": blueprint_exported_path, "type": "MODEL", "generated": True,"internal":blueprint.local, "parent": blueprint.name})
 
             # and add sub stuff
-            sub_assets_lists = get_blueprint_assets_tree(child_blueprint, blueprints_data, parent=child_blueprint.name, addon_prefs=addon_prefs)
+            sub_assets_lists = get_blueprint_assets_tree(child_blueprint, blueprints_data, parent=child_blueprint.name, settings=settings)
             assets_list += sub_assets_lists
 
     direct_assets = get_user_assets_as_list(blueprint.collection)
@@ -90,9 +90,9 @@ def get_blueprint_assets_tree(blueprint, blueprints_data, parent, addon_prefs):
     assets_list += direct_assets
     return assets_list
 
-def get_main_scene_assets_tree(main_scene, blueprints_data, addon_prefs):
-    blueprints_path =  getattr(addon_prefs, "blueprints_path")
-    export_gltf_extension = getattr(addon_prefs, "export_gltf_extension")
+def get_main_scene_assets_tree(main_scene, blueprints_data, settings):
+    blueprints_path =  getattr(settings, "blueprints_path")
+    export_gltf_extension = getattr(settings, "export_gltf_extension")
     blueprint_instance_names_for_scene = blueprints_data.blueprint_instances_per_main_scene.get(main_scene.name, None)
 
     assets_list = get_user_assets_as_list(main_scene)
@@ -109,7 +109,7 @@ def get_main_scene_assets_tree(main_scene, blueprints_data, addon_prefs):
                 if blueprint_exported_path is not None and not does_asset_exist(assets_list, blueprint_exported_path):
                     assets_list.append({"name": blueprint.name, "path": blueprint_exported_path, "type": "MODEL", "generated": True, "internal":blueprint.local, "parent": None})
                 
-                assets_list += get_blueprint_assets_tree(blueprint, blueprints_data, parent=blueprint.name, addon_prefs=addon_prefs)
+                assets_list += get_blueprint_assets_tree(blueprint, blueprints_data, parent=blueprint.name, settings=settings)
 
     print("TOTAL ASSETS", assets_list)
     return assets_list

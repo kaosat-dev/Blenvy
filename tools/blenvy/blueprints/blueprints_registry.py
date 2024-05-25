@@ -8,8 +8,19 @@ from bpy_types import (PropertyGroup)
 from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorProperty, IntProperty, IntVectorProperty, EnumProperty, PointerProperty, CollectionProperty)
 
 from ..settings import load_settings
-from ..gltf_auto_export.helpers.helpers_scenes import get_scenes
+from ..core.scene_helpers import get_main_and_library_scenes
 from .blueprints_scan import blueprints_scan
+
+
+
+def refresh_blueprints():
+    try:
+        blueprints_registry = bpy.context.window_manager.blueprints_registry
+        blueprints_registry.refresh_blueprints()
+        #print('refresh blueprints')
+    except:pass
+
+    return 3
 
 # this is where we store the information for all available Blueprints
 class BlueprintsRegistry(PropertyGroup):
@@ -40,17 +51,25 @@ class BlueprintsRegistry(PropertyGroup):
     @classmethod
     def register(cls):
         bpy.types.WindowManager.blueprints_registry = PointerProperty(type=BlueprintsRegistry)
+        bpy.app.timers.register(refresh_blueprints)
 
     @classmethod
     def unregister(cls):
+        try:
+            bpy.app.timers.unregister(refresh_blueprints)
+        except: pass
+        
         del bpy.types.WindowManager.blueprints_registry
+
 
     def add_blueprint(self, blueprint): 
         self.blueprints_list.append(blueprint)
 
-    def add_blueprints_data(self):
+    def refresh_blueprints(self):
         blenvy = bpy.context.window_manager.blenvy
-        addon_prefs = blenvy
-        [main_scene_names, level_scenes, library_scene_names, library_scenes] = get_scenes(addon_prefs)
-        blueprints_data = blueprints_scan(level_scenes, library_scenes, addon_prefs)
+        settings = blenvy
+        [main_scene_names, level_scenes, library_scene_names, library_scenes] = get_main_and_library_scenes(settings)
+        blueprints_data = blueprints_scan(level_scenes, library_scenes, settings)
         self.blueprints_data = blueprints_data
+        """for blueprint in blueprints_data.blueprints:
+            self.add_blueprint(blueprint)"""

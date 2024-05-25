@@ -1,5 +1,4 @@
 
-from ..auto_export.preferences import AutoExportGltfAddonPreferences
 from io_scene_gltf2 import (ExportGLTF2_Base)
 
 # given the input (actual) gltf settings, filters out any invalid/useless params & params that are equal to defaults
@@ -28,12 +27,12 @@ def generate_complete_preferences_dict_gltf(settings):
     return complete_preferences
 
 # given the input (actual) auto settings, filters out any invalid/useless params & params that are equal to defaults
-def generate_complete_preferences_dict_auto(settings):
+def generate_complete_preferences_dict_auto(settings, presets):
     complete_preferences = {}    
     defaults = {}
 
-    for k in AutoExportGltfAddonPreferences.__annotations__:
-        item = AutoExportGltfAddonPreferences.__annotations__[k]
+    for k in presets.__annotations__:
+        item = presets.__annotations__[k]
         default = item.keywords.get('default', None)
         #complete_preferences[k] = default
         defaults[k] = default

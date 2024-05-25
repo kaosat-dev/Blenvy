@@ -8,7 +8,7 @@ class OT_switch_bevy_tooling(Operator):
     """Switch bevy tooling"""
     bl_idname = "bevy.tooling_switch"
     bl_label = "Switch bevy tooling"
-    bl_options = {"UNDO"}
+    #bl_options = {}
 
    
     tool: EnumProperty(

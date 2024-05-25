@@ -31,12 +31,12 @@ def gltf_post_export_callback(data):
         scene = bpy.context.scene
         if "glTF2ExportSettings" in scene:
             settings = scene["glTF2ExportSettings"]
-            export_settings = bpy.data.texts[".blenvy_gltf_settings"] if ".blenvy_gltf_settings" in bpy.data.texts else bpy.data.texts.new(".blenvy_gltf_settings")
+            gltf_export_settings = bpy.data.texts[".blenvy_gltf_settings"] if ".blenvy_gltf_settings" in bpy.data.texts else bpy.data.texts.new(".blenvy_gltf_settings")
             # now write new settings
-            export_settings.clear()
+            gltf_export_settings.clear()
 
             current_gltf_settings = generate_complete_preferences_dict_gltf(dict(settings))
-            export_settings.write(json.dumps(current_gltf_settings))
+            gltf_export_settings.write(json.dumps(current_gltf_settings))
         # now reset the original gltf_settings
         if gltf_settings_backup != "":
             scene["glTF2ExportSettings"] = json.loads(gltf_settings_backup)

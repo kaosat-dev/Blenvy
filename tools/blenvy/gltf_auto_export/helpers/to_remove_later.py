@@ -155,7 +155,7 @@ class glTF2ExportUserExtension:
         self.Extension = Extension
         self.properties = bpy.context.scene.ExampleExtensionProperties
 
-    def gather_node_hook(self, gltf2_object, blender_object, export_settings):
+    def gather_node_hook(self, gltf2_object, blender_object, gltf_export_settings):
         if self.properties.enabled:
             if gltf2_object.extensions is None:
                 gltf2_object.extensions = {}
@@ -193,7 +193,7 @@ def did_export_parameters_change(current_params, previous_params):
             bpy.context.window.scene = library_scene
             with bpy.context.temp_override(scene=library_scene):
                 print("active scene", bpy.context.scene)
-            export_gltf(gltf_output_path, export_settings)
+            export_gltf(gltf_output_path, gltf_export_settings)
             bpy.context.window.scene = original_scene"""
 
 """
@@ -296,16 +296,16 @@ def duplicate_object2(object, original_name):
                         settings = scene["glTF2ExportSettings"]
                         formatted_settings = dict(settings)
 
-                        export_settings = bpy.data.texts[".blenvy_gltf_settings"] if ".blenvy_gltf_settings" in bpy.data.texts else bpy.data.texts.new(".blenvy_gltf_settings")
+                        gltf_export_settings = bpy.data.texts[".blenvy_gltf_settings"] if ".blenvy_gltf_settings" in bpy.data.texts else bpy.data.texts.new(".blenvy_gltf_settings")
                         
                         #check if params have changed
-                        bpy.context.window_manager.gltf_settings_changed = sorted(json.loads(export_settings.as_string()).items()) != sorted(formatted_settings.items())
+                        bpy.context.window_manager.gltf_settings_changed = sorted(json.loads(gltf_export_settings.as_string()).items()) != sorted(formatted_settings.items())
 
-                        print("gltf NEW settings", formatted_settings, "OLD settings", export_settings, "CHANGED ?", bpy.context.window_manager.gltf_settings_changed)
+                        print("gltf NEW settings", formatted_settings, "OLD settings", gltf_export_settings, "CHANGED ?", bpy.context.window_manager.gltf_settings_changed)
 
                         # now write new settings
-                        export_settings.clear()
-                        export_settings.write(json.dumps(formatted_settings))
+                        gltf_export_settings.clear()
+                        gltf_export_settings.write(json.dumps(formatted_settings))
 
 
                     # now reset the original gltf_settings

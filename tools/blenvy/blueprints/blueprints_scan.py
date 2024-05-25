@@ -7,8 +7,8 @@ from .blueprint import Blueprint
 # - marked as asset
 # - with the "auto_export" flag
 # https://blender.stackexchange.com/questions/167878/how-to-get-all-collections-of-the-current-scene
-def blueprints_scan(main_scenes, library_scenes, addon_prefs):
-    export_marked_assets = getattr(addon_prefs.auto_export,"export_marked_assets")
+def blueprints_scan(main_scenes, library_scenes, settings):
+    export_marked_assets = getattr(settings.auto_export, "export_marked_assets")
 
     blueprints = {}
     blueprints_from_objects = {}
