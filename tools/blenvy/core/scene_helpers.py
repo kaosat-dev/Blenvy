@@ -15,7 +15,6 @@ def get_main_and_library_scenes(settings):
     level_scene_names= list(map(lambda scene: scene.name, getattr(settings,"main_scenes")))
     library_scene_names = list(map(lambda scene: scene.name, getattr(settings,"library_scenes")))
 
-    print("level_scene_names", level_scene_names)
     level_scene_names = list(filter(lambda name: name in bpy.data.scenes, level_scene_names))
     library_scene_names = list(filter(lambda name: name in bpy.data.scenes, library_scene_names))
 

@@ -66,6 +66,10 @@ Components:
         - [ ] handle missing types in registry for keys & values
 
     - [ ] Add correct upgrade handling from individual component to bevy_components
+    - [ ] Settings handling:
+        - [ ] move saveable settings out to a settings file
+        - [ ] update save & load
+        - [ ] add handling of polling frequency & enabling
 
 
 General things to solve:
@@ -85,3 +89,4 @@ General issues:
     - perhaps a simple hashing of the parent's path would be enought 
  - [x] addon-prefs => settings
  - [x] generate_gltf_export_preferences => should not use add-on prefs at all ? since we are not overriding gltf settings that way anymore ?
+ - [ ] remove hard coded path for standard gltf settings

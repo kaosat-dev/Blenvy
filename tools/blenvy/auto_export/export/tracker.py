@@ -14,9 +14,18 @@ class AutoExportTracker(PropertyGroup):
     change_detection_enabled = True
     export_params_changed = False
 
-    gltf_settings_backup = None
     last_operator = None
-    dummy_file_path = ""
+
+
+    dummy_file_path: StringProperty()# type: ignore
+    # special property for gltf settings
+    gltf_settings_backup: StringProperty(
+        name="gltf settings backup",
+        description="backup for existing gltf settings so that we can restore them"
+    ) # type: ignore
+
+
+
 
     exports_total : IntProperty(
         name='exports_total',
@@ -77,7 +86,7 @@ class AutoExportTracker(PropertyGroup):
                 scene = bpy.context.scene
                 if "glTF2ExportSettings" in scene:
                     existing_setting = scene["glTF2ExportSettings"]
-                    bpy.context.window_manager.gltf_settings_backup = json.dumps(dict(existing_setting))
+                    bpy.context.window_manager.auto_export_tracker.gltf_settings_backup = json.dumps(dict(existing_setting))
 
                 # we force saving params
                 active_operator.will_save_settings = True

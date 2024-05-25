@@ -63,6 +63,7 @@ class ComponentsRegistry(PropertyGroup):
         description="path to the registry schema file",
         default="registry.json"
     )# type: ignore
+    
     schemaFullPath : bpy.props.StringProperty(
         name="schema full path",
         description="path to the registry schema file",

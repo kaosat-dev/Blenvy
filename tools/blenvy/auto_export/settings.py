@@ -83,10 +83,4 @@ class AutoExportSettings(PropertyGroup):
         default="DISABLED"
     ) # type: ignore
 
-    # special property for gltf settings
-    gltf_settings_backup: StringProperty(
-        name="gltf settings backup",
-        description="backup for existing gltf settings so that we can restore them"
-    ) # type: ignore
-
 

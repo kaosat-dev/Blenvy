@@ -4,6 +4,7 @@ from ...settings import are_settings_identical, load_settings, upsert_settings
 
 # which settings are specific to auto_export # TODO: can we infer this ?
 auto_export_parameter_names = [
+    # blenvy core
     'project_root_path',
     'assets_path',
     'blueprints_path',
@@ -12,6 +13,7 @@ auto_export_parameter_names = [
     #'main_scene_names',
     #'library_scene_names',
 
+    # auto export
     'export_scene_settings',
     'export_blueprints',
     'export_separate_dynamic_and_static_objects',
@@ -20,13 +22,14 @@ auto_export_parameter_names = [
     'export_marked_assets'
 ]
 
-def get_setting_changes():
+def get_setting_changes(auto_export_settings):
+    print("get setting changes", dict(auto_export_settings))
     previous_gltf_settings = load_settings(".blenvy_gltf_settings_previous")
     current_gltf_settings = load_settings(".blenvy_gltf_settings")
     gltf_settings_changed = not are_settings_identical(previous_gltf_settings, current_gltf_settings)
 
     previous_export_settings = load_settings(".blenvy_export_settings_previous")
-    current_export_settings = load_settings(".blenvy_export_settings")
+    current_export_settings = dict(auto_export_settings) #load_settings(".blenvy_export_settings")
     export_settings_changed = not are_settings_identical(previous_export_settings, current_export_settings)
 
     # if there were no setting before, it is new, we need export
@@ -37,7 +40,7 @@ def get_setting_changes():
     
     # write the new settings to the old settings
     upsert_settings(".blenvy_gltf_settings_previous", current_gltf_settings)
-    upsert_settings(".blenvy_export_settings_previous", current_gltf_settings)
+    upsert_settings(".blenvy_export_settings_previous", current_export_settings)
 
     return gltf_settings_changed or export_settings_changed
 
