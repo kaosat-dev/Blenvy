@@ -7,7 +7,7 @@ from ...core.scene_helpers import get_main_and_library_scenes
 
 from .get_blueprints_to_export import get_blueprints_to_export
 from .get_levels_to_export import get_levels_to_export
-from .get_standard_exporter_settings import get_standard_exporter_settings
+from .export_gltf import get_standard_exporter_settings
 
 from .export_main_scenes import export_main_scene
 from .export_blueprints import export_blueprints

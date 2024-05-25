@@ -2,7 +2,11 @@ import json
 import os
 import bpy
 
-from .get_standard_exporter_settings import get_standard_exporter_settings
+from ...settings import load_settings
+
+def get_standard_exporter_settings():
+    standard_gltf_exporter_settings = load_settings(".blenvy_gltf_settings")
+    return standard_gltf_exporter_settings if standard_gltf_exporter_settings is not None else {}
 
 def generate_gltf_export_preferences(settings): 
     # default values

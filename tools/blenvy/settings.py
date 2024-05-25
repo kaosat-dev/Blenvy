@@ -14,8 +14,11 @@ def upsert_settings(name, data):
 
 def load_settings(name):
     stored_settings = bpy.data.texts[name] if name in bpy.data.texts else None
-    if stored_settings != None:
-        return json.loads(stored_settings.as_string())
+    if stored_settings is not None:
+        try:
+            return json.loads(stored_settings.as_string())
+        except:
+            return None
     return None
 
 # checks if old & new settings (dicts really) are identical
