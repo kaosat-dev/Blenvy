@@ -11,7 +11,7 @@ from ..propGroups.prop_groups import generate_propertyGroups_for_components
 
 class ReloadRegistryOperator(Operator):
     """Reloads registry (schema file) from disk, generates propertyGroups for components & ensures all objects have metadata """
-    bl_idname = "object.reload_registry"
+    bl_idname = "blenvy.reload_components_registry"
     bl_label = "Reload Registry"
     bl_options = {"UNDO"}
 
@@ -191,10 +191,8 @@ class OT_OpenSchemaFileBrowser(Operator, ImportHelper):
         folder_path = os.path.dirname(file_path)
         relative_path = os.path.relpath(self.filepath, folder_path)
 
-        registry = context.window_manager.components_registry
-        registry.schemaPath = relative_path
-
         blenvy = context.window_manager.blenvy
+        blenvy.components.schema_path = relative_path
         upsert_settings(blenvy.settings_save_path, {"components_schemaPath": relative_path})
         
         return {'FINISHED'}

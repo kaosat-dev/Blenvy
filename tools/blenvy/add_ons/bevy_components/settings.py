@@ -1,7 +1,18 @@
+import os
 import bpy
 from bpy_types import (PropertyGroup)
 from bpy.props import (EnumProperty, PointerProperty, StringProperty, BoolProperty, CollectionProperty, IntProperty)
+from blenvy.settings import load_settings, upsert_settings
+from .propGroups.prop_groups import generate_propertyGroups_for_components
+from .components.metadata import ensure_metadata_for_all_items
 
+# list of settings we do NOT want to save
+settings_black_list = ['watcher_active']
+
+def save_settings(settings, context):
+    print("save settings", settings, context, dict(settings))
+    settings_dict = dict(settings)
+    upsert_settings(settings.settings_save_path, {key: settings_dict[key] for key in settings_dict.keys() if key not in settings_black_list})
 
 # helper function to deal with timer
 def toggle_watcher(self, context):
@@ -14,15 +25,17 @@ def toggle_watcher(self, context):
     else:
         self.watcher_active = True
         bpy.app.timers.register(watch_schema)
+    save_settings(self, context)
 
 def watch_schema():
-    self = bpy.context.window_manager.components_registry
-    # print("watching schema file for changes")
+    blenvy = bpy.context.window_manager.blenvy
+    component_settings = blenvy.components
+    #print("watching schema file for changes")
     try:
-        stamp = os.stat(self.schemaFullPath).st_mtime
+        stamp = os.stat(component_settings.schema_path_full).st_mtime
         stamp = str(stamp)
-        if stamp != self.schemaTimeStamp and self.schemaTimeStamp != "":
-            print("FILE CHANGED !!", stamp,  self.schemaTimeStamp)
+        if stamp != component_settings.schemaTimeStamp and component_settings.schemaTimeStamp != "":
+            print("FILE CHANGED !!", stamp,  component_settings.schemaTimeStamp)
             # see here for better ways : https://stackoverflow.com/questions/11114492/check-if-a-file-is-not-open-nor-being-used-by-another-process
             """try:
                 os.rename(path, path)
@@ -34,18 +47,28 @@ def watch_schema():
             # we need to add an additional delay as the file might not have loaded yet
             bpy.app.timers.register(lambda: bpy.ops.object.reload_registry(), first_interval=1)
 
-        self.schemaTimeStamp = stamp
+        component_settings.schemaTimeStamp = stamp
     except Exception as error:
         pass
-    return self.watcher_poll_frequency if self.watcher_enabled else None
+    return component_settings.watcher_poll_frequency if component_settings.watcher_enabled else None
 
 
 class ComponentsSettings(PropertyGroup):
-    schemaPath: StringProperty(
+
+    settings_save_path = ".blenvy_components_settings" # where to store data in bpy.texts
+
+    schema_path: StringProperty(
         name="schema path",
         description="path to the registry schema file",
-        default="registry.json"
+        default="registry.json",
+        update=save_settings
     )# type: ignore
+
+    schema_path_full: StringProperty(
+        name="schema full path",
+        description="path to the registry schema file",
+        get=lambda self: os.path.abspath(os.path.join(os.path.dirname(bpy.data.filepath), self.schema_path))
+    ) # type: ignore
 
     watcher_enabled: BoolProperty(name="Watcher_enabled", default=True, update=toggle_watcher)# type: ignore
     watcher_active: BoolProperty(name = "Flag for watcher status", default = False)# type: ignore
@@ -55,11 +78,45 @@ class ComponentsSettings(PropertyGroup):
         description="frequency (s) at wich to poll for changes to the registry file",
         min=1,
         max=10,
-        default=1
+        default=1,
+        update=save_settings
     )# type: ignore
     
     schemaTimeStamp: StringProperty(
         name="last timestamp of schema file",
         description="",
-        default=""
+        default="",
+        update=save_settings
     )# type: ignore
+
+
+    @classmethod
+    def register(cls):
+        pass
+        #bpy.context.window_manager.blenvy.components.watcher_active = False
+  
+    @classmethod
+    def unregister(cls):
+        bpy.context.window_manager.blenvy.components.watcher_active = False
+        try:
+            bpy.app.timers.unregister(watch_schema)
+        except Exception as error:
+            pass
+
+    def start_schema_watcher(self):
+         # start timer
+        if not self.watcher_active and self.watcher_enabled:
+            self.watcher_active = True
+            print("registering function", watch_schema)
+            bpy.app.timers.register(watch_schema)
+
+    def load_settings(self):
+        settings = load_settings(self.settings_save_path)
+        if settings is not None:
+            for setting in settings:
+                print("setting", setting, settings[setting])
+                setattr(self, setting, settings[setting])
+            registry = bpy.context.components_registry
+            registry.load_schema()
+            generate_propertyGroups_for_components()
+            ensure_metadata_for_all_items()

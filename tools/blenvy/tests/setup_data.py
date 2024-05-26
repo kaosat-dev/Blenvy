@@ -5,9 +5,9 @@ import pytest
 def setup_data(request):
     print("\nSetting up resources...")
 
-    schemaPath = "../../testing/bevy_example/assets/registry.json"
+    schema_path = "../../testing/bevy_example/assets/registry.json"
 
-    yield {"schema_path": schemaPath}
+    yield {"schema_path": schema_path}
 
     def finalizer():
         print("\nPerforming teardown...")

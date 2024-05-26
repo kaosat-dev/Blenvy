@@ -5,13 +5,11 @@ from bpy.props import (StringProperty)
 
 from ..utils import get_selection_type
 
-from ..components.operators import OT_rename_component, RemoveComponentFromAllItemsOperator, RemoveComponentOperator
+from ..components.operators import OT_rename_component, RemoveComponentFromAllItemsOperator
 from .operators import(
     COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL, 
     COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT, 
-    OT_OpenSchemaFileBrowser,
-    OT_select_component_name_to_replace,
-    OT_select_object, ReloadRegistryOperator, 
+    OT_OpenSchemaFileBrowser, ReloadRegistryOperator, 
     COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL, 
     COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT)
 
@@ -34,23 +32,24 @@ class BEVY_COMPONENTS_PT_Configuration(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         registry = context.window_manager.components_registry 
+        blenvy = context.window_manager.blenvy
+        component_settings = blenvy.components
       
-
         row = layout.row()
         col = row.column()
         col.enabled = False
-        col.prop(registry, "schemaPath", text="Registry Schema path")
+        col.prop(component_settings, "schema_path", text="Registry Schema path")
         col = row.column()
-        col.operator(OT_OpenSchemaFileBrowser.bl_idname, text="Browse for registry schema file (json)")
+        col.operator("blenvy.open_schemafilebrowser", text="Browse for registry schema file (json)")
 
         layout.separator()
-        layout.operator(ReloadRegistryOperator.bl_idname, text="reload registry" , icon="FILE_REFRESH")
+        layout.operator("blenvy.reload_components_registry", text="reload registry" , icon="FILE_REFRESH")
 
         layout.separator()
         row = layout.row()
         
-        row.prop(registry, "watcher_enabled", text="enable registry file polling")
-        row.prop(registry, "watcher_poll_frequency", text="registry file poll frequency (s)")
+        row.prop(component_settings, "watcher_enabled", text="enable registry file polling")
+        row.prop(component_settings, "watcher_poll_frequency", text="registry file poll frequency (s)")
 
         layout.separator()
         layout.separator()

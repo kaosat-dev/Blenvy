@@ -5,10 +5,7 @@ import uuid
 from pathlib import Path
 from bpy_types import (PropertyGroup)
 from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorProperty, IntProperty, IntVectorProperty, EnumProperty, PointerProperty, CollectionProperty)
-
-from blenvy.settings import load_settings
-from ..propGroups.prop_groups import generate_propertyGroups_for_components
-from ..components.metadata import ComponentMetadata, ensure_metadata_for_all_items
+from ..components.metadata import ComponentMetadata
 
 # helper class to store missing bevy types information
 class MissingBevyType(bpy.types.PropertyGroup):
@@ -16,59 +13,9 @@ class MissingBevyType(bpy.types.PropertyGroup):
         name="type",
     ) # type: ignore
 
-# helper function to deal with timer
-def toggle_watcher(self, context):
-    #print("toggling watcher", self.watcher_enabled, watch_schema, self, bpy.app.timers)
-    if not self.watcher_enabled:
-        try:
-            bpy.app.timers.unregister(watch_schema)
-        except Exception as error:
-            pass
-    else:
-        self.watcher_active = True
-        bpy.app.timers.register(watch_schema)
-
-def watch_schema():
-    self = bpy.context.window_manager.components_registry
-    # print("watching schema file for changes")
-    try:
-        stamp = os.stat(self.schemaFullPath).st_mtime
-        stamp = str(stamp)
-        if stamp != self.schemaTimeStamp and self.schemaTimeStamp != "":
-            print("FILE CHANGED !!", stamp,  self.schemaTimeStamp)
-            # see here for better ways : https://stackoverflow.com/questions/11114492/check-if-a-file-is-not-open-nor-being-used-by-another-process
-            """try:
-                os.rename(path, path)
-                #return False
-            except OSError:    # file is in use
-                print("in use")
-                #return True"""
-            #bpy.ops.object.reload_registry()
-            # we need to add an additional delay as the file might not have loaded yet
-            bpy.app.timers.register(lambda: bpy.ops.object.reload_registry(), first_interval=1)
-
-        self.schemaTimeStamp = stamp
-    except Exception as error:
-        pass
-    return self.watcher_poll_frequency if self.watcher_enabled else None
-
 
 # this is where we store the information for all available components
 class ComponentsRegistry(PropertyGroup):
-
-    settings_save_path = ".bevy_components_settings" # where to store data in bpy.texts
-
-    schemaPath: bpy.props.StringProperty(
-        name="schema path",
-        description="path to the registry schema file",
-        default="registry.json"
-    )# type: ignore
-    
-    schemaFullPath : bpy.props.StringProperty(
-        name="schema full path",
-        description="path to the registry schema file",
-    )# type: ignore
-  
     registry: bpy.props. StringProperty(
         name="registry",
         description="component registry"
@@ -80,25 +27,6 @@ class ComponentsRegistry(PropertyGroup):
     )# type: ignore
 
     disable_all_object_updates: BoolProperty(name="disable_object_updates", default=False) # type: ignore
-
-    ## file watcher
-    watcher_enabled: BoolProperty(name="Watcher_enabled", default=True, update=toggle_watcher)# type: ignore
-    watcher_active: BoolProperty(name = "Flag for watcher status", default = False)# type: ignore
-
-    watcher_poll_frequency: IntProperty(
-        name="watcher poll frequency",
-        description="frequency (s) at wich to poll for changes to the registry file",
-        min=1,
-        max=10,
-        default=1
-    )# type: ignore
-
-    schemaTimeStamp: StringProperty(
-        name="last timestamp of schema file",
-        description="",
-        default=""
-    )# type: ignore
-
 
     missing_types_list: CollectionProperty(name="missing types list", type=MissingBevyType)# type: ignore
     missing_types_list_index: IntProperty(name = "Index for missing types list", default = 0)# type: ignore
@@ -218,29 +146,22 @@ class ComponentsRegistry(PropertyGroup):
     @classmethod
     def register(cls):
         bpy.types.WindowManager.components_registry = PointerProperty(type=ComponentsRegistry)
-        bpy.context.window_manager.components_registry.watcher_active = False
 
     @classmethod
     def unregister(cls):
-        bpy.context.window_manager.components_registry.watcher_active = False
-
         for propgroup_name in cls.component_propertyGroups.keys():
             try:
                 delattr(ComponentMetadata, propgroup_name)
-                #print("unregistered propertyGroup", propgroup_name)
             except Exception as error:
                 pass
-                #print("failed to remove", error, "ComponentMetadata")
         
-        try:
-            bpy.app.timers.unregister(watch_schema)
-        except Exception as error:
-            pass
-
         del bpy.types.WindowManager.components_registry
 
     def load_schema(self):
         print("load schema", self)
+        blenvy = bpy.context.window_manager.blenvy
+        component_settings = blenvy.components
+
         # cleanup previous data if any
         self.propGroupIdCounter = 0
         self.long_names_to_propgroup_names.clear()
@@ -252,23 +173,13 @@ class ComponentsRegistry(PropertyGroup):
         self.invalid_components.clear()
 
         # now prepare paths to load data
-        file_path = bpy.data.filepath
-        # Get the folder
-        folder_path = os.path.dirname(file_path)
-        path =  os.path.join(folder_path, self.schemaPath)
-        self.schemaFullPath = path
 
-        f = Path(bpy.path.abspath(path)) # make a path object of abs path
-        with open(path) as f: 
+        with open(component_settings.schema_path_full) as f: 
             data = json.load(f) 
             defs = data["$defs"]
             self.registry = json.dumps(defs) # FIXME:meh ?
 
-        # start timer
-        if not self.watcher_active and self.watcher_enabled:
-            self.watcher_active = True
-            print("registering function", watch_schema)
-            bpy.app.timers.register(watch_schema)
+        component_settings.start_schema_watcher()       
 
 
     # we load the json once, so we do not need to do it over & over again
@@ -278,17 +189,6 @@ class ComponentsRegistry(PropertyGroup):
     
     def has_type_infos(self):
         return len(self.type_infos.keys()) != 0
-
-    def load_settings(self):
-        print("loading settings")
-        settings = load_settings(self.settings_save_path)
-
-        if settings!= None:
-            self.schemaPath = settings["components_schemaPath"]
-            self.load_schema()
-            generate_propertyGroups_for_components()
-            ensure_metadata_for_all_items()
-
 
     # we keep a list of component propertyGroup around 
     def register_component_propertyGroup(self, name, propertyGroup):

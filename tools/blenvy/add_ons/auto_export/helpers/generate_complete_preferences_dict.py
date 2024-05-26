@@ -26,21 +26,3 @@ def generate_complete_preferences_dict_gltf(settings):
     complete_preferences = dict(filter(filter_out, dict(complete_preferences).items()))
     return complete_preferences
 
-# given the input (actual) auto settings, filters out any invalid/useless params & params that are equal to defaults
-def generate_complete_preferences_dict_auto(settings, presets):
-    complete_preferences = {}    
-    defaults = {}
-
-    for k in presets.__annotations__:
-        item = presets.__annotations__[k]
-        default = item.keywords.get('default', None)
-        #complete_preferences[k] = default
-        defaults[k] = default
-    
-    for key in list(settings.keys()):
-        if key in defaults: 
-            if settings[key] != defaults[key]: # only write out values different from defaults
-                complete_preferences[key] = settings[key]
-        else:
-            complete_preferences[key] = settings[key]
-    return complete_preferences

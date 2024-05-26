@@ -5,7 +5,7 @@ from .setup_data import setup_data
 
 def test_shuffler(setup_data):
     registry = bpy.context.window_manager.components_registry
-    registry.schemaPath = setup_data["schema_path"]
+    registry.schema_path = setup_data["schema_path"]
     bpy.ops.object.reload_registry()
 
     type_infos = registry.type_infos

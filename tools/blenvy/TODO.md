@@ -80,6 +80,7 @@ General things to solve:
 - [x] rename all path stuff using the old naming convention : "blueprints_path_full"
 - [x] generate the full paths directly when setting them in the UI  
     - [x] problem : how to deal with defaults: do it on start/load ?
+- [x] filter out scenes that have already been used in scenes list
 
 General issues:
  - there is no safeguard for naming collisions for naming across blender files
@@ -87,6 +88,12 @@ General issues:
  - "parents" can only be blueprints
     - they normally need/have unique export paths (otherwise, user error, perhaps show it ?)
     - perhaps a simple hashing of the parent's path would be enought 
+
+
  - [x] addon-prefs => settings
  - [x] generate_gltf_export_preferences => should not use add-on prefs at all ? since we are not overriding gltf settings that way anymore ?
- - [ ] remove hard coded path for standard gltf settings
+ - [x] remove hard coded path for standard gltf settings
+ - [ ] load settings on file load
+    - [x] auto_export
+    - [ ] components
+    - [ ] add handling of errors when trying to load settings

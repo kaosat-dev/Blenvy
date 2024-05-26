@@ -26,6 +26,7 @@ from .add_ons.bevy_components.components.lists import GENERIC_LIST_OT_actions, G
 from .add_ons.bevy_components.components.maps import GENERIC_MAP_OT_actions
 from .add_ons.bevy_components.components.definitions_list import (ComponentDefinitionsList, ClearComponentDefinitionsList)
 from .add_ons.bevy_components.components.ui import (BEVY_COMPONENTS_PT_ComponentsPanel)
+from .add_ons.bevy_components.settings import ComponentsSettings
 
 # auto export
 from .add_ons.auto_export import gltf_post_export_callback
@@ -67,6 +68,7 @@ classes = [
     BLENVY_PT_SidePanel,
 
     # bevy components
+    ComponentsSettings,
     AddComponentOperator,  
     CopyComponentOperator,
     PasteComponentOperator,
@@ -110,6 +112,7 @@ classes = [
 
     GENERIC_MAP_OT_actions,
 
+
     # gltf auto export
     AutoExportTracker,
     AutoExportSettings,
@@ -143,9 +146,6 @@ def post_save(scene, depsgraph):
 @persistent
 def post_load(file_name):
     print("POST LOAD")
-    registry = bpy.context.window_manager.components_registry
-    if registry  is not None:
-        registry.load_settings()
     blenvy = bpy.context.window_manager.blenvy
     if blenvy is not None:
         blenvy.load_settings()

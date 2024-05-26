@@ -2,7 +2,7 @@ import json
 import bpy
 
 def upsert_settings(name, data):
-    stored_settings = bpy.data.texts[name] if name in bpy.data.texts else None#bpy.data.texts.new(name)
+    stored_settings = bpy.data.texts[name] if name in bpy.data.texts else None
     if stored_settings is None:
         stored_settings = bpy.data.texts.new(name)
         stored_settings.write(json.dumps(data))
@@ -20,6 +20,41 @@ def load_settings(name):
         except:
             return None
     return None
+
+
+# given the input (actual) settings, filters out any invalid/useless params & params that are equal to defaults
+def generate_complete_preferences_dict(settings, presets, ignore_list=[]):
+    complete_preferences = {}    
+    defaults = {}
+
+    def filter_out(pair):
+        key, value = pair
+        if key in ignore_list:
+            return False
+        return True
+
+    for k in presets.__annotations__:
+        item = presets.__annotations__[k]
+        default = item.keywords.get('default', None)
+        defaults[k] = default
+        #complete_preferences[k] = default
+    # print("defaults", defaults)
+    
+
+    for key in list(settings.keys()):
+        if key in defaults and settings[key] != defaults[key]: # only write out values different from defaults
+            complete_preferences[key] = getattr(settings, key, None)
+       
+    print("complete_preferences", complete_preferences)
+
+    """for key in list(settings.keys()):
+        if key in defaults and settings[key] != defaults[key]: # only write out values different from defaults
+            complete_preferences[key] = settings[key]"""
+
+    complete_preferences = dict(filter(filter_out, dict(complete_preferences).items()))
+
+    return complete_preferences
+
 
 # checks if old & new settings (dicts really) are identical
 def are_settings_identical(old, new, white_list=None):

@@ -95,19 +95,19 @@ class SCENES_LIST_OT_actions(Operator):
         if self.action == 'ADD':
             new_scene_name = None
             if self.scene_type == "LEVEL":
-                if context.window_manager.main_scene:
-                    new_scene_name = context.window_manager.main_scene.name
+                if context.window_manager.blenvy.main_scene_selector:
+                    new_scene_name = context.window_manager.blenvy.main_scene_selector.name
             else:
-                if context.window_manager.library_scene:
-                    new_scene_name = context.window_manager.library_scene.name
+                if context.window_manager.blenvy.library_scene_selector:
+                    new_scene_name = context.window_manager.blenvy.library_scene_selector.name
             if new_scene_name:
                 item = target.add()
                 item.name = new_scene_name
 
                 if self.scene_type == "LEVEL":
-                    context.window_manager.main_scene = None
+                    context.window_manager.blenvy.main_scene_selector = None
                 else:
-                    context.window_manager.library_scene = None
+                    context.window_manager.blenvy.library_scene_selector = None
 
                 setattr(source, target_index, len(target) - 1)
 

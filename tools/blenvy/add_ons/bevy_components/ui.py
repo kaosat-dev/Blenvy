@@ -1,19 +1,20 @@
-def draw_settings_ui(layout, registry):
+def draw_settings_ui(layout, component_settings):
+
     row = layout.row()
     col = row.column()
     col.enabled = False
-    col.prop(registry, "schemaPath", text="Registry Schema path")
+    col.prop(component_settings, "schema_path", text="Registry Schema path")
     col = row.column()
     col.operator(operator="blenvy.open_schemafilebrowser", text="Browse for registry schema file (json)")
 
     layout.separator()
-    layout.operator(operator="object.reload_registry", text="reload registry" , icon="FILE_REFRESH")
+    layout.operator(operator="blenvy.reload_components_registry", text="reload registry" , icon="FILE_REFRESH")
 
     layout.separator()
     row = layout.row()
 
-    row.prop(registry, "watcher_enabled", text="enable registry file polling")
-    row.prop(registry, "watcher_poll_frequency", text="registry file poll frequency (s)")
+    row.prop(component_settings, "watcher_enabled", text="enable registry file polling")
+    row.prop(component_settings, "watcher_poll_frequency", text="registry file poll frequency (s)")
 
     layout.separator()
     layout.separator()
