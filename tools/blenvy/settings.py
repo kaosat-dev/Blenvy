@@ -23,7 +23,7 @@ def load_settings(name):
 
 
 # given the input (actual) settings, filters out any invalid/useless params & params that are equal to defaults
-def generate_complete_preferences_dict(settings, presets, ignore_list=[]):
+def generate_complete_preferences_dict(settings, presets, ignore_list=[], preset_defaults=True):
     complete_preferences = {}    
     defaults = {}
 
@@ -36,21 +36,16 @@ def generate_complete_preferences_dict(settings, presets, ignore_list=[]):
     for k in presets.__annotations__:
         item = presets.__annotations__[k]
         default = item.keywords.get('default', None)
-        defaults[k] = default
-        #complete_preferences[k] = default
+        if default is not None:
+            defaults[k] = default
+            if preset_defaults:
+                complete_preferences[k] = default
     # print("defaults", defaults)
     
 
     for key in list(settings.keys()):
         if key in defaults and settings[key] != defaults[key]: # only write out values different from defaults
             complete_preferences[key] = getattr(settings, key, None)
-       
-    print("complete_preferences", complete_preferences)
-
-    """for key in list(settings.keys()):
-        if key in defaults and settings[key] != defaults[key]: # only write out values different from defaults
-            complete_preferences[key] = settings[key]"""
-
     complete_preferences = dict(filter(filter_out, dict(complete_preferences).items()))
 
     return complete_preferences

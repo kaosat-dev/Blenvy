@@ -2,17 +2,18 @@ import os
 import bpy
 from bpy_types import (PropertyGroup)
 from bpy.props import (EnumProperty, PointerProperty, StringProperty, BoolProperty, CollectionProperty, IntProperty)
-from blenvy.settings import load_settings, upsert_settings
+from blenvy.settings import load_settings, upsert_settings, generate_complete_preferences_dict
 from .propGroups.prop_groups import generate_propertyGroups_for_components
 from .components.metadata import ensure_metadata_for_all_items
 
 # list of settings we do NOT want to save
-settings_black_list = ['watcher_active']
+settings_black_list = ['settings_save_enabled', 'watcher_active']
 
 def save_settings(settings, context):
-    print("save settings", settings, context, dict(settings))
-    settings_dict = dict(settings)
-    upsert_settings(settings.settings_save_path, {key: settings_dict[key] for key in settings_dict.keys() if key not in settings_black_list})
+    if settings.settings_save_enabled:
+        settings_dict = generate_complete_preferences_dict(settings, ComponentsSettings, [])
+        print("save settings", settings, context,settings_dict)
+        upsert_settings(settings.settings_save_path, {key: settings_dict[key] for key in settings_dict.keys() if key not in settings_black_list})
 
 # helper function to deal with timer
 def toggle_watcher(self, context):
@@ -46,8 +47,7 @@ def watch_schema():
             #bpy.ops.object.reload_registry()
             # we need to add an additional delay as the file might not have loaded yet
             bpy.app.timers.register(lambda: bpy.ops.object.reload_registry(), first_interval=1)
-
-        component_settings.schemaTimeStamp = stamp
+            component_settings.schemaTimeStamp = stamp
     except Exception as error:
         pass
     return component_settings.watcher_poll_frequency if component_settings.watcher_enabled else None
@@ -56,6 +56,7 @@ def watch_schema():
 class ComponentsSettings(PropertyGroup):
 
     settings_save_path = ".blenvy_components_settings" # where to store data in bpy.texts
+    settings_save_enabled: BoolProperty(name="settings save enabled", default=True)# type: ignore
 
     schema_path: StringProperty(
         name="schema path",
@@ -112,11 +113,19 @@ class ComponentsSettings(PropertyGroup):
 
     def load_settings(self):
         settings = load_settings(self.settings_save_path)
+        print("component settings", settings)
         if settings is not None:
-            for setting in settings:
-                print("setting", setting, settings[setting])
-                setattr(self, setting, settings[setting])
-            registry = bpy.context.components_registry
-            registry.load_schema()
-            generate_propertyGroups_for_components()
-            ensure_metadata_for_all_items()
+            self.settings_save_enabled = False # we disable auto_saving of our settings
+            try:
+                for setting in settings:
+                    print("setting", setting, settings[setting])
+                    setattr(self, setting, settings[setting])
+            except:pass
+            try:
+                registry = bpy.context.components_registry
+                registry.load_schema()
+                generate_propertyGroups_for_components()
+                ensure_metadata_for_all_items()
+            except:pass
+
+        self.settings_save_enabled = True

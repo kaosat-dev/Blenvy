@@ -93,7 +93,7 @@ General issues:
  - [x] addon-prefs => settings
  - [x] generate_gltf_export_preferences => should not use add-on prefs at all ? since we are not overriding gltf settings that way anymore ?
  - [x] remove hard coded path for standard gltf settings
- - [ ] load settings on file load
+ - [x] load settings on file load
     - [x] auto_export
-    - [ ] components
+    - [x] components
     - [ ] add handling of errors when trying to load settings

@@ -1,11 +1,23 @@
 import os
 import bpy
 from bpy_types import (PropertyGroup)
-from bpy.props import (EnumProperty, PointerProperty, StringProperty, CollectionProperty, IntProperty)
+from bpy.props import (BoolProperty, EnumProperty, PointerProperty, StringProperty, CollectionProperty, IntProperty)
 from .scene_helpers import SceneSelector
-from ..settings import upsert_settings, load_settings
+from ..settings import upsert_settings, load_settings, generate_complete_preferences_dict
 import blenvy.add_ons.auto_export.settings as auto_export_settings
 import blenvy.add_ons.bevy_components.settings as component_settings
+
+
+# list of settings we do NOT want to save
+settings_black_list = ['settings_save_enabled', 'main_scene_selector', 'main_scenes', 'main_scenes_index', 'library_scene_selector', 'library_scenes', 'library_scenes_index',
+                       #'project_root_path_full', 'assets_path_full', '' 
+                       ]
+
+def save_settings(settings, context):  
+    if settings.settings_save_enabled:
+        settings_dict =  generate_complete_preferences_dict(settings, BlenvyManager, [])
+        print("save settings", settings, context, settings_dict)
+        # upsert_settings(settings.settings_save_path, {key: settings_dict[key] for key in settings_dict.keys() if key not in settings_black_list})
 
 def update_scene_lists(blenvy, context):                
     blenvy.main_scene_names = [scene.name for scene in blenvy.main_scenes] # FIXME: unsure
@@ -21,20 +33,16 @@ def update_asset_folders(blenvy, context):
 def update_mode(blenvy, context):
     upsert_settings(blenvy.settings_save_path, {"mode": blenvy.mode })
 
-
-def is_scene_ok(self, scene):
+def is_scene_already_in_use(self, scene):
     try:
-
-        print("SELF", self)
-
         return scene.name not in self.main_scenes and scene.name not in self.library_scenes
     except:
-        print("FAILURE")
         return True
 
 class BlenvyManager(PropertyGroup):
 
     settings_save_path = ".blenvy_common_settings" # where to store data in bpy.texts
+    settings_save_enabled = BoolProperty(name="settings save enabled", default=True)
 
     mode: EnumProperty(
         items=(
@@ -110,21 +118,19 @@ class BlenvyManager(PropertyGroup):
 
     main_scenes: CollectionProperty(name="main scenes", type=SceneSelector) # type: ignore
     main_scenes_index: IntProperty(name = "Index for main scenes list", default = 0, update=update_scene_lists) # type: ignore
-    main_scene_names = [] # FIXME: unsure
+    #main_scene_names = [] # FIXME: unsure
 
     library_scenes: CollectionProperty(name="library scenes", type=SceneSelector) # type: ignore
     library_scenes_index: IntProperty(name = "Index for library scenes list", default = 0, update=update_scene_lists) # type: ignore
-    library_scene_names = [] # FIXME: unsure
+    #library_scene_names = [] # FIXME: unsure
 
     # sub ones
     auto_export: PointerProperty(type=auto_export_settings.AutoExportSettings) # type: ignore
     components: PointerProperty(type=component_settings.ComponentsSettings) # type: ignore
 
-    main_scene_selector: PointerProperty(type=bpy.types.Scene, name="main scene", description="main_scene_picker", poll=is_scene_ok)# type: ignore
-    library_scene_selector: PointerProperty(type=bpy.types.Scene, name="library scene", description="library_scene_picker", poll=is_scene_ok)# type: ignore
+    main_scene_selector: PointerProperty(type=bpy.types.Scene, name="main scene", description="main_scene_picker", poll=is_scene_already_in_use)# type: ignore
+    library_scene_selector: PointerProperty(type=bpy.types.Scene, name="library scene", description="library_scene_picker", poll=is_scene_already_in_use)# type: ignore
 
- 
-        
     @classmethod
     def register(cls):
         bpy.types.WindowManager.blenvy = PointerProperty(type=BlenvyManager)
@@ -157,4 +163,4 @@ class BlenvyManager(PropertyGroup):
         self.auto_export.load_settings()
 
         # now load component settings
-        self.auto_export.load_settings()
+        self.components.load_settings()
