@@ -14,10 +14,7 @@ license = "MIT OR Apache-2.0"
 workspace = true
 
 [dependencies]
-bevy = { version = "0.13", default-features = false, features = [
-  "bevy_asset",
-  "bevy_scene",
-] }
+bevy = { version = "0.13", default-features = false, features = ["bevy_scene"] }
 bevy_gltf_components = { version = "0.5", path = "../bevy_gltf_components" }
 
 [dev-dependencies]

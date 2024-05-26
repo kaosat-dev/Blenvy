@@ -1,6 +1,5 @@
 use bevy::{
     app::{App, Plugin},
-    asset::Handle,
     ecs::{
         component::Component,
         entity::Entity,
@@ -13,7 +12,7 @@ use bevy::{
     log::warn,
     prelude::Update,
     reflect::{Reflect, TypePath},
-    scene::Scene,
+    scene::SceneInstance,
     utils::HashMap,
 };
 use bevy_gltf_components::GltfComponentsSet;
@@ -157,7 +156,7 @@ impl<T: Component + FromGltfRef> Default for GltfRefPlugin<T> {
 /// SystemParam to find the Gltf that an entity belongs to.
 #[derive(SystemParam)]
 pub struct GltfForEntity<'w, 's> {
-    gltfs: Query<'w, 's, (), With<Handle<Scene>>>,
+    gltfs: Query<'w, 's, (), With<SceneInstance>>,
     hierarchy: Query<'w, 's, &'static Parent>,
 }
 
