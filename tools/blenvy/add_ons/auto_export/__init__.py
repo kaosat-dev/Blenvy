@@ -1,7 +1,9 @@
 import os
 import json
 import bpy
-from .helpers.generate_complete_preferences_dict import generate_complete_preferences_dict_gltf
+from blenvy.settings import generate_complete_settings_dict
+from io_scene_gltf2 import ExportGLTF2_Base
+
 
 def cleanup_file():
     gltf_filepath = bpy.context.window_manager.auto_export_tracker.dummy_file_path
@@ -36,7 +38,8 @@ def gltf_post_export_callback(data):
             # now write new settings
             gltf_export_settings.clear()
 
-            current_gltf_settings = generate_complete_preferences_dict_gltf(dict(settings))
+            settings = dict(settings)
+            current_gltf_settings = generate_complete_settings_dict(settings, presets=ExportGLTF2_Base, ignore_list=["use_active_collection", "use_active_collection_with_nested", "use_active_scene", "use_selection", "will_save_settings", "gltf_export_id"], preset_defaults=True)
             gltf_export_settings.write(json.dumps(current_gltf_settings))
         # now reset the original gltf_settings
         if gltf_settings_backup != "":

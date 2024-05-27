@@ -3,7 +3,7 @@ import bpy
 from bpy_types import (PropertyGroup)
 from bpy.props import (BoolProperty, EnumProperty, PointerProperty, StringProperty, CollectionProperty, IntProperty)
 from .scene_helpers import SceneSelector
-from ..settings import upsert_settings, load_settings, generate_complete_preferences_dict
+from ..settings import upsert_settings, load_settings, generate_complete_settings_dict
 import blenvy.add_ons.auto_export.settings as auto_export_settings
 import blenvy.add_ons.bevy_components.settings as component_settings
 
@@ -15,7 +15,7 @@ settings_black_list = ['settings_save_enabled', 'main_scene_selector', 'main_sce
 
 def save_settings(settings, context):  
     if settings.settings_save_enabled:
-        settings_dict =  generate_complete_preferences_dict(settings, BlenvyManager, [])
+        settings_dict =  generate_complete_settings_dict(settings, BlenvyManager, [])
         print("save settings", settings, context, settings_dict)
         # upsert_settings(settings.settings_save_path, {key: settings_dict[key] for key in settings_dict.keys() if key not in settings_black_list})
 

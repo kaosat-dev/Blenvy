@@ -11,7 +11,6 @@ Auto export
      - blueprints/levels/blueprints path => relative to assets path
  - [ ] add error handling for de/serialization of project, so that in case of error, the previous saved serialized project is thrown away
 
-
 - move out some parameters from auto export to a higher level (as they are now used in multiple places)
     - [x] main/ library scene names
     - [x] paths
@@ -97,3 +96,8 @@ General issues:
     - [x] auto_export
     - [x] components
     - [ ] add handling of errors when trying to load settings
+
+
+- [ ] force overwrite of settings files instead of partial updates ?
+- [ ] add tests for disabled components 
+- [ ]  fix auto export workflow

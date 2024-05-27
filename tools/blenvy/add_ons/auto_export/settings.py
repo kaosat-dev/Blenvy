@@ -1,14 +1,14 @@
 import bpy
 from bpy_types import (PropertyGroup)
 from bpy.props import (EnumProperty, PointerProperty, StringProperty, BoolProperty, CollectionProperty, IntProperty)
-from blenvy.settings import load_settings, upsert_settings, generate_complete_preferences_dict
+from blenvy.settings import load_settings, upsert_settings, generate_complete_settings_dict
 
 # list of settings we do NOT want to save
 settings_black_list = ['settings_save_enabled', 'dry_run']
 
 def save_settings(settings, context):  
     if settings.settings_save_enabled:
-        settings_dict =  generate_complete_preferences_dict(settings, AutoExportSettings, [])
+        settings_dict =  generate_complete_settings_dict(settings, AutoExportSettings, [])
         print("save settings", settings, context, settings_dict)
         upsert_settings(settings.settings_save_path, {key: settings_dict[key] for key in settings_dict.keys() if key not in settings_black_list})
 
