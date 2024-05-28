@@ -90,7 +90,7 @@ General issues:
 
 
  - [x] addon-prefs => settings
- - [x] generate_gltf_export_preferences => should not use add-on prefs at all ? since we are not overriding gltf settings that way anymore ?
+ - [x] generate_gltf_export_settings => should not use add-on prefs at all ? since we are not overriding gltf settings that way anymore ?
  - [x] remove hard coded path for standard gltf settings
  - [x] load settings on file load
     - [x] auto_export
@@ -100,4 +100,5 @@ General issues:
 
 - [ ] force overwrite of settings files instead of partial updates ?
 - [ ] add tests for disabled components 
-- [ ]  fix auto export workflow
+- [x]  fix auto export workflow
+- [ ] should we write the previous _xxx data only AFTER a sucessfull export only ?

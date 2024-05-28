@@ -8,9 +8,9 @@ def get_standard_exporter_settings():
     standard_gltf_exporter_settings = load_settings(".blenvy_gltf_settings")
     return standard_gltf_exporter_settings if standard_gltf_exporter_settings is not None else {}
 
-def generate_gltf_export_preferences(settings): 
+def generate_gltf_export_settings(settings): 
     # default values
-    gltf_export_preferences = dict(
+    gltf_export_settings = dict(
         # export_format= 'GLB', #'GLB', 'GLTF_SEPARATE', 'GLTF_EMBEDDED'
         check_existing=False,
 
@@ -49,7 +49,7 @@ def generate_gltf_export_preferences(settings):
     """for key in settings.__annotations__.keys():
         if str(key) not in AutoExportGltfPreferenceNames:
             #print("overriding setting", key, "value", getattr(settings,key))
-            pass#gltf_export_preferences[key] = getattr(settings, key)"""
+            pass#gltf_export_settings[key] = getattr(settings, key)"""
 
 
     standard_gltf_exporter_settings = get_standard_exporter_settings()
@@ -68,8 +68,10 @@ def generate_gltf_export_preferences(settings):
     # a certain number of essential params should NEVER be overwritten , no matter the settings of the standard exporter
     for key in standard_gltf_exporter_settings.keys():
         if str(key) not in constant_keys:
-            gltf_export_preferences[key] =  standard_gltf_exporter_settings.get(key)
-    return gltf_export_preferences
+            gltf_export_settings[key] =  standard_gltf_exporter_settings.get(key)
+
+    print("GLTF EXPORT SETTINGS", gltf_export_settings)
+    return gltf_export_settings
 
 
 #https://docs.blender.org/api/current/bpy.ops.export_scene.html#bpy.ops.export_scene.gltf

@@ -1,6 +1,7 @@
 import json
 import bpy
 from ..helpers.serialize_scene import serialize_scene
+from blenvy.settings import load_settings, upsert_settings
 
 def bubble_up_changes(object, changes_per_scene):
     if object.parent:
@@ -44,26 +45,25 @@ def serialize_current():
     return current
 
 def get_changes_per_scene():
+    previous = load_settings(".blenvy.project_serialized_previous")
     current = serialize_current()
 
-    previous_stored = bpy.data.texts[".blenvy.project.serialized"] if ".blenvy.project.serialized" in bpy.data.texts else None
-    if previous_stored == None:
-        previous_stored = bpy.data.texts.new(".blenvy.project.serialized")
-        previous_stored.write(json.dumps(current))
-        return {}
-    
-    previous = json.loads(previous_stored.as_string())
-    
-    # determin changes
+    # determine changes
     changes_per_scene = project_diff(previous, current)
 
     # save the current project as previous
-    previous_stored.clear()
-    previous_stored.write(json.dumps(current))
+    upsert_settings(".blenvy.project_serialized_previous", current, overwrite=True)
+
+    print("changes per scene", changes_per_scene)
     return changes_per_scene
 
 
 def project_diff(previous, current):
+    """print("previous", previous)
+    print("current", current)"""
+    if previous is None or current is None:
+        return {}
+    print("HERE")
     
     changes_per_scene = {}
 
@@ -100,5 +100,4 @@ def project_diff(previous, current):
                     bubble_up_changes(bpy.data.objects[object_name], changes_per_scene[scene])
                     # now bubble up for instances & parents
         
-    print("changes per scene", changes_per_scene)
     return changes_per_scene

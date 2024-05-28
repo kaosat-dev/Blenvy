@@ -17,14 +17,13 @@ def refresh_blueprints():
     try:
         blueprints_registry = bpy.context.window_manager.blueprints_registry
         blueprints_registry.refresh_blueprints()
-        #print('refresh blueprints')
     except:pass
 
     return 3
 
 # this is where we store the information for all available Blueprints
 class BlueprintsRegistry(PropertyGroup):
-    blueprints_data = {}
+    blueprints_data = None
     blueprints_list = []
 
     asset_name_selector: StringProperty(
@@ -66,10 +65,13 @@ class BlueprintsRegistry(PropertyGroup):
         self.blueprints_list.append(blueprint)
 
     def refresh_blueprints(self):
+        #print("titi", self)
         blenvy = bpy.context.window_manager.blenvy
         settings = blenvy
         [main_scene_names, level_scenes, library_scene_names, library_scenes] = get_main_and_library_scenes(settings)
         blueprints_data = blueprints_scan(level_scenes, library_scenes, settings)
         self.blueprints_data = blueprints_data
+        return blueprints_data
+        #print("bla", self.blueprints_data)
         """for blueprint in blueprints_data.blueprints:
             self.add_blueprint(blueprint)"""

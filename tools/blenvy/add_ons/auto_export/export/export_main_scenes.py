@@ -5,19 +5,19 @@ from blenvy.blueprints.blueprint_helpers import inject_blueprints_list_into_main
 
 from ..constants import TEMPSCENE_PREFIX
 from ..helpers.generate_and_export import generate_and_export
-from .export_gltf import (generate_gltf_export_preferences, export_gltf)
+from .export_gltf import (generate_gltf_export_settings, export_gltf)
 from ..modules.bevy_dynamic import is_object_dynamic, is_object_static
 from ..helpers.helpers_scenes import clear_hollow_scene, copy_hollowed_collection_into
 
 def export_main_scene(scene, blend_file_path, settings, blueprints_data): 
-    gltf_export_preferences = generate_gltf_export_preferences(settings)
+    gltf_export_settings = generate_gltf_export_settings(settings)
     assets_path_full = getattr(settings,"assets_path_full")
     levels_path_full = getattr(settings,"levels_path_full")
 
     export_blueprints = getattr(settings.auto_export,"export_blueprints")
     export_separate_dynamic_and_static_objects = getattr(settings.auto_export, "export_separate_dynamic_and_static_objects")
 
-    gltf_export_settings = { **gltf_export_preferences, 
+    gltf_export_settings = { **gltf_export_settings, 
                        'use_active_scene': True, 
                        'use_active_collection':True, 
                        'use_active_collection_with_nested':True,  

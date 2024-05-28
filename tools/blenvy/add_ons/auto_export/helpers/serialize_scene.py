@@ -208,7 +208,8 @@ def serialize_scene():
             collections = [collection.name for collection in object.users_collection]
             materials = materials_hash(object, cache) if len(object.material_slots) > 0 else None
 
-            data[scene.name][object.name] = {
+
+            object_field_hashes = {
                 "name": object.name,
                 "transforms": transform,
                 "visibility": visibility,
@@ -222,6 +223,9 @@ def serialize_scene():
                 "collections": collections,
                 "materials": materials
             }
+            object_field_hashes_filtered = {key: object_field_hashes[key] for key in object_field_hashes.keys() if object_field_hashes[key] is not None}
+            objectHash = str(hash(str(object_field_hashes_filtered)))
+            data[scene.name][object.name] = objectHash
 
     """print("data", data)
     print("")

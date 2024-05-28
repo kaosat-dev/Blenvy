@@ -41,8 +41,9 @@ def auto_export(changes_per_scene, changed_export_parameters, settings):
 
         [main_scene_names, level_scenes, library_scene_names, library_scenes] = get_main_and_library_scenes(settings)
 
-        bpy.context.window_manager.blueprints_registry.refresh_blueprints()
-        blueprints_data = bpy.context.window_manager.blueprints_registry.blueprints_data
+        blueprints_data = bpy.context.window_manager.blueprints_registry.refresh_blueprints()
+        #blueprints_data = bpy.context.window_manager.blueprints_registry.blueprints_data
+        #print("blueprints_data", blueprints_data)
         blueprints_per_scene = blueprints_data.blueprints_per_scenes
         internal_blueprints = [blueprint.name for blueprint in blueprints_data.internal_blueprints]
         external_blueprints = [blueprint.name for blueprint in blueprints_data.external_blueprints]

@@ -39,7 +39,7 @@ def gltf_post_export_callback(data):
             gltf_export_settings.clear()
 
             settings = dict(settings)
-            current_gltf_settings = generate_complete_settings_dict(settings, presets=ExportGLTF2_Base, ignore_list=["use_active_collection", "use_active_collection_with_nested", "use_active_scene", "use_selection", "will_save_settings", "gltf_export_id"], preset_defaults=True)
+            current_gltf_settings = generate_complete_settings_dict(settings, presets=ExportGLTF2_Base, ignore_list=["use_active_collection", "use_active_collection_with_nested", "use_active_scene", "use_selection", "will_save_settings", "gltf_export_id"], preset_defaults=False)
             gltf_export_settings.write(json.dumps(current_gltf_settings))
         # now reset the original gltf_settings
         if gltf_settings_backup != "":

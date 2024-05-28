@@ -6,7 +6,7 @@ from blenvy.core.helpers_collections import (traverse_tree)
 from blenvy.core.object_makers import make_cube
 from blenvy.materials.materials_helpers import get_all_materials
 from ..helpers.generate_and_export import generate_and_export
-from .export_gltf import (generate_gltf_export_preferences)
+from .export_gltf import (generate_gltf_export_settings)
 
 def clear_material_info(collection_names, library_scenes):
     for scene in library_scenes:
@@ -60,13 +60,13 @@ def clear_materials_scene(temp_scene):
 # exports the materials used inside the current project:
 # the name of the output path is <materials_folder>/<name_of_your_blend_file>_materials_library.gltf/glb
 def export_materials(collections, library_scenes, settings):
-    gltf_export_preferences = generate_gltf_export_preferences(settings)
+    gltf_export_settings = generate_gltf_export_settings(settings)
     materials_path_full = getattr(settings,"materials_path_full")
 
     used_material_names = get_all_materials(collections, library_scenes)
     current_project_name = Path(bpy.context.blend_data.filepath).stem
 
-    gltf_export_settings = { **gltf_export_preferences, 
+    gltf_export_settings = { **gltf_export_settings, 
                     'use_active_scene': True, 
                     'use_active_collection':True, 
                     'use_active_collection_with_nested':True,  

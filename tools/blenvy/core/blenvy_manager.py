@@ -22,8 +22,8 @@ def save_settings(settings, context):
 def update_scene_lists(blenvy, context):                
     blenvy.main_scene_names = [scene.name for scene in blenvy.main_scenes] # FIXME: unsure
     blenvy.library_scene_names = [scene.name for scene in blenvy.library_scenes] # FIXME: unsure
-    upsert_settings(blenvy.settings_save_path, {"common_main_scene_names": [scene.name for scene in blenvy.main_scenes]})
-    upsert_settings(blenvy.settings_save_path, {"common_library_scene_names": [scene.name for scene in blenvy.library_scenes]})
+    upsert_settings(blenvy.settings_save_path, {"main_scene_names": [scene.name for scene in blenvy.main_scenes]})
+    upsert_settings(blenvy.settings_save_path, {"library_scene_names": [scene.name for scene in blenvy.library_scenes]})
 
 def update_asset_folders(blenvy, context):
     asset_path_names = ['project_root_path', 'assets_path', 'blueprints_path', 'levels_path', 'materials_path']
@@ -145,12 +145,12 @@ class BlenvyManager(PropertyGroup):
         if settings is not None:
             if "mode" in settings:
                 self.mode = settings["mode"]
-            if "common_main_scene_names" in settings:
-                for main_scene_name in settings["common_main_scene_names"]:
+            if "main_scene_names" in settings:
+                for main_scene_name in settings["main_scene_names"]:
                     added = self.main_scenes.add()
                     added.name = main_scene_name
-            if "common_library_scene_names" in settings:
-                for main_scene_name in settings["common_library_scene_names"]:
+            if "library_scene_names" in settings:
+                for main_scene_name in settings["library_scene_names"]:
                     added = self.library_scenes.add()
                     added.name = main_scene_name
 
