@@ -30,7 +30,7 @@ from .add_ons.bevy_components.settings import ComponentsSettings
 
 # auto export
 from .add_ons.auto_export import gltf_post_export_callback
-from .add_ons.auto_export.export.tracker import AutoExportTracker
+from .add_ons.auto_export.common.tracker import AutoExportTracker
 from .add_ons.auto_export.settings import AutoExportSettings
 
 # asset management

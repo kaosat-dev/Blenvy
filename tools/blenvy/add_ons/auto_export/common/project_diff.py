@@ -1,6 +1,6 @@
 import json
 import bpy
-from ..helpers.serialize_scene import serialize_scene
+from .serialize_scene import serialize_scene
 from blenvy.settings import load_settings, upsert_settings
 
 def bubble_up_changes(object, changes_per_scene):
@@ -8,23 +8,7 @@ def bubble_up_changes(object, changes_per_scene):
         changes_per_scene[object.parent.name] = bpy.data.objects[object.parent.name]
         bubble_up_changes(object.parent, changes_per_scene)
 
-
-def foo():
-    current = json.loads(current)
-
-    previous_stored = bpy.data.texts[".TESTING"] if ".TESTING" in bpy.data.texts else None # bpy.data.texts.new(".TESTING")
-    if previous_stored == None:
-        previous_stored = bpy.data.texts.new(".TESTING")
-        previous_stored.write(current)
-        return {}
-    previous = json.loads(previous_stored.as_string())
-
-
-    previous_stored.clear()
-    previous_stored.write(json.dumps(current))
-
-    
-def serialize_current():
+def serialize_current(settings):
     # sigh... you need to save & reset the frame otherwise it saves the values AT THE CURRENT FRAME WHICH CAN DIFFER ACROSS SCENES
     current_frames = [scene.frame_current for scene in bpy.data.scenes]
     for scene in bpy.data.scenes:
@@ -35,7 +19,7 @@ def serialize_current():
     #serialize scene at frame 0
     """with bpy.context.temp_override(scene=bpy.data.scenes[1]):
         bpy.context.scene.frame_set(0)"""
-    current = serialize_scene()
+    current = serialize_scene(settings)
     bpy.context.window.scene = current_scene
 
     # reset previous frames
@@ -44,9 +28,9 @@ def serialize_current():
     
     return current
 
-def get_changes_per_scene():
+def get_changes_per_scene(settings):
     previous = load_settings(".blenvy.project_serialized_previous")
-    current = serialize_current()
+    current = serialize_current(settings)
 
     # determine changes
     changes_per_scene = project_diff(previous, current)

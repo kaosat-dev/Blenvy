@@ -32,6 +32,9 @@ def draw_settings_ui(layout, auto_export_settings):
         section.enabled = controls_enabled
         section.prop(auto_export_settings, "change_detection", text="Use change detection")
 
+        section.prop(auto_export_settings, "materials_in_depth_scan", text="Detailed materials scan")
+        
+
     header, panel = layout.panel("Blueprints", default_closed=False)
     header.label(text="Blueprints")
     if panel:

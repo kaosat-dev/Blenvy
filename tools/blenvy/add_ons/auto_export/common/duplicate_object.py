@@ -1,10 +1,7 @@
 import json
 import bpy
 from blenvy.core.object_makers import (make_empty)
-
-
-# these are mostly for when using this add-on together with the bevy_components add-on
-custom_properties_to_filter_out = ['_combine', 'template', 'components_meta']
+from ..constants import custom_properties_to_filter_out
 
 def is_component_valid_and_enabled(object, component_name):
     if "components_meta" in object or hasattr(object, "components_meta"):
@@ -89,7 +86,6 @@ def copy_animation_data(source, target):
             markers_formated += '}, '             
         markers_formated += '}' 
         target["AnimationMarkers"] = f'( {markers_formated} )'
-
         
 def duplicate_object(object, parent, combine_mode, destination_collection, blueprints_data, nester=""):
     copy = None
@@ -97,19 +93,21 @@ def duplicate_object(object, parent, combine_mode, destination_collection, bluep
     # print("COMBINE MODE", combine_mode)
     if object.instance_type == 'COLLECTION' and (combine_mode == 'Split' or (combine_mode == 'EmbedExternal' and (object.instance_collection.name in internal_blueprint_names)) ): 
         #print("creating empty for", object.name, object.instance_collection.name, internal_blueprint_names, combine_mode)
-        collection_name = object.instance_collection.name
+        original_collection = object.instance_collection
         original_name = object.name
+        blueprint_name = original_collection.name
+        blueprint_path = original_collection['export_path'] if 'export_path' in original_collection else f'./{blueprint_name}' # TODO: the default requires the currently used extension !!
+
 
         object.name = original_name + "____bak"
         empty_obj = make_empty(original_name, object.location, object.rotation_euler, object.scale, destination_collection)
         
         """we inject the collection/blueprint name, as a component called 'BlueprintName', but we only do this in the empty, not the original object"""
-        empty_obj['BlueprintName'] = '("'+collection_name+'")'
-        empty_obj["BlueprintPath"] = ''
+        empty_obj['BlueprintName'] = f'("{blueprint_name}")'
+        empty_obj["BlueprintPath"] = f'("{blueprint_path}")'
         empty_obj['SpawnHere'] = '()'
 
         # we also inject a list of all sub blueprints, so that the bevy side can preload them
-        blueprint_name = collection_name
         children_per_blueprint = {}
         blueprint = blueprints_data.blueprints_per_name.get(blueprint_name, None)
         if blueprint:
@@ -131,10 +129,6 @@ def duplicate_object(object, parent, combine_mode, destination_collection, bluep
 
         destination_collection.objects.link(copy)
 
-        """if object.parent == None:
-            if parent_empty is not None:
-                copy.parent = parent_empty
-           """
     # do this both for empty replacements & normal copies
     if parent is not None:
         copy.parent = parent
@@ -143,64 +137,3 @@ def duplicate_object(object, parent, combine_mode, destination_collection, bluep
 
     for child in object.children:
         duplicate_object(child, copy, combine_mode, destination_collection, blueprints_data, nester+"  ")
-
-# copies the contents of a collection into another one while replacing library instances with empties
-def copy_hollowed_collection_into(source_collection, destination_collection, parent_empty=None, filter=None, blueprints_data=None, settings={}):
-    collection_instances_combine_mode = getattr(settings.auto_export, "collection_instances_combine_mode")
-
-    for object in source_collection.objects:
-        if object.name.endswith("____bak"): # some objects could already have been handled, ignore them
-            continue       
-        if filter is not None and filter(object) is False:
-            continue
-        #check if a specific collection instance does not have an ovveride for combine_mode
-        combine_mode = object['_combine'] if '_combine' in object else collection_instances_combine_mode
-        parent = parent_empty
-        duplicate_object(object, parent, combine_mode, destination_collection, blueprints_data)
-        
-    # for every child-collection of the source, copy its content into a new sub-collection of the destination
-    for collection in source_collection.children:
-        original_name = collection.name
-        collection.name = original_name + "____bak"
-        collection_placeholder = make_empty(original_name, [0,0,0], [0,0,0], [1,1,1], destination_collection)
-
-        if parent_empty is not None:
-            collection_placeholder.parent = parent_empty
-        copy_hollowed_collection_into(
-            source_collection = collection, 
-            destination_collection = destination_collection, 
-            parent_empty = collection_placeholder, 
-            filter = filter,
-            blueprints_data = blueprints_data, 
-            settings=settings
-        )
-    return {}
-
-# clear & remove "hollow scene"
-def clear_hollow_scene(temp_scene, original_root_collection):
-    def restore_original_names(collection):
-        if collection.name.endswith("____bak"):
-            collection.name = collection.name.replace("____bak", "")
-        for object in collection.objects:
-            if object.instance_type == 'COLLECTION':
-                if object.name.endswith("____bak"):
-                    object.name = object.name.replace("____bak", "")
-            else: 
-                if object.name.endswith("____bak"):
-                    object.name = object.name.replace("____bak", "")
-        for child_collection in collection.children:
-            restore_original_names(child_collection)
-    
-
-    # remove any data we created
-    temp_root_collection = temp_scene.collection 
-    temp_scene_objects = [o for o in temp_root_collection.all_objects]
-    for object in temp_scene_objects:
-        #print("removing", object.name)
-        bpy.data.objects.remove(object, do_unlink=True)
-
-    # remove the temporary scene
-    bpy.data.scenes.remove(temp_scene, do_unlink=True)
-    
-    # reset original names
-    restore_original_names(original_root_collection)

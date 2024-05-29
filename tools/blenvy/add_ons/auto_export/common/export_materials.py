@@ -5,7 +5,7 @@ from pathlib import Path
 from blenvy.core.helpers_collections import (traverse_tree)
 from blenvy.core.object_makers import make_cube
 from blenvy.materials.materials_helpers import get_all_materials
-from ..helpers.generate_and_export import generate_and_export
+from .generate_temporary_scene_and_export import generate_temporary_scene_and_export
 from .export_gltf import (generate_gltf_export_settings)
 
 def clear_material_info(collection_names, library_scenes):
@@ -79,7 +79,7 @@ def export_materials(collections, library_scenes, settings):
 
     print("       exporting Materials to", gltf_output_path, ".gltf/glb")
 
-    generate_and_export(
+    generate_temporary_scene_and_export(
         settings=settings, 
         gltf_export_settings=gltf_export_settings,
         temp_scene_name="__materials_scene",

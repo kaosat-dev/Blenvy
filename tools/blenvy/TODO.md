@@ -102,3 +102,4 @@ General issues:
 - [ ] add tests for disabled components 
 - [x]  fix auto export workflow
 - [ ] should we write the previous _xxx data only AFTER a sucessfull export only ?
+- [ ] add hashing of modifiers/ geometry nodes in serialize scene

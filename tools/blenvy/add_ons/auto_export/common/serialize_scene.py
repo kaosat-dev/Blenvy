@@ -4,11 +4,14 @@ import numpy as np
 import bpy
 from ..constants import TEMPSCENE_PREFIX
 
-fields_to_ignore_generic = ["tag", "type", "update_tag", "use_extra_user", "use_fake_user", "user_clear", "user_of_id", "user_remap", "users",
-                    'animation_data_clear', 'animation_data_create', 'asset_clear', 'asset_data', 'asset_generate_preview', 'asset_mark', 'bl_rna', 'evaluated_get',
-                    'library', 'library_weak_reference', 'make_local','name', 'name_full', 'original',
-                        'override_create', 'override_hierarchy_create', 'override_library', 'preview', 'preview_ensure', 'rna_type',
-                        'session_uid', 'copy', 'id_type', 'is_embedded_data', 'is_evaluated', 'is_library_indirect', 'is_missing', 'is_runtime_data']
+
+fields_to_ignore_generic = [
+    "tag", "type", "update_tag", "use_extra_user", "use_fake_user", "user_clear", "user_of_id", "user_remap", "users",
+    'animation_data_clear', 'animation_data_create', 'asset_clear', 'asset_data', 'asset_generate_preview', 'asset_mark', 'bl_rna', 'evaluated_get',
+    'library', 'library_weak_reference', 'make_local','name', 'name_full', 'original',
+    'override_create', 'override_hierarchy_create', 'override_library', 'preview', 'preview_ensure', 'rna_type',
+    'session_uid', 'copy', 'id_type', 'is_embedded_data', 'is_evaluated', 'is_library_indirect', 'is_missing', 'is_runtime_data'
+]
 
 # possible alternatives https://blender.stackexchange.com/questions/286010/bpy-detect-modified-mesh-data-vertices-edges-loops-or-polygons-for-cachin
 def mesh_hash(obj):
@@ -118,6 +121,13 @@ def lineart(lineart_data):
     return str(fields)
 
 def node_tree(nodetree_data):
+    print("SCANNING NODE TREE", nodetree_data)
+    # output node:
+    output = nodetree_data.get_output_node("ALL")
+    print("output", output)
+
+
+
     fields_to_ignore = fields_to_ignore_generic+ ['contains_tree','get_output_node', 'interface_update', 'override_template_create']
     all_field_names = dir(nodetree_data)
     fields = [getattr(nodetree_data, prop, None) for prop in all_field_names if not prop.startswith("__") and not prop in fields_to_ignore and not prop.startswith("show_")]
@@ -141,7 +151,6 @@ def material_hash(material):
 
     type_of = [type(getattr(material, prop, None))  for prop in all_field_names if not prop.startswith("__") and not prop in fields_to_ignore and not prop.startswith("show_")]
     names = [prop for prop in all_field_names if not prop.startswith("__") and not prop in fields_to_ignore and not prop.startswith("show_")]
-
     tutu = [t == Color for t in type_of] # bpy.types.MaterialLineArt bpy.types.ShaderNodeTree
     #print("fields", type_of)
 
@@ -152,11 +161,10 @@ def material_hash(material):
             print("types", type(bla) == bpy.types.bpy_prop_collection, type(bla) == bpy.types.FloatColorAttributeValue)"""
             
     # print("oooooh", material, material.bl_rna.properties.items())
-
     return str(fields)#str(hash(str(fields)))
 
 # TODO: this is partially taken from export_materials utilities, perhaps we could avoid having to fetch things multiple times ?
-def materials_hash(obj, cache):
+def materials_hash(obj, cache, settings):
     # print("materials")
     materials = []
     for material_slot in obj.material_slots:
@@ -170,20 +178,54 @@ def materials_hash(obj, cache):
             cache['materials'][material.name] = mat
             materials.append(mat)
             # print("NOT CACHHH", mat)
-
-    # materials = [material_hash(material_slot.material) if not material_slot.material.name in cache["materials"] else cache["materials"][material_slot.material.name]  for material_slot in obj.material_slots]
     return str(hash(str(materials)))
 
+# TODO : we should also check for custom props on scenes, meshes, materials
 def custom_properties_hash(obj):
     custom_properties = {}
     for property_name in obj.keys():
         if property_name not in '_RNA_UI' and property_name != 'components_meta':
             custom_properties[property_name] = obj[property_name]
-
     return str(hash(str(custom_properties)))
     
+def modifier_hash(modifier_data, settings):
+    fields_to_ignore = fields_to_ignore_generic
+    all_field_names = dir(modifier_data)
+    fields = [getattr(modifier_data, prop, None) for prop in all_field_names if not prop.startswith("__") and not prop in fields_to_ignore and not prop.startswith("show_")]
 
-def serialize_scene(): 
+    filtered_field_names = [prop for prop in all_field_names if not prop.startswith("__") and not prop in fields_to_ignore and not prop.startswith("show_")]
+    print("fields", fields, "field names", filtered_field_names)
+    node_group = getattr(modifier_data, "node_group", None)
+    if node_group is not None:
+        print("THIS IS A GEOMETRY NODE")
+        for node in node_group.nodes:
+            print("node", node)
+            print("node type", node.type)
+            try:
+                print("node value", node.values())
+            except:pass
+            for input in node.inputs:
+                print(" input", input, input.name, input.label)
+                if hasattr(input, "default_value"):
+                    print("YOHO", dict(input), input.default_value)
+
+            
+
+    return str(fields)
+
+def modifiers_hash(object, settings):
+    print("modifiers", object.modifiers)
+
+    modifiers = []
+    for modifier in object.modifiers:
+        print("modifier", modifier )# modifier.node_group)
+        try:
+            print("MODIFIER FIEEEEEEELD", modifier.ratio) # apparently this only works for non geometry nodes ??
+        except: pass
+        modifiers.append(modifier_hash(modifier, settings))
+    return str(hash(str(modifiers)))
+
+def serialize_scene(settings): 
     cache = {"materials":{}}
     print("serializing scene")
     data = {}
@@ -206,7 +248,8 @@ def serialize_scene():
             armature = armature_hash(object) if object.type == 'ARMATURE' else None
             parent = object.parent.name if object.parent else None
             collections = [collection.name for collection in object.users_collection]
-            materials = materials_hash(object, cache) if len(object.material_slots) > 0 else None
+            materials = materials_hash(object, cache, settings) if len(object.material_slots) > 0 else None
+            modifiers = modifiers_hash(object, settings) if len(object.modifiers) > 0 else None
 
 
             object_field_hashes = {
@@ -221,7 +264,8 @@ def serialize_scene():
                 "armature": armature,
                 "parent": parent,
                 "collections": collections,
-                "materials": materials
+                "materials": materials,
+                "modifiers":modifiers
             }
             object_field_hashes_filtered = {key: object_field_hashes[key] for key in object_field_hashes.keys() if object_field_hashes[key] is not None}
             objectHash = str(hash(str(object_field_hashes_filtered)))

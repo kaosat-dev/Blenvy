@@ -1,9 +1,8 @@
 import os
 import bpy
 from ..constants import TEMPSCENE_PREFIX
-from ..helpers.generate_and_export import generate_and_export
-from ..helpers.helpers_scenes import clear_hollow_scene, copy_hollowed_collection_into
-from .export_gltf import generate_gltf_export_settings
+from ..common.generate_temporary_scene_and_export import generate_temporary_scene_and_export, copy_hollowed_collection_into, clear_hollow_scene
+from ..common.export_gltf import generate_gltf_export_settings
 
 def export_blueprints(blueprints, settings, blueprints_data):
     blueprints_path_full = getattr(settings, "blueprints_path_full")
@@ -25,7 +24,7 @@ def export_blueprints(blueprints, settings, blueprints_data):
 
             collection = bpy.data.collections[blueprint.name]
             # do the actual export
-            generate_and_export(
+            generate_temporary_scene_and_export(
                 settings, 
                 temp_scene_name=TEMPSCENE_PREFIX+collection.name,
                 gltf_export_settings=gltf_export_settings,

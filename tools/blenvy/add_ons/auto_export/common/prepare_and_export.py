@@ -1,6 +1,6 @@
 import bpy
 
-from .project_diff import get_changes_per_scene, project_diff, serialize_current
+from .project_diff import get_changes_per_scene
 from .auto_export import auto_export
 from .settings_diff import get_setting_changes
 
@@ -13,11 +13,11 @@ def prepare_and_export():
     if auto_export_settings.auto_export: # only do the actual exporting if auto export is actually enabled
 
         # determine changed objects
-        per_scene_changes = get_changes_per_scene()
+        per_scene_changes = get_changes_per_scene(settings=blenvy)
         # determine changed parameters 
         setting_changes = get_setting_changes()
         # do the actual export
-        auto_export(per_scene_changes, setting_changes, blenvy)
+        # auto_export(per_scene_changes, setting_changes, blenvy)
 
         # cleanup 
         # TODO: these are likely obsolete

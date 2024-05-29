@@ -1,13 +1,9 @@
 import os
-import bpy
-from pathlib import Path
 from blenvy.blueprints.blueprint_helpers import inject_blueprints_list_into_main_scene, remove_blueprints_list_from_main_scene
-
 from ..constants import TEMPSCENE_PREFIX
-from ..helpers.generate_and_export import generate_and_export
-from .export_gltf import (generate_gltf_export_settings, export_gltf)
-from ..modules.bevy_dynamic import is_object_dynamic, is_object_static
-from ..helpers.helpers_scenes import clear_hollow_scene, copy_hollowed_collection_into
+from ..common.generate_temporary_scene_and_export import generate_temporary_scene_and_export, copy_hollowed_collection_into, clear_hollow_scene
+from ..common.export_gltf import (generate_gltf_export_settings, export_gltf)
+from .is_object_dynamic import is_object_dynamic, is_object_static
 
 def export_main_scene(scene, blend_file_path, settings, blueprints_data): 
     gltf_export_settings = generate_gltf_export_settings(settings)
@@ -33,7 +29,7 @@ def export_main_scene(scene, blend_file_path, settings, blueprints_data):
         if export_separate_dynamic_and_static_objects:
             #print("SPLIT STATIC AND DYNAMIC")
             # first export static objects
-            generate_and_export(
+            generate_temporary_scene_and_export(
                 settings, 
                 temp_scene_name=TEMPSCENE_PREFIX,
                 gltf_export_settings=gltf_export_settings,
@@ -44,7 +40,7 @@ def export_main_scene(scene, blend_file_path, settings, blueprints_data):
 
             # then export all dynamic objects
             gltf_output_path = os.path.join(levels_path_full, scene.name+ "_dynamic")
-            generate_and_export(
+            generate_temporary_scene_and_export(
                 settings, 
                 temp_scene_name=TEMPSCENE_PREFIX,
                 gltf_export_settings=gltf_export_settings,
@@ -55,7 +51,7 @@ def export_main_scene(scene, blend_file_path, settings, blueprints_data):
 
         else:
             #print("NO SPLIT")
-            generate_and_export(
+            generate_temporary_scene_and_export(
                 settings, 
                 temp_scene_name=TEMPSCENE_PREFIX,
                 gltf_export_settings=gltf_export_settings,
