@@ -34,8 +34,15 @@ class AutoExportSettings(PropertyGroup):
 
     materials_in_depth_scan : BoolProperty(
         name='In depth scan of materials (could be slow)',
-        description='serializes more details of materials in order to detect changes (slower, but more accurate in detecting changes)',
-        default=False,
+        description='serializes more details of materials in order to detect changes (could be slower, but much more accurate in detecting changes)',
+        default=True,
+        update=save_settings
+    ) # type: ignore
+
+    modifiers_in_depth_scan : BoolProperty(
+        name='In depth scan of modifiers (could be slow)',
+        description='serializes more details of modifiers (particularly geometry nodes) in order to detect changes (could be slower, but much more accurate in detecting changes)',
+        default=True,
         update=save_settings
     ) # type: ignore
 

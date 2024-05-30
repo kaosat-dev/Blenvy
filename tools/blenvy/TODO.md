@@ -15,7 +15,7 @@ Auto export
     - [x] main/ library scene names
     - [x] paths
 
-Data storage:
+Data storage for custom properties:
     - for scenes (main scenes)
         - at scene level
     - for blueprints 
@@ -23,7 +23,7 @@ Data storage:
         - Note: these should be COPIED to the scene level when exporting, into the temp_scene's properties
 
     > NOTE: UP until we manage to create a PR for Bevy to directly support the scene level gltf_extras, the auto exporter should automatically create (& remove)
-        an additional object with scene_<scene_name>_components to copy that data to
+        any additional object with scene_<scene_name>_components to copy that data to
 
 Assets:
     - blueprint assets should be auto_generated & inserted into the list of assets : these assets are NOT removable by the user
@@ -103,3 +103,5 @@ General issues:
 - [x]  fix auto export workflow
 - [ ] should we write the previous _xxx data only AFTER a sucessfull export only ?
 - [ ] add hashing of modifiers/ geometry nodes in serialize scene
+- [ ] add ability to FORCE export specific blueprints & levels
+- [ ] undo after a save removes any saved "serialized scene" data ? DIG into this
