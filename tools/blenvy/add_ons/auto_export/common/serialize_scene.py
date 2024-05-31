@@ -33,6 +33,10 @@ def _lookup_color(data):
 def _lookup_array(data):
     return peel_value(data)
 
+def _lookup_array2(data):
+    print("mystery vectors")
+    return peel_value(data)
+
 def _lookup_prop_group(data):
     bla = generic_fields_hasher_evolved(data, fields_to_ignore=fields_to_ignore_generic)
     print("PROPGROUP", bla)
@@ -46,11 +50,30 @@ def _lookup_materialLineArt(data):
 
 type_lookups = {
     Color: _lookup_color,#lambda input: print("dsf")',
+    bpy.types.FloatVectorAttribute: _lookup_array2,
     bpy.types.bpy_prop_array: _lookup_array,
     bpy.types.PropertyGroup: _lookup_prop_group,
     bpy.types.bpy_prop_collection: _lookup_collection,
     bpy.types.MaterialLineArt: _lookup_materialLineArt
 }
+
+def convert_field(raw_value, field_name=""):
+    conversion_lookup = None # type_lookups.get(type(raw_value), None)
+    all_types = inspect.getmro(type(raw_value))            
+    for s_type in all_types:
+        if type_lookups.get(s_type, None) is not None:
+            conversion_lookup = type_lookups[s_type]
+            break
+
+    field_value = None
+    if conversion_lookup is not None:
+        field_value =  conversion_lookup(raw_value)
+        #print("field_name",field_name,"conv value", field_value)
+    else:
+        #print("field_name",field_name,"raw value", raw_value)
+        field_value = raw_value
+    
+    return field_value
 
 # TODO: replace the first one with this once if its done 
 def generic_fields_hasher_evolved(data, fields_to_ignore):
@@ -60,21 +83,7 @@ def generic_fields_hasher_evolved(data, fields_to_ignore):
         if not field_name.startswith("__") and not field_name in fields_to_ignore and not field_name.startswith("show") and not callable(getattr(data, field_name, None)):
             raw_value = getattr(data, field_name, None)
             #print("raw value", raw_value, "type", type(raw_value), isinstance(raw_value, Color), isinstance(raw_value, bpy.types.bpy_prop_array))
-            conversion_lookup = None # type_lookups.get(type(raw_value), None)
-            all_types = inspect.getmro(type(raw_value))            
-            for s_type in all_types:
-                if type_lookups.get(s_type, None) is not None:
-                    conversion_lookup = type_lookups[s_type]
-                    break
-
-            field_value = None
-            if conversion_lookup is not None:
-                field_value =  conversion_lookup(raw_value)
-                print("field_name",field_name,"conv value", field_value)
-            else:
-                print("field_name",field_name,"raw value", raw_value)
-                field_value = raw_value
-            
+            field_value = convert_field(raw_value, field_name)
             field_values.append(str(field_value))
 
     return str(field_values)
@@ -170,29 +179,67 @@ def armature_hash(obj):
         print("bone", bone, bone_hash(bone))"""
     return str(fields)
 
+# used for various node trees: shaders, modifiers etc
+def node_tree(node_tree):
+    print("SCANNING NODE TREE", node_tree)
 
-def node_tree(nodetree_data):
-    print("SCANNING NODE TREE", nodetree_data)
-    # output node:
-    output = nodetree_data.get_output_node("ALL")
-    print("output", output)
+    # storage for hashing
+    links_hashes = []
+    nodes_hashes = []
+    root_inputs = dict(node_tree) # probably useless for materials, contains settings for certain modifiers
 
-    fields_to_ignore = fields_to_ignore_generic+ ['contains_tree','get_output_node', 'interface_update', 'override_template_create']
-    all_field_names = dir(nodetree_data)
-    fields = [getattr(nodetree_data, prop, None) for prop in all_field_names if not prop.startswith("__") and not prop in fields_to_ignore and not prop.startswith("show_")]
+    for node in node_tree.nodes:
+        #print("node", node, node.type, node.name, node.label)
 
-    # print("node tree", fields)
-    return str(fields)
+        input_hashes = []
+        for input in node.inputs:
+            #print(" input", input, "label", input.label, "name", input.name, dir(input))
+            default_value = getattr(input, 'default_value', None)
+            input_hash = f"{convert_field(default_value)}"
+            input_hashes.append(input_hash)
+
+        output_hashes = []
+        # IF the node itself is a group input, its outputs are the inputs of the geometry node (yes, not easy)
+        node_in_use = True
+        for (index, output) in enumerate(node.outputs):
+            # print(" output", output, "label", output.label, "name", output.name, "generated name", f"Socket_{index+1}")
+            default_value = getattr(output, 'default_value', None)
+            output_hash = f"{convert_field(default_value)}"
+            output_hashes.append(output_hash)
+
+            node_in_use = node_in_use and default_value is not None
+        #print("NODE IN USE", node_in_use)
+
+        node_fields_to_ignore = fields_to_ignore_generic + ['internal_links', 'inputs', 'outputs']
+        node_hash = f"{generic_fields_hasher_evolved(node, node_fields_to_ignore)}_{str(input_hashes)}_{str(output_hashes)}"
+        #print("node hash", node_hash)
+        #print("node hash", str(input_hashes))
+        nodes_hashes.append(node_hash)
+
+    for link in node_tree.links:
+        """print("LINK", link, dir(link))
+        print("FROM", link.from_node, link.from_socket)
+        print("TO", link.to_node, link.to_socket)"""
+
+        from_socket_default = link.from_socket.default_value if hasattr(link.from_socket, "default_value") else None
+        to_socket_default = link.to_socket.default_value if hasattr(link.to_socket, "default_value") else None
+        link_hash = f"{link.from_node.name}_{link.from_socket.name}_{from_socket_default}+{link.to_node.name}_{link.to_socket.name}_{to_socket_default}"
+
+        links_hashes.append(link_hash)
+
+    print("node hashes",nodes_hashes, "links_hashes", links_hashes)
+    return f"{str(root_inputs)}_{str(nodes_hashes)}_{str(links_hashes)}"
+
 
 def material_hash(material, settings):
-    print("material_hash", material)
-    hashed_material = generic_fields_hasher_evolved(material, fields_to_ignore_generic + ['node_tree']) # we want to handle the node tree seperatly
-    print("HASH", hashed_material)
-    """if node_group is not None and settings.auto_export.materials_in_depth_scan:
-        pass
+    print("material_hash", material.name, material.node_tree)
+    node_group = getattr(material, "node_tree", None)
+    hashed_material_except_node_tree = generic_fields_hasher_evolved(material, fields_to_ignore_generic + ['node_tree']) # we want to handle the node tree seperatly
+    if node_group is not None and settings.auto_export.materials_in_depth_scan:
+        hashed_node_tree = node_tree(node_group)
+        return str(hashed_material_except_node_tree) + str(hashed_node_tree)
     else:
-        generic_fields_hasher(material, fields_to_ignore_generic)"""
-    return str(hashed_material)
+        return str(hashed_material_except_node_tree)
 
 # TODO: this is partially taken from export_materials utilities, perhaps we could avoid having to fetch things multiple times ?
 def materials_hash(obj, cache, settings):
@@ -216,68 +263,14 @@ def materials_hash(obj, cache, settings):
 
 def modifier_hash(modifier_data, settings):
     node_group = getattr(modifier_data, "node_group", None)
+    hashed_modifier_except_node_tree = generic_fields_hasher_evolved(modifier_data, fields_to_ignore_generic)
 
     if node_group is not None and settings.auto_export.modifiers_in_depth_scan:
-        #print("THIS IS A GEOMETRY NODE") 
-
-        # storage for hashing
-        links_hashes = []
-        nodes_hashes = []
-        modifier_inputs = dict(modifier_data)
-
-        for node in node_group.nodes:
-            #print("node", node, node.type, node.name, node.label)
-            #print("node info", dir(node))
-
-            input_hashes = []
-            for input in node.inputs:
-                #print(" input", input, "label", input.label, "name", input.name)
-                input_hash = f"{getattr(input, 'default_value', None)}"
-                input_hashes.append(input_hash)
-                """if hasattr(input, "default_value"):
-                    print("YOHO", dict(input), input.default_value)"""
-
-            output_hashes = []
-            # IF the node itself is a group input, its outputs are the inputs of the geometry node (yes, not easy)
-            node_in_use = True
-            for (index, output) in enumerate(node.outputs):
-                # print(" output", output, "label", output.label, "name", output.name, "generated name", f"Socket_{index+1}")
-                output_hash = f"{getattr(output, 'default_value', None)}"
-                output_hashes.append(output_hash)
-                """if hasattr(output, "default_value"):
-                    print("YOHO", output.default_value)"""
-                node_in_use = node_in_use and hasattr(output, "default_value")
-            #print("NODE IN USE", node_in_use)
-
-            node_fields_to_ignore = fields_to_ignore_generic + ['internal_links', 'inputs', 'outputs']
-
-            node_hash = f"{generic_fields_hasher(node, node_fields_to_ignore)}_{str(input_hashes)}_{str(output_hashes)}"
-            #print("node hash", node_hash)
-            nodes_hashes.append(node_hash)
-            #print(" ")
-
-        for link in node_group.links:
-            """print("LINK", link) #dir(link)
-            print("FROM", link.from_node, link.from_socket)
-            print("TO", link.to_node, link.to_socket)"""
-
-
-            from_socket_default = link.from_socket.default_value if hasattr(link.from_socket, "default_value") else None
-            to_socket_default = link.to_socket.default_value if hasattr(link.to_socket, "default_value") else None
-
-            link_hash = f"{link.from_node.name}_{link.from_socket.name}_{from_socket_default}+{link.to_node.name}_{link.to_socket.name}_{to_socket_default}"
-
-            """if hasattr(link.from_socket, "default_value"):
-                print("[FROM SOCKET]", link.from_socket.default_value)
-            if hasattr(link.to_socket, "default_value"):
-                print("[TO SOCKET]", link.to_socket.default_value)"""
-
-            links_hashes.append(link_hash)
-            #print("link_hash", link_hash)
-
-        return f"{str(modifier_inputs)}_{str(nodes_hashes)}_{str(links_hashes)}"
+        print("modifier here")
+        hashed_node_tree = node_tree(node_group)
+        return str(hashed_modifier_except_node_tree) + str(hashed_node_tree)
     else:
-        return generic_fields_hasher(modifier_data, fields_to_ignore_generic)
+        return str(hashed_modifier_except_node_tree)
     
 
 def modifiers_hash(object, settings):
