@@ -91,13 +91,16 @@ impl GltfRefMap {
 
 #[derive(Component, Reflect)]
 #[reflect(Component)]
-struct GltfRef<T: Component + FromGltfRef> {
+struct GltfRef<T: Component> {
     target: String,
     #[reflect(ignore)]
     _marker: PhantomData<T>,
 }
 
-impl<T: Component + FromGltfRef> GltfRef<T> {
+impl<T: Component> GltfRef<T>
+where
+    Entity: Into<T>,
+{
     fn system(
         refs: Query<(Entity, &Self)>,
         gltf_for_entity: GltfForEntity,
@@ -113,7 +116,7 @@ impl<T: Component + FromGltfRef> GltfRef<T> {
 
             match ref_map.get_ref(gltf_root, &gltf_ref.target) {
                 Some(target) => {
-                    commands.entity(entity).insert(T::from_ref(target));
+                    commands.entity(entity).insert(Into::<T>::into(target));
                 }
                 None => {
                     warn!(
@@ -126,17 +129,14 @@ impl<T: Component + FromGltfRef> GltfRef<T> {
     }
 }
 
-/// Trait for creating a component for a Gltf reference.
-pub trait FromGltfRef {
-    /// Creates `Self` given the `entity` for this reference.
-    fn from_ref(entity: Entity) -> Self;
-}
-
 /// Plugin for automatically converting [`GltfRef`]s into their corresponding
 /// `T`.
-pub struct GltfRefPlugin<T: Component + FromGltfRef + TypePath>(PhantomData<T>);
+pub struct GltfRefPlugin<T: Component + TypePath>(PhantomData<T>);
 
-impl<T: Component + FromGltfRef + TypePath> Plugin for GltfRefPlugin<T> {
+impl<T: Component + TypePath> Plugin for GltfRefPlugin<T>
+where
+    Entity: Into<T>,
+{
     fn build(&self, app: &mut App) {
         app.register_type::<GltfRef<T>>().add_systems(
             Update,
@@ -147,7 +147,10 @@ impl<T: Component + FromGltfRef + TypePath> Plugin for GltfRefPlugin<T> {
 
 // Manual implementation of Default for GltfRefPlugin to avoid `Default` trait
 // bounds on `T`.
-impl<T: Component + FromGltfRef + TypePath> Default for GltfRefPlugin<T> {
+impl<T: Component + TypePath> Default for GltfRefPlugin<T>
+where
+    Entity: Into<T>,
+{
     fn default() -> Self {
         Self(Default::default())
     }
