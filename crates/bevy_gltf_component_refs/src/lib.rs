@@ -134,9 +134,9 @@ pub trait FromGltfRef {
 
 /// Plugin for automatically converting [`GltfRef`]s into their corresponding
 /// `T`.
-pub struct GltfRefPlugin<T: Component + FromGltfRef>(PhantomData<T>);
+pub struct GltfRefPlugin<T: Component + FromGltfRef + TypePath>(PhantomData<T>);
 
-impl<T: Component + FromGltfRef + Reflect + TypePath> Plugin for GltfRefPlugin<T> {
+impl<T: Component + FromGltfRef + TypePath> Plugin for GltfRefPlugin<T> {
     fn build(&self, app: &mut App) {
         app.register_type::<GltfRef<T>>().add_systems(
             Update,
@@ -147,7 +147,7 @@ impl<T: Component + FromGltfRef + Reflect + TypePath> Plugin for GltfRefPlugin<T
 
 // Manual implementation of Default for GltfRefPlugin to avoid `Default` trait
 // bounds on `T`.
-impl<T: Component + FromGltfRef> Default for GltfRefPlugin<T> {
+impl<T: Component + FromGltfRef + TypePath> Default for GltfRefPlugin<T> {
     fn default() -> Self {
         Self(Default::default())
     }
