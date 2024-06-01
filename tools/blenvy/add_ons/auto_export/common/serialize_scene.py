@@ -1,3 +1,5 @@
+import collections
+import collections.abc
 import inspect
 import json
 from mathutils import Color
@@ -57,7 +59,13 @@ type_lookups = {
     bpy.types.MaterialLineArt: _lookup_materialLineArt
 }
 
-def convert_field(raw_value, field_name=""):
+def convert_field(raw_value, field_name="", scan_node_tree=True):
+    # nodes are a special case: # TODO: find out their types & move these to type lookups
+    if field_name in ["node_tree", "node_group"] and scan_node_tree:
+        print("scan node tree")
+        return node_tree(raw_value)
+
+
     conversion_lookup = None # type_lookups.get(type(raw_value), None)
     all_types = inspect.getmro(type(raw_value))            
     for s_type in all_types:
@@ -75,18 +83,25 @@ def convert_field(raw_value, field_name=""):
     
     return field_value
 
+def obj_to_dict(object):
+    try:
+        return dict(object)
+    except:
+        return {}
+    
 # TODO: replace the first one with this once if its done 
-def generic_fields_hasher_evolved(data, fields_to_ignore):
+def generic_fields_hasher_evolved(data, fields_to_ignore, scan_node_tree=True):
+    dict_data = obj_to_dict(data) # in some cases, some data is in the key/value pairs of the object
     all_field_names = dir(data)
     field_values = []
     for field_name in all_field_names:
         if not field_name.startswith("__") and not field_name in fields_to_ignore and not field_name.startswith("show") and not callable(getattr(data, field_name, None)):
             raw_value = getattr(data, field_name, None)
             #print("raw value", raw_value, "type", type(raw_value), isinstance(raw_value, Color), isinstance(raw_value, bpy.types.bpy_prop_array))
-            field_value = convert_field(raw_value, field_name)
+            field_value = convert_field(raw_value, field_name, scan_node_tree)
             field_values.append(str(field_value))
 
-    return str(field_values)
+    return str(dict_data) + str(field_values)
 
 # possible alternatives https://blender.stackexchange.com/questions/286010/bpy-detect-modified-mesh-data-vertices-edges-loops-or-polygons-for-cachin
 def mesh_hash(obj):
@@ -227,19 +242,15 @@ def node_tree(node_tree):
 
         links_hashes.append(link_hash)
 
-    print("node hashes",nodes_hashes, "links_hashes", links_hashes)
+    #print("node hashes",nodes_hashes, "links_hashes", links_hashes)
+    print("root_inputs", root_inputs)
     return f"{str(root_inputs)}_{str(nodes_hashes)}_{str(links_hashes)}"
 
 
 def material_hash(material, settings):
-    print("material_hash", material.name, material.node_tree)
-    node_group = getattr(material, "node_tree", None)
-    hashed_material_except_node_tree = generic_fields_hasher_evolved(material, fields_to_ignore_generic + ['node_tree']) # we want to handle the node tree seperatly
-    if node_group is not None and settings.auto_export.materials_in_depth_scan:
-        hashed_node_tree = node_tree(node_group)
-        return str(hashed_material_except_node_tree) + str(hashed_node_tree)
-    else:
-        return str(hashed_material_except_node_tree)
+    scan_node_tree = settings.auto_export.materials_in_depth_scan
+    hashed_material_except_node_tree = generic_fields_hasher_evolved(material, fields_to_ignore_generic, scan_node_tree=scan_node_tree)
+    return str(hashed_material_except_node_tree)
 
 # TODO: this is partially taken from export_materials utilities, perhaps we could avoid having to fetch things multiple times ?
 def materials_hash(obj, cache, settings):
@@ -262,15 +273,9 @@ def materials_hash(obj, cache, settings):
     return str(hash(str(materials)))
 
 def modifier_hash(modifier_data, settings):
-    node_group = getattr(modifier_data, "node_group", None)
-    hashed_modifier_except_node_tree = generic_fields_hasher_evolved(modifier_data, fields_to_ignore_generic)
-
-    if node_group is not None and settings.auto_export.modifiers_in_depth_scan:
-        print("modifier here")
-        hashed_node_tree = node_tree(node_group)
-        return str(hashed_modifier_except_node_tree) + str(hashed_node_tree)
-    else:
-        return str(hashed_modifier_except_node_tree)
+    scan_node_tree = settings.auto_export.modifiers_in_depth_scan
+    hashed_modifier = generic_fields_hasher_evolved(modifier_data, fields_to_ignore_generic, scan_node_tree=scan_node_tree)
+    return str(hashed_modifier)
     
 
 def modifiers_hash(object, settings):
