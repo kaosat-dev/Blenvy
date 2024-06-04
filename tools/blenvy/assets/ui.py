@@ -5,7 +5,7 @@ from .asset_helpers import get_user_assets
 
 
 def draw_assets(layout, name, title, asset_registry, target_type, target_name, editable=True, user_assets= [], generated_assets = []):
-    header, panel = layout.box().panel(f"assets{name}", default_closed=False)
+    header, panel = layout.panel(f"assets{name}", default_closed=False)
     header.label(text=title)
     if panel:
         if editable:
@@ -92,6 +92,8 @@ class Blenvy_assets(bpy.types.Panel):
                 user_assets = get_user_assets(scene)
                 #print("user assets", user_assets, scene)
                 row = panel.row()
+                row.prop(scene, "always_export")
+
                 scene_assets_panel = draw_assets(layout=row, name=scene.name, title=f"{scene.name} Assets", asset_registry=asset_registry, user_assets=user_assets, target_type="SCENE", target_name=scene.name)
                 """if scene.name in blueprints_data.blueprint_instances_per_main_scene:
                     for blueprint_name in blueprints_data.blueprint_instances_per_main_scene[scene.name].keys():

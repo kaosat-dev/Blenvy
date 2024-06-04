@@ -74,7 +74,7 @@ Components:
 General things to solve:
  - [x] save settings
  - [x] load settings
-    - [ ] add blueprints data
+    - [x] add blueprints data
 
 - [x] rename all path stuff using the old naming convention : "blueprints_path_full"
 - [x] generate the full paths directly when setting them in the UI  
@@ -100,10 +100,12 @@ General issues:
 
 - [ ] force overwrite of settings files instead of partial updates ?
 - [ ] add tests for disabled components 
-- [x]  fix auto export workflow
+- [x] fix auto export workflow
 - [ ] should we write the previous _xxx data only AFTER a sucessfull export only ?
 - [x] add hashing of modifiers/ geometry nodes in serialize scene
 - [ ] add ability to FORCE export specific blueprints & levels
 - [ ] undo after a save removes any saved "serialized scene" data ? DIG into this
 - [ ] handle scene renames between saves (breaks diffing)
 - [ ] change scene selector to work on actual scenes aka to deal with renamed scenes
+- [x] fix asset file selection
+- [x] change "assets" tab to "levels"/worlds tab & modify UI accordingly

@@ -48,6 +48,7 @@ class BlenvyManager(PropertyGroup):
         items=(
                 ('COMPONENTS', "Components", ""),
                 ('BLUEPRINTS', "Blueprints", ""),
+                ('LEVELS', "Levels", ""),
                 ('ASSETS', "Assets", ""),
                 ('SETTINGS', "Settings", ""),
                 ('TOOLS', "Tools", ""),
@@ -135,9 +136,18 @@ class BlenvyManager(PropertyGroup):
     def register(cls):
         bpy.types.WindowManager.blenvy = PointerProperty(type=BlenvyManager)
 
+        # unsure
+        # you can add components to both objects & collections
+        #bpy.types.Object.components_meta = PointerProperty(type=ComponentsMeta)
+        bpy.types.Collection.always_export = BoolProperty(default=False, description="always export this blueprint, regardless of changed status") # FIXME: not sure about this one
+        bpy.types.Scene.always_export = BoolProperty(default=False, description="always export this blueprint, regardless of changed status") # FIXME: not sure about this one
+
     @classmethod
     def unregister(cls):
         del bpy.types.WindowManager.blenvy
+
+        del bpy.types.Collection.always_export
+        del bpy.types.Scene.always_export
 
     def load_settings(self):
         print("LOAD SETTINGS")

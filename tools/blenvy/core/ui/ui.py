@@ -57,6 +57,10 @@ class BLENVY_PT_SidePanel(bpy.types.Panel):
         tool_switch_components = target.operator(operator="bevy.tooling_switch", text="", icon="PACKAGE")
         tool_switch_components.tool = "BLUEPRINTS"
 
+        target = row.box() if active_mode == 'LEVELS' else row
+        tool_switch_components = target.operator(operator="bevy.tooling_switch", text="", icon="PACKAGE")
+        tool_switch_components.tool = "LEVELS"
+
         target = row.box() if active_mode == 'ASSETS' else row
         tool_switch_components = target.operator(operator="bevy.tooling_switch", text="", icon="ASSET_MANAGER")
         tool_switch_components.tool = "ASSETS"

@@ -144,10 +144,10 @@ class OT_Add_asset_filebrowser(Operator, ImportHelper):
     # Filters files
     filter_glob: StringProperty(options={'HIDDEN'}, default='*.jpg;*.jpeg;*.png;*.bmp') # type: ignore
 
-    def execute(self, context):         
-        current_auto_settings = load_settings(".gltf_auto_export_settings")
-        project_root_path = current_auto_settings.get("project_root_path", "../")
-        assets_path = current_auto_settings.get("assets_path", "assets")
+    def execute(self, context):      
+        blenvy = context.window_manager.blenvy   
+        project_root_path = blenvy.project_root_path
+        assets_path =  blenvy.assets_path
         # FIXME: not sure
         print("project_root_path", project_root_path, "assets_path", assets_path)
         export_assets_path_absolute = absolute_path_from_blend_file(os.path.join(project_root_path, assets_path))

@@ -38,6 +38,10 @@ from .assets.ui import Blenvy_assets
 from .assets.assets_registry import Asset, AssetsRegistry
 from .assets.operators import OT_Add_asset_filebrowser, OT_add_bevy_asset, OT_remove_bevy_asset, OT_test_bevy_assets
 
+# levels management
+from .levels.ui import Blenvy_levels
+from .levels.operators import OT_select_level
+
 # blueprints management
 from .blueprints.ui import GLTF_PT_auto_export_blueprints_list
 from .blueprints.blueprints_registry import BlueprintsRegistry
@@ -128,6 +132,9 @@ classes = [
     OT_test_bevy_assets,
     OT_Add_asset_filebrowser,
     Blenvy_assets,
+
+    Blenvy_levels,
+    OT_select_level,
 
     BlueprintsRegistry,
     OT_select_blueprint,

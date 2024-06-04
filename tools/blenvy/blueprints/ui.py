@@ -30,6 +30,8 @@ class GLTF_PT_auto_export_blueprints_list(bpy.types.Panel):
             row.label(icon="RIGHTARROW")
             row.label(text=blueprint.name)
 
+            row.prop(blueprint.collection, "always_export")
+            
             if blueprint.local:
                 
                 select_blueprint = row.operator(operator="blueprint.select", text="", icon="RESTRICT_SELECT_OFF")

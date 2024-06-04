@@ -10,11 +10,11 @@ class OT_switch_bevy_tooling(Operator):
     bl_label = "Switch bevy tooling"
     #bl_options = {}
 
-   
     tool: EnumProperty(
             items=(
                 ('COMPONENTS', "Components", "Switch to components"),
                 ('BLUEPRINTS', "Blueprints", ""),
+                ('LEVELS', "Levels", ""),
                 ('ASSETS', "Assets", ""),
                 ('SETTINGS', "Settings", ""),
                 ('TOOLS', "Tools", ""),
