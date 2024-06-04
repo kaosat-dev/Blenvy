@@ -50,22 +50,75 @@ def _lookup_collection(data):
 def _lookup_materialLineArt(data):
     return generic_fields_hasher_evolved(data, fields_to_ignore=fields_to_ignore_generic)
 
+# used for various node trees: shaders, modifiers etc
+def node_tree(node_tree):
+    print("SCANNING NODE TREE", node_tree)
+
+    # storage for hashing
+    links_hashes = []
+    nodes_hashes = []
+    root_inputs = dict(node_tree) # probably useless for materials, contains settings for certain modifiers
+
+    for node in node_tree.nodes:
+        #print("node", node, node.type, node.name, node.label)
+
+        input_hashes = []
+        for input in node.inputs:
+            #print(" input", input, "label", input.label, "name", input.name, dir(input))
+            default_value = getattr(input, 'default_value', None)
+            input_hash = f"{convert_field(default_value)}"
+            input_hashes.append(input_hash)
+
+        output_hashes = []
+        # IF the node itself is a group input, its outputs are the inputs of the geometry node (yes, not easy)
+        node_in_use = True
+        for (index, output) in enumerate(node.outputs):
+            # print(" output", output, "label", output.label, "name", output.name, "generated name", f"Socket_{index+1}")
+            default_value = getattr(output, 'default_value', None)
+            output_hash = f"{convert_field(default_value)}"
+            output_hashes.append(output_hash)
+
+            node_in_use = node_in_use and default_value is not None
+        #print("NODE IN USE", node_in_use)
+
+        node_fields_to_ignore = fields_to_ignore_generic + ['internal_links', 'inputs', 'outputs']
+        node_hash = f"{generic_fields_hasher_evolved(node, node_fields_to_ignore)}_{str(input_hashes)}_{str(output_hashes)}"
+        #print("node hash", node_hash)
+        #print("node hash", str(input_hashes))
+        nodes_hashes.append(node_hash)
+
+    for link in node_tree.links:
+        """print("LINK", link, dir(link))
+        print("FROM", link.from_node, link.from_socket)
+        print("TO", link.to_node, link.to_socket)"""
+
+        from_socket_default = link.from_socket.default_value if hasattr(link.from_socket, "default_value") else None
+        to_socket_default = link.to_socket.default_value if hasattr(link.to_socket, "default_value") else None
+        link_hash = f"{link.from_node.name}_{link.from_socket.name}_{from_socket_default}+{link.to_node.name}_{link.to_socket.name}_{to_socket_default}"
+
+        links_hashes.append(link_hash)
+
+    #print("node hashes",nodes_hashes, "links_hashes", links_hashes)
+    print("root_inputs", root_inputs)
+    return f"{str(root_inputs)}_{str(nodes_hashes)}_{str(links_hashes)}"
+
+
 type_lookups = {
     Color: _lookup_color,#lambda input: print("dsf")',
     bpy.types.FloatVectorAttribute: _lookup_array2,
     bpy.types.bpy_prop_array: _lookup_array,
     bpy.types.PropertyGroup: _lookup_prop_group,
     bpy.types.bpy_prop_collection: _lookup_collection,
-    bpy.types.MaterialLineArt: _lookup_materialLineArt
+    bpy.types.MaterialLineArt: _lookup_materialLineArt,
+    bpy.types.NodeTree: node_tree,
 }
 
 def convert_field(raw_value, field_name="", scan_node_tree=True):
-    # nodes are a special case: # TODO: find out their types & move these to type lookups
+    """# nodes are a special case: # TODO: find out their types & move these to type lookups
     if field_name in ["node_tree", "node_group"] and scan_node_tree:
-        print("scan node tree")
+        print("scan node tree", inspect.getmro(type(raw_value)))
         return node_tree(raw_value)
-
-
+"""
     conversion_lookup = None # type_lookups.get(type(raw_value), None)
     all_types = inspect.getmro(type(raw_value))            
     for s_type in all_types:
@@ -83,6 +136,7 @@ def convert_field(raw_value, field_name="", scan_node_tree=True):
     
     return field_value
 
+# just a helper , for shorthand
 def obj_to_dict(object):
     try:
         return dict(object)
@@ -194,59 +248,6 @@ def armature_hash(obj):
         print("bone", bone, bone_hash(bone))"""
     return str(fields)
 
-# used for various node trees: shaders, modifiers etc
-def node_tree(node_tree):
-    print("SCANNING NODE TREE", node_tree)
-
-    # storage for hashing
-    links_hashes = []
-    nodes_hashes = []
-    root_inputs = dict(node_tree) # probably useless for materials, contains settings for certain modifiers
-
-    for node in node_tree.nodes:
-        #print("node", node, node.type, node.name, node.label)
-
-        input_hashes = []
-        for input in node.inputs:
-            #print(" input", input, "label", input.label, "name", input.name, dir(input))
-            default_value = getattr(input, 'default_value', None)
-            input_hash = f"{convert_field(default_value)}"
-            input_hashes.append(input_hash)
-
-        output_hashes = []
-        # IF the node itself is a group input, its outputs are the inputs of the geometry node (yes, not easy)
-        node_in_use = True
-        for (index, output) in enumerate(node.outputs):
-            # print(" output", output, "label", output.label, "name", output.name, "generated name", f"Socket_{index+1}")
-            default_value = getattr(output, 'default_value', None)
-            output_hash = f"{convert_field(default_value)}"
-            output_hashes.append(output_hash)
-
-            node_in_use = node_in_use and default_value is not None
-        #print("NODE IN USE", node_in_use)
-
-        node_fields_to_ignore = fields_to_ignore_generic + ['internal_links', 'inputs', 'outputs']
-        node_hash = f"{generic_fields_hasher_evolved(node, node_fields_to_ignore)}_{str(input_hashes)}_{str(output_hashes)}"
-        #print("node hash", node_hash)
-        #print("node hash", str(input_hashes))
-        nodes_hashes.append(node_hash)
-
-    for link in node_tree.links:
-        """print("LINK", link, dir(link))
-        print("FROM", link.from_node, link.from_socket)
-        print("TO", link.to_node, link.to_socket)"""
-
-        from_socket_default = link.from_socket.default_value if hasattr(link.from_socket, "default_value") else None
-        to_socket_default = link.to_socket.default_value if hasattr(link.to_socket, "default_value") else None
-        link_hash = f"{link.from_node.name}_{link.from_socket.name}_{from_socket_default}+{link.to_node.name}_{link.to_socket.name}_{to_socket_default}"
-
-        links_hashes.append(link_hash)
-
-    #print("node hashes",nodes_hashes, "links_hashes", links_hashes)
-    print("root_inputs", root_inputs)
-    return f"{str(root_inputs)}_{str(nodes_hashes)}_{str(links_hashes)}"
-
-
 def material_hash(material, settings):
     scan_node_tree = settings.auto_export.materials_in_depth_scan
     hashed_material_except_node_tree = generic_fields_hasher_evolved(material, fields_to_ignore_generic, scan_node_tree=scan_node_tree)
@@ -290,10 +291,29 @@ def serialize_scene(settings):
     cache = {"materials":{}}
     print("serializing scene")
     data = {}
+
+
+    # render settings are injected into each scene
+
+
+    # TODO: only go through scenes actually in our list
     for scene in bpy.data.scenes:
+        # ignore temporary scenes
         if scene.name.startswith(TEMPSCENE_PREFIX):
             continue
         data[scene.name] = {}
+        
+        custom_properties = custom_properties_hash(scene) if len(scene.keys()) > 0 else None
+        eevee_settings = generic_fields_hasher_evolved(scene.eevee, fields_to_ignore=fields_to_ignore_generic) # TODO: ignore most of the fields
+        scene_field_hashes = {
+            "custom_properties": custom_properties,
+            "eevee": eevee_settings
+        }
+        print("SCENE WORLD", scene.world, dir(scene.eevee))
+        #generic_fields_hasher_evolved(scene.eevee, fields_to_ignore=fields_to_ignore_generic)
+        data[scene.name]["____scene_settings"] = str(hash(str(scene_field_hashes)))
+
+
         for object in scene.objects:
             object = bpy.data.objects[object.name]
 

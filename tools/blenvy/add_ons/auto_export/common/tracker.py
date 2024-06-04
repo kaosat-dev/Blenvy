@@ -43,6 +43,8 @@ class AutoExportTracker(PropertyGroup):
     def register(cls):
         bpy.types.WindowManager.auto_export_tracker = PointerProperty(type=AutoExportTracker)
 
+        bpy.types.Scene.id_test = StringProperty(default="")
+
         # setup handlers for updates & saving
         #bpy.app.handlers.save_post.append(cls.save_handler)
         #bpy.app.handlers.depsgraph_update_post.append(cls.deps_update_handler)
@@ -57,6 +59,8 @@ class AutoExportTracker(PropertyGroup):
             bpy.app.handlers.save_post.remove(cls.save_handler)
         except:pass"""
         del bpy.types.WindowManager.auto_export_tracker
+
+        del bpy.types.Scene.id_test
 
     @classmethod
     def save_handler(cls, scene, depsgraph):
@@ -73,6 +77,7 @@ class AutoExportTracker(PropertyGroup):
     @classmethod
     def deps_post_update_handler(cls, scene, depsgraph):
         # print("change detection enabled", cls.change_detection_enabled)
+        print("change detected", list(map(lambda x: x.name, list(bpy.data.scenes))))
 
         """ops = bpy.context.window_manager.operators
         print("last operators", ops)

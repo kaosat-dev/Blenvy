@@ -102,6 +102,8 @@ General issues:
 - [ ] add tests for disabled components 
 - [x]  fix auto export workflow
 - [ ] should we write the previous _xxx data only AFTER a sucessfull export only ?
-- [ ] add hashing of modifiers/ geometry nodes in serialize scene
+- [x] add hashing of modifiers/ geometry nodes in serialize scene
 - [ ] add ability to FORCE export specific blueprints & levels
 - [ ] undo after a save removes any saved "serialized scene" data ? DIG into this
+- [ ] handle scene renames between saves (breaks diffing)
+- [ ] change scene selector to work on actual scenes aka to deal with renamed scenes
