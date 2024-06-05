@@ -32,7 +32,7 @@ class AssetsRegistry(PropertyGroup):
     asset_path_selector: StringProperty(
         name="asset path",
         description="path of asset to add",
-        subtype='FILE_PATH'
+        #subtype='FILE_PATH'
     ) # type: ignore
 
 

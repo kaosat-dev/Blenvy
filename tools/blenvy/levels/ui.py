@@ -28,9 +28,9 @@ class Blenvy_levels(bpy.types.Panel):
 
         for scene_selector in blenvy.main_scenes:
             scene = bpy.data.scenes[scene_selector.name]
-            header, panel = layout.box().panel(f"assets{scene.name}", default_closed=False)
+            header, panel = layout.box().panel(f"level_assets{scene.name}", default_closed=False)
             if header:
-                header.label(text=scene.name, icon="HIDE_OFF")
+                header.label(text=scene.name)#, icon="HIDE_OFF")
                 header.prop(scene, "always_export")
                 select_level = header.operator(operator="level.select", text="", icon="RESTRICT_SELECT_OFF")
                 select_level.level_name = scene.name
@@ -53,7 +53,6 @@ class Blenvy_levels(bpy.types.Panel):
                 col.label(text=" ")
 
                 col = split.column()
-                #col.label(text="col in row 2")
 
                 scene_assets_panel = draw_assets(layout=col, name=f"{scene.name}_assets", title=f"Assets", asset_registry=asset_registry, user_assets=user_assets, target_type="SCENE", target_name=scene.name)
 

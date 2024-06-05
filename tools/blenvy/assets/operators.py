@@ -115,12 +115,14 @@ class OT_remove_bevy_asset(Operator):
 
 
     def execute(self, context):
+        print("REMOVE ASSET", self.target_name, self.target_type, self.asset_path)
         assets = []
         blueprint_assets = self.target_type == 'BLUEPRINT'
         if blueprint_assets:
             target = bpy.data.collections[self.target_name]
         else:
             target = bpy.data.scenes[self.target_name]
+            print("removing this", target)
         remove_asset(target, {"path": self.asset_path})
        
         return {'FINISHED'}
@@ -128,6 +130,7 @@ class OT_remove_bevy_asset(Operator):
 
 import os
 from bpy_extras.io_utils import ImportHelper
+from pathlib import Path
 
 class OT_Add_asset_filebrowser(Operator, ImportHelper):
     """Browse for asset files"""
@@ -142,7 +145,7 @@ class OT_Add_asset_filebrowser(Operator, ImportHelper):
         ) # type: ignore
     
     # Filters files
-    filter_glob: StringProperty(options={'HIDDEN'}, default='*.jpg;*.jpeg;*.png;*.bmp') # type: ignore
+    filter_glob: StringProperty(options={'HIDDEN'}, default='*.*') # type: ignore
 
     def execute(self, context):      
         blenvy = context.window_manager.blenvy   
@@ -157,8 +160,12 @@ class OT_Add_asset_filebrowser(Operator, ImportHelper):
 
         assets_registry = context.window_manager.assets_registry
         assets_registry.asset_path_selector = asset_path
+        if assets_registry.asset_name_selector == "":
+            assets_registry.asset_name_selector = Path(os.path.basename(asset_path)).stem
 
         print("SELECTED ASSET PATH", asset_path)
+
+
         
         return {'FINISHED'}
     

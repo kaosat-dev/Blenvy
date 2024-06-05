@@ -1,34 +1,38 @@
 from types import SimpleNamespace
 import bpy
 from .assets_scan import get_main_scene_assets_tree
-from .asset_helpers import get_user_assets
-
+from .asset_helpers import get_user_assets, does_asset_exist
 
 def draw_assets(layout, name, title, asset_registry, target_type, target_name, editable=True, user_assets= [], generated_assets = []):
     header, panel = layout.panel(f"assets{name}", default_closed=False)
-    header.label(text=title)
+    header.label(text=title, icon="ASSET_MANAGER")
+
     if panel:
         if editable:
             row = panel.row()
+            blueprint_assets = target_type == 'BLUEPRINT'
+            if blueprint_assets:
+                target = bpy.data.collections[target_name]
+            else:
+                target = bpy.data.scenes[target_name]
+
+            add_possible = does_asset_exist(target, {"path": asset_registry.asset_path_selector}) #"name": asset_registry.asset_name_selector, 
+
+            row.alert = add_possible
             row.prop(asset_registry, "asset_name_selector", text="")
-            row.prop(asset_registry, "asset_type_selector", text="")
+            row.label(text=asset_registry.asset_path_selector)
             asset_selector = row.operator(operator="asset.open_filebrowser", text="", icon="FILE_FOLDER")
             
-            if asset_registry.asset_type_selector == 'IMAGE':
-                asset_selector.filter_glob = '*.jpg;*.jpeg;*.png;*.bmp'
-            if asset_registry.asset_type_selector == 'MODEL':
-                asset_selector.filter_glob="*.glb;*.gltf"
-            if asset_registry.asset_type_selector == 'TEXT':
-                asset_selector.filter_glob="*.txt;*.md;*.ron;*.json"
-            if asset_registry.asset_type_selector == 'AUDIO':
-                asset_selector.filter_glob="*.mp3;*.wav;*.flac"
+            add_asset_layout = row.column()
+            add_asset_layout.enabled = not add_possible
 
-            add_asset = row.operator(operator="bevyassets.add", text="", icon="ADD")
+            add_asset = add_asset_layout.operator(operator="bevyassets.add", text="", icon="ADD")
             add_asset.target_type = target_type
             add_asset.target_name = target_name
             add_asset.asset_name = asset_registry.asset_name_selector
             add_asset.asset_type = asset_registry.asset_type_selector
             add_asset.asset_path = asset_registry.asset_path_selector
+
         panel.separator()
 
         for asset in user_assets:

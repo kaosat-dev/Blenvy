@@ -26,24 +26,30 @@ class GLTF_PT_auto_export_blueprints_list(bpy.types.Panel):
         blueprint_registry.refresh_blueprints()
 
         for blueprint in blueprint_registry.blueprints_data.blueprints:
-            row = layout.row()
-            row.label(icon="RIGHTARROW")
-            row.label(text=blueprint.name)
 
-            row.prop(blueprint.collection, "always_export")
-            
-            if blueprint.local:
+            header, panel = layout.box().panel(f"blueprint_assets{blueprint.name}", default_closed=True)
+            if header:
+                header.label(text=blueprint.name)
+                header.prop(blueprint.collection, "always_export")
                 
-                select_blueprint = row.operator(operator="blueprint.select", text="", icon="RESTRICT_SELECT_OFF")
-                
-                if blueprint.collection and blueprint.collection.name:
-                    select_blueprint.blueprint_collection_name = blueprint.collection.name
-                select_blueprint.blueprint_scene_name = blueprint.scene.name
+                if blueprint.local:
+                    select_blueprint = header.operator(operator="blueprint.select", text="", icon="RESTRICT_SELECT_OFF")
+                    if blueprint.collection and blueprint.collection.name:
+                        select_blueprint.blueprint_collection_name = blueprint.collection.name
+                    select_blueprint.blueprint_scene_name = blueprint.scene.name
 
-                user_assets = get_user_assets(blueprint.collection)
-                draw_assets(layout=layout, name=blueprint.name, title="Assets", asset_registry=asset_registry, user_assets=user_assets, target_type="BLUEPRINT", target_name=blueprint.name)
+            if panel:
+                split  = panel.split(factor=0.005)
+                col = split.column()
+                col.label(text=" ")
 
-            else:
-                assets = get_user_assets(blueprint.collection)
-                draw_assets(layout=layout, name=blueprint.name, title="Assets", asset_registry=asset_registry, user_assets=user_assets, target_type="BLUEPRINT", target_name=blueprint.name, editable=False)
-                row.label(text="External")
+                col = split.column()
+
+                if blueprint.local:
+                    user_assets = get_user_assets(blueprint.collection)
+                    draw_assets(layout=col, name=blueprint.name, title="Assets", asset_registry=asset_registry, user_assets=user_assets, target_type="BLUEPRINT", target_name=blueprint.name)
+
+                else:
+                    assets = get_user_assets(blueprint.collection)
+                    draw_assets(layout=col, name=blueprint.name, title="Assets", asset_registry=asset_registry, user_assets=user_assets, target_type="BLUEPRINT", target_name=blueprint.name, editable=False)
+                    panel.label(text="External")
