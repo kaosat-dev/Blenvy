@@ -1,3 +1,4 @@
+import bpy
 from blenvy.core.scene_helpers import get_main_and_library_scenes
 from blenvy.blueprints.blueprint_helpers import check_if_blueprint_on_disk
 
@@ -33,19 +34,32 @@ def changed_object_in_scene(scene_name, changes_per_scene, blueprints_data, coll
         return level_needs_export
     return False
 
+def is_level_always_export(scene_name):
+    scene = bpy.data.scenes[scene_name]
+    return scene['always_export'] if 'always_export' in scene else False
 
-# this also takes the split/embed mode into account: if a collection instance changes AND embed is active, its container level/world should also be exported
-def get_levels_to_export(changes_per_scene, changed_export_parameters, blueprints_data, settings):
+def should_level_be_exported(scene_name, changed_export_parameters, changes_per_scene, blueprints_data, settings):
     export_gltf_extension = getattr(settings, "export_gltf_extension")
     levels_path_full = getattr(settings, "levels_path_full")
 
     change_detection = getattr(settings.auto_export, "change_detection")
     collection_instances_combine_mode = getattr(settings.auto_export, "collection_instances_combine_mode")
 
+    # the list of conditions to determine IF a level should be exported or not
+    return (
+        not change_detection 
+        or changed_export_parameters 
+        or is_level_always_export(scene_name) 
+        or scene_name in changes_per_scene.keys() 
+        or changed_object_in_scene(scene_name, changes_per_scene, blueprints_data, collection_instances_combine_mode) 
+        or not check_if_blueprint_on_disk(scene_name, levels_path_full, export_gltf_extension) 
+    )
+
+# this also takes the split/embed mode into account: if a collection instance changes AND embed is active, its container level/world should also be exported
+def get_levels_to_export(changes_per_scene, changed_export_parameters, blueprints_data, settings):
     [main_scene_names, level_scenes, library_scene_names, library_scenes] = get_main_and_library_scenes(settings)
- 
     # determine list of main scenes to export
     # we have more relaxed rules to determine if the main scenes have changed : any change is ok, (allows easier handling of changes, render settings etc)
-    main_scenes_to_export = [scene_name for scene_name in main_scene_names if not change_detection or changed_export_parameters or scene_name in changes_per_scene.keys() or changed_object_in_scene(scene_name, changes_per_scene, blueprints_data, collection_instances_combine_mode) or not check_if_blueprint_on_disk(scene_name, levels_path_full, export_gltf_extension) ]
+    main_scenes_to_export = [scene_name for scene_name in main_scene_names if should_level_be_exported(scene_name, changed_export_parameters, changes_per_scene, blueprints_data, settings)]
 
     return (main_scenes_to_export)

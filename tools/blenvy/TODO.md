@@ -65,10 +65,10 @@ Components:
         - [ ] handle missing types in registry for keys & values
 
     - [ ] Add correct upgrade handling from individual component to bevy_components
-    - [ ] Settings handling:
-        - [ ] move saveable settings out to a settings file
-        - [ ] update save & load
-        - [ ] add handling of polling frequency & enabling
+    - [x] Settings handling:
+        - [x] move saveable settings out to a settings file
+        - [x] update save & load
+        - [x] add handling of polling frequency & enabling
 
 
 General things to solve:
@@ -103,7 +103,7 @@ General issues:
 - [x] fix auto export workflow
 - [ ] should we write the previous _xxx data only AFTER a sucessfull export only ?
 - [x] add hashing of modifiers/ geometry nodes in serialize scene
-- [ ] add ability to FORCE export specific blueprints & levels
+- [x] add ability to FORCE export specific blueprints & levels
 - [ ] undo after a save removes any saved "serialized scene" data ? DIG into this
 - [ ] handle scene renames between saves (breaks diffing)
 - [ ] change scene selector to work on actual scenes aka to deal with renamed scenes

@@ -2,6 +2,7 @@ import os
 import bpy
 from bpy_types import (Operator)
 from bpy.props import (StringProperty)
+from blenvy.core.helpers_collections import set_active_collection
 
 class OT_select_blueprint(Operator):
     """Select blueprint """
@@ -27,7 +28,8 @@ class OT_select_blueprint(Operator):
                 bpy.ops.object.select_all(action='DESELECT')
                 bpy.context.window.scene = scene
                 bpy.context.view_layer.objects.active = None
-                bpy.context.view_layer.active_layer_collection = bpy.context.view_layer.layer_collection.children[self.blueprint_collection_name]
+                set_active_collection(scene, self.blueprint_collection_name)
+                #bpy.context.view_layer.active_layer_collection = bpy.context.view_layer.layer_collection.children[self.blueprint_collection_name]
                 #bpy.context.view_layer.collections.active = collection
                 #            bpy.context.view_layer.active_layer_collection = collection
                 """for o in collection.objects:

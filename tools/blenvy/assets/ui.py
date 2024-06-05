@@ -4,8 +4,11 @@ from .assets_scan import get_main_scene_assets_tree
 from .asset_helpers import get_user_assets, does_asset_exist
 
 def draw_assets(layout, name, title, asset_registry, target_type, target_name, editable=True, user_assets= [], generated_assets = []):
+    number_of_user_assets = len(user_assets)
+    number_of_generated_assets = len(generated_assets)
+
     header, panel = layout.panel(f"assets{name}", default_closed=False)
-    header.label(text=title, icon="ASSET_MANAGER")
+    header.label(text=title + f"({number_of_user_assets + number_of_generated_assets})", icon="ASSET_MANAGER")
 
     if panel:
         if editable:
@@ -92,9 +95,8 @@ class Blenvy_assets(bpy.types.Panel):
             #print("dfs")
             for scene_selector in blenvy.main_scenes:
                 scene = bpy.data.scenes[scene_selector.name]
-                #get_main_scene_assets_tree(scene, blueprints_data, settings)
                 user_assets = get_user_assets(scene)
-                #print("user assets", user_assets, scene)
+                
                 row = panel.row()
                 row.prop(scene, "always_export")
 

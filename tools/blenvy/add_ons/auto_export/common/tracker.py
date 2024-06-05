@@ -77,14 +77,14 @@ class AutoExportTracker(PropertyGroup):
     @classmethod
     def deps_post_update_handler(cls, scene, depsgraph):
         # print("change detection enabled", cls.change_detection_enabled)
-        print("change detected", list(map(lambda x: x.name, list(bpy.data.scenes))))
+        #print("change detected", list(map(lambda x: x.name, list(bpy.data.scenes))))
 
         """ops = bpy.context.window_manager.operators
         print("last operators", ops)
         for op in ops:
             print("operator", op)"""
-        active_operator = bpy.context.active_operator
-        if active_operator:
+        active_operator = getattr(bpy.context.active_operator, 'active_operator' , None)
+        if active_operator is not None:
             #print("Operator", active_operator.bl_label, active_operator.bl_idname)
             if active_operator.bl_idname == "EXPORT_SCENE_OT_gltf" and active_operator.gltf_export_id == "gltf_auto_export":
                 # we backup any existing gltf export settings, if there were any

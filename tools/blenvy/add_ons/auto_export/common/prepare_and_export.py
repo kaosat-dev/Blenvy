@@ -15,9 +15,10 @@ def prepare_and_export():
         # determine changed objects
         per_scene_changes = get_changes_per_scene(settings=blenvy)
         # determine changed parameters 
-        setting_changes = get_setting_changes()
+        setting_changes = False # get_setting_changes()
         # do the actual export
-        # auto_export(per_scene_changes, setting_changes, blenvy)
+        blenvy.auto_export.dry_run = 'NO_EXPORT'#'DISABLED'#
+        auto_export(per_scene_changes, setting_changes, blenvy)
 
         # cleanup 
         # TODO: these are likely obsolete

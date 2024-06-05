@@ -1,7 +1,6 @@
 from types import SimpleNamespace
 import bpy
-from ..assets.assets_scan import get_main_scene_assets_tree
-from ..assets.asset_helpers import get_user_assets
+from ..assets.asset_helpers import get_generated_assets, get_user_assets
 from ..assets.ui import draw_assets
 
 class Blenvy_levels(bpy.types.Panel):
@@ -37,6 +36,7 @@ class Blenvy_levels(bpy.types.Panel):
 
             if panel:
                 user_assets = get_user_assets(scene)
+                generated_assets =  get_generated_assets(scene)
                 row = panel.row()
                 #row.label(text="row")
                 """col = row.column()
@@ -54,23 +54,8 @@ class Blenvy_levels(bpy.types.Panel):
 
                 col = split.column()
 
-                scene_assets_panel = draw_assets(layout=col, name=f"{scene.name}_assets", title=f"Assets", asset_registry=asset_registry, user_assets=user_assets, target_type="SCENE", target_name=scene.name)
+                scene_assets_panel = draw_assets(layout=col, name=f"{scene.name}_assets", title=f"Assets", asset_registry=asset_registry, user_assets=user_assets, generated_assets=generated_assets, target_type="SCENE", target_name=scene.name)
 
     
         settings = {"blueprints_path": "blueprints", "export_gltf_extension": ".glb"}
         settings = SimpleNamespace(**settings)
-
-        """if panel:
-            for scene_selector in blenvy.main_scenes:
-                scene = bpy.data.scenes[scene_selector.name]
-                #get_main_scene_assets_tree(scene, blueprints_data, settings)
-                user_assets = get_user_assets(scene)
-                #print("user assets", user_assets, scene)
-                row = panel.row()
-                header.prop(scene, "always_export")
-
-                sub_header, sub_panel = row.box().panel(f"assets{name}", default_closed=False)
-
-
-                scene_assets_panel = draw_assets(layout=sub_panel, name=scene.name, title=f"{scene.name} Assets", asset_registry=asset_registry, user_assets=user_assets, target_type="SCENE", target_name=scene.name)
-                """

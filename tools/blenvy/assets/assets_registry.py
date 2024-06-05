@@ -40,6 +40,10 @@ class AssetsRegistry(PropertyGroup):
     def register(cls):
         bpy.types.Scene.user_assets = CollectionProperty(name="user assets", type=Asset)
         bpy.types.Collection.user_assets = CollectionProperty(name="user assets", type=Asset) 
+
+        bpy.types.Scene.generated_assets = CollectionProperty(name="generated assets", type=Asset)
+        bpy.types.Collection.generated_assets = CollectionProperty(name="generated assets", type=Asset) 
+
         bpy.types.WindowManager.assets_registry = PointerProperty(type=AssetsRegistry)
 
 
@@ -48,6 +52,9 @@ class AssetsRegistry(PropertyGroup):
         del bpy.types.WindowManager.assets_registry
         del bpy.types.Scene.user_assets
         del bpy.types.Collection.user_assets
+
+        del bpy.types.Scene.generated_assets
+        del bpy.types.Collection.generated_assets
 
     def add_asset(self, name, type, path, internal): # internal means it cannot be edited by the user, aka auto generated
         in_list = [asset for asset in self.assets_list if (asset["path"] == path)]

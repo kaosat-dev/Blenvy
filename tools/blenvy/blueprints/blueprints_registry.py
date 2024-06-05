@@ -72,6 +72,3 @@ class BlueprintsRegistry(PropertyGroup):
         blueprints_data = blueprints_scan(level_scenes, library_scenes, settings)
         self.blueprints_data = blueprints_data
         return blueprints_data
-        #print("bla", self.blueprints_data)
-        """for blueprint in blueprints_data.blueprints:
-            self.add_blueprint(blueprint)"""

@@ -5,7 +5,7 @@ def get_user_assets(scene_or_collection):
     return user_assets
 
 def get_generated_assets(scene_or_collection):
-    generated_assets = []
+    generated_assets = getattr(scene_or_collection, 'generated_assets', [])
     return generated_assets
 
 def get_user_assets_as_list(scene_or_collection):
