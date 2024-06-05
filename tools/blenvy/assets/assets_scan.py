@@ -112,4 +112,12 @@ def get_main_scene_assets_tree(main_scene, blueprints_data, settings):
                 assets_list += get_blueprint_assets_tree(blueprint, blueprints_data, parent=blueprint.name, settings=settings)
 
     print("TOTAL ASSETS", assets_list)
+    # FIXME: do not do it here !!
+    scene = bpy.data.scenes[main_scene.name]
+    scene.generated_assets.clear()
+    for asset in assets_list:
+        if asset.get("generated", False):
+            added_asset = scene.generated_assets.add()
+            added_asset.name = asset["name"]
+            added_asset.path = asset["path"]
     return assets_list

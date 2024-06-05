@@ -51,7 +51,6 @@ class Blenvy_levels(bpy.types.Panel):
                 split  = panel.split(factor=0.005)
                 col = split.column()
                 col.label(text=" ")
-
                 col = split.column()
 
                 scene_assets_panel = draw_assets(layout=col, name=f"{scene.name}_assets", title=f"Assets", asset_registry=asset_registry, user_assets=user_assets, generated_assets=generated_assets, target_type="SCENE", target_name=scene.name)

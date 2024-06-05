@@ -1,7 +1,7 @@
 import bpy 
 import json
 
-from ..assets.asset_helpers import get_user_assets
+from ..assets.asset_helpers import get_user_assets, get_generated_assets
 
 from ..assets.ui import draw_assets
 
@@ -29,7 +29,7 @@ class GLTF_PT_auto_export_blueprints_list(bpy.types.Panel):
 
             header, panel = layout.box().panel(f"blueprint_assets{blueprint.name}", default_closed=True)
             if header:
-                header.label(text=blueprint.name)
+                header.label(text=blueprint.name, icon="XRAY")
                 header.prop(blueprint.collection, "always_export")
                 
                 if blueprint.local:
@@ -47,9 +47,13 @@ class GLTF_PT_auto_export_blueprints_list(bpy.types.Panel):
 
                 if blueprint.local:
                     user_assets = get_user_assets(blueprint.collection)
-                    draw_assets(layout=col, name=blueprint.name, title="Assets", asset_registry=asset_registry, user_assets=user_assets, target_type="BLUEPRINT", target_name=blueprint.name)
+                    generated_assets =  get_generated_assets(blueprint.collection)
+
+                    draw_assets(layout=col, name=blueprint.name, title="Assets", asset_registry=asset_registry, user_assets=user_assets,  generated_assets=generated_assets, target_type="BLUEPRINT", target_name=blueprint.name)
 
                 else:
-                    assets = get_user_assets(blueprint.collection)
-                    draw_assets(layout=col, name=blueprint.name, title="Assets", asset_registry=asset_registry, user_assets=user_assets, target_type="BLUEPRINT", target_name=blueprint.name, editable=False)
+                    user_assets = get_user_assets(blueprint.collection)
+                    generated_assets =  get_generated_assets(blueprint.collection)
+
+                    draw_assets(layout=col, name=blueprint.name, title="Assets", asset_registry=asset_registry, user_assets=user_assets, generated_assets=generated_assets, target_type="BLUEPRINT", target_name=blueprint.name, editable=False)
                     panel.label(text="External")
