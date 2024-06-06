@@ -2,6 +2,7 @@ from types import SimpleNamespace
 import bpy
 from ..assets.asset_helpers import get_generated_assets, get_user_assets
 from ..assets.ui import draw_assets
+from ..blueprints.ui import draw_blueprints
 
 class Blenvy_levels(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
@@ -18,7 +19,7 @@ class Blenvy_levels(bpy.types.Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
         blenvy = context.window_manager.blenvy
-        layout.operator(operator="bevyassets.test")
+        layout.operator(operator="bevyassets.test", text="Generate")
 
         asset_registry = context.window_manager.assets_registry
         blueprints_registry = context.window_manager.blueprints_registry
@@ -54,7 +55,7 @@ class Blenvy_levels(bpy.types.Panel):
                 col = split.column()
 
                 scene_assets_panel = draw_assets(layout=col, name=f"{scene.name}_assets", title=f"Assets", asset_registry=asset_registry, user_assets=user_assets, generated_assets=generated_assets, target_type="SCENE", target_name=scene.name)
-
+                scene_blueprints_panel = draw_blueprints(layout=col, name=f"{scene.name}_blueprints", title=f"Blueprints", generated_assets=generated_assets, )
     
         settings = {"blueprints_path": "blueprints", "export_gltf_extension": ".glb"}
         settings = SimpleNamespace(**settings)

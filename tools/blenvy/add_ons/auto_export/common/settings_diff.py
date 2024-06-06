@@ -37,6 +37,7 @@ def get_setting_changes():
 
     previous_gltf_settings = load_settings(".blenvy_gltf_settings_previous")
     current_gltf_settings = load_settings(".blenvy_gltf_settings")
+    print("previous_gltf_settings", previous_gltf_settings, "current_gltf_settings", current_gltf_settings)
     gltf_settings_changed = not are_settings_identical(previous_gltf_settings, current_gltf_settings)
 
     # write the new settings to the old settings

@@ -109,3 +109,5 @@ General issues:
 - [ ] change scene selector to work on actual scenes aka to deal with renamed scenes
 - [x] fix asset file selection
 - [x] change "assets" tab to "levels"/worlds tab & modify UI accordingly
+- [ ] add option to 'split out' meshes from blueprints ? 
+    - [ ] ie considering meshletts etc , it would make sense to keep blueprints seperate from purely mesh gltfs

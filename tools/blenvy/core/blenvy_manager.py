@@ -137,8 +137,6 @@ class BlenvyManager(PropertyGroup):
         bpy.types.WindowManager.blenvy = PointerProperty(type=BlenvyManager)
 
         # unsure
-        # you can add components to both objects & collections
-        #bpy.types.Object.components_meta = PointerProperty(type=ComponentsMeta)
         bpy.types.Collection.always_export = BoolProperty(default=False, description="always export this blueprint, regardless of changed status") # FIXME: not sure about this one
         bpy.types.Scene.always_export = BoolProperty(default=False, description="always export this blueprint, regardless of changed status") # FIXME: not sure about this one
 

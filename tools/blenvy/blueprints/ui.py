@@ -5,6 +5,27 @@ from ..assets.asset_helpers import get_user_assets, get_generated_assets
 
 from ..assets.ui import draw_assets
 
+
+def draw_blueprints(layout, name, title, generated_assets):
+    nesting_indent = 0.05
+    number_of_generated_assets = len(generated_assets)
+
+    header, panel = layout.panel(f"assets{name}", default_closed=True)
+    header.label(text=title + f"({number_of_generated_assets})", icon="XRAY")
+
+    if panel:
+        for asset in generated_assets:
+            row = panel.row()
+            split  = row.split(factor=nesting_indent)
+            col = split.column()
+            col.label(text=" ")
+            col = split.column()
+
+            sub_header, sub_panel = col.panel(f"assets_sub{asset.name}", default_closed=False)
+            sub_header.label(text=f"{asset.name}        ({asset.path})", icon="XRAY")
+            if sub_panel:
+                sub_panel.label(text="         some stuff")
+
 class GLTF_PT_auto_export_blueprints_list(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'

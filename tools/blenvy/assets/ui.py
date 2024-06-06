@@ -4,6 +4,7 @@ from .assets_scan import get_main_scene_assets_tree
 from .asset_helpers import get_user_assets, does_asset_exist
 
 def draw_assets(layout, name, title, asset_registry, target_type, target_name, editable=True, user_assets= [], generated_assets = []):
+    nesting_indent = 0.05
     number_of_user_assets = len(user_assets)
     number_of_generated_assets = len(generated_assets)
 
@@ -20,7 +21,6 @@ def draw_assets(layout, name, title, asset_registry, target_type, target_name, e
     add_possible = does_asset_exist(target, {"path": asset_registry.asset_path_selector}) #"name": asset_registry.asset_name_selector, 
 
     if header:
-        
         row = header.row()
         row.alert = add_possible
 
@@ -37,9 +37,6 @@ def draw_assets(layout, name, title, asset_registry, target_type, target_name, e
         add_asset.asset_name = asset_registry.asset_name_selector
         add_asset.asset_type = asset_registry.asset_type_selector
         add_asset.asset_path = asset_registry.asset_path_selector
-
-       
-
 
     if panel:
         if editable:
@@ -61,16 +58,17 @@ def draw_assets(layout, name, title, asset_registry, target_type, target_name, e
             add_asset.asset_type = asset_registry.asset_type_selector
             add_asset.asset_path = asset_registry.asset_path_selector"""
 
-        panel.separator()
+        #panel.separator()
 
         for asset in user_assets:
             row = panel.row()
-            split  = row.split(factor=0.005)
+            split  = row.split(factor=nesting_indent)
             col = split.column()
             col.label(text=" ")
             col = split.column()
 
             row = col.row()
+            row.label(icon="ASSET_MANAGER")
             row.prop(asset, "name", text="")
             row.label(text=asset.path)
             asset_selector = row.operator(operator="asset.open_filebrowser", text="", icon="FILE_FOLDER")
@@ -80,11 +78,11 @@ def draw_assets(layout, name, title, asset_registry, target_type, target_name, e
             remove_asset.target_name = target_name
             remove_asset.asset_path = asset.path
           
-        for asset in generated_assets:
+        '''for asset in generated_assets:
             row = panel.row()
             #row.label(text=asset.name)
             #row.label(text=asset.path)
-            split  = row.split(factor=0.005)
+            split  = row.split(factor=nesting_indent)
             col = split.column()
             col.label(text=" ")
             col = split.column()
@@ -97,7 +95,7 @@ def draw_assets(layout, name, title, asset_registry, target_type, target_name, e
             """remove_asset = row.operator(operator="bevyassets.remove", text="", icon="TRASH")
             remove_asset.target_type = target_type
             remove_asset.target_name = target_name
-            remove_asset.asset_path = asset.path"""
+            remove_asset.asset_path = asset.path"""'''
 
 
     return panel

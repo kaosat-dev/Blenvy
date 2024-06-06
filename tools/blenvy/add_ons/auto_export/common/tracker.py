@@ -83,7 +83,7 @@ class AutoExportTracker(PropertyGroup):
         print("last operators", ops)
         for op in ops:
             print("operator", op)"""
-        active_operator = getattr(bpy.context.active_operator, 'active_operator' , None)
+        active_operator = getattr(bpy.context, 'active_operator' , None)
         if active_operator is not None:
             #print("Operator", active_operator.bl_label, active_operator.bl_idname)
             if active_operator.bl_idname == "EXPORT_SCENE_OT_gltf" and active_operator.gltf_export_id == "gltf_auto_export":
