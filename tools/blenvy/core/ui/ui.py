@@ -109,44 +109,40 @@ class BLENVY_PT_SidePanel(bpy.types.Panel):
                 row = section.row()
                 row.label(text="main scenes")
                 row.prop(blenvy, "main_scene_selector", text='')
-
-                row = section.row()
-                row.template_list("SCENE_UL_Blenvy", "level scenes", blenvy, "main_scenes", blenvy, "main_scenes_index", rows=rows)
-
-                col = row.column(align=True)
-                sub_row = col.row()
-                add_operator = sub_row.operator("scene_list.list_action", icon='ADD', text="")
+                add_operator = row.operator("scene_list.list_action", icon='ADD', text="")
                 add_operator.action = 'ADD'
                 add_operator.scene_type = 'LEVEL'
-                #add_operator.operator = operator
-                sub_row.enabled = blenvy.main_scene_selector is not None
+                #sub_row.enabled = blenvy.main_scene_selector is not None
 
-                sub_row = col.row()
-                remove_operator = sub_row.operator("scene_list.list_action", icon='REMOVE', text="")
-                remove_operator.action = 'REMOVE'
-                remove_operator.scene_type = 'LEVEL'
+                row = section.row()
+                col = row.column()
+                for scene in blenvy.main_scenes:
+                    sub_row = col.box().row()
+                    sub_row.label(text=scene.name)
+                    remove_operator = sub_row.operator("scene_list.list_action", icon='TRASH', text="")
+                    remove_operator.action = 'REMOVE'
+                    remove_operator.scene_type = 'LEVEL'
+                    remove_operator.scene_name = scene.name
+
                 col.separator()
 
                 # library scenes
                 row = section.row()
                 row.label(text="library scenes")
                 row.prop(blenvy, "library_scene_selector", text='')
-
-                row = section.row()
-                row.template_list("SCENE_UL_Blenvy", "library scenes", blenvy, "library_scenes", blenvy, "library_scenes_index", rows=rows)
-
-                col = row.column(align=True)
-                sub_row = col.row()
-                add_operator = sub_row.operator("scene_list.list_action", icon='ADD', text="")
+                add_operator = row.operator("scene_list.list_action", icon='ADD', text="")
                 add_operator.action = 'ADD'
                 add_operator.scene_type = 'LIBRARY'
-                sub_row.enabled = blenvy.library_scene_selector is not None
 
-
-                sub_row = col.row()
-                remove_operator = sub_row.operator("scene_list.list_action", icon='REMOVE', text="")
-                remove_operator.action = 'REMOVE'
-                remove_operator.scene_type = 'LIBRARY'
+                row = section.row()
+                col = row.column()
+                for scene in blenvy.library_scenes:
+                    sub_row = col.box().row()
+                    sub_row.label(text=scene.name)
+                    remove_operator = sub_row.operator("scene_list.list_action", icon='TRASH', text="")
+                    remove_operator.action = 'REMOVE'
+                    remove_operator.scene_type = 'LEVEL'
+                    remove_operator.scene_name = scene.name
                 col.separator()
             
             header, panel = layout.panel("components", default_closed=False)

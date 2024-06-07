@@ -3,7 +3,6 @@ import os
 import bpy
 import traceback
 
-from blenvy.core.scene_helpers import get_main_and_library_scenes
 from blenvy.blueprints.blueprints_scan import blueprints_scan
 from blenvy.blueprints.blueprint_helpers import inject_export_path_into_internal_blueprints
 
@@ -39,8 +38,6 @@ def auto_export(changes_per_scene, changed_export_parameters, settings):
         gltf_extension = '.glb' if gltf_extension == 'GLB' else '.gltf'
         settings.export_gltf_extension = gltf_extension
 
-        [main_scene_names, level_scenes, library_scene_names, library_scenes] = get_main_and_library_scenes(settings)
-
         blueprints_data = bpy.context.window_manager.blueprints_registry.refresh_blueprints()
         #blueprints_data = bpy.context.window_manager.blueprints_registry.blueprints_data
         #print("blueprints_data", blueprints_data)
@@ -58,7 +55,7 @@ def auto_export(changes_per_scene, changed_export_parameters, settings):
 
         if export_scene_settings:
             # inject/ update scene components
-            upsert_scene_components(level_scenes)
+            upsert_scene_components(settings.main_scenes)
         #inject/ update light shadow information
         for light in bpy.data.lights:
             enabled = 'true' if light.use_shadow else 'false'
@@ -76,7 +73,7 @@ def auto_export(changes_per_scene, changed_export_parameters, settings):
             # since materials export adds components we need to call this before blueprints are exported
             # export materials & inject materials components into relevant objects
             if export_materials_library:
-                export_materials(blueprints_data.blueprint_names, library_scenes, settings)
+                export_materials(blueprints_data.blueprint_names, settings.library_scenes, settings)
 
             # update the list of tracked exports
             exports_total = len(blueprints_to_export) + len(main_scenes_to_export) + (1 if export_materials_library else 0)
@@ -123,11 +120,11 @@ def auto_export(changes_per_scene, changed_export_parameters, settings):
             for obj in old_selections:
                 obj.select_set(True)
             if export_materials_library:
-                cleanup_materials(blueprints_data.blueprint_names, library_scenes)
+                cleanup_materials(blueprints_data.blueprint_names, settings.library_scenes)
 
         else:
-            for scene_name in main_scene_names:
-                export_main_scene(bpy.data.scenes[scene_name], blend_file_path, settings, [])
+            for scene in settings.main_scenes:
+                export_main_scene(scene, blend_file_path, settings, [])
 
 
 
@@ -141,9 +138,7 @@ def auto_export(changes_per_scene, changed_export_parameters, settings):
 
     finally:
         # FIXME: error handling ? also redundant
-        [main_scene_names, main_scenes, library_scene_names, library_scenes] = get_main_and_library_scenes(settings)
-
         if export_scene_settings:
             # inject/ update scene components
-            remove_scene_components(main_scenes)
+            remove_scene_components(settings.main_scenes)
 

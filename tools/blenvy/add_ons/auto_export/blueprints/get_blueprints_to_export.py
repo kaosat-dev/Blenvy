@@ -1,5 +1,4 @@
 
-from blenvy.core.scene_helpers import get_main_and_library_scenes
 from blenvy.blueprints.blueprint_helpers import find_blueprints_not_on_disk
 
 
@@ -13,7 +12,6 @@ def get_blueprints_to_export(changes_per_scene, changed_export_parameters, bluep
     change_detection = getattr(settings.auto_export, "change_detection")
     collection_instances_combine_mode = getattr(settings.auto_export, "collection_instances_combine_mode")
 
-    [main_scene_names, level_scenes, library_scene_names, library_scenes] = get_main_and_library_scenes(settings)
     internal_blueprints = blueprints_data.internal_blueprints
     blueprints_to_export = internal_blueprints # just for clarity
 
@@ -28,7 +26,7 @@ def get_blueprints_to_export(changes_per_scene, changed_export_parameters, bluep
         # in your current Blender session for example)
         blueprints_not_on_disk = find_blueprints_not_on_disk(internal_blueprints, blueprints_path_full, export_gltf_extension)
 
-        for scene in library_scenes:
+        for scene in settings.library_scenes:
             if scene.name in changes_per_scene:
                 changed_objects = list(changes_per_scene[scene.name].keys())
                 changed_blueprints = [blueprints_data.blueprints_from_objects[changed] for changed in changed_objects if changed in blueprints_data.blueprints_from_objects]

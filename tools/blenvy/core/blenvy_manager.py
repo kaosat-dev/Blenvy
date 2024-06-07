@@ -2,10 +2,10 @@ import os
 import bpy
 from bpy_types import (PropertyGroup)
 from bpy.props import (BoolProperty, EnumProperty, PointerProperty, StringProperty, CollectionProperty, IntProperty)
-from .scene_helpers import SceneSelector
 from ..settings import upsert_settings, load_settings, generate_complete_settings_dict
 import blenvy.add_ons.auto_export.settings as auto_export_settings
 import blenvy.add_ons.bevy_components.settings as component_settings
+
 
 
 # list of settings we do NOT want to save
@@ -35,7 +35,10 @@ def update_mode(blenvy, context):
 
 def is_scene_already_in_use(self, scene):
     try:
-        return scene.name not in self.main_scenes and scene.name not in self.library_scenes
+        current_main_scene_names = list(map(lambda x: x.name, self.main_scenes))
+        current_library_scene_names = list(map(lambda x: x.name, self.library_scenes))
+        #print("scene ", scene.name, current_main_scene_names, current_library_scene_names)
+        return scene.name not in current_main_scene_names and scene.name not in current_library_scene_names
     except:
         return True
 
@@ -117,20 +120,28 @@ class BlenvyManager(PropertyGroup):
         get=lambda self: os.path.abspath(os.path.join(os.path.dirname(bpy.data.filepath), self.project_root_path, self.assets_path, self.materials_path))
     ) # type: ignore
 
-    main_scenes: CollectionProperty(name="main scenes", type=SceneSelector) # type: ignore
-    main_scenes_index: IntProperty(name = "Index for main scenes list", default = 0, update=update_scene_lists) # type: ignore
-    #main_scene_names = [] # FIXME: unsure
-
-    library_scenes: CollectionProperty(name="library scenes", type=SceneSelector) # type: ignore
-    library_scenes_index: IntProperty(name = "Index for library scenes list", default = 0, update=update_scene_lists) # type: ignore
-    #library_scene_names = [] # FIXME: unsure
-
     # sub ones
     auto_export: PointerProperty(type=auto_export_settings.AutoExportSettings) # type: ignore
     components: PointerProperty(type=component_settings.ComponentsSettings) # type: ignore
 
     main_scene_selector: PointerProperty(type=bpy.types.Scene, name="main scene", description="main_scene_picker", poll=is_scene_already_in_use)# type: ignore
     library_scene_selector: PointerProperty(type=bpy.types.Scene, name="library scene", description="library_scene_picker", poll=is_scene_already_in_use)# type: ignore
+
+    @property
+    def main_scenes(self):
+        return [scene for scene in bpy.data.scenes if scene.blenvy_scene_type == 'Level']
+    
+    @property
+    def main_scenes_names(self):
+        return [scene.name for scene in self.main_scenes]
+    
+    @property
+    def library_scenes(self):
+        return [scene for scene in bpy.data.scenes if scene.blenvy_scene_type == 'Library']
+    
+    @property
+    def library_scenes_names(self):
+        return [scene.name for scene in self.library_scenes]
 
     @classmethod
     def register(cls):
@@ -139,6 +150,14 @@ class BlenvyManager(PropertyGroup):
         # unsure
         bpy.types.Collection.always_export = BoolProperty(default=False, description="always export this blueprint, regardless of changed status") # FIXME: not sure about this one
         bpy.types.Scene.always_export = BoolProperty(default=False, description="always export this blueprint, regardless of changed status") # FIXME: not sure about this one
+        bpy.types.Scene.blenvy_scene_type = EnumProperty(
+            items= (
+                ('None', 'None', 'No blenvy type specified'),
+                ('Level', 'Level','Main/ Level scene'),
+                ('Library', 'Library', 'Library scene'),
+            ),
+         default='None'
+        )
 
     @classmethod
     def unregister(cls):
@@ -146,6 +165,7 @@ class BlenvyManager(PropertyGroup):
 
         del bpy.types.Collection.always_export
         del bpy.types.Scene.always_export
+        del bpy.types.Scene.blenvy_scene_type
 
     def load_settings(self):
         print("LOAD SETTINGS")
@@ -153,14 +173,6 @@ class BlenvyManager(PropertyGroup):
         if settings is not None:
             if "mode" in settings:
                 self.mode = settings["mode"]
-            if "main_scene_names" in settings:
-                for main_scene_name in settings["main_scene_names"]:
-                    added = self.main_scenes.add()
-                    added.name = main_scene_name
-            if "library_scene_names" in settings:
-                for main_scene_name in settings["library_scene_names"]:
-                    added = self.library_scenes.add()
-                    added.name = main_scene_name
 
             asset_path_names = ['project_root_path', 'assets_path', 'blueprints_path', 'levels_path', 'materials_path']
             for asset_path_name in asset_path_names:

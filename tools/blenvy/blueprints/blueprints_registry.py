@@ -8,7 +8,6 @@ from bpy_types import (PropertyGroup)
 from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorProperty, IntProperty, IntVectorProperty, EnumProperty, PointerProperty, CollectionProperty)
 
 from ..settings import load_settings
-from ..core.scene_helpers import get_main_and_library_scenes
 from .blueprints_scan import blueprints_scan
 
 
@@ -68,7 +67,6 @@ class BlueprintsRegistry(PropertyGroup):
         #print("titi", self)
         blenvy = bpy.context.window_manager.blenvy
         settings = blenvy
-        [main_scene_names, level_scenes, library_scene_names, library_scenes] = get_main_and_library_scenes(settings)
-        blueprints_data = blueprints_scan(level_scenes, library_scenes, settings)
+        blueprints_data = blueprints_scan(settings.main_scenes, settings.library_scenes, settings)
         self.blueprints_data = blueprints_data
         return blueprints_data

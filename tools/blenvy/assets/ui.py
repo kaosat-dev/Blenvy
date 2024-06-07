@@ -131,9 +131,7 @@ class Blenvy_assets(bpy.types.Panel):
         settings = SimpleNamespace(**settings)
 
         if panel:
-            #print("dfs")
-            for scene_selector in blenvy.main_scenes:
-                scene = bpy.data.scenes[scene_selector.name]
+            for scene in blenvy.main_scenes:
                 user_assets = get_user_assets(scene)
 
                 row = panel.row()

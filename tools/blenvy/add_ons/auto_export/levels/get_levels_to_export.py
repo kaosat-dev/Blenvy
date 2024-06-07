@@ -1,5 +1,4 @@
 import bpy
-from blenvy.core.scene_helpers import get_main_and_library_scenes
 from blenvy.blueprints.blueprint_helpers import check_if_blueprint_on_disk
 
 # IF collection_instances_combine_mode is not 'split' check for each scene if any object in changes_per_scene has an instance in the scene
@@ -57,9 +56,8 @@ def should_level_be_exported(scene_name, changed_export_parameters, changes_per_
 
 # this also takes the split/embed mode into account: if a collection instance changes AND embed is active, its container level/world should also be exported
 def get_levels_to_export(changes_per_scene, changed_export_parameters, blueprints_data, settings):
-    [main_scene_names, level_scenes, library_scene_names, library_scenes] = get_main_and_library_scenes(settings)
     # determine list of main scenes to export
     # we have more relaxed rules to determine if the main scenes have changed : any change is ok, (allows easier handling of changes, render settings etc)
-    main_scenes_to_export = [scene_name for scene_name in main_scene_names if should_level_be_exported(scene_name, changed_export_parameters, changes_per_scene, blueprints_data, settings)]
+    main_scenes_to_export = [scene_name for scene_name in settings.main_scenes_names if should_level_be_exported(scene_name, changed_export_parameters, changes_per_scene, blueprints_data, settings)]
 
     return (main_scenes_to_export)

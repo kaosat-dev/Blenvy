@@ -15,7 +15,7 @@ Auto export
     - [x] main/ library scene names
     - [x] paths
 
-Data storage for custom properties:
+- [ ] Data storage for custom properties:
     - for scenes (main scenes)
         - at scene level
     - for blueprints 
@@ -106,7 +106,8 @@ General issues:
 - [x] add ability to FORCE export specific blueprints & levels
 - [ ] undo after a save removes any saved "serialized scene" data ? DIG into this
 - [ ] handle scene renames between saves (breaks diffing)
-- [ ] change scene selector to work on actual scenes aka to deal with renamed scenes
+- [x] change scene selector to work on actual scenes aka to deal with renamed scenes
+    - [x] remove get_main_and_library_scenes as it should not be needed anymore
 - [x] fix asset file selection
 - [x] change "assets" tab to "levels"/worlds tab & modify UI accordingly
 - [ ] add option to 'split out' meshes from blueprints ? 

@@ -50,9 +50,8 @@ from .blueprints.operators import OT_select_blueprint
 # blenvy core
 from .core.blenvy_manager import BlenvyManager
 from .core.operators import OT_switch_bevy_tooling
-from .core.scene_helpers import (SceneSelector)
 from .core.ui.ui import (BLENVY_PT_SidePanel)
-from .core.ui.scenes_list import SCENES_LIST_OT_actions, SCENE_UL_Blenvy
+from .core.ui.scenes_list import SCENES_LIST_OT_actions
 from .core.ui.assets_folder_browser import OT_OpenAssetsFolderBrowser
 
 
@@ -63,8 +62,6 @@ def glTF2_post_export_callback(data):
 
 classes = [
     # common/core
-    SceneSelector,
-    SCENE_UL_Blenvy,
     SCENES_LIST_OT_actions,
     OT_OpenAssetsFolderBrowser,
 
