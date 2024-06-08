@@ -1,8 +1,10 @@
+import json
 import bpy
 from blenvy.core.helpers_collections import (set_active_collection)
 from blenvy.core.object_makers import (make_empty)
 from .duplicate_object import duplicate_object
 from .export_gltf import export_gltf
+from blenvy.core.scene_helpers import add_scene_property
 
 """ 
 generates a temporary scene, fills it with data, cleans up after itself
@@ -12,10 +14,25 @@ generates a temporary scene, fills it with data, cleans up after itself
     * cleaned up using tempScene_cleaner
 
 """
-def generate_temporary_scene_and_export(settings, gltf_export_settings, gltf_output_path, temp_scene_name="__temp_scene", tempScene_filler=None, tempScene_cleaner=None): 
+def generate_temporary_scene_and_export(settings, gltf_export_settings, gltf_output_path, temp_scene_name="__temp_scene", tempScene_filler=None, tempScene_cleaner=None, additional_data=None): 
 
     temp_scene = bpy.data.scenes.new(name=temp_scene_name)
     temp_root_collection = temp_scene.collection
+
+    print("additional_dataAAAAAAAAAAAAAAAH", additional_data)
+    if additional_data is not None: # FIXME not a fan of having this here
+        for entry in dict(additional_data):
+            print("entry in additional data", entry)
+            if entry == "local_assets":
+                temp_scene["local_assets"] = additional_data[entry] # this is for bevy 0.14
+                temp_root_collection["local_assets"] = additional_data[entry] # for previous bevy versions, remove when migration done
+                bla = "[(name: \"test_asset\", path: \"audio/fake.mp3\")]"
+                add_scene_property(temp_scene, 'assets_components', {"LocalAssets":  f"LocalAssets({additional_data[entry]})".replace("'", '')}) 
+
+            if entry == entry == "AllAssets":
+                temp_scene["AllAssets"] = additional_data[entry]
+                temp_root_collection["AllAssets"] = additional_data[entry] # for previous bevy versions, remove when migration done
+                add_scene_property(temp_scene, 'assets_components', {"AllAssets":  f"AllAssets({additional_data[entry]})".replace("'", '')}) 
 
     # save active scene
     original_scene = bpy.context.window.scene
@@ -43,6 +60,7 @@ def generate_temporary_scene_and_export(settings, gltf_export_settings, gltf_out
         scene_filler_data = tempScene_filler(temp_root_collection)
         # export the temporary scene
         try:
+            print("dry_run MODE", settings.auto_export.dry_run)
             if settings.auto_export.dry_run == "DISABLED":
                 export_gltf(gltf_output_path, gltf_export_settings)
         except Exception as error:

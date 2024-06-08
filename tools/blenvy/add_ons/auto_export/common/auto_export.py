@@ -105,7 +105,7 @@ def auto_export(changes_per_scene, changed_export_parameters, settings):
                 print("export MAIN scenes")
                 for scene_name in main_scenes_to_export:
                     print("     exporting scene:", scene_name)
-                    export_main_scene(bpy.data.scenes[scene_name], blend_file_path, settings, blueprints_data)
+                    export_main_scene(bpy.data.scenes[scene_name], settings, blueprints_data)
 
             # now deal with blueprints/collections
             do_export_library_scene = not change_detection or changed_export_parameters or len(blueprints_to_export) > 0
@@ -124,7 +124,7 @@ def auto_export(changes_per_scene, changed_export_parameters, settings):
 
         else:
             for scene in settings.main_scenes:
-                export_main_scene(scene, blend_file_path, settings, [])
+                export_main_scene(scene, settings, [])
 
 
 

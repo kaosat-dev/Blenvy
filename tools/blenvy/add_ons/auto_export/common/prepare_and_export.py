@@ -18,7 +18,7 @@ def prepare_and_export():
         setting_changes = get_setting_changes()
         print("setting_changes", setting_changes)
         # do the actual export
-        blenvy.auto_export.dry_run = 'NO_EXPORT'#'DISABLED'#
+        # blenvy.auto_export.dry_run = 'NO_EXPORT'#'DISABLED'#
         auto_export(per_scene_changes, setting_changes, blenvy)
 
         # cleanup 

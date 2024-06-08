@@ -112,3 +112,8 @@ General issues:
 - [x] change "assets" tab to "levels"/worlds tab & modify UI accordingly
 - [ ] add option to 'split out' meshes from blueprints ? 
     - [ ] ie considering meshletts etc , it would make sense to keep blueprints seperate from purely mesh gltfs
+
+- [ ] remove 'export_marked_assets' it should be a default setting
+- [x] disable/ hide asset editing ui for external assets
+
+clear && pytest -svv --blender-template ../../testing/bevy_example/art/testing_library.blend --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration_prepare.py  && pytest -svv --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration.py

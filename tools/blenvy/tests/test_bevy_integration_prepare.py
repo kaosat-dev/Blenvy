@@ -2,6 +2,7 @@ import os
 import json
 import pytest
 import bpy
+from blenvy.add_ons.auto_export.common.prepare_and_export import prepare_and_export
 
 @pytest.fixture
 def setup_data(request):
@@ -25,14 +26,11 @@ def setup_data(request):
 # this runs the external blueprints file 
 def test_export_external_blueprints(setup_data):
     root_path = setup_data["root_path"]
-    auto_export_operator = bpy.ops.export_scenes.auto_gltf
 
     # with change detection
     # first, configure things
     # we use the global settings for that
     export_props = {
-        "main_scene_names" : [],
-        "library_scene_names": ['Library'],
     }
     gltf_settings = {
         "export_animations": True,
@@ -49,20 +47,20 @@ def test_export_external_blueprints(setup_data):
     stored_gltf_settings.clear()
     stored_gltf_settings.write(json.dumps(gltf_settings))
 
+    blenvy = bpy.context.window_manager.blenvy
+    #blenvy.project_root_path = 
+    #blenvy.blueprints_path
+    blenvy.auto_export.auto_export = True
+    blenvy.auto_export.export_scene_settings = True
+    blenvy.auto_export.export_blueprints = True
+    blenvy.auto_export.export_materials_library = True
 
-    auto_export_operator(
-        auto_export=True,
-        direct_mode=True,
-        project_root_path = os.path.abspath(root_path),
-        #blueprints_path = os.path.join("assets", "models", "library"),
-        #export_output_folder = os.path.join("assets", "models"), #"./models",
-        #levels_path = os.path.join("assets", "models"),
-
-        export_scene_settings=False,
-        export_blueprints=True,
-        export_materials_library=True,
-        export_marked_assets= True
-    )
+    print("SCENES", bpy.data.scenes)
+    for scene in bpy.data.scenes:
+        print("SCNE", scene)
+    bpy.data.scenes['Library'].blenvy_scene_type = 'Library' # set scene as Library scene
+    # do the actual export
+    prepare_and_export()
 
     assert os.path.exists(os.path.join(setup_data["blueprints_path"], "External_blueprint.glb")) == True
     assert os.path.exists(os.path.join(setup_data["blueprints_path"], "External_blueprint2.glb")) == True

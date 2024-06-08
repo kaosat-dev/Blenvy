@@ -77,4 +77,4 @@ class GLTF_PT_auto_export_blueprints_list(bpy.types.Panel):
                     generated_assets =  get_generated_assets(blueprint.collection)
 
                     draw_assets(layout=col, name=blueprint.name, title="Assets", asset_registry=asset_registry, user_assets=user_assets, generated_assets=generated_assets, target_type="BLUEPRINT", target_name=blueprint.name, editable=False)
-                    panel.label(text="External")
+                    panel.label(text="External blueprint, assets are not editable")

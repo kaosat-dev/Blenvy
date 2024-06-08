@@ -20,7 +20,7 @@ def draw_assets(layout, name, title, asset_registry, target_type, target_name, e
 
     add_possible = does_asset_exist(target, {"path": asset_registry.asset_path_selector}) #"name": asset_registry.asset_name_selector, 
 
-    if header:
+    if header and editable:
         row = header.row()
         row.alert = add_possible
 
@@ -41,23 +41,6 @@ def draw_assets(layout, name, title, asset_registry, target_type, target_name, e
     if panel:
         if editable:
             row = panel.row()
-            
-
-            """row.alert = add_possible
-            row.prop(asset_registry, "asset_name_selector", text="")
-            row.label(text=asset_registry.asset_path_selector)
-            asset_selector = row.operator(operator="asset.open_filebrowser", text="", icon="FILE_FOLDER")
-            
-            add_asset_layout = row.column()
-            add_asset_layout.enabled = not add_possible
-
-            add_asset = add_asset_layout.operator(operator="bevyassets.add", text="", icon="ADD")
-            add_asset.target_type = target_type
-            add_asset.target_name = target_name
-            add_asset.asset_name = asset_registry.asset_name_selector
-            add_asset.asset_type = asset_registry.asset_type_selector
-            add_asset.asset_path = asset_registry.asset_path_selector"""
-
         #panel.separator()
 
         for asset in user_assets:
@@ -77,27 +60,6 @@ def draw_assets(layout, name, title, asset_registry, target_type, target_name, e
             remove_asset.target_type = target_type
             remove_asset.target_name = target_name
             remove_asset.asset_path = asset.path
-          
-        '''for asset in generated_assets:
-            row = panel.row()
-            #row.label(text=asset.name)
-            #row.label(text=asset.path)
-            split  = row.split(factor=nesting_indent)
-            col = split.column()
-            col.label(text=" ")
-            col = split.column()
-
-
-            sub_header, sub_panel = col.panel(f"assets_sub{asset.name}", default_closed=False)
-            sub_header.label(text=f"{asset.name}        ({asset.path})", icon="XRAY")
-            if sub_panel:
-                sub_panel.label(text="         some stuff")
-            """remove_asset = row.operator(operator="bevyassets.remove", text="", icon="TRASH")
-            remove_asset.target_type = target_type
-            remove_asset.target_name = target_name
-            remove_asset.asset_path = asset.path"""'''
-
-
     return panel
 
 class Blenvy_assets(bpy.types.Panel):

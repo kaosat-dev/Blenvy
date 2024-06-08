@@ -9,7 +9,7 @@ import filecmp
 from PIL import Image
 from pixelmatch.contrib.PIL import pixelmatch
 
-from blenvy.auto_export.export.prepare_and_export import prepare_and_export
+from blenvy.add_ons.auto_export.common.prepare_and_export import prepare_and_export
 
 @pytest.fixture
 def setup_data(request):
@@ -73,14 +73,11 @@ def setup_data(request):
 """
 def test_export_complex(setup_data):
     root_path = setup_data["root_path"]
-    auto_export_operator = bpy.ops.export_scenes.auto_gltf
 
     # with change detection
     # first, configure things
     # we use the global settings for that
     export_props = {
-        "main_scene_names" : ['World'],
-        "library_scene_names": ['Library'],
     }
     gltf_settings = {
         "export_animations": True,
@@ -102,26 +99,29 @@ def test_export_complex(setup_data):
     # move the cube in the library
     # TODO: add back bpy.data.objects["Blueprint1_mesh"].location = [1, 2, 1]
 
-    registry = bpy.context.window_manager.components_registry
     blenvy = bpy.context.window_manager.blenvy
-    main_scene = blenvy.main_scenes.add()
-    main_scene.name = "World"
+    #blenvy.project_root_path = 
+    #blenvy.blueprints_path
     blenvy.auto_export.auto_export = True
+    blenvy.auto_export.export_scene_settings = True
+    blenvy.auto_export.export_blueprints = True
+    blenvy.auto_export.export_materials_library = True
+
+    bpy.data.scenes['World'].blenvy_scene_type = 'Level' # set scene as main/level scene
+    bpy.data.scenes['Library'].blenvy_scene_type = 'Library' # set scene as Library scene
+
+    # scene asset
+    user_asset = bpy.data.scenes['World'].user_assets.add()
+    user_asset.name = "test_asset"
+    user_asset.path = "audio/fake.mp3"
+
+    # blueprint asset
+    user_asset = bpy.data.collections['Blueprint4_nested'].user_assets.add()
+    user_asset.name = "yoho_audio"
+    user_asset.path = "audio/fake.mp3"
 
     prepare_and_export()
 
-    """auto_export_operator(
-        auto_export=True,
-        direct_mode=True,
-        project_root_path = os.path.abspath(root_path),
-        #blueprints_path = os.path.join("assets", "models", "library"),
-        export_output_folder = os.path.join("assets", "models"), #"./models",
-        #levels_path = os.path.join("assets", "models"),
-
-        export_scene_settings=True,
-        export_blueprints=True,
-        export_materials_library=True
-    )"""
     # blueprint1 => has an instance, got changed, should export
     # blueprint2 => has NO instance, but marked as asset, should export
     # blueprint3 => has NO instance, not marked as asset, used inside blueprint 4: should export
