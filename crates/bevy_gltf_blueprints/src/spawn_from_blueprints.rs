@@ -2,7 +2,7 @@ use std::path::{Path, PathBuf};
 
 use bevy::{gltf::Gltf, prelude::*, utils::HashMap};
 
-use crate::{BluePrintsConfig, BlueprintAnimations};
+use crate::{BluePrintsConfig, BlueprintAnimations, BlueprintsList, AssetLoadTracker, AssetsToLoad, BlueprintAssetsNotLoaded, BlueprintAssetsLoaded};
 
 /// this is a flag component for our levels/game world
 #[derive(Component)]
@@ -12,6 +12,11 @@ pub struct GameWorldTag;
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
 pub struct BlueprintName(pub String);
+
+/// path component for the blueprints
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+pub struct BlueprintPath(pub String);
 
 /// flag component needed to signify the intent to spawn a Blueprint
 #[derive(Component, Reflect, Default, Debug)]
@@ -45,46 +50,6 @@ pub struct AddToGameWorld;
 #[derive(Component)]
 /// helper component, just to transfer child data
 pub(crate) struct OriginalChildren(pub Vec<Entity>);
-
-/// helper component, is used to store the list of sub blueprints to enable automatic loading of dependend blueprints
-#[derive(Component, Reflect, Default, Debug)]
-#[reflect(Component)]
-pub struct BlueprintsList(pub HashMap<String, Vec<String>>);
-
-/// helper component, for tracking loaded assets's loading state, id , handle etc
-#[derive(Default, Debug)]
-pub(crate) struct AssetLoadTracker<T: bevy::prelude::Asset> {
-    #[allow(dead_code)]
-    pub name: String,
-    pub id: AssetId<T>,
-    pub loaded: bool,
-    #[allow(dead_code)]
-    pub handle: Handle<T>,
-}
-
-/// helper component, for tracking loaded assets
-#[derive(Component, Debug)]
-pub(crate) struct AssetsToLoad<T: bevy::prelude::Asset> {
-    pub all_loaded: bool,
-    pub asset_infos: Vec<AssetLoadTracker<T>>,
-    pub progress: f32,
-}
-impl<T: bevy::prelude::Asset> Default for AssetsToLoad<T> {
-    fn default() -> Self {
-        Self {
-            all_loaded: Default::default(),
-            asset_infos: Default::default(),
-            progress: Default::default(),
-        }
-    }
-}
-
-/// flag component, usually added when a blueprint is loaded
-#[derive(Component)]
-pub(crate) struct BlueprintAssetsLoaded;
-/// flag component
-#[derive(Component)]
-pub(crate) struct BlueprintAssetsNotLoaded;
 
 /// spawning prepare function,
 /// * also takes into account the already exisiting "override" components, ie "override components" > components from blueprint
