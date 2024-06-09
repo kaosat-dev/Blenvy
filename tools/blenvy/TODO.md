@@ -113,10 +113,14 @@ General issues:
 - [ ] add option to 'split out' meshes from blueprints ? 
     - [ ] ie considering meshletts etc , it would make sense to keep blueprints seperate from purely mesh gltfs
 
-- [ ] remove 'export_marked_assets' it should be a default setting
+- [x] remove 'export_marked_assets' it should be a default setting
 - [x] disable/ hide asset editing ui for external assets
 - [ ] inject_export_path_into_internal_blueprints should be called on every asset/blueprint scan !! Not just on export
 - [x] fix level asets UI 
+- [ ] persist exported materials path in blueprints so that it can be read from library file users
+    - [ ] just like "export_path" write it into each blueprint's collection
+    - [ ] scan for used materials per blueprint !
+    - [ ] for scenes, scan for used materials of all non instance objects (TODO: what about overrides ?)
 
 - [x] remove BlueprintsList & replace is with assets list
 

@@ -8,8 +8,6 @@ from .blueprint import Blueprint
 # - with the "auto_export" flag
 # https://blender.stackexchange.com/questions/167878/how-to-get-all-collections-of-the-current-scene
 def blueprints_scan(main_scenes, library_scenes, settings):
-    export_marked_assets = getattr(settings.auto_export, "export_marked_assets")
-
     blueprints = {}
     blueprints_from_objects = {}
     blueprint_name_from_instances = {}
@@ -84,12 +82,12 @@ def blueprints_scan(main_scenes, library_scenes, settings):
         
         if (
             'AutoExport' in collection and collection['AutoExport'] == True # get marked collections
-            or export_marked_assets and collection.asset_data is not None # or if you have marked collections as assets you can auto export them too
+            or collection.asset_data is not None # or if you have marked collections as assets you can auto export them too
             or collection.name in list(internal_collection_instances.keys()) # or if the collection has an instance in one of the main scenes
             ):
             blueprint = Blueprint(collection.name)
             blueprint.local = True
-            blueprint.marked = 'AutoExport' in collection and collection['AutoExport'] == True or export_marked_assets and collection.asset_data is not None
+            blueprint.marked = 'AutoExport' in collection and collection['AutoExport'] == True or collection.asset_data is not None
             blueprint.objects = [object.name for object in collection.all_objects if not object.instance_type == 'COLLECTION'] # inneficient, double loop
             blueprint.nested_blueprints = [object.instance_collection.name for object in collection.all_objects if object.instance_type == 'COLLECTION'] # FIXME: not precise enough, aka "what is a blueprint"
             blueprint.collection = collection

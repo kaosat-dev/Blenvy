@@ -27,6 +27,13 @@ pub struct SpawnHere;
 /// flag component for dynamically spawned scenes
 pub struct Spawned;
 
+
+#[derive(Component)]
+/// flag component added when a Blueprint instance ist Ready : ie : 
+/// - its assets have loaded
+/// - it has finished spawning
+pub struct BlueprintInstanceReady;
+
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
 /// flag component marking any spwaned child of blueprints ..unless the original entity was marked with the `NoInBlueprint` marker component
@@ -298,6 +305,7 @@ pub(crate) fn spawn_from_blueprints2(
                 ..Default::default()
             },
             Spawned,
+            BlueprintInstanceReady, // FIXME: not sure if this is should be added here or in the post process
             OriginalChildren(original_children),
             BlueprintAnimations {
                 // these are animations specific to the inside of the blueprint

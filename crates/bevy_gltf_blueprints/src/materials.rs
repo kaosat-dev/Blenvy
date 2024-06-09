@@ -17,14 +17,14 @@ use bevy::{
     render::mesh::Mesh,
 };
 
-use crate::{AssetLoadTracker, AssetsToLoad, BluePrintsConfig};
+use crate::{AssetLoadTracker, AssetsToLoad, BluePrintsConfig, BlueprintInstanceReady};
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-/// struct containing the name & source of the material to apply
+/// struct containing the name & path of the material to apply
 pub struct MaterialInfo {
     pub name: String,
-    pub source: String,
+    pub path: String,
 }
 
 /// flag component
@@ -37,21 +37,21 @@ pub(crate) struct BlueprintMaterialAssetsNotLoaded;
 /// system that injects / replaces materials from material library
 pub(crate) fn materials_inject(
     blueprints_config: ResMut<BluePrintsConfig>,
-    material_infos: Query<(Entity, &MaterialInfo), Added<MaterialInfo>>,
+
+    ready_blueprints: Query<(Entity, &Children), (With<BlueprintInstanceReady>)>,
+    material_infos: Query<(Entity, &MaterialInfo, &Parent), Added<MaterialInfo>>,
     asset_server: Res<AssetServer>,
     mut commands: Commands,
 ) {
-    for (entity, material_info) in material_infos.iter() {
-        let model_file_name = format!(
-            "{}_materials_library.{}",
-            &material_info.source, &blueprints_config.format
-        );
-        let materials_path = Path::new(&blueprints_config.material_library_folder)
-            .join(Path::new(model_file_name.as_str()));
-        let material_name = &material_info.name;
-        let material_full_path = materials_path.to_str().unwrap().to_string() + "#" + material_name; // TODO: yikes, cleanup
 
-        if blueprints_config
+    /*for(entity, children) in ready_blueprints.iter() {
+        println!("Blueprint ready !");
+    } */
+    for (entity, material_info, parent) in material_infos.iter() {
+        println!("Entity with material info {:?} {:?}", entity, material_info);
+        let parent_blueprint = ready_blueprints.get(parent.get());
+        println!("Parent blueprint {:?}", parent_blueprint)
+        /*if blueprints_config
             .material_library_cache
             .contains_key(&material_full_path)
         {
@@ -68,7 +68,7 @@ pub(crate) fn materials_inject(
             let material_file_id = material_file_handle.id();
             
             // FIXME: fix this stuff 
-            /*let asset_infos: Vec<AssetLoadTracker> = vec![AssetLoadTracker {
+            let asset_infos: Vec<AssetLoadTracker> = vec![AssetLoadTracker {
                 name: material_full_path,
                 id: material_file_id,
                 loaded: false,
@@ -83,17 +83,17 @@ pub(crate) fn materials_inject(
                     ..Default::default()
                 })
                 .insert(BlueprintMaterialAssetsNotLoaded);
-            */
-        }
+           
+        } */
     }
 }
 
 // TODO, merge with check_for_loaded, make generic ?
 // FIXME: fix this:
-/* 
+
 pub(crate) fn check_for_material_loaded(
     mut blueprint_assets_to_load: Query<
-        (Entity, &mut AssetsToLoad<Gltf>),
+        (Entity, &mut AssetsToLoad),
         With<BlueprintMaterialAssetsNotLoaded>,
     >,
     asset_server: Res<AssetServer>,
@@ -125,7 +125,7 @@ pub(crate) fn check_for_material_loaded(
         }
     }
 }
-*/
+
 /// system that injects / replaces materials from material library
 pub(crate) fn materials_inject2(
     mut blueprints_config: ResMut<BluePrintsConfig>,
@@ -152,7 +152,7 @@ pub(crate) fn materials_inject2(
     for (material_info, children) in material_infos.iter() {
         let model_file_name = format!(
             "{}_materials_library.{}",
-            &material_info.source, &blueprints_config.format
+            &material_info.path, &blueprints_config.format
         );
         let materials_path = Path::new(&blueprints_config.material_library_folder)
             .join(Path::new(model_file_name.as_str()));

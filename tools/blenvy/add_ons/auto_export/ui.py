@@ -51,7 +51,6 @@ def draw_settings_ui(layout, auto_export_settings):
 
         # collections/blueprints 
         section.prop(auto_export_settings, "collection_instances_combine_mode")
-        section.prop(auto_export_settings, "export_marked_assets")
         section.separator()
 
         section.prop(auto_export_settings, "export_separate_dynamic_and_static_objects")

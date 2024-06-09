@@ -223,7 +223,6 @@ def test_export_do_not_export_marked_assets(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_marked_assets = False
     )
     assert os.path.exists(os.path.join(setup_data["levels_path"], "World.glb")) == True
     assert os.path.exists(os.path.join(setup_data["blueprints_path"], "Blueprint1.glb")) == True

@@ -4,7 +4,7 @@ from pathlib import Path
 
 from blenvy.core.helpers_collections import (traverse_tree)
 from blenvy.core.object_makers import make_cube
-from blenvy.materials.materials_helpers import get_all_materials
+from blenvy.materials.materials_helpers import add_material_info_to_objects, get_all_materials
 from .generate_temporary_scene_and_export import generate_temporary_scene_and_export
 from .export_gltf import (generate_gltf_export_settings)
 
@@ -69,8 +69,8 @@ def export_materials(collections, library_scenes, settings):
     gltf_export_settings = generate_gltf_export_settings(settings)
     materials_path_full = getattr(settings,"materials_path_full")
 
-    used_material_names = get_all_materials(collections, library_scenes)
-    current_project_name = Path(bpy.context.blend_data.filepath).stem
+    (used_material_names, materials_per_object) = get_all_materials(collections, library_scenes)
+    add_material_info_to_objects(materials_per_object, settings)
 
     gltf_export_settings = { **gltf_export_settings, 
                     'use_active_scene': True, 
@@ -80,8 +80,9 @@ def export_materials(collections, library_scenes, settings):
                     'use_renderable': False,
                     'export_apply':True
                     }
-                    
-    gltf_output_path = os.path.join(materials_path_full, current_project_name + "_materials_library")
+
+    current_project_name = Path(bpy.context.blend_data.filepath).stem
+    gltf_output_path = os.path.join(materials_path_full, current_project_name + "_materials")
 
     print("       exporting Materials to", gltf_output_path, ".gltf/glb")
 

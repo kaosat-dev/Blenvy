@@ -101,13 +101,6 @@ class AutoExportSettings(PropertyGroup):
         update=save_settings
     ) # type: ignore
 
-    export_marked_assets: BoolProperty(
-        name='Auto export marked assets',
-        description='Collections that have been marked as assets will be systematically exported, even if not in use in another scene',
-        default=True,
-        update=save_settings
-    ) # type: ignore
-
     dry_run: EnumProperty(
         name="dry run",
         description="debug/ develop helper to enable everything but the actual exporting of files",

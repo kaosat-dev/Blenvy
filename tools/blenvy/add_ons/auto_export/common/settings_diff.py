@@ -21,7 +21,6 @@ parameter_names_whitelist_auto_export = [
     'export_separate_dynamic_and_static_objects',
     'export_materials_library',
     'collection_instances_combine_mode',
-    'export_marked_assets'
 ]
 
 def get_setting_changes():

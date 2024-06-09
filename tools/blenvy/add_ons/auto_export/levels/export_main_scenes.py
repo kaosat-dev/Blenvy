@@ -1,6 +1,9 @@
 import json
 import os
+from pathlib import Path
 from types import SimpleNamespace
+
+import bpy
 from blenvy.blueprints.blueprint_helpers import inject_blueprints_list_into_main_scene, remove_blueprints_list_from_main_scene
 from ..constants import TEMPSCENE_PREFIX
 from ..common.generate_temporary_scene_and_export import generate_temporary_scene_and_export, copy_hollowed_collection_into, clear_hollow_scene
@@ -49,9 +52,9 @@ def export_main_scene(scene, settings, blueprints_data):
         auto_assets = []
 
         all_assets = []
+        export_gltf_extension = getattr(settings.auto_export, "export_gltf_extension", ".glb")
 
         blueprints_path =  getattr(settings, "blueprints_path")
-        export_gltf_extension = getattr(settings.auto_export, "export_gltf_extension", ".glb")
         for blueprint in blueprints_in_scene:
             if blueprint.local:
                 blueprint_exported_path = os.path.join(blueprints_path, f"{blueprint.name}{export_gltf_extension}")
@@ -69,8 +72,15 @@ def export_main_scene(scene, settings, blueprints_data):
         """for asset in auto_assets:
             print("  generated asset", asset.name, asset.path)"""
         
-        scene["local_assets"] = assets_to_fake_ron([{"name": asset.name, "path": asset.path} for asset in scene.user_assets] + auto_assets)
-        scene["AllAssets"] = assets_to_fake_ron(all_assets + [{"name": asset.name, "path": asset.path} for asset in scene.user_assets] + auto_assets)
+        materials_path =  getattr(settings, "materials_path")
+        current_project_name = Path(bpy.context.blend_data.filepath).stem
+        materials_library_name = f"{current_project_name}_materials"
+        materials_exported_path = os.path.join(materials_path, f"{materials_library_name}{export_gltf_extension}")
+        material_assets = [{"name": materials_library_name, "path": materials_exported_path}] # we also add the material library as an asset
+
+
+        scene["local_assets"] = assets_to_fake_ron([{"name": asset.name, "path": asset.path} for asset in scene.user_assets] + auto_assets + material_assets)
+        scene["AllAssets"] = assets_to_fake_ron(all_assets + [{"name": asset.name, "path": asset.path} for asset in scene.user_assets] + auto_assets + material_assets)
 
 
         if export_separate_dynamic_and_static_objects:
