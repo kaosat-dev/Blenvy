@@ -96,6 +96,8 @@ def duplicate_object(object, parent, combine_mode, destination_collection, bluep
         original_collection = object.instance_collection
         original_name = object.name
         blueprint_name = original_collection.name
+        # FIXME: blueprint path is WRONG ! 
+        print("BLUEPRINT PATH", original_collection.get('export_path', None))
         blueprint_path = original_collection['export_path'] if 'export_path' in original_collection else f'./{blueprint_name}' # TODO: the default requires the currently used extension !!
 
 

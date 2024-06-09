@@ -27,12 +27,16 @@ def generate_temporary_scene_and_export(settings, gltf_export_settings, gltf_out
                 temp_scene["local_assets"] = additional_data[entry] # this is for bevy 0.14
                 temp_root_collection["local_assets"] = additional_data[entry] # for previous bevy versions, remove when migration done
                 bla = "[(name: \"test_asset\", path: \"audio/fake.mp3\")]"
-                add_scene_property(temp_scene, 'assets_components', {"LocalAssets":  f"LocalAssets({additional_data[entry]})".replace("'", '')}) 
+                local_assets = additional_data.get(entry, [])
+                local_assets = [entry for entry in local_assets]
+                add_scene_property(temp_scene, 'assets_components', {"LocalAssets":  f"LocalAssets({local_assets})".replace("'", '')}) 
 
             if entry == entry == "AllAssets":
                 temp_scene["AllAssets"] = additional_data[entry]
                 temp_root_collection["AllAssets"] = additional_data[entry] # for previous bevy versions, remove when migration done
-                add_scene_property(temp_scene, 'assets_components', {"AllAssets":  f"AllAssets({additional_data[entry]})".replace("'", '')}) 
+                all_assets = additional_data.get(entry, [])
+                all_assets = [entry for entry in all_assets]
+                add_scene_property(temp_scene, 'assets_components', {"AllAssets":  f"AllAssets({all_assets})".replace("'", '')}) 
 
     # save active scene
     original_scene = bpy.context.window.scene

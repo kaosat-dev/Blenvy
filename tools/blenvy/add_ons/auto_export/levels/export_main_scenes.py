@@ -72,6 +72,7 @@ def export_main_scene(scene, settings, blueprints_data):
         scene["local_assets"] = assets_to_fake_ron([{"name": asset.name, "path": asset.path} for asset in scene.user_assets] + auto_assets)
         scene["AllAssets"] = assets_to_fake_ron(all_assets + [{"name": asset.name, "path": asset.path} for asset in scene.user_assets] + auto_assets)
 
+
         if export_separate_dynamic_and_static_objects:
             #print("SPLIT STATIC AND DYNAMIC")
             # first export static objects

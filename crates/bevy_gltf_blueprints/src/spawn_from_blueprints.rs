@@ -51,6 +51,35 @@ pub struct AddToGameWorld;
 /// helper component, just to transfer child data
 pub(crate) struct OriginalChildren(pub Vec<Entity>);
 
+
+
+pub(crate) fn test_thingy(
+    spawn_placeholders: Query<
+    (
+        Entity,
+        &BlueprintPath,
+    ),
+    (Added<BlueprintPath>, Without<Spawned>, Without<SpawnHere>),
+>,
+mut commands: Commands,
+asset_server: Res<AssetServer>,
+
+
+) {
+    for (entity, blueprint_path) in spawn_placeholders.iter() {
+        println!("added blueprint_path {:?}", blueprint_path);
+        commands.entity(entity).insert(
+            SceneBundle {
+                scene: asset_server.load(format!("{}#Scene0", &blueprint_path.0)), // "levels/World.glb#Scene0"),
+                ..default()
+            },
+        );
+        // let model_handle: Handle<Gltf> = asset_server.load(model_path.clone());
+
+    }
+
+}
+
 /// spawning prepare function,
 /// * also takes into account the already exisiting "override" components, ie "override components" > components from blueprint
 pub(crate) fn prepare_blueprints(

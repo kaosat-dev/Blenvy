@@ -157,6 +157,7 @@ impl Plugin for BlueprintsPlugin {
             .add_systems(
                 Update,
                 (
+                    test_thingy,
                     (
                         prepare_blueprints,
                         check_for_loaded,

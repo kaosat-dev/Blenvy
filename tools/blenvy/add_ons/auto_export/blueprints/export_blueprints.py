@@ -4,6 +4,12 @@ from ..constants import TEMPSCENE_PREFIX
 from ..common.generate_temporary_scene_and_export import generate_temporary_scene_and_export, copy_hollowed_collection_into, clear_hollow_scene
 from ..common.export_gltf import generate_gltf_export_settings
 
+def assets_to_fake_ron(list_like):
+    result = []
+    for item in list_like:
+        result.append(f"(name: \"{item['name']}\", path: \"{item['path']}\")")
+    return result#.join(", ")
+
 def export_blueprints(blueprints, settings, blueprints_data):
     blueprints_path_full = getattr(settings, "blueprints_path_full")
     gltf_export_settings = generate_gltf_export_settings(settings)
@@ -15,7 +21,7 @@ def export_blueprints(blueprints, settings, blueprints_data):
 
         for blueprint in blueprints:
             print("exporting collection", blueprint.name)
-            gltf_output_path = os.path.join(blueprints_path_full, blueprint.name)
+            gltf_output_path = os.path.join(blueprints_path_full, blueprint.name) # TODO: reuse the export_path custom property ?
             gltf_export_settings = { **gltf_export_settings, 'use_active_scene': True, 'use_active_collection': True, 'use_active_collection_with_nested':True}
             
             # if we are using the material library option, do not export materials, use placeholder instead
@@ -23,10 +29,23 @@ def export_blueprints(blueprints, settings, blueprints_data):
                 gltf_export_settings['export_materials'] = 'PLACEHOLDER'
 
             collection = bpy.data.collections[blueprint.name]
+
+            print("BLUEPRINT", blueprint.name)
+
+            for asset in collection.user_assets:
+                print("  user asset", asset.name, asset.path)
+
+            all_assets = []
+            auto_assets = []
+            collection["local_assets"] = assets_to_fake_ron([{"name": asset.name, "path": asset.path} for asset in collection.user_assets] + auto_assets)
+            collection["AllAssets"] = assets_to_fake_ron([{"name": asset.name, "path": asset.path} for asset in collection.user_assets]) #all_assets + [{"name": asset.name, "path": asset.path} for asset in collection.user_assets] + auto_assets)
+
+
             # do the actual export
             generate_temporary_scene_and_export(
                 settings, 
                 temp_scene_name=TEMPSCENE_PREFIX+collection.name,
+                additional_data = collection,
                 gltf_export_settings=gltf_export_settings,
                 gltf_output_path=gltf_output_path,
                 tempScene_filler= lambda temp_collection: copy_hollowed_collection_into(collection, temp_collection, blueprints_data=blueprints_data, settings=settings),

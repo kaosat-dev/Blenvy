@@ -120,6 +120,12 @@ def test_export_complex(setup_data):
     user_asset.name = "yoho_audio"
     user_asset.path = "audio/fake.mp3"
 
+    # we have to cheat, since we cannot rely on the data injected when saving the library file
+    bpy.data.collections["External_blueprint"]["export_path"] = "blueprints/External_blueprint.glb"
+    bpy.data.collections["External_blueprint2"]["export_path"] = "blueprints/External_blueprint2.glb"
+    bpy.data.collections["External_blueprint3"]["export_path"] = "blueprints/External_blueprint3.glb"
+
+
     prepare_and_export()
 
     # blueprint1 => has an instance, got changed, should export

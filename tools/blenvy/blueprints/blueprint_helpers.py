@@ -23,6 +23,8 @@ def check_if_blueprint_on_disk(scene_name, folder_path, extension):
 def inject_export_path_into_internal_blueprints(internal_blueprints, blueprints_path, gltf_extension):
     for blueprint in internal_blueprints:
         blueprint_exported_path = os.path.join(blueprints_path, f"{blueprint.name}{gltf_extension}")
+        print("injecting blueprint path", blueprint_exported_path, "for", blueprint.name)
+
         blueprint.collection["export_path"] = blueprint_exported_path
 
 def inject_blueprints_list_into_main_scene(scene, blueprints_data, settings):
