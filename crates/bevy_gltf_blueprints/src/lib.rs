@@ -129,12 +129,12 @@ impl Plugin for BlueprintsPlugin {
             .register_type::<HashMap<u32, Vec<String>>>()
             .register_type::<HashMap<String, HashMap<u32, Vec<String>>>>()
             .add_event::<AnimationMarkerReached>()
-            .register_type::<BlueprintsList>()
             .register_type::<MyAsset>()
             .register_type::<Vec<MyAsset>>()
             .register_type::<Vec<String>>()
             .register_type::<LocalAssets>()
             .register_type::<AllAssets>()
+
 
             .register_type::<HashMap<String, Vec<String>>>()
             .insert_resource(BluePrintsConfig {
@@ -158,20 +158,23 @@ impl Plugin for BlueprintsPlugin {
                 Update,
                 (
                     test_thingy,
-                    (
+                    check_for_loaded2,
+                    spawn_from_blueprints2,
+
+                    /*(
                         prepare_blueprints,
                         check_for_loaded,
                         spawn_from_blueprints,
                         apply_deferred,
                     )
-                        .chain(),
+                        .chain(),*/
                     (compute_scene_aabbs, apply_deferred)
                         .chain()
                         .run_if(aabbs_enabled),
                     apply_deferred,
                     (
                         materials_inject,
-                        check_for_material_loaded,
+                        // check_for_material_loaded,
                         materials_inject2,
                     )
                         .chain()

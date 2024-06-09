@@ -8,6 +8,12 @@ from blenvy.materials.materials_helpers import get_all_materials
 from .generate_temporary_scene_and_export import generate_temporary_scene_and_export
 from .export_gltf import (generate_gltf_export_settings)
 
+# material library logic
+# To avoid redundant materials (can be very costly, mostly when using high res textures)
+# - we explore a gltf file containing all materials from a blend file
+# - we add materialInfo component to each object that uses one of the materials, so that "what material is used by which object" is preserved
+#
+
 def clear_material_info(collection_names, library_scenes):
     for scene in library_scenes:
         root_collection = scene.collection

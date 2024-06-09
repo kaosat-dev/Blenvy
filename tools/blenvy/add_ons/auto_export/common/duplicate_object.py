@@ -108,13 +108,6 @@ def duplicate_object(object, parent, combine_mode, destination_collection, bluep
         empty_obj['BlueprintName'] = f'("{blueprint_name}")'
         empty_obj["BlueprintPath"] = f'("{blueprint_path}")'
         empty_obj['SpawnHere'] = '()'
-
-        # we also inject a list of all sub blueprints, so that the bevy side can preload them
-        children_per_blueprint = {}
-        blueprint = blueprints_data.blueprints_per_name.get(blueprint_name, None)
-        if blueprint:
-            children_per_blueprint[blueprint_name] = blueprint.nested_blueprints
-        empty_obj["BlueprintsList"] = f"({json.dumps(dict(children_per_blueprint))})"
         
         # we copy custom properties over from our original object to our empty
         for component_name, component_value in object.items():

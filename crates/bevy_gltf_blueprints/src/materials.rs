@@ -66,7 +66,9 @@ pub(crate) fn materials_inject(
         } else {
             let material_file_handle: Handle<Gltf> = asset_server.load(materials_path.clone());
             let material_file_id = material_file_handle.id();
-            let asset_infos: Vec<AssetLoadTracker<Gltf>> = vec![AssetLoadTracker {
+            
+            // FIXME: fix this stuff 
+            /*let asset_infos: Vec<AssetLoadTracker> = vec![AssetLoadTracker {
                 name: material_full_path,
                 id: material_file_id,
                 loaded: false,
@@ -81,12 +83,14 @@ pub(crate) fn materials_inject(
                     ..Default::default()
                 })
                 .insert(BlueprintMaterialAssetsNotLoaded);
-            /**/
+            */
         }
     }
 }
 
 // TODO, merge with check_for_loaded, make generic ?
+// FIXME: fix this:
+/* 
 pub(crate) fn check_for_material_loaded(
     mut blueprint_assets_to_load: Query<
         (Entity, &mut AssetsToLoad<Gltf>),
@@ -121,7 +125,7 @@ pub(crate) fn check_for_material_loaded(
         }
     }
 }
-
+*/
 /// system that injects / replaces materials from material library
 pub(crate) fn materials_inject2(
     mut blueprints_config: ResMut<BluePrintsConfig>,

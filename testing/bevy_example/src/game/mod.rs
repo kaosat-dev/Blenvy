@@ -6,7 +6,7 @@ pub use in_game::*;
 use std::{collections::HashMap, fs, time::Duration};
 
 use bevy_gltf_blueprints::{
-    BlueprintAnimationPlayerLink, BlueprintName, BlueprintsList, GltfBlueprintsSet, SceneAnimations,
+    AllAssets, BlueprintAnimationPlayerLink, BlueprintName, GltfBlueprintsSet, SceneAnimations
 };
 
 use bevy::{
@@ -23,7 +23,7 @@ fn start_game(mut next_app_state: ResMut<NextState<AppState>>) {
 
 // if the export from Blender worked correctly, we should have animations (simplified here by using AnimationPlayerLink)
 // if the export from Blender worked correctly, we should have an Entity called "Blueprint4_nested" that has a child called "Blueprint3" that has a "BlueprintName" component with value Blueprint3
-// if the export from Blender worked correctly, we should have a blueprints_list
+// if the export from Blender worked correctly, we should have an assets_list
 // if the export from Blender worked correctly, we should have the correct tree of entities
 #[allow(clippy::too_many_arguments)]
 #[allow(clippy::type_complexity)]
@@ -36,7 +36,7 @@ fn validate_export(
     scene_animations: Query<(Entity, &SceneAnimations)>,
     empties_candidates: Query<(Entity, &Name, &GlobalTransform)>,
 
-    blueprints_list: Query<(Entity, &BlueprintsList)>,
+    assets_list: Query<(Entity, &AllAssets)>,
     root: Query<(Entity, &Name, &Children), (Without<Parent>, With<Children>)>,
 ) {
     let animations_found =
@@ -66,8 +66,8 @@ fn validate_export(
             break;
         }
     }
-    // check if there are blueprints_list components
-    let blueprints_list_found = !blueprints_list.is_empty();
+    // check if there are assets_list components
+    let assets_list_found = !assets_list.is_empty();
 
     // there should be no entity named xxx____bak as it means an error in the Blender side export process
     let mut exported_names_correct = true;
@@ -104,8 +104,8 @@ fn validate_export(
     fs::write(
         "bevy_diagnostics.json",
         format!(
-            "{{ \"animations\": {},  \"nested_blueprint_found\": {}, \"empty_found\": {}, \"blueprints_list_found\": {}, \"exported_names_correct\": {} }}",
-            animations_found, nested_blueprint_found, empty_found, blueprints_list_found, exported_names_correct
+            "{{ \"animations\": {},  \"nested_blueprint_found\": {}, \"empty_found\": {}, \"assets_list_found\": {}, \"exported_names_correct\": {} }}",
+            animations_found, nested_blueprint_found, empty_found, assets_list_found, exported_names_correct
         ),
     )
     .expect("Unable to write file");

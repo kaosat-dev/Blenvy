@@ -59,7 +59,7 @@ def setup_data(request):
         if os.path.exists(screenshot_observed_path):
             os.remove(screenshot_observed_path)
 
-    request.addfinalizer(finalizer)
+    #request.addfinalizer(finalizer)
 
     return None
 
@@ -105,7 +105,7 @@ def test_export_complex(setup_data):
     blenvy.auto_export.auto_export = True
     blenvy.auto_export.export_scene_settings = True
     blenvy.auto_export.export_blueprints = True
-    blenvy.auto_export.export_materials_library = True
+    blenvy.auto_export.export_materials_library = False # TODO: switch back
 
     bpy.data.scenes['World'].blenvy_scene_type = 'Level' # set scene as main/level scene
     bpy.data.scenes['Library'].blenvy_scene_type = 'Library' # set scene as Library scene

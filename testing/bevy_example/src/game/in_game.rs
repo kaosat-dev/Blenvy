@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, GameWorldTag};
+use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, BlueprintPath, GameWorldTag};
 use bevy_gltf_worlflow_examples_common_rapier::{GameState, InAppRunning};
 
 use bevy_rapier3d::prelude::Velocity;
@@ -11,7 +11,7 @@ pub fn setup_game(
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     // here we actually spawn our game world/level
-    commands.spawn((
+    /*commands.spawn((
         SceneBundle {
             scene: asset_server.load("levels/World.glb#Scene0"),
             ..default()
@@ -19,7 +19,16 @@ pub fn setup_game(
         bevy::prelude::Name::from("world"),
         GameWorldTag,
         InAppRunning,
+    ));*/
+
+    commands.spawn((
+        BlueprintName("World".into()),
+        BlueprintPath("levels/World.glb".into()),
+        bevy::prelude::Name::from("world"),
+        GameWorldTag,
+        InAppRunning,
     ));
+
     next_game_state.set(GameState::InGame)
 }
 

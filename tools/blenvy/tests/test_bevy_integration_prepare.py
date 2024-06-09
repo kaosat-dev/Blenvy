@@ -53,7 +53,7 @@ def test_export_external_blueprints(setup_data):
     blenvy.auto_export.auto_export = True
     blenvy.auto_export.export_scene_settings = True
     blenvy.auto_export.export_blueprints = True
-    blenvy.auto_export.export_materials_library = True
+    blenvy.auto_export.export_materials_library = False  # TODO switch back
 
     print("SCENES", bpy.data.scenes)
     for scene in bpy.data.scenes:

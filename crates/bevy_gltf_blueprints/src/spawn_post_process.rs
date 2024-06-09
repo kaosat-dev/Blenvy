@@ -95,8 +95,8 @@ pub(crate) fn spawned_blueprint_post_process(
         commands.entity(original).remove::<SpawnHere>();
         commands.entity(original).remove::<Spawned>();
         commands.entity(original).remove::<Handle<Scene>>();
-        commands.entity(original).remove::<AssetsToLoad<Gltf>>(); // also clear the sub assets tracker to free up handles, perhaps just freeing up the handles and leave the rest would be better ?
-        commands.entity(original).remove::<BlueprintAssetsLoaded>();
+        //commands.entity(original).remove::<AssetsToLoad>(); // also clear the sub assets tracker to free up handles, perhaps just freeing up the handles and leave the rest would be better ?
+        //commands.entity(original).remove::<BlueprintAssetsLoaded>();
         commands.entity(root_entity).despawn_recursive();
     }
 }

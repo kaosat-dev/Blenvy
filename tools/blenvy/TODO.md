@@ -116,6 +116,8 @@ General issues:
 - [ ] remove 'export_marked_assets' it should be a default setting
 - [x] disable/ hide asset editing ui for external assets
 - [ ] inject_export_path_into_internal_blueprints should be called on every asset/blueprint scan !! Not just on export
-- [ ] fix level asets UI 
+- [x] fix level asets UI 
+
+- [x] remove BlueprintsList & replace is with assets list
 
 clear && pytest -svv --blender-template ../../testing/bevy_example/art/testing_library.blend --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration_prepare.py  && pytest -svv --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration.py
