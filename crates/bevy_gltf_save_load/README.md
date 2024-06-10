@@ -191,7 +191,6 @@ fn main() {
             },
             // you need to configure the blueprints plugin as well (might be pre_configured in the future, but for now you need to do it manually)
             BlueprintsPlugin {
-                library_folder: "models/library".into(),
                 format: GltfFormat::GLB,
                 aabbs: true,
                 ..Default::default()

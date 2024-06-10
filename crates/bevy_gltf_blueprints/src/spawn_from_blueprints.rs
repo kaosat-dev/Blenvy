@@ -264,9 +264,6 @@ pub(crate) fn spawn_from_blueprints2(
             blupeprint_name.0, name, entity, original_parent
         );
 
-        let what = &blupeprint_name.0;
-        let model_file_name = format!("{}.{}", &what, &blueprints_config.format);
-
         // info!("attempting to spawn {:?}", model_path);
         let model_handle: Handle<Gltf> = asset_server.load(blueprint_path.0.clone()); // FIXME: kinda weird now
 

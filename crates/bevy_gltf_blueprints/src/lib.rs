@@ -51,12 +51,10 @@ impl Default for BluePrintBundle {
 #[derive(Clone, Resource)]
 pub struct BluePrintsConfig {
     pub(crate) format: GltfFormat,
-    pub(crate) library_folder: PathBuf,
     pub(crate) aabbs: bool,
     pub(crate) aabb_cache: HashMap<String, Aabb>, // cache for aabbs
 
     pub(crate) material_library: bool,
-    pub(crate) material_library_folder: PathBuf,
     pub(crate) material_library_cache: HashMap<String, Handle<StandardMaterial>>,
 }
 
@@ -84,23 +82,18 @@ impl fmt::Display for GltfFormat {
 /// Plugin for gltf blueprints
 pub struct BlueprintsPlugin {
     pub format: GltfFormat,
-    /// The base folder where library/blueprints assets are loaded from, relative to the executable.
-    pub library_folder: PathBuf,
     /// Automatically generate aabbs for the blueprints root objects
     pub aabbs: bool,
     ///
     pub material_library: bool,
-    pub material_library_folder: PathBuf,
 }
 
 impl Default for BlueprintsPlugin {
     fn default() -> Self {
         Self {
             format: GltfFormat::GLB,
-            library_folder: PathBuf::from("models/library"),
             aabbs: false,
-            material_library: false,
-            material_library_folder: PathBuf::from("materials"),
+            material_library: false
         }
     }
 }
@@ -139,13 +132,11 @@ impl Plugin for BlueprintsPlugin {
             .register_type::<HashMap<String, Vec<String>>>()
             .insert_resource(BluePrintsConfig {
                 format: self.format,
-                library_folder: self.library_folder.clone(),
 
                 aabbs: self.aabbs,
                 aabb_cache: HashMap::new(),
 
                 material_library: self.material_library,
-                material_library_folder: self.material_library_folder.clone(),
                 material_library_cache: HashMap::new(),
             })
             .configure_sets(
@@ -174,7 +165,7 @@ impl Plugin for BlueprintsPlugin {
                     apply_deferred,
                     (
                         materials_inject,
-                        // check_for_material_loaded,
+                        check_for_material_loaded,
                         materials_inject2,
                     )
                         .chain()

@@ -101,11 +101,8 @@ fn main() {
     App::new()
         .add_plugins((
              BlueprintsPlugin{
-                library_folder: "advanced/models/library".into() // replace this with your blueprints library path , relative to the assets folder,
-                format: GltfFormat::GLB,// optional, use either  format: GltfFormat::GLB, or  format: GltfFormat::GLTF, or  ..Default::default() if you want to keep the default .glb extension, this sets what extensions/ gltf files will be looked for by the library
                 aabbs: true, // defaults to false, enable this to automatically calculate aabb for the scene/blueprint
                 material_library: true,  // defaults to false, enable this to enable automatic injection of materials from material library files
-                material_library_folder: "materials".into() //defaults to "materials" the folder to look for for the material files
                 ..Default::default()
             }
         ))
@@ -294,7 +291,6 @@ Ie for example without this option, 56 different blueprints using the same mater
 you can configure this with the settings:
 ```rust
 material_library: true  // defaults to false, enable this to enable automatic injection of materials from material library files
-material_library_folder: "materials".into() //defaults to "materials" the folder to look for for the material files
 ```
 
 > Important! you must take care of preloading your material librairy gltf files in advance, using for example ```bevy_asset_loader```since 
