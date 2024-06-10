@@ -2,7 +2,7 @@
 [![License](https://img.shields.io/crates/l/bevy_gltf_components)](https://github.com/kaosat-dev/Blender_bevy_components_workflow/blob/main/LICENSE.md)
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/F1F5TO32O)
 
-# Blender_bevy_components_workflow
+# Blenvy: a Blender <=> bevy components workflow
 
 ![demo](./docs/blender_bevy.png)
 
@@ -18,8 +18,7 @@ It also allows you to setup 'blueprints' in Blender by using collections (the re
 
 * Useful if you want to use Blender (or any editor allowing to export gltf with configurable gltf_extras) as your Editor
 * define Bevy components as custom properties in Blender (some visually , some using RON, though an older JSON version is also available)
-* no plugin or extra tools needed in Blender (but I provide a [little Blender add-on](./tools/gltf_auto_export/README.md) to auto-export to gltf on save (and more !) if you want !)
-* now also with a nice UI tool to add & edit Bevy components in [Blender](./tools/bevy_components/README.md)
+* now also with an UI tool to add & edit Bevy components, automatically export gltf blueprints & more in [Blender](./tools/blenvy/README.md)
 * define components in Blender Collections & override any of them in your collection instances if you want
 * ability to automatically turn your Blender collections into [gltf Blueprints](./crates/bevy_gltf_blueprints/README.md) for reuse
 * minimal setup & code,  you can have something basic running fast
@@ -45,23 +44,19 @@ bevy_gltf_blueprints to only save a minimal subset of dynamic data, seperating d
 The examples for the crate are [here](./examples/bevy_gltf_save_load/)
     > Note: this uses ```bevy_gltf_blueprints``` under the hood
 
-- [bevy_registry_export](./crates/bevy_registry_export/) This crate adds the ability to export your project's Bevy registry to json, in order to be able to generate custom component UIs on the Blender side in the Blender [bevy_components](./tools/bevy_components/README.md) add-on
+- [bevy_registry_export](./crates/bevy_registry_export/) This crate adds the ability to export your project's Bevy registry to json, in order to be able to generate custom component UIs on the Blender side in the Blender [blenvy](./tools/blenvy/README.md) add-on
  
 
 ## Tools
 
-### Blender: gltf_auto_export
+### Blender: blenvy
 
-- for convenience I also added a [Blender addon](./tools/gltf_auto_export/README.md) that automatically exports your level/world from Blender to gltf whenever you save your Blend file
-- it also supports automatical exports of collections as [Gltf blueprints](./crates/bevy_gltf_blueprints/README.md) & more !
+- an all in one [Blender addon](./tools/blenvy/README.md) for the Blender side of the workflow: 
+    - allow easilly adding & editing Bevy components , using automatically generated UIs for each component
+    - automatically exports your level/world from Blender to gltf whenever you save your Blend file
+    - it also supports automatical exports of collections as [Gltf blueprints](./crates/bevy_gltf_blueprints/README.md) &
 
-Please read the [README]((./tools/gltf_auto_export/README.md)) of the add-on for installation & use instructions
-
-### Blender: bevy_components
-
-- an add-on for Blender to allow easilly adding & editing Bevy components , using automatically generated UIs for each component
-
-Please read the [README]((./tools/bevy_components/README.md)) of the add-on for installation & use instructions
+Please read the [README]((./tools/blenvy/README.md)) of the add-on for installation & use instructions
 
 
 

@@ -123,5 +123,8 @@ General issues:
     - [ ] for scenes, scan for used materials of all non instance objects (TODO: what about overrides ?)
 
 - [x] remove BlueprintsList & replace is with assets list
+- [ ] update main docs
+    - [ ] replace all references to the old 2 add-ons with those to Blenvy
+- [ ] rename repo to "Blenvy"
 
 clear && pytest -svv --blender-template ../../testing/bevy_example/art/testing_library.blend --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration_prepare.py  && pytest -svv --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration.py

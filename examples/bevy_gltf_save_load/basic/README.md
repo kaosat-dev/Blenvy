@@ -4,7 +4,7 @@ This example showcases how to use ```bevy_save_load``` crate to save & load your
 
 ## Notes Workflow with blender / demo information
 
-- the gltf files for this demo where generated using the **Export dynamic and static objects seperatly** feature of the auto_export addon:
+- the gltf files for this demo where generated using the **Export dynamic and static objects seperatly** feature of the blenvy addon:
 so the static & dynamic level files where generated automatically, based on the entities that have a **Dynamic** component/custom property 
 
 

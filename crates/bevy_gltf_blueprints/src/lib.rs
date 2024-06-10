@@ -50,7 +50,6 @@ impl Default for BluePrintBundle {
 
 #[derive(Clone, Resource)]
 pub struct BluePrintsConfig {
-    pub(crate) format: GltfFormat,
     pub(crate) aabbs: bool,
     pub(crate) aabb_cache: HashMap<String, Aabb>, // cache for aabbs
 
@@ -81,7 +80,6 @@ impl fmt::Display for GltfFormat {
 #[derive(Debug, Clone)]
 /// Plugin for gltf blueprints
 pub struct BlueprintsPlugin {
-    pub format: GltfFormat,
     /// Automatically generate aabbs for the blueprints root objects
     pub aabbs: bool,
     ///
@@ -91,7 +89,6 @@ pub struct BlueprintsPlugin {
 impl Default for BlueprintsPlugin {
     fn default() -> Self {
         Self {
-            format: GltfFormat::GLB,
             aabbs: false,
             material_library: false
         }
@@ -131,7 +128,6 @@ impl Plugin for BlueprintsPlugin {
 
             .register_type::<HashMap<String, Vec<String>>>()
             .insert_resource(BluePrintsConfig {
-                format: self.format,
 
                 aabbs: self.aabbs,
                 aabb_cache: HashMap::new(),

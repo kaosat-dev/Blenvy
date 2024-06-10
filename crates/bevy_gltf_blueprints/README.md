@@ -15,9 +15,8 @@ A blueprint is a set of **overrideable** components + a hierarchy: ie
     * just a Gltf file with Gltf_extras specifying components 
     * a component called BlueprintName
 
-Particularly useful when using [Blender](https://www.blender.org/) as an editor for the [Bevy](https://bevyengine.org/) game engine, combined with the Blender add-ons that do a lot of the work for you 
-- [gltf_auto_export](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/gltf_auto_export)
-- [bevy_components](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/bevy_components) 
+Particularly useful when using [Blender](https://www.blender.org/) as an editor for the [Bevy](https://bevyengine.org/) game engine, combined with the Blender add-on that do a lot of the work for you 
+- [blenvy](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/blenvy)
 
 
 ## Usage

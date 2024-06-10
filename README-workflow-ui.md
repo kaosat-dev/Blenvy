@@ -8,7 +8,7 @@ The workflow goes as follows (once you got your Bevy code setup)
 
 ## Component creation
 
-Setup the Blender [bevy_components](./tools/bevy_components/README.md) add-on
+Setup the Blender [bevy_components](./tools/blenvy/README.md) add-on
 to add & edit your components visually & reliably
 
 ![bevy_components](./docs/bevy_components.png)
@@ -22,7 +22,7 @@ to add & edit your components visually & reliably
         - custom properties
         - cameras & lights if you want a complete level (as in this example)
         ![gltf_export](./docs/gltf_export.png)
-    - or much better, using [gltf_auto_export](./tools/gltf_auto_export/)
+    - or much better, using [blenvy](./tools/blenvy/)
 
 ## Now use your gltf files in Bevy
 
