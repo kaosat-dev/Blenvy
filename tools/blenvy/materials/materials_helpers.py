@@ -44,3 +44,30 @@ def add_material_info_to_objects(materials_per_object, settings):
         # TODO: switch to using actual components ?
         materials_exported_path = os.path.join(materials_path, f"{materials_library_name}{export_gltf_extension}")
         object['MaterialInfo'] = f'(name: "{material.name}", path: "{materials_exported_path}")' 
+
+
+# get all the materials of all objects in a given scene
+def get_scene_materials(scene):
+    used_material_names = []
+    materials_per_object = {}
+
+    root_collection = scene.collection
+    for cur_collection in traverse_tree(root_collection):
+        for object in cur_collection.all_objects:
+            used_material_names = used_material_names + get_materials(object, materials_per_object)
+
+    # we only want unique names
+    used_material_names = list(set(used_material_names))
+    return (used_material_names, materials_per_object)
+
+# get all the materials of all objects used by a given blueprint
+def get_blueprint_materials(blueprint):
+    materials_per_object = {}
+    used_material_names = []
+
+    for object in blueprint.collection.all_objects:
+        used_material_names = used_material_names + get_materials(object, materials_per_object)
+    
+    # we only want unique names
+    used_material_names = list(set(used_material_names))
+    return (used_material_names, materials_per_object)
