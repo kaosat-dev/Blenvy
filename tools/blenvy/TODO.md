@@ -43,7 +43,7 @@ Blueprints:
     - [x] on save: write IN THE COLLECTION PROPERTIES
         - list of assets
         - export path
-    - [ ] blueprint selection for nested blueprints is broken
+    - [x] blueprint selection for nested blueprints is broken
 
     - [ ] scan & inject on load
     - [ ] scan & inject on save
@@ -58,7 +58,7 @@ Components:
         - [ ] OT_rename_component
         - [ ] Fix_Component_Operator
     - [ ] add handling for core::ops::Range<f32> & other ranges
-    - [ ] fix is_component_valid that is used in gltf_auto_export
+    - [x] fix is_component_valid that is used in gltf_auto_export
     - Hashmap Support
         - [x] fix parsing of keys's type either on Bevy side (prefered) or on the Blender side 
         - [x] fix weird issue with missing "0" property when adding new entry in empty hashmap => happens only if the values for the "setter" have never been set
@@ -69,6 +69,16 @@ Components:
         - [x] move saveable settings out to a settings file
         - [x] update save & load
         - [x] add handling of polling frequency & enabling
+    - [x] move advanced tools to components tab
+    - [ ] remove most of the (bulk) advanced tools, too complex, too unclear (even for me !) and of limited use
+        - component renaming should be kept, but perhaps simplified: 
+            - if a renaming fails because the parameters are incompatible, nuke the old parameters
+        - perhaps just add a display list of all NON component custom properties, so the user can find them easilly ?
+        - [ ] status "unregistered" is often false and misleading
+            -> see in registry ui "for custom_property in object.keys():"
+
+    - [x] overhaul / improve the component selector (with built in searching, etc)
+    - [ ] remove select_component_name_to_replace
 
 
 General things to solve:
@@ -124,7 +134,9 @@ General issues:
 
 - [x] remove BlueprintsList & replace is with assets list
 - [ ] update main docs
+    - [ ] rename project to Blenvy
     - [ ] replace all references to the old 2 add-ons with those to Blenvy
 - [ ] rename repo to "Blenvy"
+
 
 clear && pytest -svv --blender-template ../../testing/bevy_example/art/testing_library.blend --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration_prepare.py  && pytest -svv --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration.py

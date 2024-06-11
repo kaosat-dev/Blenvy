@@ -69,7 +69,7 @@ class BEVY_COMPONENTS_PT_AdvancedToolsPanel(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.window_manager.blenvy.mode == 'TOOLS'
+        return context.window_manager.blenvy.mode == 'COMPONENTS'
 
     def draw_invalid_or_unregistered_header(self, layout, items):
         row = layout.row()
@@ -78,16 +78,12 @@ class BEVY_COMPONENTS_PT_AdvancedToolsPanel(bpy.types.Panel):
             col = row.column()
             col.label(text=item)
 
-
     def draw_invalid_or_unregistered(self, layout, status, component_name, target):
-        available_components = bpy.context.window_manager.components_list
         registry = bpy.context.window_manager.components_registry 
         registry_has_type_infos = registry.has_type_infos()
+        selected_component = target.components_meta.component_selector
 
         row = layout.row()
-
-        col = row.column()
-        col.label(text=component_name)
 
         col = row.column()
         operator = col.operator("object.select", text=target.name)
@@ -97,15 +93,21 @@ class BEVY_COMPONENTS_PT_AdvancedToolsPanel(bpy.types.Panel):
         col.label(text=status)
 
         col = row.column()
-        col.prop(available_components, "list", text="")
+        col.label(text=component_name)
+
+        col = row.column()
+        # each components_meta has a component selector to pick components from
+        components_meta = target.components_meta
+        col.prop(components_meta, "component_selector", text="")
+
 
         col = row.column()
         operator = col.operator("object.rename_bevy_component", text="", icon="SHADERFX") #rename
-        new_name = registry.type_infos[available_components.list]['long_name'] if available_components.list in registry.type_infos else ""
+        target_name = registry.type_infos[selected_component]['long_name'] if selected_component in registry.type_infos else ""
         operator.original_name = component_name
-        operator.target_objects = json.dumps([target.name])
-        operator.new_name = new_name
-        col.enabled = registry_has_type_infos and component_name != "" and component_name != new_name
+        operator.target_items = json.dumps([target.name])
+        operator.target_name = target_name
+        col.enabled = registry_has_type_infos and component_name != "" and component_name != target_name
 
 
         col = row.column()
@@ -115,84 +117,100 @@ class BEVY_COMPONENTS_PT_AdvancedToolsPanel(bpy.types.Panel):
         operator.item_type = get_selection_type(target)
 
 
-        col = row.column()
+        """col = row.column()
         col = row.column()
         operator = col.operator("object.select_component_name_to_replace", text="", icon="EYEDROPPER") #text="select for rename", 
-        operator.component_name = component_name
+        operator.component_name = component_name"""
+
+    def draw_invalid_item_entry(self, layout, item, invalid_component_names, items_with_invalid_components):
+        if "components_meta" in item:
+            components_metadata = item.components_meta.components
+            object_component_names = []
+            for index, component_meta in enumerate(components_metadata):
+                long_name = component_meta.long_name
+                if component_meta.invalid:
+                    self.draw_invalid_or_unregistered(layout, "Invalid", long_name, item)
+                
+                    if not item.name in items_with_invalid_components:
+                        items_with_invalid_components.append(item.name)
+                    
+                    if not long_name in invalid_component_names:
+                        invalid_component_names.append(long_name)
+
+
+                object_component_names.append(long_name) 
+
+            for custom_property in item.keys():
+                # Invalid (something is wrong)
+                # Unregistered (not in registry) 
+                # Upgrade Needed (Old-style component)
+
+                status = None
+                if custom_property != 'components_meta' and custom_property != 'bevy_components' and custom_property not in object_component_names:
+                    status = "Upgrade Needed"
+
+                if status is not None:
+                    self.draw_invalid_or_unregistered(layout, status, custom_property, item)
+
+                    if not item.name in items_with_invalid_components:
+                        items_with_invalid_components.append(item.name)
+                    """if not long_name in invalid_component_names:
+                        invalid_component_names.append(custom_property)""" # FIXME
 
     def draw(self, context):
         layout = self.layout
         registry = bpy.context.window_manager.components_registry 
         registry_has_type_infos = registry.has_type_infos()
         selected_object = context.selected_objects[0] if len(context.selected_objects) > 0 else None
-        available_components = bpy.context.window_manager.components_list
+        selected_component = bpy.context.window_manager.blenvy.components.component_selector
 
         row = layout.row()
         box= row.box()
         box.label(text="Invalid/ unregistered components")
 
-        objects_with_invalid_components = []
+        items_with_invalid_components = []
         invalid_component_names = []
 
-        self.draw_invalid_or_unregistered_header(layout, ["Component", "Object", "Status", "Target"])
+        self.draw_invalid_or_unregistered_header(layout, ["Item","Status", "Component", "Target"])
 
         for object in bpy.data.objects: # TODO: very inneficent
             if len(object.keys()) > 0:
-                if "components_meta" in object:
-                    components_metadata = object.components_meta.components
-                    comp_names = []
-                    for index, component_meta in enumerate(components_metadata):
-                        long_name = component_meta.long_name
-                        if component_meta.invalid:
-                            self.draw_invalid_or_unregistered(layout, "Invalid", long_name, object)
-                        
-                            if not object.name in objects_with_invalid_components:
-                                objects_with_invalid_components.append(object.name)
-                            
-                            if not long_name in invalid_component_names:
-                                invalid_component_names.append(long_name)
+                self.draw_invalid_item_entry(layout, object, invalid_component_names, items_with_invalid_components)
+
+        for collection in bpy.data.collections:
+            if len(collection.keys()) > 0:
+                self.draw_invalid_item_entry(layout, collection, invalid_component_names, items_with_invalid_components)
 
 
-                        comp_names.append(long_name) 
-
-                    for custom_property in object.keys():
-                        if custom_property != 'components_meta' and custom_property != 'bevy_components' and custom_property not in comp_names:
-                            self.draw_invalid_or_unregistered(layout, "Unregistered", custom_property, object)
-
-                            if not object.name in objects_with_invalid_components:
-                                objects_with_invalid_components.append(object.name)
-                            """if not long_name in invalid_component_names:
-                                invalid_component_names.append(custom_property)""" # FIXME
         layout.separator()
         layout.separator()
-        original_name = bpy.context.window_manager.bevy_component_rename_helper.original_name
+        layout.label(text="------------------Bulk actions: Rename/ Upgrade -------------------")
+        original_name = bpy.context.window_manager.blenvy.components.source_component_selector
+        target_name = bpy.context.window_manager.blenvy.components.target_component_selector
 
         row = layout.row()
         col = row.column()
-        col.label(text="Original")
+        col.label(text="Component")
         col = row.column()
-        col.label(text="New")
+        col.label(text="Target")
         col = row.column()
         col.label(text="------")
 
         row = layout.row()
         col = row.column()
-        box = col.box()
-        box.label(text=original_name)
+        col.prop(bpy.context.window_manager.blenvy.components, "source_component_selector", text="")
 
         col = row.column()
-        col.prop(available_components, "list", text="")
-        #row.prop(available_components, "filter",text="Filter")
+        col.prop(bpy.context.window_manager.blenvy.components, "target_component_selector", text="")
     
         col = row.column()
         components_rename_progress = context.window_manager.components_rename_progress
-
+        print("components_rename_progress", components_rename_progress)
         if components_rename_progress == -1.0:
             operator = col.operator(OT_rename_component.bl_idname, text="apply", icon="SHADERFX")
-            operator.target_objects = json.dumps(objects_with_invalid_components)
-            new_name = registry.type_infos[available_components.list]['short_name'] if available_components.list in registry.type_infos else ""
-            operator.new_name = new_name
-            col.enabled = registry_has_type_infos and original_name != "" and original_name != new_name
+            operator.target_items = json.dumps(items_with_invalid_components)
+            operator.target_name = target_name
+            col.enabled = registry_has_type_infos and original_name != "" and original_name != target_name
         else:
             if hasattr(layout,"progress") : # only for Blender > 4.0
                 col.progress(factor = components_rename_progress, text=f"updating {components_rename_progress * 100.0:.2f}%")
@@ -208,7 +226,7 @@ class BEVY_COMPONENTS_PT_AdvancedToolsPanel(bpy.types.Panel):
                 col.progress(factor = remove_components_progress, text=f"updating {remove_components_progress * 100.0:.2f}%")
 
         layout.separator()
-        layout.separator()
+        """layout.separator()
         row = layout.row()
         box= row.box()
         box.label(text="Conversions between custom properties and components & vice-versa")
@@ -266,7 +284,7 @@ class BEVY_COMPONENTS_PT_AdvancedToolsPanel(bpy.types.Panel):
             if hasattr(layout,"progress") : # only for Blender > 4.0
                 layout.progress(factor = components_from_custom_properties_progress_all, text=f"updating {components_from_custom_properties_progress_all * 100.0:.2f}%")
 
-
+"""
 class BEVY_COMPONENTS_PT_MissingTypesPanel(bpy.types.Panel):
     """panel listing all the missing bevy types in the schema"""
     bl_idname = "BEVY_COMPONENTS_PT_MissingTypesPanel"
@@ -340,3 +358,4 @@ class MISSING_TYPES_UL_List(UIList):
             layout.alignment = 'CENTER' 
             row = layout.row()
             row.prop(item, "long_name", text="")
+            

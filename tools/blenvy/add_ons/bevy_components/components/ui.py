@@ -172,7 +172,7 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
         # name = context.object.name if context.object != None else ''
         layout.label(text=f"Components for {name} ({target_type})")
 
-        print("object", context.object, "active", context.active_object, "objects", context.selected_objects)
+        #print("object", context.object, "active", context.active_object, "objects", context.selected_objects)
 
     def draw(self, context):
         object = next(iter(context.selected_objects), None)
@@ -181,28 +181,27 @@ class BEVY_COMPONENTS_PT_ComponentsPanel(bpy.types.Panel):
 
         # we get & load our component registry
         registry = bpy.context.window_manager.components_registry 
-        available_components = bpy.context.window_manager.components_list
+        selected_component = bpy.context.window_manager.blenvy.components.component_selector
         registry_has_type_infos = registry.has_type_infos()
 
         if object is not None:
-            draw_component_ui(layout, object, registry, available_components, registry_has_type_infos, context)
+            draw_component_ui(layout, object, registry, selected_component, registry_has_type_infos, context)
         elif collection is not None:
-            draw_component_ui(layout, collection, registry, available_components, registry_has_type_infos, context)
+            draw_component_ui(layout, collection, registry, selected_component, registry_has_type_infos, context)
         else: 
             layout.label(text ="Select an object to edit its components")      
 
 
 
-def draw_component_ui(layout, object_or_collection, registry, available_components, registry_has_type_infos, context):
+def draw_component_ui(layout, object_or_collection, registry, selected_component, registry_has_type_infos, context):
     row = layout.row(align=True)
-    row.prop(available_components, "list", text="Component")
-    row.prop(available_components, "filter",text="Filter")
+    row.prop(context.window_manager.blenvy.components, "component_selector", text="Component: ")
 
     # add components
     row = layout.row(align=True)
     op = row.operator(AddComponentOperator.bl_idname, text="Add", icon="ADD")
-    op.component_type = available_components.list
-    row.enabled = available_components.list != ''
+    op.component_type = selected_component
+    row.enabled = selected_component != ''
 
     layout.separator()
 
@@ -249,7 +248,6 @@ def draw_component_ui(layout, object_or_collection, registry, available_componen
         # we fetch the matching ui property group
         root_propertyGroup_name =  registry.get_propertyGroupName_from_longName(component_name)
         """print("root_propertyGroup_name", root_propertyGroup_name)"""
-        print("component_meta", component_meta, component_invalid)
 
         if root_propertyGroup_name:
             propertyGroup = getattr(component_meta, root_propertyGroup_name, None)

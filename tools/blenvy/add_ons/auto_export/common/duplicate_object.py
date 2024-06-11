@@ -1,15 +1,8 @@
 import json
 import bpy
 from blenvy.core.object_makers import (make_empty)
+from blenvy.add_ons.bevy_components.utils import is_component_valid_and_enabled
 from ..constants import custom_properties_to_filter_out
-
-def is_component_valid_and_enabled(object, component_name):
-    if "components_meta" in object or hasattr(object, "components_meta"):
-        target_components_metadata = object.components_meta.components
-        component_meta = next(filter(lambda component: component["long_name"] == component_name, target_components_metadata), None)
-        if component_meta != None:
-            return component_meta.enabled and not component_meta.invalid
-    return True
 
 def remove_unwanted_custom_properties(object):
     to_remove = []

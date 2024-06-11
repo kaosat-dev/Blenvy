@@ -5,6 +5,7 @@ from bpy.props import (EnumProperty, PointerProperty, StringProperty, BoolProper
 from blenvy.settings import load_settings, upsert_settings, generate_complete_settings_dict
 from .propGroups.prop_groups import generate_propertyGroups_for_components
 from .components.metadata import ensure_metadata_for_all_items
+from .utils import add_component_to_ui_list
 
 # list of settings we do NOT want to save
 settings_black_list = ['settings_save_enabled', 'watcher_active']
@@ -52,7 +53,6 @@ def watch_schema():
         pass
     return component_settings.watcher_poll_frequency if component_settings.watcher_enabled else None
 
-
 class ComponentsSettings(PropertyGroup):
 
     settings_save_path = ".blenvy_components_settings" # where to store data in bpy.texts
@@ -88,6 +88,20 @@ class ComponentsSettings(PropertyGroup):
         description="",
         default="",
         update=save_settings
+    )# type: ignore
+
+
+    component_selector: StringProperty(
+        search=add_component_to_ui_list
+    )# type: ignore
+
+
+    source_component_selector: StringProperty(
+        search=add_component_to_ui_list
+    )# type: ignore
+
+    target_component_selector: StringProperty(
+        search=add_component_to_ui_list
     )# type: ignore
 
 

@@ -4,6 +4,7 @@ from bpy_types import (PropertyGroup)
 
 from ..propGroups.conversions_from_prop_group import property_group_value_to_custom_property_value
 from ..propGroups.conversions_to_prop_group import property_group_value_from_custom_property_value
+from ..utils import add_component_to_ui_list
 
 class ComponentMetadata(bpy.types.PropertyGroup):
     short_name : bpy.props.StringProperty(
@@ -43,12 +44,20 @@ class ComponentMetadata(bpy.types.PropertyGroup):
         default=True
     ) # type: ignore
 
+   
+
 class ComponentsMeta(PropertyGroup):
     infos_per_component:  StringProperty(
         name="infos per component",
         description="component"
     ) # type: ignore
     components: bpy.props.CollectionProperty(type = ComponentMetadata)  # type: ignore
+
+    # compone
+    component_selector: StringProperty(
+        search=add_component_to_ui_list
+    ) # type: ignore
+
 
     @classmethod
     def register(cls):

@@ -198,7 +198,7 @@ class RemoveComponentFromAllItemsOperator(Operator):
 
 class RenameHelper(bpy.types.PropertyGroup):
     original_name: bpy.props.StringProperty(name="") # type: ignore
-    new_name: bpy.props.StringProperty(name="") # type: ignore
+    target_name: bpy.props.StringProperty(name="") # type: ignore
 
     #object: bpy.props.PointerProperty(type=bpy.types.Object)
     @classmethod
@@ -217,12 +217,12 @@ class OT_rename_component(Operator):
     bl_options = {"UNDO"}
 
     original_name: bpy.props.StringProperty(default="") # type: ignore
-    new_name: StringProperty(
-        name="new_name",
+    target_name: StringProperty(
+        name="target_name",
         description="new name of component",
     ) # type: ignore
 
-    target_objects: bpy.props.StringProperty() # type: ignore
+    target_items: bpy.props.StringProperty() # type: ignore
 
     @classmethod
     def register(cls):
@@ -237,28 +237,28 @@ class OT_rename_component(Operator):
         type_infos = registry.type_infos
         settings = context.window_manager.bevy_component_rename_helper
         original_name = settings.original_name if self.original_name == "" else self.original_name
-        new_name = self.new_name
+        target_name = self.target_name
 
 
-        print("renaming components: original name", original_name, "new_name", self.new_name, "targets", self.target_objects)
-        target_objects = json.loads(self.target_objects)
+        print("renaming components: original name", original_name, "target_name", self.target_name, "targets", self.target_items)
+        target_items = json.loads(self.target_items)
         errors = []
-        total = len(target_objects)
+        total = len(target_items)
 
-        if original_name != '' and new_name != '' and original_name != new_name and len(target_objects) > 0:
-            for index, item_name in enumerate(target_objects):
+        if original_name != '' and target_name != '' and original_name != target_name and len(target_items) > 0:
+            for index, item_name in enumerate(target_items):
                 object = bpy.data.objects[item_name]
                 if object and original_name in get_bevy_components(object) or original_name in object:
                     try:
                         # attempt conversion
-                        rename_component(object=object, original_long_name=original_name, new_long_name=new_name)
+                        rename_component(item=object, original_long_name=original_name, new_long_name=target_name)
                     except Exception as error:
                         if '__disable__update' in object:
                             del object["__disable__update"] # make sure custom properties are updateable afterwards, even in the case of failure
                         components_metadata = getattr(object, "components_meta", None)
                         if components_metadata:
                             components_metadata = components_metadata.components
-                            component_meta =  next(filter(lambda component: component["long_name"] == new_name, components_metadata), None)
+                            component_meta =  next(filter(lambda component: component["long_name"] == target_name, components_metadata), None)
                             if component_meta:
                                 component_meta.invalid = True
                                 component_meta.invalid_details = "wrong custom property value, overwrite them by changing the values in the ui or change them & regenerate"

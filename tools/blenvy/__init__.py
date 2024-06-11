@@ -24,7 +24,6 @@ from .add_ons.bevy_components.registry.ui import (BEVY_COMPONENTS_PT_Configurati
 from .add_ons.bevy_components.components.metadata import (ComponentMetadata, ComponentsMeta)
 from .add_ons.bevy_components.components.lists import GENERIC_LIST_OT_actions, Generic_LIST_OT_AddItem, Generic_LIST_OT_RemoveItem, Generic_LIST_OT_SelectItem
 from .add_ons.bevy_components.components.maps import GENERIC_MAP_OT_actions
-from .add_ons.bevy_components.components.definitions_list import (ComponentDefinitionsList, ClearComponentDefinitionsList)
 from .add_ons.bevy_components.components.ui import (BEVY_COMPONENTS_PT_ComponentsPanel)
 from .add_ons.bevy_components.settings import ComponentsSettings
 
@@ -80,9 +79,6 @@ classes = [
     RenameHelper,
     GenerateComponent_From_custom_property_Operator,
     Toggle_ComponentVisibility,
-
-    ComponentDefinitionsList,
-    ClearComponentDefinitionsList,
     
     ComponentMetadata,
     ComponentsMeta,
@@ -103,6 +99,7 @@ classes = [
     BEVY_COMPONENTS_PT_ComponentsPanel,
     BEVY_COMPONENTS_PT_AdvancedToolsPanel,
     #BEVY_COMPONENTS_PT_Configuration,
+
     MISSING_TYPES_UL_List,
     BEVY_COMPONENTS_PT_MissingTypesPanel,
 
