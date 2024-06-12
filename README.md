@@ -2,7 +2,7 @@
 [![License](https://img.shields.io/crates/l/bevy_gltf_components)](https://github.com/kaosat-dev/Blender_bevy_components_workflow/blob/main/LICENSE.md)
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/F1F5TO32O)
 
-# Blenvy: a Blender <=> bevy components workflow
+# BLENVY: a friendly Blender <=> Bevy workflow !
 
 ![demo](./docs/blender_bevy.png)
 
