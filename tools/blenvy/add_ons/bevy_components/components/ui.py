@@ -362,22 +362,34 @@ class BLENVY_PT_component_tools_panel(bpy.types.Panel):
         operator.component_name = component_name
         operator.item_type = get_selection_type(target)
 
-    def draw_invalid_item_entry(self, layout, item, invalid_component_names, items_with_invalid_components, item_type):
+    def draw_invalid_items(self, layout, upgreadable_entries):
+        for entry in upgreadable_entries:
+            (status, custom_property, item, item_type) = entry
+            print("ENTRY", entry)
+            self.draw_invalid_or_unregistered(layout, status, custom_property, item, item_type)
+
+    def gather_invalid_item_data(self, item, invalid_component_names, items_with_invalid_components, items_with_original_components, original_name, item_type):
         blenvy_custom_properties = ['components_meta', 'bevy_components', 'user_assets', 'generated_assets' ] # some of our own hard coded custom properties that should be ignored
+        upgreadable_entries = []
+
         if "components_meta" in item:
             components_metadata = item.components_meta.components
             object_component_names = []
+
+
             for index, component_meta in enumerate(components_metadata):
                 long_name = component_meta.long_name
                 if component_meta.invalid:
-                    self.draw_invalid_or_unregistered(layout, "Invalid", long_name, item, item_type)
-                
+                    upgreadable_entries.append(("Invalid", long_name, item, item_type))
+                    #self.draw_invalid_or_unregistered(layout, "Invalid", long_name, item, item_type)
                     if not item.name in items_with_invalid_components:
                         items_with_invalid_components.append((item.name, item_type))
-                    
                     if not long_name in invalid_component_names:
                         invalid_component_names.append(long_name)
 
+                if original_name != "":
+                    if long_name == original_name:
+                        items_with_original_components.append((item.name, item_type))
 
                 object_component_names.append(long_name) 
 
@@ -391,12 +403,14 @@ class BLENVY_PT_component_tools_panel(bpy.types.Panel):
                     status = "Upgrade Needed"
 
                 if status is not None:
-                    self.draw_invalid_or_unregistered(layout, status, custom_property, item, item_type)
+                    upgreadable_entries.append((status, custom_property, item, item_type))
+                   # self.draw_invalid_or_unregistered(layout, status, custom_property, item, item_type)
 
                     if not item.name in items_with_invalid_components:
                         items_with_invalid_components.append((item.name, item_type))
                     """if not long_name in invalid_component_names:
                         invalid_component_names.append(custom_property)""" # FIXME
+        return upgreadable_entries
 
     def draw(self, context):
         layout = self.layout
@@ -406,49 +420,35 @@ class BLENVY_PT_component_tools_panel(bpy.types.Panel):
         selected_component = bpy.context.window_manager.blenvy.components.component_selector
 
         row = layout.row()
-        row.label(text= "------------------ Single item actions: Rename / Fix / Upgrade -------------------")#"Invalid/ unregistered components")
+        row.label(text= "* Single item actions: Rename / Fix / Upgrade")#"Invalid/ unregistered components")
 
         items_with_invalid_components = []
         invalid_component_names = []
         items_with_original_components = []
 
-
-        self.draw_invalid_or_unregistered_header(layout, ["Item","Status", "Component", "Target"])
-
         # for possible bulk actions
         original_name = bpy.context.window_manager.blenvy.components.source_component_selector
         target_component_name = bpy.context.window_manager.blenvy.components.target_component_selector
 
+        upgreadable_entries = []
         for object in bpy.data.objects: # TODO: very inneficent
             if len(object.keys()) > 0:
-                self.draw_invalid_item_entry(layout, object, invalid_component_names, items_with_invalid_components, "OBJECT")
-
-                if original_name != "" and "components_meta" in object:
-                    components_metadata = object.components_meta.components
-                    for index, component_meta in enumerate(components_metadata):
-                        long_name = component_meta.long_name
-                        if long_name == original_name:
-                            items_with_original_components.append((object.name, "OBJECT"))
-
+                upgreadable_entries += self.gather_invalid_item_data(object, invalid_component_names, items_with_invalid_components, items_with_original_components, original_name,  "OBJECT")
         for collection in bpy.data.collections:
             if len(collection.keys()) > 0:
-                self.draw_invalid_item_entry(layout, collection, invalid_component_names, items_with_invalid_components, "COLLECTION")
+                upgreadable_entries += self.gather_invalid_item_data(collection, invalid_component_names, items_with_invalid_components, items_with_original_components, original_name,  "COLLECTION")
 
-                if original_name != "" and "components_meta" in collection:
-                    components_metadata = collection.components_meta.components
-                    for index, component_meta in enumerate(components_metadata):
-                        long_name = component_meta.long_name
-                        if long_name == original_name:
-                            items_with_original_components.append((collection.name, "COLLECTION"))
-
-        if len(items_with_invalid_components) == 0:
-            layout.label(text="Nothing to see here , all good !")
+        if len(items_with_invalid_components) > 0:
+            self.draw_invalid_or_unregistered_header(layout, ["Item","Status", "Component", "Target"])
+            self.draw_invalid_items(layout, upgreadable_entries)
+        else:
+            layout.box().label(text="No components with anomalies , all good !")
 
         #print("items_with_original_components", items_with_original_components)
         layout.separator()
         layout.separator()
         row = layout.row()
-        row.label(text="------------------Bulk actions: Rename / Fix / Upgrade -------------------")
+        row.label(text="*Bulk actions: Rename / Fix / Upgrade")
   
         row = layout.row()
         col = row.column()
