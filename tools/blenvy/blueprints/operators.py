@@ -22,18 +22,12 @@ class BLENVY_OT_blueprint_select(Operator):
 
     def execute(self, context):
         if self.blueprint_collection_name:
-            collection = bpy.data.collections[self.blueprint_collection_name]
             scene = bpy.data.scenes[self.blueprint_scene_name]
             if scene:
                 bpy.ops.object.select_all(action='DESELECT')
                 bpy.context.window.scene = scene
                 bpy.context.view_layer.objects.active = None
                 set_active_collection(scene, self.blueprint_collection_name)
-                #bpy.context.view_layer.active_layer_collection = bpy.context.view_layer.layer_collection.children[self.blueprint_collection_name]
-                #bpy.context.view_layer.collections.active = collection
-                #            bpy.context.view_layer.active_layer_collection = collection
-                """for o in collection.objects:
-                    o.select_set(True)"""
 
         return {'FINISHED'}
     

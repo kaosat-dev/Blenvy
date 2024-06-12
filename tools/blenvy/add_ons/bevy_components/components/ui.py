@@ -3,9 +3,6 @@ import bpy
 
 from ..utils import get_selection_type
 from .metadata import do_item_custom_properties_have_missing_metadata, get_bevy_components
-from .operators import BLENVY_OT_component_add, BLENVY_OT_component_copy, BLENVY_OT_component_fix, BLENVY_OT_component_remove, BLENVY_OT_component_paste, BLENVY_OT_component_toggle_visibility
-
-from ..utils import get_selection_type
 
 
 def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None):
@@ -201,7 +198,7 @@ def draw_component_ui(layout, object_or_collection, registry, selected_component
 
     # add components
     row = layout.row(align=True)
-    op = row.operator(BLENVY_OT_component_add.bl_idname, text="Add", icon="ADD")
+    op = row.operator("blenvy.component_add", text="Add", icon="ADD")
     op.component_type = selected_component
     row.enabled = selected_component != ''
 
@@ -209,7 +206,7 @@ def draw_component_ui(layout, object_or_collection, registry, selected_component
 
     # paste components
     row = layout.row(align=True)
-    row.operator(BLENVY_OT_component_paste.bl_idname, text="Paste component ("+bpy.context.window_manager.copied_source_component_name+")", icon="PASTEDOWN")
+    row.operator("blenvy.component_paste", text="Paste component ("+bpy.context.window_manager.copied_source_component_name+")", icon="PASTEDOWN")
     row.enabled = registry_has_type_infos and context.window_manager.copied_source_item_name != ''
 
     layout.separator()
@@ -226,7 +223,6 @@ def draw_component_ui(layout, object_or_collection, registry, selected_component
     #print("components_names", dict(components_bla).keys())
 
     for component_name in sorted(get_bevy_components(object_or_collection)) : # sorted by component name, practical
-        #print("component_name", component_name)
         if component_name == "components_meta": 
             continue
         # anything withouth metadata gets skipped, we only want to see real components, not all custom props
@@ -279,17 +275,17 @@ def draw_component_ui(layout, object_or_collection, registry, selected_component
                 if propertyGroup:
                     unit_struct = len(propertyGroup.field_names) == 0
                     if unit_struct: 
-                        op = row.operator(BLENVY_OT_component_fix.bl_idname, text="", icon="SHADERFX")
+                        op = row.operator("blenvy.component_fix", text="", icon="SHADERFX")
                         op.component_name = component_name
                         row.separator()
 
-        op = row.operator(BLENVY_OT_component_remove.bl_idname, text="", icon="X")
+        op = row.operator("blenvy.component_remove", text="", icon="X")
         op.component_name = component_name
         op.item_name = object_or_collection.name
         op.item_type = get_selection_type(object_or_collection)
         row.separator()
         
-        op = row.operator(BLENVY_OT_component_copy.bl_idname, text="", icon="COPYDOWN")
+        op = row.operator("blenvy.component_copy", text="", icon="COPYDOWN")
         op.source_component_name = component_name
         op.source_item_name = object_or_collection.name
         op.source_item_type = get_selection_type(object_or_collection)
@@ -297,10 +293,9 @@ def draw_component_ui(layout, object_or_collection, registry, selected_component
         
         #if not single_field:
         toggle_icon = "TRIA_DOWN" if component_visible else "TRIA_RIGHT"
-        op = row.operator(BLENVY_OT_component_toggle_visibility.bl_idname, text="", icon=toggle_icon)
+        op = row.operator("blenvy.component_toggle_visibility", text="", icon=toggle_icon)
         op.component_name = component_name
         #row.separator()
-
 
 
 
@@ -327,7 +322,8 @@ class BLENVY_PT_component_tools_panel(bpy.types.Panel):
             col = row.column()
             col.label(text=item)
 
-    def draw_invalid_or_unregistered(self, layout, status, component_name, target):
+    def draw_invalid_or_unregistered(self, layout, status, component_name, target, item_type):
+        item_type_short = item_type.lower()
         registry = bpy.context.window_manager.components_registry 
         registry_has_type_infos = registry.has_type_infos()
         selected_component = target.components_meta.component_selector
@@ -335,8 +331,9 @@ class BLENVY_PT_component_tools_panel(bpy.types.Panel):
         row = layout.row()
 
         col = row.column()
-        operator = col.operator("object.select", text=target.name)
+        operator = col.operator("blenvy.select_item", text=f"{target.name}({item_type_short})")
         operator.target_name = target.name
+        operator.item_type = item_type
 
         col = row.column()
         col.label(text=status)
@@ -352,11 +349,11 @@ class BLENVY_PT_component_tools_panel(bpy.types.Panel):
 
         col = row.column()
         operator = col.operator("blenvy.component_rename", text="", icon="SHADERFX") #rename
-        target_name = registry.type_infos[selected_component]['long_name'] if selected_component in registry.type_infos else ""
+        target_component_name = registry.type_infos[selected_component]['long_name'] if selected_component in registry.type_infos else ""
         operator.original_name = component_name
-        operator.target_items = json.dumps([target.name])
-        operator.target_name = target_name
-        col.enabled = registry_has_type_infos and component_name != "" and component_name != target_name
+        operator.target_items = json.dumps([(target.name, item_type)]) # tupple
+        operator.target_name = target_component_name
+        col.enabled = registry_has_type_infos and component_name != "" and target_component_name != ""  and component_name != target_component_name
 
 
         col = row.column()
@@ -365,17 +362,18 @@ class BLENVY_PT_component_tools_panel(bpy.types.Panel):
         operator.component_name = component_name
         operator.item_type = get_selection_type(target)
 
-    def draw_invalid_item_entry(self, layout, item, invalid_component_names, items_with_invalid_components):
+    def draw_invalid_item_entry(self, layout, item, invalid_component_names, items_with_invalid_components, item_type):
+        blenvy_custom_properties = ['components_meta', 'bevy_components', 'user_assets', 'generated_assets' ] # some of our own hard coded custom properties that should be ignored
         if "components_meta" in item:
             components_metadata = item.components_meta.components
             object_component_names = []
             for index, component_meta in enumerate(components_metadata):
                 long_name = component_meta.long_name
                 if component_meta.invalid:
-                    self.draw_invalid_or_unregistered(layout, "Invalid", long_name, item)
+                    self.draw_invalid_or_unregistered(layout, "Invalid", long_name, item, item_type)
                 
                     if not item.name in items_with_invalid_components:
-                        items_with_invalid_components.append(item.name)
+                        items_with_invalid_components.append((item.name, item_type))
                     
                     if not long_name in invalid_component_names:
                         invalid_component_names.append(long_name)
@@ -389,14 +387,14 @@ class BLENVY_PT_component_tools_panel(bpy.types.Panel):
                 # Upgrade Needed (Old-style component)
 
                 status = None
-                if custom_property != 'components_meta' and custom_property != 'bevy_components' and custom_property not in object_component_names:
+                if custom_property not in blenvy_custom_properties and custom_property not in object_component_names:
                     status = "Upgrade Needed"
 
                 if status is not None:
-                    self.draw_invalid_or_unregistered(layout, status, custom_property, item)
+                    self.draw_invalid_or_unregistered(layout, status, custom_property, item, item_type)
 
                     if not item.name in items_with_invalid_components:
-                        items_with_invalid_components.append(item.name)
+                        items_with_invalid_components.append((item.name, item_type))
                     """if not long_name in invalid_component_names:
                         invalid_component_names.append(custom_property)""" # FIXME
 
@@ -408,29 +406,50 @@ class BLENVY_PT_component_tools_panel(bpy.types.Panel):
         selected_component = bpy.context.window_manager.blenvy.components.component_selector
 
         row = layout.row()
-        box= row.box()
-        box.label(text="Invalid/ unregistered components")
+        row.label(text= "------------------ Single item actions: Rename / Fix / Upgrade -------------------")#"Invalid/ unregistered components")
 
         items_with_invalid_components = []
         invalid_component_names = []
+        items_with_original_components = []
+
 
         self.draw_invalid_or_unregistered_header(layout, ["Item","Status", "Component", "Target"])
 
+        # for possible bulk actions
+        original_name = bpy.context.window_manager.blenvy.components.source_component_selector
+        target_component_name = bpy.context.window_manager.blenvy.components.target_component_selector
+
         for object in bpy.data.objects: # TODO: very inneficent
             if len(object.keys()) > 0:
-                self.draw_invalid_item_entry(layout, object, invalid_component_names, items_with_invalid_components)
+                self.draw_invalid_item_entry(layout, object, invalid_component_names, items_with_invalid_components, "OBJECT")
+
+                if original_name != "" and "components_meta" in object:
+                    components_metadata = object.components_meta.components
+                    for index, component_meta in enumerate(components_metadata):
+                        long_name = component_meta.long_name
+                        if long_name == original_name:
+                            items_with_original_components.append((object.name, "OBJECT"))
 
         for collection in bpy.data.collections:
             if len(collection.keys()) > 0:
-                self.draw_invalid_item_entry(layout, collection, invalid_component_names, items_with_invalid_components)
+                self.draw_invalid_item_entry(layout, collection, invalid_component_names, items_with_invalid_components, "COLLECTION")
 
+                if original_name != "" and "components_meta" in collection:
+                    components_metadata = collection.components_meta.components
+                    for index, component_meta in enumerate(components_metadata):
+                        long_name = component_meta.long_name
+                        if long_name == original_name:
+                            items_with_original_components.append((collection.name, "COLLECTION"))
 
+        if len(items_with_invalid_components) == 0:
+            layout.label(text="Nothing to see here , all good !")
+
+        #print("items_with_original_components", items_with_original_components)
         layout.separator()
         layout.separator()
-        layout.label(text="------------------Bulk actions: Rename/ Upgrade -------------------")
-        original_name = bpy.context.window_manager.blenvy.components.source_component_selector
-        target_name = bpy.context.window_manager.blenvy.components.target_component_selector
-
+        row = layout.row()
+        row.label(text="------------------Bulk actions: Rename / Fix / Upgrade -------------------")
+  
         row = layout.row()
         col = row.column()
         col.label(text="Component")
@@ -450,9 +469,10 @@ class BLENVY_PT_component_tools_panel(bpy.types.Panel):
         components_rename_progress = context.window_manager.components_rename_progress
         if components_rename_progress == -1.0:
             operator = col.operator("blenvy.component_rename", text="apply", icon="SHADERFX")
-            operator.target_items = json.dumps(items_with_invalid_components)
-            operator.target_name = target_name
-            col.enabled = registry_has_type_infos and original_name != "" and original_name != target_name
+            operator.original_name = original_name
+            operator.target_name = target_component_name
+            operator.target_items = json.dumps(items_with_original_components)
+            col.enabled = registry_has_type_infos and original_name != "" and original_name != target_component_name
         else:
             if hasattr(layout,"progress") : # only for Blender > 4.0
                 col.progress(factor = components_rename_progress, text=f"updating {components_rename_progress * 100.0:.2f}%")

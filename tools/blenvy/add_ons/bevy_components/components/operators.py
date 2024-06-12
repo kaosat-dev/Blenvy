@@ -4,7 +4,8 @@ import bpy
 from bpy_types import Operator
 from bpy.props import (StringProperty)
 
-from .metadata import add_component_from_custom_property, add_component_to_item, apply_propertyGroup_values_to_item_customProperties_for_component, copy_propertyGroup_values_to_another_item, get_bevy_component_value_by_long_name, get_bevy_components, is_bevy_component_in_item, remove_component_from_item, rename_component, toggle_component
+from .metadata import add_component_from_custom_property, add_component_to_item, apply_customProperty_values_to_item_propertyGroups, apply_propertyGroup_values_to_item_customProperties, apply_propertyGroup_values_to_item_customProperties_for_component, copy_propertyGroup_values_to_another_item, get_bevy_component_value_by_long_name, get_bevy_components, is_bevy_component_in_item, remove_component_from_item, rename_component, toggle_component
+
 from ..utils import get_selected_object_or_collection
 
 class BLENVY_OT_component_add(Operator):
@@ -226,7 +227,7 @@ class BLENVY_OT_component_rename_component(Operator):
 
     @classmethod
     def register(cls):
-        bpy.types.WindowManager.components_rename_progress = bpy.props.FloatProperty(default=-1.0) #bpy.props.PointerProperty(type=RenameHelper)
+        bpy.types.WindowManager.components_rename_progress = bpy.props.FloatProperty(default=-1.0)
 
     @classmethod
     def unregister(cls):
@@ -234,7 +235,6 @@ class BLENVY_OT_component_rename_component(Operator):
 
     def execute(self, context):
         registry = context.window_manager.components_registry
-        type_infos = registry.type_infos
         settings = context.window_manager.bevy_component_rename_helper
         original_name = settings.original_name if self.original_name == "" else self.original_name
         target_name = self.target_name
@@ -243,19 +243,29 @@ class BLENVY_OT_component_rename_component(Operator):
         print("renaming components: original name", original_name, "target_name", self.target_name, "targets", self.target_items)
         target_items = json.loads(self.target_items)
         errors = []
+        warnings = []
         total = len(target_items)
 
+
         if original_name != '' and target_name != '' and original_name != target_name and len(target_items) > 0:
-            for index, item_name in enumerate(target_items):
-                object = bpy.data.objects[item_name]
-                if object and original_name in get_bevy_components(object) or original_name in object:
+            for index, item_data in enumerate(target_items):
+                [item_name, item_type] = item_data
+                item = None
+                if item_type == "OBJECT":
+                    item = bpy.data.objects[item_name]
+                elif item_type == "COLLECTION":
+                    item = bpy.data.collections[item_name]
+
+                print("heloooo", item, get_bevy_components(item))
+
+                if item and original_name in get_bevy_components(item) or original_name in item:
                     try:
                         # attempt conversion
-                        rename_component(item=object, original_long_name=original_name, new_long_name=target_name)
+                        warnings += rename_component(registry=registry, item=item, original_long_name=original_name, new_long_name=target_name)
                     except Exception as error:
-                        if '__disable__update' in object:
-                            del object["__disable__update"] # make sure custom properties are updateable afterwards, even in the case of failure
-                        components_metadata = getattr(object, "components_meta", None)
+                        if '__disable__update' in item:
+                            del item["__disable__update"] # make sure custom properties are updateable afterwards, even in the case of failure
+                        components_metadata = getattr(item, "components_meta", None)
                         if components_metadata:
                             components_metadata = components_metadata.components
                             component_meta =  next(filter(lambda component: component["long_name"] == target_name, components_metadata), None)
@@ -263,8 +273,8 @@ class BLENVY_OT_component_rename_component(Operator):
                                 component_meta.invalid = True
                                 component_meta.invalid_details = "wrong custom property value, overwrite them by changing the values in the ui or change them & regenerate"
 
-                        errors.append( "wrong custom property values to generate target component: object: '" + object.name + "', error: " + str(error))
-                
+                        errors.append( "wrong custom property values to generate target component: object: '" + item.name + "', error: " + str(error))
+   
                 progress = index / total
                 context.window_manager.components_rename_progress = progress
 
@@ -276,7 +286,7 @@ class BLENVY_OT_component_rename_component(Operator):
         if len(errors) > 0:
             self.report({'ERROR'}, "Failed to rename component: Errors:" + str(errors))
         else: 
-            self.report({'INFO'}, "Sucessfully renamed component")
+            self.report({'INFO'}, f"Sucessfully renamed component for {total} items: Warnings: {str(warnings)}")
 
         #clear data after we are done
         self.original_name = ""
@@ -353,3 +363,142 @@ class BLENVY_OT_component_toggle_visibility(Operator):
         toggle_component(target, self.component_name)
         return {'FINISHED'}
 
+
+
+
+    
+class BLENVY_OT_components_refresh_custom_properties_all(Operator):
+    """Apply registry to ALL objects: update the custom property values of all objects based on their definition, if any"""
+    bl_idname = "object.refresh_custom_properties_all"
+    bl_label = "Apply Registry to all objects"
+    bl_options = {"UNDO"}
+
+    @classmethod
+    def register(cls):
+        bpy.types.WindowManager.custom_properties_from_components_progress_all = bpy.props.FloatProperty(default=-1.0)
+
+    @classmethod
+    def unregister(cls):
+        del bpy.types.WindowManager.custom_properties_from_components_progress_all
+
+    def execute(self, context):
+        print("apply registry to all")
+        #context.window_manager.components_registry.load_schema()
+        total = len(bpy.data.objects)
+
+        for index, object in enumerate(bpy.data.objects):
+            apply_propertyGroup_values_to_item_customProperties(object)
+            progress = index / total
+            context.window_manager.custom_properties_from_components_progress_all = progress
+            # now force refresh the ui
+            bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)
+        context.window_manager.custom_properties_from_components_progress_all = -1.0
+
+        return {'FINISHED'}
+    
+class BLENVY_OT_components_refresh_custom_properties_current(Operator):
+    """Apply registry to CURRENT object: update the custom property values of current object based on their definition, if any"""
+    bl_idname = "object.refresh_custom_properties_current"
+    bl_label = "Apply Registry to current object"
+    bl_options = {"UNDO"}
+
+    @classmethod
+    def register(cls):
+        bpy.types.WindowManager.custom_properties_from_components_progress = bpy.props.FloatProperty(default=-1.0)
+
+    @classmethod
+    def unregister(cls):
+        del bpy.types.WindowManager.custom_properties_from_components_progress
+
+    def execute(self, context):
+        print("apply registry to current object")
+        object = context.object
+        context.window_manager.custom_properties_from_components_progress = 0.5
+        # now force refresh the ui
+        bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)
+        apply_propertyGroup_values_to_item_customProperties(object)
+
+        context.window_manager.custom_properties_from_components_progress = -1.0
+        return {'FINISHED'}
+    
+
+class BLENVY_OT_components_refresh_propgroups_current(Operator):
+    """Update UI values from custom properties to CURRENT object"""
+    bl_idname = "object.refresh_ui_from_custom_properties_current"
+    bl_label = "Apply custom_properties to current object"
+    bl_options = {"UNDO"}
+
+    @classmethod
+    def register(cls):
+        bpy.types.WindowManager.components_from_custom_properties_progress = bpy.props.FloatProperty(default=-1.0)
+
+    @classmethod
+    def unregister(cls):
+        del bpy.types.WindowManager.components_from_custom_properties_progress
+
+    def execute(self, context):
+        print("apply custom properties to current object")
+        object = context.object
+        error = False
+        try:
+            apply_customProperty_values_to_item_propertyGroups(object)
+            progress = 0.5
+            context.window_manager.components_from_custom_properties_progress = progress
+            try:
+                # now force refresh the ui
+                bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)
+            except:pass # ony run in ui
+
+        except Exception as error_message:
+            del object["__disable__update"] # make sure custom properties are updateable afterwards, even in the case of failure
+            error = True
+            self.report({'ERROR'}, "Failed to update propertyGroup values from custom property: Error:" + str(error_message))
+        if not error:
+            self.report({'INFO'}, "Sucessfully generated UI values for custom properties for selected object")
+        context.window_manager.components_from_custom_properties_progress = -1.0
+
+        return {'FINISHED'}
+    
+
+class BLENVY_OT_components_refresh_propgroups_all(Operator):
+    """Update UI values from custom properties to ALL object"""
+    bl_idname = "object.refresh_ui_from_custom_properties_all"
+    bl_label = "Apply custom_properties to all objects"
+    bl_options = {"UNDO"}
+
+    @classmethod
+    def register(cls):
+        bpy.types.WindowManager.components_from_custom_properties_progress_all = bpy.props.FloatProperty(default=-1.0)
+
+    @classmethod
+    def unregister(cls):
+        del bpy.types.WindowManager.components_from_custom_properties_progress_all
+
+    def execute(self, context):
+        print("apply custom properties to all object")
+        bpy.context.window_manager.components_registry.disable_all_object_updates = True
+        errors = []
+        total = len(bpy.data.objects)
+
+        for index, object in enumerate(bpy.data.objects):
+          
+            try:
+                apply_customProperty_values_to_item_propertyGroups(object)
+            except Exception as error:
+                del object["__disable__update"] # make sure custom properties are updateable afterwards, even in the case of failure
+                errors.append( "object: '" + object.name + "', error: " + str(error))
+
+            progress = index / total
+            context.window_manager.components_from_custom_properties_progress_all = progress
+            # now force refresh the ui
+            bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)
+
+
+
+        if len(errors) > 0:
+            self.report({'ERROR'}, "Failed to update propertyGroup values from custom property: Errors:" + str(errors))
+        else: 
+            self.report({'INFO'}, "Sucessfully generated UI values for custom properties for all objects")
+        bpy.context.window_manager.components_registry.disable_all_object_updates = False
+        context.window_manager.components_from_custom_properties_progress_all = -1.0
+        return {'FINISHED'}

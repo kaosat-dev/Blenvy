@@ -51,11 +51,11 @@ Blueprints:
 
 Components:
     - [x] add support for adding components to collections
-    - [ ] upgrade all operators:
+    - [x] upgrade all operators:
         - [x] add 
         - [x] remove
         - [x] copy & paste
-        - [ ] BLENVY_OT_component_rename_component
+        - [x] BLENVY_OT_component_rename_component
         - [x] BLENVY_OT_component_fix
     - [ ] add handling for core::ops::Range<f32> & other ranges
     - [x] fix is_component_valid that is used in gltf_auto_export
@@ -64,21 +64,23 @@ Components:
         - [x] fix weird issue with missing "0" property when adding new entry in empty hashmap => happens only if the values for the "setter" have never been set
         - [ ] handle missing types in registry for keys & values
 
-    - [ ] Add correct upgrade handling from individual component to bevy_components
+    - [x] Add correct upgrade handling from individual component to bevy_components
     - [x] Settings handling:
         - [x] move saveable settings out to a settings file
         - [x] update save & load
         - [x] add handling of polling frequency & enabling
     - [x] move advanced tools to components tab
-    - [ ] remove most of the (bulk) advanced tools, too complex, too unclear (even for me !) and of limited use
+    - [x] remove most of the (bulk) advanced tools, too complex, too unclear (even for me !) and of limited use
         - component renaming should be kept, but perhaps simplified: 
             - if a renaming fails because the parameters are incompatible, nuke the old parameters
         - perhaps just add a display list of all NON component custom properties, so the user can find them easilly ?
-        - [ ] status "unregistered" is often false and misleading
+        - [x] status "unregistered" is often false and misleading
             -> see in registry ui "for custom_property in object.keys():"
+        
 
     - [x] overhaul / improve the component selector (with built in searching, etc)
     - [x] remove select_component_name_to_replace
+    - [ ] display of invalid components is not working ?
 
 
 General things to solve:
@@ -148,7 +150,7 @@ General issues:
 
 
 
-- [ ] overall cleanup
-    - [ ] object.add_bevy_component => blenvy.component_add
+- [x] overall cleanup
+    - [x] object.add_bevy_component => blenvy.component_add
 
 clear && pytest -svv --blender-template ../../testing/bevy_example/art/testing_library.blend --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration_prepare.py  && pytest -svv --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration.py

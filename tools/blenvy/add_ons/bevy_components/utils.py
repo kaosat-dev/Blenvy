@@ -1,7 +1,14 @@
 import bpy
 from .constants import HIDDEN_COMPONENTS
-from bpy.props import StringProperty
+from bpy.props import StringProperty, EnumProperty
 from bpy_types import Operator
+from blenvy.core.helpers_collections import (set_active_collection)
+
+def get_collection_scene(collection):
+    for scene in bpy.data.scenes:
+        if scene.user_of_id(collection):
+            return scene
+    return None
 
 #FIXME: does not work if object is hidden !!
 def get_selected_object_or_collection(context):
@@ -15,11 +22,22 @@ def get_selected_object_or_collection(context):
     return target
 
 
-class BLENVY_OT_object_select(Operator):
+class BLENVY_OT_item_select(Operator):
     """Select object by name"""
-    bl_idname = "object.select"
-    bl_label = "Select object"
+    bl_idname = "blenvy.select_item"
+    bl_label = "Select item (object or collection)"
     bl_options = {"UNDO"}
+
+
+    item_type : EnumProperty(
+        name="item type",
+        description="type of the item to select: object or collection",
+        items=(
+            ('OBJECT', "Object", ""),
+            ('COLLECTION', "Collection", ""),
+            ),
+        default="OBJECT"
+    ) # type: ignore
 
     target_name: StringProperty(
         name="target name",
@@ -28,13 +46,24 @@ class BLENVY_OT_object_select(Operator):
 
     def execute(self, context):
         if self.target_name:
-            object = bpy.data.objects[self.target_name]
-            scenes_of_object = list(object.users_scene)
-            if len(scenes_of_object) > 0:
-                bpy.ops.object.select_all(action='DESELECT')
-                bpy.context.window.scene = scenes_of_object[0]
-                object.select_set(True)    
-                bpy.context.view_layer.objects.active = object
+            if self.item_type == "OBJECT":
+                object = bpy.data.objects[self.target_name]
+                scenes_of_object = list(object.users_scene)
+                if len(scenes_of_object) > 0:
+                    bpy.ops.object.select_all(action='DESELECT')
+                    bpy.context.window.scene = scenes_of_object[0]
+                    object.select_set(True)    
+                    bpy.context.view_layer.objects.active = object
+            elif self.item_type == "COLLECTION":
+                collection = bpy.data.collections[self.target_name]
+                scene_of_collection = get_collection_scene(collection)
+                if scene_of_collection is not None:
+                    bpy.ops.object.select_all(action='DESELECT')
+                    bpy.context.window.scene = scene_of_collection
+                    bpy.context.view_layer.objects.active = None
+                    set_active_collection(bpy.context.window.scene, collection.name)
+
+
         return {'FINISHED'}
     
 
@@ -45,7 +74,6 @@ def get_selection_type(selection):
         return 'Collection'
 
 def add_component_to_ui_list(self, context, _):
-        print("add components to ui_list")
         items = []
         type_infos = context.window_manager.components_registry.type_infos
         for long_name in type_infos.keys():

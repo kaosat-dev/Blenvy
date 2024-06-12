@@ -168,6 +168,7 @@ def add_metadata_to_components_without_metadata(item):
                     
 # adds a component to an item (including metadata) using the provided component definition & optional value
 def add_component_to_item(item, component_definition, value=None):
+    warnings = []
     cleanup_invalid_metadata(item)
     if item is not None:
         # print("add_component_to_item", component_definition)
@@ -182,10 +183,15 @@ def add_component_to_item(item, component_definition, value=None):
             value = property_group_value_to_custom_property_value(propertyGroup, definition, registry, None)
         else: # we have provided a value, that is a raw , custom property value, to set the value of the propertyGroup
             item["__disable__update"] = True # disable update callback while we set the values of the propertyGroup "tree" (as a propertyGroup can contain other propertyGroups) 
-            property_group_value_from_custom_property_value(propertyGroup, definition, registry, value)
+            try:
+                property_group_value_from_custom_property_value(propertyGroup, definition, registry, value)
+            except:
+                # if we failed to get the value, we default... to the default
+                value = property_group_value_to_custom_property_value(propertyGroup, definition, registry, None)
+                warnings.append(f"failed to get the initial value of {item.name}, using default value")
             del item["__disable__update"]
-
         upsert_bevy_component(item, long_name, value)
+    return warnings
        
 def upsert_component_in_item(item, long_name, registry):
     # print("upsert_component_in_item", item, "component name", component_name)
@@ -338,17 +344,17 @@ def add_component_from_custom_property(item):
     add_metadata_to_components_without_metadata(item)
     apply_customProperty_values_to_item_propertyGroups(item)
 
-def rename_component(item, original_long_name, new_long_name):
-    registry = bpy.context.window_manager.components_registry
+def rename_component(registry, item, original_long_name, new_long_name):
     type_infos = registry.type_infos
     component_definition = type_infos[new_long_name]
 
     component_ron_value = get_bevy_component_value_by_long_name(item=item, long_name=original_long_name)
     if component_ron_value is None and original_long_name in item:
         component_ron_value = item[original_long_name]
-
+    
     remove_component_from_item(item, original_long_name)
-    add_component_to_item(item, component_definition, component_ron_value)
+    print("remove & rename")
+    return add_component_to_item(item, component_definition, component_ron_value)
 
 
 def toggle_component(item, component_name):

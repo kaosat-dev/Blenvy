@@ -17,16 +17,16 @@ from bpy.props import (StringProperty)
 
 
 # components management 
-from .add_ons.bevy_components.components.operators import BLENVY_OT_component_copy, BLENVY_OT_component_fix, BLENVY_OT_component_rename_component, BLENVY_OT_component_remove_from_all_items, BLENVY_OT_component_remove, BLENVY_OT_component_from_custom_property, BLENVY_OT_component_paste, BLENVY_OT_component_add, RenameHelper, BLENVY_OT_component_toggle_visibility
+from .add_ons.bevy_components.components.operators import BLENVY_OT_component_copy, BLENVY_OT_component_fix, BLENVY_OT_component_rename_component, BLENVY_OT_component_remove_from_all_items, BLENVY_OT_component_remove, BLENVY_OT_component_from_custom_property, BLENVY_OT_component_paste, BLENVY_OT_component_add, RenameHelper, BLENVY_OT_component_toggle_visibility, BLENVY_OT_components_refresh_custom_properties_all, BLENVY_OT_components_refresh_custom_properties_current, BLENVY_OT_components_refresh_propgroups_all, BLENVY_OT_components_refresh_propgroups_current
 from .add_ons.bevy_components.registry.registry import ComponentsRegistry,MissingBevyType
-from .add_ons.bevy_components.registry.operators import (BLENVY_OT_components_refresh_custom_properties_all, BLENVY_OT_components_refresh_custom_properties_current, BLENVY_OT_components_refresh_propgroups_all, BLENVY_OT_components_refresh_propgroups_current, BLENVY_OT_components_registry_reload, BLENVY_OT_components_registry_browse_schema)
+from .add_ons.bevy_components.registry.operators import (BLENVY_OT_components_registry_reload, BLENVY_OT_components_registry_browse_schema)
 from .add_ons.bevy_components.registry.ui import (BLENVY_PT_components_missing_types_panel, BLENVY_UL_components_missing_types)
 from .add_ons.bevy_components.components.metadata import (ComponentMetadata, ComponentsMeta)
 from .add_ons.bevy_components.components.lists import BLENVY_OT_component_list_actions, BLENVY_OT_component_list_add_item, BLENVY_OT_component_list_remove_item, BLENVY_OT_component_list_select_item
 from .add_ons.bevy_components.components.maps import BLENVY_OT_component_map_actions
 from .add_ons.bevy_components.components.ui import BLENVY_PT_components_panel, BLENVY_PT_component_tools_panel
 from .add_ons.bevy_components.settings import ComponentsSettings
-from .add_ons.bevy_components.utils import BLENVY_OT_object_select
+from .add_ons.bevy_components.utils import BLENVY_OT_item_select
 
 # auto export
 from .add_ons.auto_export import gltf_post_export_callback
@@ -90,11 +90,10 @@ classes = [
     BLENVY_OT_components_registry_reload,
     BLENVY_OT_components_refresh_custom_properties_all,
     BLENVY_OT_components_refresh_custom_properties_current,
-
     BLENVY_OT_components_refresh_propgroups_all,
     BLENVY_OT_components_refresh_propgroups_current,
 
-    BLENVY_OT_object_select,
+    BLENVY_OT_item_select,
     
     BLENVY_PT_components_panel,
     BLENVY_PT_component_tools_panel,
