@@ -4,12 +4,13 @@ from ..assets.asset_helpers import get_generated_assets, get_user_assets
 from ..assets.ui import draw_assets
 from ..blueprints.ui import draw_blueprints
 
-class Blenvy_levels(bpy.types.Panel):
+class BLENVY_PT_levels_panel(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = ""
     bl_parent_id = "BLENVY_PT_SidePanel"
     bl_options = {'DEFAULT_CLOSED','HIDE_HEADER'}
+    
     @classmethod
     def poll(cls, context):
         return context.window_manager.blenvy.mode == 'LEVELS'
@@ -19,7 +20,7 @@ class Blenvy_levels(bpy.types.Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
         blenvy = context.window_manager.blenvy
-        layout.operator(operator="bevyassets.test", text="Generate")
+        layout.operator(operator="blenvy.assets_generate_files", text="Generate")
 
         asset_registry = context.window_manager.assets_registry
         blueprints_registry = context.window_manager.blueprints_registry
@@ -31,7 +32,7 @@ class Blenvy_levels(bpy.types.Panel):
             if header:
                 header.label(text=scene.name)#, icon="HIDE_OFF")
                 header.prop(scene, "always_export")
-                select_level = header.operator(operator="level.select", text="", icon="RESTRICT_SELECT_OFF")
+                select_level = header.operator(operator="blenvy.level_select", text="", icon="RESTRICT_SELECT_OFF")
                 select_level.level_name = scene.name
 
             if panel:

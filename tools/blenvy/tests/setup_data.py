@@ -15,7 +15,7 @@ def setup_data(request):
 
         type_infos = registry.type_infos
         object = bpy.context.object
-        remove_component_operator = bpy.ops.object.remove_bevy_component
+        remove_component_operator = bpy.ops.blenvy.component_remove
 
         for long_name in type_infos:
             definition = type_infos[long_name]

@@ -4,9 +4,9 @@ from bpy.props import (StringProperty, EnumProperty, PointerProperty, FloatVecto
 
 from ..propGroups.conversions_from_prop_group import property_group_value_to_custom_property_value
 
-class GENERIC_MAP_OT_actions(Operator):
+class BLENVY_OT_component_map_actions(Operator):
     """Move items up and down, add and remove"""
-    bl_idname = "generic_map.map_action"
+    bl_idname = "blenvy.component_map_actions"
     bl_label = "Map Actions"
     bl_description = "Move items up and down, add and remove"
     bl_options = {'REGISTER', 'UNDO'}

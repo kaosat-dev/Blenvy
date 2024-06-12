@@ -2,9 +2,9 @@ import json
 from bpy_types import Operator, UIList
 from bpy.props import (StringProperty, EnumProperty, PointerProperty, FloatVectorProperty, IntProperty)
 
-class Generic_LIST_OT_AddItem(Operator): 
+class BLENVY_OT_component_list_add_item(Operator): 
     """Add a new item to the list.""" 
-    bl_idname = "generic_list.add_item" 
+    bl_idname = "blenvy.component_list_add_item" 
     bl_label = "Add a new item" 
 
     property_group_path: StringProperty(
@@ -39,9 +39,9 @@ class Generic_LIST_OT_AddItem(Operator):
         return{'FINISHED'}
     
 
-class Generic_LIST_OT_RemoveItem(Operator): 
+class BLENVY_OT_component_list_remove_item(Operator): 
     """Remove an item to the list.""" 
-    bl_idname = "generic_list.remove_item" 
+    bl_idname = "blenvy.component_list_remove_item" 
     bl_label = "Remove selected item" 
 
     property_group_path: StringProperty(
@@ -72,9 +72,9 @@ class Generic_LIST_OT_RemoveItem(Operator):
         return{'FINISHED'}
 
 
-class Generic_LIST_OT_SelectItem(Operator): 
+class BLENVY_OT_component_list_select_item(Operator): 
     """Remove an item to the list.""" 
-    bl_idname = "generic_list.select_item" 
+    bl_idname = "blenvy.component_list_select_item" 
     bl_label = "select an item" 
 
 
@@ -109,9 +109,9 @@ class Generic_LIST_OT_SelectItem(Operator):
         return{'FINISHED'}
 
 
-class GENERIC_LIST_OT_actions(Operator):
+class BLENVY_OT_component_list_actions(Operator):
     """Move items up and down, add and remove"""
-    bl_idname = "generic_list.list_action"
+    bl_idname = "blenvy.component_list_actions"
     bl_label = "List Actions"
     bl_description = "Move items up and down, add and remove"
     bl_options = {'REGISTER', 'UNDO'}

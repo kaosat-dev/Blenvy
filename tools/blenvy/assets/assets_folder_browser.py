@@ -4,11 +4,11 @@ import os
 from bpy_extras.io_utils import ImportHelper
 from bpy.types import Operator
 
-from ..path_helpers import absolute_path_from_blend_file    
+from ..core.path_helpers import absolute_path_from_blend_file    
 
-class OT_OpenAssetsFolderBrowser(Operator, ImportHelper):
+class BLENVY_OT_assets_paths_browse(Operator, ImportHelper):
     """Assets folder's browser"""
-    bl_idname = "generic.open_folderbrowser" 
+    bl_idname = "blenvy.assets_paths_browse" 
     bl_label = "Select folder" 
 
     # Define this to tell 'fileselect_add' that we want a directoy

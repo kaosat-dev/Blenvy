@@ -1,9 +1,9 @@
 import bpy
 from bpy.types import Operator
 
-class SCENES_LIST_OT_actions(Operator):
+class BLENVY_OT_scenes_list_actions(Operator):
     """Move items up and down, add and remove"""
-    bl_idname = "scene_list.list_action"
+    bl_idname = "blenvy.scenes_list_actions"
     bl_label = "List Actions"
     bl_description = "Move items up and down, add and remove"
     bl_options = {'REGISTER'}

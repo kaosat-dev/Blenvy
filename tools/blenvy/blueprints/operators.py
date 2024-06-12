@@ -4,9 +4,9 @@ from bpy_types import (Operator)
 from bpy.props import (StringProperty)
 from blenvy.core.helpers_collections import set_active_collection
 
-class OT_select_blueprint(Operator):
+class BLENVY_OT_blueprint_select(Operator):
     """Select blueprint """
-    bl_idname = "blueprint.select"
+    bl_idname = "blenvy.blueprint_select"
     bl_label = "Select blueprint"
     bl_options = {"UNDO"}
 

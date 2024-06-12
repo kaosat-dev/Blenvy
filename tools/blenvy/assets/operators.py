@@ -6,13 +6,11 @@ from bpy.props import (BoolProperty, StringProperty, EnumProperty)
 
 from .asset_helpers import does_asset_exist, get_user_assets, remove_asset, upsert_asset
 from .assets_scan import get_main_scene_assets_tree
-
 from ..core.path_helpers import absolute_path_from_blend_file
-from ..settings import load_settings
 
-class OT_add_bevy_asset(Operator):
+class BLENVY_OT_assets_add(Operator):
     """Add asset"""
-    bl_idname = "bevyassets.add"
+    bl_idname = "blenvy.assets_add"
     bl_label = "Add bevy asset"
     bl_options = {"UNDO"}
 
@@ -79,9 +77,9 @@ class OT_add_bevy_asset(Operator):
         return {'FINISHED'}
     
 
-class OT_remove_bevy_asset(Operator):
+class BLENVY_OT_assets_remove(Operator):
     """Remove asset"""
-    bl_idname = "bevyassets.remove"
+    bl_idname = "blenvy.assets_remove"
     bl_label = "remove bevy asset"
     bl_options = {"UNDO"}
 
@@ -132,9 +130,9 @@ import os
 from bpy_extras.io_utils import ImportHelper
 from pathlib import Path
 
-class OT_Add_asset_filebrowser(Operator, ImportHelper):
+class BLENVY_OT_assets_browse(Operator, ImportHelper):
     """Browse for asset files"""
-    bl_idname = "asset.open_filebrowser" 
+    bl_idname = "blenvy.assets_open_filebrowser" 
     bl_label = "Select asset file" 
 
     # Define this to tell 'fileselect_add' that we want a directoy
@@ -200,9 +198,9 @@ def write_ron_assets_file(level_name, assets_hierarchy, internal_only=False, lev
         assets_file.writelines(formated_assets)
         assets_file.write("\n})")
 
-class OT_test_bevy_assets(Operator):
+class BLENVY_OT_assets_generate_files(Operator):
     """Test assets"""
-    bl_idname = "bevyassets.test"
+    bl_idname = "blenvy.assets_generate_files"
     bl_label = "test bevy assets"
     bl_options = {"UNDO"}
 

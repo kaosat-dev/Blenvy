@@ -196,7 +196,7 @@ def test_remove_components(setup_data):
 
     # now test component removal
     errors.clear()
-    remove_component_operator = bpy.ops.object.remove_bevy_component
+    remove_component_operator = bpy.ops.blenvy.component_remove
     for long_name in added_components:
         try:
             remove_component_operator(component_name=long_name)
@@ -225,7 +225,7 @@ def test_copy_paste_components(setup_data):
 
     setattr(propertyGroup, propertyGroup.field_names[0], 25.0)
 
-    copy_component_operator = bpy.ops.object.copy_bevy_component
+    copy_component_operator = bpy.ops.blenvy.component_copy
     copy_component_operator(source_component_name=long_name, source_item_name=object.name)
 
     # ---------------------------------------
@@ -240,7 +240,7 @@ def test_copy_paste_components(setup_data):
     # first check that there is no component currently
     assert component_meta == None
 
-    paste_component_operator = bpy.ops.object.paste_bevy_component
+    paste_component_operator = bpy.ops.blenvy.component_paste
     paste_component_operator()
 
     target_components_metadata = new_cube.components_meta.components

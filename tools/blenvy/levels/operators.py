@@ -3,9 +3,9 @@ import bpy
 from bpy_types import (Operator)
 from bpy.props import (StringProperty)
 
-class OT_select_level(Operator):
+class BLENVY_OT_level_select(Operator):
     """Select level """
-    bl_idname = "level.select"
+    bl_idname = "blenvy.level_select"
     bl_label = "Select level"
     bl_options = {"UNDO"}
 
@@ -20,7 +20,6 @@ class OT_select_level(Operator):
             if scene:
                 # bpy.ops.object.select_all(action='DESELECT')
                 bpy.context.window.scene = scene
-              
 
         return {'FINISHED'}
     

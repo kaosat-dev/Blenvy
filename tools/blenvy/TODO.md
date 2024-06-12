@@ -55,8 +55,8 @@ Components:
         - [x] add 
         - [x] remove
         - [x] copy & paste
-        - [ ] OT_rename_component
-        - [ ] Fix_Component_Operator
+        - [ ] BLENVY_OT_component_rename_component
+        - [x] BLENVY_OT_component_fix
     - [ ] add handling for core::ops::Range<f32> & other ranges
     - [x] fix is_component_valid that is used in gltf_auto_export
     - Hashmap Support
@@ -78,7 +78,7 @@ Components:
             -> see in registry ui "for custom_property in object.keys():"
 
     - [x] overhaul / improve the component selector (with built in searching, etc)
-    - [ ] remove select_component_name_to_replace
+    - [x] remove select_component_name_to_replace
 
 
 General things to solve:
@@ -138,5 +138,17 @@ General issues:
     - [ ] replace all references to the old 2 add-ons with those to Blenvy
 - [ ] rename repo to "Blenvy"
 
+
+- [ ] simplify testing example:
+    - [ ] remove use of rapier physics (or even the whole common boilerplate ?)
+    - [ ] remove/replace bevy editor pls with some native ui to display hierarchies
+    - [ ] switch to bevy rc2
+
+
+
+
+
+- [ ] overall cleanup
+    - [ ] object.add_bevy_component => blenvy.component_add
 
 clear && pytest -svv --blender-template ../../testing/bevy_example/art/testing_library.blend --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration_prepare.py  && pytest -svv --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration.py

@@ -7,9 +7,9 @@ from bpy.props import (StringProperty)
 from .metadata import add_component_from_custom_property, add_component_to_item, apply_propertyGroup_values_to_item_customProperties_for_component, copy_propertyGroup_values_to_another_item, get_bevy_component_value_by_long_name, get_bevy_components, is_bevy_component_in_item, remove_component_from_item, rename_component, toggle_component
 from ..utils import get_selected_object_or_collection
 
-class AddComponentOperator(Operator):
+class BLENVY_OT_component_add(Operator):
     """Add Bevy component to object/collection"""
-    bl_idname = "object.add_bevy_component"
+    bl_idname = "blenvy.component_add"
     bl_label = "Add component to object/collection Operator"
     bl_options = {"UNDO"}
 
@@ -30,9 +30,9 @@ class AddComponentOperator(Operator):
 
         return {'FINISHED'}
 
-class CopyComponentOperator(Operator):
+class BLENVY_OT_component_copy(Operator):
     """Copy Bevy component from object"""
-    bl_idname = "object.copy_bevy_component"
+    bl_idname = "blenvy.component_copy"
     bl_label = "Copy component Operator"
     bl_options = {"UNDO"}
 
@@ -75,10 +75,10 @@ class CopyComponentOperator(Operator):
         return {'FINISHED'}
     
 
-class PasteComponentOperator(Operator):
+class BLENVY_OT_component_paste(Operator):
     """Paste Bevy component to object"""
-    bl_idname = "object.paste_bevy_component"
-    bl_label = "Paste component to object Operator"
+    bl_idname = "blenvy.component_paste"
+    bl_label = "Paste component to item Operator"
     bl_options = {"UNDO"}
 
     def execute(self, context):
@@ -104,9 +104,9 @@ class PasteComponentOperator(Operator):
 
         return {'FINISHED'}
     
-class RemoveComponentOperator(Operator):
+class BLENVY_OT_component_remove(Operator):
     """Remove Bevy component from object/collection"""
-    bl_idname = "object.remove_bevy_component"
+    bl_idname = "blenvy.component_remove"
     bl_label = "Remove component from object/collection Operator"
     bl_options = {"UNDO"}
 
@@ -149,9 +149,9 @@ class RemoveComponentOperator(Operator):
         return {'FINISHED'}
 
 
-class RemoveComponentFromAllItemsOperator(Operator):
+class BLENVY_OT_component_remove_from_all_items(Operator):
     """Remove Bevy component from all items"""
-    bl_idname = "object.remove_bevy_component_all"
+    bl_idname = "blenvy.component_remove_from_all_items"
     bl_label = "Remove component from all items Operator"
     bl_options = {"UNDO"}
 
@@ -210,9 +210,9 @@ class RenameHelper(bpy.types.PropertyGroup):
         # remove handlers & co
         del bpy.types.WindowManager.bevy_component_rename_helper
 
-class OT_rename_component(Operator):
+class BLENVY_OT_component_rename_component(Operator):
     """Rename Bevy component"""
-    bl_idname = "object.rename_bevy_component"
+    bl_idname = "blenvy.component_rename"
     bl_label = "rename component"
     bl_options = {"UNDO"}
 
@@ -286,9 +286,9 @@ class OT_rename_component(Operator):
         return {'FINISHED'}
 
 
-class GenerateComponent_From_custom_property_Operator(Operator):
+class BLENVY_OT_component_from_custom_property(Operator):
     """Generate Bevy components from custom property"""
-    bl_idname = "object.generate_bevy_component_from_custom_property"
+    bl_idname = "blenvy.component_from_custom_property"
     bl_label = "Generate component from custom_property Operator"
     bl_options = {"UNDO"}
 
@@ -312,9 +312,9 @@ class GenerateComponent_From_custom_property_Operator(Operator):
         return {'FINISHED'}
 
 
-class Fix_Component_Operator(Operator):
+class BLENVY_OT_component_fix(Operator):
     """Attempt to fix Bevy component"""
-    bl_idname = "object.fix_bevy_component"
+    bl_idname = "blenvy.component_fix"
     bl_label = "Fix component (attempts to)"
     bl_options = {"UNDO"}
 
@@ -337,9 +337,9 @@ class Fix_Component_Operator(Operator):
             self.report({'INFO'}, "Sucessfully fixed component (please double check component & its custom property value)")
         return {'FINISHED'}
 
-class Toggle_ComponentVisibility(Operator):
+class BLENVY_OT_component_toggle_visibility(Operator):
     """Toggle Bevy component's visibility"""
-    bl_idname = "object.toggle_bevy_component_visibility"
+    bl_idname = "blenvy.component_toggle_visibility"
     bl_label = "Toggle component visibility"
     bl_options = {"UNDO"}
 

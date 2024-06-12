@@ -199,7 +199,7 @@ UI:
 
 - [x] remove metadata when deleting components
 - [x] add try catch around custom_prop =>  propGroup
-- [x] enhance the GenerateComponent_From_custom_property_Operator to use the new system to actually generate the stuff
+- [x] enhance the BLENVY_OT_component_from_custom_property to use the new system to actually generate the stuff
 
 - coherence in operators: 
     - component_name vs component_type

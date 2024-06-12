@@ -26,12 +26,12 @@ def draw_assets(layout, name, title, asset_registry, target_type, target_name, e
 
         row.prop(asset_registry, "asset_name_selector", text="")
         row.label(text=asset_registry.asset_path_selector)
-        row.operator(operator="asset.open_filebrowser", text="", icon="FILE_FOLDER")
+        row.operator(operator="blenvy.assets_open_filebrowser", text="", icon="FILE_FOLDER")
 
         add_asset_layout = row.column()
         add_asset_layout.enabled = not add_possible
 
-        add_asset = add_asset_layout.operator(operator="bevyassets.add", text="", icon="ADD")
+        add_asset = add_asset_layout.operator(operator="blenvy.assets_add", text="", icon="ADD")
         add_asset.target_type = target_type
         add_asset.target_name = target_name
         add_asset.asset_name = asset_registry.asset_name_selector
@@ -55,15 +55,15 @@ def draw_assets(layout, name, title, asset_registry, target_type, target_name, e
             row.label(icon="ASSET_MANAGER")
             row.prop(asset, "name", text="")
             row.label(text=asset.path)
-            asset_selector = row.operator(operator="asset.open_filebrowser", text="", icon="FILE_FOLDER")
+            asset_selector = row.operator(operator="blenvy.assets_open_filebrowser", text="", icon="FILE_FOLDER")
 
-            remove_asset = row.operator(operator="bevyassets.remove", text="", icon="TRASH")
+            remove_asset = row.operator(operator="blenvy.assets_remove", text="", icon="TRASH")
             remove_asset.target_type = target_type
             remove_asset.target_name = target_name
             remove_asset.asset_path = asset.path
     return panel
 
-class Blenvy_assets(bpy.types.Panel):
+class BLENVY_PT_assets_panel(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = ""
@@ -79,7 +79,7 @@ class Blenvy_assets(bpy.types.Panel):
         layout.use_property_decorate = False  # No animation.
         blenvy = context.window_manager.blenvy
 
-        layout.operator(operator="bevyassets.test")
+        layout.operator(operator="blenvy.assets_generate_files")
 
         asset_registry = context.window_manager.assets_registry
         blueprints_registry = context.window_manager.blueprints_registry

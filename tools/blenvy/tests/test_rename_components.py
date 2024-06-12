@@ -27,7 +27,7 @@ def test_rename_component_single_unit_struct(setup_data):
     registry.schema_path = setup_data["components_schemaPath"]
     bpy.ops.object.reload_registry()
 
-    rename_component_operator = bpy.ops.object.rename_bevy_component
+    rename_component_operator = bpy.ops.blenvy.component_rename
     object = bpy.context.object
 
 
@@ -50,7 +50,7 @@ def test_rename_component_single_complex_struct(setup_data):
     registry.schema_path = setup_data["components_schemaPath"]
     bpy.ops.object.reload_registry()
 
-    rename_component_operator = bpy.ops.object.rename_bevy_component
+    rename_component_operator = bpy.ops.blenvy.component_rename
     object = bpy.context.object
 
 
@@ -73,7 +73,7 @@ def test_rename_component_bulk(setup_data):
     registry.schema_path = setup_data["components_schemaPath"]
     bpy.ops.object.reload_registry()
 
-    rename_component_operator = bpy.ops.object.rename_bevy_component
+    rename_component_operator = bpy.ops.blenvy.component_rename
 
     source_component_name = "bevy_example::test_components::SomeOldUnitStruct"
     target_component_name = "bevy_example::test_components::UnitTest"
@@ -98,7 +98,7 @@ def test_rename_component_single_error_handling(setup_data):
     registry.schema_path = setup_data["components_schemaPath"]
     bpy.ops.object.reload_registry()
 
-    rename_component_operator = bpy.ops.object.rename_bevy_component
+    rename_component_operator = bpy.ops.blenvy.component_rename
     object = bpy.context.object
 
 
@@ -128,7 +128,7 @@ def test_rename_component_single_error_handling_clean_errors(setup_data):
     registry.schema_path = setup_data["components_schemaPath"]
     bpy.ops.object.reload_registry()
 
-    rename_component_operator = bpy.ops.object.rename_bevy_component
+    rename_component_operator = bpy.ops.blenvy.component_rename
     object = bpy.context.object
 
 

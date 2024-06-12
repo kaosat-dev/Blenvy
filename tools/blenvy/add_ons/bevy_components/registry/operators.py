@@ -9,9 +9,9 @@ from blenvy.settings import upsert_settings
 from ..components.metadata import apply_customProperty_values_to_item_propertyGroups, apply_propertyGroup_values_to_item_customProperties, ensure_metadata_for_all_items
 from ..propGroups.prop_groups import generate_propertyGroups_for_components
 
-class ReloadRegistryOperator(Operator):
+class BLENVY_OT_components_registry_reload(Operator):
     """Reloads registry (schema file) from disk, generates propertyGroups for components & ensures all objects have metadata """
-    bl_idname = "blenvy.reload_components_registry"
+    bl_idname = "blenvy.components_registry_reload"
     bl_label = "Reload Registry"
     bl_options = {"UNDO"}
 
@@ -37,7 +37,7 @@ class ReloadRegistryOperator(Operator):
 
         return {'FINISHED'}
     
-class COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL(Operator):
+class BLENVY_OT_components_refresh_custom_properties_all(Operator):
     """Apply registry to ALL objects: update the custom property values of all objects based on their definition, if any"""
     bl_idname = "object.refresh_custom_properties_all"
     bl_label = "Apply Registry to all objects"
@@ -66,7 +66,7 @@ class COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_ALL(Operator):
 
         return {'FINISHED'}
     
-class COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT(Operator):
+class BLENVY_OT_components_refresh_custom_properties_current(Operator):
     """Apply registry to CURRENT object: update the custom property values of current object based on their definition, if any"""
     bl_idname = "object.refresh_custom_properties_current"
     bl_label = "Apply Registry to current object"
@@ -92,7 +92,7 @@ class COMPONENTS_OT_REFRESH_CUSTOM_PROPERTIES_CURRENT(Operator):
         return {'FINISHED'}
     
 
-class COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT(Operator):
+class BLENVY_OT_components_refresh_propgroups_current(Operator):
     """Update UI values from custom properties to CURRENT object"""
     bl_idname = "object.refresh_ui_from_custom_properties_current"
     bl_label = "Apply custom_properties to current object"
@@ -130,7 +130,7 @@ class COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_CURRENT(Operator):
         return {'FINISHED'}
     
 
-class COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL(Operator):
+class BLENVY_OT_components_refresh_propgroups_all(Operator):
     """Update UI values from custom properties to ALL object"""
     bl_idname = "object.refresh_ui_from_custom_properties_all"
     bl_label = "Apply custom_properties to all objects"
@@ -173,9 +173,9 @@ class COMPONENTS_OT_REFRESH_PROPGROUPS_FROM_CUSTOM_PROPERTIES_ALL(Operator):
         context.window_manager.components_from_custom_properties_progress_all = -1.0
         return {'FINISHED'}
 
-class OT_OpenSchemaFileBrowser(Operator, ImportHelper):
+class BLENVY_OT_components_registry_browse_schema(Operator, ImportHelper):
     """Browse for registry json file"""
-    bl_idname = "blenvy.open_schemafilebrowser" 
+    bl_idname = "blenvy.components_registry_browse_schema" 
     bl_label = "Open the file browser" 
 
     filter_glob: StringProperty( 
@@ -195,43 +195,5 @@ class OT_OpenSchemaFileBrowser(Operator, ImportHelper):
         blenvy.components.schema_path = relative_path
         upsert_settings(blenvy.components.settings_save_path, {"schema_path": relative_path})
         
-        return {'FINISHED'}
-    
-
-class OT_select_object(Operator):
-    """Select object by name"""
-    bl_idname = "object.select"
-    bl_label = "Select object"
-    bl_options = {"UNDO"}
-
-    target_name: StringProperty(
-        name="target name",
-        description="target to select's name ",
-    ) # type: ignore
-
-    def execute(self, context):
-        if self.target_name:
-            object = bpy.data.objects[self.target_name]
-            scenes_of_object = list(object.users_scene)
-            if len(scenes_of_object) > 0:
-                bpy.ops.object.select_all(action='DESELECT')
-                bpy.context.window.scene = scenes_of_object[0]
-                object.select_set(True)    
-                bpy.context.view_layer.objects.active = object
-        return {'FINISHED'}
-    
-class OT_select_component_name_to_replace(Operator):
-    """Select component name to replace"""
-    bl_idname = "object.select_component_name_to_replace"
-    bl_label = "Select component name for bulk replace"
-    bl_options = {"UNDO"}
-
-    component_name: StringProperty(
-        name="component_name",
-        description="component name to replace",
-    ) # type: ignore
-
-    def execute(self, context):
-        context.window_manager.bevy_component_rename_helper.original_name = self.component_name
         return {'FINISHED'}
     

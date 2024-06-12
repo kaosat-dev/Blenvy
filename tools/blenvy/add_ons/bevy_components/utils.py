@@ -1,5 +1,7 @@
 import bpy
 from .constants import HIDDEN_COMPONENTS
+from bpy.props import StringProperty
+from bpy_types import Operator
 
 #FIXME: does not work if object is hidden !!
 def get_selected_object_or_collection(context):
@@ -11,6 +13,30 @@ def get_selected_object_or_collection(context):
     elif collection is not None:
         target = collection
     return target
+
+
+class BLENVY_OT_object_select(Operator):
+    """Select object by name"""
+    bl_idname = "object.select"
+    bl_label = "Select object"
+    bl_options = {"UNDO"}
+
+    target_name: StringProperty(
+        name="target name",
+        description="target to select's name ",
+    ) # type: ignore
+
+    def execute(self, context):
+        if self.target_name:
+            object = bpy.data.objects[self.target_name]
+            scenes_of_object = list(object.users_scene)
+            if len(scenes_of_object) > 0:
+                bpy.ops.object.select_all(action='DESELECT')
+                bpy.context.window.scene = scenes_of_object[0]
+                object.select_set(True)    
+                bpy.context.view_layer.objects.active = object
+        return {'FINISHED'}
+    
 
 def get_selection_type(selection):
     if isinstance(selection, bpy.types.Object):

@@ -5,10 +5,10 @@ def draw_settings_ui(layout, component_settings):
     col.enabled = False
     col.prop(component_settings, "schema_path", text="Registry Schema path")
     col = row.column()
-    col.operator(operator="blenvy.open_schemafilebrowser", text="Browse for registry schema file (json)")
+    col.operator(operator="blenvy.components_registry_browse_schema", text="Browse for registry schema file (json)")
 
     layout.separator()
-    layout.operator(operator="blenvy.reload_components_registry", text="reload registry" , icon="FILE_REFRESH")
+    layout.operator(operator="blenvy.components_registry_reload", text="reload registry" , icon="FILE_REFRESH")
 
     layout.separator()
     row = layout.row()

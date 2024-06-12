@@ -26,7 +26,7 @@ def draw_blueprints(layout, name, title, generated_assets):
             if sub_panel:
                 sub_panel.label(text="         some stuff")
 
-class GLTF_PT_auto_export_blueprints_list(bpy.types.Panel):
+class BLENVY_PT_blueprints_panel(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "Blueprints"
@@ -54,7 +54,7 @@ class GLTF_PT_auto_export_blueprints_list(bpy.types.Panel):
                 header.prop(blueprint.collection, "always_export")
                 
                 if blueprint.local:
-                    select_blueprint = header.operator(operator="blueprint.select", text="", icon="RESTRICT_SELECT_OFF")
+                    select_blueprint = header.operator(operator="blenvy.blueprint_select", text="", icon="RESTRICT_SELECT_OFF")
                     if blueprint.collection and blueprint.collection.name:
                         select_blueprint.blueprint_collection_name = blueprint.collection.name
                     select_blueprint.blueprint_scene_name = blueprint.scene.name

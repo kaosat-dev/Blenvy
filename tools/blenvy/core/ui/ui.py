@@ -17,7 +17,7 @@ def draw_folder_browser(layout, label, prop_origin, target_property):
     col.enabled = False
     col.prop(prop_origin, target_property, text="")
 
-    folder_selector = row.operator("generic.open_folderbrowser", icon="FILE_FOLDER", text="")
+    folder_selector = row.operator("blenvy.assets_paths_browse", icon="FILE_FOLDER", text="")
     folder_selector.target_property = target_property #"project_root_path"
 
 # side panel
@@ -109,7 +109,7 @@ class BLENVY_PT_SidePanel(bpy.types.Panel):
                 row = section.row()
                 row.label(text="main scenes")
                 row.prop(blenvy, "main_scene_selector", text='')
-                add_operator = row.operator("scene_list.list_action", icon='ADD', text="")
+                add_operator = row.operator("blenvy.scenes_list_actions", icon='ADD', text="")
                 add_operator.action = 'ADD'
                 add_operator.scene_type = 'LEVEL'
                 #sub_row.enabled = blenvy.main_scene_selector is not None
@@ -119,7 +119,7 @@ class BLENVY_PT_SidePanel(bpy.types.Panel):
                 for scene in blenvy.main_scenes:
                     sub_row = col.box().row()
                     sub_row.label(text=scene.name)
-                    remove_operator = sub_row.operator("scene_list.list_action", icon='TRASH', text="")
+                    remove_operator = sub_row.operator("blenvy.scenes_list_actions", icon='TRASH', text="")
                     remove_operator.action = 'REMOVE'
                     remove_operator.scene_type = 'LEVEL'
                     remove_operator.scene_name = scene.name
@@ -130,7 +130,7 @@ class BLENVY_PT_SidePanel(bpy.types.Panel):
                 row = section.row()
                 row.label(text="library scenes")
                 row.prop(blenvy, "library_scene_selector", text='')
-                add_operator = row.operator("scene_list.list_action", icon='ADD', text="")
+                add_operator = row.operator("blenvy.scenes_list_actions", icon='ADD', text="")
                 add_operator.action = 'ADD'
                 add_operator.scene_type = 'LIBRARY'
 
@@ -139,7 +139,7 @@ class BLENVY_PT_SidePanel(bpy.types.Panel):
                 for scene in blenvy.library_scenes:
                     sub_row = col.box().row()
                     sub_row.label(text=scene.name)
-                    remove_operator = sub_row.operator("scene_list.list_action", icon='TRASH', text="")
+                    remove_operator = sub_row.operator("blenvy.scenes_list_actions", icon='TRASH', text="")
                     remove_operator.action = 'REMOVE'
                     remove_operator.scene_type = 'LEVEL'
                     remove_operator.scene_name = scene.name
