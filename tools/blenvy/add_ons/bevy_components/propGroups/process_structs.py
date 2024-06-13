@@ -40,7 +40,7 @@ def process_structs(registry, definition, properties, update, nesting, nesting_l
         # if there are sub fields, add an attribute "sub_fields" possibly a pointer property ? or add a standard field to the type , that is stored under "attributes" and not __annotations (better)
         else:
             # component not found in type_infos, generating placeholder
-            __annotations__[property_name] = StringProperty(default="N/A")
+            __annotations__[property_name] = StringProperty(default="Struct N/A") # Not sure about the usefullness of this, as we do not show a propgroup in the UI if it is invalid
             registry.add_missing_typeInfo(ref_name)
             # the root component also becomes invalid (in practice it is not always a component, but good enough)
             registry.add_invalid_component(nesting_long_names[0])

@@ -6,7 +6,7 @@ from pathlib import Path
 from bpy_types import (PropertyGroup)
 from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorProperty, IntProperty, IntVectorProperty, EnumProperty, PointerProperty, CollectionProperty)
 from ..components.metadata import ComponentMetadata
-
+from .hashing.tiger import hash as tiger_hash
 # helper class to store missing bevy types information
 class MissingBevyType(bpy.types.PropertyGroup):
     long_name: bpy.props.StringProperty(
@@ -163,7 +163,6 @@ class ComponentsRegistry(PropertyGroup):
         component_settings = blenvy.components
 
         # cleanup previous data if any
-        self.propGroupIdCounter = 0
         self.long_names_to_propgroup_names.clear()
         self.missing_types_list.clear()
         self.type_infos.clear()
@@ -171,7 +170,6 @@ class ComponentsRegistry(PropertyGroup):
         self.component_propertyGroups.clear()
         self.custom_types_to_add.clear()
         self.invalid_components.clear()
-
         # now prepare paths to load data
 
         with open(component_settings.schema_path_full) as f: 
@@ -217,33 +215,28 @@ class ComponentsRegistry(PropertyGroup):
 
     ###########
         
-    propGroupIdCounter: IntProperty(
-        name="propGroupIdCounter",
-        description="",
-        min=0,
-        max=1000000000,
-        default=0
-    ) # type: ignore
-    
     long_names_to_propgroup_names = {}
 
-    # generate propGroup name from nesting level & shortName: each shortName + nesting is unique
+    # generate propGroup name from nesting level & longName: each longName + nesting is unique
     def generate_propGroup_name(self, nesting, longName):
         #print("gen propGroup name for", shortName, nesting)
-        self.propGroupIdCounter += 1
-
-        propGroupIndex = str(self.propGroupIdCounter)
-        propGroupName = propGroupIndex + "_ui"
-
         key = str(nesting) + longName if len(nesting) > 0 else longName
+
+        propGroupHash = tiger_hash(key)
+        propGroupName = propGroupHash + "_ui"
+
+        # check for collision
+        #print("--computing hash for", nesting, longName)
+        if propGroupName in self.long_names_to_propgroup_names.values(): 
+            print("  WARNING !! you have a collision between the hash of multiple component names: collision for", nesting, longName)
+
         self.long_names_to_propgroup_names[key] = propGroupName
+
         return propGroupName
     
     def get_propertyGroupName_from_longName(self, longName):
         return self.long_names_to_propgroup_names.get(longName, None)
     
-    def long_name_to_key():
-        pass
 
     ###########
 

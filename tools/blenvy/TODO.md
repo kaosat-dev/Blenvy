@@ -57,12 +57,13 @@ Components:
         - [x] copy & paste
         - [x] BLENVY_OT_component_rename_component
         - [x] BLENVY_OT_component_fix
-    - [ ] add handling for core::ops::Range<f32> & other ranges
+    - [x] add handling for core::ops::Range<f32> & other ranges
     - [x] fix is_component_valid that is used in gltf_auto_export
     - Hashmap Support
         - [x] fix parsing of keys's type either on Bevy side (prefered) or on the Blender side 
         - [x] fix weird issue with missing "0" property when adding new entry in empty hashmap => happens only if the values for the "setter" have never been set
         - [ ] handle missing types in registry for keys & values
+        - [x] adding a hashmap nukes every existing component ??
 
     - [x] Add correct upgrade handling from individual component to bevy_components
     - [x] Settings handling:
@@ -80,7 +81,21 @@ Components:
 
     - [x] overhaul / improve the component selector (with built in searching, etc)
     - [x] remove select_component_name_to_replace
-    - [ ] display of invalid components is not working ?
+    - [x] display of invalid components is not working ?
+    - [x] weird items are present in the components list that do not seem to be components
+    - [x] remove :
+        - BLENVY_OT_component_list_add_item
+        - BLENVY_OT_component_list_remove_item
+        - BLENVY_OT_component_list_select_item: merge it into the rest of the actions 
+
+    - [x] clearing invalid flag after a registry change does not work correctly (ie the ui still says the component is invalid)
+        - [x] should reset ALL "invalid" flags IF they have the matching data
+    - [x] registry auto reload not working ?
+    - [x] changing the registry breaks all the values of existing components !!!!!!
+        -> VERY likely due to the int-offset computation for hashes of components
+        - now switched to tiger_hash
+        - [x] add warning about hash colision (not much we can/ could do if it is the case ?)
+        - [ ] double check weird collisions AND/OR reuse existing if applicable
 
 
 General things to solve:

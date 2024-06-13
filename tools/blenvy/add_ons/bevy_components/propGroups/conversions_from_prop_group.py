@@ -48,7 +48,7 @@ def property_group_value_to_custom_property_value(property_group, definition, re
                 value = getattr(property_group, field_name)
                 is_property_group = isinstance(value, PropertyGroup)
                 child_property_group = value if is_property_group else None
-                if item_definition != None:
+                if item_definition is not None:
                     value = property_group_value_to_custom_property_value(child_property_group, item_definition, registry, parent=long_name, value=value)
                 else:
                     value = '""'
@@ -63,7 +63,7 @@ def property_group_value_to_custom_property_value(property_group, definition, re
             value = getattr(property_group, field_name)
             is_property_group = isinstance(value, PropertyGroup)
             child_property_group = value if is_property_group else None
-            if item_definition != None:
+            if item_definition is not None:
                 value = property_group_value_to_custom_property_value(child_property_group, item_definition, registry, parent=long_name, value=value)
             else:
                 value = '""'
@@ -80,7 +80,7 @@ def property_group_value_to_custom_property_value(property_group, definition, re
             value = getattr(property_group, field_name)
             is_property_group = isinstance(value, PropertyGroup)
             child_property_group = value if is_property_group else None
-            if item_definition != None:
+            if item_definition is not None:
                 value = property_group_value_to_custom_property_value(child_property_group, item_definition, registry, parent=long_name, value=value)
             else:
                 value = '""'
@@ -125,7 +125,7 @@ def property_group_value_to_custom_property_value(property_group, definition, re
         for item in item_list:
             item_long_name = getattr(item, "long_name")
             definition = registry.type_infos[item_long_name] if item_long_name in registry.type_infos else None
-            if definition != None:
+            if definition is not None:
                 item_value = property_group_value_to_custom_property_value(item, definition, registry, long_name, None)
                 if item_long_name.startswith("wrapper_"): #if we have a "fake" tupple for aka for value types, we need to remove one nested level
                     item_value = item_value[0]
@@ -141,7 +141,7 @@ def property_group_value_to_custom_property_value(property_group, definition, re
             # first get the keys
             key_long_name = getattr(key, "long_name")
             definition = registry.type_infos[key_long_name] if key_long_name in registry.type_infos else None
-            if definition != None:
+            if definition is not None:
                 key_value = property_group_value_to_custom_property_value(key, definition, registry, long_name, None)
                 if key_long_name.startswith("wrapper_"): #if we have a "fake" tupple for aka for value types, we need to remove one nested level
                     key_value = key_value[0]
@@ -151,7 +151,7 @@ def property_group_value_to_custom_property_value(property_group, definition, re
             val = values_list[index]
             value_long_name = getattr(val, "long_name")
             definition = registry.type_infos[value_long_name] if value_long_name in registry.type_infos else None
-            if definition != None:
+            if definition is not None:
                 val_value = property_group_value_to_custom_property_value(val, definition, registry, long_name, None)
                 if value_long_name.startswith("wrapper_"): #if we have a "fake" tupple for aka for value types, we need to remove one nested level
                     val_value = val_value[0]

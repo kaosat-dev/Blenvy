@@ -17,6 +17,7 @@ def process_map(registry, definition, update, nesting=[], nesting_long_names=[])
 
     #print("definition", definition)
     __annotations__ = {}
+
     if key_ref_name in type_infos:
         key_definition = type_infos[key_ref_name]
         original_long_name = key_definition["long_name"]
@@ -33,10 +34,8 @@ def process_map(registry, definition, update, nesting=[], nesting_long_names=[])
         keys_collection = CollectionProperty(type=keys_property_group_class)
         keys_property_group_pointer = PointerProperty(type=keys_property_group_class)
     else:
-        __annotations__["list"] = StringProperty(default="N/A")
+        #__annotations__["list"] = StringProperty(default="N/A")
         registry.add_missing_typeInfo(key_ref_name)
-        # the root component also becomes invalid (in practice it is not always a component, but good enough)
-        registry.add_invalid_component(nesting_long_names[0])
 
     if value_ref_name in type_infos:
         value_definition = type_infos[value_ref_name]
@@ -57,11 +56,10 @@ def process_map(registry, definition, update, nesting=[], nesting_long_names=[])
     else:
         #__annotations__["list"] = StringProperty(default="N/A")
         registry.add_missing_typeInfo(value_ref_name)
-        # the root component also becomes invalid (in practice it is not always a component, but good enough)
-        registry.add_invalid_component(nesting_long_names[0])
 
 
     if key_ref_name in type_infos and value_ref_name in type_infos:
+        #print("hashmap processed normally: key_ref_name",key_ref_name, "value_ref_name", value_ref_name )
         __annotations__ = {
             "list": keys_collection,
             "list_index": IntProperty(name = "Index for keys", default = 0,  update=update),
@@ -71,15 +69,8 @@ def process_map(registry, definition, update, nesting=[], nesting_long_names=[])
             "values_list_index": IntProperty(name = "Index for values", default = 0,  update=update),
             "values_setter":values_property_group_pointer,
         }
-    
-    """__annotations__["list"] = StringProperty(default="N/A")
-    __annotations__["values_list"] = StringProperty(default="N/A")
-    __annotations__["keys_setter"] = StringProperty(default="N/A")"""
-
-    """registry.add_missing_typeInfo(key_ref_name)
-    registry.add_missing_typeInfo(value_ref_name)
-    # the root component also becomes invalid (in practice it is not always a component, but good enough)
-    registry.add_invalid_component(nesting_long_names[0])
-    print("setting invalid flag for", nesting_long_names[0])"""
+    else:    
+        # the root component also becomes invalid (in practice it is not always a component, but good enough)
+        registry.add_invalid_component(nesting_long_names[0])
 
     return __annotations__

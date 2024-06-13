@@ -43,9 +43,9 @@ def generate_temporary_scene_and_export(settings, gltf_export_settings, gltf_out
     # and selected collection
     active_collection = bpy.context.view_layer.active_layer_collection
     # and mode
-    active_mode = bpy.context.active_object.mode if bpy.context.active_object != None else None
+    active_mode = bpy.context.active_object.mode if bpy.context.active_object is not None else None
     # we change the mode to object mode, otherwise the gltf exporter is not happy
-    if active_mode != None and active_mode != 'OBJECT':
+    if active_mode is not None and active_mode != 'OBJECT':
         print("setting to object mode", active_mode)
         bpy.ops.object.mode_set(mode='OBJECT')
     # we set our active scene to be this one : this is needed otherwise the stand-in empties get generated in the wrong scene

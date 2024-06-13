@@ -247,7 +247,7 @@ def test_copy_paste_components(setup_data):
     component_meta = next(filter(lambda component: component["long_name"] == long_name, target_components_metadata), None)
 
     # now after pasting to the new object, it should have component meta
-    assert component_meta != None
+    assert component_meta is not None
 
     # and then check if the propertyGroup of the target object is correct
     propertyGroup = getattr(component_meta, property_group_name, None)

@@ -190,7 +190,7 @@ class AutoExportTracker(PropertyGroup):
 
 def get_auto_exporter_settings():
     auto_exporter_settings = bpy.data.texts[".gltf_auto_export_settings"] if ".gltf_auto_export_settings" in bpy.data.texts else None
-    if auto_exporter_settings != None:
+    if auto_exporter_settings is not None:
         try:
             auto_exporter_settings = json.loads(auto_exporter_settings.as_string())
         except:

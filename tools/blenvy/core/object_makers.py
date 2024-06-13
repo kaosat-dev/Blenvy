@@ -42,7 +42,7 @@ def make_cube(name, location=[0,0,0], rotation=[0,0,0], scale=[1,1,1], collectio
     new_object.scale = scale
     new_object.rotation_euler = rotation
 
-    if collection != None:
+    if collection is not None:
         collection.objects.link( new_object )
     return new_object
 

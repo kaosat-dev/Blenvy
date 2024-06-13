@@ -309,7 +309,7 @@ def duplicate_object2(object, original_name):
 
 
                     # now reset the original gltf_settings
-                    if getattr(cls, "existing_gltf_settings", None) != None:
+                    if getattr(cls, "existing_gltf_settings", None) is not None:
                         print("resetting original gltf settings")
                         scene["glTF2ExportSettings"] = cls.existing_gltf_settings
                     else:

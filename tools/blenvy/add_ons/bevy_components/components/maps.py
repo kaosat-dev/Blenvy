@@ -3,6 +3,7 @@ from bpy_types import Operator, UIList
 from bpy.props import (StringProperty, EnumProperty, PointerProperty, FloatVectorProperty, IntProperty)
 
 from ..propGroups.conversions_from_prop_group import property_group_value_to_custom_property_value
+from blenvy.add_ons.bevy_components.utils import get_item_by_type
 
 class BLENVY_OT_component_map_actions(Operator):
     """Move items up and down, add and remove"""
@@ -30,11 +31,29 @@ class BLENVY_OT_component_map_actions(Operator):
 
     target_index: IntProperty(name="target index", description="index of item to manipulate")# type: ignore
 
+    item_type : EnumProperty(
+        name="item type",
+        description="type of the item to select: object or collection",
+        items=(
+            ('OBJECT', "Object", ""),
+            ('COLLECTION', "Collection", ""),
+            ),
+        default="OBJECT"
+    ) # type: ignore
+
+    item_name: StringProperty(
+        name="object name",
+        description="object whose component to delete",
+        default=""
+    ) # type: ignore
+
     def invoke(self, context, event):
-        object = context.object
+
+        item = get_item_by_type(self.item_type, self.item_name)
+
         # information is stored in component meta
-        components_in_object = object.components_meta.components
-        component_meta =  next(filter(lambda component: component["long_name"] == self.component_name, components_in_object), None)
+        components_in_item = item.components_meta.components
+        component_meta =  next(filter(lambda component: component["long_name"] == self.component_name, components_in_item), None)
 
         propertyGroup = component_meta
         for path_item in json.loads(self.property_group_path):

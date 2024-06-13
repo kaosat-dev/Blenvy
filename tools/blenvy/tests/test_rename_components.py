@@ -42,7 +42,7 @@ def test_rename_component_single_unit_struct(setup_data):
     assert is_old_component_in_object == False
     assert is_new_component_in_object == True
     assert get_bevy_component_value_by_long_name(object, target_component_name) == '()'
-    assert get_component_propGroup(registry, target_component_name, get_component_metadata(object, target_component_name)) != None
+    assert get_component_propGroup(registry, target_component_name, get_component_metadata(object, target_component_name)) is not None
 
     
 def test_rename_component_single_complex_struct(setup_data):
@@ -65,7 +65,7 @@ def test_rename_component_single_complex_struct(setup_data):
     assert is_old_component_in_object == False
     assert is_new_component_in_object == True
     assert get_bevy_component_value_by_long_name(object, target_component_name) == 'Capsule(Vec3(x:1.0, y:2.0, z:0.0), Vec3(x:0.0, y:0.0, z:0.0), 3.0)'
-    assert get_component_propGroup(registry, target_component_name, get_component_metadata(object, target_component_name)) != None
+    assert get_component_propGroup(registry, target_component_name, get_component_metadata(object, target_component_name)) is not None
 
 
 def test_rename_component_bulk(setup_data):
@@ -91,7 +91,7 @@ def test_rename_component_bulk(setup_data):
         assert is_old_component_in_object == False
         assert is_new_component_in_object == True
         assert get_bevy_component_value_by_long_name(object, target_component_name) == '()'
-        assert get_component_propGroup(registry, target_component_name, get_component_metadata(object, target_component_name)) != None
+        assert get_component_propGroup(registry, target_component_name, get_component_metadata(object, target_component_name)) is not None
 
 def test_rename_component_single_error_handling(setup_data):
     registry = bpy.context.window_manager.components_registry
@@ -118,7 +118,7 @@ def test_rename_component_single_error_handling(setup_data):
     assert is_old_component_in_object == False
     assert is_new_component_in_object == True
     assert get_bevy_component_value_by_long_name(object, target_component_name) == 'Capsule(Vec3(x:1.0, y:2.0, z:0.0), Vec3(x:0.0, y:0.0, z:0.0), 3.0)'
-    assert get_component_propGroup(registry, target_component_name, target_component_metadata) != None
+    assert get_component_propGroup(registry, target_component_name, target_component_metadata) is not None
     assert target_component_metadata.invalid == True
     
     assert target_component_metadata.invalid_details == 'wrong custom property value, overwrite them by changing the values in the ui or change them & regenerate'
@@ -148,7 +148,7 @@ def test_rename_component_single_error_handling_clean_errors(setup_data):
     assert is_old_component_in_object == False
     assert is_new_component_in_object == True
     assert get_bevy_component_value_by_long_name(object, target_component_name) == 'Capsule(Vec3(x:1.0, y:2.0, z:0.0), Vec3(x:0.0, y:0.0, z:0.0), 3.0)'
-    assert get_component_propGroup(registry, target_component_name, target_component_metadata) != None
+    assert get_component_propGroup(registry, target_component_name, target_component_metadata) is not None
     assert target_component_metadata.invalid == True
     
     assert target_component_metadata.invalid_details == 'wrong custom property value, overwrite them by changing the values in the ui or change them & regenerate'

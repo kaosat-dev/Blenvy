@@ -5,7 +5,7 @@ from ..utils import get_selection_type
 from .metadata import do_item_custom_properties_have_missing_metadata, get_bevy_components
 
 
-def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None):
+def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None, item_type="OBJECT", item_name=""):
     is_enum = getattr(propertyGroup, "with_enum")
     is_list = getattr(propertyGroup, "with_list") 
     is_map = getattr(propertyGroup, "with_map")
@@ -31,7 +31,7 @@ def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None):
                 nested = getattr(nestedPropertyGroup, "nested", False)
                 #print("nestedPropertyGroup", nestedPropertyGroup, fname, nested)
                 if nested:
-                    draw_propertyGroup(nestedPropertyGroup, subrow.column(), nesting + [fname], rootName )
+                    draw_propertyGroup(nestedPropertyGroup, subrow.column(), nesting + [fname], rootName, item_type, item_name )
                 # if an enum variant is not a propertyGroup
                 break
     elif is_list:
@@ -44,12 +44,15 @@ def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None):
         list_column = list_column.box()
         for index, item  in enumerate(item_list):
             row = list_column.row()
-            draw_propertyGroup(item, row, nesting, rootName)
+            draw_propertyGroup(item, row, nesting, rootName, item_type)
             icon = 'CHECKBOX_HLT' if list_index == index else 'CHECKBOX_DEHLT'
-            op = row.operator('blenvy.component_list_select_item', icon=icon, text="")
+            op = row.operator('blenvy.component_list_actions', icon=icon, text="")
+            op.action = 'SELECT'
             op.component_name = rootName
             op.property_group_path = json.dumps(nesting)
             op.selection_index = index
+            op.item_type = item_type
+            op.item_name = item_name
 
         #various control buttons
         buttons_column.separator()
@@ -58,12 +61,16 @@ def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None):
         op.action = 'ADD'
         op.component_name = rootName
         op.property_group_path = json.dumps(nesting)
+        op.item_type = item_type
+        op.item_name = item_name
 
         row = buttons_column.row()
         op = row.operator('blenvy.component_list_actions', icon='REMOVE', text="")
         op.action = 'REMOVE'
         op.component_name = rootName
         op.property_group_path = json.dumps(nesting)
+        op.item_type = item_type
+        op.item_name = item_name
 
         buttons_column.separator()
         row = buttons_column.row()
@@ -71,12 +78,18 @@ def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None):
         op.action = 'UP'
         op.component_name = rootName
         op.property_group_path = json.dumps(nesting)
+        op.item_type = item_type
+        op.item_name = item_name
+
 
         row = buttons_column.row()
         op = row.operator('blenvy.component_list_actions', icon='TRIA_DOWN', text="")
         op.action = 'DOWN'
         op.component_name = rootName
         op.property_group_path = json.dumps(nesting)
+        op.item_type = item_type
+        op.item_name = item_name
+
 
     elif is_map:
         root = layout.row().column()
@@ -87,15 +100,17 @@ def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None):
             row = box.row()
             row.label(text="Add entry:")
             keys_setter = getattr(propertyGroup, "keys_setter")
-            draw_propertyGroup(keys_setter, row, nesting, rootName)
+            draw_propertyGroup(keys_setter, row, nesting, rootName, item_type, item_name)
 
             values_setter = getattr(propertyGroup, "values_setter")
-            draw_propertyGroup(values_setter, row, nesting, rootName)
+            draw_propertyGroup(values_setter, row, nesting, rootName, item_type, item_name)
 
             op = row.operator('blenvy.component_map_actions', icon='ADD', text="")
             op.action = 'ADD'
             op.component_name = rootName
             op.property_group_path = json.dumps(nesting)
+            op.item_type = item_type
+            op.item_name = item_name
 
             box = root.box()
             split = box.split(factor=0.9)
@@ -104,17 +119,18 @@ def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None):
 
             for index, item  in enumerate(keys_list):
                 row = list_column.row()
-                draw_propertyGroup(item, row, nesting, rootName)
+                draw_propertyGroup(item, row, nesting, rootName, item_type, item_name)
 
                 value = values_list[index]
-                draw_propertyGroup(value, row, nesting, rootName)
+                draw_propertyGroup(value, row, nesting, rootName, item_type, item_name)
 
                 op = row.operator('blenvy.component_map_actions', icon='REMOVE', text="")
                 op.action = 'REMOVE'
                 op.component_name = rootName
                 op.property_group_path = json.dumps(nesting)
                 op.target_index = index
-
+                op.item_type = item_type
+                op.item_name = item_name
 
             #various control buttons
             buttons_column.separator()
@@ -135,7 +151,7 @@ def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None):
                 layout.label(text=display_name) #  this is the name of the field/sub field
                 layout.separator()
                 subrow = layout.row()
-                draw_propertyGroup(nestedPropertyGroup, subrow, nesting + [fname], rootName )
+                draw_propertyGroup(nestedPropertyGroup, subrow, nesting + [fname], rootName, item_type, item_name )
             else:
                 subrow = layout.row()
                 subrow.prop(propertyGroup, fname, text=display_name)
@@ -168,7 +184,7 @@ class BLENVY_PT_components_panel(bpy.types.Panel):
         elif collection is not None:
             name = collection.name
             target_type = "Collection"
-        # name = context.object.name if context.object != None else ''
+        # name = context.object.name if context.object is not None else ''
         layout.label(text=f"Components for {name} ({target_type})")
 
         #print("object", context.object, "active", context.active_object, "objects", context.selected_objects)
@@ -215,18 +231,20 @@ def draw_component_ui(layout, object_or_collection, registry, selected_component
     upgradeable_customProperties = registry.has_type_infos() and do_item_custom_properties_have_missing_metadata(object_or_collection)
     if upgradeable_customProperties:
         row = layout.row(align=True)
-        op = row.operator("blenvy.component_from_custom_property", text="generate components from custom properties" , icon="LOOP_FORWARDS") 
+        op = row.operator("blenvy.component_from_custom_property", text="fix components" , icon="LOOP_FORWARDS") 
         layout.separator()
 
 
-    components_in_object = object_or_collection.components_meta.components
+    components_in_item = object_or_collection.components_meta.components
+    item_type = get_selection_type(object_or_collection)
+    item_name = object_or_collection.name
     #print("components_names", dict(components_bla).keys())
 
     for component_name in sorted(get_bevy_components(object_or_collection)) : # sorted by component name, practical
         if component_name == "components_meta": 
             continue
         # anything withouth metadata gets skipped, we only want to see real components, not all custom props
-        component_meta =  next(filter(lambda component: component["long_name"] == component_name, components_in_object), None)
+        component_meta =  next(filter(lambda component: component["long_name"] == component_name, components_in_item), None)
         if component_meta == None: 
             continue
         
@@ -244,7 +262,7 @@ def draw_component_ui(layout, object_or_collection, registry, selected_component
         row.label(text=component_name)
 
         # we fetch the matching ui property group
-        root_propertyGroup_name =  registry.get_propertyGroupName_from_longName(component_name)
+        root_propertyGroup_name = registry.get_propertyGroupName_from_longName(component_name)
         """print("root_propertyGroup_name", root_propertyGroup_name)"""
 
         if root_propertyGroup_name:
@@ -261,7 +279,8 @@ def draw_component_ui(layout, object_or_collection, registry, selected_component
                     if component_invalid:
                         error_message = invalid_details if component_invalid else "Missing component UI data, please reload registry !"
                         prop_group_location.label(text=error_message)
-                    draw_propertyGroup(propertyGroup, prop_group_location, [root_propertyGroup_name], component_name)
+                    else:
+                        draw_propertyGroup(propertyGroup, prop_group_location, [root_propertyGroup_name], component_name, item_type, item_name)
                 else :
                     row.label(text="details hidden, click on toggle to display")
             else:

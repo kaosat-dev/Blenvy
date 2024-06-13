@@ -1,113 +1,7 @@
 import json
-from bpy_types import Operator, UIList
-from bpy.props import (StringProperty, EnumProperty, PointerProperty, FloatVectorProperty, IntProperty)
-
-class BLENVY_OT_component_list_add_item(Operator): 
-    """Add a new item to the list.""" 
-    bl_idname = "blenvy.component_list_add_item" 
-    bl_label = "Add a new item" 
-
-    property_group_path: StringProperty(
-        name="property group path",
-        description="",
-    ) # type: ignore
-
-    component_name: StringProperty(
-        name="component name",
-        description="",
-    ) # type: ignore
-
-    def execute(self, context): 
-        print("")
-        object = context.object
-        # information is stored in component meta
-        components_in_object = object.components_meta.components
-        component_meta =  next(filter(lambda component: component["long_name"] == self.component_name, components_in_object), None)
-
-        propertyGroup = component_meta
-        for path_item in json.loads(self.property_group_path):
-            propertyGroup = getattr(propertyGroup, path_item)
-
-        print("list container", propertyGroup, dict(propertyGroup))
-        target_list = getattr(propertyGroup, "list")
-        index = getattr(propertyGroup, "list_index")
-        item = target_list.add()
-        propertyGroup.list_index = index + 1 # we use this to force the change detection
-
-        print("added item", item, item.field_names, getattr(item, "field_names"))
-        print("")
-        return{'FINISHED'}
-    
-
-class BLENVY_OT_component_list_remove_item(Operator): 
-    """Remove an item to the list.""" 
-    bl_idname = "blenvy.component_list_remove_item" 
-    bl_label = "Remove selected item" 
-
-    property_group_path: StringProperty(
-        name="property group path",
-        description="",
-    ) # type: ignore
-
-    component_name: StringProperty(
-        name="component name",
-        description="",
-    ) # type: ignore
-    def execute(self, context): 
-        print("remove from list", context.object)
-
-        object = context.object
-        # information is stored in component meta
-        components_in_object = object.components_meta.components
-        component_meta =  next(filter(lambda component: component["long_name"] == self.component_name, components_in_object), None)
-
-        propertyGroup = component_meta
-        for path_item in json.loads(self.property_group_path):
-            propertyGroup = getattr(propertyGroup, path_item)
-
-        target_list = getattr(propertyGroup, "list")
-        index = getattr(propertyGroup, "list_index")
-        target_list.remove(index)
-        propertyGroup.list_index = min(max(0, index - 1), len(target_list) - 1) 
-        return{'FINISHED'}
-
-
-class BLENVY_OT_component_list_select_item(Operator): 
-    """Remove an item to the list.""" 
-    bl_idname = "blenvy.component_list_select_item" 
-    bl_label = "select an item" 
-
-
-    property_group_path: StringProperty(
-        name="property group path",
-        description="",
-    ) # type: ignore
-
-    component_name: StringProperty(
-        name="component name",
-        description="",
-    ) # type: ignore
-
-    selection_index: IntProperty() # type: ignore
-
-    def execute(self, context): 
-        print("select in list", context.object)
-
-        object = context.object
-        # information is stored in component meta
-        components_in_object = object.components_meta.components
-        component_meta =  next(filter(lambda component: component["long_name"] == self.component_name, components_in_object), None)
-
-        propertyGroup = component_meta
-        for path_item in json.loads(self.property_group_path):
-            propertyGroup = getattr(propertyGroup, path_item)
-
-        target_list = getattr(propertyGroup, "list")
-        index = getattr(propertyGroup, "list_index")
-
-        propertyGroup.list_index = self.selection_index
-        return{'FINISHED'}
-
+from bpy_types import Operator
+from bpy.props import (StringProperty, EnumProperty, IntProperty)
+from blenvy.add_ons.bevy_components.utils import get_item_by_type
 
 class BLENVY_OT_component_list_actions(Operator):
     """Move items up and down, add and remove"""
@@ -121,7 +15,10 @@ class BLENVY_OT_component_list_actions(Operator):
             ('UP', "Up", ""),
             ('DOWN', "Down", ""),
             ('REMOVE', "Remove", ""),
-            ('ADD', "Add", ""))) # type: ignore
+            ('ADD', "Add", ""),
+            ('SELECT', "Select", "")
+        )
+    ) # type: ignore
     
     property_group_path: StringProperty(
         name="property group path",
@@ -133,11 +30,31 @@ class BLENVY_OT_component_list_actions(Operator):
         description="",
     ) # type: ignore
 
+    item_name: StringProperty(
+        name="item name",
+        description="item object/collections we are working on",
+        default=""
+    ) # type: ignore
+
+    item_type : EnumProperty(
+        name="item type",
+        description="type of the item we are working on : object or collection",
+        items=(
+            ('OBJECT', "Object", ""),
+            ('COLLECTION', "Collection", ""),
+            ),
+        default="OBJECT"
+    ) # type: ignore
+
+
+    selection_index: IntProperty() # type: ignore
+
     def invoke(self, context, event):
-        object = context.object
+        item = get_item_by_type(self.item_type, self.item_name)
+
         # information is stored in component meta
-        components_in_object = object.components_meta.components
-        component_meta =  next(filter(lambda component: component["long_name"] == self.component_name, components_in_object), None)
+        components_in_item = item.components_meta.components
+        component_meta =  next(filter(lambda component: component["long_name"] == self.component_name, components_in_item), None)
 
         propertyGroup = component_meta
         for path_item in json.loads(self.property_group_path):
@@ -166,5 +83,9 @@ class BLENVY_OT_component_list_actions(Operator):
             propertyGroup.list_index = index + 1 # we use this to force the change detection
             #info = '"%s" added to list' % (item.name)
             #self.report({'INFO'}, info)
+
+        if self.action == 'SELECT':
+            propertyGroup.list_index = self.selection_index
+
 
         return {"FINISHED"}

@@ -2,7 +2,7 @@ import ast
 import json
 import bpy
 from bpy_types import Operator
-from bpy.props import (StringProperty)
+from bpy.props import (StringProperty, EnumProperty)
 
 from .metadata import add_component_from_custom_property, add_component_to_item, apply_customProperty_values_to_item_propertyGroups, apply_propertyGroup_values_to_item_customProperties, apply_propertyGroup_values_to_item_customProperties_for_component, copy_propertyGroup_values_to_another_item, get_bevy_component_value_by_long_name, get_bevy_components, is_bevy_component_in_item, remove_component_from_item, rename_component, toggle_component
 
@@ -24,7 +24,7 @@ class BLENVY_OT_component_add(Operator):
         print("adding component ", self.component_type, "to target  '"+target.name+"'")
     
         has_component_type = self.component_type != ""
-        if has_component_type and target != None:
+        if has_component_type and target is not None:
             type_infos = context.window_manager.components_registry.type_infos
             component_definition = type_infos[self.component_type]
             add_component_to_item(target, component_definition)
@@ -47,11 +47,16 @@ class BLENVY_OT_component_copy(Operator):
         description="name of the object/collection to copy the component from",
     ) # type: ignore
 
-    source_item_type: StringProperty(
+    source_item_type: EnumProperty(
         name="source item type",
-        description="type of the object/collection to copy the component from",
+        description="type of the object/collection to copy the component from: object or collection",
+        items=(
+            ('OBJECT', "Object", ""),
+            ('COLLECTION', "Collection", ""),
+            ),
+        default="OBJECT"
     ) # type: ignore
-
+    
     @classmethod
     def register(cls):
         bpy.types.WindowManager.copied_source_component_name = StringProperty()
@@ -122,9 +127,14 @@ class BLENVY_OT_component_remove(Operator):
         default=""
     ) # type: ignore
 
-    item_type: StringProperty(
+    item_type : EnumProperty(
         name="item type",
-        description="type of the object/collection to delete",
+        description="type of the item to select: object or collection",
+        items=(
+            ('OBJECT', "Object", ""),
+            ('COLLECTION', "Collection", ""),
+            ),
+        default="OBJECT"
     ) # type: ignore
 
     def execute(self, context):
@@ -132,9 +142,9 @@ class BLENVY_OT_component_remove(Operator):
         if self.item_name == "":
             self.report({"ERROR"}, "The target to remove ("+ self.component_name +") from does not exist")
         else:
-            if self.item_type == 'Object':
+            if self.item_type == 'OBJECT':
                 target = bpy.data.objects[self.item_name]
-            elif self.item_type == 'Collection':
+            elif self.item_type == 'COLLECTION':
                 target = bpy.data.collections[self.item_name]
 
         print("removing component ", self.component_name, "from object  '"+target.name+"'")
@@ -255,8 +265,6 @@ class BLENVY_OT_component_rename_component(Operator):
                     item = bpy.data.objects[item_name]
                 elif item_type == "COLLECTION":
                     item = bpy.data.collections[item_name]
-
-                print("heloooo", item, get_bevy_components(item))
 
                 if item and original_name in get_bevy_components(item) or original_name in item:
                     try:

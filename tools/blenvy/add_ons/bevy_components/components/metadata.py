@@ -99,6 +99,7 @@ def ensure_metadata_for_all_items():
     for collection in bpy.data.collections:
         add_metadata_to_components_without_metadata(collection)
 
+
 # returns whether an item has custom properties without matching metadata
 def do_item_custom_properties_have_missing_metadata(item):
     components_metadata = getattr(item, "components_meta", None)
@@ -116,7 +117,7 @@ def do_item_custom_properties_have_missing_metadata(item):
             # current component has no metadata but is there even a compatible type in the registry ?
             # if not ignore it
             component_definition = find_component_definition_from_long_name(component_name)
-            if component_definition != None:
+            if component_definition is not None:
                 missing_metadata = True
                 break
 
@@ -198,7 +199,7 @@ def upsert_component_in_item(item, long_name, registry):
     # TODO: upsert this part too ?
     target_components_metadata = item.components_meta.components
     component_definition = registry.type_infos.get(long_name, None)
-    if component_definition != None:
+    if component_definition is not None:
         short_name = component_definition["short_name"]
         long_name = component_definition["long_name"]
         property_group_name = registry.get_propertyGroupName_from_longName(long_name)
@@ -223,11 +224,17 @@ def upsert_component_in_item(item, long_name, registry):
                 propertyGroup = getattr(component_meta, property_group_name, None)
         
         # now deal with property groups details
-        if propertyGroup != None:
+        if propertyGroup is not None:
             if long_name in registry.invalid_components:
                 component_meta.enabled = False
                 component_meta.invalid = True
                 component_meta.invalid_details = "component contains fields that are not in the schema, disabling"
+            else:
+                # clear previous invalid state
+                if not component_meta.enabled and component_meta.invalid and component_meta.invalid_details == "component contains fields that are not in the schema, disabling":
+                    component_meta.enabled = True
+                    component_meta.invalid = False
+                    component_meta.invalid_details = ""
         else:
             # if we still have not found the property group, mark it as invalid
             component_meta.enabled = False
@@ -277,7 +284,7 @@ def apply_propertyGroup_values_to_item_customProperties(item):
             continue"""
         (_, propertyGroup) =  upsert_component_in_item(item, component_name, registry)
         component_definition = find_component_definition_from_long_name(component_name)
-        if component_definition != None:
+        if component_definition is not None:
             value = property_group_value_to_custom_property_value(propertyGroup, component_definition, registry, None)
             upsert_bevy_component(item=item, long_name=component_name, value=value)
 
@@ -286,7 +293,7 @@ def apply_propertyGroup_values_to_item_customProperties_for_component(item, comp
     registry = bpy.context.window_manager.components_registry
     (_, propertyGroup) =  upsert_component_in_item(item, component_name, registry)
     component_definition = find_component_definition_from_long_name(component_name)
-    if component_definition != None:
+    if component_definition is not None:
         value = property_group_value_to_custom_property_value(propertyGroup, component_definition, registry, None)
         item[component_name] = value
     
@@ -304,7 +311,7 @@ def apply_customProperty_values_to_item_propertyGroups(item):
         if component_name == "components_meta":
             continue
         component_definition = find_component_definition_from_long_name(component_name)
-        if component_definition != None:
+        if component_definition is not None:
             property_group_name = registry.get_propertyGroupName_from_longName(component_name)
             components_metadata = item.components_meta.components
             source_componentMeta = next(filter(lambda component: component["long_name"] == component_name, components_metadata), None)
@@ -360,5 +367,5 @@ def rename_component(registry, item, original_long_name, new_long_name):
 def toggle_component(item, component_name):
     components_in_item = item.components_meta.components
     component_meta =  next(filter(lambda component: component["long_name"] == component_name, components_in_item), None)
-    if component_meta != None: 
+    if component_meta is not None: 
         component_meta.visible = not component_meta.visible

@@ -1,3 +1,4 @@
+import json
 import bpy
 
 from .conversions_from_prop_group import property_group_value_to_custom_property_value
@@ -5,7 +6,6 @@ from .process_component import process_component
 from .utils import update_calback_helper
 from ..utils import get_selected_object_or_collection
 
-import json
 ## main callback function, fired whenever any property changes, no matter the nesting level
 def update_component(self, context, definition, component_name):
     registry = bpy.context.window_manager.components_registry
@@ -18,7 +18,7 @@ def update_component(self, context, definition, component_name):
     components_in_object = current_object_or_collection.components_meta.components
     component_meta =  next(filter(lambda component: component["long_name"] == component_name, components_in_object), None)
 
-    if component_meta != None:
+    if component_meta is not None:
         property_group_name = registry.get_propertyGroupName_from_longName(component_name)
         property_group = getattr(component_meta, property_group_name)
         # we use our helper to set the values
@@ -38,6 +38,7 @@ def generate_propertyGroups_for_components():
         definition = type_infos[component_name]
         is_component = definition['isComponent'] if "isComponent" in definition else False
         root_property_name = component_name if is_component else None
+        #print("root property", root_property_name)
         process_component(registry, definition, update_calback_helper(definition, update_component, root_property_name), None, [])
         
     # if we had to add any wrapper types on the fly, process them now

@@ -110,7 +110,7 @@ def component_values_shuffler(seed=1, property_group=None, definition=None, regi
             value = getattr(property_group, field_name)
             is_property_group = isinstance(value, PropertyGroup)
             child_property_group = value if is_property_group else None
-            if item_definition != None:
+            if item_definition is not None:
                 value = component_values_shuffler(seed, child_property_group, item_definition, registry, parent=component_name)
             else:
                 value = '""'
@@ -129,7 +129,7 @@ def component_values_shuffler(seed=1, property_group=None, definition=None, regi
             value = getattr(property_group, field_name)
             is_property_group = isinstance(value, PropertyGroup)
             child_property_group = value if is_property_group else None
-            if item_definition != None:
+            if item_definition is not None:
                 value = component_values_shuffler(seed, child_property_group, item_definition, registry, parent=component_name)
             else:
                 value = '""'
@@ -148,7 +148,7 @@ def component_values_shuffler(seed=1, property_group=None, definition=None, regi
             value = getattr(property_group, field_name)
             is_property_group = isinstance(value, PropertyGroup)
             child_property_group = value if is_property_group else None
-            if item_definition != None:
+            if item_definition is not None:
                 value = component_values_shuffler(seed, child_property_group, item_definition, registry, parent=component_name)
             else:
                 value = '""'
@@ -202,7 +202,7 @@ def component_values_shuffler(seed=1, property_group=None, definition=None, regi
 
             definition = registry.type_infos[item_long_name] if item_long_name in registry.type_infos else None
 
-            if definition != None:
+            if definition is not None:
                 component_values_shuffler(seed, new_entry, definition, registry, parent=component_name)
             else:
                 pass

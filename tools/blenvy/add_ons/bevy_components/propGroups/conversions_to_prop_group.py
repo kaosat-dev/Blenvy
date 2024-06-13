@@ -205,7 +205,7 @@ def property_group_value_from_custom_property_value(property_group, definition, 
                 propGroup_value = getattr(property_group, field_name)
                 is_property_group = isinstance(propGroup_value, PropertyGroup)
                 child_property_group = propGroup_value if is_property_group else None
-                if item_definition != None:
+                if item_definition is not None:
                     custom_prop_value = property_group_value_from_custom_property_value(child_property_group, item_definition, registry, value=custom_prop_value, nesting=nesting)
                 else:
                     custom_prop_value = custom_prop_value
@@ -231,7 +231,7 @@ def property_group_value_from_custom_property_value(property_group, definition, 
             propGroup_value = getattr(property_group, field_name)
             is_property_group = isinstance(propGroup_value, PropertyGroup)
             child_property_group = propGroup_value if is_property_group else None
-            if item_definition != None:
+            if item_definition is not None:
                 custom_property_value = property_group_value_from_custom_property_value(child_property_group, item_definition, registry, value=custom_property_value, nesting=nesting)
             if is_def_value_type(item_definition, registry):
                 setattr(property_group , field_name, custom_property_value)
@@ -247,7 +247,7 @@ def property_group_value_from_custom_property_value(property_group, definition, 
             value = getattr(property_group, field_name)
             is_property_group = isinstance(value, PropertyGroup)
             child_property_group = value if is_property_group else None
-            if item_definition != None:
+            if item_definition is not None:
                 custom_prop_value = property_group_value_from_custom_property_value(child_property_group, item_definition, registry, value=custom_prop_value, nesting=nesting)
 
             if is_def_value_type(item_definition, registry):
@@ -301,7 +301,7 @@ def property_group_value_from_custom_property_value(property_group, definition, 
             item_long_name = getattr(new_entry, "long_name") # we get the REAL type name
             definition = registry.type_infos[item_long_name] if item_long_name in registry.type_infos else None
 
-            if definition != None:
+            if definition is not None:
                 property_group_value_from_custom_property_value(new_entry, definition, registry, value=raw_value, nesting=nesting)            
     else:
         try:

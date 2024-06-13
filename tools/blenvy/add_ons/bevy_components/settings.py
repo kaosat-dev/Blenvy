@@ -45,9 +45,11 @@ def watch_schema():
             except OSError:    # file is in use
                 print("in use")
                 #return True"""
-            #bpy.ops.object.reload_registry()
             # we need to add an additional delay as the file might not have loaded yet
-            bpy.app.timers.register(lambda: bpy.ops.object.reload_registry(), first_interval=1)
+            bpy.app.timers.register(lambda: bpy.ops.blenvy.components_registry_reload(), first_interval=1)
+            component_settings.schemaTimeStamp = stamp
+
+        if component_settings.schemaTimeStamp == "":
             component_settings.schemaTimeStamp = stamp
     except Exception as error:
         pass

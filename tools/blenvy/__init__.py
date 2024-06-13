@@ -22,7 +22,7 @@ from .add_ons.bevy_components.registry.registry import ComponentsRegistry,Missin
 from .add_ons.bevy_components.registry.operators import (BLENVY_OT_components_registry_reload, BLENVY_OT_components_registry_browse_schema)
 from .add_ons.bevy_components.registry.ui import (BLENVY_PT_components_missing_types_panel, BLENVY_UL_components_missing_types)
 from .add_ons.bevy_components.components.metadata import (ComponentMetadata, ComponentsMeta)
-from .add_ons.bevy_components.components.lists import BLENVY_OT_component_list_actions, BLENVY_OT_component_list_add_item, BLENVY_OT_component_list_remove_item, BLENVY_OT_component_list_select_item
+from .add_ons.bevy_components.components.lists import BLENVY_OT_component_list_actions
 from .add_ons.bevy_components.components.maps import BLENVY_OT_component_map_actions
 from .add_ons.bevy_components.components.ui import BLENVY_PT_components_panel, BLENVY_PT_component_tools_panel
 from .add_ons.bevy_components.settings import ComponentsSettings
@@ -100,9 +100,6 @@ classes = [
     BLENVY_UL_components_missing_types,
     BLENVY_PT_components_missing_types_panel,
 
-    BLENVY_OT_component_list_select_item,
-    BLENVY_OT_component_list_add_item,
-    BLENVY_OT_component_list_remove_item,
     BLENVY_OT_component_list_actions,
     BLENVY_OT_component_map_actions,
 
