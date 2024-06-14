@@ -1,16 +1,14 @@
 from bpy.props import (StringProperty)
 from . import process_component
 
-def process_structs(registry, definition, properties, update, nesting, nesting_long_names): 
+def process_structs(registry, definition, properties, update, nesting_long_names): 
     value_types_defaults = registry.value_types_defaults 
     blender_property_mapping = registry.blender_property_mapping
     type_infos = registry.type_infos
     long_name = definition["long_name"]
-    short_name = definition["short_name"]
 
     __annotations__ = {}
     default_values = {}
-    nesting = nesting + [short_name]
     nesting_long_names = nesting_long_names + [long_name]
 
     for property_name in properties.keys():
@@ -35,7 +33,7 @@ def process_structs(registry, definition, properties, update, nesting, nesting_l
                     __annotations__[property_name] = blender_property
             else:
                 original_long_name = original["long_name"]
-                (sub_component_group, _) = process_component.process_component(registry, original, update, {"nested": True, "long_name": original_long_name}, nesting, nesting_long_names)
+                (sub_component_group, _) = process_component.process_component(registry, original, update, {"nested": True, "long_name": original_long_name}, nesting_long_names)
                 __annotations__[property_name] = sub_component_group
         # if there are sub fields, add an attribute "sub_fields" possibly a pointer property ? or add a standard field to the type , that is stored under "attributes" and not __annotations (better)
         else:

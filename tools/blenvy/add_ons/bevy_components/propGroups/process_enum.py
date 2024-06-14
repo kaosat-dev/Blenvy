@@ -1,21 +1,19 @@
 from bpy.props import (StringProperty)
 from . import process_component
 
-def process_enum(registry, definition, update, nesting, nesting_long_names):
+def process_enum(registry, definition, update, nesting_long_names):
     blender_property_mapping = registry.blender_property_mapping
-    short_name = definition["short_name"]
     long_name = definition["long_name"]
 
     type_def = definition["type"] if "type" in definition else None
     variants = definition["oneOf"]
 
-    nesting = nesting + [short_name]
-    nesting_long_names = nesting_long_names = [long_name]
+    nesting_long_names = nesting_long_names + [long_name]
 
     __annotations__ = {}
     original_type_name = "enum"
 
-    # print("processing enum", short_name, long_name, definition)
+    #print("processing enum", long_name)#, definition)
 
     if type_def == "object":
         labels = []
@@ -28,12 +26,12 @@ def process_enum(registry, definition, update, nesting, nesting_long_names):
             if "prefixItems" in variant:
                 #print("tupple variant in enum", variant)
                 registry.add_custom_type(variant_name, variant)
-                (sub_component_group, _) = process_component.process_component(registry, variant, update, {"nested": True}, nesting, nesting_long_names) 
+                (sub_component_group, _) = process_component.process_component(registry, variant, update, {"nested": True}, nesting_long_names=nesting_long_names) 
                 additional_annotations[variant_prefixed_name] = sub_component_group
             elif "properties" in variant:
                 #print("struct variant in enum", variant)
                 registry.add_custom_type(variant_name, variant)
-                (sub_component_group, _) = process_component.process_component(registry, variant, update, {"nested": True}, nesting, nesting_long_names) 
+                (sub_component_group, _) = process_component.process_component(registry, variant, update, {"nested": True}, nesting_long_names=nesting_long_names) 
                 additional_annotations[variant_prefixed_name] = sub_component_group
             else: # for the cases where it's neither a tupple nor a structs: FIXME: not 100% sure of this
                 #print("other variant in enum")

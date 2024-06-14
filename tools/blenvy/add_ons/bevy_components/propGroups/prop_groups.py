@@ -37,9 +37,9 @@ def generate_propertyGroups_for_components():
     for component_name in type_infos:
         definition = type_infos[component_name]
         is_component = definition['isComponent'] if "isComponent" in definition else False
-        root_property_name = component_name if is_component else None
-        #print("root property", root_property_name)
-        process_component(registry, definition, update_calback_helper(definition, update_component, root_property_name), None, [])
+        root_property_name = component_name# if is_component else None
+        print("root property", component_name,f"({is_component})")
+        process_component(registry, definition, update_calback_helper(definition, update_component, root_property_name), extras=None, nesting_long_names=[])
         
     # if we had to add any wrapper types on the fly, process them now
     registry.process_custom_types()

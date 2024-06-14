@@ -217,25 +217,27 @@ class ComponentsRegistry(PropertyGroup):
         
     long_names_to_propgroup_names = {}
 
-    # generate propGroup name from nesting level & longName: each longName + nesting is unique
-    def generate_propGroup_name(self, nesting, longName):
+    # generate propGroup name from nesting level: each longName + nesting is unique
+    def generate_propGroup_name(self, nesting):
         #print("gen propGroup name for", shortName, nesting)
-        key = str(nesting) + longName if len(nesting) > 0 else longName
+        key = str(nesting)
 
         propGroupHash = tiger_hash(key)
         propGroupName = propGroupHash + "_ui"
 
         # check for collision
-        #print("--computing hash for", nesting, longName)
+        padding = "  " * (len(nesting) + 1)
+
+        print(f"{padding}--computing hash for", nesting)
         if propGroupName in self.long_names_to_propgroup_names.values(): 
-            print("  WARNING !! you have a collision between the hash of multiple component names: collision for", nesting, longName)
+            print("  WARNING !! you have a collision between the hash of multiple component names: collision for", nesting)
 
         self.long_names_to_propgroup_names[key] = propGroupName
 
         return propGroupName
     
     def get_propertyGroupName_from_longName(self, longName):
-        return self.long_names_to_propgroup_names.get(longName, None)
+        return self.long_names_to_propgroup_names.get(str([longName]), None)
     
 
     ###########

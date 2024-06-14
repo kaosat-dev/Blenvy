@@ -62,15 +62,15 @@ class ComponentsSettings(PropertyGroup):
 
     schema_path: StringProperty(
         name="schema path",
-        description="path to the registry schema file",
+        description="path to the registry schema file (relative to the assets path)",
         default="registry.json",
         update=save_settings
     )# type: ignore
 
     schema_path_full: StringProperty(
         name="schema full path",
-        description="path to the registry schema file",
-        get=lambda self: os.path.abspath(os.path.join(os.path.dirname(bpy.data.filepath), self.schema_path))
+        description="full path to the registry schema file",
+        get=lambda self: os.path.abspath(os.path.join(bpy.context.window_manager.blenvy.assets_path_full, self.schema_path))
     ) # type: ignore
 
     watcher_enabled: BoolProperty(name="Watcher_enabled", default=True, update=toggle_watcher)# type: ignore

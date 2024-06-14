@@ -7,7 +7,7 @@ from . import process_enum
 from . import process_list
 from . import process_map
 
-def process_component(registry, definition, update, extras=None, nesting = [], nesting_long_names = []):
+def process_component(registry, definition, update, extras=None, nesting_long_names = []):
     long_name = definition['long_name']
     short_name = definition["short_name"]
     type_info = definition["typeInfo"] if "typeInfo" in definition else None
@@ -30,28 +30,32 @@ def process_component(registry, definition, update, extras=None, nesting = [], n
     with_list = False
     with_map = False
 
+    padding = "  " * (len(nesting_long_names) + 1)
+    #print(f"{padding}process component", long_name, "nesting_long_names",nesting_long_names, "foo", has_properties, has_prefixItems, is_enum, is_list, is_map)
 
     if has_properties:
-        __annotations__ = __annotations__ | process_structs.process_structs(registry, definition, properties, update, nesting, nesting_long_names)
+        __annotations__ = __annotations__ | process_structs.process_structs(registry, definition, properties, update, nesting_long_names)
         with_properties = True
         tupple_or_struct = "struct"
 
     if has_prefixItems:
-        __annotations__ = __annotations__ | process_tupples.process_tupples(registry, definition, prefixItems, update, nesting, nesting_long_names)
+        __annotations__ = __annotations__ | process_tupples.process_tupples(registry, definition, prefixItems, update, nesting_long_names)
         with_items = True
         tupple_or_struct = "tupple"
 
     if is_enum:
-        __annotations__ = __annotations__ | process_enum.process_enum(registry, definition, update, nesting, nesting_long_names)
+        __annotations__ = __annotations__ | process_enum.process_enum(registry, definition, update, nesting_long_names)
         with_enum = True
 
     if is_list:
-        __annotations__ = __annotations__ | process_list.process_list(registry, definition, update, nesting, nesting_long_names)
+        __annotations__ = __annotations__ | process_list.process_list(registry, definition, update, nesting_long_names)
         with_list= True
 
     if is_map:
-        __annotations__ = __annotations__ | process_map.process_map(registry, definition, update, nesting, nesting_long_names)
+        __annotations__ = __annotations__ | process_map.process_map(registry, definition, update, nesting_long_names)
         with_map = True
+
+    # print("AFTER PROCESS", nesting_long_names, long_name)
     
     field_names = []
     for a in __annotations__:
@@ -61,7 +65,10 @@ def process_component(registry, definition, update, extras=None, nesting = [], n
     extras = extras if extras is not None else {
         "long_name": long_name
     }
+
+    nesting_long_names = nesting_long_names + [long_name]
     root_component = nesting_long_names[0] if len(nesting_long_names) > 0 else long_name
+
     # print("")
     property_group_params = {
          **extras,
@@ -78,7 +85,7 @@ def process_component(registry, definition, update, extras=None, nesting = [], n
         -BasicTest => the registration & update callback of this one overwrites the first "basicTest"
     have not found a cleaner workaround so far
     """
-    property_group_name = registry.generate_propGroup_name(nesting, long_name)
+    property_group_name = registry.generate_propGroup_name(nesting_long_names)
     (property_group_pointer, property_group_class) = property_group_from_infos(property_group_name, property_group_params)
     # add our component propertyGroup to the registry
     registry.register_component_propertyGroup(property_group_name, property_group_pointer)

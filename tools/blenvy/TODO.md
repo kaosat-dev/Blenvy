@@ -97,6 +97,8 @@ Components:
         - [x] add warning about hash colision (not much we can/ could do if it is the case ?)
         - [ ] double check weird collisions AND/OR reuse existing if applicable
 
+    - [x] annoying default path for registry, should be relative to the assets path
+
 
 General things to solve:
  - [x] save settings
