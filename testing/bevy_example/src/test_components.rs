@@ -119,6 +119,10 @@ pub struct VecOfColors(Vec<Color>);
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
+pub struct VecOfUints(Vec<u32>);
+
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
 pub struct AAAAddedCOMPONENT;
 
 #[derive(Component, Reflect, Default, Debug)]
@@ -196,6 +200,18 @@ pub struct ComponentAToFilterOut;
 #[reflect(Component)]
 pub struct ComponentBToFilterOut;
 
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+pub struct ComponentWithFieldsOfIdenticalType{
+    pub first: f32,
+    pub second: f32,
+    pub third: Vec<f32>,
+    pub fourth: Vec<f32>,
+}
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+pub struct ComponentWithFieldsOfIdenticalType2(f32, f32, f32);
+
 pub struct ComponentsTestPlugin;
 impl Plugin for ComponentsTestPlugin {
     fn build(&self, app: &mut App) {
@@ -227,6 +243,9 @@ impl Plugin for ComponentsTestPlugin {
             .register_type::<Range<f32>>()
             .register_type::<VecOfF32s>()
             .register_type::<Vec<f32>>()
+            .register_type::<u32>()
+            .register_type::<Vec<u32>>()
+            .register_type::<VecOfUints>()
             // .register_type::<AAAAddedCOMPONENT>()
             .register_type::<AComponentWithAnExtremlyExageratedOrMaybeNotButCouldBeNameOrWut>()
             .register_type::<HashMap<String, String>>()
@@ -242,6 +261,9 @@ impl Plugin for ComponentsTestPlugin {
             .register_type::<HashmapTestStringColorFlat>()
             .register_type::<ComponentAToFilterOut>()
             .register_type::<ComponentBToFilterOut>()
+            .register_type::<ComponentWithFieldsOfIdenticalType>()
+            .register_type::<ComponentWithFieldsOfIdenticalType2>()
+
             .add_plugins(MaterialPlugin::<
                 ExtendedMaterial<StandardMaterial, MyExtension>,
             >::default());

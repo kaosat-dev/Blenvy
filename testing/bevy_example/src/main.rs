@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_gltf_worlflow_examples_common_rapier::CommonPlugin;
+use bevy_gltf_worlflow_examples_common::CommonPlugin;
 
 mod core;
 use crate::core::*;

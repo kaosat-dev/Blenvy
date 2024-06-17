@@ -13,7 +13,7 @@ use bevy::{
     prelude::*, render::view::screenshot::ScreenshotManager, time::common_conditions::on_timer,
     window::PrimaryWindow,
 };
-use bevy_gltf_worlflow_examples_common_rapier::{AppState, GameState};
+use bevy_gltf_worlflow_examples_common::{AppState, GameState};
 
 use json_writer::to_json_string;
 

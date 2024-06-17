@@ -1,8 +1,8 @@
 use bevy::prelude::*;
 use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, BlueprintPath, GameWorldTag};
-use bevy_gltf_worlflow_examples_common_rapier::{GameState, InAppRunning};
+use bevy_gltf_worlflow_examples_common::{GameState, InAppRunning};
 
-use bevy_rapier3d::prelude::Velocity;
+//use bevy_rapier3d::prelude::Velocity;
 use rand::Rng;
 
 pub fn setup_game(
@@ -69,10 +69,10 @@ pub fn spawn_test(
                 // BlueprintName("Health_Pickup".to_string()),
                 // SpawnHere,
                 TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
-                Velocity {
+                /*Velocity {
                     linvel: Vec3::new(vel_x, vel_y, vel_z),
                     angvel: Vec3::new(0.0, 0.0, 0.0),
-                },
+                },*/
             ))
             .id();
         commands.entity(world).add_child(new_entity);
