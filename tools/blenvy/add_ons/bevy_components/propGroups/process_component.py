@@ -30,13 +30,14 @@ def process_component(registry, definition, update, extras=None, nesting_long_na
     with_list = False
     with_map = False
 
-    padding = "  " * (len(nesting_long_names) + 1)
+    #padding = "  " * (len(nesting_long_names) + 1)
     #print(f"{padding}process component", long_name, "nesting_long_names",nesting_long_names, "foo", has_properties, has_prefixItems, is_enum, is_list, is_map)
 
     if has_properties:
         __annotations__ = __annotations__ | process_structs.process_structs(registry, definition, properties, update, nesting_long_names)
         with_properties = True
         tupple_or_struct = "struct"
+        #print(f"{padding}struct")
 
     if has_prefixItems:
         __annotations__ = __annotations__ | process_tupples.process_tupples(registry, definition, prefixItems, update, nesting_long_names)
@@ -61,7 +62,6 @@ def process_component(registry, definition, update, extras=None, nesting_long_na
     for a in __annotations__:
         field_names.append(a)
  
-
     extras = extras if extras is not None else {
         "long_name": long_name
     }
@@ -78,25 +78,16 @@ def process_component(registry, definition, update, extras=None, nesting_long_na
         **dict(with_properties = with_properties, with_items= with_items, with_enum= with_enum, with_list= with_list, with_map = with_map, short_name= short_name, long_name=long_name),
         'root_component': root_component
     }
-    #FIXME: YIKES, but have not found another way: 
-    """ Withouth this ; the following does not work
+    
+    # we need to pass the full hierarchy to disambiguate between components 
+    # Withouth this ; the following does not work
+    """ 
     -BasicTest
     - NestingTestLevel2
         -BasicTest => the registration & update callback of this one overwrites the first "basicTest"
-    have not found a cleaner workaround so far
     """
-    property_group_name = registry.generate_propGroup_name(nesting_long_names)
-    (property_group_pointer, property_group_class) = property_group_from_infos(property_group_name, property_group_params)
     # add our component propertyGroup to the registry
-    registry.register_component_propertyGroup(property_group_name, property_group_pointer)
+    (property_group_pointer, property_group_class) = registry.register_component_propertyGroup(nesting_long_names, property_group_params)
 
     return (property_group_pointer, property_group_class)
                 
-def property_group_from_infos(property_group_name, property_group_parameters):
-    # print("creating property group", property_group_name)
-    property_group_class = type(property_group_name, (PropertyGroup,), property_group_parameters)
-    
-    bpy.utils.register_class(property_group_class)
-    property_group_pointer = PointerProperty(type=property_group_class)
-    
-    return (property_group_pointer, property_group_class)

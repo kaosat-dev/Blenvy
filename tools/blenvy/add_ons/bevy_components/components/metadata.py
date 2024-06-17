@@ -220,7 +220,7 @@ def upsert_component_in_item(item, long_name, registry):
             if property_group_name in registry.component_propertyGroups:
                 # we have found a matching property_group, so try to inject it
                 # now inject property group
-                setattr(ComponentMetadata, property_group_name, registry.component_propertyGroups[property_group_name]) # FIXME: not ideal as all ComponentMetadata get the propGroup, but have not found a way to assign it per instance
+                setattr(ComponentMetadata, property_group_name, registry.component_propertyGroups[property_group_name]) # FIXME: not ideal as ALL instances of ComponentMetadata get the propGroup, but have not found a way to assign it per instance
                 propertyGroup = getattr(component_meta, property_group_name, None)
         
         # now deal with property groups details

@@ -7,12 +7,23 @@ from bpy_types import (PropertyGroup)
 from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorProperty, IntProperty, IntVectorProperty, EnumProperty, PointerProperty, CollectionProperty)
 from ..components.metadata import ComponentMetadata
 from .hashing.tiger import hash as tiger_hash
+
+
 # helper class to store missing bevy types information
 class MissingBevyType(bpy.types.PropertyGroup):
     long_name: bpy.props.StringProperty(
         name="type",
     ) # type: ignore
 
+
+def property_group_from_infos(property_group_name, property_group_parameters):
+    # print("creating property group", property_group_name)
+    property_group_class = type(property_group_name, (PropertyGroup,), property_group_parameters)
+    
+    bpy.utils.register_class(property_group_class)
+    property_group_pointer = PointerProperty(type=property_group_class)
+    
+    return (property_group_pointer, property_group_class)
 
 # this is where we store the information for all available components
 class ComponentsRegistry(PropertyGroup):
@@ -140,6 +151,8 @@ class ComponentsRegistry(PropertyGroup):
     type_infos = {}
     type_infos_missing = []
     component_propertyGroups = {}
+    component_property_group_classes = []
+
     custom_types_to_add = {}
     invalid_components = []
 
@@ -152,8 +165,18 @@ class ComponentsRegistry(PropertyGroup):
         for propgroup_name in cls.component_propertyGroups.keys():
             try:
                 delattr(ComponentMetadata, propgroup_name)
+                #print("sucess REMOVAL from Metadata")
             except Exception as error:
                 pass
+                #print("failed to unregister")
+
+        for propgroup_class in cls.component_property_group_classes:
+            try:
+                bpy.utils.unregister_class(propgroup_class)
+                #print("sucess UNREGISTER")
+            except Exception as error:
+                pass
+                #print("NEW failed to unregister")
         
         del bpy.types.WindowManager.components_registry
 
@@ -167,7 +190,10 @@ class ComponentsRegistry(PropertyGroup):
         self.missing_types_list.clear()
         self.type_infos.clear()
         self.type_infos_missing.clear()
+
         self.component_propertyGroups.clear()
+        self.component_property_group_classes.clear()
+
         self.custom_types_to_add.clear()
         self.invalid_components.clear()
         # now prepare paths to load data
@@ -187,10 +213,6 @@ class ComponentsRegistry(PropertyGroup):
     
     def has_type_infos(self):
         return len(self.type_infos.keys()) != 0
-
-    # we keep a list of component propertyGroup around 
-    def register_component_propertyGroup(self, name, propertyGroup):
-        self.component_propertyGroups[name] = propertyGroup
 
     # to be able to give the user more feedback on any missin/unregistered types in their schema file
     def add_missing_typeInfo(self, long_name):
@@ -217,18 +239,25 @@ class ComponentsRegistry(PropertyGroup):
         
     long_names_to_propgroup_names = {}
 
+    # we keep a list of component propertyGroup around 
+    def register_component_propertyGroup(self, nesting, property_group_params):
+        property_group_name = self.generate_propGroup_name(nesting)
+        (property_group_pointer, property_group_class) = property_group_from_infos(property_group_name, property_group_params)
+        self.component_propertyGroups[property_group_name] = property_group_pointer
+        self.component_property_group_classes.append(property_group_class)
+
+        return (property_group_pointer, property_group_class)
+
     # generate propGroup name from nesting level: each longName + nesting is unique
     def generate_propGroup_name(self, nesting):
-        #print("gen propGroup name for", shortName, nesting)
         key = str(nesting)
 
         propGroupHash = tiger_hash(key)
         propGroupName = propGroupHash + "_ui"
 
         # check for collision
-        padding = "  " * (len(nesting) + 1)
-
-        print(f"{padding}--computing hash for", nesting)
+        #padding = "  " * (len(nesting) + 1)
+        #print(f"{padding}--computing hash for", nesting)
         if propGroupName in self.long_names_to_propgroup_names.values(): 
             print("  WARNING !! you have a collision between the hash of multiple component names: collision for", nesting)
 
@@ -238,7 +267,6 @@ class ComponentsRegistry(PropertyGroup):
     
     def get_propertyGroupName_from_longName(self, longName):
         return self.long_names_to_propgroup_names.get(str([longName]), None)
-    
 
     ###########
 

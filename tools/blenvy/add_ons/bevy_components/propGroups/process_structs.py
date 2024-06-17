@@ -33,7 +33,7 @@ def process_structs(registry, definition, properties, update, nesting_long_names
                     __annotations__[property_name] = blender_property
             else:
                 original_long_name = original["long_name"]
-                (sub_component_group, _) = process_component.process_component(registry, original, update, {"nested": True, "long_name": original_long_name}, nesting_long_names)
+                (sub_component_group, _) = process_component.process_component(registry, original, update, {"nested": True, "long_name": original_long_name}, nesting_long_names+[property_name])
                 __annotations__[property_name] = sub_component_group
         # if there are sub fields, add an attribute "sub_fields" possibly a pointer property ? or add a standard field to the type , that is stored under "attributes" and not __annotations (better)
         else:

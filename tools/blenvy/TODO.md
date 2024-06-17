@@ -95,7 +95,7 @@ Components:
         -> VERY likely due to the int-offset computation for hashes of components
         - now switched to tiger_hash
         - [x] add warning about hash colision (not much we can/ could do if it is the case ?)
-        - [ ] double check weird collisions AND/OR reuse existing if applicable
+        - [x] double check weird collisions AND/OR reuse existing if applicable
 
     - [x] annoying default path for registry, should be relative to the assets path
 
@@ -163,8 +163,9 @@ General issues:
     - [ ] remove/replace bevy editor pls with some native ui to display hierarchies
     - [ ] switch to bevy rc2
 
-
-
+- [ ] simplify examples:
+    - [ ] a full fledged demo (including physics & co)
+    - [ ] other examples without interactions or physics 
 
 
 - [x] overall cleanup
