@@ -34,6 +34,7 @@ pub fn setup_main_scene_animations(asset_server: Res<AssetServer>, mut commands:
     commands.insert_resource(AnimTest(asset_server.load("levels/World.glb")));
 }
 
+/* 
 #[allow(clippy::type_complexity)]
 pub fn animations(
     added_animation_players: Query<(Entity, &Name, &AnimationPlayer)>,
@@ -225,7 +226,7 @@ pub fn play_animations(
         }
     }
 }
-
+*/
 pub fn react_to_animation_markers(
     mut animation_marker_events: EventReader<AnimationMarkerReached>,
 ) {

@@ -38,7 +38,7 @@ pub(crate) fn spawned_blueprint_post_process(
     for (original, children, original_children, animations, no_inblueprint, name) in
         unprocessed_entities.iter()
     {
-        debug!("post processing blueprint for entity {:?}", name);
+        info!("post processing blueprint for entity {:?}", name);
 
         if children.len() == 0 {
             warn!("timing issue ! no children found, please restart your bevy app (bug being investigated)");
@@ -94,9 +94,10 @@ pub(crate) fn spawned_blueprint_post_process(
 
         commands.entity(original).remove::<SpawnHere>();
         commands.entity(original).remove::<Spawned>();
-        commands.entity(original).remove::<Handle<Scene>>();
+        // commands.entity(original).remove::<Handle<Scene>>(); // FIXME: if we delete the handle to the scene, things get despawned ! not what we want
         //commands.entity(original).remove::<AssetsToLoad>(); // also clear the sub assets tracker to free up handles, perhaps just freeing up the handles and leave the rest would be better ?
         //commands.entity(original).remove::<BlueprintAssetsLoaded>();
         commands.entity(root_entity).despawn_recursive();
+        info!("DONE WITH POST PROCESS");
     }
 }

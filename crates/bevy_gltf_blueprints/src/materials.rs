@@ -160,10 +160,10 @@ pub(crate) fn materials_inject2(
             let mat_gltf = assets_gltf
                 .get(model_handle.id())
                 .expect("material should have been preloaded");
-            if mat_gltf.named_materials.contains_key(&material_info.name) {
+            if mat_gltf.named_materials.contains_key(&material_info.name as &str) {
                 let material = mat_gltf
                     .named_materials
-                    .get(&material_info.name)
+                    .get(&material_info.name as &str)
                     .expect("this material should have been loaded");
                 blueprints_config
                     .material_library_cache

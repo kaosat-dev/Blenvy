@@ -1,6 +1,6 @@
 [package]
-name = "bevy_gltf_components"
-version = "0.6.0"
+name = "blenvy"
+version = "0.0.1"
 authors = ["Mark 'kaosat-dev' Moissette"]
 description = "Allows you to define Bevy components direclty inside gltf files and instanciate the components on the Bevy side."
 homepage = "https://github.com/kaosat-dev/Blender_bevy_components_workflow"

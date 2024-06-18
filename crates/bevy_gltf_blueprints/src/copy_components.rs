@@ -1,4 +1,4 @@
-use bevy::ecs::system::Command;
+use bevy::ecs::world::Command;
 use bevy::prelude::*;
 use std::any::TypeId;
 

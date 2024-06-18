@@ -1,7 +1,8 @@
-pub mod animation;
 pub mod in_game;
-pub use animation::*;
 pub use in_game::*;
+
+pub mod animation;
+pub use animation::*;
 
 use std::{collections::HashMap, fs, time::Duration};
 
@@ -13,12 +14,14 @@ use bevy::{
     prelude::*, render::view::screenshot::ScreenshotManager, time::common_conditions::on_timer,
     window::PrimaryWindow,
 };
-use bevy_gltf_worlflow_examples_common::{AppState, GameState};
+use crate::{AppState, GameState};
 
 use json_writer::to_json_string;
 
 fn start_game(mut next_app_state: ResMut<NextState<AppState>>) {
-    next_app_state.set(AppState::AppLoading);
+    println!("START GAME");
+    //next_app_state.set(AppState::AppLoading);
+    next_app_state.set(AppState::AppRunning);
 }
 
 // if the export from Blender worked correctly, we should have animations (simplified here by using AnimationPlayerLink)
@@ -121,7 +124,7 @@ fn generate_screenshot(
 }
 
 fn exit_game(mut app_exit_events: ResMut<Events<bevy::app::AppExit>>) {
-    app_exit_events.send(bevy::app::AppExit);
+    app_exit_events.send(bevy::app::AppExit::Success);
 }
 
 pub struct GamePlugin;
@@ -134,16 +137,18 @@ impl Plugin for GamePlugin {
 
             .add_systems(Update, (spawn_test).run_if(in_state(GameState::InGame)))
             .add_systems(Update, validate_export)
+            //.add_systems(OnEnter(AppState::CoreLoading), start_game)
+
             .add_systems(OnEnter(AppState::MenuRunning), start_game)
             .add_systems(OnEnter(AppState::AppRunning), setup_game)
 
             .add_systems(OnEnter(AppState::MenuRunning), setup_main_scene_animations)
-            .add_systems(Update, (animations)
+            /* .add_systems(Update, (animations)
                 .run_if(in_state(AppState::AppRunning))
                 .after(GltfBlueprintsSet::AfterSpawn)
             )
             .add_systems(Update, play_animations)
-            .add_systems(Update, react_to_animation_markers)
+            .add_systems(Update, react_to_animation_markers)*/
 
              /*.add_systems(Update, generate_screenshot.run_if(on_timer(Duration::from_secs_f32(0.2)))) // TODO: run once
             .add_systems(

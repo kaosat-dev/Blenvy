@@ -1,6 +1,6 @@
 use std::path::{Path, PathBuf};
 
-use bevy::{gltf::Gltf, prelude::*, utils::HashMap};
+use bevy::{gltf::Gltf, prelude::*, utils::hashbrown::HashMap};
 
 use crate::{AllAssets, AssetsToLoad, AssetLoadTracker, BluePrintsConfig, BlueprintAnimations, BlueprintAssetsLoaded, BlueprintAssetsNotLoaded};
 
@@ -28,7 +28,7 @@ pub struct SpawnHere;
 pub struct Spawned;
 
 
-#[derive(Component)]
+#[derive(Component, Debug)]
 /// flag component added when a Blueprint instance ist Ready : ie : 
 /// - its assets have loaded
 /// - it has finished spawning
@@ -194,8 +194,13 @@ pub(crate) fn check_for_loaded2(
             println!("loading {}: // load state: {:?}", tracker.name, asset_server.load_state(asset_id));
 
             // FIXME: hack for now
-            let failed = asset_server.load_state(asset_id) == bevy::asset::LoadState::Failed;
-
+            let mut failed = false;// asset_server.load_state(asset_id) == bevy::asset::LoadState::Failed(_error);
+            match asset_server.load_state(asset_id) {
+                bevy::asset::LoadState::Failed(_) => {
+                    failed = true
+                },
+                _ => {}
+            }
             tracker.loaded = loaded || failed;
             if loaded || failed {
                 loaded_amount += 1;
@@ -295,6 +300,12 @@ pub(crate) fn spawn_from_blueprints2(
                 original_children.push(*child);
             }
         }
+
+        let mut named_animations:HashMap<String, Handle<AnimationClip>> = HashMap::new() ;
+        for (key, value) in gltf.named_animations.iter() {
+            named_animations.insert(key.to_string(), value.clone());
+        }
+
         commands.entity(entity).insert((
             SceneBundle {
                 scene: scene.clone(),
@@ -306,7 +317,7 @@ pub(crate) fn spawn_from_blueprints2(
             OriginalChildren(original_children),
             BlueprintAnimations {
                 // these are animations specific to the inside of the blueprint
-                named_animations: gltf.named_animations.clone(),
+                named_animations: named_animations//gltf.named_animations.clone(),
             },
         ));
 

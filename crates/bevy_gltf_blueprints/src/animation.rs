@@ -73,6 +73,7 @@ pub struct AnimationMarkerReached {
 
 /////////////////////
 
+/* 
 /// triggers events when a given animation marker is reached for INSTANCE animations
 pub fn trigger_instance_animation_markers_events(
     animation_infos: Query<(
@@ -82,13 +83,15 @@ pub fn trigger_instance_animation_markers_events(
         &SceneAnimations,
         &AnimationInfos,
     )>,
-    animation_players: Query<&AnimationPlayer>,
+    animation_players: Query<(&AnimationPlayer)>,
     animation_clips: Res<Assets<AnimationClip>>,
+    animation_graphs: Res<Assets<AnimationGraph>>,
     mut animation_marker_events: EventWriter<AnimationMarkerReached>,
 ) {
     for (entity, markers, link, animations, animation_infos) in animation_infos.iter() {
         let animation_player = animation_players.get(link.0).unwrap();
         let animation_clip = animation_clips.get(animation_player.animation_clip());
+        // animation_player.play(animation)
 
         if animation_clip.is_some() {
             // println!("Entity {:?} markers {:?}", entity, markers);
@@ -215,3 +218,4 @@ pub fn trigger_blueprint_animation_markers_events(
         }
     }
 }
+*/

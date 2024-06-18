@@ -176,12 +176,13 @@ impl Plugin for BlueprintsPlugin {
                     .chain()
                     .in_set(GltfBlueprintsSet::AfterSpawn),
             )
-            .add_systems(
+            /* .add_systems(
                 Update,
                 (
                     trigger_instance_animation_markers_events,
                     trigger_blueprint_animation_markers_events,
                 ),
-            );
+            )*/
+            ;
     }
 }
