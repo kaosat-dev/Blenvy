@@ -156,12 +156,16 @@ General issues:
     - [ ] rename project to Blenvy
     - [ ] replace all references to the old 2 add-ons with those to Blenvy
 - [ ] rename repo to "Blenvy"
+- [x] switch to bevy 0.14 rc2
+- [ ] find a solution for the new color handling 
+- [ ] add back lighting_components
+- [ ] check if scene components are being deleted through our scene re-orgs in the spawn post process
 
 
 - [ ] simplify testing example:
-    - [ ] remove use of rapier physics (or even the whole common boilerplate ?)
+    - [x] remove use of rapier physics (or even the whole common boilerplate ?)
     - [ ] remove/replace bevy editor pls with some native ui to display hierarchies
-    - [ ] switch to bevy rc2
+
 
 - [ ] simplify examples:
     - [ ] a full fledged demo (including physics & co)

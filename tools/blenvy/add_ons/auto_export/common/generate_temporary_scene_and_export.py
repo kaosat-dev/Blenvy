@@ -20,23 +20,13 @@ def generate_temporary_scene_and_export(settings, gltf_export_settings, gltf_out
     temp_root_collection = temp_scene.collection
 
     print("additional_dataAAAAAAAAAAAAAAAH", additional_data)
+    properties_black_list = ['user_assets', 'components_meta']
     if additional_data is not None: # FIXME not a fan of having this here
         for entry in dict(additional_data):
-            print("entry in additional data", entry)
-            if entry == "local_assets":
-                temp_scene["local_assets"] = additional_data[entry] # this is for bevy 0.14
-                temp_root_collection["local_assets"] = additional_data[entry] # for previous bevy versions, remove when migration done
-                bla = "[(name: \"test_asset\", path: \"audio/fake.mp3\")]"
-                local_assets = additional_data.get(entry, [])
-                local_assets = [entry for entry in local_assets]
-                add_scene_property(temp_scene, 'assets_components', {"LocalAssets":  f"LocalAssets({local_assets})".replace("'", '')}) 
-
-            if entry == entry == "AllAssets":
-                temp_scene["AllAssets"] = additional_data[entry]
-                temp_root_collection["AllAssets"] = additional_data[entry] # for previous bevy versions, remove when migration done
-                all_assets = additional_data.get(entry, [])
-                all_assets = [entry for entry in all_assets]
-                add_scene_property(temp_scene, 'assets_components', {"AllAssets":  f"AllAssets({all_assets})".replace("'", '')}) 
+            # we copy everything over except those on the black list
+            if entry not in properties_black_list:
+                print("entry in additional data", entry, "value", additional_data[entry], "in", additional_data.name)
+                temp_scene[entry] = additional_data[entry]
 
     # save active scene
     active_scene = bpy.context.window.scene
@@ -121,13 +111,13 @@ def clear_hollow_scene(temp_scene, original_root_collection):
     def restore_original_names(collection):
         if collection.name.endswith("____bak"):
             collection.name = collection.name.replace("____bak", "")
-        for object in collection.objects:
-            if object.instance_type == 'COLLECTION':
+        for object in collection.all_objects:
+            """if object.instance_type == 'COLLECTION':
                 if object.name.endswith("____bak"):
                     object.name = object.name.replace("____bak", "")
-            else: 
-                if object.name.endswith("____bak"):
-                    object.name = object.name.replace("____bak", "")
+            else: """
+            if object.name.endswith("____bak"):
+                object.name = object.name.replace("____bak", "")
         for child_collection in collection.children:
             restore_original_names(child_collection)
     
