@@ -6,8 +6,8 @@ pub use animation::*;
 
 use std::{collections::HashMap, fs, time::Duration};
 
-use bevy_gltf_blueprints::{
-    AllAssets, BlueprintAnimationPlayerLink, BlueprintName, GltfBlueprintsSet, SceneAnimations
+use blenvy::{
+    AllAssets, BlueprintAnimationPlayerLink, BlueprintEvent, BlueprintName, GltfBlueprintsSet, SceneAnimations
 };
 
 use bevy::{
@@ -127,6 +127,15 @@ fn exit_game(mut app_exit_events: ResMut<Events<bevy::app::AppExit>>) {
     app_exit_events.send(bevy::app::AppExit::Success);
 }
 
+fn check_for_gltf_events(
+    mut blueprint_events: EventReader<BlueprintEvent>,
+)
+{
+    for event in blueprint_events.read() {
+        info!("BLUEPRINT EVENT: {:?}", event);
+    }
+}
+
 pub struct GamePlugin;
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
@@ -136,7 +145,7 @@ impl Plugin for GamePlugin {
             .register_type::<MarkerFox>()
 
             .add_systems(Update, (spawn_test).run_if(in_state(GameState::InGame)))
-            .add_systems(Update, validate_export)
+            .add_systems(Update, (validate_export, check_for_gltf_events))
             //.add_systems(OnEnter(AppState::CoreLoading), start_game)
 
             .add_systems(OnEnter(AppState::MenuRunning), start_game)

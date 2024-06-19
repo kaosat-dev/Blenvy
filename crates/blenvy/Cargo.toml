@@ -1,6 +1,6 @@
 [package]
 name = "blenvy"
-version = "0.0.1"
+version = "0.1.0"
 authors = ["Mark 'kaosat-dev' Moissette"]
 description = "Allows you to define Bevy components direclty inside gltf files and instanciate the components on the Bevy side."
 homepage = "https://github.com/kaosat-dev/Blender_bevy_components_workflow"
@@ -17,6 +17,8 @@ workspace = true
 bevy = { version = "0.14.0-rc.3", default-features = false, features = ["bevy_asset", "bevy_scene", "bevy_gltf"] }
 serde = "1.0.188"
 ron = "0.8.1"
+serde_json = "1.0.108"
+
 
 [dev-dependencies]
 bevy = { version = "0.14.0-rc.3", default-features = false, features = ["dynamic_linking"] }

@@ -1,5 +1,5 @@
 use bevy::{gltf::{GltfMaterialExtras, GltfMeshExtras, GltfSceneExtras}, prelude::*};
-use bevy_gltf_blueprints::{AllAssets, BlueprintInstanceReady};
+use blenvy::{AllAssets, BlueprintInstanceReady};
 
 use crate::BasicTest;
 
@@ -140,7 +140,7 @@ impl Plugin for HiearchyDebugPlugin {
             .add_systems(Startup, setup_hierarchy_debug)
             .add_systems(Update, draw_hierarchy_debug)
             //.add_systems(Update, check_for_gltf_extras)
-
+            
            ;
     }
 }

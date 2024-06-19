@@ -1,11 +1,16 @@
 use std::time::Duration;
 
-use bevy_gltf_blueprints::{
+/*use bevy_gltf_blueprints::{
+    AnimationInfos, AnimationMarkerReached, BlueprintAnimationPlayerLink, BlueprintAnimations,
+    SceneAnimationPlayerLink, SceneAnimations,
+};*/
+
+use bevy::{gltf::Gltf, prelude::*};
+
+use blenvy::{
     AnimationInfos, AnimationMarkerReached, BlueprintAnimationPlayerLink, BlueprintAnimations,
     SceneAnimationPlayerLink, SceneAnimations,
 };
-
-use bevy::{gltf::Gltf, prelude::*};
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]

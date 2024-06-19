@@ -160,12 +160,13 @@ General issues:
 - [ ] find a solution for the new color handling 
 - [ ] add back lighting_components
 - [ ] check if scene components are being deleted through our scene re-orgs in the spawn post process
-
+- [x] trigger events when assets are loaded, blueprints are spawned & co
+- [ ] should "blueprint spawned" only be triggered after all its sub blueprints have spawned ? 
 
 - [ ] simplify testing example:
     - [x] remove use of rapier physics (or even the whole common boilerplate ?)
     - [ ] remove/replace bevy editor pls with some native ui to display hierarchies
-
+- [ ] do a deprecation release of all bevy_gltf_xxx crates to point at the new Blenvy crate
 
 - [ ] simplify examples:
     - [ ] a full fledged demo (including physics & co)

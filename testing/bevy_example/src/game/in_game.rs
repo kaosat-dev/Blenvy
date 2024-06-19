@@ -1,5 +1,6 @@
 use bevy::prelude::*;
-use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, BlueprintPath, GameWorldTag};
+// use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, BlueprintPath, GameWorldTag};
+use blenvy::{BluePrintBundle, BlueprintName, BlueprintPath, GameWorldTag, SpawnHere};
 use crate::{GameState, InAppRunning};
 
 //use bevy_rapier3d::prelude::Velocity;
@@ -25,6 +26,7 @@ pub fn setup_game(
         BlueprintName("World".into()),
         BlueprintPath("levels/World.glb".into()),
         bevy::prelude::Name::from("world"),
+        SpawnHere,
         GameWorldTag,
         InAppRunning,
     ));
