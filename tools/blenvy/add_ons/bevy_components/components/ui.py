@@ -1,7 +1,7 @@
 import json
 import bpy
 
-from ..utils import get_selection_type
+from ..utils import get_selected_item, get_selection_type
 from .metadata import do_item_custom_properties_have_missing_metadata, get_bevy_components
 
 
@@ -176,22 +176,17 @@ class BLENVY_PT_components_panel(bpy.types.Panel):
         layout = self.layout
         name = ""
         target_type = ""
-        object = next(iter(context.selected_objects), None)
-        collection = context.collection
-        if object is not None:
-            name = object.name
-            target_type = "Object"
-        elif collection is not None:
-            name = collection.name
-            target_type = "Collection"
+        selected_item = get_selected_item(context)
+        target_type = get_selection_type(selected_item)
+        name = selected_item.name if selected_item is not None else ''
+        
         # name = context.object.name if context.object is not None else ''
         layout.label(text=f"Components for {name} ({target_type})")
 
         #print("object", context.object, "active", context.active_object, "objects", context.selected_objects)
 
     def draw(self, context):
-        object = next(iter(context.selected_objects), None)
-        collection = context.collection
+        selected_item = get_selected_item(context)
         layout = self.layout
 
         # we get & load our component registry
@@ -199,10 +194,8 @@ class BLENVY_PT_components_panel(bpy.types.Panel):
         selected_component = bpy.context.window_manager.blenvy.components.component_selector
         registry_has_type_infos = registry.has_type_infos()
 
-        if object is not None:
-            draw_component_ui(layout, object, registry, selected_component, registry_has_type_infos, context)
-        elif collection is not None:
-            draw_component_ui(layout, collection, registry, selected_component, registry_has_type_infos, context)
+        if selected_item is not None:
+            draw_component_ui(layout, selected_item, registry, selected_component, registry_has_type_infos, context)
         else: 
             layout.label(text ="Select an object to edit its components")      
 

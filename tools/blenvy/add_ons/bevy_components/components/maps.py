@@ -37,6 +37,8 @@ class BLENVY_OT_component_map_actions(Operator):
         items=(
             ('OBJECT', "Object", ""),
             ('COLLECTION', "Collection", ""),
+            ('MESH', "Mesh", ""),
+            ('MATERIAL', "Material", ""),
             ),
         default="OBJECT"
     ) # type: ignore

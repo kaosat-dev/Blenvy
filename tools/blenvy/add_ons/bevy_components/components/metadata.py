@@ -61,14 +61,18 @@ class ComponentsMeta(PropertyGroup):
 
     @classmethod
     def register(cls):
-        # you can add components to both objects & collections
+        # you can add components to both objects , collections , meshes & materials
         bpy.types.Object.components_meta = PointerProperty(type=ComponentsMeta)
         bpy.types.Collection.components_meta = PointerProperty(type=ComponentsMeta)
+        bpy.types.Mesh.components_meta = PointerProperty(type=ComponentsMeta)
+        bpy.types.Material.components_meta = PointerProperty(type=ComponentsMeta)
 
     @classmethod
     def unregister(cls):
         del bpy.types.Object.components_meta
         del bpy.types.Collection.components_meta
+        del bpy.types.Mesh.components_meta
+        del bpy.types.Material.components_meta
 
 # remove no longer valid metadata from item
 def cleanup_invalid_metadata(item):

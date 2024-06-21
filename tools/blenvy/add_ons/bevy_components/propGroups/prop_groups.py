@@ -4,13 +4,13 @@ import bpy
 from .conversions_from_prop_group import property_group_value_to_custom_property_value
 from .process_component import process_component
 from .utils import update_calback_helper
-from ..utils import get_selected_object_or_collection
+from ..utils import get_selected_item
 
 ## main callback function, fired whenever any property changes, no matter the nesting level
 def update_component(self, context, definition, component_name):
     registry = bpy.context.window_manager.components_registry
     
-    current_object_or_collection = get_selected_object_or_collection(context)
+    current_object_or_collection = get_selected_item(context)
     update_disabled = current_object_or_collection["__disable__update"] if "__disable__update" in current_object_or_collection else False
     update_disabled = registry.disable_all_object_updates or update_disabled # global settings
     if update_disabled:

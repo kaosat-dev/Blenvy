@@ -6,7 +6,7 @@ from bpy.props import (StringProperty, EnumProperty)
 
 from .metadata import add_component_from_custom_property, add_component_to_item, apply_customProperty_values_to_item_propertyGroups, apply_propertyGroup_values_to_item_customProperties, apply_propertyGroup_values_to_item_customProperties_for_component, copy_propertyGroup_values_to_another_item, get_bevy_component_value_by_long_name, get_bevy_components, is_bevy_component_in_item, remove_component_from_item, rename_component, toggle_component
 
-from ..utils import get_selected_object_or_collection
+from ..utils import get_item_by_type, get_selected_item
 
 class BLENVY_OT_component_add(Operator):
     """Add Bevy component to object/collection"""
@@ -20,7 +20,7 @@ class BLENVY_OT_component_add(Operator):
     ) # type: ignore
 
     def execute(self, context):
-        target = get_selected_object_or_collection(context)
+        target = get_selected_item(context)
         print("adding component ", self.component_type, "to target  '"+target.name+"'")
     
         has_component_type = self.component_type != ""
@@ -53,6 +53,8 @@ class BLENVY_OT_component_copy(Operator):
         items=(
             ('OBJECT', "Object", ""),
             ('COLLECTION', "Collection", ""),
+            ('MESH', "Mesh", ""),
+            ('MATERIAL', "Material", ""),
             ),
         default="OBJECT"
     ) # type: ignore
@@ -90,12 +92,14 @@ class BLENVY_OT_component_paste(Operator):
     def execute(self, context):
         source_item_name = context.window_manager.copied_source_item_name
         source_item_type = context.window_manager.copied_source_item_type
-        if source_item_type == 'Object':
+        source_item = get_item_by_type(source_item_type, source_item_name)
+        print("HEEEERRE", source_item_name, source_item_type, source_item)
+        """if source_item_type == 'Object':
             source_item = bpy.data.objects.get(source_item_name, None)
         elif source_item_type == 'Collection':
-            source_item = bpy.data.collections.get(source_item_name, None)
+            source_item = bpy.data.collections.get(source_item_name, None)"""
 
-        if source_item == None:
+        if source_item is None:
             self.report({"ERROR"}, "The source object to copy a component from does not exist")
         else:
             component_name = context.window_manager.copied_source_component_name
@@ -105,7 +109,7 @@ class BLENVY_OT_component_paste(Operator):
             else:
                 print("pasting component to item:", source_item, "component name:", str(component_name), "component value:" + str(component_value))
                 registry = context.window_manager.components_registry
-                target_item = get_selected_object_or_collection(context)
+                target_item = get_selected_item(context)
                 copy_propertyGroup_values_to_another_item(source_item, target_item, component_name, registry)
 
         return {'FINISHED'}
@@ -133,7 +137,9 @@ class BLENVY_OT_component_remove(Operator):
         items=(
             ('OBJECT', "Object", ""),
             ('COLLECTION', "Collection", ""),
-            ),
+            ('MESH', "Mesh", ""),
+            ('MATERIAL', "Material", ""),
+        ),
         default="OBJECT"
     ) # type: ignore
 
@@ -142,10 +148,7 @@ class BLENVY_OT_component_remove(Operator):
         if self.item_name == "":
             self.report({"ERROR"}, "The target to remove ("+ self.component_name +") from does not exist")
         else:
-            if self.item_type == 'OBJECT':
-                target = bpy.data.objects[self.item_name]
-            elif self.item_type == 'COLLECTION':
-                target = bpy.data.collections[self.item_name]
+            target = get_item_by_type(self.item_type, self.item_name)
 
         print("removing component ", self.component_name, "from object  '"+target.name+"'")
 
@@ -260,11 +263,7 @@ class BLENVY_OT_component_rename_component(Operator):
         if original_name != '' and target_name != '' and original_name != target_name and len(target_items) > 0:
             for index, item_data in enumerate(target_items):
                 [item_name, item_type] = item_data
-                item = None
-                if item_type == "OBJECT":
-                    item = bpy.data.objects[item_name]
-                elif item_type == "COLLECTION":
-                    item = bpy.data.collections[item_name]
+                item = get_item_by_type(item_type, item_name)
 
                 if item and original_name in get_bevy_components(item) or original_name in item:
                     try:
@@ -367,7 +366,7 @@ class BLENVY_OT_component_toggle_visibility(Operator):
     ) # type: ignore
 
     def execute(self, context):
-        target = get_selected_object_or_collection(context)
+        target = get_selected_item(context)
         toggle_component(target, self.component_name)
         return {'FINISHED'}
 

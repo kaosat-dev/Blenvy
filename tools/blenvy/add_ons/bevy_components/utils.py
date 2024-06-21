@@ -22,6 +22,8 @@ class BLENVY_OT_item_select(Operator):
         items=(
             ('OBJECT', "Object", ""),
             ('COLLECTION', "Collection", ""),
+            ('MESH', "Mesh", ""),
+            ('MATERIAL', "Material", ""),
             ),
         default="OBJECT"
     ) # type: ignore
@@ -53,19 +55,38 @@ class BLENVY_OT_item_select(Operator):
 
         return {'FINISHED'}
 
-#FIXME: does not work if object is hidden !!
-def get_selected_object_or_collection(context):
-    target = None
-    object = next(iter(context.selected_objects), None)
-    collection = context.collection
-    if object is not None:
-        target = object
-    elif collection is not None:
-        target = collection
-    return target
+def get_selected_item(context):
+    selection = None
+
+    #print("original context", context)
+    def get_outliner_area():
+        if bpy.context.area.type!='OUTLINER':
+            for area in bpy.context.screen.areas:
+                if area.type == 'OUTLINER':
+                    return area
+        return None
+
+    area = get_outliner_area()
+    if area is not None:
+        region = next(region for region in area.regions if region.type == "WINDOW")
+
+        with bpy.context.temp_override(area=area, region=region):
+            #print("overriden context", bpy.context)
+            for obj in bpy.context.selected_ids:
+                pass#print(f"Selected: {obj.name} - {type(obj)}")
+            selection = bpy.context.selected_ids[len(bpy.context.selected_ids) - 1] if len(bpy.context.selected_ids)>0 else None #next(iter(bpy.context.selected_ids), None)
+            print("selection", f"Selected: {selection.name} - {type(selection)}")
+
+    #print("SELECTIONS", context.selected_objects)
+    return selection
 
 
 def get_selection_type(selection):
+    #print("bla mesh", isinstance(selection, bpy.types.Mesh), "bli bli", selection.type)
+    if isinstance(selection, bpy.types.Material):
+        return 'MATERIAL'
+    if isinstance(selection, bpy.types.Mesh):
+        return 'MESH'
     if isinstance(selection, bpy.types.Object):
         return 'OBJECT'
     if isinstance(selection, bpy.types.Collection):
@@ -76,17 +97,12 @@ def get_item_by_type(item_type, item_name):
     if item_type == 'OBJECT':
         item = bpy.data.objects[item_name]
     elif item_type == 'COLLECTION':
-        print("item NAME", item_name)
         item = bpy.data.collections[item_name]
+    elif item_type == "MESH":
+        item = bpy.data.meshes[item_name]
+    elif item_type == 'MATERIAL':
+        item = bpy.data.materials[item_name]
     return item
-
-def get_selected_object_or_collection_by_item_type(context, item_type):
-    item = None
-    if item_type == 'OBJECT':
-        object = next(iter(context.selected_objects), None)
-        return object
-    elif item_type == 'COLLECTION':
-        return context.collection
 
 def add_component_to_ui_list(self, context, _):
         items = []
