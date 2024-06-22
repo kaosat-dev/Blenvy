@@ -78,9 +78,7 @@ def export_main_scene(scene, settings, blueprints_data):
         materials_exported_path = os.path.join(materials_path, f"{materials_library_name}{export_gltf_extension}")
         material_assets = [{"name": materials_library_name, "path": materials_exported_path}] # we also add the material library as an asset
 
-
-        scene["local_assets"] = assets_to_fake_ron([{"name": asset.name, "path": asset.path} for asset in scene.user_assets] + auto_assets + material_assets)
-        scene["AllAssets"] = assets_to_fake_ron(all_assets + [{"name": asset.name, "path": asset.path} for asset in scene.user_assets] + auto_assets + material_assets)
+        scene["BlenvyAssets"] = assets_to_fake_ron(all_assets + [{"name": asset.name, "path": asset.path} for asset in scene.user_assets] + auto_assets + material_assets)
 
 
         if export_separate_dynamic_and_static_objects:

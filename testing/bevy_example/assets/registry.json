@@ -13231,11 +13231,11 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "blenvy::blueprints::assets::AllAssets": {
+    "blenvy::blueprints::assets::BlenvyAssets": {
       "isComponent": true,
       "isResource": false,
       "items": false,
-      "long_name": "blenvy::blueprints::assets::AllAssets",
+      "long_name": "blenvy::blueprints::assets::BlenvyAssets",
       "prefixItems": [
         {
           "type": {
@@ -13243,23 +13243,7 @@
           }
         }
       ],
-      "short_name": "AllAssets",
-      "type": "array",
-      "typeInfo": "TupleStruct"
-    },
-    "blenvy::blueprints::assets::LocalAssets": {
-      "isComponent": true,
-      "isResource": false,
-      "items": false,
-      "long_name": "blenvy::blueprints::assets::LocalAssets",
-      "prefixItems": [
-        {
-          "type": {
-            "$ref": "#/$defs/alloc::vec::Vec<blenvy::blueprints::assets::MyAsset>"
-          }
-        }
-      ],
-      "short_name": "LocalAssets",
+      "short_name": "BlenvyAssets",
       "type": "array",
       "typeInfo": "TupleStruct"
     },

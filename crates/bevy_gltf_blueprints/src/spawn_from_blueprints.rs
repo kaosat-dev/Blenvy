@@ -2,7 +2,7 @@ use std::path::{Path, PathBuf};
 
 use bevy::{gltf::Gltf, prelude::*, utils::hashbrown::HashMap};
 
-use crate::{AllAssets, AssetsToLoad, AssetLoadTracker, BluePrintsConfig, BlueprintAnimations, BlueprintAssetsLoaded, BlueprintAssetsNotLoaded};
+use crate::{BlenvyAssets, AssetsToLoad, AssetLoadTracker, BluePrintsConfig, BlueprintAnimations, BlueprintAssetsLoaded, BlueprintAssetsNotLoaded};
 
 /// this is a flag component for our levels/game world
 #[derive(Component)]
@@ -76,9 +76,9 @@ pub(crate) fn test_thingy(
             &BlueprintPath,
             Option<&Parent>,*/
             Option<&Name>,
-            Option<&AllAssets>,
+            Option<&BlenvyAssets>,
         ),
-        (Added<AllAssets>), //  Added<AllAssets>
+        (Added<BlenvyAssets>), //  Added<BlenvyAssets>
     >,
 
 

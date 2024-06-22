@@ -50,26 +50,6 @@ impl Default for BluePrintBundle {
 }
 
 
-#[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Default)]
-pub enum GltfFormat {
-    #[default]
-    GLB,
-    GLTF,
-}
-
-impl fmt::Display for GltfFormat {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            GltfFormat::GLB => {
-                write!(f, "glb",)
-            }
-            GltfFormat::GLTF => {
-                write!(f, "gltf")
-            }
-        }
-    }
-}
-
 #[derive(Debug, Clone)]
 /// Plugin for gltf blueprints
 pub struct BlueprintsPlugin {
@@ -112,8 +92,7 @@ impl Plugin for BlueprintsPlugin {
             .register_type::<MyAsset>()
             .register_type::<Vec<MyAsset>>()
             .register_type::<Vec<String>>()
-            .register_type::<LocalAssets>()
-            .register_type::<AllAssets>()
+            .register_type::<BlenvyAssets>()
 
             .add_event::<BlueprintEvent>()
 

@@ -1,5 +1,5 @@
 use bevy::{gltf::{GltfMaterialExtras, GltfMeshExtras, GltfSceneExtras}, prelude::*};
-use blenvy::{AllAssets, BlueprintInstanceReady};
+use blenvy::{BlenvyAssets, BlueprintInstanceReady};
 
 use crate::BasicTest;
 
@@ -32,7 +32,7 @@ pub fn get_descendants(
     all_children: &Query<&Children>, 
     all_names:&Query<&Name>, root: &Entity, 
     nesting: usize, 
-    to_check: &Query<&BasicTest>//&Query<(&BlueprintInstanceReady, &AllAssets)>,
+    to_check: &Query<&BasicTest>//&Query<(&BlueprintInstanceReady, &BlenvyAssets)>,
 ) 
     -> String
 {
@@ -67,7 +67,7 @@ pub fn draw_hierarchy_debug(
     all_children: Query<&Children>,
     all_names:Query<&Name>,
 
-    to_check: Query<&BasicTest>,//Query<(&BlueprintInstanceReady, &AllAssets)>,
+    to_check: Query<&BasicTest>,//Query<(&BlueprintInstanceReady, &BlenvyAssets)>,
     mut display: Query<&mut Text, With<HiearchyDebugTag>>,
 ){
     let mut hierarchy_display: Vec<String> = vec![];

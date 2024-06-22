@@ -7,7 +7,7 @@ pub use animation::*;
 use std::{collections::HashMap, fs, time::Duration};
 
 use blenvy::{
-    AllAssets, BlueprintAnimationPlayerLink, BlueprintEvent, BlueprintName, GltfBlueprintsSet, SceneAnimations
+    BlenvyAssets, BlueprintAnimationPlayerLink, BlueprintEvent, BlueprintName, GltfBlueprintsSet, SceneAnimations
 };
 
 use bevy::{
@@ -39,7 +39,7 @@ fn validate_export(
     scene_animations: Query<(Entity, &SceneAnimations)>,
     empties_candidates: Query<(Entity, &Name, &GlobalTransform)>,
 
-    assets_list: Query<(Entity, &AllAssets)>,
+    assets_list: Query<(Entity, &BlenvyAssets)>,
     root: Query<(Entity, &Name, &Children), (Without<Parent>, With<Children>)>,
 ) {
     let animations_found =

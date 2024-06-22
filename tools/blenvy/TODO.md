@@ -141,6 +141,7 @@ General issues:
 - [x] change "assets" tab to "levels"/worlds tab & modify UI accordingly
 - [ ] add option to 'split out' meshes from blueprints ? 
     - [ ] ie considering meshletts etc , it would make sense to keep blueprints seperate from purely mesh gltfs
+- [ ] remove local assets, useless
 
 - [x] remove 'export_marked_assets' it should be a default setting
 - [x] disable/ hide asset editing ui for external assets
