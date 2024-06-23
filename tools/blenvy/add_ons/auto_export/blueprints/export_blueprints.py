@@ -1,5 +1,7 @@
 import os
 import bpy
+from blenvy.assets.assets_scan import get_blueprint_asset_tree
+from blenvy.assets.generate_asset_file import write_ron_assets_file
 from ..constants import TEMPSCENE_PREFIX
 from ..common.generate_temporary_scene_and_export import generate_temporary_scene_and_export, copy_hollowed_collection_into, clear_hollow_scene
 from ..common.export_gltf import generate_gltf_export_settings
@@ -50,6 +52,9 @@ def export_blueprints(blueprints, settings, blueprints_data):
                 tempScene_filler= lambda temp_collection: copy_hollowed_collection_into(collection, temp_collection, blueprints_data=blueprints_data, settings=settings),
                 tempScene_cleaner= lambda temp_scene, params: clear_hollow_scene(original_root_collection=collection, temp_scene=temp_scene, **params)
             )
+
+            #blueprint_asset_tree = get_blueprint_asset_tree(blueprint=blueprint, blueprints_data=blueprints_data, settings=settings)
+            #write_ron_assets_file(blueprint.name, blueprint_asset_tree, output_path_full = blueprints_path_full)
 
         # reset active collection to the one we save before
         bpy.context.view_layer.active_layer_collection = active_collection

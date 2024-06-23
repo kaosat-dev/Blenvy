@@ -20,7 +20,7 @@ def generate_temporary_scene_and_export(settings, gltf_export_settings, gltf_out
     temp_root_collection = temp_scene.collection
 
     print("additional_dataAAAAAAAAAAAAAAAH", additional_data)
-    properties_black_list = ['user_assets', 'components_meta']
+    properties_black_list = ['glTF2ExportSettings', 'user_assets', 'components_meta']
     if additional_data is not None: # FIXME not a fan of having this here
         for entry in dict(additional_data):
             # we copy everything over except those on the black list

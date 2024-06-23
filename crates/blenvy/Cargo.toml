@@ -18,6 +18,19 @@ bevy = { version = "0.14.0-rc.3", default-features = false, features = ["bevy_as
 serde = "1.0.188"
 ron = "0.8.1"
 serde_json = "1.0.108"
+gltf = { version = "1.4.0", default-features = false, features = [
+  "KHR_lights_punctual",
+  "KHR_materials_transmission",
+  "KHR_materials_ior",
+  "KHR_materials_volume",
+  "KHR_materials_unlit",
+  "KHR_materials_emissive_strength",
+  "KHR_texture_transform",
+  "extras",
+  "extensions",
+  "names",
+  "utils",
+] }
 
 
 [dev-dependencies]

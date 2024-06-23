@@ -7,6 +7,7 @@ from bpy.props import (BoolProperty, StringProperty, EnumProperty)
 from .asset_helpers import does_asset_exist, get_user_assets, remove_asset, upsert_asset
 from .assets_scan import get_main_scene_assets_tree
 from ..core.path_helpers import absolute_path_from_blend_file
+from .generate_asset_file import write_ron_assets_file
 
 class BLENVY_OT_assets_add(Operator):
     """Add asset"""
@@ -172,32 +173,6 @@ class BLENVY_OT_assets_browse(Operator, ImportHelper):
 from types import SimpleNamespace
 
 
-def write_ron_assets_file(level_name, assets_hierarchy, internal_only=False, levels_path_full="."):
-    # just for testing, this uses the format of bevy_asset_loader's asset files
-    '''
-            ({
-        "world":File (path: "models/StartLevel.glb"),
-        "level1":File (path: "models/Level1.glb"),
-        "level2":File (path: "models/Level2.glb"),
-
-        "models": Folder (
-            path: "models/library",
-        ),
-        "materials": Folder (
-            path: "materials",
-        ),
-    })
-    '''
-    formated_assets = []
-    for asset in assets_hierarchy:
-        if asset["internal"] or not internal_only:
-            bla = f'\n    "{asset["name"]}": File ( path: "{asset["path"]}" ),'
-            formated_assets.append(bla)
-    with open(f"{levels_path_full}/{level_name}.assets.ron", "w") as assets_file:
-        assets_file.write("({")
-        assets_file.writelines(formated_assets)
-        assets_file.write("\n})")
-
 class BLENVY_OT_assets_generate_files(Operator):
     """Test assets"""
     bl_idname = "blenvy.assets_generate_files"
@@ -213,7 +188,7 @@ class BLENVY_OT_assets_generate_files(Operator):
 
         for scene in blenvy.main_scenes:
             assets_hierarchy = get_main_scene_assets_tree(scene, blueprints_data, settings)
-            scene["assets"] = json.dumps(assets_hierarchy)
-            write_ron_assets_file(scene.name, assets_hierarchy, internal_only = False, levels_path_full = blenvy.levels_path_full)
+            # scene["assets"] = json.dumps(assets_hierarchy)
+            write_ron_assets_file(scene.name, assets_hierarchy, internal_only = False, output_path_full = blenvy.levels_path_full)
 
         return {'FINISHED'}

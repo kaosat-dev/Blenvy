@@ -15,7 +15,7 @@ Auto export
     - [x] main/ library scene names
     - [x] paths
 
-- [ ] Data storage for custom properties:
+- [x] Data storage for custom properties:
     - for scenes (main scenes)
         - at scene level
     - for blueprints 
@@ -59,12 +59,11 @@ Components:
         - [x] BLENVY_OT_component_fix
     - [x] add handling for core::ops::Range<f32> & other ranges
     - [x] fix is_component_valid that is used in gltf_auto_export
-    - Hashmap Support
+    - [x] Hashmap Support
         - [x] fix parsing of keys's type either on Bevy side (prefered) or on the Blender side 
         - [x] fix weird issue with missing "0" property when adding new entry in empty hashmap => happens only if the values for the "setter" have never been set
         - [ ] handle missing types in registry for keys & values
         - [x] adding a hashmap nukes every existing component ??
-
     - [x] Add correct upgrade handling from individual component to bevy_components
     - [x] Settings handling:
         - [x] move saveable settings out to a settings file
@@ -77,8 +76,6 @@ Components:
         - perhaps just add a display list of all NON component custom properties, so the user can find them easilly ?
         - [x] status "unregistered" is often false and misleading
             -> see in registry ui "for custom_property in object.keys():"
-        
-
     - [x] overhaul / improve the component selector (with built in searching, etc)
     - [x] remove select_component_name_to_replace
     - [x] display of invalid components is not working ?
@@ -87,7 +84,6 @@ Components:
         - BLENVY_OT_component_list_add_item
         - BLENVY_OT_component_list_remove_item
         - BLENVY_OT_component_list_select_item: merge it into the rest of the actions 
-
     - [x] clearing invalid flag after a registry change does not work correctly (ie the ui still says the component is invalid)
         - [x] should reset ALL "invalid" flags IF they have the matching data
     - [x] registry auto reload not working ?
@@ -96,7 +92,6 @@ Components:
         - now switched to tiger_hash
         - [x] add warning about hash colision (not much we can/ could do if it is the case ?)
         - [x] double check weird collisions AND/OR reuse existing if applicable
-
     - [x] annoying default path for registry, should be relative to the assets path
 
 
@@ -127,54 +122,55 @@ General issues:
     - [ ] add handling of errors when trying to load settings
 
 
-- [ ] force overwrite of settings files instead of partial updates ?
-- [ ] add tests for disabled components 
 - [x] fix auto export workflow
-- [ ] should we write the previous _xxx data only AFTER a sucessfull export only ?
 - [x] add hashing of modifiers/ geometry nodes in serialize scene
 - [x] add ability to FORCE export specific blueprints & levels
-- [ ] undo after a save removes any saved "serialized scene" data ? DIG into this
-- [ ] handle scene renames between saves (breaks diffing)
 - [x] change scene selector to work on actual scenes aka to deal with renamed scenes
     - [x] remove get_main_and_library_scenes as it should not be needed anymore
 - [x] fix asset file selection
 - [x] change "assets" tab to "levels"/worlds tab & modify UI accordingly
-- [ ] add option to 'split out' meshes from blueprints ? 
-    - [ ] ie considering meshletts etc , it would make sense to keep blueprints seperate from purely mesh gltfs
-- [ ] remove local assets, useless
-
+- [x] remove local assets, useless
 - [x] remove 'export_marked_assets' it should be a default setting
 - [x] disable/ hide asset editing ui for external assets
-- [ ] inject_export_path_into_internal_blueprints should be called on every asset/blueprint scan !! Not just on export
 - [x] fix level asets UI 
+- [x] remove BlueprintsList & replace is with assets list
+- [x] switch to bevy 0.14 rc2
+- [x] trigger events when assets are loaded, blueprints are spawned & co
+- [x] overall cleanup
+    - [x] object.add_bevy_component => blenvy.component_add
+
+
+- [ ] inject_export_path_into_internal_blueprints should be called on every asset/blueprint scan !! Not just on export
+- [ ] undo after a save removes any saved "serialized scene" data ? DIG into this
+- [ ] handle scene renames between saves (breaks diffing) => very hard to achieve
+- [ ] force overwrite of settings files instead of partial updates ?
+- [ ] add tests for disabled components 
+- [ ] should we write the previous _xxx data only AFTER a sucessfull export only ?
+- [ ] add option to 'split out' meshes from blueprints ? 
+    - [ ] ie considering meshletts etc , it would make sense to keep blueprints seperate from purely mesh gltfs
 - [ ] persist exported materials path in blueprints so that it can be read from library file users
     - [ ] just like "export_path" write it into each blueprint's collection
     - [ ] scan for used materials per blueprint !
     - [ ] for scenes, scan for used materials of all non instance objects (TODO: what about overrides ?)
-
-- [x] remove BlueprintsList & replace is with assets list
-- [ ] update main docs
-    - [ ] rename project to Blenvy
-    - [ ] replace all references to the old 2 add-ons with those to Blenvy
-- [ ] rename repo to "Blenvy"
-- [x] switch to bevy 0.14 rc2
 - [ ] find a solution for the new color handling 
 - [ ] add back lighting_components
 - [ ] check if scene components are being deleted through our scene re-orgs in the spawn post process
-- [x] trigger events when assets are loaded, blueprints are spawned & co
 - [ ] should "blueprint spawned" only be triggered after all its sub blueprints have spawned ? 
 
 - [ ] simplify testing example:
     - [x] remove use of rapier physics (or even the whole common boilerplate ?)
     - [ ] remove/replace bevy editor pls with some native ui to display hierarchies
-- [ ] do a deprecation release of all bevy_gltf_xxx crates to point at the new Blenvy crate
+- [ ] try out hot reloading
 
 - [ ] simplify examples:
     - [ ] a full fledged demo (including physics & co)
     - [ ] other examples without interactions or physics 
+- [ ] update main docs
+    - [ ] rename project to Blenvy
+    - [ ] replace all references to the old 2 add-ons with those to Blenvy
+- [ ] rename repo to "Blenvy"
+- [ ] do a deprecation release of all bevy_gltf_xxx crates to point at the new Blenvy crate
+- [ ] hidden objects/collections not respected at export !!!
 
-
-- [x] overall cleanup
-    - [x] object.add_bevy_component => blenvy.component_add
 
 clear && pytest -svv --blender-template ../../testing/bevy_example/art/testing_library.blend --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration_prepare.py  && pytest -svv --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration.py

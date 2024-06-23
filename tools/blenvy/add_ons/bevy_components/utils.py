@@ -75,7 +75,8 @@ def get_selected_item(context):
             for obj in bpy.context.selected_ids:
                 pass#print(f"Selected: {obj.name} - {type(obj)}")
             selection = bpy.context.selected_ids[len(bpy.context.selected_ids) - 1] if len(bpy.context.selected_ids)>0 else None #next(iter(bpy.context.selected_ids), None)
-            print("selection", f"Selected: {selection.name} - {type(selection)}")
+            """if selection is not None:
+                print("selection", f"Selected: {selection.name} - {type(selection)}")"""
 
     #print("SELECTIONS", context.selected_objects)
     return selection

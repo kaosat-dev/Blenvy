@@ -5,14 +5,12 @@ from blenvy.core.object_makers import make_empty
 # TODO: replace this with placing scene level custom properties once support for that has been added to bevy_gltf
 def upsert_scene_components(main_scenes):
     for scene in main_scenes:
-        """lighting_components_name = f"lighting_components_{scene.name}"
-        lighting_components = bpy.data.objects.get(lighting_components_name, None)
-        if not lighting_components:
-            root_collection = scene.collection
-            lighting_components = make_empty('lighting_components_'+scene.name, [0,0,0], [0,0,0], [0,0,0], root_collection)"""
-
-        """if scene.world is not None:
-            lighting_components['BlenderBackgroundShader'] = ambient_color_to_component(scene.world)""" # FIXME add back
+        if scene.world is not None:
+            scene['BlenderBackgroundShader'] = ambient_color_to_component(scene.world)
+            print("FOOOOO WORLD", dir(scene.world))
+            print("FOOOO scene", dir(scene))
+            print("foooo", dir(scene.view_settings))
+            print("GNAAA", scene.view_settings.view_transform)
         scene['BlenderShadowSettings'] = scene_shadows_to_component(scene)
 
         if scene.eevee.use_bloom:
@@ -25,13 +23,24 @@ def upsert_scene_components(main_scenes):
         elif 'SSAOSettings' in scene:
             del scene['SSAOSettings']
 
+        scene['BlenderToneMapping'] = scene_tonemapping_to_component(scene)
+        scene['BlenderColorGrading'] = scene_colorgrading_to_component(scene)
+
 def remove_scene_components(main_scenes):
     pass
-    """for scene in main_scenes:
-        lighting_components_name = f"lighting_components_{scene.name}"
-        lighting_components = bpy.data.objects.get(lighting_components_name, None)
-        if lighting_components:
-            bpy.data.objects.remove(lighting_components, do_unlink=True)"""
+
+def scene_tonemapping_to_component(scene):
+    tone_mapping =  scene.view_settings.view_transform
+    blender_to_bevy = {
+        'NONE': '',
+        'AgX': 'AgX',
+        'Filmic': 'Filmic',
+    }
+    bevy_tone_mapping = blender_to_bevy[tone_mapping] if tone_mapping in blender_to_bevy else None
+    return bevy_tone_mapping
+
+def scene_colorgrading_to_component(scene):
+    return f"(exposure: {scene.view_settings.exposure}, gamma: {scene.view_settings.gamma})"
 
 
 def ambient_color_to_component(world):
@@ -43,9 +52,8 @@ def ambient_color_to_component(world):
     except Exception as ex:
         print("failed to parse ambient color: Only background is supported")
    
-
     if color is not None and strength is not None:
-        colorRgba = f"LinearRgba(red: {color[0]}, green: {color[1]}, blue: {color[2]}, alpha: {color[3]})"
+        colorRgba = f"LinearRgba((red: {color[0]}, green: {color[1]}, blue: {color[2]}, alpha: {color[3]}))"
         component = f"( color: {colorRgba}, strength: {strength})"
         return component
     return None

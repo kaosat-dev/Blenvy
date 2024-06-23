@@ -1,5 +1,5 @@
 use bevy::log::{debug, warn};
-use bevy::reflect::serde::ReflectDeserializer;
+use bevy::reflect::serde::{ReflectDeserializer, ReflectSerializer};
 use bevy::reflect::{Reflect, TypeRegistration, TypeRegistry};
 use bevy::utils::HashMap;
 use ron::Value;
@@ -58,12 +58,16 @@ fn components_string_to_components(
             parsed_value
         );
 
+        /* 
         // usefull to determine what an entity looks like Serialized
-        /*let test_struct = CameraRenderGraph::new("name");
+        let test_struct =  Color::Srgba(Srgba { red: 0.2, green: 0.2, blue: 0.2, alpha: 0.2 });
+        //CameraRenderGraph::new("name");
         let serializer = ReflectSerializer::new(&test_struct, &type_registry);
         let serialized =
             ron::ser::to_string_pretty(&serializer, ron::ser::PrettyConfig::default()).unwrap();
-        println!("serialized Component {}", serialized);*/
+        println!("serialized Component {}", serialized);
+        */
+
 
         debug!("component data ron string {}", ron_string);
         let mut deserializer = ron::Deserializer::from_str(ron_string.as_str())

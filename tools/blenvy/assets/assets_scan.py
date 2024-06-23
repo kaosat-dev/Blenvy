@@ -121,3 +121,26 @@ def get_main_scene_assets_tree(main_scene, blueprints_data, settings):
             added_asset.name = asset["name"]
             added_asset.path = asset["path"]
     return assets_list
+
+def get_blueprint_asset_tree(blueprint, blueprints_data, settings):
+    blueprints_path =  getattr(settings, "blueprints_path")
+    export_gltf_extension = getattr(settings.auto_export, "export_gltf_extension", ".glb")
+
+    assets_list = get_user_assets_as_list(blueprint.collection)
+
+    for blueprint_name in blueprint.nested_blueprints:
+        sub_blueprint = blueprints_data.blueprints_per_name.get(blueprint_name, None)
+        if sub_blueprint is not None: 
+            sub_blueprint_exported_path = None
+            if sub_blueprint.local:
+                sub_blueprint_exported_path = os.path.join(blueprints_path, f"{sub_blueprint.name}{export_gltf_extension}")
+            else:
+                # get the injected path of the external blueprints
+                sub_blueprint_exported_path = sub_blueprint.collection['export_path'] if 'export_path' in sub_blueprint.collection else None
+
+            if sub_blueprint_exported_path is not None and not does_asset_exist(assets_list, sub_blueprint_exported_path):
+                assets_list.append({"name": sub_blueprint.name, "path": sub_blueprint_exported_path, "type": "MODEL", "generated": True, "internal": sub_blueprint.local, "parent": None})
+            
+            assets_list += get_blueprint_assets_tree(sub_blueprint, blueprints_data, parent=sub_blueprint.name, settings=settings)
+    
+    return assets_list
