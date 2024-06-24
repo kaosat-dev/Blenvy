@@ -1,16 +1,7 @@
-
-import bpy
-from blenvy.core.object_makers import make_empty
-
-# TODO: replace this with placing scene level custom properties once support for that has been added to bevy_gltf
 def upsert_scene_components(main_scenes):
     for scene in main_scenes:
         if scene.world is not None:
             scene['BlenderBackgroundShader'] = ambient_color_to_component(scene.world)
-            print("FOOOOO WORLD", dir(scene.world))
-            print("FOOOO scene", dir(scene))
-            print("foooo", dir(scene.view_settings))
-            print("GNAAA", scene.view_settings.view_transform)
         scene['BlenderShadowSettings'] = scene_shadows_to_component(scene)
 
         if scene.eevee.use_bloom:
@@ -32,11 +23,11 @@ def remove_scene_components(main_scenes):
 def scene_tonemapping_to_component(scene):
     tone_mapping =  scene.view_settings.view_transform
     blender_to_bevy = {
-        'NONE': '',
+        'NONE': 'None',
         'AgX': 'AgX',
         'Filmic': 'Filmic',
     }
-    bevy_tone_mapping = blender_to_bevy[tone_mapping] if tone_mapping in blender_to_bevy else None
+    bevy_tone_mapping = blender_to_bevy[tone_mapping] if tone_mapping in blender_to_bevy else 'None'
     return bevy_tone_mapping
 
 def scene_colorgrading_to_component(scene):
