@@ -25,7 +25,7 @@ pub fn setup_game(
     commands.spawn((
         BlueprintName("World".into()),
         BlueprintPath("levels/World.glb".into()),
-        bevy::prelude::Name::from("world"),
+        bevy::prelude::Name::from("world"), //FIXME: not really needed ? could be infered from blueprint's name/ path
         SpawnHere,
         GameWorldTag,
         InAppRunning,

@@ -61,7 +61,6 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
     // let gltf_components_config = world.resource::<GltfComponentsConfig>();
 
     for (entity, name, extra, parent) in extras.iter(world) {
-        println!("GLTF EXTRA !!!!");
         debug!(
             "Name: {}, entity {:?}, parent: {:?}, extras {:?}",
             name, entity, parent, extra
@@ -77,8 +76,6 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
 
 
     for (entity, name, extra, parent) in scene_extras.iter(world) {
-        println!("GLTF SCENE EXTRA !!!!");
-
         debug!(
             "Name: {}, entity {:?}, parent: {:?}, scene_extras {:?}",
             name, entity, parent, extra
@@ -93,8 +90,6 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
     }
 
     for (entity, name, extra, parent) in mesh_extras.iter(world) {
-        println!("GLTF MESH EXTRA !!!!");
-
         debug!(
             "Name: {}, entity {:?}, parent: {:?}, mesh_extras {:?}",
             name, entity, parent, extra

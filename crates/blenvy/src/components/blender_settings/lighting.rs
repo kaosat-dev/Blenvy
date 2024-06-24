@@ -107,7 +107,6 @@ fn process_background_shader(
     mut commands: Commands,
 ) {
     for background_shader in background_shaders.iter() {
-        println!("HEYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY {:?}", background_shader.color);
         commands.insert_resource(AmbientLight {
             color: background_shader.color,
             // Just a guess, see <https://github.com/bevyengine/bevy/issues/12280>

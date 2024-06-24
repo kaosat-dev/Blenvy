@@ -10,7 +10,7 @@ def assets_to_fake_ron(list_like):
     result = []
     for item in list_like:
         result.append(f"(name: \"{item['name']}\", path: \"{item['path']}\")")
-    return result#.join(", ")
+    return f"({result})".replace("'", '')#.join(", ")
 
 def export_blueprints(blueprints, settings, blueprints_data):
     blueprints_path_full = getattr(settings, "blueprints_path_full")
@@ -39,7 +39,7 @@ def export_blueprints(blueprints, settings, blueprints_data):
 
             all_assets = []
             auto_assets = []
-            collection["BlenvyAssets"] = assets_to_fake_ron([{"name": asset.name, "path": asset.path} for asset in collection.user_assets] + auto_assets) #all_assets + [{"name": asset.name, "path": asset.path} for asset in collection.user_assets] + auto_assets)
+            collection["BlenvyAssets"] = assets_to_fake_ron([]) #assets_to_fake_ron([{"name": asset.name, "path": asset.path} for asset in collection.user_assets] + auto_assets) #all_assets + [{"name": asset.name, "path": asset.path} for asset in collection.user_assets] + auto_assets)
 
 
             # do the actual export

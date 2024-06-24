@@ -17,7 +17,7 @@ use bevy::{
     render::mesh::Mesh,
 };
 
-use crate::{AssetLoadTracker, AssetsToLoad, BlenvyConfig, BlueprintInstanceReady};
+use crate::{AssetLoadTracker, BlenvyAssetsLoadState, BlenvyConfig, BlueprintInstanceReady};
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
@@ -71,7 +71,7 @@ pub(crate) fn materials_inject(
 
             commands
                 .entity(entity)
-                .insert(AssetsToLoad {
+                .insert(BlenvyAssetsLoadState {
                     all_loaded: false,
                     asset_infos,
                     ..Default::default()
@@ -85,7 +85,7 @@ pub(crate) fn materials_inject(
 // TODO, merge with blueprints_check_assets_loading, make generic ?
 pub(crate) fn check_for_material_loaded(
     mut blueprint_assets_to_load: Query<
-        (Entity, &mut AssetsToLoad),
+        (Entity, &mut BlenvyAssetsLoadState),
         With<BlueprintMaterialAssetsNotLoaded>,
     >,
     asset_server: Res<AssetServer>,

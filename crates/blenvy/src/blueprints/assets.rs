@@ -1,11 +1,12 @@
 use std::path::{Path, PathBuf};
 
 use bevy::{asset::LoadedUntypedAsset, gltf::Gltf, prelude::*, utils::HashMap};
+use serde::Deserialize;
 
 use crate::{BlenvyConfig, BlueprintAnimations};
 
 /// helper component, is used to store the list of sub blueprints to enable automatic loading of dependend blueprints
-#[derive(Component, Reflect, Default, Debug)]
+#[derive(Component, Reflect, Default, Debug, Deserialize)]
 #[reflect(Component)]
 pub struct MyAsset{
     pub name: String,
@@ -13,7 +14,7 @@ pub struct MyAsset{
 }
 
 /// helper component, is used to store the list of sub blueprints to enable automatic loading of dependend blueprints
-#[derive(Component, Reflect, Default, Debug)]
+#[derive(Component, Reflect, Default, Debug, Deserialize)]
 #[reflect(Component)]
 pub struct BlenvyAssets(pub Vec<MyAsset>);
 
@@ -42,12 +43,12 @@ pub(crate) struct AssetLoadTracker {
 
 /// helper component, for tracking loaded assets
 #[derive(Component, Debug)]
-pub(crate) struct AssetsToLoad {
+pub(crate) struct BlenvyAssetsLoadState {
     pub all_loaded: bool,
     pub asset_infos: Vec<AssetLoadTracker>,
     pub progress: f32,
 }
-impl Default for AssetsToLoad {
+impl Default for BlenvyAssetsLoadState {
     fn default() -> Self {
         Self {
             all_loaded: Default::default(),
