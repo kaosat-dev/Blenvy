@@ -10,22 +10,11 @@ use crate::{BlenvyAssets, BlenvyAssetsLoadState, AssetLoadTracker, BlenvyConfig,
 pub struct GameWorldTag;
 
 /// Main component for the blueprints
-#[derive(Component, Reflect, Default, Debug)]
-#[reflect(Component)]
-pub struct BlueprintName(pub String);
-
-/// path component for the blueprints
-#[derive(Component, Reflect, Default, Debug)]
-#[reflect(Component)]
-pub struct BlueprintPath(pub String);
-
-
-/// Main component for the blueprints
 /// has both name & path of the blueprint to enable injecting the data from the correct blueprint
 /// into the entity that contains this component 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-pub struct BlueprintInfo{
+pub struct BlueprintInfo {
     pub name: String,
     pub path: String,
 }
@@ -100,67 +89,35 @@ pub enum BlueprintEvent {
 use gltf::Gltf as RawGltf;
 
 pub(crate) fn blueprints_prepare_spawn(
-    spawn_placeholders: Query<
-    (
-        Entity,
-        &BlueprintPath,
-    ),
-    (Added<BlueprintPath>, Without<Spawned>, Without<SpawnHere>)>,
-
-    // before 0.14 we have to use a seperate query, after migrating we can query at the root level
-    entities_with_assets: Query<
-        (
-            Entity,
-            /*&BlueprintName,
-            &BlueprintPath,
-            Option<&Parent>,*/
-            Option<&Name>,
-            Option<&BlenvyAssets>,
-        ),
-        (Added<BlenvyAssets>), //  Added<BlenvyAssets>
-    >,
-
-
     blueprint_instances_to_spawn : Query<
     (
         Entity,
-        &BlueprintName,
-        &BlueprintPath,
+        &BlueprintInfo,
         Option<&Parent>,
         Option<&BlenvyAssets>,
-    ),(Added<BlueprintPath>)
+    ),(Added<BlueprintInfo>)
     >,
 mut commands: Commands,
 asset_server: Res<AssetServer>,
 
 
 ) {
-    for (entity, blueprint_path) in spawn_placeholders.iter() {
-        println!("added blueprint_path {:?}", blueprint_path);
-        /*commands.entity(entity).insert(
-            SceneBundle {
-                scene: asset_server.load(format!("{}#Scene0", &blueprint_path.0)), // "levels/World.glb#Scene0"),
-                ..default()
-            },
-        );*/
-        // let model_handle: Handle<Gltf> = asset_server.load(model_path.clone());
-    }
-
-    for (entity, blueprint_name, blueprint_path, parent, all_assets) in blueprint_instances_to_spawn.iter() {
-        println!("Detected blueprint to spawn {:?} {:?}", blueprint_name, blueprint_path);
+   
+    for (entity, blueprint_info, parent, all_assets) in blueprint_instances_to_spawn.iter() {
+        println!("Detected blueprint to spawn {:?} {:?}", blueprint_info.name, blueprint_info.path);
         println!("all assets {:?}", all_assets);
         //////////////
 
         // we add the asset of the blueprint itself
         // TODO: add detection of already loaded data
-        let untyped_handle = asset_server.load_untyped(&blueprint_path.0);
+        let untyped_handle = asset_server.load_untyped(&blueprint_info.path);
         let asset_id = untyped_handle.id();
         let loaded = asset_server.is_loaded_with_dependencies(asset_id);
 
         let mut asset_infos: Vec<AssetLoadTracker> = vec![];
         if !loaded {
             asset_infos.push(AssetLoadTracker {
-                name: blueprint_name.0.clone(),
+                name: blueprint_info.name.clone(),
                 id: asset_id,
                 loaded: false,
                 handle: untyped_handle.clone(),
@@ -169,7 +126,7 @@ asset_server: Res<AssetServer>,
 
         // and we also add all its assets
         /* prefetch attempt */
-        let gltf = RawGltf::open(format!("assets/{}", blueprint_path.0)).unwrap();// RawGltf::open("examples/Box.gltf")?;
+        let gltf = RawGltf::open(format!("assets/{}", blueprint_info.path)).unwrap();// RawGltf::open("examples/Box.gltf")?;
         for scene in gltf.scenes() {
             let foo_extras = scene.extras().clone().unwrap();
 
@@ -184,7 +141,7 @@ asset_server: Res<AssetServer>,
                 let all_assets: BlenvyAssets = ron::from_str(&assets_raw.as_str().unwrap()).unwrap();
                 println!("all_assets {:?}", all_assets);
 
-                for asset in all_assets.0.iter() {
+                for asset in all_assets.assets.iter() {
                     let untyped_handle = asset_server.load_untyped(&asset.path);
                     //println!("untyped handle {:?}", untyped_handle);
                     //asset_server.load(asset.path);
@@ -222,7 +179,7 @@ asset_server: Res<AssetServer>,
 
 pub(crate) fn blueprints_check_assets_loading(
     mut blueprint_assets_to_load: Query<
-        (Entity, Option<&Name>, &BlueprintPath, &mut BlenvyAssetsLoadState),
+        (Entity, Option<&Name>, &BlueprintInfo, &mut BlenvyAssetsLoadState),
         With<BlueprintAssetsNotLoaded>,
     >,
     asset_server: Res<AssetServer>,
@@ -230,7 +187,7 @@ pub(crate) fn blueprints_check_assets_loading(
     mut blueprint_events: EventWriter<BlueprintEvent>,
 
 ) {
-    for (entity, entity_name, blueprint_path, mut assets_to_load) in blueprint_assets_to_load.iter_mut() {
+    for (entity, entity_name, blueprint_info, mut assets_to_load) in blueprint_assets_to_load.iter_mut() {
         let mut all_loaded = true;
         let mut loaded_amount = 0;
         let total = assets_to_load.asset_infos.len();
@@ -259,8 +216,8 @@ pub(crate) fn blueprints_check_assets_loading(
 
         if all_loaded {
             assets_to_load.all_loaded = true;
-            println!("LOADING: in progress for ALL assets of {:?} (instance of {}), preparing for spawn", entity_name, blueprint_path.0);
-            blueprint_events.send(BlueprintEvent::AssetsLoaded {blueprint_name:"".into(), blueprint_path: blueprint_path.0.clone() });
+            println!("LOADING: in progress for ALL assets of {:?} (instance of {}), preparing for spawn", entity_name, blueprint_info.path);
+            blueprint_events.send(BlueprintEvent::AssetsLoaded {blueprint_name:"".into(), blueprint_path: blueprint_info.path.clone() });
 
             commands
                 .entity(entity)
@@ -269,7 +226,7 @@ pub(crate) fn blueprints_check_assets_loading(
                 .remove::<BlenvyAssetsLoadState>()
                 ;
         }else {
-            println!("LOADING: done for ALL assets of {:?} (instance of {}): {} ",entity_name, blueprint_path.0, progress * 100.0);
+            println!("LOADING: done for ALL assets of {:?} (instance of {}): {} ",entity_name, blueprint_info.path, progress * 100.0);
         }
     }
 }
@@ -280,8 +237,7 @@ pub(crate) fn blueprints_spawn(
     spawn_placeholders: Query<
         (
             Entity,
-            &BlueprintName,
-            &BlueprintPath,
+            &BlueprintInfo,
             Option<&Transform>,
             Option<&Parent>,
             Option<&AddToGameWorld>,
@@ -303,8 +259,7 @@ pub(crate) fn blueprints_spawn(
 ) {
     for (
         entity,
-        blupeprint_name,
-        blueprint_path,
+        blueprint_info,
         transform,
         original_parent,
         add_to_world,
@@ -313,16 +268,16 @@ pub(crate) fn blueprints_spawn(
     {
         info!(
             "all assets loaded, attempting to spawn blueprint {:?} for entity {:?}, id: {:?}, parent:{:?}",
-            blupeprint_name.0, name, entity, original_parent
+            blueprint_info.name, name, entity, original_parent
         );
 
         // info!("attempting to spawn {:?}", model_path);
-        let model_handle: Handle<Gltf> = asset_server.load(blueprint_path.0.clone()); // FIXME: kinda weird now
+        let model_handle: Handle<Gltf> = asset_server.load(blueprint_info.path.clone()); // FIXME: kinda weird now
 
         let gltf = assets_gltf.get(&model_handle).unwrap_or_else(|| {
             panic!(
                 "gltf file {:?} should have been loaded",
-                &blueprint_path.0
+                &blueprint_info.path
             )
         });
 

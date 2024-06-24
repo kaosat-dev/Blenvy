@@ -64,7 +64,7 @@ class ExampleExtensionProperties(bpy.types.PropertyGroup):
     # blueprint settings
     auto_export_blueprints: BoolProperty(
         name='Export Blueprints',
-        description='Replaces collection instances with an Empty with a BlueprintName custom property',
+        description='Replaces collection instances with an Empty with a BlueprintInfo custom property',
         default=True
     )
     auto_export_blueprints_path: StringProperty(

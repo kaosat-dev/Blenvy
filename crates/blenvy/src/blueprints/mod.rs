@@ -35,15 +35,13 @@ pub enum GltfBlueprintsSet {
 
 #[derive(Bundle)]
 pub struct BluePrintBundle {
-    pub blueprint: BlueprintName,
-    pub blueprint_path: BlueprintPath,
+    pub blueprint: BlueprintInfo,
     pub spawn_here: SpawnHere,
 }
 impl Default for BluePrintBundle {
     fn default() -> Self {
         BluePrintBundle {
-            blueprint: BlueprintName("default".into()),
-            blueprint_path: BlueprintPath("".into()),
+            blueprint: BlueprintInfo{ name: "default".into(), path:"".into()},
             spawn_here: SpawnHere,
         }
     }
@@ -76,8 +74,7 @@ fn aabbs_enabled(blenvy_config: Res<BlenvyConfig>) -> bool {
 impl Plugin for BlueprintsPlugin {
     fn build(&self, app: &mut App) {
         app
-            .register_type::<BlueprintName>()
-            .register_type::<BlueprintPath>()
+            .register_type::<BlueprintInfo>()
             .register_type::<MaterialInfo>()
             .register_type::<SpawnHere>()
             .register_type::<BlueprintAnimations>()

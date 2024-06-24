@@ -13,7 +13,7 @@ this crate adds the ability to define Blueprints/Prefabs for [Bevy](https://bevy
 A blueprint is a set of **overrideable** components + a hierarchy: ie 
 
     * just a Gltf file with Gltf_extras specifying components 
-    * a component called BlueprintName
+    * a component called BlueprintInfo
 
 Particularly useful when using [Blender](https://www.blender.org/) as an editor for the [Bevy](https://bevyengine.org/) game engine, combined with the Blender add-on that do a lot of the work for you 
 - [blenvy](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/blenvy)
@@ -51,7 +51,7 @@ fn spawn_blueprint(
 ){
     if keycode.just_pressed(KeyCode::S) {
         let new_entity = commands.spawn((
-            BlueprintName("Health_Pickup".to_string()), // mandatory !!
+            BlueprintInfo(name: "Health_Pickup".to_string(), path:""), // mandatory !!
             SpawnHere, // mandatory !!
             TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)), // VERY important !!
             // any other component you want to insert
@@ -114,7 +114,7 @@ fn main() {
 You can spawn entities from blueprints like this:
 ```rust no_run
 commands.spawn((
-    BlueprintName("Health_Pickup".to_string()), // mandatory !!
+    BlueprintInfo("Health_Pickup".to_string()), // mandatory !!
     SpawnHere, // mandatory !!
     
     TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)), // optional
@@ -134,7 +134,7 @@ you can just add any additional components you need when spawning :
 
 ```rust no_run
 commands.spawn((
-    BlueprintName("Health_Pickup".to_string()),
+    BlueprintInfo("Health_Pickup".to_string()),
     SpawnHere,
     TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
     // from Rapier/bevy_xpbd: this means the entity will also have a velocity component when inserted into the world
@@ -152,7 +152,7 @@ any component you specify when spawning the Blueprint that is also specified **w
 for example 
 ```rust no_run
 commands.spawn((
-    BlueprintName("Health_Pickup".to_string()),
+    BlueprintInfo("Health_Pickup".to_string()),
     SpawnHere,
     TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
     HealthPowerUp(20)// if this is component is also present inside the "Health_Pickup" blueprint, that one will be replaced with this component during spawning
@@ -163,7 +163,7 @@ commands.spawn((
 ### BluePrintBundle
 
 There is also a ```BluePrintBundle``` for convenience , which just has 
- * a ```BlueprintName``` component
+ * a ```BlueprintInfo``` component
  * a ```SpawnHere``` component
 
 ## Additional information
@@ -178,7 +178,7 @@ commands
     .spawn((
         Name::from("test"),
         BluePrintBundle {
-            blueprint: BlueprintName("TestBlueprint".to_string()),
+            blueprint: BlueprintInfo("TestBlueprint".to_string()),
             ..Default::default()
         },
         Library("models".into()) // now the path to the blueprint above will be /assets/models/TestBlueprint.glb

@@ -7,7 +7,7 @@ pub use animation::*;
 use std::{collections::HashMap, fs, time::Duration};
 
 use blenvy::{
-    BlenvyAssets, BlueprintAnimationPlayerLink, BlueprintEvent, BlueprintName, GltfBlueprintsSet, SceneAnimations
+    BlenvyAssets, BlueprintAnimationPlayerLink, BlueprintEvent, BlueprintInfo, GltfBlueprintsSet, SceneAnimations
 };
 
 use bevy::{
@@ -25,7 +25,7 @@ fn start_game(mut next_app_state: ResMut<NextState<AppState>>) {
 }
 
 // if the export from Blender worked correctly, we should have animations (simplified here by using AnimationPlayerLink)
-// if the export from Blender worked correctly, we should have an Entity called "Blueprint4_nested" that has a child called "Blueprint3" that has a "BlueprintName" component with value Blueprint3
+// if the export from Blender worked correctly, we should have an Entity called "Blueprint4_nested" that has a child called "Blueprint3" that has a "BlueprintInfo" component with value Blueprint3
 // if the export from Blender worked correctly, we should have an assets_list
 // if the export from Blender worked correctly, we should have the correct tree of entities
 #[allow(clippy::too_many_arguments)]
@@ -34,7 +34,7 @@ fn validate_export(
     parents: Query<&Parent>,
     children: Query<&Children>,
     names: Query<&Name>,
-    blueprints: Query<(Entity, &Name, &BlueprintName)>,
+    blueprints: Query<(Entity, &Name, &BlueprintInfo)>,
     animation_player_links: Query<(Entity, &BlueprintAnimationPlayerLink)>,
     scene_animations: Query<(Entity, &SceneAnimations)>,
     empties_candidates: Query<(Entity, &Name, &GlobalTransform)>,
@@ -46,13 +46,13 @@ fn validate_export(
         !animation_player_links.is_empty() && scene_animations.into_iter().len() == 4;
 
     let mut nested_blueprint_found = false;
-    for (entity, name, blueprint_name) in blueprints.iter() {
-        if name.to_string() == *"Blueprint4_nested" && blueprint_name.0 == *"Blueprint4_nested" {
+    for (entity, name, blueprint_info) in blueprints.iter() {
+        if name.to_string() == *"Blueprint4_nested" && blueprint_info.name == *"Blueprint4_nested" {
             if let Ok(cur_children) = children.get(entity) {
                 for child in cur_children.iter() {
-                    if let Ok((_, child_name, child_blueprint_name)) = blueprints.get(*child) {
+                    if let Ok((_, child_name, child_blueprint_info)) = blueprints.get(*child) {
                         if child_name.to_string() == *"Blueprint3"
-                            && child_blueprint_name.0 == *"Blueprint3"
+                            && child_blueprint_info.name == *"Blueprint3"
                         {
                             nested_blueprint_found = true;
                         }

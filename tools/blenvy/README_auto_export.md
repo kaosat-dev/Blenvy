@@ -133,7 +133,7 @@ This issue has been resolved in v0.9.
 You can enable this option to automatically replace all the **collection instances** inside your main scene with blueprints
 - whenever you change your main scene (or your library scene , if that option is enabled), all your collection instances 
     * will be replaced with empties (this will not be visible to you)
-    * those empties will have additional custom properties / components : ```BlueprintName``` & ```SpawnHere```
+    * those empties will have additional custom properties / components : ```BlueprintInfo``` & ```SpawnHere```
     * your main scene/ level will be exported to a much more trimmed down gltf file (see next point)
     * all the original collections (that you used to create the instances) will be exported as **seperate gltf files** into the "library" folder
 

@@ -1,6 +1,5 @@
 use bevy::prelude::*;
-// use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, BlueprintPath, GameWorldTag};
-use blenvy::{BluePrintBundle, BlueprintName, BlueprintPath, GameWorldTag, SpawnHere};
+use blenvy::{BluePrintBundle, BlueprintInfo, GameWorldTag, SpawnHere};
 use crate::{GameState, InAppRunning};
 
 //use bevy_rapier3d::prelude::Velocity;
@@ -23,8 +22,7 @@ pub fn setup_game(
     ));*/
 
     commands.spawn((
-        BlueprintName("World".into()),
-        BlueprintPath("levels/World.glb".into()),
+        BlueprintInfo{name: "World".into(), path: "levels/World.glb".into()},
         bevy::prelude::Name::from("world"), //FIXME: not really needed ? could be infered from blueprint's name/ path
         SpawnHere,
         GameWorldTag,
@@ -64,11 +62,10 @@ pub fn spawn_test(
         let new_entity = commands
             .spawn((
                 BluePrintBundle {
-                    blueprint: BlueprintName("Health_Pickup".to_string()),
+                    blueprint: BlueprintInfo{name: "Health_Pickup".into() , path:"foo/bar.glb".into()}, // FIXME
                     ..Default::default()
                 },
                 bevy::prelude::Name::from(format!("test{}", name_index)),
-                // BlueprintName("Health_Pickup".to_string()),
                 // SpawnHere,
                 TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
                 /*Velocity {

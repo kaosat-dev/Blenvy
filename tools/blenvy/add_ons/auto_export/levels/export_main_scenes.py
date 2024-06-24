@@ -14,7 +14,10 @@ def assets_to_fake_ron(list_like):
     result = []
     for item in list_like:
         result.append(f"(name: \"{item['name']}\", path: \"{item['path']}\")")
-    return f"({result})".replace("'", '')#.join(", ")
+
+    return f"(assets: {result})".replace("'", '')
+
+    return f"({result})".replace("'", '')
         
 
 def export_main_scene(scene, settings, blueprints_data): 

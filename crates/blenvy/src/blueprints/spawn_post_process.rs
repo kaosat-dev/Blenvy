@@ -5,7 +5,7 @@ use bevy::prelude::*;
 use bevy::scene::SceneInstance;
 // use bevy::utils::hashbrown::HashSet;
 
-use crate::{BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintPath};
+use crate::{BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintInfo};
 use crate::{SpawnHere, Spawned};
 use crate::{
     BlenvyAssetsLoadState, BlueprintAssetsLoaded, BlueprintEvent, CopyComponents, InBlueprint, NoInBlueprint, OriginalChildren
@@ -28,7 +28,7 @@ pub(crate) fn spawned_blueprint_post_process(
             &BlueprintAnimations,
             Option<&NoInBlueprint>,
             Option<&Name>,
-            &BlueprintPath
+            &BlueprintInfo
         ),
         (With<SpawnHere>, With<SceneInstance>, With<Spawned>),
     >,
@@ -39,7 +39,7 @@ pub(crate) fn spawned_blueprint_post_process(
     mut blueprint_events: EventWriter<BlueprintEvent>,
 
 ) {
-    for (original, children, original_children, animations, no_inblueprint, name, blueprint_path) in
+    for (original, children, original_children, animations, no_inblueprint, name, blueprint_info) in
         unprocessed_entities.iter()
     {
         info!("post processing blueprint for entity {:?}", name);
@@ -103,7 +103,7 @@ pub(crate) fn spawned_blueprint_post_process(
         //commands.entity(original).remove::<BlueprintAssetsLoaded>();
         commands.entity(root_entity).despawn_recursive();
 
-        blueprint_events.send(BlueprintEvent::Spawned {blueprint_name:"".into(), blueprint_path: blueprint_path.0.clone() });
+        blueprint_events.send(BlueprintEvent::Spawned {blueprint_name: blueprint_info.name.clone(), blueprint_path: blueprint_info.path.clone() });
         
         debug!("DONE WITH POST PROCESS");
     }

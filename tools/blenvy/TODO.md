@@ -153,8 +153,8 @@ General issues:
     - [ ] scan for used materials per blueprint !
     - [ ] for scenes, scan for used materials of all non instance objects (TODO: what about overrides ?)
 - [ ] find a solution for the new color handling 
-- [ ] add back lighting_components
-- [ ] check if scene components are being deleted through our scene re-orgs in the spawn post process
+- [x] add back lighting_components
+- [x] check if scene components are being deleted through our scene re-orgs in the spawn post process
 - [ ] should "blueprint spawned" only be triggered after all its sub blueprints have spawned ? 
 
 - [ ] simplify testing example:
@@ -171,6 +171,11 @@ General issues:
 - [ ] rename repo to "Blenvy"
 - [ ] do a deprecation release of all bevy_gltf_xxx crates to point at the new Blenvy crate
 - [ ] hidden objects/collections not respected at export !!!
+- [ ] add a way of overriding assets for collection instances
+    - [ ] add a way of visualizing per blueprint instances
+- [ ] cleanup all the spurious debug messages
+- [ ] deprecate BlueprintName & BlueprintPath & use BlueprintInfo instead
+- [ ] fix animation handling
 
 
 clear && pytest -svv --blender-template ../../testing/bevy_example/art/testing_library.blend --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration_prepare.py  && pytest -svv --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration.py

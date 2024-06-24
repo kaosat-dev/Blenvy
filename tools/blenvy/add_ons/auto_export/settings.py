@@ -59,7 +59,7 @@ class AutoExportSettings(PropertyGroup):
     # blueprint settings
     export_blueprints: BoolProperty(
         name='Export Blueprints',
-        description='Replaces collection instances with an Empty with a BlueprintName custom property, and enabled a lot more features !',
+        description='Replaces collection instances with an Empty with a BlueprintInfo custom property, and enabled a lot more features !',
         default=True,
         update=save_settings
     ) # type: ignore
