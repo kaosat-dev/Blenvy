@@ -8,7 +8,7 @@ use bevy::scene::SceneInstance;
 use crate::{BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintInfo};
 use crate::{SpawnHere, Spawned};
 use crate::{
-    BlenvyAssetsLoadState, BlueprintAssetsLoaded, BlueprintEvent, CopyComponents, InBlueprint, NoInBlueprint, OriginalChildren
+    BlueprintEvent, CopyComponents, InBlueprint, NoInBlueprint, OriginalChildren
 };
 
 

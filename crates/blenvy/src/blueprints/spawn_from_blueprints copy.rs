@@ -3,7 +3,7 @@ use std::path::{Path, PathBuf};
 use bevy::{gltf::Gltf, prelude::*, utils::hashbrown::HashMap};
 use serde_json::Value;
 
-use crate::{BlenvyAssets, AssetsToLoad, AssetLoadTracker, BlenvyConfig, BlueprintAnimations, BlueprintAssetsLoaded, BlueprintAssetsNotLoaded};
+use crate::{BlueprintAssets, AssetsToLoad, AssetLoadTracker, BlenvyConfig, BlueprintAnimations, BlueprintAssetsLoaded, BlueprintAssetsNotLoaded};
 
 /// this is a flag component for our levels/game world
 #[derive(Component)]
@@ -103,9 +103,9 @@ pub(crate) fn blueprints_prepare_spawn(
             &BlueprintPath,
             Option<&Parent>,*/
             Option<&Name>,
-            Option<&BlenvyAssets>,
+            Option<&BlueprintAssets>,
         ),
-        (Added<BlenvyAssets>), //  Added<BlenvyAssets>
+        (Added<BlueprintAssets>), //  Added<BlueprintAssets>
     >,
 
 
@@ -115,7 +115,7 @@ pub(crate) fn blueprints_prepare_spawn(
         &BlueprintName,
         &BlueprintPath,
         Option<&Parent>,
-        Option<&BlenvyAssets>,
+        Option<&BlueprintAssets>,
     ),(Added<BlueprintPath>)
     >,
 mut commands: Commands,
@@ -150,10 +150,10 @@ asset_server: Res<AssetServer>,
                 println!("{} / {}", key, value);
             }
 
-            if lookup.contains_key("BlenvyAssets"){
-                let assets_raw = &lookup["BlenvyAssets"];
+            if lookup.contains_key("BlueprintAssets"){
+                let assets_raw = &lookup["BlueprintAssets"];
                 println!("ASSETS RAW {}", assets_raw);
-                let x: BlenvyAssets = ron::from_str(&assets_raw.as_str().unwrap()).unwrap();
+                let x: BlueprintAssets = ron::from_str(&assets_raw.as_str().unwrap()).unwrap();
                 println!("YAHA {:?}", x);
 
             }

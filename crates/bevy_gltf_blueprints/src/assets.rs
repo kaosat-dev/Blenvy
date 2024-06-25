@@ -20,7 +20,7 @@ pub struct LocalAssets(pub Vec<MyAsset>);
 /// helper component, is used to store the list of sub blueprints to enable automatic loading of dependend blueprints
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-pub struct BlenvyAssets(pub Vec<MyAsset>);
+pub struct BlueprintAssets(pub Vec<MyAsset>);
 
 
 

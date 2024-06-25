@@ -89,7 +89,7 @@ impl Plugin for BlueprintsPlugin {
             .register_type::<MyAsset>()
             .register_type::<Vec<MyAsset>>()
             .register_type::<Vec<String>>()
-            .register_type::<BlenvyAssets>()
+            .register_type::<BlueprintAssets>()
 
             .add_event::<BlueprintEvent>()
 
@@ -143,6 +143,8 @@ impl Plugin for BlueprintsPlugin {
                     trigger_blueprint_animation_markers_events,
                 ),
             )*/
+
+            .add_systems(Update, react_to_asset_changes)
             ;
     }
 }

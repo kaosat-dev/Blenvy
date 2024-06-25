@@ -64,6 +64,7 @@ pub(crate) fn materials_inject(
             
             let asset_infos: Vec<AssetLoadTracker> = vec![AssetLoadTracker {
                 name: material_info.name.clone(),
+                path: material_info.path.clone(),
                 id: material_file_id,
                 loaded: false,
                 handle: material_file_handle.clone(),

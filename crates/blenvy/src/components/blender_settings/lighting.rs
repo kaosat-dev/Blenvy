@@ -153,7 +153,6 @@ fn process_colorgrading(
 
     for entity in cameras.iter(){
         for blender_colorgrading in blender_colorgradings.iter(){
-            println!("COLOR GRADING");
             commands.entity(entity).insert(
                 ColorGrading{
                     global: ColorGradingGlobal{

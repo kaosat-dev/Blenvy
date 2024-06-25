@@ -123,7 +123,7 @@ impl Plugin for BlueprintsPlugin {
             .register_type::<Vec<MyAsset>>()
             .register_type::<Vec<String>>()
             .register_type::<LocalAssets>()
-            .register_type::<BlenvyAssets>()
+            .register_type::<BlueprintAssets>()
 
 
             .register_type::<HashMap<String, Vec<String>>>()

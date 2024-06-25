@@ -13231,21 +13231,36 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "blenvy::blueprints::assets::BlenvyAssets": {
+    "blenvy::blueprints::assets::BlueprintAssets": {
+      "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
-      "items": false,
-      "long_name": "blenvy::blueprints::assets::BlenvyAssets",
-      "prefixItems": [
-        {
+      "long_name": "blenvy::blueprints::assets::BlueprintAssets",
+      "properties": {
+        "assets": {
           "type": {
             "$ref": "#/$defs/alloc::vec::Vec<blenvy::blueprints::assets::MyAsset>"
           }
+        },
+        "loaded": {
+          "type": {
+            "$ref": "#/$defs/bool"
+          }
+        },
+        "progress": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
         }
+      },
+      "required": [
+        "assets",
+        "loaded",
+        "progress"
       ],
-      "short_name": "BlenvyAssets",
-      "type": "array",
-      "typeInfo": "TupleStruct"
+      "short_name": "BlueprintAssets",
+      "type": "object",
+      "typeInfo": "Struct"
     },
     "blenvy::blueprints::assets::MyAsset": {
       "additionalProperties": false,
@@ -13297,37 +13312,30 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "blenvy::blueprints::spawn_from_blueprints::BlueprintName": {
+    "blenvy::blueprints::spawn_from_blueprints::BlueprintInfo": {
+      "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
-      "items": false,
-      "long_name": "blenvy::blueprints::spawn_from_blueprints::BlueprintName",
-      "prefixItems": [
-        {
+      "long_name": "blenvy::blueprints::spawn_from_blueprints::BlueprintInfo",
+      "properties": {
+        "name": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        },
+        "path": {
           "type": {
             "$ref": "#/$defs/alloc::string::String"
           }
         }
+      },
+      "required": [
+        "name",
+        "path"
       ],
-      "short_name": "BlueprintName",
-      "type": "array",
-      "typeInfo": "TupleStruct"
-    },
-    "blenvy::blueprints::spawn_from_blueprints::BlueprintPath": {
-      "isComponent": true,
-      "isResource": false,
-      "items": false,
-      "long_name": "blenvy::blueprints::spawn_from_blueprints::BlueprintPath",
-      "prefixItems": [
-        {
-          "type": {
-            "$ref": "#/$defs/alloc::string::String"
-          }
-        }
-      ],
-      "short_name": "BlueprintPath",
-      "type": "array",
-      "typeInfo": "TupleStruct"
+      "short_name": "BlueprintInfo",
+      "type": "object",
+      "typeInfo": "Struct"
     },
     "blenvy::blueprints::spawn_from_blueprints::SpawnHere": {
       "additionalProperties": false,
@@ -13376,6 +13384,31 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "blenvy::components::blender_settings::lighting::BlenderColorGrading": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "blenvy::components::blender_settings::lighting::BlenderColorGrading",
+      "properties": {
+        "exposure": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "gamma": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      },
+      "required": [
+        "exposure",
+        "gamma"
+      ],
+      "short_name": "BlenderColorGrading",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "blenvy::components::blender_settings::lighting::BlenderLightShadows": {
       "additionalProperties": false,
       "isComponent": true,
@@ -13419,6 +13452,19 @@
       "short_name": "BlenderShadowSettings",
       "type": "object",
       "typeInfo": "Struct"
+    },
+    "blenvy::components::blender_settings::lighting::BlenderToneMapping": {
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "blenvy::components::blender_settings::lighting::BlenderToneMapping",
+      "oneOf": [
+        "None",
+        "AgX",
+        "Filmic"
+      ],
+      "short_name": "BlenderToneMapping",
+      "type": "string",
+      "typeInfo": "Enum"
     },
     "bool": {
       "isComponent": false,

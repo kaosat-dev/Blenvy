@@ -16,7 +16,7 @@ pub struct MyAsset{
 /// helper component, is used to store the list of sub blueprints to enable automatic loading of dependend blueprints
 #[derive(Component, Reflect, Default, Debug, Deserialize)]
 #[reflect(Component)]
-pub struct BlenvyAssets {
+pub struct BlueprintAssets {
     /// only this field should get filled in from the Blender side
     pub assets: Vec<MyAsset>,
     /// set to default when deserializing
@@ -49,12 +49,12 @@ pub(crate) struct BlueprintAssetsNotLoaded;
 pub(crate) struct AssetLoadTracker {
     #[allow(dead_code)]
     pub name: String,
+    pub path: String,
     pub id: AssetId<LoadedUntypedAsset>,
     pub loaded: bool,
     #[allow(dead_code)]
     pub handle: Handle<LoadedUntypedAsset>,
 }
-
 
 /// helper component, for tracking loaded assets
 #[derive(Component, Debug)]
