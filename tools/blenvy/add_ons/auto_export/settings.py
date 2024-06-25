@@ -6,16 +6,15 @@ from blenvy.settings import load_settings, upsert_settings, generate_complete_se
 # list of settings we do NOT want to save
 settings_black_list = ['settings_save_enabled', 'dry_run']
 
-def save_settings(settings, context):  
+def save_settings(settings, context): 
     if settings.settings_save_enabled:
         settings_dict =  generate_complete_settings_dict(settings, AutoExportSettings, [])
-        print("save settings", settings, context, settings_dict)
         upsert_settings(settings.settings_save_path, {key: settings_dict[key] for key in settings_dict.keys() if key not in settings_black_list}, overwrite=True)
 
 class AutoExportSettings(PropertyGroup):
 
     settings_save_path = ".blenvy_export_settings" # where to store data in bpy.texts
-    settings_save_enabled = BoolProperty(name="settings save enabled", default=True)
+    settings_save_enabled: BoolProperty(name="settings save enabled", default=True) # type: ignore
 
     auto_export: BoolProperty(
         name='Auto export',
@@ -119,7 +118,6 @@ class AutoExportSettings(PropertyGroup):
             self.settings_save_enabled = False # we disable auto_saving of our settings
             try:
                 for setting in settings:
-                    print("setting", setting, settings[setting])
                     setattr(self, setting, settings[setting])
             except: pass
             # TODO: remove setting if there was a failure

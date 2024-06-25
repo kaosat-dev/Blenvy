@@ -11,7 +11,7 @@ def cleanup_file():
         os.remove(gltf_filepath)
         return None
     else:
-        return 1
+        return 1.0
     
 def gltf_post_export_callback(data):
     #print("post_export", data)

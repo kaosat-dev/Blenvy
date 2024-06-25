@@ -41,11 +41,11 @@ def export_main_scene(scene, settings, blueprints_data):
         gltf_output_path = os.path.join(levels_path_full, scene.name)
 
         inject_blueprints_list_into_main_scene(scene, blueprints_data, settings)
-        print("main scene", scene)
+        """print("main scene", scene)
         for asset in scene.user_assets:
             print("  user asset", asset.name, asset.path)
         for asset in scene.generated_assets:
-            print("  generated asset", asset)
+            print("  generated asset", asset)"""
         """for blueprint in blueprints_data.blueprints_per_scenes[scene.name]:
             print("BLUEPRINT", blueprint)"""
         blueprint_instances_in_scene = blueprints_data.blueprint_instances_per_main_scene.get(scene.name, {}).keys()
@@ -69,7 +69,7 @@ def export_main_scene(scene, settings, blueprints_data):
 
             # now also add the assets of the blueprints # TODO: wait no , these should not be a part of the (scene) local assets
             for asset in blueprint.collection.user_assets:
-                print("adding assets of blueprint", asset.name)
+                #print("adding assets of blueprint", asset.name)
                 all_assets.append({"name": asset.name, "path": asset.path})
 
         """for asset in auto_assets:
@@ -81,8 +81,8 @@ def export_main_scene(scene, settings, blueprints_data):
         materials_exported_path = os.path.join(materials_path, f"{materials_library_name}{export_gltf_extension}")
         material_assets = [{"name": materials_library_name, "path": materials_exported_path}] # we also add the material library as an asset
 
-        scene["BlenvyAssets"] = assets_to_fake_ron(all_assets + [{"name": asset.name, "path": asset.path} for asset in scene.user_assets] + auto_assets + material_assets)
-        #scene["BlenvyAssets"] = assets_to_fake_ron([{'name':'foo', 'path':'bar'}])
+        scene["BlueprintAssets"] = assets_to_fake_ron(all_assets + [{"name": asset.name, "path": asset.path} for asset in scene.user_assets] + auto_assets + material_assets)
+        #scene["BlueprintAssets"] = assets_to_fake_ron([{'name':'foo', 'path':'bar'}])
 
         if export_separate_dynamic_and_static_objects:
             #print("SPLIT STATIC AND DYNAMIC")

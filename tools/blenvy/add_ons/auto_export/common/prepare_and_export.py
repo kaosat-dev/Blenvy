@@ -3,6 +3,7 @@ import bpy
 from .project_diff import get_changes_per_scene
 from .auto_export import auto_export
 from .settings_diff import get_setting_changes
+from blenvy.settings import load_settings, upsert_settings
 
 # prepare export by gather the changes to the scenes & settings
 def prepare_and_export():
@@ -13,17 +14,28 @@ def prepare_and_export():
     if auto_export_settings.auto_export: # only do the actual exporting if auto export is actually enabled
 
         # determine changed objects
-        per_scene_changes = get_changes_per_scene(settings=blenvy)
+        per_scene_changes, project_hash = get_changes_per_scene(settings=blenvy)
         # determine changed parameters 
-        setting_changes = get_setting_changes()
-        print("setting_changes", setting_changes)
+        setting_changes, current_common_settings, current_export_settings, current_gltf_settings = get_setting_changes()
+        print("changes: settings:", setting_changes)
+        print("changes: scenes:", per_scene_changes)
+
+        print("project_hash", project_hash)
         # do the actual export
         # blenvy.auto_export.dry_run = 'NO_EXPORT'#'DISABLED'#
         auto_export(per_scene_changes, setting_changes, blenvy)
+
+        # -------------------------------------
+        # now that this point is reached, the export should have run correctly, so we can save all the current state to the "previous one"
+        # save the current project hash as previous
+        upsert_settings(".blenvy.project_serialized_previous", project_hash, overwrite=True)
+        # write the new settings to the old settings
+        upsert_settings(".blenvy_common_settings_previous", current_common_settings, overwrite=True)
+        upsert_settings(".blenvy_export_settings_previous", current_export_settings, overwrite=True)
+        upsert_settings(".blenvy_gltf_settings_previous", current_gltf_settings, overwrite=True)
 
         # cleanup 
         # TODO: these are likely obsolete
         # reset the list of changes in the tracker
         #bpy.context.window_manager.auto_export_tracker.clear_changes()
         print("AUTO EXPORT DONE")            
-        #bpy.app.timers.register(bpy.context.window_manager.auto_export_tracker.enable_change_detection, first_interval=0.1)

@@ -139,29 +139,53 @@ General issues:
 - [x] overall cleanup
     - [x] object.add_bevy_component => blenvy.component_add
 
-
+Blender side:
+- [x] force overwrite of settings files instead of partial updates ?
+- [x] prevent loop when loading/setting/saving settings
+- [x] fix asset changes not being detected as a scene change
+- [x] fix scene setting changes not being detected as a scene change
+- [x] add back lighting_components
+- [x] check if scene components are being deleted through our scene re-orgs in the spawn post process
+- [x] fix unreliable project hashing between sessions: (note, it is due to the use of hash() : https://stackoverflow.com/questions/27522626/hash-function-in-python-3-3-returns-different-results-between-sessions)
+- [x] figure out why there are still changes per session (it is due to object pointer being present in the generated "hash")
+    - materials & modifiers, both using the same underlying logic
+        - [x] filter out components_meta
+        - [x] filter out xxx_ui propgroups
+- [x] fix missing main/lib scene names in blenvy_common_settings
+- [x] fix incorect updating of main/lib scenes list in settings
+- [ ] and what about scene renames ?? perhaps tigger a forced "save settings" before doing the export ?
+- [x] should we write the previous _xxx data only AFTER a sucessfull export only ?
+- [x] finer grained control of setting changes to trigger a re-export:
+    - [x] common: any of them should trigger
+    - [x] components: none
+    - [x] auto_export:
+        - auto_export: yes
+        - gltf settings: yes
+        - change detection: no ?
+        - export blueprints: YES
+            - export split dynamic/static: YES
+            - export merge mode : YES
+            - materials: YES
 - [ ] inject_export_path_into_internal_blueprints should be called on every asset/blueprint scan !! Not just on export
 - [ ] undo after a save removes any saved "serialized scene" data ? DIG into this
 - [ ] handle scene renames between saves (breaks diffing) => very hard to achieve
-- [ ] force overwrite of settings files instead of partial updates ?
 - [ ] add tests for disabled components 
-- [ ] should we write the previous _xxx data only AFTER a sucessfull export only ?
+- [ ] find a solution for the new color handling 
+- [ ] hidden objects/collections not respected at export !!!
 - [ ] add option to 'split out' meshes from blueprints ? 
     - [ ] ie considering meshletts etc , it would make sense to keep blueprints seperate from purely mesh gltfs
 - [ ] persist exported materials path in blueprints so that it can be read from library file users
     - [ ] just like "export_path" write it into each blueprint's collection
     - [ ] scan for used materials per blueprint !
     - [ ] for scenes, scan for used materials of all non instance objects (TODO: what about overrides ?)
-- [ ] find a solution for the new color handling 
-- [x] add back lighting_components
-- [x] check if scene components are being deleted through our scene re-orgs in the spawn post process
-- [ ] should "blueprint spawned" only be triggered after all its sub blueprints have spawned ? 
 
+Bevy Side:
+- [x] deprecate BlueprintName & BlueprintPath & use BlueprintInfo instead
+- [ ] should "blueprint spawned" only be triggered after all its sub blueprints have spawned ? 
 - [ ] simplify testing example:
     - [x] remove use of rapier physics (or even the whole common boilerplate ?)
     - [ ] remove/replace bevy editor pls with some native ui to display hierarchies
-- [ ] try out hot reloading
-
+- [x] try out hot reloading
 - [ ] simplify examples:
     - [ ] a full fledged demo (including physics & co)
     - [ ] other examples without interactions or physics 
@@ -170,12 +194,9 @@ General issues:
     - [ ] replace all references to the old 2 add-ons with those to Blenvy
 - [ ] rename repo to "Blenvy"
 - [ ] do a deprecation release of all bevy_gltf_xxx crates to point at the new Blenvy crate
-- [ ] hidden objects/collections not respected at export !!!
 - [ ] add a way of overriding assets for collection instances
     - [ ] add a way of visualizing per blueprint instances
 - [ ] cleanup all the spurious debug messages
-- [ ] deprecate BlueprintName & BlueprintPath & use BlueprintInfo instead
 - [ ] fix animation handling
-
 
 clear && pytest -svv --blender-template ../../testing/bevy_example/art/testing_library.blend --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration_prepare.py  && pytest -svv --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration.py

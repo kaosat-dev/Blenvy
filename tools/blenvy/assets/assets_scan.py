@@ -19,14 +19,13 @@ def scan_assets(scene, blueprints_data, settings):
         for blueprint_name in blueprint_instance_names_for_scene:
             blueprint = blueprints_data.blueprints_per_name.get(blueprint_name, None)
             if blueprint is not None: 
-                print("BLUEPRINT", blueprint)
+                #print("BLUEPRINT", blueprint)
                 blueprint_exported_path = None
                 if blueprint.local:
                     blueprint_exported_path = os.path.join(relative_blueprints_path, f"{blueprint.name}{export_gltf_extension}")
                 else:
                     # get the injected path of the external blueprints
                     blueprint_exported_path = blueprint.collection['Export_path'] if 'Export_path' in blueprint.collection else None
-                    print("foo", dict(blueprint.collection))
                 if blueprint_exported_path is not None:
                     blueprint_assets_list.append({"name": blueprint.name, "path": blueprint_exported_path})
                 
@@ -45,7 +44,7 @@ def scan_assets(scene, blueprints_data, settings):
     assets_list_name = f"assets_{scene.name}"
     assets_list_data = {"blueprints": json.dumps(blueprint_assets_list), "sounds":[], "images":[]}
 
-    print("blueprint assets", blueprint_assets_list)
+    #print("blueprint assets", blueprint_assets_list)
 
 
 def get_userTextures():

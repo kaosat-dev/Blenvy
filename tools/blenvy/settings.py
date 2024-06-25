@@ -70,7 +70,6 @@ def are_settings_identical(old, new, white_list=None):
     if old is not None and new is None:
         return False
     
-    #print("TUTU", old_items, new_items)
     old_items = sorted(old.items())
     new_items = sorted(new.items())
 
@@ -86,3 +85,33 @@ def are_settings_identical(old, new, white_list=None):
         new_items = sorted(new_items_override.items())
 
     return old_items == new_items
+
+
+# if one of the changed settings is not in the white list, it gets discarded
+def changed_settings(old, new, white_list=[]):
+    if old is None and new is None:
+        return []
+    if old is None and new is not None:
+        return new.keys()
+    if old is not None and new is None:
+        return []
+    
+    old_items = sorted(old.items())
+    new_items = sorted(new.items())
+
+    result  = []
+    old_keys = list(old.keys())
+    new_keys =list(new.keys())
+    added =  list(set(new_keys) - set(old_keys))
+    removed =  list(set(old_keys) - set(new_keys))
+
+    result += added 
+    result += removed
+    for key in new.keys():
+        if key in old:
+            if new[key] != old[key]:
+                result.append(key)
+
+    
+
+    return [key for key in list(set(result)) if key in white_list]

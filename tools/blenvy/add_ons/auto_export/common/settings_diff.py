@@ -1,8 +1,8 @@
 import bpy
 
-from blenvy.settings import are_settings_identical, load_settings, upsert_settings
+from blenvy.settings import are_settings_identical, load_settings, changed_settings
 
-# which settings are specific to auto_export # TODO: can we infer this ?
+# which common settings changes should trigger a re-export 
 parameter_names_whitelist_common = [
     # blenvy core
     'project_root_path',
@@ -14,6 +14,7 @@ parameter_names_whitelist_common = [
     'library_scene_names',
 ]
 
+# which auto export settings changes should trigger a re-export 
 parameter_names_whitelist_auto_export = [
     # auto export
     'export_scene_settings',
@@ -24,34 +25,29 @@ parameter_names_whitelist_auto_export = [
 ]
 
 def get_setting_changes():
-    print("get setting changes")
+     previous_common_settings = load_settings(".blenvy_common_settings_previous")
+     current_common_settings = load_settings(".blenvy_common_settings")
+     changed_common_settings_fields = changed_settings(previous_common_settings, current_common_settings, white_list=parameter_names_whitelist_common)
+     common_settings_changed = len(changed_common_settings_fields) > 0
 
-    previous_common_settings = load_settings(".blenvy_common_settings_previous")
-    current_common_settings = load_settings(".blenvy_common_settings")
-    common_settings_changed = not are_settings_identical(previous_common_settings, current_common_settings, white_list=parameter_names_whitelist_common)
+     previous_export_settings = load_settings(".blenvy_export_settings_previous")
+     current_export_settings = load_settings(".blenvy_export_settings")
+     changed_export_settings_fields = changed_settings(previous_export_settings, current_export_settings, white_list=parameter_names_whitelist_auto_export)
+     export_settings_changed = len(changed_export_settings_fields) > 0
 
-    previous_export_settings = load_settings(".blenvy_export_settings_previous")
-    current_export_settings = load_settings(".blenvy_export_settings")
-    export_settings_changed = not are_settings_identical(previous_export_settings, current_export_settings, white_list=parameter_names_whitelist_auto_export)
+     previous_gltf_settings = load_settings(".blenvy_gltf_settings_previous")
+     current_gltf_settings = load_settings(".blenvy_gltf_settings")
+     gltf_settings_changed = not are_settings_identical(previous_gltf_settings, current_gltf_settings)
 
-    previous_gltf_settings = load_settings(".blenvy_gltf_settings_previous")
-    current_gltf_settings = load_settings(".blenvy_gltf_settings")
-    print("previous_gltf_settings", previous_gltf_settings, "current_gltf_settings", current_gltf_settings)
-    gltf_settings_changed = not are_settings_identical(previous_gltf_settings, current_gltf_settings)
+     settings_changed = common_settings_changed or gltf_settings_changed or export_settings_changed
 
-    # write the new settings to the old settings
-    upsert_settings(".blenvy_common_settings_previous", current_common_settings, overwrite=True)
-    upsert_settings(".blenvy_export_settings_previous", current_export_settings, overwrite=True)
-    upsert_settings(".blenvy_gltf_settings_previous", current_gltf_settings, overwrite=True)
+     # if there were no setting before, it is new, we need export # TODO: do we even need this ? I guess in the case where both the previous & the new one are both none ? very unlikely, but still
+     if previous_common_settings is None:
+          settings_changed = True
+     if previous_export_settings is None:
+          settings_changed = True
+     if previous_gltf_settings is None:
+          settings_changed = True
 
-    print("common_settings_changed", common_settings_changed,"export_settings_changed", export_settings_changed, "gltf_settings_changed", gltf_settings_changed, )
 
-    # if there were no setting before, it is new, we need export # TODO: do we even need this ? I guess in the case where both the previous & the new one are both none ? very unlikely, but still
-    if previous_common_settings is None:
-         return True
-    if previous_export_settings is None:
-         return True
-    if previous_gltf_settings is None:
-         return True
-
-    return common_settings_changed or gltf_settings_changed or export_settings_changed
+     return settings_changed, current_common_settings, current_export_settings, current_gltf_settings

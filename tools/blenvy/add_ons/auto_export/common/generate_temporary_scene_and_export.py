@@ -19,7 +19,6 @@ def generate_temporary_scene_and_export(settings, gltf_export_settings, gltf_out
     temp_scene = bpy.data.scenes.new(name=temp_scene_name)
     temp_root_collection = temp_scene.collection
 
-    print("additional_dataAAAAAAAAAAAAAAAH", additional_data)
     properties_black_list = ['glTF2ExportSettings', 'assets', 'user_assets', 'components_meta', 'Components_meta', 'Generated_assets', 'generated_assets']
     if additional_data is not None: # FIXME not a fan of having this here
         for entry in dict(additional_data):

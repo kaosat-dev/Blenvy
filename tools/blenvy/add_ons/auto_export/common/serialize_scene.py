@@ -7,13 +7,23 @@ import numpy as np
 import bpy
 from ..constants import TEMPSCENE_PREFIX
 
+import hashlib
+
+# horrible and uneficient
+def h1_hash(w):
+    try:
+        w = w.encode('utf-8')
+    except: pass
+    return hashlib.md5(w).hexdigest()
 
 fields_to_ignore_generic = [
     "tag", "type", "update_tag", "use_extra_user", "use_fake_user", "user_clear", "user_of_id", "user_remap", "users",
     'animation_data_clear', 'animation_data_create', 'asset_clear', 'asset_data', 'asset_generate_preview', 'asset_mark', 'bl_rna', 'evaluated_get',
     'library', 'library_weak_reference', 'make_local','name', 'name_full', 'original',
     'override_create', 'override_hierarchy_create', 'override_library', 'preview', 'preview_ensure', 'rna_type',
-    'session_uid', 'copy', 'id_type', 'is_embedded_data', 'is_evaluated', 'is_library_indirect', 'is_missing', 'is_runtime_data'
+    'session_uid', 'copy', 'id_type', 'is_embedded_data', 'is_evaluated', 'is_library_indirect', 'is_missing', 'is_runtime_data',
+
+    'components_meta', 'cycles'
 ]
 
 
@@ -40,9 +50,7 @@ def _lookup_array2(data):
     return peel_value(data)
 
 def _lookup_prop_group(data):
-    bla = generic_fields_hasher_evolved(data, fields_to_ignore=fields_to_ignore_generic)
-    print("PROPGROUP", bla)
-    return bla
+    return generic_fields_hasher_evolved(data, fields_to_ignore=fields_to_ignore_generic)
 
 def _lookup_collection(data):
     return [generic_fields_hasher_evolved(item, fields_to_ignore=fields_to_ignore_generic) for item in data]
@@ -50,9 +58,16 @@ def _lookup_collection(data):
 def _lookup_materialLineArt(data):
     return generic_fields_hasher_evolved(data, fields_to_ignore=fields_to_ignore_generic)
 
+def _lookup_object(data):
+    return data.name
+    return generic_fields_hasher_evolved(data, fields_to_ignore=fields_to_ignore_generic)
+
+def _lookup_generic(data):
+    return generic_fields_hasher_evolved(data, fields_to_ignore=fields_to_ignore_generic)
+
 # used for various node trees: shaders, modifiers etc
 def node_tree(node_tree):
-    print("SCANNING NODE TREE", node_tree)
+    #print("SCANNING NODE TREE", node_tree)
 
     # storage for hashing
     links_hashes = []
@@ -99,18 +114,19 @@ def node_tree(node_tree):
         links_hashes.append(link_hash)
 
     #print("node hashes",nodes_hashes, "links_hashes", links_hashes)
-    print("root_inputs", root_inputs)
     return f"{str(root_inputs)}_{str(nodes_hashes)}_{str(links_hashes)}"
 
 
 type_lookups = {
     Color: _lookup_color,#lambda input: print("dsf")',
+    bpy.types.Object: _lookup_object,
     bpy.types.FloatVectorAttribute: _lookup_array2,
     bpy.types.bpy_prop_array: _lookup_array,
     bpy.types.PropertyGroup: _lookup_prop_group,
     bpy.types.bpy_prop_collection: _lookup_collection,
     bpy.types.MaterialLineArt: _lookup_materialLineArt,
     bpy.types.NodeTree: node_tree,
+    bpy.types.CurveProfile: _lookup_generic
 }
 
 def convert_field(raw_value, field_name="", scan_node_tree=True):
@@ -122,6 +138,7 @@ def convert_field(raw_value, field_name="", scan_node_tree=True):
     conversion_lookup = None # type_lookups.get(type(raw_value), None)
     all_types = inspect.getmro(type(raw_value))            
     for s_type in all_types:
+        #print("  stype", s_type)
         if type_lookups.get(s_type, None) is not None:
             conversion_lookup = type_lookups[s_type]
             break
@@ -132,6 +149,9 @@ def convert_field(raw_value, field_name="", scan_node_tree=True):
         #print("field_name",field_name,"conv value", field_value)
     else:
         #print("field_name",field_name,"raw value", raw_value)
+        """try:
+            field_value=_lookup_generic(raw_value)
+        except:pass"""
         field_value = raw_value
     
     return field_value
@@ -146,6 +166,7 @@ def obj_to_dict(object):
 # TODO: replace the first one with this once if its done 
 def generic_fields_hasher_evolved(data, fields_to_ignore, scan_node_tree=True):
     dict_data = obj_to_dict(data) # in some cases, some data is in the key/value pairs of the object
+    dict_data = {key: dict_data[key] for key in dict_data.keys() if key not in fields_to_ignore}# we need to filter out fields here too
     all_field_names = dir(data)
     field_values = []
     for field_name in all_field_names:
@@ -153,6 +174,8 @@ def generic_fields_hasher_evolved(data, fields_to_ignore, scan_node_tree=True):
             raw_value = getattr(data, field_name, None)
             #print("raw value", raw_value, "type", type(raw_value), isinstance(raw_value, Color), isinstance(raw_value, bpy.types.bpy_prop_array))
             field_value = convert_field(raw_value, field_name, scan_node_tree)
+            #print("field name", field_name, "raw", raw_value, "converted", field_value)
+
             field_values.append(str(field_value))
 
     return str(dict_data) + str(field_values)
@@ -163,7 +186,7 @@ def mesh_hash(obj):
     vertex_count = len(obj.data.vertices)
     vertices_np = np.empty(vertex_count * 3, dtype=np.float32)
     obj.data.vertices.foreach_get("co", vertices_np)
-    h = str(hash(vertices_np.tobytes()))
+    h = str(h1_hash(vertices_np.tobytes()))
     return h
 
 # TODO: redo this one, this is essentially modifiec copy & pasted data, not fitting
@@ -202,7 +225,7 @@ def animation_hash(obj):
                 markers_per_animation[animation_name][marker.frame] = []
             markers_per_animation[animation_name][marker.frame].append(marker.name)
 
-    compact_result = hash(str((blender_actions, blender_tracks, markers_per_animation, animations_infos)))
+    compact_result = h1_hash(str((blender_actions, blender_tracks, markers_per_animation, animations_infos)))
     return compact_result
 
 
@@ -213,7 +236,7 @@ def custom_properties_hash(obj):
     for property_name in obj.keys():
         if property_name not in '_RNA_UI' and property_name != 'components_meta':
             custom_properties[property_name] = obj[property_name]
-    return str(hash(str(custom_properties)))
+    return str(h1_hash(str(custom_properties)))
 
 def camera_hash(obj):
     camera_data = obj.data
@@ -233,7 +256,7 @@ def bones_hash(bones):
         fields = [getattr(bone, prop, None)  for prop in all_field_names if not prop.startswith("__") and not prop in fields_to_ignore and not prop.startswith("show_")]
         bones_result.append(fields)
     #print("fields of bone", bones_result)
-    return str(hash(str(bones_result)))
+    return str(h1_hash(str(bones_result)))
 
 # fixme: not good enough ?
 def armature_hash(obj):
@@ -250,8 +273,10 @@ def armature_hash(obj):
 
 def material_hash(material, settings):
     scan_node_tree = settings.auto_export.materials_in_depth_scan
-    hashed_material_except_node_tree = generic_fields_hasher_evolved(material, fields_to_ignore_generic, scan_node_tree=scan_node_tree)
-    return str(hashed_material_except_node_tree)
+    #print("HASHING MATERIAL", material.name)
+    hashed_material = generic_fields_hasher_evolved(material, fields_to_ignore_generic, scan_node_tree=scan_node_tree)
+    #print("HASHED MATERIAL", hashed_material)
+    return str(hashed_material)
 
 # TODO: this is partially taken from export_materials utilities, perhaps we could avoid having to fetch things multiple times ?
 def materials_hash(obj, cache, settings):
@@ -271,21 +296,23 @@ def materials_hash(obj, cache, settings):
         cache['materials'][material.name] = mat
         materials.append(mat)
 
-    return str(hash(str(materials)))
+    return str(h1_hash(str(materials)))
 
 def modifier_hash(modifier_data, settings):
     scan_node_tree = settings.auto_export.modifiers_in_depth_scan
+    #print("HASHING MODIFIER", modifier_data.name)
     hashed_modifier = generic_fields_hasher_evolved(modifier_data, fields_to_ignore_generic, scan_node_tree=scan_node_tree)
+    #print("modifier", modifier_data.name, "hashed", hashed_modifier)
     return str(hashed_modifier)
     
 
 def modifiers_hash(object, settings):
     modifiers = []
     for modifier in object.modifiers:
-        print("modifier", modifier )# modifier.node_group)
+        #print("modifier", modifier )# modifier.node_group)
         modifiers.append(modifier_hash(modifier, settings))
-        print("  ")
-    return str(hash(str(modifiers)))
+        #print("  ")
+    return str(h1_hash(str(modifiers)))
 
 def serialize_scene(settings): 
     cache = {"materials":{}}
@@ -309,16 +336,15 @@ def serialize_scene(settings):
             "custom_properties": custom_properties,
             "eevee": eevee_settings
         }
-        print("SCENE WORLD", scene.world, dir(scene.eevee))
         #generic_fields_hasher_evolved(scene.eevee, fields_to_ignore=fields_to_ignore_generic)
-        data[scene.name]["____scene_settings"] = str(hash(str(scene_field_hashes)))
+        # FIXME: how to deal with this cleanly
+        print("SCENE CUSTOM PROPS", custom_properties)
+        data[scene.name]["____scene_settings"] = str(h1_hash(str(scene_field_hashes)))
 
 
         for object in scene.objects:
             object = bpy.data.objects[object.name]
-
             #loc, rot, scale = bpy.context.object.matrix_world.decompose()
-
             transform = str((object.location, object.rotation_euler, object.scale)) #str((object.matrix_world.to_translation(), object.matrix_world.to_euler('XYZ'), object.matrix_world.to_quaternion()))#
             visibility = object.visible_get()            
             custom_properties = custom_properties_hash(object) if len(object.keys()) > 0 else None
@@ -331,7 +357,6 @@ def serialize_scene(settings):
             collections = [collection.name for collection in object.users_collection]
             materials = materials_hash(object, cache, settings) if len(object.material_slots) > 0 else None
             modifiers = modifiers_hash(object, settings) if len(object.modifiers) > 0 else None
-
 
             object_field_hashes = {
                 "name": object.name,
@@ -348,8 +373,9 @@ def serialize_scene(settings):
                 "materials": materials,
                 "modifiers":modifiers
             }
+
             object_field_hashes_filtered = {key: object_field_hashes[key] for key in object_field_hashes.keys() if object_field_hashes[key] is not None}
-            objectHash = str(hash(str(object_field_hashes_filtered)))
+            objectHash = str(h1_hash(str(object_field_hashes_filtered)))
             data[scene.name][object.name] = objectHash
 
     """print("data", data)

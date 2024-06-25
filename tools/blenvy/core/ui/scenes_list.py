@@ -28,6 +28,8 @@ class BLENVY_OT_scenes_list_actions(Operator):
     def invoke(self, context, event): 
         if self.action == 'REMOVE':
             bpy.data.scenes[self.scene_name].blenvy_scene_type = 'None'
+            context.window_manager.blenvy.main_scene_selector = None  # we use these to force update/save the list of main/library scenes 
+            context.window_manager.blenvy.library_scene_selector = None # we use these to force update/save the list of main/library scenes 
             """info = 'Item "%s" removed from list' % (target[idx].name)
             target.remove(idx)
 
@@ -49,9 +51,9 @@ class BLENVY_OT_scenes_list_actions(Operator):
                 print("adding scene", scene_to_add)
                 
                 if self.scene_type == "LEVEL":
-                    context.window_manager.blenvy.main_scene_selector = None
+                    context.window_manager.blenvy.main_scene_selector = None  # we use these to force update/save the list of main/library scenes 
                 else:
-                    context.window_manager.blenvy.library_scene_selector = None
+                    context.window_manager.blenvy.library_scene_selector = None  # we use these to force update/save the list of main/library scenes 
 
                 #setattr(source, target_index, len(target) - 1)
 

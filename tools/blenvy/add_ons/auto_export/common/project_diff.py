@@ -22,6 +22,7 @@ def serialize_current(settings):
     current_scene = bpy.context.window.scene
     bpy.context.window.scene = bpy.data.scenes[0]
     #serialize scene at frame 0
+    # TODO: add back
     """with bpy.context.temp_override(scene=bpy.data.scenes[1]):
         bpy.context.scene.frame_set(0)"""
     
@@ -38,7 +39,6 @@ def get_changes_per_scene(settings):
     previous = load_settings(".blenvy.project_serialized_previous")
     current = serialize_current(settings)
 
-
     # determine changes
     changes_per_scene = {}
     try:
@@ -46,11 +46,7 @@ def get_changes_per_scene(settings):
     except Exception as error:
         print("failed to compare current serialized scenes to previous ones", error)
 
-    # save the current project as previous
-    upsert_settings(".blenvy.project_serialized_previous", current, overwrite=True)
-
-    print("changes per scene", changes_per_scene)
-    return changes_per_scene
+    return changes_per_scene, current
 
 
 def project_diff(previous, current, settings):
@@ -58,17 +54,13 @@ def project_diff(previous, current, settings):
     print("current", current)"""
     if previous is None or current is None:
         return {}
-    print("Settings", settings,"current", current, "previous", previous)
     
     changes_per_scene = {}
 
     # TODO : how do we deal with changed scene names ???
     # possible ? on each save, inject an id into each scene, that cannot be copied over
 
-    print('TEST SCENE', bpy.data.scenes.get("ULTRA LEVEL2"), None)
-
     for scene in current:
-        print("SCENE", scene)
         current_object_names =list(current[scene].keys())
 
         if scene in previous: # we can only compare scenes that are in both previous and current data

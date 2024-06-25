@@ -36,14 +36,9 @@ def export_blueprints(blueprints, settings, blueprints_data):
 
             collection = bpy.data.collections[blueprint.name]
 
-            print("BLUEPRINT", blueprint.name)
-
-            for asset in collection.user_assets:
-                print("  user asset", asset.name, asset.path)
-
             all_assets = []
             auto_assets = []
-            collection["BlenvyAssets"] = assets_to_fake_ron([]) #assets_to_fake_ron([{"name": asset.name, "path": asset.path} for asset in collection.user_assets] + auto_assets) #all_assets + [{"name": asset.name, "path": asset.path} for asset in collection.user_assets] + auto_assets)
+            collection["BlueprintAssets"] = assets_to_fake_ron([]) #assets_to_fake_ron([{"name": asset.name, "path": asset.path} for asset in collection.user_assets] + auto_assets) #all_assets + [{"name": asset.name, "path": asset.path} for asset in collection.user_assets] + auto_assets)
 
 
             # do the actual export

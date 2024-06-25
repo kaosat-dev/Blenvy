@@ -1,7 +1,7 @@
 import os
 import bpy
 from bpy_types import (PropertyGroup)
-from bpy.props import (EnumProperty, PointerProperty, StringProperty, BoolProperty, CollectionProperty, IntProperty)
+from bpy.props import (EnumProperty, PointerProperty, StringProperty, BoolProperty, CollectionProperty, FloatProperty)
 from blenvy.settings import load_settings, upsert_settings, generate_complete_settings_dict
 from .propGroups.prop_groups import generate_propertyGroups_for_components
 from .components.metadata import ensure_metadata_for_all_items
@@ -18,7 +18,6 @@ def save_settings(settings, context):
 
 # helper function to deal with timer
 def toggle_watcher(self, context):
-    #print("toggling watcher", self.watcher_enabled, watch_schema, self, bpy.app.timers)
     if not self.watcher_enabled:
         try:
             bpy.app.timers.unregister(watch_schema)
@@ -76,12 +75,12 @@ class ComponentsSettings(PropertyGroup):
     watcher_enabled: BoolProperty(name="Watcher_enabled", default=True, update=toggle_watcher)# type: ignore
     watcher_active: BoolProperty(name = "Flag for watcher status", default = False)# type: ignore
 
-    watcher_poll_frequency: IntProperty(
+    watcher_poll_frequency: FloatProperty(
         name="watcher poll frequency",
         description="frequency (s) at wich to poll for changes to the registry file",
-        min=1,
-        max=10,
-        default=1,
+        min=1.0,
+        max=10.0,
+        default=1.0,
         update=save_settings
     )# type: ignore
     
@@ -134,7 +133,6 @@ class ComponentsSettings(PropertyGroup):
             self.settings_save_enabled = False # we disable auto_saving of our settings
             try:
                 for setting in settings:
-                    print("setting", setting, settings[setting])
                     setattr(self, setting, settings[setting])
             except:pass
             try:

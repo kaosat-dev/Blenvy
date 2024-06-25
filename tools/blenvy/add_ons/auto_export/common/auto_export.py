@@ -51,7 +51,6 @@ def auto_export(changes_per_scene, changed_export_parameters, settings):
         for blueprint in blueprints_data.blueprints:
             bpy.context.window_manager.blueprints_registry.add_blueprint(blueprint)
         #bpy.context.window_manager.blueprints_registry.refresh_blueprints()
-        print("YO YO")
 
         if export_scene_settings:
             # inject/ update scene components

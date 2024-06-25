@@ -42,9 +42,7 @@ def draw_assets(layout, name, title, asset_registry, target_type, target_name, e
         if editable:
             row = panel.row()
         #panel.separator()
-        print("here", user_assets)
         for asset in user_assets:
-            print("asset", asset)
             row = panel.row()
             split  = row.split(factor=nesting_indent)
             col = split.column()
