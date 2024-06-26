@@ -1,7 +1,7 @@
 use bevy::{gltf::{GltfMaterialExtras, GltfMeshExtras, GltfSceneExtras}, prelude::*};
 use blenvy::{BlueprintAssets, BlueprintInstanceReady};
 
-use crate::BasicTest;
+use crate::{BasicTest, EnumComplex};
 
 #[derive(Component)]
 pub struct HiearchyDebugTag;
@@ -13,7 +13,7 @@ pub fn setup_hierarchy_debug(mut commands: Commands, asset_server: Res<AssetServ
             "",
             TextStyle {
                 color: LinearRgba { red: 1.0, green:0.0, blue: 0.0, alpha: 1.0}.into(),
-                font_size: 10.,
+                font_size: 20.,
                 ..default()
             },
         )
@@ -133,12 +133,31 @@ for (id, name, scene_extras, extras, mesh_extras, material_extras) in
 }
 }
 
+fn check_for_component(
+    foo: Query<(Entity, Option<&Name>, &EnumComplex)>,
+    mut display: Query<&mut Text, With<HiearchyDebugTag>>,
+
+){
+    let mut info_lines: Vec<String> = vec![];
+    for (entiity, name , enum_complex) in foo.iter(){
+        let data = format!(" We have a 'EnumComplex' component: {:?} (on {:?})", enum_complex, name);
+        info_lines.push(data);
+        println!("yoho component");
+
+    }
+    let mut display = display.single_mut();
+    display.sections[0].value = info_lines.join("\n");
+
+}
+
+
 pub struct HiearchyDebugPlugin;
 impl Plugin for HiearchyDebugPlugin {
     fn build(&self, app: &mut App) {
         app
             .add_systems(Startup, setup_hierarchy_debug)
-            .add_systems(Update, draw_hierarchy_debug)
+            .add_systems(Update, check_for_component)
+            //.add_systems(Update, draw_hierarchy_debug)
             //.add_systems(Update, check_for_gltf_extras)
             
            ;

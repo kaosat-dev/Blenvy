@@ -119,13 +119,13 @@ fn process_background_shader(
 
 // FIXME: this logic should not depend on if toneMapping or Cameras where added first
 fn process_tonemapping(
-    tonemappings: Query<&BlenderToneMapping , Added<BlenderToneMapping>>,
+    tonemappings: Query<(Entity, &BlenderToneMapping) , Added<BlenderToneMapping>>,
     cameras: Query<Entity, With<Camera>>,
     mut commands: Commands,
 ){
 
     for entity in cameras.iter(){
-        for tone_mapping in tonemappings.iter(){
+        for (scene_id, tone_mapping) in tonemappings.iter(){
             match tone_mapping {
                 BlenderToneMapping::None => {
                     println!("TONEMAPPING NONE");
@@ -140,19 +140,21 @@ fn process_tonemapping(
                     commands.entity(entity).insert(Tonemapping::BlenderFilmic);
                 }
             }
+            commands.entity(scene_id).remove::<BlenderToneMapping>();
         }
     }
+
 }
 
 // FIXME: this logic should not depend on if toneMapping or Cameras where added first
 fn process_colorgrading(
-    blender_colorgradings: Query<&BlenderColorGrading , Added<BlenderColorGrading>>,
+    blender_colorgradings: Query<(Entity, &BlenderColorGrading) , Added<BlenderColorGrading>>,
     cameras: Query<Entity, With<Camera>>,
     mut commands: Commands,
 ){
 
     for entity in cameras.iter(){
-        for blender_colorgrading in blender_colorgradings.iter(){
+        for (scene_id, blender_colorgrading) in blender_colorgradings.iter(){
             commands.entity(entity).insert(
                 ColorGrading{
                     global: ColorGradingGlobal{
@@ -175,6 +177,8 @@ fn process_colorgrading(
                     ..Default::default()
                 }
             );
+            commands.entity(scene_id).remove::<ColorGrading>();
+
         }
     }
 }

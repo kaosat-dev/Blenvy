@@ -4019,6 +4019,25 @@
       "type": "array",
       "typeInfo": "TupleStruct"
     },
+    "bevy_example::test_components::HashmapTestStringEnum": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "bevy_example::test_components::HashmapTestStringEnum",
+      "properties": {
+        "inner": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<alloc::string::String, bevy_example::test_components::EnumComplex, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+          }
+        }
+      },
+      "required": [
+        "inner"
+      ],
+      "short_name": "HashmapTestStringEnum",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "bevy_example::test_components::HashmapTestStringFloat": {
       "additionalProperties": false,
       "isComponent": true,
@@ -4035,6 +4054,25 @@
         "named_animations"
       ],
       "short_name": "HashmapTestStringFloat",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_example::test_components::HashmapTestStringStruct": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "bevy_example::test_components::HashmapTestStringStruct",
+      "properties": {
+        "inner": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<alloc::string::String, bevy_example::test_components::BasicTest, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+          }
+        }
+      },
+      "required": [
+        "inner"
+      ],
+      "short_name": "HashmapTestStringStruct",
       "type": "object",
       "typeInfo": "Struct"
     },
@@ -11877,6 +11915,42 @@
       "valueType": {
         "type": {
           "$ref": "#/$defs/bevy_color::color::Color"
+        }
+      }
+    },
+    "bevy_utils::hashbrown::HashMap<alloc::string::String, bevy_example::test_components::BasicTest, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "isComponent": false,
+      "isResource": false,
+      "keyType": {
+        "type": {
+          "$ref": "#/$defs/alloc::string::String"
+        }
+      },
+      "long_name": "bevy_utils::hashbrown::HashMap<alloc::string::String, bevy_example::test_components::BasicTest, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "short_name": "HashMap<String, BasicTest, DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Map",
+      "valueType": {
+        "type": {
+          "$ref": "#/$defs/bevy_example::test_components::BasicTest"
+        }
+      }
+    },
+    "bevy_utils::hashbrown::HashMap<alloc::string::String, bevy_example::test_components::EnumComplex, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "isComponent": false,
+      "isResource": false,
+      "keyType": {
+        "type": {
+          "$ref": "#/$defs/alloc::string::String"
+        }
+      },
+      "long_name": "bevy_utils::hashbrown::HashMap<alloc::string::String, bevy_example::test_components::EnumComplex, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "short_name": "HashMap<String, EnumComplex, DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Map",
+      "valueType": {
+        "type": {
+          "$ref": "#/$defs/bevy_example::test_components::EnumComplex"
         }
       }
     },

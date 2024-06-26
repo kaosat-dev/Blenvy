@@ -190,6 +190,18 @@ pub struct HashmapTestStringColor {
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
+pub struct HashmapTestStringEnum {
+    pub inner: HashMap<String, EnumComplex>,
+}
+
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+pub struct HashmapTestStringStruct {
+    pub inner: HashMap<String, BasicTest>,
+}
+
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
 pub struct HashmapTestStringColorFlat(HashMap<String, Color>);
 
 #[derive(Component, Reflect, Default, Debug)]
@@ -259,6 +271,9 @@ impl Plugin for ComponentsTestPlugin {
             .register_type::<HashMap<String, Color>>()
             .register_type::<HashmapTestStringColor>()
             .register_type::<HashmapTestStringColorFlat>()
+            .register_type::<HashmapTestStringEnum>()
+            .register_type::<HashmapTestStringStruct>()
+
             .register_type::<ComponentAToFilterOut>()
             .register_type::<ComponentBToFilterOut>()
             .register_type::<ComponentWithFieldsOfIdenticalType>()
