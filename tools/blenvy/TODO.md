@@ -166,12 +166,26 @@ Blender side:
             - export split dynamic/static: YES
             - export merge mode : YES
             - materials: YES
+- [x] blenvy tooling not appearing in library scenes ?? (edit: was actually , it was not appearing in anything but object mode)
+- [x] find a solution for the new color handling 
+    - [x] in theory, srgba, linearrgba , and hsva should be able to be represented visually
+    - [x] bevy_render::color::Color => bevy_color::color::Color
+- [x] fix weird issue with hashmaps with enums as values
+- [ ] prevent attempting to add unexisting components to targets (ie when using the component search)
+
+
 - [ ] inject_export_path_into_internal_blueprints should be called on every asset/blueprint scan !! Not just on export
 - [ ] undo after a save removes any saved "serialized scene" data ? DIG into this
 - [ ] handle scene renames between saves (breaks diffing) => very hard to achieve
-- [ ] add tests for disabled components 
-- [ ] find a solution for the new color handling 
-- [ ] hidden objects/collections not respected at export !!!
+- [ ] add tests for
+    - [ ] disabled components 
+    - [ ] blueprint instances as children of blueprint instances
+    - [ ] blueprint instances as children of empties
+
+- [ ] hidden objects/collections not respected at export !!!?
+    - [ ] verify based on gltf settings
+    - [ ] add "hidden" component otherwise ?
+        https://devtalk.blender.org/t/how-to-get-render-visibility-for-object/23717
 - [ ] add option to 'split out' meshes from blueprints ? 
     - [ ] ie considering meshletts etc , it would make sense to keep blueprints seperate from purely mesh gltfs
 - [ ] persist exported materials path in blueprints so that it can be read from library file users

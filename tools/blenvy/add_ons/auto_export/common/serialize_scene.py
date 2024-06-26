@@ -332,9 +332,12 @@ def serialize_scene(settings):
         
         custom_properties = custom_properties_hash(scene) if len(scene.keys()) > 0 else None
         eevee_settings = generic_fields_hasher_evolved(scene.eevee, fields_to_ignore=fields_to_ignore_generic) # TODO: ignore most of the fields
+        view_settings = generic_fields_hasher_evolved(scene.view_settings, fields_to_ignore=fields_to_ignore_generic)
+        
         scene_field_hashes = {
             "custom_properties": custom_properties,
-            "eevee": eevee_settings
+            "eevee": eevee_settings,
+            "view_settings": view_settings,
         }
         #generic_fields_hasher_evolved(scene.eevee, fields_to_ignore=fields_to_ignore_generic)
         # FIXME: how to deal with this cleanly

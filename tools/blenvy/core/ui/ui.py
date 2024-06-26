@@ -27,8 +27,7 @@ class BLENVY_PT_SidePanel(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "Bevy"
-    bl_context = "objectmode"
-
+    #bl_context = "objectmode"
 
     def draw_header(self, context):
         layout = self.layout

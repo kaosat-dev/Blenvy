@@ -118,9 +118,13 @@ def parse_vec4(value, caster, typeName):
     parsed = parse_struct_string(value.replace(typeName,"").replace("(", "").replace(")","") )
     return [caster(parsed['x']), caster(parsed['y']), caster(parsed['z']), caster(parsed['w'])]
 
-def parse_color(value, caster, typeName):
+def parse_color_rgba(value, caster, typeName):
     parsed = parse_struct_string(value.replace(typeName,"").replace("(", "").replace(")","") )
     return [caster(parsed['red']), caster(parsed['green']), caster(parsed['blue']), caster(parsed['alpha'])]
+
+def parse_color_hsva(value, caster, typeName):
+    parsed = parse_struct_string(value.replace(typeName,"").replace("(", "").replace(")","") )
+    return [caster(parsed['hue']), caster(parsed['saturation']), caster(parsed['value']), caster(parsed['alpha'])]
 
 def to_int(input):
     return int(float(input))
@@ -163,7 +167,11 @@ type_mappings = {
     'alloc::string::String': lambda value: str(value.replace('"', "")),
     'alloc::borrow::Cow<str>': lambda value: str(value.replace('"', "")),
 
-    'bevy_render::color::Color': lambda value: parse_color(value, float, "Rgba"),
+    "bevy_color::srgba::Srgba":  lambda value: parse_color_rgba(value, float, "Srgba"),
+    "bevy_color::linear_rgba::LinearRgba":  lambda value: parse_color_rgba(value, float, "LinearRgba"),
+    "bevy_color::hsva::Hsva":  lambda value: parse_color_hsva(value, float, "Hsva"),
+
+
     'bevy_ecs::entity::Entity': lambda value: int(value),
 }
 
