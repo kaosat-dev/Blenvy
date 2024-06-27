@@ -209,7 +209,7 @@ def draw_component_ui(layout, object_or_collection, registry, selected_component
     row = layout.row(align=True)
     op = row.operator("blenvy.component_add", text="Add", icon="ADD")
     op.component_type = selected_component
-    row.enabled = selected_component != ''
+    row.enabled = selected_component != '' and selected_component in list(registry.type_infos.keys())
 
     layout.separator()
 
@@ -377,7 +377,6 @@ class BLENVY_PT_component_tools_panel(bpy.types.Panel):
     def draw_invalid_items(self, layout, upgreadable_entries):
         for entry in upgreadable_entries:
             (status, custom_property, item, item_type) = entry
-            print("ENTRY", entry)
             self.draw_invalid_or_unregistered(layout, status, custom_property, item, item_type)
 
     def gather_invalid_item_data(self, item, invalid_component_names, items_with_invalid_components, items_with_original_components, original_name, item_type):
@@ -428,8 +427,7 @@ class BLENVY_PT_component_tools_panel(bpy.types.Panel):
         layout = self.layout
         registry = bpy.context.window_manager.components_registry 
         registry_has_type_infos = registry.has_type_infos()
-        selected_object = context.selected_objects[0] if len(context.selected_objects) > 0 else None
-        selected_component = bpy.context.window_manager.blenvy.components.component_selector
+        type_infos = list(registry.type_infos.keys())
 
         row = layout.row()
         row.label(text= "* Single item actions: Rename / Fix / Upgrade")#"Invalid/ unregistered components")
@@ -484,7 +482,7 @@ class BLENVY_PT_component_tools_panel(bpy.types.Panel):
             operator.original_name = original_name
             operator.target_name = target_component_name
             operator.target_items = json.dumps(items_with_original_components)
-            col.enabled = registry_has_type_infos and original_name != "" and original_name != target_component_name
+            col.enabled = registry_has_type_infos and original_name != "" and original_name != target_component_name and original_name in type_infos and target_component_name in type_infos
         else:
             if hasattr(layout,"progress") : # only for Blender > 4.0
                 col.progress(factor = components_rename_progress, text=f"updating {components_rename_progress * 100.0:.2f}%")

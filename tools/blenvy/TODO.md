@@ -171,8 +171,13 @@ Blender side:
     - [x] in theory, srgba, linearrgba , and hsva should be able to be represented visually
     - [x] bevy_render::color::Color => bevy_color::color::Color
 - [x] fix weird issue with hashmaps with enums as values
-- [ ] prevent attempting to add unexisting components to targets (ie when using the component search)
-
+- [x] prevent attempting to add unexisting components to targets (ie when using the component search)
+    - [x] also for the bulk fix actions
+- [ ] hidden objects/collections only semi respected at export
+    - this is because blueprints are external ?
+    - [ ] verify based on gltf settings
+    - [ ] add "Visibility::Hidden" component otherwise 
+        https://devtalk.blender.org/t/how-to-get-render-visibility-for-object/23717
 
 - [ ] inject_export_path_into_internal_blueprints should be called on every asset/blueprint scan !! Not just on export
 - [ ] undo after a save removes any saved "serialized scene" data ? DIG into this
@@ -181,11 +186,9 @@ Blender side:
     - [ ] disabled components 
     - [ ] blueprint instances as children of blueprint instances
     - [ ] blueprint instances as children of empties
+- [ ] update testing files
 
-- [ ] hidden objects/collections not respected at export !!!?
-    - [ ] verify based on gltf settings
-    - [ ] add "hidden" component otherwise ?
-        https://devtalk.blender.org/t/how-to-get-render-visibility-for-object/23717
+
 - [ ] add option to 'split out' meshes from blueprints ? 
     - [ ] ie considering meshletts etc , it would make sense to keep blueprints seperate from purely mesh gltfs
 - [ ] persist exported materials path in blueprints so that it can be read from library file users
@@ -195,11 +198,16 @@ Blender side:
 
 Bevy Side:
 - [x] deprecate BlueprintName & BlueprintPath & use BlueprintInfo instead
+- [ ] make blueprint instances invisible until spawning is done to avoid "spawn flash"?
 - [ ] should "blueprint spawned" only be triggered after all its sub blueprints have spawned ? 
 - [ ] simplify testing example:
     - [x] remove use of rapier physics (or even the whole common boilerplate ?)
     - [ ] remove/replace bevy editor pls with some native ui to display hierarchies
 - [x] try out hot reloading
+- [ ] add a way of overriding assets for collection instances
+    - [ ] add a way of visualizing per blueprint instances
+- [ ] cleanup all the spurious debug messages
+- [ ] fix animation handling
 - [ ] simplify examples:
     - [ ] a full fledged demo (including physics & co)
     - [ ] other examples without interactions or physics 
@@ -208,9 +216,5 @@ Bevy Side:
     - [ ] replace all references to the old 2 add-ons with those to Blenvy
 - [ ] rename repo to "Blenvy"
 - [ ] do a deprecation release of all bevy_gltf_xxx crates to point at the new Blenvy crate
-- [ ] add a way of overriding assets for collection instances
-    - [ ] add a way of visualizing per blueprint instances
-- [ ] cleanup all the spurious debug messages
-- [ ] fix animation handling
 
 clear && pytest -svv --blender-template ../../testing/bevy_example/art/testing_library.blend --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration_prepare.py  && pytest -svv --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration.py

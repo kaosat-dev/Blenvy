@@ -15,7 +15,7 @@ def draw_settings_ui(layout, auto_export_settings):
         #op.export_format = 'GLTF_SEPARATE'
         op.use_selection=True
         op.will_save_settings=True
-        op.use_visible=True # Export visible and hidden objects. See Object/Batch Export to skip.
+        op.use_visible=True
         op.use_renderable=True
         op.use_active_collection = True
         op.use_active_collection_with_nested=True

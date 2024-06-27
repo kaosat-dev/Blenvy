@@ -43,14 +43,11 @@ def process_map(registry, definition, update, nesting_long_names=[]):
 
         #if the content of the list is a unit type, we need to generate a fake wrapper, otherwise we cannot use layout.prop(group, "propertyName") as there is no propertyName !
         if is_value_value_type:
-            print("WRAPPPER,  property group", definition["short_name"])
             values_property_group_class = generate_wrapper_propertyGroup(f"{long_name}_values", original_long_name, definition_link, registry, update, nesting_long_names)
         else:
 
             (_, list_content_group_class) = process_component.process_component(registry, value_definition, update, {"nested": True, "long_name": original_long_name}, nesting_long_names)
             values_property_group_class = list_content_group_class
-            print("COMPONENT,  property group", definition["short_name"], values_property_group_class)
-
 
         values_collection = CollectionProperty(type=values_property_group_class)
         values_property_group_pointer = PointerProperty(type=values_property_group_class)

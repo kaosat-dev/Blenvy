@@ -93,7 +93,8 @@ class ComponentsSettings(PropertyGroup):
 
 
     component_selector: StringProperty(
-        search=add_component_to_ui_list
+        search=add_component_to_ui_list,
+        description="component selector: only components present in the registry are accepted"
     )# type: ignore
 
 
