@@ -173,6 +173,19 @@ Blender side:
 - [x] fix weird issue with hashmaps with enums as values
 - [x] prevent attempting to add unexisting components to targets (ie when using the component search)
     - [x] also for the bulk fix actions
+- [x] selection of nested objects in collections IS NOT WORKING !!! AHH
+- [ ] fix/ overhaul upgreadable components
+    - [x] add listing of upgradeable components for
+        - [x] meshes
+        - [x] materials
+    - [x] fix display of upgradeaeble components & co
+    - [x] add clear visual distinction between internal (selectable) & non selectable ones
+    - [x] do not make selection button available for external blueprints/collections 
+        - [ ] perhaps do not show the other buttons & inputs either ? we cannot change the values of an external library file anyway
+
+- [ ] BLENVY_OT_item_select is missing handling for the other types (outside of object & collection)
+        - [ ] fix selection logic 
+
 - [ ] hidden objects/collections only semi respected at export
     - this is because blueprints are external ?
     - [ ] verify based on gltf settings
@@ -186,7 +199,7 @@ Blender side:
     - [ ] disabled components 
     - [ ] blueprint instances as children of blueprint instances
     - [ ] blueprint instances as children of empties
-- [ ] update testing files
+- [x] update testing files
 
 
 - [ ] add option to 'split out' meshes from blueprints ? 

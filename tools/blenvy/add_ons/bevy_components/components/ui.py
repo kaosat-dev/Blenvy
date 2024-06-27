@@ -343,9 +343,13 @@ class BLENVY_PT_component_tools_panel(bpy.types.Panel):
         row = layout.row()
 
         col = row.column()
-        operator = col.operator("blenvy.select_item", text=f"{target.name}({item_type_short})")
-        operator.target_name = target.name
-        operator.item_type = item_type
+        selector_text = f"{target.name}({item_type_short})"
+        if target.library is None:
+            operator = col.operator("blenvy.select_item", text=selector_text, icon="FILE_BLEND")
+            operator.target_name = target.name
+            operator.item_type = item_type
+        else:
+            col.label(text=selector_text, icon="LIBRARY_DATA_DIRECT")
 
         col = row.column()
         col.label(text=status)
@@ -383,10 +387,9 @@ class BLENVY_PT_component_tools_panel(bpy.types.Panel):
         blenvy_custom_properties = ['components_meta', 'bevy_components', 'user_assets', 'generated_assets' ] # some of our own hard coded custom properties that should be ignored
         upgreadable_entries = []
 
-        if "components_meta" in item:
+        if "components_meta" in item or hasattr(item, "components_meta"): # FIXME; wrong way of determining
             components_metadata = item.components_meta.components
             object_component_names = []
-
 
             for index, component_meta in enumerate(components_metadata):
                 long_name = component_meta.long_name
@@ -408,10 +411,12 @@ class BLENVY_PT_component_tools_panel(bpy.types.Panel):
                 # Invalid (something is wrong)
                 # Unregistered (not in registry) 
                 # Upgrade Needed (Old-style component)
-
                 status = None
-                if custom_property not in blenvy_custom_properties and custom_property not in object_component_names:
-                    status = "Upgrade Needed"
+                if custom_property not in blenvy_custom_properties: 
+                    if custom_property not in object_component_names:
+                        status = "Upgrade Needed"
+                    else: 
+                        status = "Other issue"
 
                 if status is not None:
                     upgreadable_entries.append((status, custom_property, item, item_type))
@@ -447,6 +452,12 @@ class BLENVY_PT_component_tools_panel(bpy.types.Panel):
         for collection in bpy.data.collections:
             if len(collection.keys()) > 0:
                 upgreadable_entries += self.gather_invalid_item_data(collection, invalid_component_names, items_with_invalid_components, items_with_original_components, original_name,  "COLLECTION")
+        for mesh in bpy.data.meshes:
+            if len(mesh.keys()) > 0:
+                upgreadable_entries += self.gather_invalid_item_data(mesh, invalid_component_names, items_with_invalid_components, items_with_original_components, original_name,  "MESH")
+        for material in bpy.data.materials:
+            if len(material.keys()) > 0:
+                upgreadable_entries += self.gather_invalid_item_data(material, invalid_component_names, items_with_invalid_components, items_with_original_components, original_name,  "MATERIAL")
 
         if len(items_with_invalid_components) > 0:
             self.draw_invalid_or_unregistered_header(layout, ["Item","Status", "Component", "Target"])
