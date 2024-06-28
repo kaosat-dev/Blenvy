@@ -339,17 +339,15 @@ class BLENVY_PT_component_tools_panel(bpy.types.Panel):
         registry = bpy.context.window_manager.components_registry 
         registry_has_type_infos = registry.has_type_infos()
         selected_component = target.components_meta.component_selector
-
+        internal = target.library is None
         row = layout.row()
 
         col = row.column()
         selector_text = f"{target.name}({item_type_short})"
-        if target.library is None:
-            operator = col.operator("blenvy.select_item", text=selector_text, icon="FILE_BLEND")
-            operator.target_name = target.name
-            operator.item_type = item_type
-        else:
-            col.label(text=selector_text, icon="LIBRARY_DATA_DIRECT")
+        operator = col.operator("blenvy.select_item", text=selector_text, icon="FILE_BLEND")
+        operator.target_name = target.name
+        operator.item_type = item_type
+        col.enabled = internal
 
         col = row.column()
         col.label(text=status)
@@ -358,9 +356,12 @@ class BLENVY_PT_component_tools_panel(bpy.types.Panel):
         col.label(text=component_name)
 
         col = row.column()
-        # each components_meta has a component selector to pick components from
-        components_meta = target.components_meta
-        col.prop(components_meta, "component_selector", text="")
+        if internal:
+            # each components_meta has a component selector to pick components from
+            components_meta = target.components_meta
+            col.prop(components_meta, "component_selector", text="")
+        else:
+            col.label(text="external, cannot edit")
 
 
         col = row.column()
@@ -369,7 +370,7 @@ class BLENVY_PT_component_tools_panel(bpy.types.Panel):
         operator.original_name = component_name
         operator.target_items = json.dumps([(target.name, item_type)]) # tupple
         operator.target_name = target_component_name
-        col.enabled = registry_has_type_infos and component_name != "" and target_component_name != ""  and component_name != target_component_name
+        col.enabled = internal and registry_has_type_infos and component_name != "" and target_component_name != ""  and component_name != target_component_name
 
 
         col = row.column()
@@ -377,6 +378,7 @@ class BLENVY_PT_component_tools_panel(bpy.types.Panel):
         operator.item_name = target.name
         operator.component_name = component_name
         operator.item_type = get_selection_type(target)
+        col.enabled = internal
 
     def draw_invalid_items(self, layout, upgreadable_entries):
         for entry in upgreadable_entries:
