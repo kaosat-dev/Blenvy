@@ -209,6 +209,8 @@ Blender side:
     - [ ] scan for used materials per blueprint !
     - [ ] for scenes, scan for used materials of all non instance objects (TODO: what about overrides ?)
 
+- [ ] add a way of visualizing per blueprint instances ?
+
 Bevy Side:
 - [x] deprecate BlueprintName & BlueprintPath & use BlueprintInfo instead
 - [ ] make blueprint instances invisible until spawning is done to avoid "spawn flash"?
@@ -216,14 +218,14 @@ Bevy Side:
 - [ ] simplify testing example:
     - [x] remove use of rapier physics (or even the whole common boilerplate ?)
     - [ ] remove/replace bevy editor pls with some native ui to display hierarchies
-- [x] try out hot reloading
-- [ ] add a way of overriding assets for collection instances
-    - [ ] add a way of visualizing per blueprint instances
-- [ ] cleanup all the spurious debug messages
-- [ ] fix animation handling
-- [ ] simplify examples:
     - [ ] a full fledged demo (including physics & co)
     - [ ] other examples without interactions or physics 
+- [x] try out hot reloading
+- [ ] add a way of overriding assets for collection instances => doubt this is possible
+- [ ] cleanup all the spurious debug messages
+- [ ] fix animation handling
+    - [ ] how to deal with animation graphs ?
+
 - [ ] update main docs
     - [ ] rename project to Blenvy
     - [ ] replace all references to the old 2 add-ons with those to Blenvy

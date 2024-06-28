@@ -10,7 +10,7 @@ def select_area(context, area_name):
     for area in context.screen.areas:
         #if area.type == 'PROPERTIES' and context.object is not None and context.object.type not in ('LIGHT_PROBE', 'CAMERA', 'LIGHT', 'SPEAKER'):
         # Set it the active space
-        print("SELECT AREA", area_name)
+        #print("SELECT AREA", area_name)
         try:
             area.spaces.active.context = area_name #'MATERIAL' # 'VIEW_LAYER', 'SCENE' etc.
         except Exception as error: 
@@ -103,7 +103,6 @@ class BLENVY_OT_item_select(Operator):
                     bpy.ops.object.select_all(action='DESELECT')
                     bpy.context.window.scene = scene_of_collection
                     #bpy.context.view_layer.objects.active = None
-                    #
                     context.window_manager.blenvy_item_selected_ids = json.dumps({"name": collection.name, "type": self.item_type})
                     set_active_collection(bpy.context.window.scene, collection.name)
 
@@ -116,7 +115,6 @@ class BLENVY_OT_item_select(Operator):
                 if scene_of_item is not None:
                     bpy.ops.object.select_all(action='DESELECT')
                     bpy.context.window.scene = scene_of_item
-                    mesh_object.select_set(True)    
                     bpy.context.view_layer.objects.active = mesh_object
 
                     context.window_manager.blenvy_item_selected_ids = json.dumps({"name": mesh.name, "type": self.item_type})
@@ -128,12 +126,9 @@ class BLENVY_OT_item_select(Operator):
                 material_object = get_material_object(material)
                 scene_of_item = get_object_scene(material_object)
                 select_area(context=context, area_name="MATERIAL")
-                print("scene_of_item", scene_of_item)
                 if scene_of_item is not None:
-
                     bpy.ops.object.select_all(action='DESELECT')
                     bpy.context.window.scene = scene_of_item
-                    #material_object.select_set(True)    
                     bpy.context.view_layer.objects.active = material_object
 
                     context.window_manager.blenvy_item_selected_ids = json.dumps({"name": material.name, "type": self.item_type})
@@ -154,20 +149,6 @@ def get_selected_item(context):
     #print("original context", context)
    
 
-    try:
-        selection_overrides = json.loads(context.window_manager.blenvy_item_selected_ids)
-        #print("selection_overrides", selection_overrides)
-        if selection_overrides["type"] == "OBJECT":
-            selection = bpy.data.objects[selection_overrides["name"]]
-        elif selection_overrides["type"] == "COLLECTION":
-            selection = bpy.data.collections[selection_overrides["name"]]
-        if selection_overrides["type"] == "MESH":
-            selection = bpy.data.meshes[selection_overrides["name"]]
-        elif selection_overrides["type"] == "MATERIAL":
-            selection = bpy.data.materials[selection_overrides["name"]]
-        #print("SELECTION", selection)
-        #context.window_manager.blenvy_item_selected_ids = "{}"
-    except: pass
 
     if selection is None:
         area = get_outliner_area()
@@ -175,8 +156,8 @@ def get_selected_item(context):
             region = next(region for region in area.regions if region.type == "WINDOW")
             with bpy.context.temp_override(area=area, region=region):
                 #print("overriden context", bpy.context)
-                for obj in bpy.context.selected_ids:
-                    print(f"Selected: {obj.name} - {type(obj)}")
+                """for obj in bpy.context.selected_ids:
+                    print(f"Selected: {obj.name} - {type(obj)}")"""
                 number_of_selections = len(bpy.context.selected_ids)
                 selection = bpy.context.selected_ids[number_of_selections - 1] if number_of_selections > 0 else None #next(iter(bpy.context.selected_ids), None)
 
@@ -185,6 +166,22 @@ def get_selected_item(context):
     if selection is None:
         number_of_selections = len(context.selected_objects)
         selection = context.selected_objects[number_of_selections - 1] if number_of_selections > 0 else None
+
+    if selection is None:
+        try:
+            selection_overrides = json.loads(context.window_manager.blenvy_item_selected_ids)
+            #print("selection_overrides", selection_overrides)
+            if selection_overrides["type"] == "OBJECT":
+                selection = bpy.data.objects[selection_overrides["name"]]
+            elif selection_overrides["type"] == "COLLECTION":
+                selection = bpy.data.collections[selection_overrides["name"]]
+            if selection_overrides["type"] == "MESH":
+                selection = bpy.data.meshes[selection_overrides["name"]]
+            elif selection_overrides["type"] == "MATERIAL":
+                selection = bpy.data.materials[selection_overrides["name"]]
+            #print("SELECTION", selection)
+            #context.window_manager.blenvy_item_selected_ids = "{}"
+        except: pass
     return selection
 
 
