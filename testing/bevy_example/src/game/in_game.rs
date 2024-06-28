@@ -62,7 +62,7 @@ pub fn spawn_test(
         let new_entity = commands
             .spawn((
                 BluePrintBundle {
-                    blueprint: BlueprintInfo{name: "Health_Pickup".into() , path:"foo/bar.glb".into()}, // FIXME
+                    blueprint: BlueprintInfo{name: "Blueprint1".into() , path:"blueprints/Blueprint1.glb".into()}, // FIXME
                     ..Default::default()
                 },
                 bevy::prelude::Name::from(format!("test{}", name_index)),

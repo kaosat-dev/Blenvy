@@ -58,12 +58,12 @@ pub(crate) struct AssetLoadTracker {
 
 /// helper component, for tracking loaded assets
 #[derive(Component, Debug)]
-pub(crate) struct BlenvyAssetsLoadState {
+pub(crate) struct BlueprintAssetsLoadState {
     pub all_loaded: bool,
     pub asset_infos: Vec<AssetLoadTracker>,
     pub progress: f32,
 }
-impl Default for BlenvyAssetsLoadState {
+impl Default for BlueprintAssetsLoadState {
     fn default() -> Self {
         Self {
             all_loaded: Default::default(),

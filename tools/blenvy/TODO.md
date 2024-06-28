@@ -210,6 +210,7 @@ Blender side:
     - [ ] for scenes, scan for used materials of all non instance objects (TODO: what about overrides ?)
 
 - [ ] add a way of visualizing per blueprint instances ?
+- [ ] display export path of blueprints (mostly external) ?
 
 Bevy Side:
 - [x] deprecate BlueprintName & BlueprintPath & use BlueprintInfo instead
@@ -220,7 +221,15 @@ Bevy Side:
     - [ ] remove/replace bevy editor pls with some native ui to display hierarchies
     - [ ] a full fledged demo (including physics & co)
     - [ ] other examples without interactions or physics 
-- [x] try out hot reloading
+- [ ] add hot reloading
+    - [x] basics
+    - [ ] make it enabled/disabled based on general flag
+    - [ ] cleanup internals
+- [ ] review & change general component insertion & spawning ordering & logic
+    - GltfComponentsSet::Injection => GltfBlueprintsSet::Spawn => GltfBlueprintsSet::AfterSpawn
+        Injection => inject lights & co => spawn => afterSpawn
+                                                 => Injection => inject lights & co 
+
 - [ ] add a way of overriding assets for collection instances => doubt this is possible
 - [ ] cleanup all the spurious debug messages
 - [ ] fix animation handling

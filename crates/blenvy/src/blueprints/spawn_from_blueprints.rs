@@ -1,9 +1,9 @@
 use std::path::{Path, PathBuf};
 
-use bevy::{asset::LoadedUntypedAsset, gltf::Gltf, prelude::*, scene::SceneInstance, transform::commands, utils::hashbrown::HashMap};
+use bevy::{asset::LoadedUntypedAsset, gltf::Gltf, prelude::*, render::view::visibility, scene::SceneInstance, transform::commands, utils::hashbrown::HashMap};
 use serde_json::Value;
 
-use crate::{BlueprintAssets, BlenvyAssetsLoadState, AssetLoadTracker, BlenvyConfig, BlueprintAnimations, BlueprintAssetsLoaded, BlueprintAssetsNotLoaded};
+use crate::{BlueprintAssets, BlueprintAssetsLoadState, AssetLoadTracker, BlenvyConfig, BlueprintAnimations, BlueprintAssetsLoaded, BlueprintAssetsNotLoaded};
 
 /// this is a flag component for our levels/game world
 #[derive(Component)]
@@ -164,12 +164,13 @@ asset_server: Res<AssetServer>,
         if !asset_infos.is_empty() {
             commands
                 .entity(entity)
-                .insert(BlenvyAssetsLoadState {
+                .insert(BlueprintAssetsLoadState {
                     all_loaded: false,
                     asset_infos,
                     ..Default::default()
                 })
-                .insert(BlueprintAssetsNotLoaded);
+                .insert(BlueprintAssetsNotLoaded)                
+                ;
         } else {
             commands.entity(entity).insert(BlueprintAssetsLoaded);
         }
@@ -178,7 +179,7 @@ asset_server: Res<AssetServer>,
 
 pub(crate) fn blueprints_check_assets_loading(
     mut blueprint_assets_to_load: Query<
-        (Entity, Option<&Name>, &BlueprintInfo, &mut BlenvyAssetsLoadState),
+        (Entity, Option<&Name>, &BlueprintInfo, &mut BlueprintAssetsLoadState),
         With<BlueprintAssetsNotLoaded>,
     >,
     asset_server: Res<AssetServer>,
@@ -222,7 +223,7 @@ pub(crate) fn blueprints_check_assets_loading(
                 .entity(entity)
                 .insert(BlueprintAssetsLoaded)
                 .remove::<BlueprintAssetsNotLoaded>()
-                //.remove::<BlenvyAssetsLoadState>() //REMOVE it in release mode/ when hot reload is off, keep it for dev/hot reload
+                //.remove::<BlueprintAssetsLoadState>() //REMOVE it in release mode/ when hot reload is off, keep it for dev/hot reload
                 ;
         }else {
             println!("LOADING: done for ALL assets of {:?} (instance of {}): {} ",entity_name, blueprint_info.path, progress * 100.0);
@@ -233,7 +234,7 @@ pub(crate) fn blueprints_check_assets_loading(
 /* 
 pub(crate) fn hot_reload_asset_check(
     mut blueprint_assets: Query<
-    (Entity, Option<&Name>, &BlueprintInfo, &mut BlenvyAssetsLoadState)>,
+    (Entity, Option<&Name>, &BlueprintInfo, &mut BlueprintAssetsLoadState)>,
     asset_server: Res<AssetServer>,
     mut commands: Commands,
 ){
@@ -260,109 +261,42 @@ use bevy::asset::AssetEvent;
 pub(crate) fn react_to_asset_changes(
     mut gltf_events: EventReader<AssetEvent<Gltf>>,
     mut untyped_events: EventReader<AssetEvent<LoadedUntypedAsset>>,
-    mut blueprint_assets: Query<(Entity, Option<&Name>, &BlueprintInfo, &mut BlenvyAssetsLoadState, Option<&Children>)>,
+    mut blueprint_assets: Query<(Entity, Option<&Name>, &BlueprintInfo, &mut BlueprintAssetsLoadState, Option<&Children>)>,
     asset_server: Res<AssetServer>,
     mut commands: Commands,
 
 ) {
 
-    for event in untyped_events.read() {
-        for (entity, entity_name, blueprint_info, mut assets_to_load, c) in blueprint_assets.iter_mut() {
-            for tracker in assets_to_load.asset_infos.iter_mut() {
-                let asset_id = tracker.id;
-
-                println!("changed {:?} (blueprint {}) {}", entity_name, blueprint_info.path, event.is_modified(asset_id));
-            }
-        }
-
-        match event {
-            AssetEvent::Added { id } => {
-                // React to the image being created
-                println!("Added untyped {:?}", asset_server.get_path(*id))
-            }
-            AssetEvent::LoadedWithDependencies { id } => {
-                // React to the image being loaded
-                // after all dependencies
-                println!("Loaded with deps untyped {:?}", asset_server.get_path(*id))
-            }
-            AssetEvent::Modified { id } => {
-                // React to the image being modified
-                println!("Modified untyped {:?}", asset_server.get_path(*id))
-            }
-            AssetEvent::Removed { id } => {
-                // React to the image being removed
-                println!("Removed untyped {:?}", asset_server.get_path(*id))
-            },
-            AssetEvent::Unused { id } => {
-                // React to the last strong handle for the asset being dropped
-                println!("unused untyped {:?}", asset_server.get_path(*id))
-            }
-        }
-    }
     for event in gltf_events.read() {
         // LoadedUntypedAsset
-
-        /*for (entity, entity_name, blueprint_info, mut assets_to_load) in blueprint_assets.iter_mut() {
-            for tracker in assets_to_load.asset_infos.iter_mut() {
-                let asset_id = tracker.id;
-                if blueprint_info.path.ends_with("glb") || blueprint_info.path.ends_with("gltf") {
-                    // let typed_asset_id = asset_server.get_handle(blueprint_info.path);
-                    let foo: Handle<Gltf> = asset_server.load(blueprint_info.path.clone());
-                    //println!("changed {:?} (blueprint {}) {}", entity_name, blueprint_info.path, event.is_modified(foo.id()));
-                    println!("changed {:?} (blueprint {}) {}", entity_name, blueprint_info.path, event.is_modified(foo.id()));
-                    println!("added {:?} (blueprint {}) {}", entity_name, blueprint_info.path, event.is_added(foo.id()));
-                    println!("removed {:?} (blueprint {}) {}", entity_name, blueprint_info.path, event.is_removed(foo.id()));
-                    println!("loaded with deps {:?} (blueprint {}) {}", entity_name, blueprint_info.path, event.is_loaded_with_dependencies(foo.id()));
-
-                }
-            }
-        }*/
-
         match event {
-            AssetEvent::Added { id } => {
-                // React to the image being created
-                println!("Added gltf, path {:?}", asset_server.get_path(*id));
-                
-            }
-            AssetEvent::LoadedWithDependencies { id } => {
-                // React to the image being loaded
-                // after all dependencies
-                println!("Loaded gltf with deps{:?}", asset_server.get_path(*id))
-            }
             AssetEvent::Modified { id } => {
                 // React to the image being modified
-                println!("Modified gltf {:?}", asset_server.get_path(*id));
-
+                // println!("Modified gltf {:?}", asset_server.get_path(*id));
                 for (entity, entity_name, blueprint_info, mut assets_to_load, children) in blueprint_assets.iter_mut() {
                     for tracker in assets_to_load.asset_infos.iter_mut() {
-                        if tracker.path == asset_server.get_path(*id).unwrap().to_string() {
-                            println!("HOLY MOLY IT DETECTS !!, now respawn {:?}", entity_name);
-                            if children.is_some() {
-                                for child in children.unwrap().iter(){
-                                    commands.entity(*child).despawn_recursive();
-
+                        if asset_server.get_path(*id).is_some() {
+                            if tracker.path == asset_server.get_path(*id).unwrap().to_string() {
+                                println!("HOLY MOLY IT DETECTS !!, now respawn {:?}", entity_name);
+                                if children.is_some() {
+                                    for child in children.unwrap().iter(){
+                                        commands.entity(*child).despawn_recursive();
+                                    }
                                 }
-                            }
-                            commands.entity(entity)
-                            .remove::<BlueprintAssetsLoaded>()
-                            .remove::<SceneInstance>()
-                            .remove::<BlenvyAssetsLoadState>()
-                            .insert(SpawnHere);
+                                commands.entity(entity)
+                                    .remove::<BlueprintAssetsLoaded>()
+                                    .remove::<SceneInstance>()
+                                    .remove::<BlueprintAssetsLoadState>()
+                                    .insert(SpawnHere);
 
-                            break;
+                                break;
+                            }
                         }
                     }
                 }
 
             }
-            AssetEvent::Removed { id } => {
-                // React to the image being removed
-                println!("Removed gltf {:?}", asset_server.get_path(*id))
-            },
-            AssetEvent::Unused { id } => {
-                // React to the last strong handle for the asset being dropped
-                println!("unused gltf {:?}", asset_server.get_path(*id))
-            }
+            _ => {}
         }
     }
 }
@@ -447,6 +381,8 @@ pub(crate) fn blueprints_spawn(
             SceneBundle {
                 scene: scene.clone(),
                 transform: transforms,
+                visibility: Visibility::Hidden,
+
                 ..Default::default()
             },
             Spawned,

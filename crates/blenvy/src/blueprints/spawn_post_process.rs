@@ -99,10 +99,11 @@ pub(crate) fn spawned_blueprint_post_process(
         commands.entity(original).remove::<SpawnHere>();
         commands.entity(original).remove::<Spawned>();
         // commands.entity(original).remove::<Handle<Scene>>(); // FIXME: if we delete the handle to the scene, things get despawned ! not what we want
-        //commands.entity(original).remove::<BlenvyAssetsLoadState>(); // also clear the sub assets tracker to free up handles, perhaps just freeing up the handles and leave the rest would be better ?
+        //commands.entity(original).remove::<BlueprintAssetsLoadState>(); // also clear the sub assets tracker to free up handles, perhaps just freeing up the handles and leave the rest would be better ?
         //commands.entity(original).remove::<BlueprintAssetsLoaded>();
         commands.entity(root_entity).despawn_recursive();
-
+        commands.entity(original).insert(            Visibility::Visible
+        );
         blueprint_events.send(BlueprintEvent::Spawned {blueprint_name: blueprint_info.name.clone(), blueprint_path: blueprint_info.path.clone() });
         
         debug!("DONE WITH POST PROCESS");
