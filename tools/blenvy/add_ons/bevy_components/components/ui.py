@@ -386,7 +386,7 @@ class BLENVY_PT_component_tools_panel(bpy.types.Panel):
             self.draw_invalid_or_unregistered(layout, status, custom_property, item, item_type)
 
     def gather_invalid_item_data(self, item, invalid_component_names, items_with_invalid_components, items_with_original_components, original_name, item_type):
-        blenvy_custom_properties = ['components_meta', 'bevy_components', 'user_assets', 'generated_assets' ] # some of our own hard coded custom properties that should be ignored
+        blenvy_custom_properties = ['components_meta', 'bevy_components', 'user_assets', 'generated_assets', 'BlueprintAssets', 'export_path' ] # some of our own hard coded custom properties that should be ignored
         upgreadable_entries = []
 
         if "components_meta" in item or hasattr(item, "components_meta"): # FIXME; wrong way of determining

@@ -1,6 +1,6 @@
 use std::path::{Path, PathBuf};
 
-use bevy::{asset::LoadedUntypedAsset, gltf::Gltf, prelude::*, render::view::visibility, scene::SceneInstance, transform::commands, utils::hashbrown::HashMap};
+use bevy::{asset::LoadedUntypedAsset, gltf::Gltf, prelude::*, render::view::visibility, scene::SceneInstance, transform::commands, utils::{hashbrown::HashMap}};
 use serde_json::Value;
 
 use crate::{BlueprintAssets, BlueprintAssetsLoadState, AssetLoadTracker, BlenvyConfig, BlueprintAnimations, BlueprintAssetsLoaded, BlueprintAssetsNotLoaded};
@@ -65,6 +65,7 @@ pub enum BlueprintEvent {
 
     /// event fired when a blueprint has finished loading its assets & before it attempts spawning
     AssetsLoaded {
+        entity: Entity,
         blueprint_name: String,
         blueprint_path: String,
         // TODO: add assets list ?
@@ -73,16 +74,38 @@ pub enum BlueprintEvent {
     /// - all its assets have been loaded
     /// - the spawning attempt has been sucessfull
     Spawned {
+        entity: Entity,
         blueprint_name: String,
         blueprint_path: String,
     },
 
     /// 
     Ready {
+        entity: Entity,
         blueprint_path: String,
     }
     
 }
+
+
+// TODO: move this somewhere else ?
+#[derive(Component, Reflect, Debug, Default)]
+#[reflect(Component)]
+/// component used to mark any entity as Dynamic: aka add this to make sure your entity is going to be saved
+pub struct DynamicBlueprintInstance;
+
+
+// TODO: move these somewhere else ?
+#[derive(Component, Reflect, Debug, Default)]
+#[reflect(Component)]
+/// component gets added when a blueprint starts spawning, removed when spawning is done
+pub struct BlueprintSpawning;
+
+
+#[derive(Component, Reflect, Debug, Default)]
+#[reflect(Component)]
+/// component gets added when a blueprint spawning is done
+pub struct BlueprintSpawned;
 
 
 use gltf::Gltf as RawGltf;
@@ -101,8 +124,8 @@ asset_server: Res<AssetServer>,
 ) {
    
     for (entity, blueprint_info, parent, all_assets) in blueprint_instances_to_spawn.iter() {
-        println!("Detected blueprint to spawn: {:?} path:{:?}", blueprint_info.name, blueprint_info.path);
-        println!("all assets {:?}", all_assets);
+        info!("BLUEPRINT: to spawn detected: {:?} path:{:?}", blueprint_info.name, blueprint_info.path);
+        //println!("all assets {:?}", all_assets);
         //////////////
 
         // we add the asset of the blueprint itself
@@ -124,7 +147,7 @@ asset_server: Res<AssetServer>,
 
         // and we also add all its assets
         /* prefetch attempt */
-        let gltf = RawGltf::open(format!("assets/{}", blueprint_info.path)).unwrap();// RawGltf::open("examples/Box.gltf")?;
+        let gltf = RawGltf::open(format!("assets/{}", blueprint_info.path)).unwrap();
         for scene in gltf.scenes() {
             let foo_extras = scene.extras().clone().unwrap();
 
@@ -137,7 +160,7 @@ asset_server: Res<AssetServer>,
                 let assets_raw = &lookup["BlueprintAssets"];
                 //println!("ASSETS RAW {}", assets_raw);
                 let all_assets: BlueprintAssets = ron::from_str(&assets_raw.as_str().unwrap()).unwrap();
-                println!("all_assets {:?}", all_assets);
+                // println!("all_assets {:?}", all_assets);
 
                 for asset in all_assets.assets.iter() {
                     let untyped_handle = asset_server.load_untyped(&asset.path);
@@ -174,6 +197,9 @@ asset_server: Res<AssetServer>,
         } else {
             commands.entity(entity).insert(BlueprintAssetsLoaded);
         }
+
+
+        commands.entity(entity).insert(BlueprintSpawning);
     }
 }
 
@@ -216,8 +242,8 @@ pub(crate) fn blueprints_check_assets_loading(
 
         if all_loaded {
             assets_to_load.all_loaded = true;
-            println!("LOADING: in progress for ALL assets of {:?} (instance of {}), preparing for spawn", entity_name, blueprint_info.path);
-            blueprint_events.send(BlueprintEvent::AssetsLoaded {blueprint_name:"".into(), blueprint_path: blueprint_info.path.clone() });
+            // println!("LOADING: DONE for ALL assets of {:?} (instance of {}), preparing for spawn", entity_name, blueprint_info.path);
+            // blueprint_events.send(BlueprintEvent::AssetsLoaded {blueprint_name:"".into(), blueprint_path: blueprint_info.path.clone() });
 
             commands
                 .entity(entity)
@@ -226,7 +252,7 @@ pub(crate) fn blueprints_check_assets_loading(
                 //.remove::<BlueprintAssetsLoadState>() //REMOVE it in release mode/ when hot reload is off, keep it for dev/hot reload
                 ;
         }else {
-            println!("LOADING: done for ALL assets of {:?} (instance of {}): {} ",entity_name, blueprint_info.path, progress * 100.0);
+            // println!("LOADING: in progress for ALL assets of {:?} (instance of {}): {} ",entity_name, blueprint_info.path, progress * 100.0);
         }
     }
 }
@@ -302,30 +328,30 @@ pub(crate) fn react_to_asset_changes(
 }
 
 
-pub(crate) fn blueprints_spawn(
-    spawn_placeholders: Query<
-        (
-            Entity,
-            &BlueprintInfo,
-            Option<&Transform>,
-            Option<&Parent>,
-            Option<&AddToGameWorld>,
-            Option<&Name>,
-        ),
-        (
-            With<BlueprintAssetsLoaded>,
-            Added<BlueprintAssetsLoaded>,
-            Without<BlueprintAssetsNotLoaded>,
-        ),
-    >,
+
+pub(crate) fn blueprints_assets_ready(spawn_placeholders: Query<
+    (
+        Entity,
+        &BlueprintInfo,
+        Option<&Transform>,
+        Option<&Parent>,
+        Option<&AddToGameWorld>,
+        Option<&Name>,
+    ),
+    (
+        With<BlueprintAssetsLoaded>,
+        Added<BlueprintAssetsLoaded>,
+        Without<BlueprintAssetsNotLoaded>,
+    ),
+>,
 
     mut commands: Commands,
     mut game_world: Query<Entity, With<GameWorldTag>>,
 
     assets_gltf: Res<Assets<Gltf>>,
     asset_server: Res<AssetServer>,
-    children: Query<&Children>,
-) {
+    children: Query<&Children>,)
+{
     for (
         entity,
         blueprint_info,
@@ -336,7 +362,7 @@ pub(crate) fn blueprints_spawn(
     ) in spawn_placeholders.iter()
     {
         info!(
-            "all assets loaded, attempting to spawn blueprint {:?} for entity {:?}, id: {:?}, parent:{:?}",
+            "BLUEPRINT: all assets loaded, attempting to spawn blueprint SCENE {:?} for entity {:?}, id: {:?}, parent:{:?}",
             blueprint_info.name, name, entity, original_parent
         );
 
@@ -385,25 +411,137 @@ pub(crate) fn blueprints_spawn(
 
                 ..Default::default()
             },
-            Spawned,
-            BlueprintInstanceReady, // FIXME: not sure if this is should be added here or in the post process
             OriginalChildren(original_children),
             BlueprintAnimations {
                 // these are animations specific to the inside of the blueprint
                 named_animations: named_animations//gltf.named_animations.clone(),
             },
+            
         ));
 
-        if add_to_world.is_some() {
+        /*        if add_to_world.is_some() {
             let world = game_world
                 .get_single_mut()
                 .expect("there should be a game world present");
             commands.entity(world).add_child(entity);
-        }
+        } */
+
     }
 }
 
 
+#[derive(Component, Reflect, Debug, Default)]
+#[reflect(Component)]
+pub struct SubBlueprintsSpawnTracker{
+    sub_blueprint_instances: HashMap<Entity, bool>
+}
 
+#[derive(Component, Reflect, Debug)]
+#[reflect(Component)]
+pub struct SpawnTrackRoot(Entity);
+
+pub(crate) fn blueprints_check_blueprints_spawning(
+    foo: Query<(Entity, Option<&Name>, Option<&Children>, Option<&SpawnTrackRoot>), (With<BlueprintSpawning>, Added<SceneInstance>)>,
+    spawning_blueprints: Query<(Entity, Option<&Name>, Option<&Children>), Added<BlueprintSpawned>>,
+
+    mut trackers: Query<(Entity, &mut SubBlueprintsSpawnTracker)>,
+    with_blueprint_infos : Query<(Entity, Option<&Name>), With<BlueprintInfo>>,
+    all_children: Query<&Children>,
+    mut commands: Commands,
+) {
+    for (entity, name, children, track_root) in foo.iter(){
+        info!("Done spawning blueprint scene for {:?} (track root: {:?})", name, track_root);
+        let mut sub_blueprint_instances: Vec<Entity> = vec![];
+        let mut tracker_data: HashMap<Entity, bool> = HashMap::new();
+
+        if children.is_some() {
+            //println!("has children");
+            let children = children
+                .expect("there should be some children of the current blueprint instance");
+
+            for child in all_children.iter_descendants(entity) {
+                if with_blueprint_infos.get(child).is_ok() {
+                    sub_blueprint_instances.push(child);
+                    tracker_data.insert(child, false);
+                    commands.entity(child).insert(SpawnTrackRoot(entity));// Injecting to know which entity is the root
+                }
+            }
+
+            /*for child in children.iter() {
+                // println!("  child: {:?}", child);
+                /*if with_blueprint_infos.get(*child).is_ok() {
+                    sub_blueprint_instances.push(*child);
+                } */
+
+                all_children
+                if let Ok(sub_children) = all_children.get(*child) {
+                    for sub_child in sub_children.iter() {
+                        if with_blueprint_infos.get(*sub_child).is_ok() {
+                            sub_blueprint_instances.push(*sub_child);
+                        }
+                    }
+                }
+            }*/
+        }
+        if let Some(track_root) = track_root {
+            //println!("got some root");
+            if let Ok((s_entity, mut tracker)) = trackers.get_mut(track_root.0) {
+                // println!("found the tracker, setting loaded for {}", entity);
+                tracker.sub_blueprint_instances.entry(entity).or_insert(true);
+                tracker.sub_blueprint_instances.insert(entity, true);
+
+                // TODO: ugh, my limited rust knowledge, this is bad code
+                let mut all_spawned = true;
+
+                for key in tracker.sub_blueprint_instances.keys() {
+                    let val = tracker.sub_blueprint_instances[key];
+                    println!("Key: {key}, Spawned {}", val);
+                }
+
+                for val in tracker.sub_blueprint_instances.values() {
+                    println!("spawned {}", val);
+                    if !val {
+                        all_spawned = false;
+                        break;
+                    }
+                }
+                if all_spawned {
+                    println!("ALLLLL SPAAAAWNED for {}", track_root.0)
+                } 
+            }
+        }
+
+        println!("sub blueprint instances {:?}", sub_blueprint_instances);
+        commands.entity(entity)
+            .insert(SubBlueprintsSpawnTracker{sub_blueprint_instances: tracker_data.clone()});
+    }
+    /*for(entity, name, children) in spawning_blueprints.iter() {
+        println!("checking for spawning state of sub blueprints for {:?}", name);
+    }*/
+}
+
+
+/*
+BlueprintSpawning
+    - Blueprint Load Assets
+    - Blueprint Assets Ready: spawn Blueprint's scene
+    - Blueprint Scene Ready:
+        - get list of sub Blueprints if any, inject blueprints spawn tracker
+            => annoying issue with the "nested" useless root node created by blender
+            => distinguish between blueprint instances inside blueprint instances vs blueprint instances inside blueprints ??
+    - Blueprint sub_blueprints Ready
+
+*/
+
+
+// could be done differently, by notifying each parent of a spawning blueprint that this child is done spawning ?
+// perhaps using component hooks or observers (ie , if a ComponentSpawning + Parent)
+pub fn track_sub_blueprints(
+    spawning_blueprints: Query<(Entity, Option<&Name>, Option<&Children>), Added<BlueprintSpawned>>
+) {
+    for(entity, name, children) in spawning_blueprints.iter() {
+        println!("checking for spawning state of sub blueprints for {:?}", name);
+    }
+}
 
 

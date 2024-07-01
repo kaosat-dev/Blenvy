@@ -156,8 +156,8 @@ impl Plugin for HiearchyDebugPlugin {
     fn build(&self, app: &mut App) {
         app
             .add_systems(Startup, setup_hierarchy_debug)
-            .add_systems(Update, check_for_component)
-            //.add_systems(Update, draw_hierarchy_debug)
+            // .add_systems(Update, check_for_component)
+            .add_systems(Update, draw_hierarchy_debug)
             //.add_systems(Update, check_for_gltf_extras)
             
            ;

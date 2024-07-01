@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use blenvy::{BluePrintBundle, BlueprintInfo, GameWorldTag, SpawnHere};
+use blenvy::{BluePrintBundle, BlueprintInfo, DynamicBlueprintInstance, GameWorldTag, SpawnHere};
 use crate::{GameState, InAppRunning};
 
 //use bevy_rapier3d::prelude::Velocity;
@@ -65,6 +65,7 @@ pub fn spawn_test(
                     blueprint: BlueprintInfo{name: "Blueprint1".into() , path:"blueprints/Blueprint1.glb".into()}, // FIXME
                     ..Default::default()
                 },
+                DynamicBlueprintInstance,
                 bevy::prelude::Name::from(format!("test{}", name_index)),
                 // SpawnHere,
                 TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),

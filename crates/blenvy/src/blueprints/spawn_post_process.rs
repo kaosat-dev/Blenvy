@@ -5,7 +5,7 @@ use bevy::prelude::*;
 use bevy::scene::SceneInstance;
 // use bevy::utils::hashbrown::HashSet;
 
-use crate::{BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintInfo};
+use crate::{BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintInfo, BlueprintSpawned, BlueprintSpawning};
 use crate::{SpawnHere, Spawned};
 use crate::{
     BlueprintEvent, CopyComponents, InBlueprint, NoInBlueprint, OriginalChildren
@@ -63,7 +63,7 @@ pub(crate) fn spawned_blueprint_post_process(
         // can be usefull to filter out anything that came from blueprints vs normal children
         if no_inblueprint.is_none() {
             for child in all_children.iter_descendants(root_entity) {
-                commands.entity(child).insert(InBlueprint);
+                commands.entity(child).insert(InBlueprint); // we do this here in order to avoid doing it to normal children
             }
         }
 
@@ -101,11 +101,18 @@ pub(crate) fn spawned_blueprint_post_process(
         // commands.entity(original).remove::<Handle<Scene>>(); // FIXME: if we delete the handle to the scene, things get despawned ! not what we want
         //commands.entity(original).remove::<BlueprintAssetsLoadState>(); // also clear the sub assets tracker to free up handles, perhaps just freeing up the handles and leave the rest would be better ?
         //commands.entity(original).remove::<BlueprintAssetsLoaded>();
-        commands.entity(root_entity).despawn_recursive();
+        commands.entity(root_entity).despawn_recursive(); // Remove the root entity that comes from the spawned-in scene
         commands.entity(original).insert(            Visibility::Visible
         );
-        blueprint_events.send(BlueprintEvent::Spawned {blueprint_name: blueprint_info.name.clone(), blueprint_path: blueprint_info.path.clone() });
+
+        // blueprint_events.send(BlueprintEvent::Spawned {blueprint_name: blueprint_info.name.clone(), blueprint_path: blueprint_info.path.clone() });
+        commands.entity(original)
+        .insert(BlueprintSpawned)
+        .remove::<BlueprintSpawning>()
+        ;
         
         debug!("DONE WITH POST PROCESS");
+        info!("done spawning blueprint for entity {:?}", name);
+
     }
 }

@@ -107,7 +107,9 @@ impl Plugin for BlueprintsPlugin {
                 (
                     blueprints_prepare_spawn,
                     blueprints_check_assets_loading,
-                    blueprints_spawn,
+                    blueprints_assets_ready,
+                    blueprints_check_blueprints_spawning,
+                    // blueprints_spawn,
 
                     /*(
                         prepare_blueprints,
@@ -145,6 +147,7 @@ impl Plugin for BlueprintsPlugin {
             )*/
 
             .add_systems(Update, react_to_asset_changes)
+            // .add_systems(Update, track_sub_blueprints)
             ;
     }
 }
