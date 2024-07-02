@@ -13,7 +13,7 @@ pub fn setup_hierarchy_debug(mut commands: Commands, asset_server: Res<AssetServ
             "",
             TextStyle {
                 color: LinearRgba { red: 1.0, green:0.0, blue: 0.0, alpha: 1.0}.into(),
-                font_size: 20.,
+                font_size: 15.,
                 ..default()
             },
         )

@@ -5,11 +5,12 @@ use bevy::prelude::*;
 use bevy::scene::SceneInstance;
 // use bevy::utils::hashbrown::HashSet;
 
-use crate::{BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintInfo, BlueprintSpawned, BlueprintSpawning};
+use crate::{BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintInfo, BlueprintReadyForPostProcess, BlueprintSpawned, BlueprintSpawning, SpawnTrackRoot, SubBlueprintsSpawnTracker};
 use crate::{SpawnHere, Spawned};
 use crate::{
     BlueprintEvent, CopyComponents, InBlueprint, NoInBlueprint, OriginalChildren
 };
+
 
 
 
@@ -19,7 +20,7 @@ use crate::{
 /// - it copies the children of the blueprint scene into the original entity
 /// - it add `AnimationLink` components so that animations can be controlled from the original entity
 /// - it cleans up/ removes a few , by then uneeded components
-pub(crate) fn spawned_blueprint_post_process(
+pub(crate) fn spawned_blueprint_post_process( // rename to '
     unprocessed_entities: Query<
         (
             Entity,
@@ -28,18 +29,24 @@ pub(crate) fn spawned_blueprint_post_process(
             &BlueprintAnimations,
             Option<&NoInBlueprint>,
             Option<&Name>,
-            &BlueprintInfo
+            &BlueprintInfo,
+
+            // sub blueprint instances tracker
+            Option<&SpawnTrackRoot>
         ),
-        (With<SpawnHere>, With<SceneInstance>, With<Spawned>),
+        (With<SpawnHere>, With<SceneInstance>, Added<BlueprintReadyForPostProcess>),
     >,
     added_animation_players: Query<(Entity, &Parent), Added<AnimationPlayer>>,
     all_children: Query<&Children>,
+
+    mut trackers: Query<(Entity, &mut SubBlueprintsSpawnTracker, &BlueprintInfo)>,
+
 
     mut commands: Commands,
     mut blueprint_events: EventWriter<BlueprintEvent>,
 
 ) {
-    for (original, children, original_children, animations, no_inblueprint, name, blueprint_info) in
+    for (original, children, original_children, animations, no_inblueprint, name, blueprint_info, track_root) in
         unprocessed_entities.iter()
     {
         info!("post processing blueprint for entity {:?}", name);
@@ -105,14 +112,54 @@ pub(crate) fn spawned_blueprint_post_process(
         commands.entity(original).insert(            Visibility::Visible
         );
 
-        // blueprint_events.send(BlueprintEvent::Spawned {blueprint_name: blueprint_info.name.clone(), blueprint_path: blueprint_info.path.clone() });
         commands.entity(original)
         .insert(BlueprintSpawned)
         .remove::<BlueprintSpawning>()
+        
+
+        //
+        .remove::<BlueprintReadyForPostProcess>()
         ;
+
+
+        if let Some(track_root) = track_root {
+            //println!("got some root");
+            if let Ok((s_entity, mut tracker, bp_info)) = trackers.get_mut(track_root.0) {
+                // println!("found the tracker, setting loaded for {}", entity);
+                tracker.sub_blueprint_instances.entry(original).or_insert(true);
+                tracker.sub_blueprint_instances.insert(original, true);
+
+                // TODO: ugh, my limited rust knowledge, this is bad code
+                let mut all_spawned = true;
+
+                for key in tracker.sub_blueprint_instances.keys() {
+                    let val = tracker.sub_blueprint_instances[key];
+                    println!("Key: {key}, Spawned {}", val);
+                }
+
+                for val in tracker.sub_blueprint_instances.values() {
+                    println!("spawned {}", val);
+                    if !val {
+                        all_spawned = false;
+                        break;
+                    }
+                }
+                if all_spawned { // TODO: move this to an other system, or "notify" the tracked root entity of the fact that all its sub blueprints have been loaded
+                    println!("ALLLLL SPAAAAWNED for {}", track_root.0);
+                    // commands.entity(track_root.0).insert(bundle)
+                    blueprint_events.send(BlueprintEvent::Spawned {entity: track_root.0, blueprint_name: bp_info.name.clone(), blueprint_path: bp_info.path.clone()});
+
+                } 
+            }
+            
+        } 
+        if trackers.get(original).is_err() {
+            // if it has no sub blueprint instances
+            blueprint_events.send(BlueprintEvent::Spawned {entity: original, blueprint_name: blueprint_info.name.clone(), blueprint_path: blueprint_info.path.clone()});
+        }
         
         debug!("DONE WITH POST PROCESS");
-        info!("done spawning blueprint for entity {:?}", name);
+        info!("done instanciating blueprint for entity {:?}", name);
 
     }
 }

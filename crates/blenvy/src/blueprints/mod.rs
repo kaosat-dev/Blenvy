@@ -108,36 +108,35 @@ impl Plugin for BlueprintsPlugin {
                     blueprints_prepare_spawn,
                     blueprints_check_assets_loading,
                     blueprints_assets_ready,
-                    blueprints_check_blueprints_spawning,
-                    // blueprints_spawn,
+                    blueprints_scenes_spawned,
+                    blueprints_transfer_components,
 
-                    /*(
-                        prepare_blueprints,
-                        blueprints_check_assets_loading,
-                        blueprints_spawn,
-                        apply_deferred,
-                    )
-                        .chain(),*/
+                   
                     (compute_scene_aabbs, apply_deferred)
-                        .chain()
-                        .run_if(aabbs_enabled),
+                        .chain(),
+                        // .run_if(aabbs_enabled),
                     apply_deferred,
-                    (
+
+                    blueprints_finalize_instances,
+
+                    
+                    /*(
                         materials_inject,
                         check_for_material_loaded,
                         materials_inject2,
                     )
-                        .chain()
+                        .chain()*/
                 )
                     .chain()
                     .in_set(GltfBlueprintsSet::Spawn),
             )
-            .add_systems(
+            /* .add_systems(
                 Update,
                 (spawned_blueprint_post_process, apply_deferred)
                     .chain()
                     .in_set(GltfBlueprintsSet::AfterSpawn),
-            )
+            )*/
+
             /* .add_systems(
                 Update,
                 (

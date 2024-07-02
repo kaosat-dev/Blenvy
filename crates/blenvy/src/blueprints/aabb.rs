@@ -1,10 +1,10 @@
 use bevy::{math::Vec3A, prelude::*, render::primitives::Aabb};
 
-use crate::{BlenvyConfig, Spawned};
+use crate::{BlenvyConfig, BlueprintReadyForFinalizing, BlueprintReadyForPostProcess};
 
 /// helper system that computes the compound aabbs of the scenes/blueprints
 pub fn compute_scene_aabbs(
-    root_entities: Query<(Entity, &Name), (With<Spawned>, Without<Aabb>)>,
+    root_entities: Query<(Entity, &Name), (With<BlueprintReadyForPostProcess>, Without<Aabb>)>,
     children: Query<&Children>,
     existing_aabbs: Query<&Aabb>,
 
@@ -21,10 +21,10 @@ pub fn compute_scene_aabbs(
                 .aabb_cache
                 .get(&name.to_string())
                 .expect("we should have the aabb available");
-            commands.entity(root_entity).insert(*aabb);
+            commands.entity(root_entity).insert(*aabb).insert(BlueprintReadyForFinalizing);
         } else {
             let aabb = compute_descendant_aabb(root_entity, &children, &existing_aabbs);
-            commands.entity(root_entity).insert(aabb);
+            commands.entity(root_entity).insert(aabb).insert(BlueprintReadyForFinalizing);
             blenvy_config.aabb_cache.insert(name.to_string(), aabb);
         }
     }

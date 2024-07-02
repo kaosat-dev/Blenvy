@@ -216,6 +216,12 @@ Bevy Side:
 - [x] deprecate BlueprintName & BlueprintPath & use BlueprintInfo instead
 - [ ] make blueprint instances invisible until spawning is done to avoid "spawn flash"?
 - [ ] should "blueprint spawned" only be triggered after all its sub blueprints have spawned ? 
+    - [ ] "blueprintInstance ready"/finished
+    BlueprintAssetsLoaded
+    BlueprintSceneSpawned
+    BlueprintChildrenReady
+    BlueprintReadyForPostProcess
+
 - [ ] simplify testing example:
     - [x] remove use of rapier physics (or even the whole common boilerplate ?)
     - [ ] remove/replace bevy editor pls with some native ui to display hierarchies

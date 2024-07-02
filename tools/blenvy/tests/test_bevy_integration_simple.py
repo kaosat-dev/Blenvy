@@ -96,7 +96,7 @@ def test_export_complex(setup_data):
     stored_gltf_settings.write(json.dumps(gltf_settings))
 
     # move the main cube
-    bpy.data.objects["Cube"].location = [1, 0, 0]
+    # bpy.data.objects["Cube"].location = [1, 0, 0]
     # move the cube in the library
     # TODO: add back bpy.data.objects["Blueprint1_mesh"].location = [1, 2, 1]
 

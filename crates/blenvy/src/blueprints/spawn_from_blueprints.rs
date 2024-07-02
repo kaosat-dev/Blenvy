@@ -1,6 +1,6 @@
 use std::path::{Path, PathBuf};
 
-use bevy::{asset::LoadedUntypedAsset, gltf::Gltf, prelude::*, render::view::visibility, scene::SceneInstance, transform::commands, utils::{hashbrown::HashMap}};
+use bevy::{asset::LoadedUntypedAsset, ecs::entity, gltf::Gltf, prelude::*, render::view::visibility, scene::SceneInstance, transform::commands, utils::hashbrown::HashMap};
 use serde_json::Value;
 
 use crate::{BlueprintAssets, BlueprintAssetsLoadState, AssetLoadTracker, BlenvyConfig, BlueprintAnimations, BlueprintAssetsLoaded, BlueprintAssetsNotLoaded};
@@ -257,77 +257,6 @@ pub(crate) fn blueprints_check_assets_loading(
     }
 }
 
-/* 
-pub(crate) fn hot_reload_asset_check(
-    mut blueprint_assets: Query<
-    (Entity, Option<&Name>, &BlueprintInfo, &mut BlueprintAssetsLoadState)>,
-    asset_server: Res<AssetServer>,
-    mut commands: Commands,
-){
-    for (entity, entity_name, blueprint_info, mut assets_to_load) in blueprint_assets.iter_mut() {
-        for tracker in assets_to_load.asset_infos.iter_mut() {
-            let asset_id = tracker.id;
-            asset_server.is_changed()
-            if asset_server.load_state(asset_id) == bevy::asset::LoadState::
-            match asset_server.load_state(asset_id) {
-                bevy::asset::LoadState::Failed(_) => {
-                    failed = true
-                },
-                _ => {}
-            }
-        }
-
-            //AssetEvent::Modified`
-    }
-    
-}*/
-
-use bevy::asset::AssetEvent;
-
-pub(crate) fn react_to_asset_changes(
-    mut gltf_events: EventReader<AssetEvent<Gltf>>,
-    mut untyped_events: EventReader<AssetEvent<LoadedUntypedAsset>>,
-    mut blueprint_assets: Query<(Entity, Option<&Name>, &BlueprintInfo, &mut BlueprintAssetsLoadState, Option<&Children>)>,
-    asset_server: Res<AssetServer>,
-    mut commands: Commands,
-
-) {
-
-    for event in gltf_events.read() {
-        // LoadedUntypedAsset
-        match event {
-            AssetEvent::Modified { id } => {
-                // React to the image being modified
-                // println!("Modified gltf {:?}", asset_server.get_path(*id));
-                for (entity, entity_name, blueprint_info, mut assets_to_load, children) in blueprint_assets.iter_mut() {
-                    for tracker in assets_to_load.asset_infos.iter_mut() {
-                        if asset_server.get_path(*id).is_some() {
-                            if tracker.path == asset_server.get_path(*id).unwrap().to_string() {
-                                println!("HOLY MOLY IT DETECTS !!, now respawn {:?}", entity_name);
-                                if children.is_some() {
-                                    for child in children.unwrap().iter(){
-                                        commands.entity(*child).despawn_recursive();
-                                    }
-                                }
-                                commands.entity(entity)
-                                    .remove::<BlueprintAssetsLoaded>()
-                                    .remove::<SceneInstance>()
-                                    .remove::<BlueprintAssetsLoadState>()
-                                    .insert(SpawnHere);
-
-                                break;
-                            }
-                        }
-                    }
-                }
-
-            }
-            _ => {}
-        }
-    }
-}
-
-
 
 pub(crate) fn blueprints_assets_ready(spawn_placeholders: Query<
     (
@@ -361,9 +290,14 @@ pub(crate) fn blueprints_assets_ready(spawn_placeholders: Query<
         name,
     ) in spawn_placeholders.iter()
     {
-        info!(
-            "BLUEPRINT: all assets loaded, attempting to spawn blueprint SCENE {:?} for entity {:?}, id: {:?}, parent:{:?}",
+        /*info!(
+            "BLUEPRINT: all assets loaded, attempting to spawn blueprint SCENE {:?} for entity {:?}, id: {:}, parent:{:?}",
             blueprint_info.name, name, entity, original_parent
+        );*/
+
+        info!(
+            "BLUEPRINT: all assets loaded, attempting to spawn blueprint SCENE {:?} for entity {:?}, id: {}",
+            blueprint_info.name, name, entity
         );
 
         // info!("attempting to spawn {:?}", model_path);
@@ -433,94 +367,192 @@ pub(crate) fn blueprints_assets_ready(spawn_placeholders: Query<
 #[derive(Component, Reflect, Debug, Default)]
 #[reflect(Component)]
 pub struct SubBlueprintsSpawnTracker{
-    sub_blueprint_instances: HashMap<Entity, bool>
+    pub sub_blueprint_instances: HashMap<Entity, bool>
 }
 
 #[derive(Component, Reflect, Debug)]
 #[reflect(Component)]
-pub struct SpawnTrackRoot(Entity);
+pub struct SpawnTrackRoot(pub Entity);
 
-pub(crate) fn blueprints_check_blueprints_spawning(
-    foo: Query<(Entity, Option<&Name>, Option<&Children>, Option<&SpawnTrackRoot>), (With<BlueprintSpawning>, Added<SceneInstance>)>,
-    spawning_blueprints: Query<(Entity, Option<&Name>, Option<&Children>), Added<BlueprintSpawned>>,
+#[derive(Component, Reflect, Debug)]
+#[reflect(Component)]
+pub struct BlueprintSceneSpawned;
 
-    mut trackers: Query<(Entity, &mut SubBlueprintsSpawnTracker)>,
+
+#[derive(Component, Reflect, Debug)]
+#[reflect(Component)]
+pub struct BlueprintChildrenReady;
+
+#[derive(Component, Reflect, Debug)]
+#[reflect(Component)]
+pub struct BlueprintReadyForPostProcess;
+
+
+
+pub(crate) fn blueprints_scenes_spawned(
+    spawned_blueprint_scene_instances: Query<(Entity, Option<&Name>, Option<&Children>, Option<&SpawnTrackRoot>), (With<BlueprintSpawning>, Added<SceneInstance>)>,
     with_blueprint_infos : Query<(Entity, Option<&Name>), With<BlueprintInfo>>,
     all_children: Query<&Children>,
+
+    mut sub_blueprint_trackers: Query<(Entity, &mut SubBlueprintsSpawnTracker, &BlueprintInfo)>,
+
     mut commands: Commands,
 ) {
-    for (entity, name, children, track_root) in foo.iter(){
-        info!("Done spawning blueprint scene for {:?} (track root: {:?})", name, track_root);
+    for (entity, name, children, track_root) in spawned_blueprint_scene_instances.iter(){
+        info!("Done spawning blueprint scene for entity named {:?} (track root: {:?})", name, track_root);
         let mut sub_blueprint_instances: Vec<Entity> = vec![];
         let mut tracker_data: HashMap<Entity, bool> = HashMap::new();
 
-        if children.is_some() {
-            //println!("has children");
-            let children = children
-                .expect("there should be some children of the current blueprint instance");
 
+        if children.is_some() {
             for child in all_children.iter_descendants(entity) {
                 if with_blueprint_infos.get(child).is_ok() {
                     sub_blueprint_instances.push(child);
                     tracker_data.insert(child, false);
+
+                    if track_root.is_some() {
+                        let prev_root = track_root.unwrap().0;
+                        // if we already had a track root, and it is different from the current entity , change the previous track root's list of children
+                        if prev_root != entity {
+                            let mut tracker = sub_blueprint_trackers.get_mut(prev_root).expect("should have a tracker");
+                            tracker.1.sub_blueprint_instances.remove(&child);
+                        }
+                    }
+                 
                     commands.entity(child).insert(SpawnTrackRoot(entity));// Injecting to know which entity is the root
                 }
             }
-
-            /*for child in children.iter() {
-                // println!("  child: {:?}", child);
-                /*if with_blueprint_infos.get(*child).is_ok() {
-                    sub_blueprint_instances.push(*child);
-                } */
-
-                all_children
-                if let Ok(sub_children) = all_children.get(*child) {
-                    for sub_child in sub_children.iter() {
-                        if with_blueprint_infos.get(*sub_child).is_ok() {
-                            sub_blueprint_instances.push(*sub_child);
-                        }
-                    }
-                }
-            }*/
         }
+       
+        println!("sub blueprint instances {:?}", sub_blueprint_instances);
+        
+        // TODO: how about when no sub blueprints are present
+        if tracker_data.keys().len() > 0 {
+            commands.entity(entity)
+                .insert(SubBlueprintsSpawnTracker{sub_blueprint_instances: tracker_data.clone()});
+        }else {
+            commands.entity(entity).insert(BlueprintChildrenReady);    
+        }
+    }
+}
+
+// could be done differently, by notifying each parent of a spawning blueprint that this child is done spawning ?
+// perhaps using component hooks or observers (ie , if a ComponentSpawning + Parent)
+
+use crate::{
+    CopyComponents,
+};
+use std::any::TypeId;
+
+
+/// this system is in charge of doing component transfers & co
+/// - it removes one level of useless nesting
+/// - it copies the blueprint's root components to the entity it was spawned on (original entity)
+/// - it copies the children of the blueprint scene into the original entity
+/// - it add `AnimationLink` components so that animations can be controlled from the original entity
+pub(crate) fn blueprints_transfer_components(
+    foo: Query<(
+        Entity, 
+        &Children,
+        &OriginalChildren,
+        Option<&Name>, 
+        Option<&SpawnTrackRoot>), 
+        Added<BlueprintChildrenReady>
+    >,
+    mut sub_blueprint_trackers: Query<(Entity, &mut SubBlueprintsSpawnTracker, &BlueprintInfo)>,
+    all_children: Query<&Children>,
+
+    mut commands: Commands,
+
+    all_names: Query<&Name>
+) {
+
+    for (original, children, original_children, name, track_root) in foo.iter() {
+        println!("YOOO ready !! {:?}", name);
+
+        if children.len() == 0 {
+            warn!("timing issue ! no children found, please restart your bevy app (bug being investigated)");
+            continue;
+        }
+        // the root node is the first & normally only child inside a scene, it is the one that has all relevant components
+        let mut blueprint_root_entity = Entity::PLACEHOLDER; //FIXME: and what about childless ones ?? => should not be possible normally
+                                                   // let diff = HashSet::from_iter(original_children.0).difference(HashSet::from_iter(children));
+                                                   // we find the first child that was not in the entity before (aka added during the scene spawning)
+        for child in children.iter() {
+            if !original_children.0.contains(child) {
+                blueprint_root_entity = *child;
+                break;
+            }
+        }
+
+        // copy components into from blueprint instance's blueprint_root_entity to original entity
+        commands.add(CopyComponents {
+            source: blueprint_root_entity,
+            destination: original,
+            exclude: vec![TypeId::of::<Parent>(), TypeId::of::<Children>()],
+            stringent: false,
+        });
+
+        // we move all of children of the blueprint instance one level to the original entity to avoid having an additional, useless nesting level
+        if let Ok(root_entity_children) = all_children.get(blueprint_root_entity) {
+            for child in root_entity_children.iter() {
+                // info!("copying child {:?} upward from {:?} to {:?}", names.get(*child), blueprint_root_entity, original);
+                commands.entity(original).add_child(*child);
+            }
+        }
+
+
+        commands.entity(original)
+            .insert(BlueprintReadyForPostProcess); // Tag the entity so any systems dealing with post processing can now it is now their "turn" 
+        // commands.entity(original).remove::<Handle<Scene>>(); // FIXME: if we delete the handle to the scene, things get despawned ! not what we want
+        //commands.entity(original).remove::<BlueprintAssetsLoadState>(); // also clear the sub assets tracker to free up handles, perhaps just freeing up the handles and leave the rest would be better ?
+        //commands.entity(original).remove::<BlueprintAssetsLoaded>();
+        commands.entity(blueprint_root_entity).despawn_recursive(); // Remove the root entity that comes from the spawned-in scene
+
+
+        // now check if the current entity is a child blueprint instance of another entity
+        // this should always be done last, as children should be finished before the parent can be processed correctly
         if let Some(track_root) = track_root {
-            //println!("got some root");
-            if let Ok((s_entity, mut tracker)) = trackers.get_mut(track_root.0) {
-                // println!("found the tracker, setting loaded for {}", entity);
-                tracker.sub_blueprint_instances.entry(entity).or_insert(true);
-                tracker.sub_blueprint_instances.insert(entity, true);
+            // println!("got some root {:?}", root_name);
+            if let Ok((s_entity, mut tracker, bp_info)) = sub_blueprint_trackers.get_mut(track_root.0) {
+                tracker.sub_blueprint_instances.entry(original).or_insert(true);
+                tracker.sub_blueprint_instances.insert(original, true);
 
                 // TODO: ugh, my limited rust knowledge, this is bad code
                 let mut all_spawned = true;
-
-                for key in tracker.sub_blueprint_instances.keys() {
-                    let val = tracker.sub_blueprint_instances[key];
-                    println!("Key: {key}, Spawned {}", val);
-                }
-
                 for val in tracker.sub_blueprint_instances.values() {
-                    println!("spawned {}", val);
                     if !val {
                         all_spawned = false;
                         break;
                     }
                 }
                 if all_spawned {
-                    println!("ALLLLL SPAAAAWNED for {}", track_root.0)
+                    // println!("ALLLLL SPAAAAWNED for {} named {:?}", track_root.0, root_name);
+                    commands.entity(track_root.0).insert(BlueprintChildrenReady);
                 } 
             }
-        }
-
-        println!("sub blueprint instances {:?}", sub_blueprint_instances);
-        commands.entity(entity)
-            .insert(SubBlueprintsSpawnTracker{sub_blueprint_instances: tracker_data.clone()});
+        } 
     }
-    /*for(entity, name, children) in spawning_blueprints.iter() {
-        println!("checking for spawning state of sub blueprints for {:?}", name);
-    }*/
 }
 
+#[derive(Component, Reflect, Debug)]
+#[reflect(Component)]
+pub struct BlueprintReadyForFinalizing;
 
+pub(crate) fn blueprints_finalize_instances(
+    blueprint_instances: Query<(Entity, Option<&Name>), (With<BlueprintSpawning>, With<BlueprintReadyForFinalizing>)>,
+    mut commands: Commands,
+) {
+    for (entity, name) in blueprint_instances.iter() {
+        info!("Finalizing blueprint instance {:?}", name);
+        commands.entity(entity)
+            .remove::<SpawnHere>()
+            .remove::<BlueprintSpawning>()
+            .insert(BlueprintSpawned)
+            .insert(Visibility::Visible)
+            ;
+    }
+}
 /*
 BlueprintSpawning
     - Blueprint Load Assets
@@ -529,19 +561,62 @@ BlueprintSpawning
         - get list of sub Blueprints if any, inject blueprints spawn tracker
             => annoying issue with the "nested" useless root node created by blender
             => distinguish between blueprint instances inside blueprint instances vs blueprint instances inside blueprints ??
-    - Blueprint sub_blueprints Ready
+    - Blueprint sub_blueprints Ready 
+        if all children are ready
 
+    - Blueprints post process
+        - generate aabb (need full hierarchy in its final form)
+        - materials ?
 */
 
 
-// could be done differently, by notifying each parent of a spawning blueprint that this child is done spawning ?
-// perhaps using component hooks or observers (ie , if a ComponentSpawning + Parent)
-pub fn track_sub_blueprints(
-    spawning_blueprints: Query<(Entity, Option<&Name>, Option<&Children>), Added<BlueprintSpawned>>
+
+
+
+// HOT RELOAD
+
+
+use bevy::asset::AssetEvent;
+
+pub(crate) fn react_to_asset_changes(
+    mut gltf_events: EventReader<AssetEvent<Gltf>>,
+    mut untyped_events: EventReader<AssetEvent<LoadedUntypedAsset>>,
+    mut blueprint_assets: Query<(Entity, Option<&Name>, &BlueprintInfo, &mut BlueprintAssetsLoadState, Option<&Children>)>,
+    asset_server: Res<AssetServer>,
+    mut commands: Commands,
+
 ) {
-    for(entity, name, children) in spawning_blueprints.iter() {
-        println!("checking for spawning state of sub blueprints for {:?}", name);
+
+    for event in gltf_events.read() {
+        // LoadedUntypedAsset
+        match event {
+            AssetEvent::Modified { id } => {
+                // React to the image being modified
+                // println!("Modified gltf {:?}", asset_server.get_path(*id));
+                for (entity, entity_name, blueprint_info, mut assets_to_load, children) in blueprint_assets.iter_mut() {
+                    for tracker in assets_to_load.asset_infos.iter_mut() {
+                        if asset_server.get_path(*id).is_some() {
+                            if tracker.path == asset_server.get_path(*id).unwrap().to_string() {
+                                println!("HOLY MOLY IT DETECTS !!, now respawn {:?}", entity_name);
+                                if children.is_some() {
+                                    for child in children.unwrap().iter(){
+                                        commands.entity(*child).despawn_recursive();
+                                    }
+                                }
+                                commands.entity(entity)
+                                    .remove::<BlueprintAssetsLoaded>()
+                                    .remove::<SceneInstance>()
+                                    .remove::<BlueprintAssetsLoadState>()
+                                    .insert(SpawnHere);
+
+                                break;
+                            }
+                        }
+                    }
+                }
+
+            }
+            _ => {}
+        }
     }
 }
-
-
