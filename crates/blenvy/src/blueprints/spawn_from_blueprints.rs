@@ -80,8 +80,9 @@ pub enum BlueprintEvent {
     },
 
     /// 
-    Ready {
+    InstanceReady {
         entity: Entity,
+        blueprint_name: String,
         blueprint_path: String,
     }
     
@@ -100,12 +101,6 @@ pub struct DynamicBlueprintInstance;
 #[reflect(Component)]
 /// component gets added when a blueprint starts spawning, removed when spawning is done
 pub struct BlueprintSpawning;
-
-
-#[derive(Component, Reflect, Debug, Default)]
-#[reflect(Component)]
-/// component gets added when a blueprint spawning is done
-pub struct BlueprintSpawned;
 
 
 use gltf::Gltf as RawGltf;
@@ -388,26 +383,44 @@ pub struct BlueprintChildrenReady;
 pub struct BlueprintReadyForPostProcess;
 
 
-
+// TODO: disregard blueprints that have been spawned WAIT , we already have BlueprintSpawning
 pub(crate) fn blueprints_scenes_spawned(
     spawned_blueprint_scene_instances: Query<(Entity, Option<&Name>, Option<&Children>, Option<&SpawnTrackRoot>), (With<BlueprintSpawning>, Added<SceneInstance>)>,
     with_blueprint_infos : Query<(Entity, Option<&Name>), With<BlueprintInfo>>,
+
     all_children: Query<&Children>,
+    all_parents: Query<&Parent>,
 
     mut sub_blueprint_trackers: Query<(Entity, &mut SubBlueprintsSpawnTracker, &BlueprintInfo)>,
 
     mut commands: Commands,
+
+    all_names: Query<&Name>
+
 ) {
     for (entity, name, children, track_root) in spawned_blueprint_scene_instances.iter(){
         info!("Done spawning blueprint scene for entity named {:?} (track root: {:?})", name, track_root);
         let mut sub_blueprint_instances: Vec<Entity> = vec![];
-        let mut tracker_data: HashMap<Entity, bool> = HashMap::new();
+        let mut sub_blueprint_instance_names: Vec<Name> = vec![];
 
+        let mut tracker_data: HashMap<Entity, bool> = HashMap::new();
+        
+        for parent in all_parents.iter_ancestors(entity) {
+            if with_blueprint_infos.get(parent).is_ok() {
+
+                println!("found a parent with blueprint_info {:?} for {:?}", all_names.get(parent), all_names.get(entity));
+                break;
+            }
+        }
 
         if children.is_some() {
             for child in all_children.iter_descendants(entity) {
                 if with_blueprint_infos.get(child).is_ok() {
                     sub_blueprint_instances.push(child);
+                    if let Ok(nname) = all_names.get(child) {
+                        sub_blueprint_instance_names.push(nname.clone());
+                    }
+
                     tracker_data.insert(child, false);
 
                     if track_root.is_some() {
@@ -424,7 +437,9 @@ pub(crate) fn blueprints_scenes_spawned(
             }
         }
        
-        println!("sub blueprint instances {:?}", sub_blueprint_instances);
+
+
+        println!("sub blueprint instances {:?}", sub_blueprint_instance_names);
         
         // TODO: how about when no sub blueprints are present
         if tracker_data.keys().len() > 0 {
@@ -439,9 +454,7 @@ pub(crate) fn blueprints_scenes_spawned(
 // could be done differently, by notifying each parent of a spawning blueprint that this child is done spawning ?
 // perhaps using component hooks or observers (ie , if a ComponentSpawning + Parent)
 
-use crate::{
-    CopyComponents,
-};
+use crate:: CopyComponents;
 use std::any::TypeId;
 
 
@@ -501,7 +514,6 @@ pub(crate) fn blueprints_transfer_components(
             }
         }
 
-
         commands.entity(original)
             .insert(BlueprintReadyForPostProcess); // Tag the entity so any systems dealing with post processing can now it is now their "turn" 
         // commands.entity(original).remove::<Handle<Scene>>(); // FIXME: if we delete the handle to the scene, things get despawned ! not what we want
@@ -513,7 +525,8 @@ pub(crate) fn blueprints_transfer_components(
         // now check if the current entity is a child blueprint instance of another entity
         // this should always be done last, as children should be finished before the parent can be processed correctly
         if let Some(track_root) = track_root {
-            // println!("got some root {:?}", root_name);
+            let root_name = all_names.get(track_root.0);
+            println!("got some root {:?}", root_name);
             if let Ok((s_entity, mut tracker, bp_info)) = sub_blueprint_trackers.get_mut(track_root.0) {
                 tracker.sub_blueprint_instances.entry(original).or_insert(true);
                 tracker.sub_blueprint_instances.insert(original, true);
@@ -535,42 +548,47 @@ pub(crate) fn blueprints_transfer_components(
     }
 }
 
+
+
 #[derive(Component, Reflect, Debug)]
 #[reflect(Component)]
 pub struct BlueprintReadyForFinalizing;
 
 pub(crate) fn blueprints_finalize_instances(
-    blueprint_instances: Query<(Entity, Option<&Name>), (With<BlueprintSpawning>, With<BlueprintReadyForFinalizing>)>,
+    blueprint_instances: Query<(Entity, Option<&Name>, &BlueprintInfo), (With<BlueprintSpawning>, With<BlueprintReadyForFinalizing>)>,
+    mut blueprint_events: EventWriter<BlueprintEvent>,
     mut commands: Commands,
 ) {
-    for (entity, name) in blueprint_instances.iter() {
+    for (entity, name, blueprint_info) in blueprint_instances.iter() {
         info!("Finalizing blueprint instance {:?}", name);
         commands.entity(entity)
             .remove::<SpawnHere>()
             .remove::<BlueprintSpawning>()
-            .insert(BlueprintSpawned)
+            .remove::<BlueprintReadyForPostProcess>()
+            .insert(BlueprintInstanceReady)
             .insert(Visibility::Visible)
             ;
+
+        blueprint_events.send(BlueprintEvent::InstanceReady {entity: entity, blueprint_name: blueprint_info.name.clone(), blueprint_path: blueprint_info.path.clone()});
     }
 }
 /*
+=> annoying issue with the "nested" useless root node created by blender
+            => distinguish between blueprint instances inside blueprint instances vs blueprint instances inside blueprints ??
+
 BlueprintSpawning
     - Blueprint Load Assets
     - Blueprint Assets Ready: spawn Blueprint's scene
-    - Blueprint Scene Ready:
-        - get list of sub Blueprints if any, inject blueprints spawn tracker
-            => annoying issue with the "nested" useless root node created by blender
-            => distinguish between blueprint instances inside blueprint instances vs blueprint instances inside blueprints ??
-    - Blueprint sub_blueprints Ready 
-        if all children are ready
-
-    - Blueprints post process
+    - Blueprint Scene Ready (SceneInstance component is present):
+        - get list of sub Blueprints if any, inject sub blueprints spawn tracker
+    - Blueprint copy components to original entity, remove useless nodes
+    - Blueprint post process
         - generate aabb (need full hierarchy in its final form)
-        - materials ?
+        - inject materials from library if needed
+    - Blueprint Ready 
+        - bubble information up to parent blueprint instance
+        - if all sub_blueprints are ready => Parent blueprint Instance is ready 
 */
-
-
-
 
 
 // HOT RELOAD

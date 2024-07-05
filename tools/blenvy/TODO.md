@@ -215,12 +215,17 @@ Blender side:
 Bevy Side:
 - [x] deprecate BlueprintName & BlueprintPath & use BlueprintInfo instead
 - [ ] make blueprint instances invisible until spawning is done to avoid "spawn flash"?
-- [ ] should "blueprint spawned" only be triggered after all its sub blueprints have spawned ? 
-    - [ ] "blueprintInstance ready"/finished
-    BlueprintAssetsLoaded
-    BlueprintSceneSpawned
-    BlueprintChildrenReady
-    BlueprintReadyForPostProcess
+- [ ] restructure blueprint spawning 
+    - [x] "blueprint ready" only be triggered after all its sub blueprints are ready 
+    - [x] "blueprintInstance ready"/finished
+        BlueprintAssetsLoaded
+        BlueprintSceneSpawned
+        BlueprintChildrenReady
+        BlueprintReadyForPostProcess
+    - [ ] fix issues with deeply nested blueprints
+        - perhaps reverse logic by using iter_ascendants
+    - [x] fix materials handling
+    - [ ] fix animations handling
 
 - [ ] simplify testing example:
     - [x] remove use of rapier physics (or even the whole common boilerplate ?)

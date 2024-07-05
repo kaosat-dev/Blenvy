@@ -1,9 +1,6 @@
 pub mod spawn_from_blueprints;
 pub use spawn_from_blueprints::*;
 
-pub mod spawn_post_process;
-pub(crate) use spawn_post_process::*;
-
 pub mod animation;
 pub use animation::*;
 
@@ -70,10 +67,38 @@ fn aabbs_enabled(blenvy_config: Res<BlenvyConfig>) -> bool {
     blenvy_config.aabbs
 }
 
+fn hot_reload(watching_for_changes: Res<WatchingForChanges>) -> bool {
+    watching_for_changes.0
+}
+
+
+trait BlenvyApp {
+    fn register_watching_for_changes(&mut self) -> &mut Self;
+}
+
+impl BlenvyApp for App {
+    fn register_watching_for_changes(&mut self) -> &mut Self {
+        let asset_server = self
+            .world()
+            .get_resource::<AssetServer>()
+            .expect(ASSET_ERROR);
+
+        let watching_for_changes = asset_server.watching_for_changes();
+        self.insert_resource(WatchingForChanges(watching_for_changes))
+    }
+}
+
+#[derive(Debug, Clone, Resource, Default)]
+pub(crate) struct WatchingForChanges(pub(crate) bool);
+const ASSET_ERROR: &str = ""; // TODO
+
 
 impl Plugin for BlueprintsPlugin {
     fn build(&self, app: &mut App) {
         app
+            .register_watching_for_changes()
+
+
             .register_type::<BlueprintInfo>()
             .register_type::<MaterialInfo>()
             .register_type::<SpawnHere>()
@@ -94,7 +119,6 @@ impl Plugin for BlueprintsPlugin {
             .add_event::<BlueprintEvent>()
 
 
-
             .register_type::<HashMap<String, Vec<String>>>()
             .configure_sets(
                 Update,
@@ -111,32 +135,16 @@ impl Plugin for BlueprintsPlugin {
                     blueprints_scenes_spawned,
                     blueprints_transfer_components,
 
-                   
-                    (compute_scene_aabbs, apply_deferred)
-                        .chain(),
-                        // .run_if(aabbs_enabled),
-                    apply_deferred,
-
+                    // post process
+                    inject_materials,
+                    compute_scene_aabbs,// .run_if(aabbs_enabled),
+                        
                     blueprints_finalize_instances,
 
-                    
-                    /*(
-                        materials_inject,
-                        check_for_material_loaded,
-                        materials_inject2,
-                    )
-                        .chain()*/
                 )
                     .chain()
                     .in_set(GltfBlueprintsSet::Spawn),
             )
-            /* .add_systems(
-                Update,
-                (spawned_blueprint_post_process, apply_deferred)
-                    .chain()
-                    .in_set(GltfBlueprintsSet::AfterSpawn),
-            )*/
-
             /* .add_systems(
                 Update,
                 (
@@ -144,9 +152,8 @@ impl Plugin for BlueprintsPlugin {
                     trigger_blueprint_animation_markers_events,
                 ),
             )*/
-
-            .add_systems(Update, react_to_asset_changes)
-            // .add_systems(Update, track_sub_blueprints)
+            // hot reload
+            .add_systems(Update, react_to_asset_changes.run_if(hot_reload))
             ;
     }
 }

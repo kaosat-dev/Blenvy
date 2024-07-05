@@ -5,7 +5,7 @@ use bevy::prelude::*;
 use bevy::scene::SceneInstance;
 // use bevy::utils::hashbrown::HashSet;
 
-use crate::{BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintInfo, BlueprintReadyForPostProcess, BlueprintSpawned, BlueprintSpawning, SpawnTrackRoot, SubBlueprintsSpawnTracker};
+use crate::{BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintInfo, BlueprintReadyForPostProcess, BlueprintInstanceReady, BlueprintSpawning, SpawnTrackRoot, SubBlueprintsSpawnTracker};
 use crate::{SpawnHere, Spawned};
 use crate::{
     BlueprintEvent, CopyComponents, InBlueprint, NoInBlueprint, OriginalChildren
@@ -113,7 +113,7 @@ pub(crate) fn spawned_blueprint_post_process( // rename to '
         );
 
         commands.entity(original)
-        .insert(BlueprintSpawned)
+        .insert(BlueprintInstanceReady)
         .remove::<BlueprintSpawning>()
         
 
