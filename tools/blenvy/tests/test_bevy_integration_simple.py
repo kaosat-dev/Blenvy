@@ -80,6 +80,7 @@ def test_export_complex(setup_data):
     export_props = {
     }
     gltf_settings = {
+        "export_format":"GLTF_SEPARATE",
         "export_animations": True,
         "export_optimize_animation_size": False,
         "export_apply":True

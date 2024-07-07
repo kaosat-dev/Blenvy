@@ -24,6 +24,7 @@ def generate_gltf_export_settings(settings):
         export_cameras=True,
         export_extras=True, # For custom exported properties.
         export_lights=True,
+        export_hierarchy_full_collections=False
 
         #export_texcoords=True,
         #export_normals=True,
@@ -54,6 +55,7 @@ def generate_gltf_export_settings(settings):
 
     standard_gltf_exporter_settings = get_standard_exporter_settings()
     
+    # these essential params should NEVER be overwritten , no matter the settings of the standard exporter
     constant_keys = [
         'use_selection',
         'use_visible',
@@ -63,9 +65,10 @@ def generate_gltf_export_settings(settings):
         'export_cameras',
         'export_extras', # For custom exported properties.
         'export_lights',
+        'export_hierarchy_full_collections'
     ]
 
-    # a certain number of essential params should NEVER be overwritten , no matter the settings of the standard exporter
+    #  
     for key in standard_gltf_exporter_settings.keys():
         if str(key) not in constant_keys:
             gltf_export_settings[key] =  standard_gltf_exporter_settings.get(key)

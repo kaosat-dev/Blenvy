@@ -119,6 +119,10 @@ def duplicate_object(object, parent, combine_mode, destination_collection, bluep
     # do this both for empty replacements & normal copies
     if parent is not None:
         copy.parent = parent
+        # without this, the copy"s offset from parent (if any ) will not be set correctly ! 
+        # see here for example https://blender.stackexchange.com/questions/3763/parenting-messes-up-transforms-where-is-the-offset-stored
+        copy.matrix_parent_inverse = object.matrix_parent_inverse
+
     remove_unwanted_custom_properties(copy)
     copy_animation_data(object, copy)
 

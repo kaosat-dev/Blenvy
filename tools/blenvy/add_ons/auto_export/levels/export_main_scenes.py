@@ -55,7 +55,7 @@ def export_main_scene(scene, settings, blueprints_data):
         auto_assets = []
 
         all_assets = []
-        export_gltf_extension = getattr(settings.auto_export, "export_gltf_extension", ".glb")
+        export_gltf_extension = getattr(settings, "export_gltf_extension", ".glb")
 
         blueprints_path =  getattr(settings, "blueprints_path")
         for blueprint in blueprints_in_scene:
@@ -64,6 +64,11 @@ def export_main_scene(scene, settings, blueprints_data):
             else:
                 # get the injected path of the external blueprints
                 blueprint_exported_path = blueprint.collection['export_path'] if 'export_path' in blueprint.collection else None
+                # add their material path
+                materials_exported_path = blueprint.collection['materials_path'] if 'materials_path' in blueprint.collection else None
+                auto_assets.append({"name": blueprint.name+"_material", "path": materials_exported_path})#, "generated": True, "internal":blueprint.local, "parent": None})
+
+
             if blueprint_exported_path is not None: # and not does_asset_exist(assets_list, blueprint_exported_path):
                 auto_assets.append({"name": blueprint.name, "path": blueprint_exported_path})#, "generated": True, "internal":blueprint.local, "parent": None})
 
@@ -80,7 +85,7 @@ def export_main_scene(scene, settings, blueprints_data):
         materials_library_name = f"{current_project_name}_materials"
         materials_exported_path = os.path.join(materials_path, f"{materials_library_name}{export_gltf_extension}")
         material_assets = [{"name": materials_library_name, "path": materials_exported_path}] # we also add the material library as an asset
-
+        print("material_assets", material_assets, "extension", export_gltf_extension)
         scene["BlueprintAssets"] = assets_to_fake_ron(all_assets + [{"name": asset.name, "path": asset.path} for asset in scene.user_assets] + auto_assets + material_assets)
         #scene["BlueprintAssets"] = assets_to_fake_ron([{'name':'foo', 'path':'bar'}])
 

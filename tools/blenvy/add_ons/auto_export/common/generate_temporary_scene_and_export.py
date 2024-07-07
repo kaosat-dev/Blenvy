@@ -5,7 +5,7 @@ from blenvy.core.object_makers import (make_empty)
 from .duplicate_object import duplicate_object
 from .export_gltf import export_gltf
 from blenvy.core.scene_helpers import add_scene_property
-
+from ..constants import custom_properties_to_filter_out
 """ 
 generates a temporary scene, fills it with data, cleans up after itself
     * named using temp_scene_name 
@@ -19,7 +19,7 @@ def generate_temporary_scene_and_export(settings, gltf_export_settings, gltf_out
     temp_scene = bpy.data.scenes.new(name=temp_scene_name)
     temp_root_collection = temp_scene.collection
 
-    properties_black_list = ['glTF2ExportSettings', 'assets', 'user_assets', 'components_meta', 'Components_meta', 'Generated_assets', 'generated_assets']
+    properties_black_list = custom_properties_to_filter_out
     if additional_data is not None: # FIXME not a fan of having this here
         for entry in dict(additional_data):
             # we copy everything over except those on the black list
@@ -75,7 +75,6 @@ def generate_temporary_scene_and_export(settings, gltf_export_settings, gltf_out
 # copies the contents of a collection into another one while replacing library instances with empties
 def copy_hollowed_collection_into(source_collection, destination_collection, parent_empty=None, filter=None, blueprints_data=None, settings={}):
     collection_instances_combine_mode = getattr(settings.auto_export, "collection_instances_combine_mode")
-
     for object in source_collection.objects:
         if object.name.endswith("____bak"): # some objects could already have been handled, ignore them
             continue       

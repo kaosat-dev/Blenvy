@@ -62,7 +62,7 @@ def get_userTextures():
 
 def get_blueprint_assets_tree(blueprint, blueprints_data, parent, settings):
     blueprints_path = getattr(settings, "blueprints_path")
-    export_gltf_extension = getattr(settings.auto_export, "export_gltf_extension", ".glb")
+    export_gltf_extension = getattr(settings, "export_gltf_extension", ".glb")
     assets_list = []
     
 
@@ -91,7 +91,7 @@ def get_blueprint_assets_tree(blueprint, blueprints_data, parent, settings):
 
 def get_main_scene_assets_tree(main_scene, blueprints_data, settings):
     blueprints_path =  getattr(settings, "blueprints_path")
-    export_gltf_extension = getattr(settings.auto_export, "export_gltf_extension", ".glb")
+    export_gltf_extension = getattr(settings, "export_gltf_extension", ".glb")
     blueprint_instance_names_for_scene = blueprints_data.blueprint_instances_per_main_scene.get(main_scene.name, None)
 
     assets_list = get_user_assets_as_list(main_scene)
@@ -123,7 +123,7 @@ def get_main_scene_assets_tree(main_scene, blueprints_data, settings):
 
 def get_blueprint_asset_tree(blueprint, blueprints_data, settings):
     blueprints_path =  getattr(settings, "blueprints_path")
-    export_gltf_extension = getattr(settings.auto_export, "export_gltf_extension", ".glb")
+    export_gltf_extension = getattr(settings, "export_gltf_extension", ".glb")
 
     assets_list = get_user_assets_as_list(blueprint.collection)
 

@@ -199,7 +199,8 @@ Blender side:
     - [ ] disabled components 
     - [ ] blueprint instances as children of blueprint instances
     - [ ] blueprint instances as children of empties
-- [x] update testing files
+- [x] update testing blend files
+- [ ] disable 'export_hierarchy_full_collections' for all cases: not reliable and redudant
 
 
 - [ ] add option to 'split out' meshes from blueprints ? 

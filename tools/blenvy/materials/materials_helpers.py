@@ -34,7 +34,7 @@ def get_all_materials(collection_names, library_scenes):
 
 def add_material_info_to_objects(materials_per_object, settings):
     materials_path =  getattr(settings, "materials_path")
-    export_gltf_extension = getattr(settings.auto_export, "export_gltf_extension", ".glb")
+    export_gltf_extension = getattr(settings, "export_gltf_extension", ".glb")
 
     current_project_name = Path(bpy.context.blend_data.filepath).stem
     materials_library_name = f"{current_project_name}_materials"

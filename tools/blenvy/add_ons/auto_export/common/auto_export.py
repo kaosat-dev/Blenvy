@@ -21,16 +21,11 @@ def auto_export(changes_per_scene, changed_export_parameters, settings):
     # have the export parameters (not auto export, just gltf export) have changed: if yes (for example switch from glb to gltf, compression or not, animations or not etc), we need to re-export everything
     print ("changed_export_parameters", changed_export_parameters)
     try:
-        # path to the current blend file
-        file_path = bpy.data.filepath
-        # Get the folder
-        blend_file_path = os.path.dirname(file_path)
-
         #should we use change detection or not 
         change_detection = getattr(settings.auto_export, "change_detection")
-        export_scene_settings = getattr(settings.auto_export,"export_scene_settings")
-        do_export_blueprints = getattr(settings.auto_export,"export_blueprints")
-        export_materials_library = getattr(settings.auto_export,"export_materials_library")
+        export_scene_settings = getattr(settings.auto_export, "export_scene_settings")
+        do_export_blueprints = getattr(settings.auto_export, "export_blueprints")
+        export_materials_library = getattr(settings.auto_export, "export_materials_library")
 
         # standard gltf export settings are stored differently
         standard_gltf_exporter_settings = get_standard_exporter_settings()
@@ -47,7 +42,10 @@ def auto_export(changes_per_scene, changed_export_parameters, settings):
 
         # we inject the blueprints export path
         blueprints_path = getattr(settings,"blueprints_path")
-        inject_export_path_into_internal_blueprints(internal_blueprints=blueprints_data.internal_blueprints, blueprints_path=blueprints_path, gltf_extension=gltf_extension)
+        # inject the "export_path" and "material_path" properties into the internal blueprints
+        inject_export_path_into_internal_blueprints(internal_blueprints=blueprints_data.internal_blueprints, blueprints_path=blueprints_path, gltf_extension=gltf_extension, settings=settings)
+
+
         for blueprint in blueprints_data.blueprints:
             bpy.context.window_manager.blueprints_registry.add_blueprint(blueprint)
         #bpy.context.window_manager.blueprints_registry.refresh_blueprints()
