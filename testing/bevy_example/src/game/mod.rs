@@ -129,10 +129,19 @@ fn exit_game(mut app_exit_events: ResMut<Events<bevy::app::AppExit>>) {
 
 fn check_for_gltf_events(
     mut blueprint_events: EventReader<BlueprintEvent>,
+    all_names: Query<&Name>,
 )
 {
     for event in blueprint_events.read() {
-        info!("BLUEPRINT EVENT: {:?}", event);
+        match  event {
+            BlueprintEvent::InstanceReady{entity, blueprint_name, blueprint_path} => {
+                info!("BLUEPRINT EVENT: {:?} for {:?}", event, all_names.get(*entity));
+
+            }
+            _=> {
+                info!("BLUEPRINT EVENT: {:?}", event);
+            }
+        }
     }
 }
 

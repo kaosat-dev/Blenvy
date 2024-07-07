@@ -5,7 +5,7 @@ edition = "2021"
 license = "MIT OR Apache-2.0"
 
 [dependencies]
-bevy = { version = "0.14.0-rc.3", features = ["dynamic_linking"] }
+bevy = { version = "0.14", features = ["dynamic_linking"] }
 blenvy = { path = "../../crates/blenvy" }
 # bevy_gltf_blueprints = { path = "../../crates/bevy_gltf_blueprints" }
 # bevy_registry_export = { path = "../../crates/bevy_registry_export" }

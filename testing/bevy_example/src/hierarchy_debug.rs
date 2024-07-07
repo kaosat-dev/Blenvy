@@ -1,7 +1,7 @@
 use bevy::{gltf::{GltfMaterialExtras, GltfMeshExtras, GltfSceneExtras}, prelude::*};
 use blenvy::{BlueprintAssets, BlueprintInstanceReady};
 
-use crate::{BasicTest, EnumComplex};
+use crate::{BasicTest, EnumComplex, RedirectPropHitImpulse};
 
 #[derive(Component)]
 pub struct HiearchyDebugTag;
@@ -12,7 +12,7 @@ pub fn setup_hierarchy_debug(mut commands: Commands, asset_server: Res<AssetServ
         TextBundle::from_section(
             "",
             TextStyle {
-                color: LinearRgba { red: 1.0, green:0.0, blue: 0.0, alpha: 1.0}.into(),
+                color: LinearRgba { red: 1.0, green:1.0, blue: 1.0, alpha: 1.0}.into(),
                 font_size: 15.,
                 ..default()
             },
@@ -30,7 +30,10 @@ pub fn setup_hierarchy_debug(mut commands: Commands, asset_server: Res<AssetServ
 
 pub fn get_descendants(
     all_children: &Query<&Children>, 
-    all_names:&Query<&Name>, root: &Entity, 
+    all_names:&Query<&Name>, 
+    root: &Entity, 
+    all_transforms: &Query<&Transform>,
+    all_global_transforms: &Query<&GlobalTransform>,
     nesting: usize, 
     to_check: &Query<&BasicTest>//&Query<(&BlueprintInstanceReady, &BlueprintAssets)>,
 ) 
@@ -48,14 +51,14 @@ pub fn get_descendants(
 
     let components_to_check = to_check.get(*root);
 
-    hierarchy_display.push( format!("{}{} ({:?})", " ".repeat(nesting), name, components_to_check) ); // 
+    hierarchy_display.push( format!("{}{} ({:?}) ({:?})", " ".repeat(nesting), name, all_transforms.get(*root), all_global_transforms.get(*root)) ); //components_to_check  ({:?})
 
 
     if let Ok(children) = all_children.get(*root) {
 
         for child in children.iter() {
 
-            let child_descendants_display = get_descendants(&all_children, &all_names, &child, nesting + 4, &to_check);
+            let child_descendants_display = get_descendants(&all_children, &all_names, &child, &all_transforms, &all_global_transforms, nesting + 4, &to_check);
             hierarchy_display.push(child_descendants_display);
         }
     }
@@ -66,6 +69,8 @@ pub fn draw_hierarchy_debug(
     root: Query<(Entity, Option<&Name>, &Children), (Without<Parent>)>,
     all_children: Query<&Children>,
     all_names:Query<&Name>,
+    all_transforms: Query<&Transform>,
+    all_global_transforms: Query<&GlobalTransform>,
 
     to_check: Query<&BasicTest>,//Query<(&BlueprintInstanceReady, &BlueprintAssets)>,
     mut display: Query<&mut Text, With<HiearchyDebugTag>>,
@@ -75,7 +80,7 @@ pub fn draw_hierarchy_debug(
     for (root_entity, name, children) in root.iter() {
         // hierarchy_display.push( format!("Hierarchy root{:?}", name) );
     
-        hierarchy_display.push(get_descendants(&all_children, &all_names, &root_entity, 0, &to_check));
+        hierarchy_display.push(get_descendants(&all_children, &all_names, &root_entity, &all_transforms, &all_global_transforms, 0, &to_check));
         // let mut children = all_children.get(root_entity);
         /*for child in children.iter() {
             // hierarchy_display
@@ -134,13 +139,13 @@ for (id, name, scene_extras, extras, mesh_extras, material_extras) in
 }
 
 fn check_for_component(
-    foo: Query<(Entity, Option<&Name>, &EnumComplex)>,
+    foo: Query<(Entity, Option<&Name>, &RedirectPropHitImpulse)>,
     mut display: Query<&mut Text, With<HiearchyDebugTag>>,
 
 ){
     let mut info_lines: Vec<String> = vec![];
     for (entiity, name , enum_complex) in foo.iter(){
-        let data = format!(" We have a 'EnumComplex' component: {:?} (on {:?})", enum_complex, name);
+        let data = format!(" We have a matching component: {:?} (on {:?})", enum_complex, name);
         info_lines.push(data);
         println!("yoho component");
 
@@ -156,8 +161,8 @@ impl Plugin for HiearchyDebugPlugin {
     fn build(&self, app: &mut App) {
         app
             .add_systems(Startup, setup_hierarchy_debug)
-            // .add_systems(Update, check_for_component)
-            .add_systems(Update, draw_hierarchy_debug)
+            //.add_systems(Update, check_for_component)
+            //.add_systems(Update, draw_hierarchy_debug)
             //.add_systems(Update, check_for_gltf_extras)
             
            ;

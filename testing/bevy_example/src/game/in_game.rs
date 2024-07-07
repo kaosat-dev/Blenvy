@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use blenvy::{BluePrintBundle, BlueprintInfo, DynamicBlueprintInstance, GameWorldTag, SpawnHere};
+use blenvy::{BluePrintBundle, BlueprintInfo, DynamicBlueprintInstance, GameWorldTag, HideUntilReady, SpawnHere};
 use crate::{GameState, InAppRunning};
 
 //use bevy_rapier3d::prelude::Velocity;
@@ -23,6 +23,7 @@ pub fn setup_game(
 
     commands.spawn((
         BlueprintInfo{name: "World".into(), path: "levels/World.glb".into()},
+        HideUntilReady,
         bevy::prelude::Name::from("world"), //FIXME: not really needed ? could be infered from blueprint's name/ path
         SpawnHere,
         GameWorldTag,
@@ -67,6 +68,7 @@ pub fn spawn_test(
                 },
                 DynamicBlueprintInstance,
                 bevy::prelude::Name::from(format!("test{}", name_index)),
+                HideUntilReady,
                 // SpawnHere,
                 TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
                 /*Velocity {

@@ -4182,6 +4182,30 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_example::test_components::RedirectPropHitImpulse": {
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "bevy_example::test_components::RedirectPropHitImpulse",
+      "oneOf": [
+        {
+          "items": false,
+          "long_name": "Local",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/glam::Vec3"
+              }
+            }
+          ],
+          "short_name": "Local",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "RedirectPropHitImpulse",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
     "bevy_example::test_components::TupleTest2": {
       "isComponent": true,
       "isResource": false,
@@ -8145,11 +8169,6 @@
             "$ref": "#/$defs/bevy_render::alpha::AlphaMode"
           }
         },
-        "anisotropy_channel": {
-          "type": {
-            "$ref": "#/$defs/bevy_pbr::pbr_material::UvChannel"
-          }
-        },
         "anisotropy_rotation": {
           "type": {
             "$ref": "#/$defs/f32"
@@ -8158,11 +8177,6 @@
         "anisotropy_strength": {
           "type": {
             "$ref": "#/$defs/f32"
-          }
-        },
-        "anisotropy_texture": {
-          "type": {
-            "$ref": "#/$defs/core::option::Option<bevy_asset::handle::Handle<bevy_render::texture::image::Image>>"
           }
         },
         "attenuation_color": {
@@ -8374,7 +8388,6 @@
         "clearcoat_perceptual_roughness",
         "anisotropy_strength",
         "anisotropy_rotation",
-        "anisotropy_channel",
         "double_sided",
         "unlit",
         "fog_enabled",

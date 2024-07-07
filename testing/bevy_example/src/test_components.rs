@@ -224,6 +224,12 @@ pub struct ComponentWithFieldsOfIdenticalType{
 #[reflect(Component)]
 pub struct ComponentWithFieldsOfIdenticalType2(f32, f32, f32);
 
+
+#[derive(Debug, Clone, Copy, PartialEq, Reflect, Component)]
+#[reflect(Component, )]
+pub enum RedirectPropHitImpulse {
+    Local(Vec3),
+}
 pub struct ComponentsTestPlugin;
 impl Plugin for ComponentsTestPlugin {
     fn build(&self, app: &mut App) {
@@ -278,6 +284,8 @@ impl Plugin for ComponentsTestPlugin {
             .register_type::<ComponentBToFilterOut>()
             .register_type::<ComponentWithFieldsOfIdenticalType>()
             .register_type::<ComponentWithFieldsOfIdenticalType2>()
+
+            .register_type::<RedirectPropHitImpulse>()
 
             .add_plugins(MaterialPlugin::<
                 ExtendedMaterial<StandardMaterial, MyExtension>,
