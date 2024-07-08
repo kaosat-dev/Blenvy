@@ -10,7 +10,7 @@ pub use process_gltfs::*;
 pub mod blender_settings;
 
 use bevy::{
-    ecs::{component::Component, reflect::ReflectComponent, system::Resource},
+    ecs::{component::Component, reflect::ReflectComponent},
     prelude::{App, IntoSystemConfigs, Plugin, SystemSet, Update},
     reflect::Reflect,
 };

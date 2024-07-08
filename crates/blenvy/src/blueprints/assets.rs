@@ -1,14 +1,10 @@
-use std::path::{Path, PathBuf};
-
-use bevy::{asset::LoadedUntypedAsset, gltf::Gltf, prelude::*, utils::HashMap};
+use bevy::{asset::LoadedUntypedAsset, prelude::*};
 use serde::Deserialize;
-
-use crate::{BlenvyConfig, BlueprintAnimations};
 
 /// helper component, is used to store the list of sub blueprints to enable automatic loading of dependend blueprints
 #[derive(Component, Reflect, Default, Debug, Deserialize)]
 #[reflect(Component)]
-pub struct MyAsset {
+pub struct BlueprintAsset {
     pub name: String,
     pub path: String,
 }
@@ -18,7 +14,7 @@ pub struct MyAsset {
 #[reflect(Component)]
 pub struct BlueprintAssets {
     /// only this field should get filled in from the Blender side
-    pub assets: Vec<MyAsset>,
+    pub assets: Vec<BlueprintAsset>,
     /// set to default when deserializing
     #[serde(default)]
     #[reflect(default)]
@@ -31,7 +27,7 @@ pub struct BlueprintAssets {
     #[serde(skip)]
     pub asset_infos: Vec<AssetLoadTracker>,
 }
-//(pub Vec<MyAsset>);
+//(pub Vec<BlueprintAsset>);
 
 ////////////////////////
 ///
@@ -44,7 +40,7 @@ pub(crate) struct BlueprintAssetsNotLoaded;
 
 /// helper component, for tracking loaded assets's loading state, id , handle etc
 #[derive(Debug, Reflect)]
-pub(crate) struct AssetLoadTracker {
+pub struct AssetLoadTracker {
     #[allow(dead_code)]
     pub name: String,
     pub path: String,

@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{BlenvyConfig, BlueprintReadyForPostProcess};
+use crate::BlenvyConfig;
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]

@@ -16,13 +16,10 @@ pub use materials::*;
 pub mod copy_components;
 pub use copy_components::*;
 
-pub mod hot_reload;
-pub use hot_reload::*;
+pub(crate) mod hot_reload;
+pub(crate) use hot_reload::*;
 
-use core::fmt;
-use std::path::PathBuf;
-
-use bevy::{prelude::*, render::primitives::Aabb, utils::HashMap};
+use bevy::{prelude::*, utils::HashMap};
 
 use crate::{BlenvyConfig, GltfComponentsSet};
 
@@ -112,8 +109,8 @@ impl Plugin for BlueprintsPlugin {
             .register_type::<HashMap<u32, Vec<String>>>()
             .register_type::<HashMap<String, HashMap<u32, Vec<String>>>>()
             .add_event::<AnimationMarkerReached>()
-            .register_type::<MyAsset>()
-            .register_type::<Vec<MyAsset>>()
+            .register_type::<BlueprintAsset>()
+            .register_type::<Vec<BlueprintAsset>>()
             .register_type::<Vec<String>>()
             .register_type::<BlueprintAssets>()
             .register_type::<HashMap<String, Vec<String>>>()

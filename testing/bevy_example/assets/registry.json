@@ -250,16 +250,16 @@
       "type": "array",
       "typeInfo": "List"
     },
-    "alloc::vec::Vec<blenvy::blueprints::assets::MyAsset>": {
+    "alloc::vec::Vec<blenvy::blueprints::assets::BlueprintAsset>": {
       "isComponent": false,
       "isResource": false,
       "items": {
         "type": {
-          "$ref": "#/$defs/blenvy::blueprints::assets::MyAsset"
+          "$ref": "#/$defs/blenvy::blueprints::assets::BlueprintAsset"
         }
       },
-      "long_name": "alloc::vec::Vec<blenvy::blueprints::assets::MyAsset>",
-      "short_name": "Vec<MyAsset>",
+      "long_name": "alloc::vec::Vec<blenvy::blueprints::assets::BlueprintAsset>",
+      "short_name": "Vec<BlueprintAsset>",
       "type": "array",
       "typeInfo": "List"
     },
@@ -13354,6 +13354,31 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "blenvy::blueprints::assets::BlueprintAsset": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "blenvy::blueprints::assets::BlueprintAsset",
+      "properties": {
+        "name": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        },
+        "path": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "path"
+      ],
+      "short_name": "BlueprintAsset",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "blenvy::blueprints::assets::BlueprintAssets": {
       "additionalProperties": false,
       "isComponent": true,
@@ -13362,7 +13387,7 @@
       "properties": {
         "assets": {
           "type": {
-            "$ref": "#/$defs/alloc::vec::Vec<blenvy::blueprints::assets::MyAsset>"
+            "$ref": "#/$defs/alloc::vec::Vec<blenvy::blueprints::assets::BlueprintAsset>"
           }
         },
         "loaded": {
@@ -13382,31 +13407,6 @@
         "progress"
       ],
       "short_name": "BlueprintAssets",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "blenvy::blueprints::assets::MyAsset": {
-      "additionalProperties": false,
-      "isComponent": true,
-      "isResource": false,
-      "long_name": "blenvy::blueprints::assets::MyAsset",
-      "properties": {
-        "name": {
-          "type": {
-            "$ref": "#/$defs/alloc::string::String"
-          }
-        },
-        "path": {
-          "type": {
-            "$ref": "#/$defs/alloc::string::String"
-          }
-        }
-      },
-      "required": [
-        "name",
-        "path"
-      ],
-      "short_name": "MyAsset",
       "type": "object",
       "typeInfo": "Struct"
     },

@@ -7,7 +7,7 @@ use crate::{BluePrintsConfig, BlueprintAnimations};
 /// helper component, is used to store the list of sub blueprints to enable automatic loading of dependend blueprints
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-pub struct MyAsset {
+pub struct BlueprintAsset {
     pub name: String,
     pub path: String,
 }
@@ -15,12 +15,12 @@ pub struct MyAsset {
 /// helper component, is used to store the list of sub blueprints to enable automatic loading of dependend blueprints
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-pub struct LocalAssets(pub Vec<MyAsset>);
+pub struct LocalAssets(pub Vec<BlueprintAsset>);
 
 /// helper component, is used to store the list of sub blueprints to enable automatic loading of dependend blueprints
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-pub struct BlueprintAssets(pub Vec<MyAsset>);
+pub struct BlueprintAssets(pub Vec<BlueprintAsset>);
 
 ////////////////////////
 ///

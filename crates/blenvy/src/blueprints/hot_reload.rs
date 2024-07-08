@@ -1,11 +1,11 @@
 use crate::{BlueprintAssetsLoadState, BlueprintAssetsLoaded, BlueprintInfo, SpawnBlueprint};
-use bevy::asset::{AssetEvent, LoadedUntypedAsset};
+use bevy::asset::AssetEvent;
 use bevy::prelude::*;
 use bevy::scene::SceneInstance;
 
 pub(crate) fn react_to_asset_changes(
     mut gltf_events: EventReader<AssetEvent<Gltf>>,
-    mut untyped_events: EventReader<AssetEvent<LoadedUntypedAsset>>,
+    // mut untyped_events: EventReader<AssetEvent<LoadedUntypedAsset>>,
     mut blueprint_assets: Query<(
         Entity,
         Option<&Name>,
@@ -22,7 +22,7 @@ pub(crate) fn react_to_asset_changes(
             AssetEvent::Modified { id } => {
                 // React to the image being modified
                 // println!("Modified gltf {:?}", asset_server.get_path(*id));
-                for (entity, entity_name, blueprint_info, mut assets_to_load, children) in
+                for (entity, entity_name, _blueprint_info, mut assets_to_load, children) in
                     blueprint_assets.iter_mut()
                 {
                     for tracker in assets_to_load.asset_infos.iter_mut() {

@@ -1,4 +1,4 @@
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 use bevy::{gltf::Gltf, prelude::*, scene::SceneInstance, utils::hashbrown::HashMap};
 use serde_json::Value;
@@ -113,7 +113,7 @@ Overview of the Blueprint Spawning process
 */
 
 pub(crate) fn blueprints_prepare_spawn(
-    blueprint_instances_to_spawn: Query<(Entity, &BlueprintInfo), (Added<SpawnBlueprint>)>,
+    blueprint_instances_to_spawn: Query<(Entity, &BlueprintInfo), Added<SpawnBlueprint>>,
     mut commands: Commands,
     asset_server: Res<AssetServer>,
 ) {
@@ -401,8 +401,7 @@ pub(crate) fn blueprints_scenes_spawned(
     all_children: Query<&Children>,
     all_parents: Query<&Parent>,
 
-    mut sub_blueprint_trackers: Query<(Entity, &mut SubBlueprintsSpawnTracker, &BlueprintInfo)>,
-
+    // mut sub_blueprint_trackers: Query<(Entity, &mut SubBlueprintsSpawnTracker, &BlueprintInfo)>,
     mut commands: Commands,
 
     all_names: Query<&Name>,
@@ -511,7 +510,7 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
     >,
     added_animation_players: Query<(Entity, &Parent), Added<AnimationPlayer>>,
 
-    mut sub_blueprint_trackers: Query<(Entity, &mut SubBlueprintsSpawnTracker, &BlueprintInfo)>,
+    mut sub_blueprint_trackers: Query<&mut SubBlueprintsSpawnTracker, With<BlueprintInfo>>,
     all_children: Query<&Children>,
 
     mut commands: Commands,
@@ -593,9 +592,7 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
         if let Some(track_root) = track_root {
             let root_name = all_names.get(track_root.0);
             println!("got some root {:?}", root_name);
-            if let Ok((s_entity, mut tracker, bp_info)) =
-                sub_blueprint_trackers.get_mut(track_root.0)
-            {
+            if let Ok(mut tracker) = sub_blueprint_trackers.get_mut(track_root.0) {
                 tracker
                     .sub_blueprint_instances
                     .entry(original)
