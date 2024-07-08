@@ -11,10 +11,15 @@ pub(crate) fn plugin(app: &mut App) {
         .register_type::<BlenderLightShadows>()
         .register_type::<BlenderToneMapping>()
         .register_type::<BlenderColorGrading>()
-
         .add_systems(
             Update,
-            (process_lights, process_shadowmap, process_background_shader, process_tonemapping, process_colorgrading)
+            (
+                process_lights,
+                process_shadowmap,
+                process_background_shader,
+                process_tonemapping,
+                process_colorgrading,
+            )
                 .after(GltfComponentsSet::Injection),
         );
 }
@@ -45,25 +50,24 @@ pub struct BlenderShadowSettings {
     pub cascade_size: usize,
 }
 
-/// Not all possible Blender ToneMappings are available in Bevy & vice versa 
+/// Not all possible Blender ToneMappings are available in Bevy & vice versa
 #[derive(Component, Reflect, Default, Debug, PartialEq, Clone)]
 #[reflect(Component)]
 #[non_exhaustive]
-pub enum BlenderToneMapping  {
+pub enum BlenderToneMapping {
     #[default]
     None,
     AgX,
-    Filmic
+    Filmic,
 }
 
 #[derive(Component, Reflect, Default, Debug, PartialEq, Clone)]
 #[reflect(Component)]
 #[non_exhaustive]
-pub struct  BlenderColorGrading  {
+pub struct BlenderColorGrading {
     exposure: f32,
     gamma: f32,
 }
-
 
 fn process_lights(
     mut directional_lights: Query<
@@ -76,12 +80,12 @@ fn process_lights(
     for (mut light, blender_light_shadows) in directional_lights.iter_mut() {
         if let Some(blender_light_shadows) = blender_light_shadows {
             light.shadows_enabled = blender_light_shadows.enabled;
-        } 
+        }
     }
     for (mut light, blender_light_shadows) in spot_lights.iter_mut() {
         if let Some(blender_light_shadows) = blender_light_shadows {
             light.shadows_enabled = blender_light_shadows.enabled;
-        } 
+        }
     }
 
     for (mut light, blender_light_shadows) in point_lights.iter_mut() {
@@ -113,19 +117,17 @@ fn process_background_shader(
             brightness: background_shader.strength * 400.0,
         });
         commands.insert_resource(ClearColor(background_shader.color));
-
     }
 }
 
 // FIXME: this logic should not depend on if toneMapping or Cameras where added first
 fn process_tonemapping(
-    tonemappings: Query<(Entity, &BlenderToneMapping) , Added<BlenderToneMapping>>,
+    tonemappings: Query<(Entity, &BlenderToneMapping), Added<BlenderToneMapping>>,
     cameras: Query<Entity, With<Camera>>,
     mut commands: Commands,
-){
-
-    for entity in cameras.iter(){
-        for (scene_id, tone_mapping) in tonemappings.iter(){
+) {
+    for entity in cameras.iter() {
+        for (scene_id, tone_mapping) in tonemappings.iter() {
             match tone_mapping {
                 BlenderToneMapping::None => {
                     //println!("TONEMAPPING NONE");
@@ -143,42 +145,37 @@ fn process_tonemapping(
             commands.entity(scene_id).remove::<BlenderToneMapping>();
         }
     }
-
 }
 
 // FIXME: this logic should not depend on if toneMapping or Cameras where added first
 fn process_colorgrading(
-    blender_colorgradings: Query<(Entity, &BlenderColorGrading) , Added<BlenderColorGrading>>,
+    blender_colorgradings: Query<(Entity, &BlenderColorGrading), Added<BlenderColorGrading>>,
     cameras: Query<Entity, With<Camera>>,
     mut commands: Commands,
-){
-
-    for entity in cameras.iter(){
-        for (scene_id, blender_colorgrading) in blender_colorgradings.iter(){
-            commands.entity(entity).insert(
-                ColorGrading{
-                    global: ColorGradingGlobal{
-                        exposure: blender_colorgrading.exposure,
-                        ..Default::default()
-                    },
-                    shadows: ColorGradingSection{
-                        gamma: blender_colorgrading.gamma,
-                        ..Default::default()
-                    },
-                    midtones: ColorGradingSection{
-                        gamma: blender_colorgrading.gamma,
-                        ..Default::default()
-                    },
-                    highlights: ColorGradingSection{
-                        gamma: blender_colorgrading.gamma,
-                        ..Default::default()
-                    },
-                        
+) {
+    for entity in cameras.iter() {
+        for (scene_id, blender_colorgrading) in blender_colorgradings.iter() {
+            commands.entity(entity).insert(ColorGrading {
+                global: ColorGradingGlobal {
+                    exposure: blender_colorgrading.exposure,
                     ..Default::default()
-                }
-            );
-            commands.entity(scene_id).remove::<ColorGrading>();
+                },
+                shadows: ColorGradingSection {
+                    gamma: blender_colorgrading.gamma,
+                    ..Default::default()
+                },
+                midtones: ColorGradingSection {
+                    gamma: blender_colorgrading.gamma,
+                    ..Default::default()
+                },
+                highlights: ColorGradingSection {
+                    gamma: blender_colorgrading.gamma,
+                    ..Default::default()
+                },
 
+                ..Default::default()
+            });
+            commands.entity(scene_id).remove::<ColorGrading>();
         }
     }
 }

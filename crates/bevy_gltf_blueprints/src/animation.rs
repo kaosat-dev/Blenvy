@@ -73,7 +73,7 @@ pub struct AnimationMarkerReached {
 
 /////////////////////
 
-/* 
+/*
 /// triggers events when a given animation marker is reached for INSTANCE animations
 pub fn trigger_instance_animation_markers_events(
     animation_infos: Query<(

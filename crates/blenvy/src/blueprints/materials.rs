@@ -13,18 +13,16 @@ pub struct MaterialInfo {
 #[derive(Component, Default, Debug)]
 pub struct MaterialProcessed;
 
-
 /// system that injects / replaces materials from material library
 pub(crate) fn inject_materials(
     mut blenvy_config: ResMut<BlenvyConfig>,
     material_infos: Query<
         (Entity, &MaterialInfo, &Children),
-        Without<MaterialProcessed>
-        // (With<BlueprintReadyForPostProcess>)
-        /*(
-            Added<BlueprintMaterialAssetsLoaded>,
-            With<BlueprintMaterialAssetsLoaded>,
-        ),*/
+        Without<MaterialProcessed>, // (With<BlueprintReadyForPostProcess>)
+                                    /*(
+                                        Added<BlueprintMaterialAssetsLoaded>,
+                                        With<BlueprintMaterialAssetsLoaded>,
+                                    ),*/
     >,
     with_materials_and_meshes: Query<
         (),
@@ -55,10 +53,14 @@ pub(crate) fn inject_materials(
             material_found = Some(material);
         } else {
             let model_handle: Handle<Gltf> = asset_server.load(material_info.path.clone()); // FIXME: kinda weird now
-            let mat_gltf = assets_gltf
-                .get(model_handle.id())
-                .expect(&format!("materials file {} should have been preloaded", material_info.path));
-            if mat_gltf.named_materials.contains_key(&material_info.name as &str) {
+            let mat_gltf = assets_gltf.get(model_handle.id()).expect(&format!(
+                "materials file {} should have been preloaded",
+                material_info.path
+            ));
+            if mat_gltf
+                .named_materials
+                .contains_key(&material_info.name as &str)
+            {
                 let material = mat_gltf
                     .named_materials
                     .get(&material_info.name as &str)

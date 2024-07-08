@@ -20,7 +20,6 @@ fn main() {
     App::new()
         .add_plugins((
             DefaultPlugins.set(AssetPlugin::default()),
-
             HiearchyDebugPlugin,
             // our custom plugins
             // CommonPlugin,

@@ -214,7 +214,7 @@ pub struct ComponentBToFilterOut;
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-pub struct ComponentWithFieldsOfIdenticalType{
+pub struct ComponentWithFieldsOfIdenticalType {
     pub first: f32,
     pub second: f32,
     pub third: Vec<f32>,
@@ -224,9 +224,8 @@ pub struct ComponentWithFieldsOfIdenticalType{
 #[reflect(Component)]
 pub struct ComponentWithFieldsOfIdenticalType2(f32, f32, f32);
 
-
 #[derive(Debug, Clone, Copy, PartialEq, Reflect, Component)]
-#[reflect(Component, )]
+#[reflect(Component)]
 pub enum RedirectPropHitImpulse {
     Local(Vec3),
 }
@@ -279,14 +278,11 @@ impl Plugin for ComponentsTestPlugin {
             .register_type::<HashmapTestStringColorFlat>()
             .register_type::<HashmapTestStringEnum>()
             .register_type::<HashmapTestStringStruct>()
-
             .register_type::<ComponentAToFilterOut>()
             .register_type::<ComponentBToFilterOut>()
             .register_type::<ComponentWithFieldsOfIdenticalType>()
             .register_type::<ComponentWithFieldsOfIdenticalType2>()
-
             .register_type::<RedirectPropHitImpulse>()
-
             .add_plugins(MaterialPlugin::<
                 ExtendedMaterial<StandardMaterial, MyExtension>,
             >::default());

@@ -39,7 +39,7 @@ pub fn setup_main_scene_animations(asset_server: Res<AssetServer>, mut commands:
     commands.insert_resource(AnimTest(asset_server.load("levels/World.glb")));
 }
 
-/* 
+/*
 #[allow(clippy::type_complexity)]
 pub fn animations(
     added_animation_players: Query<(Entity, &Name, &AnimationPlayer)>,
@@ -102,8 +102,7 @@ pub fn play_animations(
         ),
         (With<AnimationInfos>, With<Marker3>),
     >, */
-
-    mut animation_players: Query<(&mut AnimationPlayer,  &mut AnimationTransitions)>,
+    mut animation_players: Query<(&mut AnimationPlayer, &mut AnimationTransitions)>,
     keycode: Res<ButtonInput<KeyCode>>,
 ) {
     if keycode.just_pressed(KeyCode::KeyP) {
@@ -111,19 +110,20 @@ pub fn play_animations(
         for (link, animations) in animated_fox.iter() {
             println!("animations {:?}", animations.named_animations);
             println!("LINK target {}", link.0);
-            let (mut animation_player, mut animation_transitions) = animation_players.get_mut(link.0).unwrap();
+            let (mut animation_player, mut animation_transitions) =
+                animation_players.get_mut(link.0).unwrap();
             let anim_name = "Survey";
             let animation_index = animations
                 .named_indices
                 .get(anim_name)
                 .expect("animation name should be in the list")
                 .clone();
-    
+
             animation_transitions
                 .play(
-                    &mut animation_player, 
-                    animation_index, 
-                    Duration::from_secs(5)
+                    &mut animation_player,
+                    animation_index,
+                    Duration::from_secs(5),
                 )
                 .repeat();
 
@@ -133,7 +133,6 @@ pub fn play_animations(
             let playing_animation = animation_player.animation_mut(playing_animation_index).unwrap();
             println!("Playing animation {:?}", playing_animation);
             playing_animation.set_repeat(RepeatAnimation::Forever);*/
-
         }
     }
 
@@ -244,9 +243,6 @@ pub fn play_animations(
         }
     }*/
 }
-
-
-
 
 pub fn react_to_animation_markers(
     mut animation_marker_events: EventReader<AnimationMarkerReached>,

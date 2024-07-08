@@ -7,14 +7,15 @@ pub use animation::*;
 use std::{collections::HashMap, fs, time::Duration};
 
 use blenvy::{
-    BlueprintAssets, BlueprintAnimationPlayerLink, BlueprintEvent, BlueprintInfo, GltfBlueprintsSet, SceneAnimations
+    BlueprintAnimationPlayerLink, BlueprintAssets, BlueprintEvent, BlueprintInfo,
+    GltfBlueprintsSet, SceneAnimations,
 };
 
+use crate::{AppState, GameState};
 use bevy::{
     prelude::*, render::view::screenshot::ScreenshotManager, time::common_conditions::on_timer,
     window::PrimaryWindow,
 };
-use crate::{AppState, GameState};
 
 use json_writer::to_json_string;
 
@@ -130,18 +131,32 @@ fn exit_game(mut app_exit_events: ResMut<Events<bevy::app::AppExit>>) {
 fn check_for_gltf_events(
     mut blueprint_events: EventReader<BlueprintEvent>,
     all_names: Query<&Name>,
-)
-{
+) {
     for event in blueprint_events.read() {
-        match  event {
-            BlueprintEvent::InstanceReady{entity, blueprint_name, blueprint_path} => {
-                info!("BLUEPRINT EVENT: {:?} for {:?}", event, all_names.get(*entity));
-
-            },
-            BlueprintEvent::AssetsLoaded { entity, blueprint_name, blueprint_path }=> {
-                info!("BLUEPRINT EVENT: {:?} for {:?}", event, all_names.get(*entity));
-            },
-            _=> {
+        match event {
+            BlueprintEvent::InstanceReady {
+                entity,
+                blueprint_name,
+                blueprint_path,
+            } => {
+                info!(
+                    "BLUEPRINT EVENT: {:?} for {:?}",
+                    event,
+                    all_names.get(*entity)
+                );
+            }
+            BlueprintEvent::AssetsLoaded {
+                entity,
+                blueprint_name,
+                blueprint_path,
+            } => {
+                info!(
+                    "BLUEPRINT EVENT: {:?} for {:?}",
+                    event,
+                    all_names.get(*entity)
+                );
+            }
+            _ => {
                 info!("BLUEPRINT EVENT: {:?}", event);
             }
         }

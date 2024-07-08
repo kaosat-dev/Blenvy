@@ -90,7 +90,7 @@ impl Default for BlueprintsPlugin {
     fn default() -> Self {
         Self {
             aabbs: false,
-            material_library: false
+            material_library: false,
         }
     }
 }

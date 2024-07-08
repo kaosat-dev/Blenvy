@@ -41,12 +41,14 @@ pub struct BluePrintBundle {
 impl Default for BluePrintBundle {
     fn default() -> Self {
         BluePrintBundle {
-            blueprint: BlueprintInfo{ name: "default".into(), path:"".into()},
+            blueprint: BlueprintInfo {
+                name: "default".into(),
+                path: "".into(),
+            },
             spawn_here: SpawnBlueprint,
         }
     }
 }
-
 
 #[derive(Debug, Clone)]
 /// Plugin for gltf blueprints
@@ -61,7 +63,7 @@ impl Default for BlueprintsPlugin {
     fn default() -> Self {
         Self {
             aabbs: false,
-            material_library: false
+            material_library: false,
         }
     }
 }
@@ -73,7 +75,6 @@ fn aabbs_enabled(blenvy_config: Res<BlenvyConfig>) -> bool {
 fn hot_reload(watching_for_changes: Res<WatchingForChanges>) -> bool {
     watching_for_changes.0
 }
-
 
 trait BlenvyApp {
     fn register_watching_for_changes(&mut self) -> &mut Self;
@@ -95,14 +96,10 @@ impl BlenvyApp for App {
 pub(crate) struct WatchingForChanges(pub(crate) bool);
 const ASSET_ERROR: &str = ""; // TODO
 
-
 impl Plugin for BlueprintsPlugin {
     fn build(&self, app: &mut App) {
-        app
-            .register_watching_for_changes()
-
+        app.register_watching_for_changes()
             .add_event::<BlueprintEvent>()
-
             .register_type::<BlueprintInfo>()
             .register_type::<MaterialInfo>()
             .register_type::<SpawnBlueprint>()
@@ -119,10 +116,8 @@ impl Plugin for BlueprintsPlugin {
             .register_type::<Vec<MyAsset>>()
             .register_type::<Vec<String>>()
             .register_type::<BlueprintAssets>()
-
             .register_type::<HashMap<String, Vec<String>>>()
             .register_type::<HideUntilReady>()
-
             .configure_sets(
                 Update,
                 (GltfBlueprintsSet::Spawn, GltfBlueprintsSet::AfterSpawn)
@@ -137,13 +132,10 @@ impl Plugin for BlueprintsPlugin {
                     blueprints_assets_ready,
                     blueprints_scenes_spawned,
                     blueprints_cleanup_spawned_scene,
-
                     // post process
                     inject_materials,
-                    compute_scene_aabbs,// .run_if(aabbs_enabled),
-                        
+                    compute_scene_aabbs, // .run_if(aabbs_enabled),
                     blueprints_finalize_instances,
-
                 )
                     .chain()
                     .in_set(GltfBlueprintsSet::Spawn),
@@ -156,7 +148,6 @@ impl Plugin for BlueprintsPlugin {
                 ),
             )*/
             // hot reload
-            .add_systems(Update, react_to_asset_changes.run_if(hot_reload))
-            ;
+            .add_systems(Update, react_to_asset_changes.run_if(hot_reload));
     }
 }

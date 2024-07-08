@@ -8,9 +8,9 @@ use crate::{BlenvyConfig, BlueprintAnimations};
 /// helper component, is used to store the list of sub blueprints to enable automatic loading of dependend blueprints
 #[derive(Component, Reflect, Default, Debug, Deserialize)]
 #[reflect(Component)]
-pub struct MyAsset{
+pub struct MyAsset {
     pub name: String,
-    pub path: String
+    pub path: String,
 }
 
 /// helper component, is used to store the list of sub blueprints to enable automatic loading of dependend blueprints
@@ -27,16 +27,14 @@ pub struct BlueprintAssets {
     #[serde(default)]
     #[reflect(default)]
     pub progress: f32,
-    #[reflect(ignore)] 
+    #[reflect(ignore)]
     #[serde(skip)]
     pub asset_infos: Vec<AssetLoadTracker>,
 }
 //(pub Vec<MyAsset>);
 
-
-
 ////////////////////////
-/// 
+///
 /// flag component, usually added when a blueprint is loaded
 #[derive(Component)]
 pub(crate) struct BlueprintAssetsLoaded;

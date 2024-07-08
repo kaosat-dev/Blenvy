@@ -2,7 +2,10 @@ use std::path::{Path, PathBuf};
 
 use bevy::{gltf::Gltf, prelude::*, utils::hashbrown::HashMap};
 
-use crate::{BlueprintAssets, AssetsToLoad, AssetLoadTracker, BluePrintsConfig, BlueprintAnimations, BlueprintAssetsLoaded, BlueprintAssetsNotLoaded};
+use crate::{
+    AssetLoadTracker, AssetsToLoad, BluePrintsConfig, BlueprintAnimations, BlueprintAssets,
+    BlueprintAssetsLoaded, BlueprintAssetsNotLoaded,
+};
 
 /// this is a flag component for our levels/game world
 #[derive(Component)]
@@ -27,9 +30,8 @@ pub struct SpawnHere;
 /// flag component for dynamically spawned scenes
 pub struct Spawned;
 
-
 #[derive(Component, Debug)]
-/// flag component added when a Blueprint instance ist Ready : ie : 
+/// flag component added when a Blueprint instance ist Ready : ie :
 /// - its assets have loaded
 /// - it has finished spawning
 pub struct BlueprintInstanceReady;
@@ -58,15 +60,11 @@ pub struct AddToGameWorld;
 /// helper component, just to transfer child data
 pub(crate) struct OriginalChildren(pub Vec<Entity>);
 
-
-
 pub(crate) fn test_thingy(
     spawn_placeholders: Query<
-    (
-        Entity,
-        &BlueprintPath,
-    ),
-    (Added<BlueprintPath>, Without<Spawned>, Without<SpawnHere>)>,
+        (Entity, &BlueprintPath),
+        (Added<BlueprintPath>, Without<Spawned>, Without<SpawnHere>),
+    >,
 
     // before 0.14 we have to use a seperate query, after migrating we can query at the root level
     entities_with_assets: Query<
@@ -81,17 +79,12 @@ pub(crate) fn test_thingy(
         (Added<BlueprintAssets>), //  Added<BlueprintAssets>
     >,
 
-
-    bla_bla : Query<
-     (Entity,
-    &BlueprintName,
-    &BlueprintPath,
-    Option<&Parent>,),(Added<BlueprintPath>)
+    bla_bla: Query<
+        (Entity, &BlueprintName, &BlueprintPath, Option<&Parent>),
+        (Added<BlueprintPath>),
     >,
-mut commands: Commands,
-asset_server: Res<AssetServer>,
-
-
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
 ) {
     for (entity, blueprint_path) in spawn_placeholders.iter() {
         //println!("added blueprint_path {:?}", blueprint_path);
@@ -105,7 +98,10 @@ asset_server: Res<AssetServer>,
     }
 
     for (entity, blueprint_name, blueprint_path, parent) in bla_bla.iter() {
-        println!("added blueprint to spawn {:?} {:?}", blueprint_name, blueprint_path);
+        println!(
+            "added blueprint to spawn {:?} {:?}",
+            blueprint_name, blueprint_path
+        );
         let untyped_handle = asset_server.load_untyped(&blueprint_path.0);
         let asset_id = untyped_handle.id();
         let loaded = asset_server.is_loaded_with_dependencies(asset_id);
@@ -135,7 +131,7 @@ asset_server: Res<AssetServer>,
         }
     }
 
-    for (child_entity, child_entity_name, all_assets) in entities_with_assets.iter(){
+    for (child_entity, child_entity_name, all_assets) in entities_with_assets.iter() {
         println!("added assets {:?} to {:?}", all_assets, child_entity_name);
         if all_assets.is_some() {
             let mut asset_infos: Vec<AssetLoadTracker> = vec![];
@@ -184,21 +180,23 @@ pub(crate) fn check_for_loaded2(
     asset_server: Res<AssetServer>,
     mut commands: Commands,
 ) {
-    for (entity,entity_name, mut assets_to_load) in blueprint_assets_to_load.iter_mut() {
+    for (entity, entity_name, mut assets_to_load) in blueprint_assets_to_load.iter_mut() {
         let mut all_loaded = true;
         let mut loaded_amount = 0;
         let total = assets_to_load.asset_infos.len();
         for tracker in assets_to_load.asset_infos.iter_mut() {
             let asset_id = tracker.id;
             let loaded = asset_server.is_loaded_with_dependencies(asset_id);
-            println!("loading {}: // load state: {:?}", tracker.name, asset_server.load_state(asset_id));
+            println!(
+                "loading {}: // load state: {:?}",
+                tracker.name,
+                asset_server.load_state(asset_id)
+            );
 
             // FIXME: hack for now
-            let mut failed = false;// asset_server.load_state(asset_id) == bevy::asset::LoadState::Failed(_error);
+            let mut failed = false; // asset_server.load_state(asset_id) == bevy::asset::LoadState::Failed(_error);
             match asset_server.load_state(asset_id) {
-                bevy::asset::LoadState::Failed(_) => {
-                    failed = true
-                },
+                bevy::asset::LoadState::Failed(_) => failed = true,
                 _ => {}
             }
             tracker.loaded = loaded || failed;
@@ -209,7 +207,7 @@ pub(crate) fn check_for_loaded2(
             }
         }
         let progress: f32 = loaded_amount as f32 / total as f32;
-        println!("progress: {}",progress);
+        println!("progress: {}", progress);
         assets_to_load.progress = progress;
 
         if all_loaded {
@@ -219,13 +217,10 @@ pub(crate) fn check_for_loaded2(
                 .entity(entity)
                 .insert(BlueprintAssetsLoaded)
                 .remove::<BlueprintAssetsNotLoaded>()
-                .remove::<AssetsToLoad>()
-                ;
+                .remove::<AssetsToLoad>();
         }
     }
 }
-
-
 
 pub(crate) fn spawn_from_blueprints2(
     spawn_placeholders: Query<
@@ -254,15 +249,8 @@ pub(crate) fn spawn_from_blueprints2(
 
     children: Query<&Children>,
 ) {
-    for (
-        entity,
-        blupeprint_name,
-        blueprint_path,
-        transform,
-        original_parent,
-        add_to_world,
-        name,
-    ) in spawn_placeholders.iter()
+    for (entity, blupeprint_name, blueprint_path, transform, original_parent, add_to_world, name) in
+        spawn_placeholders.iter()
     {
         info!(
             "attempting to spawn blueprint {:?} for entity {:?}, id: {:?}, parent:{:?}",
@@ -272,12 +260,9 @@ pub(crate) fn spawn_from_blueprints2(
         // info!("attempting to spawn {:?}", model_path);
         let model_handle: Handle<Gltf> = asset_server.load(blueprint_path.0.clone()); // FIXME: kinda weird now
 
-        let gltf = assets_gltf.get(&model_handle).unwrap_or_else(|| {
-            panic!(
-                "gltf file {:?} should have been loaded",
-                &blueprint_path.0
-            )
-        });
+        let gltf = assets_gltf
+            .get(&model_handle)
+            .unwrap_or_else(|| panic!("gltf file {:?} should have been loaded", &blueprint_path.0));
 
         // WARNING we work under the assumtion that there is ONLY ONE named scene, and that the first one is the right one
         let main_scene_name = gltf
@@ -301,7 +286,7 @@ pub(crate) fn spawn_from_blueprints2(
             }
         }
 
-        let mut named_animations:HashMap<String, Handle<AnimationClip>> = HashMap::new() ;
+        let mut named_animations: HashMap<String, Handle<AnimationClip>> = HashMap::new();
         for (key, value) in gltf.named_animations.iter() {
             named_animations.insert(key.to_string(), value.clone());
         }
@@ -317,7 +302,7 @@ pub(crate) fn spawn_from_blueprints2(
             OriginalChildren(original_children),
             BlueprintAnimations {
                 // these are animations specific to the inside of the blueprint
-                named_animations: named_animations//gltf.named_animations.clone(),
+                named_animations: named_animations, //gltf.named_animations.clone(),
             },
         ));
 
@@ -329,8 +314,3 @@ pub(crate) fn spawn_from_blueprints2(
         }
     }
 }
-
-
-
-
-

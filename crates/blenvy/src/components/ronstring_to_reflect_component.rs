@@ -16,9 +16,7 @@ pub fn ronstring_to_reflect_component(
     // println!("ron_string {:?}", ron_string);
     for (name, value) in lookup.into_iter() {
         let parsed_value: String = match value.clone() {
-            Value::String(str) => {
-                str
-            }
+            Value::String(str) => str,
             _ => ron::to_string(&value).unwrap().to_string(),
         };
 
@@ -58,7 +56,7 @@ fn components_string_to_components(
             parsed_value
         );
 
-        /* 
+        /*
         // usefull to determine what an entity looks like Serialized
         let test_struct =  Color::Srgba(Srgba { red: 0.2, green: 0.2, blue: 0.2, alpha: 0.2 });
         //CameraRenderGraph::new("name");
@@ -67,7 +65,6 @@ fn components_string_to_components(
             ron::ser::to_string_pretty(&serializer, ron::ser::PrettyConfig::default()).unwrap();
         println!("serialized Component {}", serialized);
         */
-
 
         debug!("component data ron string {}", ron_string);
         let mut deserializer = ron::Deserializer::from_str(ron_string.as_str())
@@ -99,9 +96,7 @@ fn bevy_components_string_to_components(
     let lookup: HashMap<String, Value> = ron::from_str(&parsed_value).unwrap();
     for (key, value) in lookup.into_iter() {
         let parsed_value: String = match value.clone() {
-            Value::String(str) => {
-                str
-            }
+            Value::String(str) => str,
             _ => ron::to_string(&value).unwrap().to_string(),
         };
 

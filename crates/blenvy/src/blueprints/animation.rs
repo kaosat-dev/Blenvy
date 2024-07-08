@@ -7,7 +7,7 @@ use bevy::utils::HashMap;
 pub struct BlueprintAnimations {
     pub named_animations: HashMap<String, Handle<AnimationClip>>,
     pub named_indices: HashMap<String, AnimationNodeIndex>,
-    pub graph: Handle<AnimationGraph>
+    pub graph: Handle<AnimationGraph>,
 }
 
 #[derive(Component, Debug)]
@@ -22,7 +22,7 @@ pub struct BlueprintAnimationPlayerLink(pub Entity);
 /// storage for scene level animations for a given entity (hierarchy), essentially a clone of gltf's `named_animations`
 pub struct SceneAnimations {
     pub named_animations: HashMap<String, Handle<AnimationClip>>,
-    pub named_indices: HashMap<String, AnimationNodeIndex>
+    pub named_indices: HashMap<String, AnimationNodeIndex>,
 }
 
 #[derive(Component, Debug)]
@@ -76,7 +76,7 @@ pub struct AnimationMarkerReached {
 
 /////////////////////
 
-/* 
+/*
 /// triggers events when a given animation marker is reached for INSTANCE animations
 pub fn trigger_instance_animation_markers_events(
     animation_infos: Query<(

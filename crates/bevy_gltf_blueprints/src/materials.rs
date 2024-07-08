@@ -41,8 +41,6 @@ pub(crate) fn materials_inject(
     asset_server: Res<AssetServer>,
     mut commands: Commands,
 ) {
-
-
     for (entity, material_info) in material_infos.iter() {
         println!("Entity with material info {:?} {:?}", entity, material_info);
         let material_full_path = format!("{}#{}", material_info.path, material_info.name);
@@ -59,9 +57,9 @@ pub(crate) fn materials_inject(
                 .entity(entity)
                 .insert(BlueprintMaterialAssetsLoaded);
         } else {
-            let material_file_handle = asset_server.load_untyped(&material_info.path.clone()); // : Handle<Gltf> 
+            let material_file_handle = asset_server.load_untyped(&material_info.path.clone()); // : Handle<Gltf>
             let material_file_id = material_file_handle.id();
-            
+
             let asset_infos: Vec<AssetLoadTracker> = vec![AssetLoadTracker {
                 name: material_info.name.clone(),
                 id: material_file_id,
@@ -77,7 +75,6 @@ pub(crate) fn materials_inject(
                     ..Default::default()
                 })
                 .insert(BlueprintMaterialAssetsNotLoaded);
-           
         }
     }
 }
@@ -160,7 +157,10 @@ pub(crate) fn materials_inject2(
             let mat_gltf = assets_gltf
                 .get(model_handle.id())
                 .expect("material should have been preloaded");
-            if mat_gltf.named_materials.contains_key(&material_info.name as &str) {
+            if mat_gltf
+                .named_materials
+                .contains_key(&material_info.name as &str)
+            {
                 let material = mat_gltf
                     .named_materials
                     .get(&material_info.name as &str)

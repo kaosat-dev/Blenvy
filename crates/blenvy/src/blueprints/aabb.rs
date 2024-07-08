@@ -22,13 +22,18 @@ pub fn compute_scene_aabbs(
                 .aabb_cache
                 .get(&name.to_string())
                 .expect("we should have the aabb available");
-            commands.entity(root_entity).insert(*aabb).insert(BlueprintReadyForFinalizing);
+            commands
+                .entity(root_entity)
+                .insert(*aabb)
+                .insert(BlueprintReadyForFinalizing);
         } else {
             let aabb = compute_descendant_aabb(root_entity, &children, &existing_aabbs);
             blenvy_config.aabb_cache.insert(name.to_string(), aabb);
             info!("generating aabb for {:?}", name);
-            commands.entity(root_entity).insert(aabb).insert(BlueprintReadyForFinalizing);
-
+            commands
+                .entity(root_entity)
+                .insert(aabb)
+                .insert(BlueprintReadyForFinalizing);
         }
     }
     for entity in other_entities.iter() {

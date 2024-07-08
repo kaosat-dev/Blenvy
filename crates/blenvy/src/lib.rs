@@ -1,5 +1,5 @@
-use std::path::PathBuf;
 use bevy::{prelude::*, render::primitives::Aabb, utils::HashMap};
+use std::path::PathBuf;
 
 pub mod components;
 pub use components::*;
@@ -23,7 +23,6 @@ pub struct BlenvyConfig {
     pub(crate) aabb_cache: HashMap<String, Aabb>, // cache for aabbs
     pub(crate) materials_cache: HashMap<String, Handle<StandardMaterial>>, // cache for materials
 }
-
 
 #[derive(Debug, Clone)]
 /// Plugin for gltf blueprints
@@ -51,9 +50,9 @@ impl Default for BlenvyPlugin {
 impl Plugin for BlenvyPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
-            ComponentsFromGltfPlugin::default(), 
+            ComponentsFromGltfPlugin::default(),
             ExportRegistryPlugin::default(),
-            BlueprintsPlugin::default()
+            BlueprintsPlugin::default(),
         ))
         .insert_resource(BlenvyConfig {
             registry_save_path: self.registry_save_path.clone(),
@@ -64,8 +63,6 @@ impl Plugin for BlenvyPlugin {
             aabb_cache: HashMap::new(),
 
             materials_cache: HashMap::new(),
-        })
-        ;
-
+        });
     }
 }

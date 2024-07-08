@@ -1,6 +1,9 @@
-use bevy::prelude::*;
-use blenvy::{AddToGameWorld, BluePrintBundle, BlueprintInfo, DynamicBlueprintInstance, GameWorldTag, HideUntilReady, SpawnBlueprint};
 use crate::{GameState, InAppRunning};
+use bevy::prelude::*;
+use blenvy::{
+    AddToGameWorld, BluePrintBundle, BlueprintInfo, DynamicBlueprintInstance, GameWorldTag,
+    HideUntilReady, SpawnBlueprint,
+};
 
 //use bevy_rapier3d::prelude::Velocity;
 use rand::Rng;
@@ -22,7 +25,10 @@ pub fn setup_game(
     ));*/
 
     commands.spawn((
-        BlueprintInfo{name: "World".into(), path: "levels/World.glb".into()},
+        BlueprintInfo {
+            name: "World".into(),
+            path: "levels/World.glb".into(),
+        },
         HideUntilReady,
         bevy::prelude::Name::from("world"), //FIXME: not really needed ? could be infered from blueprint's name/ path
         SpawnBlueprint,
@@ -63,7 +69,10 @@ pub fn spawn_test(
         let new_entity = commands
             .spawn((
                 BluePrintBundle {
-                    blueprint: BlueprintInfo{name: "Blueprint1".into() , path:"blueprints/Blueprint1.glb".into()}, // FIXME
+                    blueprint: BlueprintInfo {
+                        name: "Blueprint1".into(),
+                        path: "blueprints/Blueprint1.glb".into(),
+                    }, // FIXME
                     ..Default::default()
                 },
                 DynamicBlueprintInstance,

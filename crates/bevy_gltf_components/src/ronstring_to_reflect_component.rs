@@ -16,9 +16,7 @@ pub fn ronstring_to_reflect_component(
     // println!("ron_string {:?}", ron_string);
     for (name, value) in lookup.into_iter() {
         let parsed_value: String = match value.clone() {
-            Value::String(str) => {
-                str
-            }
+            Value::String(str) => str,
             _ => ron::to_string(&value).unwrap().to_string(),
         };
 
@@ -95,9 +93,7 @@ fn bevy_components_string_to_components(
     let lookup: HashMap<String, Value> = ron::from_str(&parsed_value).unwrap();
     for (key, value) in lookup.into_iter() {
         let parsed_value: String = match value.clone() {
-            Value::String(str) => {
-                str
-            }
+            Value::String(str) => str,
             _ => ron::to_string(&value).unwrap().to_string(),
         };
 

@@ -4,7 +4,10 @@ pub mod export_types;
 pub use export_types::*;
 
 use bevy::{
-    app::Startup, asset::AssetPlugin, prelude::{App, Plugin, Resource}, scene::SceneFilter
+    app::Startup,
+    asset::AssetPlugin,
+    prelude::{App, Plugin, Resource},
+    scene::SceneFilter,
 };
 
 pub struct ExportRegistryPlugin {
@@ -25,8 +28,7 @@ impl Default for ExportRegistryPlugin {
 
 impl Plugin for ExportRegistryPlugin {
     fn build(&self, app: &mut App) {
-        app.register_asset_root()
-            .add_systems(Startup, export_types);
+        app.register_asset_root().add_systems(Startup, export_types);
     }
 }
 
