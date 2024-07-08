@@ -22,7 +22,7 @@ pub struct BlueprintPath(pub String);
 /// flag component needed to signify the intent to spawn a Blueprint
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-pub struct SpawnHere;
+pub struct SpawnBlueprint;
 
 #[derive(Component)]
 /// flag component for dynamically spawned scenes
@@ -93,7 +93,7 @@ pub(crate) fn blueprints_prepare_spawn(
         Entity,
         &BlueprintPath,
     ),
-    (Added<BlueprintPath>, Without<Spawned>, Without<SpawnHere>)>,
+    (Added<BlueprintPath>, Without<Spawned>, Without<SpawnBlueprint>)>,
 
     // before 0.14 we have to use a seperate query, after migrating we can query at the root level
     entities_with_assets: Query<

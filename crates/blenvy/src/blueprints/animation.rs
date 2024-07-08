@@ -6,6 +6,8 @@ use bevy::utils::HashMap;
 /// storage for animations for a given entity's BLUEPRINT (ie for example a characters animations), essentially a clone of gltf's `named_animations`
 pub struct BlueprintAnimations {
     pub named_animations: HashMap<String, Handle<AnimationClip>>,
+    pub named_indices: HashMap<String, AnimationNodeIndex>,
+    pub graph: Handle<AnimationGraph>
 }
 
 #[derive(Component, Debug)]
@@ -20,6 +22,7 @@ pub struct BlueprintAnimationPlayerLink(pub Entity);
 /// storage for scene level animations for a given entity (hierarchy), essentially a clone of gltf's `named_animations`
 pub struct SceneAnimations {
     pub named_animations: HashMap<String, Handle<AnimationClip>>,
+    pub named_indices: HashMap<String, AnimationNodeIndex>
 }
 
 #[derive(Component, Debug)]

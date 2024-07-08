@@ -49,7 +49,7 @@ pub(crate) fn prepare_blueprints(
             Option<&Name>,
             Option<&BlueprintsList>,
         ),
-        (Added<BlueprintName>, Added<SpawnHere>, Without<Spawned>),
+        (Added<BlueprintName>, Added<SpawnBlueprint>, Without<Spawned>),
     >,
 
     mut commands: Commands,

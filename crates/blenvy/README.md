@@ -52,7 +52,7 @@ fn spawn_blueprint(
     if keycode.just_pressed(KeyCode::S) {
         let new_entity = commands.spawn((
             BlueprintInfo(name: "Health_Pickup".to_string(), path:""), // mandatory !!
-            SpawnHere, // mandatory !!
+            SpawnBlueprint, // mandatory !!
             TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)), // VERY important !!
             // any other component you want to insert
         ));
@@ -115,7 +115,7 @@ You can spawn entities from blueprints like this:
 ```rust no_run
 commands.spawn((
     BlueprintInfo("Health_Pickup".to_string()), // mandatory !!
-    SpawnHere, // mandatory !!
+    SpawnBlueprint, // mandatory !!
     
     TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)), // optional
     // any other component you want to insert
@@ -135,7 +135,7 @@ you can just add any additional components you need when spawning :
 ```rust no_run
 commands.spawn((
     BlueprintInfo("Health_Pickup".to_string()),
-    SpawnHere,
+    SpawnBlueprint,
     TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
     // from Rapier/bevy_xpbd: this means the entity will also have a velocity component when inserted into the world
     Velocity {
@@ -153,7 +153,7 @@ for example
 ```rust no_run
 commands.spawn((
     BlueprintInfo("Health_Pickup".to_string()),
-    SpawnHere,
+    SpawnBlueprint,
     TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
     HealthPowerUp(20)// if this is component is also present inside the "Health_Pickup" blueprint, that one will be replaced with this component during spawning
 ))
@@ -164,7 +164,7 @@ commands.spawn((
 
 There is also a ```BluePrintBundle``` for convenience , which just has 
  * a ```BlueprintInfo``` component
- * a ```SpawnHere``` component
+ * a ```SpawnBlueprint``` component
 
 ## Additional information
 

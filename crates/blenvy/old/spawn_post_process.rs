@@ -6,7 +6,7 @@ use bevy::scene::SceneInstance;
 // use bevy::utils::hashbrown::HashSet;
 
 use crate::{BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintInfo, BlueprintReadyForPostProcess, BlueprintInstanceReady, BlueprintSpawning, SubBlueprintSpawnRoot, SubBlueprintsSpawnTracker};
-use crate::{SpawnHere, Spawned};
+use crate::{SpawnBlueprint, Spawned};
 use crate::{
     BlueprintEvent, CopyComponents, InBlueprint, NoInBlueprint, OriginalChildren
 };
@@ -34,7 +34,7 @@ pub(crate) fn spawned_blueprint_post_process( // rename to '
             // sub blueprint instances tracker
             Option<&SubBlueprintSpawnRoot>
         ),
-        (With<SpawnHere>, With<SceneInstance>, Added<BlueprintReadyForPostProcess>),
+        (With<SpawnBlueprint>, With<SceneInstance>, Added<BlueprintReadyForPostProcess>),
     >,
     added_animation_players: Query<(Entity, &Parent), Added<AnimationPlayer>>,
     all_children: Query<&Children>,
@@ -103,7 +103,7 @@ pub(crate) fn spawned_blueprint_post_process( // rename to '
             }
         }
 
-        commands.entity(original).remove::<SpawnHere>();
+        commands.entity(original).remove::<SpawnBlueprint>();
         commands.entity(original).remove::<Spawned>();
         // commands.entity(original).remove::<Handle<Scene>>(); // FIXME: if we delete the handle to the scene, things get despawned ! not what we want
         //commands.entity(original).remove::<BlueprintAssetsLoadState>(); // also clear the sub assets tracker to free up handles, perhaps just freeing up the handles and leave the rest would be better ?

@@ -12003,6 +12003,24 @@
         }
       }
     },
+    "bevy_utils::hashbrown::HashMap<alloc::string::String, petgraph::graph::NodeIndex, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "isComponent": false,
+      "isResource": false,
+      "keyType": {
+        "type": {
+          "$ref": "#/$defs/alloc::string::String"
+        }
+      },
+      "long_name": "bevy_utils::hashbrown::HashMap<alloc::string::String, petgraph::graph::NodeIndex, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "short_name": "HashMap<String, NodeIndex, DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Map",
+      "valueType": {
+        "type": {
+          "$ref": "#/$defs/petgraph::graph::NodeIndex"
+        }
+      }
+    },
     "bevy_utils::hashbrown::HashMap<bevy_animation::AnimationTargetId, alloc::vec::Vec<bevy_animation::VariableCurve>, bevy_utils::NoOpHash>": {
       "isComponent": false,
       "isResource": false,
@@ -13286,14 +13304,26 @@
       "isResource": false,
       "long_name": "blenvy::blueprints::animation::BlueprintAnimations",
       "properties": {
+        "graph": {
+          "type": {
+            "$ref": "#/$defs/bevy_asset::handle::Handle<bevy_animation::graph::AnimationGraph>"
+          }
+        },
         "named_animations": {
           "type": {
             "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<alloc::string::String, bevy_asset::handle::Handle<bevy_animation::AnimationClip>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
           }
+        },
+        "named_indices": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<alloc::string::String, petgraph::graph::NodeIndex, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+          }
         }
       },
       "required": [
-        "named_animations"
+        "named_animations",
+        "named_indices",
+        "graph"
       ],
       "short_name": "BlueprintAnimations",
       "type": "object",
@@ -13309,10 +13339,16 @@
           "type": {
             "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<alloc::string::String, bevy_asset::handle::Handle<bevy_animation::AnimationClip>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
           }
+        },
+        "named_indices": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<alloc::string::String, petgraph::graph::NodeIndex, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+          }
         }
       },
       "required": [
-        "named_animations"
+        "named_animations",
+        "named_indices"
       ],
       "short_name": "SceneAnimations",
       "type": "object",
@@ -13435,14 +13471,14 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "blenvy::blueprints::spawn_from_blueprints::SpawnHere": {
+    "blenvy::blueprints::spawn_from_blueprints::SpawnBlueprint": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
-      "long_name": "blenvy::blueprints::spawn_from_blueprints::SpawnHere",
+      "long_name": "blenvy::blueprints::spawn_from_blueprints::SpawnBlueprint",
       "properties": {},
       "required": [],
-      "short_name": "SpawnHere",
+      "short_name": "SpawnBlueprint",
       "type": "object",
       "typeInfo": "Struct"
     },

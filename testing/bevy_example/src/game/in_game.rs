@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use blenvy::{AddToGameWorld, BluePrintBundle, BlueprintInfo, DynamicBlueprintInstance, GameWorldTag, HideUntilReady, SpawnHere};
+use blenvy::{AddToGameWorld, BluePrintBundle, BlueprintInfo, DynamicBlueprintInstance, GameWorldTag, HideUntilReady, SpawnBlueprint};
 use crate::{GameState, InAppRunning};
 
 //use bevy_rapier3d::prelude::Velocity;
@@ -25,7 +25,7 @@ pub fn setup_game(
         BlueprintInfo{name: "World".into(), path: "levels/World.glb".into()},
         HideUntilReady,
         bevy::prelude::Name::from("world"), //FIXME: not really needed ? could be infered from blueprint's name/ path
-        SpawnHere,
+        SpawnBlueprint,
         GameWorldTag,
         InAppRunning,
     ));
@@ -43,7 +43,7 @@ pub fn spawn_test(
 
     mut game_world: Query<(Entity, &Children), With<GameWorldTag>>,
 ) {
-    if keycode.just_pressed(KeyCode::KeyT) {
+    if keycode.just_pressed(KeyCode::KeyS) {
         let world = game_world.single_mut();
         let world = world.1[0];
 

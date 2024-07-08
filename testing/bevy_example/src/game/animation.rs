@@ -5,7 +5,7 @@ use std::time::Duration;
     SceneAnimationPlayerLink, SceneAnimations,
 };*/
 
-use bevy::{gltf::Gltf, prelude::*};
+use bevy::{animation::RepeatAnimation, gltf::Gltf, prelude::*};
 
 use blenvy::{
     AnimationInfos, AnimationMarkerReached, BlueprintAnimationPlayerLink, BlueprintAnimations,
@@ -79,11 +79,13 @@ pub fn animations(
             }
         }
     }
-}
+}*/
 
 #[allow(clippy::type_complexity)]
 pub fn play_animations(
-    animated_marker1: Query<
+    animated_fox: Query<(&BlueprintAnimationPlayerLink, &BlueprintAnimations), With<MarkerFox>>,
+
+    /*animated_marker1: Query<
         (&SceneAnimationPlayerLink, &SceneAnimations),
         (With<AnimationInfos>, With<Marker1>),
     >,
@@ -99,32 +101,43 @@ pub fn play_animations(
             &BlueprintAnimations,
         ),
         (With<AnimationInfos>, With<Marker3>),
-    >,
+    >, */
 
-    animated_fox: Query<(&BlueprintAnimationPlayerLink, &BlueprintAnimations), With<MarkerFox>>,
-
-    mut animation_players: Query<&mut AnimationPlayer>,
+    mut animation_players: Query<(&mut AnimationPlayer,  &mut AnimationTransitions)>,
     keycode: Res<ButtonInput<KeyCode>>,
 ) {
     if keycode.just_pressed(KeyCode::KeyP) {
+        println!("playing fox animation requested");
         for (link, animations) in animated_fox.iter() {
             println!("animations {:?}", animations.named_animations);
-            let mut animation_player = animation_players.get_mut(link.0).unwrap();
-            let anim_name = "Run";
-            animation_player
-                .play_with_transition(
-                    animations
-                        .named_animations
-                        .get(anim_name)
-                        .expect("animation name should be in the list")
-                        .clone(),
-                    Duration::from_secs(5),
+            println!("LINK target {}", link.0);
+            let (mut animation_player, mut animation_transitions) = animation_players.get_mut(link.0).unwrap();
+            let anim_name = "Survey";
+            let animation_index = animations
+                .named_indices
+                .get(anim_name)
+                .expect("animation name should be in the list")
+                .clone();
+    
+            animation_transitions
+                .play(
+                    &mut animation_player, 
+                    animation_index, 
+                    Duration::from_secs(5)
                 )
                 .repeat();
+
+            /*let Some((&playing_animation_index, _)) = animation_player.playing_animations().next() else {
+                continue;
+            };
+            let playing_animation = animation_player.animation_mut(playing_animation_index).unwrap();
+            println!("Playing animation {:?}", playing_animation);
+            playing_animation.set_repeat(RepeatAnimation::Forever);*/
+
         }
     }
 
-    if keycode.just_pressed(KeyCode::KeyM) {
+    /*if keycode.just_pressed(KeyCode::KeyM) {
         for (link, animations) in animated_marker1.iter() {
             println!("animations {:?}", animations.named_animations);
             let mut animation_player = animation_players.get_mut(link.0).unwrap();
@@ -229,9 +242,12 @@ pub fn play_animations(
                 )
                 .repeat();
         }
-    }
+    }*/
 }
-*/
+
+
+
+
 pub fn react_to_animation_markers(
     mut animation_marker_events: EventReader<AnimationMarkerReached>,
 ) {

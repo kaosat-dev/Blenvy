@@ -36,13 +36,13 @@ pub enum GltfBlueprintsSet {
 #[derive(Bundle)]
 pub struct BluePrintBundle {
     pub blueprint: BlueprintInfo,
-    pub spawn_here: SpawnHere,
+    pub spawn_here: SpawnBlueprint,
 }
 impl Default for BluePrintBundle {
     fn default() -> Self {
         BluePrintBundle {
             blueprint: BlueprintInfo{ name: "default".into(), path:"".into()},
-            spawn_here: SpawnHere,
+            spawn_here: SpawnBlueprint,
         }
     }
 }
@@ -105,7 +105,7 @@ impl Plugin for BlueprintsPlugin {
 
             .register_type::<BlueprintInfo>()
             .register_type::<MaterialInfo>()
-            .register_type::<SpawnHere>()
+            .register_type::<SpawnBlueprint>()
             .register_type::<BlueprintAnimations>()
             .register_type::<SceneAnimations>()
             .register_type::<AnimationInfo>()
@@ -136,7 +136,7 @@ impl Plugin for BlueprintsPlugin {
                     blueprints_check_assets_loading,
                     blueprints_assets_ready,
                     blueprints_scenes_spawned,
-                    blueprints_transfer_components,
+                    blueprints_cleanup_spawned_scene,
 
                     // post process
                     inject_materials,

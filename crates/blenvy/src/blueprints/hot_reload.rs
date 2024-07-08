@@ -2,7 +2,7 @@
 use bevy::prelude::*;
 use bevy::asset::{AssetEvent, LoadedUntypedAsset};
 use bevy::scene::SceneInstance;
-use crate::{BlueprintAssetsLoadState, BlueprintAssetsLoaded, BlueprintInfo, SpawnHere};
+use crate::{BlueprintAssetsLoadState, BlueprintAssetsLoaded, BlueprintInfo, SpawnBlueprint};
 
 pub(crate) fn react_to_asset_changes(
     mut gltf_events: EventReader<AssetEvent<Gltf>>,
@@ -33,7 +33,7 @@ pub(crate) fn react_to_asset_changes(
                                     .remove::<BlueprintAssetsLoaded>()
                                     .remove::<SceneInstance>()
                                     .remove::<BlueprintAssetsLoadState>()
-                                    .insert(SpawnHere);
+                                    .insert(SpawnBlueprint);
 
                                 break;
                             }

@@ -89,7 +89,7 @@ expected_custom_property_values = {'bevy_animation::AnimationPlayer': '(animatio
  'bevy_gltf_blueprints::animation::SceneAnimations': '(named_animations: "")',
  'bevy_gltf_blueprints::materials::MaterialInfo': '(name: " ", source: " ")',
  'bevy_gltf_blueprints::spawn_from_blueprints::BlueprintsList': '({})',
- 'bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere': '()',
+ 'bevy_gltf_blueprints::spawn_from_blueprints::SpawnBlueprint': '()',
  'bevy_gltf_components::GltfProcessed': '()',
  'bevy_gltf_components::blender_settings::lighting::BlenderBackgroundShader': '(color: Rgba(red:1.0, green:1.0, '
                                                                               'blue:0.0, alpha:1.0), strength: 0.0)',
@@ -347,7 +347,7 @@ expected_custom_property_values_randomized = {'bevy_animation::AnimationPlayer':
  'bevy_gltf_blueprints::animation::SceneAnimations': '(named_animations: "")',
  'bevy_gltf_blueprints::materials::MaterialInfo': '(name: "sbnpsago", source: "piuzfbqp")',
  'bevy_gltf_blueprints::spawn_from_blueprints::BlueprintsList': '({})',
- 'bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere': '()',
+ 'bevy_gltf_blueprints::spawn_from_blueprints::SpawnBlueprint': '()',
  'bevy_gltf_components::GltfProcessed': '()',
  'bevy_gltf_components::blender_settings::lighting::BlenderBackgroundShader': '(color: Rgba(red:0.5714026093482971, '
                                                                               'green:0.42888906598091125, '

@@ -218,7 +218,7 @@ Bevy Side:
 - [x] make blueprint instances invisible until spawning is done to avoid "spawn flash"?
     - [x] make this controlable via an additional "HideUntilReady" component
     - [x] register "HideUntilReady" so users can set this on their blueprints in Blender directly
-- [ ] restructure blueprint spawning 
+- [x] restructure blueprint spawning 
     - [x] "blueprint ready" only be triggered after all its sub blueprints are ready 
     - [x] "blueprintInstance ready"/finished
         BlueprintAssetsLoaded
@@ -228,7 +228,7 @@ Bevy Side:
     - [x] fix issues with deeply nested blueprints
         - perhaps reverse logic by using iter_ascendants
     - [x] fix materials handling
-    - [ ] fix animations handling
+    - [x] fix animations handling
 
 - [ ] simplify testing example:
     - [x] remove use of rapier physics (or even the whole common boilerplate ?)
