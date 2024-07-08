@@ -13424,6 +13424,17 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "blenvy::blueprints::spawn_from_blueprints::HideUntilReady": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "blenvy::blueprints::spawn_from_blueprints::HideUntilReady",
+      "properties": {},
+      "required": [],
+      "short_name": "HideUntilReady",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "blenvy::blueprints::spawn_from_blueprints::SpawnHere": {
       "additionalProperties": false,
       "isComponent": true,

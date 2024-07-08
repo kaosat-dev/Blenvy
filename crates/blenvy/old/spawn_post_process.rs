@@ -5,7 +5,7 @@ use bevy::prelude::*;
 use bevy::scene::SceneInstance;
 // use bevy::utils::hashbrown::HashSet;
 
-use crate::{BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintInfo, BlueprintReadyForPostProcess, BlueprintInstanceReady, BlueprintSpawning, SpawnTrackRoot, SubBlueprintsSpawnTracker};
+use crate::{BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintInfo, BlueprintReadyForPostProcess, BlueprintInstanceReady, BlueprintSpawning, SubBlueprintSpawnRoot, SubBlueprintsSpawnTracker};
 use crate::{SpawnHere, Spawned};
 use crate::{
     BlueprintEvent, CopyComponents, InBlueprint, NoInBlueprint, OriginalChildren
@@ -32,7 +32,7 @@ pub(crate) fn spawned_blueprint_post_process( // rename to '
             &BlueprintInfo,
 
             // sub blueprint instances tracker
-            Option<&SpawnTrackRoot>
+            Option<&SubBlueprintSpawnRoot>
         ),
         (With<SpawnHere>, With<SceneInstance>, Added<BlueprintReadyForPostProcess>),
     >,

@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use blenvy::{BluePrintBundle, BlueprintInfo, DynamicBlueprintInstance, GameWorldTag, HideUntilReady, SpawnHere};
+use blenvy::{AddToGameWorld, BluePrintBundle, BlueprintInfo, DynamicBlueprintInstance, GameWorldTag, HideUntilReady, SpawnHere};
 use crate::{GameState, InAppRunning};
 
 //use bevy_rapier3d::prelude::Velocity;
@@ -69,7 +69,7 @@ pub fn spawn_test(
                 DynamicBlueprintInstance,
                 bevy::prelude::Name::from(format!("test{}", name_index)),
                 HideUntilReady,
-                // SpawnHere,
+                AddToGameWorld,
                 TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
                 /*Velocity {
                     linvel: Vec3::new(vel_x, vel_y, vel_z),
@@ -77,6 +77,6 @@ pub fn spawn_test(
                 },*/
             ))
             .id();
-        commands.entity(world).add_child(new_entity);
+        //commands.entity(world).add_child(new_entity);
     }
 }

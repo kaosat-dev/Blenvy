@@ -137,7 +137,10 @@ fn check_for_gltf_events(
             BlueprintEvent::InstanceReady{entity, blueprint_name, blueprint_path} => {
                 info!("BLUEPRINT EVENT: {:?} for {:?}", event, all_names.get(*entity));
 
-            }
+            },
+            BlueprintEvent::AssetsLoaded { entity, blueprint_name, blueprint_path }=> {
+                info!("BLUEPRINT EVENT: {:?} for {:?}", event, all_names.get(*entity));
+            },
             _=> {
                 info!("BLUEPRINT EVENT: {:?}", event);
             }

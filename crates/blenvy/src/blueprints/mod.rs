@@ -16,6 +16,9 @@ pub use materials::*;
 pub mod copy_components;
 pub use copy_components::*;
 
+pub mod hot_reload;
+pub use hot_reload::*;
+
 use core::fmt;
 use std::path::PathBuf;
 
@@ -98,6 +101,7 @@ impl Plugin for BlueprintsPlugin {
         app
             .register_watching_for_changes()
 
+            .add_event::<BlueprintEvent>()
 
             .register_type::<BlueprintInfo>()
             .register_type::<MaterialInfo>()
@@ -116,10 +120,9 @@ impl Plugin for BlueprintsPlugin {
             .register_type::<Vec<String>>()
             .register_type::<BlueprintAssets>()
 
-            .add_event::<BlueprintEvent>()
-
-
             .register_type::<HashMap<String, Vec<String>>>()
+            .register_type::<HideUntilReady>()
+
             .configure_sets(
                 Update,
                 (GltfBlueprintsSet::Spawn, GltfBlueprintsSet::AfterSpawn)

@@ -215,7 +215,9 @@ Blender side:
 
 Bevy Side:
 - [x] deprecate BlueprintName & BlueprintPath & use BlueprintInfo instead
-- [ ] make blueprint instances invisible until spawning is done to avoid "spawn flash"?
+- [x] make blueprint instances invisible until spawning is done to avoid "spawn flash"?
+    - [x] make this controlable via an additional "HideUntilReady" component
+    - [x] register "HideUntilReady" so users can set this on their blueprints in Blender directly
 - [ ] restructure blueprint spawning 
     - [x] "blueprint ready" only be triggered after all its sub blueprints are ready 
     - [x] "blueprintInstance ready"/finished
@@ -223,7 +225,7 @@ Bevy Side:
         BlueprintSceneSpawned
         BlueprintChildrenReady
         BlueprintReadyForPostProcess
-    - [ ] fix issues with deeply nested blueprints
+    - [x] fix issues with deeply nested blueprints
         - perhaps reverse logic by using iter_ascendants
     - [x] fix materials handling
     - [ ] fix animations handling
@@ -235,7 +237,7 @@ Bevy Side:
     - [ ] other examples without interactions or physics 
 - [ ] add hot reloading
     - [x] basics
-    - [ ] make it enabled/disabled based on general flag
+    - [x] make it enabled/disabled based on general flag
     - [ ] cleanup internals
 - [ ] review & change general component insertion & spawning ordering & logic
     - GltfComponentsSet::Injection => GltfBlueprintsSet::Spawn => GltfBlueprintsSet::AfterSpawn
