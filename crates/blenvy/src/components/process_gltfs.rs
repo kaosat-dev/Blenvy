@@ -48,11 +48,8 @@ fn find_entity_components(
             updated_components.push((component.clone_value(), type_registration));
         }
         return (target_entity, updated_components);
-        //entity_components.insert(target_entity, updated_components);
-    } else {
-        return (target_entity, reflect_components);
-        // entity_components.insert(target_entity, reflect_components);
     }
+    (target_entity, reflect_components)
 }
 
 /// main function: injects components into each entity in gltf files that have `gltf_extras`, using reflection

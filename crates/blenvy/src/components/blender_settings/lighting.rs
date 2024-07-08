@@ -50,7 +50,7 @@ pub struct BlenderShadowSettings {
     pub cascade_size: usize,
 }
 
-/// Not all possible Blender ToneMappings are available in Bevy & vice versa
+/// Not all possible Blender `ToneMappings` are available in Bevy & vice versa
 #[derive(Component, Reflect, Default, Debug, PartialEq, Clone)]
 #[reflect(Component)]
 #[non_exhaustive]

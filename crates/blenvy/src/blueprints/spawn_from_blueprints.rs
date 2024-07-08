@@ -230,7 +230,7 @@ pub(crate) fn blueprints_check_assets_loading(
             assets_to_load.all_loaded = true;
             // println!("LOADING: DONE for ALL assets of {:?} (instance of {}), preparing for spawn", entity_name, blueprint_info.path);
             blueprint_events.send(BlueprintEvent::AssetsLoaded {
-                entity: entity,
+                entity,
                 blueprint_name: blueprint_info.name.clone(),
                 blueprint_path: blueprint_info.path.clone(),
             });
@@ -344,8 +344,8 @@ pub(crate) fn blueprints_assets_ready(
             },
             OriginalChildren(original_children),
             BlueprintAnimations {
-                // these are animations specific to the inside of the blueprint
-                named_animations: named_animations, //gltf.named_animations.clone(),
+                // these are animations specific to the blueprint
+                named_animations,
                 named_indices: animation_indices,
                 graph,
             },
@@ -650,7 +650,7 @@ pub(crate) fn blueprints_finalize_instances(
         }
 
         blueprint_events.send(BlueprintEvent::InstanceReady {
-            entity: entity,
+            entity,
             blueprint_name: blueprint_info.name.clone(),
             blueprint_path: blueprint_info.path.clone(),
         });

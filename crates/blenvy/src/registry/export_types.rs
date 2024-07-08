@@ -41,7 +41,7 @@ pub fn export_types(world: &mut World) {
     )
     .expect("valid json");
 
-    info!("Done exporting registry schema")
+    info!("Done exporting registry schema");
 }
 
 pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
