@@ -52,15 +52,12 @@ impl Default for BluePrintBundle {
 pub struct BlueprintsPlugin {
     /// Automatically generate aabbs for the blueprints root objects
     pub aabbs: bool,
-    /// use library of materials
-    pub material_library: bool,
 }
 
 impl Default for BlueprintsPlugin {
     fn default() -> Self {
         Self {
             aabbs: false,
-            material_library: false,
         }
     }
 }
