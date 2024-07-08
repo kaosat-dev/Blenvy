@@ -4,8 +4,9 @@ use bevy::{gltf::Gltf, prelude::*, scene::SceneInstance, utils::hashbrown::HashM
 use serde_json::Value;
 
 use crate::{
-    AssetLoadTracker, BlenvyConfig, BlueprintAnimationPlayerLink, BlueprintAnimations,
-    BlueprintAssets, BlueprintAssetsLoadState, BlueprintAssetsLoaded, BlueprintAssetsNotLoaded,
+    AnimationInfos, AssetLoadTracker, BlenvyConfig, BlueprintAnimationPlayerLink,
+    BlueprintAnimations, BlueprintAssets, BlueprintAssetsLoadState, BlueprintAssetsLoaded,
+    BlueprintAssetsNotLoaded, SceneAnimationPlayerLink, SceneAnimations,
 };
 
 /// this is a flag component for our levels/game world
@@ -63,6 +64,10 @@ pub(crate) struct OriginalChildren(pub Vec<Entity>);
 /// You usually want to use this for worlds/level spawning , or dynamic spawning at runtime, but not when you are adding blueprint instances to an existing entity
 /// as it would first become invisible before re-appearing again
 pub struct HideUntilReady;
+
+#[derive(Component)]
+/// marker component, gets added to all children of a currently spawning blueprint instance, can be usefull to avoid manipulating still in progress entities
+pub struct BlueprintDisabled;
 
 #[derive(Event, Debug)]
 pub enum BlueprintEvent {
@@ -245,7 +250,7 @@ pub(crate) fn blueprints_check_assets_loading(
     }
 }
 
-pub(crate) fn blueprints_assets_ready(
+pub(crate) fn blueprints_assets_loaded(
     spawn_placeholders: Query<
         (
             Entity,
@@ -255,6 +260,7 @@ pub(crate) fn blueprints_assets_ready(
             Option<&AddToGameWorld>,
             Option<&Name>,
             Option<&HideUntilReady>,
+            Option<&AnimationInfos>,
         ),
         (
             With<BlueprintAssetsLoaded>,
@@ -279,6 +285,7 @@ pub(crate) fn blueprints_assets_ready(
         add_to_world,
         name,
         hide_until_ready,
+        animation_infos,
     ) in spawn_placeholders.iter()
     {
         /*info!(
@@ -294,7 +301,7 @@ pub(crate) fn blueprints_assets_ready(
         // info!("attempting to spawn {:?}", model_path);
         let model_handle: Handle<Gltf> = asset_server.load(blueprint_info.path.clone()); // FIXME: kinda weird now
 
-        let gltf = assets_gltf.get(&model_handle).unwrap_or_else(|| {
+        let blueprint_gltf = assets_gltf.get(&model_handle).unwrap_or_else(|| {
             panic!(
                 "gltf file {:?} should have been loaded",
                 &blueprint_info.path
@@ -302,13 +309,13 @@ pub(crate) fn blueprints_assets_ready(
         });
 
         // WARNING we work under the assumtion that there is ONLY ONE named scene, and that the first one is the right one
-        let main_scene_name = gltf
+        let main_scene_name = blueprint_gltf
             .named_scenes
             .keys()
             .next()
             .expect("there should be at least one named scene in the gltf file to spawn");
 
-        let scene = &gltf.named_scenes[main_scene_name];
+        let scene = &blueprint_gltf.named_scenes[main_scene_name];
 
         // transforms are optional, but still deal with them correctly
         let mut transforms: Transform = Transform::default();
@@ -329,12 +336,15 @@ pub(crate) fn blueprints_assets_ready(
         let mut named_animations: HashMap<String, Handle<AnimationClip>> = HashMap::new();
         let mut animation_indices: HashMap<String, AnimationNodeIndex> = HashMap::new();
 
-        for (key, clip) in gltf.named_animations.iter() {
+        for (key, clip) in blueprint_gltf.named_animations.iter() {
             named_animations.insert(key.to_string(), clip.clone());
             let animation_index = graph.add_clip(clip.clone(), 1.0, graph.root);
             animation_indices.insert(key.to_string(), animation_index);
         }
         let graph = graphs.add(graph);
+
+        println!("Named animations : {:?}", named_animations.keys());
+        println!("ANIMATION INFOS: {:?}", animation_infos);
 
         commands.entity(entity).insert((
             SceneBundle {
@@ -344,6 +354,7 @@ pub(crate) fn blueprints_assets_ready(
             },
             OriginalChildren(original_children),
             BlueprintAnimations {
+                // TODO: perhaps swap this out with SceneAnimations depending on whether we are spawning a level or a simple blueprint
                 // these are animations specific to the blueprint
                 named_animations,
                 named_indices: animation_indices,
@@ -466,6 +477,8 @@ pub(crate) fn blueprints_scenes_spawned(
                         }
                     }
                 }
+                // Mark all components as "Disabled" (until Bevy gets this as first class feature)
+                commands.entity(child).insert(BlueprintDisabled);
             }
         }
 
@@ -496,29 +509,30 @@ pub struct BlueprintReadyForPostProcess;
 /// - it copies the children of the blueprint scene into the original entity
 /// - it adds an `AnimationLink` component containing the entity that has the AnimationPlayer so that animations can be controlled from the original entity
 pub(crate) fn blueprints_cleanup_spawned_scene(
-    foo: Query<
+    blueprint_scenes: Query<
         (
             Entity,
             &Children,
             &OriginalChildren,
             Option<&Name>,
-            Option<&SubBlueprintSpawnRoot>,
             &BlueprintAnimations,
             Option<&NoInBlueprint>,
         ),
         Added<BlueprintChildrenReady>,
     >,
-    added_animation_players: Query<(Entity, &Parent), Added<AnimationPlayer>>,
-
-    mut sub_blueprint_trackers: Query<&mut SubBlueprintsSpawnTracker, With<BlueprintInfo>>,
+    animation_players: Query<(Entity, &Parent), With<AnimationPlayer>>,
     all_children: Query<&Children>,
+    all_parents: Query<&Parent>,
+    with_animation_infos: Query<&AnimationInfos>,
+    // FIXME: meh
+    anims: Query<&BlueprintAnimations>,
 
     mut commands: Commands,
 
     all_names: Query<&Name>,
 ) {
-    for (original, children, original_children, name, track_root, animations, no_inblueprint) in
-        foo.iter()
+    for (original, children, original_children, name, animations, no_inblueprint) in
+        blueprint_scenes.iter()
     {
         info!("YOOO ready !! removing empty nodes {:?}", name);
 
@@ -562,20 +576,65 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
         }
 
         if animations.named_animations.keys().len() > 0 {
-            for (added, parent) in added_animation_players.iter() {
+            for (entity_with_player, parent) in animation_players.iter() {
                 if parent.get() == blueprint_root_entity {
+                    println!(
+                        "FOUND ANIMATION PLAYER FOR {:?} {:?} ",
+                        all_names.get(original),
+                        all_names.get(entity_with_player)
+                    );
                     // FIXME: stopgap solution: since we cannot use an AnimationPlayer at the root entity level
                     // and we cannot update animation clips so that the EntityPaths point to one level deeper,
                     // BUT we still want to have some marker/control at the root entity level, we add this
                     commands
                         .entity(original)
-                        .insert((BlueprintAnimationPlayerLink(added),));
+                        .insert((BlueprintAnimationPlayerLink(entity_with_player),)); // FIXME : this is only valid for per-blueprint logic, no per scene animations
 
                     // since v0.14 you need both AnimationTransitions and AnimationGraph components/handle on the same entity as the animationPlayer
                     let transitions = AnimationTransitions::new();
                     commands
-                        .entity(added)
+                        .entity(entity_with_player)
                         .insert((transitions, animations.graph.clone()));
+                }
+            }
+            // VERY convoluted, but it works
+            for child in all_children.iter_descendants(blueprint_root_entity) {
+                if with_animation_infos.get(child).is_ok() {
+                    // player is already on the same entity as the animation_infos
+                    if animation_players.get(child).is_ok() {
+                        println!(
+                            "found BLUEPRINT animation player for {:?} at {:?} Root: {:?}",
+                            all_names.get(child),
+                            all_names.get(child),
+                            all_names.get(original)
+                        );
+                        /*commands
+                        .entity(original)
+                        .insert((BlueprintAnimationPlayerLink(bla),)); */
+                    } else {
+                        for parent in all_parents.iter_ancestors(child) {
+                            if animation_players.get(parent).is_ok() {
+                                println!(
+                                    "found SCENE animation player for {:?} at {:?} Root: {:?}",
+                                    all_names.get(child),
+                                    all_names.get(parent),
+                                    all_names.get(original)
+                                );
+                                println!("INSERTING SCENE ANIMATIONS INTO");
+                                let original_animations = anims.get(original).unwrap();
+                                commands.entity(child).insert((
+                                    SceneAnimationPlayerLink(parent),
+                                    SceneAnimations {
+                                        named_animations: original_animations
+                                            .named_animations
+                                            .clone(),
+                                        named_indices: original_animations.named_indices.clone(),
+                                        graph: original_animations.graph.clone(),
+                                    },
+                                ));
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -585,19 +644,54 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
             .insert(BlueprintReadyForPostProcess); // Tag the entity so any systems dealing with post processing can know it is now their "turn"
 
         commands.entity(blueprint_root_entity).despawn_recursive(); // Remove the root entity that comes from the spawned-in scene
+    }
+}
 
+#[derive(Component, Reflect, Debug)]
+#[reflect(Component)]
+pub struct BlueprintReadyForFinalizing;
+
+pub(crate) fn blueprints_finalize_instances(
+    blueprint_instances: Query<
+        (
+            Entity,
+            Option<&Name>,
+            &BlueprintInfo,
+            Option<&SubBlueprintSpawnRoot>,
+            Option<&HideUntilReady>,
+        ),
+        (With<BlueprintSpawning>, With<BlueprintReadyForFinalizing>),
+    >,
+    mut sub_blueprint_trackers: Query<&mut SubBlueprintsSpawnTracker, With<BlueprintInfo>>,
+    all_children: Query<&Children>,
+    mut blueprint_events: EventWriter<BlueprintEvent>,
+    mut commands: Commands,
+) {
+    for (entity, name, blueprint_info, parent_blueprint, hide_until_ready) in
+        blueprint_instances.iter()
+    {
+        info!("Finalizing blueprint instance {:?}", name);
+        commands
+            .entity(entity)
+            .remove::<BlueprintReadyForPostProcess>()
+            .remove::<BlueprintSpawning>()
+            .remove::<SpawnBlueprint>()
+            //.remove::<Handle<Scene>>(); // FIXME: if we delete the handle to the scene, things get despawned ! not what we want
+            //.remove::<BlueprintAssetsLoadState>(); // also clear the sub assets tracker to free up handles, perhaps just freeing up the handles and leave the rest would be better ?
+            //.remove::<BlueprintAssetsLoaded>();
+            .insert(BlueprintInstanceReady);
+
+        // Deal with sub blueprints
         // now check if the current entity is a child blueprint instance of another entity
         // this should always be done last, as children should be finished before the parent can be processed correctly
         // TODO: perhaps use observers for these
-        if let Some(track_root) = track_root {
-            let root_name = all_names.get(track_root.0);
-            println!("got some root {:?}", root_name);
+        if let Some(track_root) = parent_blueprint {
             if let Ok(mut tracker) = sub_blueprint_trackers.get_mut(track_root.0) {
                 tracker
                     .sub_blueprint_instances
-                    .entry(original)
+                    .entry(entity)
                     .or_insert(true);
-                tracker.sub_blueprint_instances.insert(original, true);
+                tracker.sub_blueprint_instances.insert(entity, true);
 
                 // TODO: ugh, my limited rust knowledge, this is bad code
                 let mut all_spawned = true;
@@ -613,37 +707,10 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
                 }
             }
         }
-    }
-}
 
-#[derive(Component, Reflect, Debug)]
-#[reflect(Component)]
-pub struct BlueprintReadyForFinalizing;
-
-pub(crate) fn blueprints_finalize_instances(
-    blueprint_instances: Query<
-        (
-            Entity,
-            Option<&Name>,
-            &BlueprintInfo,
-            Option<&HideUntilReady>,
-        ),
-        (With<BlueprintSpawning>, With<BlueprintReadyForFinalizing>),
-    >,
-    mut blueprint_events: EventWriter<BlueprintEvent>,
-    mut commands: Commands,
-) {
-    for (entity, name, blueprint_info, hide_until_ready) in blueprint_instances.iter() {
-        info!("Finalizing blueprint instance {:?}", name);
-        commands
-            .entity(entity)
-            .remove::<SpawnBlueprint>()
-            .remove::<BlueprintSpawning>()
-            .remove::<BlueprintReadyForPostProcess>()
-            //.remove::<Handle<Scene>>(); // FIXME: if we delete the handle to the scene, things get despawned ! not what we want
-            //.remove::<BlueprintAssetsLoadState>(); // also clear the sub assets tracker to free up handles, perhaps just freeing up the handles and leave the rest would be better ?
-            //.remove::<BlueprintAssetsLoaded>();
-            .insert(BlueprintInstanceReady);
+        for child in all_children.iter_descendants(entity) {
+            commands.entity(child).remove::<BlueprintDisabled>();
+        }
 
         if hide_until_ready.is_some() {
             commands.entity(entity).insert(Visibility::Visible);

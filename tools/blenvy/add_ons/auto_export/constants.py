@@ -9,4 +9,3 @@ custom_properties_to_filter_out = [
     'Blenvy_scene_type', 'blenvy_scene_type',
     'Materials_path', 'Export_path'
     ]
-#['_combine', 'template', 'components_meta', 'Components_meta', 'Blenvy_scene_type']

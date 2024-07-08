@@ -23,6 +23,7 @@ pub struct BlueprintAnimationPlayerLink(pub Entity);
 pub struct SceneAnimations {
     pub named_animations: HashMap<String, Handle<AnimationClip>>,
     pub named_indices: HashMap<String, AnimationNodeIndex>,
+    pub graph: Handle<AnimationGraph>,
 }
 
 #[derive(Component, Debug)]

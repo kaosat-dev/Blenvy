@@ -228,7 +228,15 @@ Bevy Side:
     - [x] fix issues with deeply nested blueprints
         - perhaps reverse logic by using iter_ascendants
     - [x] fix materials handling
-    - [x] fix animations handling
+    - [ ] fix animations handling
+        - [x] fix/upgrade blueprint level animations
+        - [x] fix/upgrade scene level animations
+        - [ ] rename SceneAnimations to LevelAnimations (more coherent with the rest)
+    - [x] move sub blueprint handling to blueprints_finalize_instances
+- [ ] look into component overriding , it seems broken:
+    - [ ] blueprint level/ collection level components are now visible in instances in Blender
+    - [ ] they do not seem to be transfered to the (instance) entity above:
+        could they be on the "empty node" ? 
 
 - [ ] simplify testing example:
     - [x] remove use of rapier physics (or even the whole common boilerplate ?)
@@ -238,16 +246,18 @@ Bevy Side:
 - [ ] add hot reloading
     - [x] basics
     - [x] make it enabled/disabled based on general flag
+    - [ ] make 
     - [ ] cleanup internals
-- [ ] review & change general component insertion & spawning ordering & logic
+
+- [x] review & change general component insertion & spawning ordering & logic
     - GltfComponentsSet::Injection => GltfBlueprintsSet::Spawn => GltfBlueprintsSet::AfterSpawn
         Injection => inject lights & co => spawn => afterSpawn
                                                  => Injection => inject lights & co 
 
 - [ ] add a way of overriding assets for collection instances => doubt this is possible
 - [ ] cleanup all the spurious debug messages
-- [ ] fix animation handling
-    - [ ] how to deal with animation graphs ?
+- [x] fix animation handling
+    - [x] how to deal with animation graphs ?
 
 - [ ] update main docs
     - [ ] rename project to Blenvy

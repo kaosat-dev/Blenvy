@@ -70,8 +70,8 @@ pub fn spawn_test(
             .spawn((
                 BluePrintBundle {
                     blueprint: BlueprintInfo {
-                        name: "Blueprint1".into(),
-                        path: "blueprints/Blueprint1.glb".into(),
+                        name: "Blueprint8_animated_no_bones".into(),
+                        path: "blueprints/Blueprint6_animated.glb".into(),
                     }, // FIXME
                     ..Default::default()
                 },

@@ -169,7 +169,8 @@ impl Plugin for GamePlugin {
         app.register_type::<Marker1>()
             .register_type::<Marker2>()
             .register_type::<Marker3>()
-            .register_type::<MarkerFox>()
+            .register_type::<MarkerAllFoxes>()
+            .register_type::<MarkerSpecificFox>()
 
             .add_systems(Update, (spawn_test).run_if(in_state(GameState::InGame)))
             .add_systems(Update, (validate_export, check_for_gltf_events))
@@ -178,12 +179,11 @@ impl Plugin for GamePlugin {
             .add_systems(OnEnter(AppState::MenuRunning), start_game)
             .add_systems(OnEnter(AppState::AppRunning), setup_game)
 
-            .add_systems(OnEnter(AppState::MenuRunning), setup_main_scene_animations)
             /* .add_systems(Update, (animations)
                 .run_if(in_state(AppState::AppRunning))
                 .after(GltfBlueprintsSet::AfterSpawn)
             )*/
-            .add_systems(Update, play_animations)
+            .add_systems(Update, (play_animations, check_animations))
             //.add_systems(Update, react_to_animation_markers)
 
              /*.add_systems(Update, generate_screenshot.run_if(on_timer(Duration::from_secs_f32(0.2)))) // TODO: run once

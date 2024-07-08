@@ -3705,14 +3705,25 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_example::game::animation::MarkerFox": {
+    "bevy_example::game::animation::MarkerAllFoxes": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
-      "long_name": "bevy_example::game::animation::MarkerFox",
+      "long_name": "bevy_example::game::animation::MarkerAllFoxes",
       "properties": {},
       "required": [],
-      "short_name": "MarkerFox",
+      "short_name": "MarkerAllFoxes",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_example::game::animation::MarkerSpecificFox": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "bevy_example::game::animation::MarkerSpecificFox",
+      "properties": {},
+      "required": [],
+      "short_name": "MarkerSpecificFox",
       "type": "object",
       "typeInfo": "Struct"
     },
@@ -13335,6 +13346,11 @@
       "isResource": false,
       "long_name": "blenvy::blueprints::animation::SceneAnimations",
       "properties": {
+        "graph": {
+          "type": {
+            "$ref": "#/$defs/bevy_asset::handle::Handle<bevy_animation::graph::AnimationGraph>"
+          }
+        },
         "named_animations": {
           "type": {
             "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<alloc::string::String, bevy_asset::handle::Handle<bevy_animation::AnimationClip>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
@@ -13348,7 +13364,8 @@
       },
       "required": [
         "named_animations",
-        "named_indices"
+        "named_indices",
+        "graph"
       ],
       "short_name": "SceneAnimations",
       "type": "object",

@@ -56,9 +56,7 @@ pub struct BlueprintsPlugin {
 
 impl Default for BlueprintsPlugin {
     fn default() -> Self {
-        Self {
-            aabbs: false,
-        }
+        Self { aabbs: false }
     }
 }
 
@@ -123,7 +121,7 @@ impl Plugin for BlueprintsPlugin {
                 (
                     blueprints_prepare_spawn,
                     blueprints_check_assets_loading,
-                    blueprints_assets_ready,
+                    blueprints_assets_loaded,
                     blueprints_scenes_spawned,
                     blueprints_cleanup_spawned_scene,
                     // post process
