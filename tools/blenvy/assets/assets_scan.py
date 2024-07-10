@@ -121,6 +121,30 @@ def get_main_scene_assets_tree(main_scene, blueprints_data, settings):
             added_asset.path = asset["path"]
     return assets_list
 
+# same as the above, withouth the clutter below : TODO: unify
+def get_main_scene_assets_tree2(main_scene, blueprints_data, settings):
+    blueprints_path =  getattr(settings, "blueprints_path")
+    export_gltf_extension = getattr(settings, "export_gltf_extension", ".glb")
+    blueprint_instance_names_for_scene = blueprints_data.blueprint_instances_per_main_scene.get(main_scene.name, None)
+
+    assets_list = get_user_assets_as_list(main_scene)
+    if blueprint_instance_names_for_scene:
+        for blueprint_name in blueprint_instance_names_for_scene:
+            blueprint = blueprints_data.blueprints_per_name.get(blueprint_name, None)
+            if blueprint is not None: 
+                blueprint_exported_path = None
+                if blueprint.local:
+                    blueprint_exported_path = os.path.join(blueprints_path, f"{blueprint.name}{export_gltf_extension}")
+                else:
+                    # get the injected path of the external blueprints
+                    blueprint_exported_path = blueprint.collection['export_path'] if 'export_path' in blueprint.collection else None
+                if blueprint_exported_path is not None and not does_asset_exist(assets_list, blueprint_exported_path):
+                    assets_list.append({"name": blueprint.name, "path": blueprint_exported_path, "type": "MODEL", "generated": True, "internal":blueprint.local, "parent": None})
+                
+                assets_list += get_blueprint_assets_tree(blueprint, blueprints_data, parent=blueprint.name, settings=settings)
+   
+    return assets_list
+
 def get_blueprint_asset_tree(blueprint, blueprints_data, settings):
     blueprints_path =  getattr(settings, "blueprints_path")
     export_gltf_extension = getattr(settings, "export_gltf_extension", ".glb")

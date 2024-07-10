@@ -185,7 +185,37 @@ Blender side:
 
 - [x] BLENVY_OT_item_select is missing handling for the other types (outside of object & collection)
     - [x] fix selection logic 
+- [x] update testing blend files
+- [x] disable 'export_hierarchy_full_collections' for all cases: not reliable and redudant
+- [ ] fix systematic material exports despite no changes
+- [ ] investigate lack of detection of changes of adding/changing components
+    - [ ] change scene serialization to account for collections ...sigh
+- [ ] also remove ____dummy____.bin when export format is gltf
 
+- [ ] fix/cleanup asset information injection (also needed for hot reload)
+    - [ ] add back per blueprint assets
+    - [ ] reuse the already existing asset_scan + export thing
+    - thoughts: 
+       - the "list of all assets" is actually the "fake"/generated one: nobody would write a list of assets for sub assets,
+    you would just add the assets to your blueprint
+       - in Bevy at spawning we have
+               blueprint => assets
+            for hot reload we need
+               asset => blueprint instances so we can despawn/respawn etc blueprint instances when one of their assets has changed 
+
+               problem of untyped vs typed
+               perhaps have a mapping of untyped => typed id
+               map asset id => [entity ids]
+
+- [ ] add option to 'split out' meshes from blueprints ? 
+    - [ ] ie considering meshletts etc , it would make sense to keep blueprints seperate from purely mesh gltfs
+- [ ] persist exported materials path in blueprints so that it can be read from library file users
+    - [ ] just like "export_path" write it into each blueprint's collection
+    - [ ] scan for used materials per blueprint !
+    - [ ] for scenes, scan for used materials of all non instance objects (TODO: what about overrides ?)
+
+- [ ] add a way of visualizing per blueprint instances ?
+- [ ] display export path of blueprints (mostly external) ?
 - [ ] hidden objects/collections only semi respected at export
     - this is because blueprints are external ?
     - [ ] verify based on gltf settings
@@ -199,19 +229,7 @@ Blender side:
     - [ ] disabled components 
     - [ ] blueprint instances as children of blueprint instances
     - [ ] blueprint instances as children of empties
-- [x] update testing blend files
-- [ ] disable 'export_hierarchy_full_collections' for all cases: not reliable and redudant
 
-
-- [ ] add option to 'split out' meshes from blueprints ? 
-    - [ ] ie considering meshletts etc , it would make sense to keep blueprints seperate from purely mesh gltfs
-- [ ] persist exported materials path in blueprints so that it can be read from library file users
-    - [ ] just like "export_path" write it into each blueprint's collection
-    - [ ] scan for used materials per blueprint !
-    - [ ] for scenes, scan for used materials of all non instance objects (TODO: what about overrides ?)
-
-- [ ] add a way of visualizing per blueprint instances ?
-- [ ] display export path of blueprints (mostly external) ?
 
 Bevy Side:
 - [x] deprecate BlueprintName & BlueprintPath & use BlueprintInfo instead
@@ -237,17 +255,26 @@ Bevy Side:
     - [x] blueprint level/ collection level components are now visible in instances in Blender
     - [x] they do not seem to be transfered to the (instance) entity above:
         could they be on the "empty node" ? 
+- [ ] add back & cleanup animation frame triggers
 
 - [ ] simplify testing example:
     - [x] remove use of rapier physics (or even the whole common boilerplate ?)
     - [ ] remove/replace bevy editor pls with some native ui to display hierarchies
     - [ ] a full fledged demo (including physics & co)
     - [ ] other examples without interactions or physics 
+
 - [ ] add hot reloading
     - [x] basics
     - [x] make it enabled/disabled based on general flag
-    - [ ] make 
-    - [ ] cleanup internals
+    - [x] account for changes impact both parent & children (ie "world" and "blueprint3") for example, which leads to a crash as there is double despawn /respawn so we need to filter things out 
+    - [x] if there are many assets/blueprints that have changed at the same time, it causes issues similar to the above, so apply a similar fix
+        - [x] also ignore any entities currently spawning (better to loose some information, than cause a crash)
+    - [ ] something is off with blueprint level components
+    - [ ] add the root blueprint itself to the assets either on the blender side or on the bevy side programatically
+    - [x] for sub blueprint tracking: do not propagate/ deal with parent blueprints if they are not themselves Spawning (ie filter out by "BlueprintSpawning")
+    - [ ] invalidate despawned entity & parent entities AABB 
+    - [x] cleanup internals
+
 
 - [x] review & change general component insertion & spawning ordering & logic
     - GltfComponentsSet::Injection => GltfBlueprintsSet::Spawn => GltfBlueprintsSet::AfterSpawn

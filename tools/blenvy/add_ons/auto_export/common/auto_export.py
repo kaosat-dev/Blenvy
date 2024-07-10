@@ -10,7 +10,7 @@ from ..blueprints.get_blueprints_to_export import get_blueprints_to_export
 from ..levels.get_levels_to_export import get_levels_to_export
 from .export_gltf import get_standard_exporter_settings
 
-from ..levels.export_main_scenes import export_main_scene
+from ..levels.export_levels import export_main_scene
 from ..blueprints.export_blueprints import export_blueprints
 from .export_materials import cleanup_materials, export_materials
 from ..levels.bevy_scene_components import remove_scene_components, upsert_scene_components
@@ -56,6 +56,7 @@ def auto_export(changes_per_scene, changed_export_parameters, settings):
         #inject/ update light shadow information
         for light in bpy.data.lights:
             enabled = 'true' if light.use_shadow else 'false'
+            # TODO: directly set relevant components instead ?
             light['BlenderLightShadows'] = f"(enabled: {enabled}, buffer_bias: {light.shadow_buffer_bias})"
 
         # export
@@ -69,7 +70,8 @@ def auto_export(changes_per_scene, changed_export_parameters, settings):
 
             # since materials export adds components we need to call this before blueprints are exported
             # export materials & inject materials components into relevant objects
-            if export_materials_library:
+            # FIXME: improve change detection, perhaps even add "material changes"
+            if export_materials_library and (changed_export_parameters or len(changes_per_scene.keys()) > 0 ):
                 export_materials(blueprints_data.blueprint_names, settings.library_scenes, settings)
 
             # update the list of tracked exports

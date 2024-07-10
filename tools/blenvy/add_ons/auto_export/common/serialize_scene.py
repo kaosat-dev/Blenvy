@@ -235,7 +235,9 @@ def custom_properties_hash(obj):
     custom_properties = {}
     for property_name in obj.keys():
         if property_name not in '_RNA_UI' and property_name != 'components_meta':
+            print("custom properties stuff for", obj, property_name)
             custom_properties[property_name] = obj[property_name]
+    print("custom props for hashing", custom_properties, str(h1_hash(str(custom_properties))) )
     return str(h1_hash(str(custom_properties)))
 
 def camera_hash(obj):
@@ -316,7 +318,7 @@ def modifiers_hash(object, settings):
 
 def serialize_scene(settings): 
     cache = {"materials":{}}
-    print("serializing scene")
+    print("serializing scenes")
     data = {}
 
 
@@ -325,6 +327,7 @@ def serialize_scene(settings):
 
     # TODO: only go through scenes actually in our list
     for scene in bpy.data.scenes:
+        print("scene", scene.name)
         # ignore temporary scenes
         if scene.name.startswith(TEMPSCENE_PREFIX):
             continue
