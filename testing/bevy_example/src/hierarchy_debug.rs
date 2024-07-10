@@ -4,7 +4,7 @@ use bevy::{
 };
 use blenvy::{BlueprintAssets, BlueprintInstanceReady};
 
-use crate::{BasicTest, EnumComplex, RedirectPropHitImpulse};
+use crate::{BasicTest, EnumComplex, EnumTest, RedirectPropHitImpulse};
 
 #[derive(Component)]
 pub struct HiearchyDebugTag;
@@ -43,7 +43,7 @@ pub fn get_descendants(
     all_transforms: &Query<&Transform>,
     all_global_transforms: &Query<&GlobalTransform>,
     nesting: usize,
-    to_check: &Query<&BasicTest>, //&Query<(&BlueprintInstanceReady, &BlueprintAssets)>,
+    to_check: &Query<&EnumTest>, //&Query<(&BlueprintInstanceReady, &BlueprintAssets)>,
 ) -> String {
     let mut hierarchy_display: Vec<String> = vec![];
     let root_name = all_names.get(*root);
@@ -54,15 +54,20 @@ pub fn get_descendants(
         name = "no_name".to_string()
     }
 
+    let mut component_display: String = "".into();
     let components_to_check = to_check.get(*root);
 
+    if let Ok(compo) = to_check.get(*root) {
+        component_display = format!("{:?}", compo).clone();
+    }
+
     hierarchy_display.push(format!(
-        "{}{} ({:?}) ({:?})",
+        "{}{} ====> {} ",
         " ".repeat(nesting),
         name,
-        all_transforms.get(*root),
-        all_global_transforms.get(*root)
-    )); //components_to_check  ({:?})
+        component_display // all_transforms.get(*root),
+                          //all_global_transforms.get(*root)
+    )); //  ({:?}) // ({:?}) ({:?})
 
     if let Ok(children) = all_children.get(*root) {
         for child in children.iter() {
@@ -88,7 +93,7 @@ pub fn draw_hierarchy_debug(
     all_transforms: Query<&Transform>,
     all_global_transforms: Query<&GlobalTransform>,
 
-    to_check: Query<&BasicTest>, //Query<(&BlueprintInstanceReady, &BlueprintAssets)>,
+    to_check: Query<&EnumTest>, //Query<(&BlueprintInstanceReady, &BlueprintAssets)>,
     mut display: Query<&mut Text, With<HiearchyDebugTag>>,
 ) {
     let mut hierarchy_display: Vec<String> = vec![];
@@ -183,7 +188,7 @@ impl Plugin for HiearchyDebugPlugin {
         app
             .add_systems(Startup, setup_hierarchy_debug)
             //.add_systems(Update, check_for_component)
-            //.add_systems(Update, draw_hierarchy_debug)
+            .add_systems(Update, draw_hierarchy_debug)
             //.add_systems(Update, check_for_gltf_extras)
            ;
     }

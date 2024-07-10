@@ -18,7 +18,7 @@ use crate::{ronstring_to_reflect_component, GltfProcessed};
 // , mut entity_components: HashMap<Entity, Vec<(Box<dyn Reflect>, TypeRegistration)>>
 fn find_entity_components(
     entity: Entity,
-    name: &Name,
+    name: Option<&Name>,
     parent: Option<&Parent>,
     reflect_components: Vec<(Box<dyn Reflect>, TypeRegistration)>,
     entity_components: &HashMap<Entity, Vec<(Box<dyn Reflect>, TypeRegistration)>>,
@@ -27,10 +27,13 @@ fn find_entity_components(
     let mut target_entity = entity;
     // if the node contains "components" or ends with "_pa" (ie add to parent), the components will not be added to the entity itself but to its parent
     // this is mostly used for Blender collections
-    if parent.is_some() && (name.as_str().contains("components") || name.as_str().ends_with("_pa"))
-    {
-        debug!("adding components to parent");
-        target_entity = parent.expect("the target entity had a parent ").get();
+    if parent.is_some() {
+        if let Some(name) = name {
+            if name.as_str().contains("components") || name.as_str().ends_with("_pa") {
+                debug!("adding components to parent");
+                target_entity = parent.expect("the target entity had a parent ").get();
+            }
+        }
     }
     debug!("adding to {:?}", target_entity);
 
@@ -54,10 +57,10 @@ fn find_entity_components(
 
 /// main function: injects components into each entity in gltf files that have `gltf_extras`, using reflection
 pub fn add_components_from_gltf_extras(world: &mut World) {
-    let mut extras = world.query_filtered::<(Entity, &Name, &GltfExtras, Option<&Parent>), (Added<GltfExtras>, Without<GltfProcessed>)>();
-    let mut scene_extras = world.query_filtered::<(Entity, &Name, &GltfSceneExtras, Option<&Parent>), (Added<GltfSceneExtras>, Without<GltfProcessed>)>();
-    let mut mesh_extras = world.query_filtered::<(Entity, &Name, &GltfMeshExtras, Option<&Parent>), (Added<GltfMeshExtras>, Without<GltfProcessed>)>();
-    let mut material_extras = world.query_filtered::<(Entity, &Name, &GltfMaterialExtras, Option<&Parent>), (Added<GltfMaterialExtras>, Without<GltfProcessed>)>();
+    let mut extras = world.query_filtered::<(Entity, Option<&Name>, &GltfExtras, Option<&Parent>), (Added<GltfExtras>, Without<GltfProcessed>)>();
+    let mut scene_extras = world.query_filtered::<(Entity, Option<&Name>, &GltfSceneExtras, Option<&Parent>), (Added<GltfSceneExtras>, Without<GltfProcessed>)>();
+    let mut mesh_extras = world.query_filtered::<(Entity, Option<&Name>, &GltfMeshExtras, Option<&Parent>), (Added<GltfMeshExtras>, Without<GltfProcessed>)>();
+    let mut material_extras = world.query_filtered::<(Entity, Option<&Name>, &GltfMaterialExtras, Option<&Parent>), (Added<GltfMaterialExtras>, Without<GltfProcessed>)>();
 
     let mut entity_components: HashMap<Entity, Vec<(Box<dyn Reflect>, TypeRegistration)>> =
         HashMap::new();
@@ -66,13 +69,14 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
 
     for (entity, name, extra, parent) in extras.iter(world) {
         debug!(
-            "Name: {}, entity {:?}, parent: {:?}, extras {:?}",
+            "Gltf Extra: Name: {:?}, entity {:?}, parent: {:?}, extras {:?}",
             name, entity, parent, extra
         );
 
         let type_registry: &AppTypeRegistry = world.resource();
         let type_registry = type_registry.read();
         let reflect_components = ronstring_to_reflect_component(&extra.value, &type_registry);
+        // let name = name.unwrap_or(&Name::new(""));
 
         let (target_entity, updated_components) =
             find_entity_components(entity, name, parent, reflect_components, &entity_components);
@@ -81,7 +85,7 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
 
     for (entity, name, extra, parent) in scene_extras.iter(world) {
         debug!(
-            "Name: {}, entity {:?}, parent: {:?}, scene_extras {:?}",
+            "Gltf Scene Extra: Name: {:?}, entity {:?}, parent: {:?}, scene_extras {:?}",
             name, entity, parent, extra
         );
 
@@ -96,7 +100,7 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
 
     for (entity, name, extra, parent) in mesh_extras.iter(world) {
         debug!(
-            "Name: {}, entity {:?}, parent: {:?}, mesh_extras {:?}",
+            "Gltf Mesh Extra: Name: {:?}, entity {:?}, parent: {:?}, mesh_extras {:?}",
             name, entity, parent, extra
         );
 
@@ -111,7 +115,7 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
 
     for (entity, name, extra, parent) in material_extras.iter(world) {
         debug!(
-            "Name: {}, entity {:?}, parent: {:?}, material_extras {:?}",
+            "Name: {:?}, entity {:?}, parent: {:?}, material_extras {:?}",
             name, entity, parent, extra
         );
 
@@ -146,7 +150,7 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
                     .expect("Unable to reflect component")
                     .insert(&mut entity_mut, &*component, &type_registry);
 
-                entity_mut.insert(GltfProcessed); //  this is how can we insert any additional components
+                entity_mut.insert(GltfProcessed); //
             }
         }
     }

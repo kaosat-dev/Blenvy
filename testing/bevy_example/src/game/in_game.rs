@@ -14,23 +14,9 @@ pub fn setup_game(
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     // here we actually spawn our game world/level
-    /*commands.spawn((
-        SceneBundle {
-            scene: asset_server.load("levels/World.glb#Scene0"),
-            ..default()
-        },
-        bevy::prelude::Name::from("world"),
-        GameWorldTag,
-        InAppRunning,
-    ));*/
-
     commands.spawn((
-        BlueprintInfo {
-            name: "World".into(),
-            path: "levels/World.glb".into(),
-        },
+        BlueprintInfo::from_path("levels/World.gltf"),
         HideUntilReady,
-        bevy::prelude::Name::from("world"), //FIXME: not really needed ? could be infered from blueprint's name/ path
         SpawnBlueprint,
         GameWorldTag,
         InAppRunning,
@@ -70,8 +56,8 @@ pub fn spawn_test(
             .spawn((
                 BluePrintBundle {
                     blueprint: BlueprintInfo {
-                        name: "Blueprint8_animated_no_bones".into(),
-                        path: "blueprints/Blueprint6_animated.glb".into(),
+                        name: "spawned".into(),
+                        path: "blueprints/Blueprint 3.gltf".into(),
                     }, // FIXME
                     ..Default::default()
                 },

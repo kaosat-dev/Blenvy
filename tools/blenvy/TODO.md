@@ -233,9 +233,9 @@ Bevy Side:
         - [x] fix/upgrade scene level animations
         - [ ] rename SceneAnimations to LevelAnimations (more coherent with the rest)
     - [x] move sub blueprint handling to blueprints_finalize_instances
-- [ ] look into component overriding , it seems broken:
-    - [ ] blueprint level/ collection level components are now visible in instances in Blender
-    - [ ] they do not seem to be transfered to the (instance) entity above:
+- [x] look into component overriding , it seems broken:
+    - [x] blueprint level/ collection level components are now visible in instances in Blender
+    - [x] they do not seem to be transfered to the (instance) entity above:
         could they be on the "empty node" ? 
 
 - [ ] simplify testing example:

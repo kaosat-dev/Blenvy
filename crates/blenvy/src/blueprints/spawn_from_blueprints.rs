@@ -22,6 +22,17 @@ pub struct BlueprintInfo {
     pub name: String,
     pub path: String,
 }
+use std::path::Path;
+
+impl BlueprintInfo {
+    pub fn from_path(path: &str) -> BlueprintInfo {
+        let p = Path::new(&path);
+        return BlueprintInfo {
+            name: p.file_stem().unwrap().to_os_string().into_string().unwrap(), // seriously ? , also unwraps !!
+            path: path.into(),
+        };
+    }
+}
 
 /// flag component needed to signify the intent to spawn a Blueprint
 #[derive(Component, Reflect, Default, Debug)]
@@ -118,11 +129,14 @@ Overview of the Blueprint Spawning process
 */
 
 pub(crate) fn blueprints_prepare_spawn(
-    blueprint_instances_to_spawn: Query<(Entity, &BlueprintInfo), Added<SpawnBlueprint>>,
+    blueprint_instances_to_spawn: Query<
+        (Entity, &BlueprintInfo, Option<&Name>),
+        Added<SpawnBlueprint>,
+    >,
     mut commands: Commands,
     asset_server: Res<AssetServer>,
 ) {
-    for (entity, blueprint_info) in blueprint_instances_to_spawn.iter() {
+    for (entity, blueprint_info, entity_name) in blueprint_instances_to_spawn.iter() {
         info!(
             "BLUEPRINT: to spawn detected: {:?} path:{:?}",
             blueprint_info.name, blueprint_info.path
@@ -152,7 +166,6 @@ pub(crate) fn blueprints_prepare_spawn(
         for scene in gltf.scenes() {
             let scene_extras = scene.extras().clone().unwrap();
             let lookup: HashMap<String, Value> = serde_json::from_str(&scene_extras.get()).unwrap();
-
             if lookup.contains_key("BlueprintAssets") {
                 let assets_raw = &lookup["BlueprintAssets"];
                 //println!("ASSETS RAW {}", assets_raw);
@@ -191,8 +204,13 @@ pub(crate) fn blueprints_prepare_spawn(
         } else {
             commands.entity(entity).insert(BlueprintAssetsLoaded);
         }
+
+        // if the entity has no name, add one based on the blueprint's
+        commands
+            .entity(entity)
+            .insert(bevy::prelude::Name::from(blueprint_info.name.clone()));
         // add the blueprint spawning marker
-        commands.entity(entity).insert(BlueprintSpawning);
+        commands.entity(entity).insert((BlueprintSpawning));
     }
 }
 
