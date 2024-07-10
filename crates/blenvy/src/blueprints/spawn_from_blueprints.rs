@@ -4,9 +4,7 @@ use bevy::{gltf::Gltf, prelude::*, scene::SceneInstance, utils::hashbrown::HashM
 use serde_json::Value;
 
 use crate::{
-    AnimationInfos, AssetLoadTracker, BlenvyConfig, BlueprintAnimationPlayerLink,
-    BlueprintAnimations, BlueprintAssets, BlueprintAssetsLoadState, BlueprintAssetsLoaded,
-    BlueprintAssetsNotLoaded, SceneAnimationPlayerLink, SceneAnimations,
+    AnimationInfos, AssetLoadTracker, AssetToBlueprintInstancesMapper, BlenvyConfig, BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintAssets, BlueprintAssetsLoadState, BlueprintAssetsLoaded, BlueprintAssetsNotLoaded, SceneAnimationPlayerLink, SceneAnimations
 };
 
 /// this is a flag component for our levels/game world
@@ -39,11 +37,7 @@ impl BlueprintInfo {
 #[reflect(Component)]
 pub struct SpawnBlueprint;
 
-#[derive(Component, Debug)]
-/// flag component added when a Blueprint instance ist Ready : ie :
-/// - its assets have loaded
-/// - it has finished spawning
-pub struct BlueprintInstanceReady;
+
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
@@ -112,6 +106,9 @@ pub struct BlueprintSpawning;
 
 use gltf::Gltf as RawGltf;
 
+
+
+
 /*
 Overview of the Blueprint Spawning process
     - Blueprint Load Assets
@@ -135,6 +132,8 @@ pub(crate) fn blueprints_prepare_spawn(
     >,
     mut commands: Commands,
     asset_server: Res<AssetServer>,
+    // for hot reload
+    mut assets_to_blueprint_instances: ResMut<AssetToBlueprintInstancesMapper>
 ) {
     for (entity, blueprint_info, entity_name) in blueprint_instances_to_spawn.iter() {
         info!(
@@ -185,6 +184,18 @@ pub(crate) fn blueprints_prepare_spawn(
                             loaded: false,
                             handle: untyped_handle.clone(),
                         });
+                    }
+
+                    // FIXME: dang, too early, asset server has not yet started loading yet
+                    // let path_id = asset_server.get_path_id(&asset.path).expect("we should have alread checked for this asset");
+                    let path_id = asset.path.clone();
+                    // TODO: make this dependant on if hot reload is enabled or not
+                    if !assets_to_blueprint_instances.untyped_id_to_blueprint_entity_ids.contains_key(&path_id) {
+                        assets_to_blueprint_instances.untyped_id_to_blueprint_entity_ids.insert(path_id.clone(), vec![]);
+                    }
+                    // only insert if not already present in mapping
+                    if !assets_to_blueprint_instances.untyped_id_to_blueprint_entity_ids[&path_id].contains(&entity) {
+                        assets_to_blueprint_instances.untyped_id_to_blueprint_entity_ids.get_mut(&path_id).unwrap().push(entity);
                     }
                 }
             }
@@ -659,6 +670,7 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
 
         commands
             .entity(original)
+            .remove::<BlueprintChildrenReady>() // we are done with this step, we can remove the `BlueprintChildrenReady` tag component
             .insert(BlueprintReadyForPostProcess); // Tag the entity so any systems dealing with post processing can know it is now their "turn"
 
         commands.entity(blueprint_root_entity).despawn_recursive(); // Remove the root entity that comes from the spawned-in scene
@@ -668,6 +680,12 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
 #[derive(Component, Reflect, Debug)]
 #[reflect(Component)]
 pub struct BlueprintReadyForFinalizing;
+
+#[derive(Component, Debug)]
+/// flag component added when a Blueprint instance ist Ready : ie :
+/// - its assets have loaded
+/// - it has finished spawning
+pub struct BlueprintInstanceReady;
 
 pub(crate) fn blueprints_finalize_instances(
     blueprint_instances: Query<
@@ -684,6 +702,8 @@ pub(crate) fn blueprints_finalize_instances(
     all_children: Query<&Children>,
     mut blueprint_events: EventWriter<BlueprintEvent>,
     mut commands: Commands,
+
+    all_names: Query<&Name>
 ) {
     for (entity, name, blueprint_info, parent_blueprint, hide_until_ready) in
         blueprint_instances.iter()
@@ -691,6 +711,7 @@ pub(crate) fn blueprints_finalize_instances(
         info!("Finalizing blueprint instance {:?}", name);
         commands
             .entity(entity)
+            .remove::<BlueprintReadyForFinalizing>()
             .remove::<BlueprintReadyForPostProcess>()
             .remove::<BlueprintSpawning>()
             .remove::<SpawnBlueprint>()
@@ -720,7 +741,8 @@ pub(crate) fn blueprints_finalize_instances(
                     }
                 }
                 if all_spawned {
-                    // println!("ALLLLL SPAAAAWNED for {} named {:?}", track_root.0, root_name);
+                    let root_name = all_names.get(track_root.0);
+                    println!("ALLLLL SPAAAAWNED for {} named {:?}", track_root.0, root_name);
                     commands.entity(track_root.0).insert(BlueprintChildrenReady);
                 }
             }

@@ -19,7 +19,7 @@ pub use copy_components::*;
 pub(crate) mod hot_reload;
 pub(crate) use hot_reload::*;
 
-use bevy::{prelude::*, utils::HashMap};
+use bevy::{prelude::*, utils::hashbrown::HashMap};
 
 use crate::{BlenvyConfig, GltfComponentsSet};
 
@@ -65,7 +65,8 @@ fn aabbs_enabled(blenvy_config: Res<BlenvyConfig>) -> bool {
 }
 
 fn hot_reload(watching_for_changes: Res<WatchingForChanges>) -> bool {
-    watching_for_changes.0
+    // println!("hot reload ? {}", watching_for_changes.0);
+    return watching_for_changes.0
 }
 
 trait BlenvyApp {
@@ -91,6 +92,9 @@ const ASSET_ERROR: &str = ""; // TODO
 impl Plugin for BlueprintsPlugin {
     fn build(&self, app: &mut App) {
         app.register_watching_for_changes()
+            .insert_resource(AssetToBlueprintInstancesMapper {
+                untyped_id_to_blueprint_entity_ids: HashMap::new(),
+            })
             .add_event::<BlueprintEvent>()
             .register_type::<BlueprintInfo>()
             .register_type::<MaterialInfo>()
