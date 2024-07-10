@@ -10,6 +10,7 @@ pub struct BlueprintAsset {
 }
 
 /// helper component, is used to store the list of sub blueprints to enable automatic loading of dependend blueprints
+/// these are only the DIRECT dependencies of a blueprint, does not contain the indirect assets (ie assets of sub blueprints, etc)
 #[derive(Component, Reflect, Default, Debug, Deserialize)]
 #[reflect(Component)]
 pub struct BlueprintAssets {
@@ -28,6 +29,14 @@ pub struct BlueprintAssets {
     pub asset_infos: Vec<AssetLoadTracker>,
 }
 //(pub Vec<BlueprintAsset>);
+
+/// helper component, is used to store the list of sub blueprints to enable automatic loading of dependend blueprints
+#[derive(Component, Reflect, Default, Debug, Deserialize)]
+pub struct BlueprintAllAssets {
+    /// only this field should get filled in from the Blender side
+    pub assets: Vec<BlueprintAsset>,
+}
+
 
 ////////////////////////
 ///

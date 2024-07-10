@@ -133,7 +133,9 @@ pub(crate) fn blueprints_prepare_spawn(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     // for hot reload
-    mut assets_to_blueprint_instances: ResMut<AssetToBlueprintInstancesMapper>
+    mut assets_to_blueprint_instances: ResMut<AssetToBlueprintInstancesMapper>,
+    // for debug
+    all_names: Query<&Name>
 ) {
     for (entity, blueprint_info, entity_name) in blueprint_instances_to_spawn.iter() {
         info!(
@@ -173,6 +175,7 @@ pub(crate) fn blueprints_prepare_spawn(
                 // println!("all_assets {:?}", all_assets);
 
                 for asset in all_assets.assets.iter() {
+                    println!("ASSET {}",asset.path);
                     let untyped_handle = asset_server.load_untyped(&asset.path);
                     let asset_id = untyped_handle.id();
                     let loaded = asset_server.is_loaded_with_dependencies(asset_id);
@@ -195,6 +198,7 @@ pub(crate) fn blueprints_prepare_spawn(
                     }
                     // only insert if not already present in mapping
                     if !assets_to_blueprint_instances.untyped_id_to_blueprint_entity_ids[&path_id].contains(&entity) {
+                        println!("adding mapping between {} and entity {:?}", path_id, all_names.get(entity));
                         assets_to_blueprint_instances.untyped_id_to_blueprint_entity_ids.get_mut(&path_id).unwrap().push(entity);
                     }
                 }
@@ -699,6 +703,7 @@ pub(crate) fn blueprints_finalize_instances(
         (With<BlueprintSpawning>, With<BlueprintReadyForFinalizing>),
     >,
     mut sub_blueprint_trackers: Query<&mut SubBlueprintsSpawnTracker, With<BlueprintInfo>>,
+    spawning_blueprints: Query<&BlueprintSpawning>,
     all_children: Query<&Children>,
     mut blueprint_events: EventWriter<BlueprintEvent>,
     mut commands: Commands,
@@ -725,25 +730,30 @@ pub(crate) fn blueprints_finalize_instances(
         // this should always be done last, as children should be finished before the parent can be processed correctly
         // TODO: perhaps use observers for these
         if let Some(track_root) = parent_blueprint {
-            if let Ok(mut tracker) = sub_blueprint_trackers.get_mut(track_root.0) {
-                tracker
-                    .sub_blueprint_instances
-                    .entry(entity)
-                    .or_insert(true);
-                tracker.sub_blueprint_instances.insert(entity, true);
+            // only propagate sub_blueprint spawning if the parent blueprint instance ist actually in spawning mode
+            if spawning_blueprints.get(track_root.0).is_ok() {
+                if let Ok(mut tracker) = sub_blueprint_trackers.get_mut(track_root.0) {
+                    tracker
+                        .sub_blueprint_instances
+                        .entry(entity)
+                        .or_insert(true);
+                    tracker.sub_blueprint_instances.insert(entity, true);
 
-                // TODO: ugh, my limited rust knowledge, this is bad code
-                let mut all_spawned = true;
-                for val in tracker.sub_blueprint_instances.values() {
-                    if !val {
-                        all_spawned = false;
-                        break;
+                    // TODO: ugh, my limited rust knowledge, this is bad code
+                    let mut all_spawned = true;
+                    for val in tracker.sub_blueprint_instances.values() {
+                        if !val {
+                            all_spawned = false;
+                            break;
+                        }
                     }
-                }
-                if all_spawned {
-                    let root_name = all_names.get(track_root.0);
-                    println!("ALLLLL SPAAAAWNED for {} named {:?}", track_root.0, root_name);
-                    commands.entity(track_root.0).insert(BlueprintChildrenReady);
+                    if all_spawned {
+                        
+                            let root_name = all_names.get(track_root.0);
+                            println!("ALLLLL SPAAAAWNED for {} named {:?}", track_root.0, root_name);
+                            commands.entity(track_root.0).insert(BlueprintChildrenReady);
+
+                    }
                 }
             }
         }
