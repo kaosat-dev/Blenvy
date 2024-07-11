@@ -14,16 +14,19 @@ def prepare_and_export():
     if auto_export_settings.auto_export: # only do the actual exporting if auto export is actually enabled
 
         # determine changed objects
-        per_scene_changes, project_hash = get_changes_per_scene(settings=blenvy)
+        per_scene_changes, per_collection_changes, per_material_changes, project_hash = get_changes_per_scene(settings=blenvy)
         # determine changed parameters 
         setting_changes, current_common_settings, current_export_settings, current_gltf_settings = get_setting_changes()
         print("changes: settings:", setting_changes)
         print("changes: scenes:", per_scene_changes)
+        print("changes: collections:", per_collection_changes)
+        print("changes: materials:", per_material_changes)
+
 
         print("project_hash", project_hash)
         # do the actual export
         # blenvy.auto_export.dry_run = 'NO_EXPORT'#'DISABLED'#
-        auto_export(per_scene_changes, setting_changes, blenvy)
+        auto_export(per_scene_changes, per_collection_changes, per_material_changes, setting_changes, blenvy)
 
         # -------------------------------------
         # now that this point is reached, the export should have run correctly, so we can save all the current state to the "previous one"

@@ -1,6 +1,6 @@
 import json
 import bpy
-from .serialize_scene import serialize_scene
+from .serialize_project import serialize_project
 from blenvy.settings import load_settings, upsert_settings
 
 def bubble_up_changes(object, changes_per_scene):
@@ -26,7 +26,7 @@ def serialize_current(settings):
     """with bpy.context.temp_override(scene=bpy.data.scenes[1]):
         bpy.context.scene.frame_set(0)"""
     
-    current = serialize_scene(settings)
+    current = serialize_project(settings)
     bpy.context.window.scene = current_scene
 
     # reset previous frames
@@ -41,12 +41,14 @@ def get_changes_per_scene(settings):
 
     # determine changes
     changes_per_scene = {}
+    changes_per_collection = {}
+    changes_per_material = {}
     try:
-        changes_per_scene = project_diff(previous, current, settings)
+        (changes_per_scene, changes_per_collection, changes_per_material) = project_diff(previous, current, settings)
     except Exception as error:
-        print("failed to compare current serialized scenes to previous ones", error)
+        print("failed to compare current serialized scenes to previous ones: Error:", error)
 
-    return changes_per_scene, current
+    return changes_per_scene, changes_per_collection, changes_per_material, current
 
 
 def project_diff(previous, current, settings):
@@ -56,16 +58,19 @@ def project_diff(previous, current, settings):
         return {}
     
     changes_per_scene = {}
+    changes_per_collection = {}
+    changes_per_material = {}
 
     # TODO : how do we deal with changed scene names ???
     # possible ? on each save, inject an id into each scene, that cannot be copied over
+    current_scenes = current["scenes"]
+    previous_scenes = previous["scenes"]
+    for scene in current_scenes:
+        current_object_names =list(current_scenes[scene].keys())
 
-    for scene in current:
-        current_object_names =list(current[scene].keys())
+        if scene in previous_scenes: # we can only compare scenes that are in both previous and current data
 
-        if scene in previous: # we can only compare scenes that are in both previous and current data
-
-            previous_object_names = list(previous[scene].keys())
+            previous_object_names = list(previous_scenes[scene].keys())
             added =  list(set(current_object_names) - set(previous_object_names))
             removed = list(set(previous_object_names) - set(current_object_names))
             
@@ -80,10 +85,10 @@ def project_diff(previous, current, settings):
                     changes_per_scene[scene] = {}
                 changes_per_scene[scene][obj] = None
 
-            for object_name in list(current[scene].keys()): # TODO : exclude directly added/removed objects  
-                if object_name in previous[scene]:
-                    current_obj = current[scene][object_name]
-                    prev_obj = previous[scene][object_name]
+            for object_name in list(current_scenes[scene].keys()): # TODO : exclude directly added/removed objects  
+                if object_name in previous_scenes[scene]:
+                    current_obj = current_scenes[scene][object_name]
+                    prev_obj = previous_scenes[scene][object_name]
                     same = str(current_obj) == str(prev_obj)
 
                     if not same:
@@ -96,5 +101,36 @@ def project_diff(previous, current, settings):
                         # now bubble up for instances & parents
         else:
             print(f"scene {scene} not present in previous data")
+
+
+
+    current_collections = current["collections"]
+    previous_collections = previous["collections"]
+
+    for collection_name in current_collections:
+        if collection_name in previous_collections:
+            current_collection = current_collections[collection_name]
+            prev_collection = previous_collections[collection_name]
+            same = str(current_collection) == str(prev_collection)
+
+            if not same:
+                #if not collection_name in changes_per_collection:
+                target_collection = bpy.data.collections[collection_name] if collection_name in bpy.data.collections else None
+                changes_per_collection[collection_name] = target_collection
+
+    # process changes to materials
+    current_materials = current["materials"]
+    previous_materials = previous["materials"]
+
+    for material_name in current_materials:
+        if material_name in previous_materials:
+            current_material = current_materials[material_name]
+            prev_material = previous_materials[material_name]
+            same = str(current_material) == str(prev_material)
+
+            if not same:
+                #if not material_name in changes_per_material:
+                target_material = bpy.data.materials[material_name] if material_name in bpy.data.materials else None
+                changes_per_material[material_name] = target_material
         
-    return changes_per_scene
+    return (changes_per_scene, changes_per_collection, changes_per_material)

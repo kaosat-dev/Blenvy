@@ -6,7 +6,7 @@ def is_blueprint_always_export(blueprint):
     return blueprint.collection['always_export'] if 'always_export' in blueprint.collection else False
 
 # this also takes the split/embed mode into account: if a nested collection changes AND embed is active, its container collection should also be exported
-def get_blueprints_to_export(changes_per_scene, changed_export_parameters, blueprints_data, settings):
+def get_blueprints_to_export(changes_per_scene, changes_per_collection, changed_export_parameters, blueprints_data, settings):
     export_gltf_extension = getattr(settings, "export_gltf_extension", ".glb")
     blueprints_path_full = getattr(settings,"blueprints_path_full", "")
     change_detection = getattr(settings.auto_export, "change_detection")
@@ -37,8 +37,9 @@ def get_blueprints_to_export(changes_per_scene, changed_export_parameters, bluep
 
         # also deal with blueprints that are always marked as "always_export"
         blueprints_always_export = [blueprint for blueprint in internal_blueprints if is_blueprint_always_export(blueprint)]
-       
-        blueprints_to_export =  list(set(changed_blueprints + blueprints_not_on_disk + blueprints_always_export))
+        changed_blueprints_based_on_changed_collections = [blueprint for blueprint in internal_blueprints if blueprint.collection in changes_per_collection.values()]
+
+        blueprints_to_export =  list(set(changed_blueprints + blueprints_not_on_disk + blueprints_always_export + changed_blueprints_based_on_changed_collections))
 
 
     # filter out blueprints that are not marked & deal with the different combine modes

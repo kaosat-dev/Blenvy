@@ -189,7 +189,9 @@ Blender side:
 - [x] disable 'export_hierarchy_full_collections' for all cases: not reliable and redudant
 - [ ] fix systematic material exports despite no changes
 - [ ] investigate lack of detection of changes of adding/changing components
-    - [ ] change scene serialization to account for collections ...sigh
+    - [x] change scene serialization to account for collections ...sigh
+    - [x] also add one NOT PER scene for materials, to fix the above issue with materials
+    - [ ] move material caching into hash material
 - [ ] also remove ____dummy____.bin when export format is gltf
 
 - [ ] fix/cleanup asset information injection (also needed for hot reload)
@@ -269,7 +271,7 @@ Bevy Side:
     - [x] account for changes impact both parent & children (ie "world" and "blueprint3") for example, which leads to a crash as there is double despawn /respawn so we need to filter things out 
     - [x] if there are many assets/blueprints that have changed at the same time, it causes issues similar to the above, so apply a similar fix
         - [x] also ignore any entities currently spawning (better to loose some information, than cause a crash)
-    - [ ] something is off with blueprint level components
+    - [ ] analyse what is off with blueprint level components 
     - [ ] add the root blueprint itself to the assets either on the blender side or on the bevy side programatically
     - [x] for sub blueprint tracking: do not propagate/ deal with parent blueprints if they are not themselves Spawning (ie filter out by "BlueprintSpawning")
     - [ ] invalidate despawned entity & parent entities AABB 

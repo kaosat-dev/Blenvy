@@ -55,7 +55,7 @@ def should_level_be_exported(scene_name, changed_export_parameters, changes_per_
     )
 
 # this also takes the split/embed mode into account: if a collection instance changes AND embed is active, its container level/world should also be exported
-def get_levels_to_export(changes_per_scene, changed_export_parameters, blueprints_data, settings):
+def get_levels_to_export(changes_per_scene, changes_per_collection, changed_export_parameters, blueprints_data, settings):
     # determine list of main scenes to export
     # we have more relaxed rules to determine if the main scenes have changed : any change is ok, (allows easier handling of changes, render settings etc)
     main_scenes_to_export = [scene_name for scene_name in settings.main_scenes_names if should_level_be_exported(scene_name, changed_export_parameters, changes_per_scene, blueprints_data, settings)]

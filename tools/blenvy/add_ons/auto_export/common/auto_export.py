@@ -17,7 +17,7 @@ from ..levels.bevy_scene_components import remove_scene_components, upsert_scene
 
 
 """this is the main 'central' function for all auto export """
-def auto_export(changes_per_scene, changed_export_parameters, settings):
+def auto_export(changes_per_scene, changes_per_collection, changes_per_material, changed_export_parameters, settings):
     # have the export parameters (not auto export, just gltf export) have changed: if yes (for example switch from glb to gltf, compression or not, animations or not etc), we need to re-export everything
     print ("changed_export_parameters", changed_export_parameters)
     try:
@@ -63,15 +63,15 @@ def auto_export(changes_per_scene, changed_export_parameters, settings):
         if do_export_blueprints:
             print("EXPORTING")
             # get blueprints/collections infos
-            (blueprints_to_export) = get_blueprints_to_export(changes_per_scene, changed_export_parameters, blueprints_data, settings)
+            (blueprints_to_export) = get_blueprints_to_export(changes_per_scene, changes_per_collection, changed_export_parameters, blueprints_data, settings)
              
             # get level/main scenes infos
-            (main_scenes_to_export) = get_levels_to_export(changes_per_scene, changed_export_parameters, blueprints_data, settings)
+            (main_scenes_to_export) = get_levels_to_export(changes_per_scene, changes_per_collection, changed_export_parameters, blueprints_data, settings)
 
             # since materials export adds components we need to call this before blueprints are exported
             # export materials & inject materials components into relevant objects
             # FIXME: improve change detection, perhaps even add "material changes"
-            if export_materials_library and (changed_export_parameters or len(changes_per_scene.keys()) > 0 ):
+            if export_materials_library and (changed_export_parameters or len(changes_per_material.keys()) > 0 ):
                 export_materials(blueprints_data.blueprint_names, settings.library_scenes, settings)
 
             # update the list of tracked exports

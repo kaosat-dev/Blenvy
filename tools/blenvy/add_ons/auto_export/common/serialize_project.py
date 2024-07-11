@@ -300,6 +300,7 @@ def materials_hash(obj, cache, settings):
 
     return str(h1_hash(str(materials)))
 
+
 def modifier_hash(modifier_data, settings):
     scan_node_tree = settings.auto_export.modifiers_in_depth_scan
     #print("HASHING MODIFIER", modifier_data.name)
@@ -316,10 +317,12 @@ def modifiers_hash(object, settings):
         #print("  ")
     return str(h1_hash(str(modifiers)))
 
-def serialize_scene(settings): 
+def serialize_project(settings): 
     cache = {"materials":{}}
     print("serializing scenes")
-    data = {}
+
+
+    per_scene = {}
 
 
     # render settings are injected into each scene
@@ -331,7 +334,7 @@ def serialize_scene(settings):
         # ignore temporary scenes
         if scene.name.startswith(TEMPSCENE_PREFIX):
             continue
-        data[scene.name] = {}
+        per_scene[scene.name] = {}
         
         custom_properties = custom_properties_hash(scene) if len(scene.keys()) > 0 else None
         eevee_settings = generic_fields_hasher_evolved(scene.eevee, fields_to_ignore=fields_to_ignore_generic) # TODO: ignore most of the fields
@@ -345,7 +348,7 @@ def serialize_scene(settings):
         #generic_fields_hasher_evolved(scene.eevee, fields_to_ignore=fields_to_ignore_generic)
         # FIXME: how to deal with this cleanly
         print("SCENE CUSTOM PROPS", custom_properties)
-        data[scene.name]["____scene_settings"] = str(h1_hash(str(scene_field_hashes)))
+        per_scene[scene.name]["____scene_settings"] = str(h1_hash(str(scene_field_hashes)))
 
 
         for object in scene.objects:
@@ -382,13 +385,42 @@ def serialize_scene(settings):
 
             object_field_hashes_filtered = {key: object_field_hashes[key] for key in object_field_hashes.keys() if object_field_hashes[key] is not None}
             objectHash = str(h1_hash(str(object_field_hashes_filtered)))
-            data[scene.name][object.name] = objectHash
+            per_scene[scene.name][object.name] = objectHash
+
+        per_collection = {}
+        # also hash collections (important to catch component changes per blueprints/collections)
+        collections_in_scene = [collection for collection in bpy.data.collections if scene.user_of_id(collection)]
+        for collection in bpy.data.collections:# collections_in_scene:
+            #loc, rot, scale = bpy.context.object.matrix_world.decompose()
+            #visibility = collection.visible_get()            
+            custom_properties = custom_properties_hash(collection) if len(collection.keys()) > 0 else None
+            # parent = collection.parent.name if collection.parent else None
+            #collections = [collection.name for collection in object.users_collection]
+
+            collection_field_hashes = {
+                "name": collection.name,
+                # "visibility": visibility,
+                "custom_properties": custom_properties,
+                #"parent": parent,
+                #"collections": collections,
+            }
+
+            collection_field_hashes_filtered = {key: collection_field_hashes[key] for key in collection_field_hashes.keys() if collection_field_hashes[key] is not None}
+            collectionHash = str(h1_hash(str(collection_field_hashes_filtered)))
+            per_collection[collection.name] = collectionHash
+
+    # and also hash materials to avoid constanstly exporting materials libraries, and only 
+    # actually this should be similar to change detections for scenes
+    per_material = {}
+    for material in bpy.data.materials:
+        per_material[material.name] = str(h1_hash(material_hash(material, settings)))
+    print("materials_hash", per_material)
 
     """print("data", data)
     print("")
     print("")
     print("data json", json.dumps(data))"""
 
-    return data # json.dumps(data)
+    return {"scenes": per_scene, "collections": per_collection, "materials": per_material}
 
 
