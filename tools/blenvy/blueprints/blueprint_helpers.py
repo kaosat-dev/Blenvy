@@ -33,7 +33,6 @@ def inject_export_path_into_internal_blueprints(internal_blueprints, blueprints_
     for blueprint in internal_blueprints:
         blueprint_exported_path = os.path.join(blueprints_path, f"{blueprint.name}{gltf_extension}")
         # print("injecting blueprint path", blueprint_exported_path, "for", blueprint.name)
-        print("blueprint_exported_path", blueprint_exported_path)
         blueprint.collection["export_path"] = blueprint_exported_path
         if export_materials_library:
             blueprint.collection["materials_path"] = materials_exported_path

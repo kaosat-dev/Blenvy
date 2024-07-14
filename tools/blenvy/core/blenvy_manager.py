@@ -37,9 +37,9 @@ def is_scene_already_in_use(self, scene):
         return True
 
 class BlenvyManager(PropertyGroup):
-
     settings_save_path = ".blenvy_common_settings" # where to store data in bpy.texts
     settings_save_enabled: BoolProperty(name="settings save enabled", default=True) # type: ignore
+    scenes_to_scene_names = {} # used to map scenes to scene names to detect scene renames for diffing
 
     mode: EnumProperty(
         items=(
@@ -187,3 +187,7 @@ class BlenvyManager(PropertyGroup):
 
         # now load component settings
         self.components.load_settings()
+
+
+        for scene in bpy.data.scenes:
+            self.scenes_to_scene_names[scene] = scene.name

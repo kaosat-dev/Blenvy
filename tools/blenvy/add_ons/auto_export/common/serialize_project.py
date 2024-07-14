@@ -126,7 +126,10 @@ type_lookups = {
     bpy.types.bpy_prop_collection: _lookup_collection,
     bpy.types.MaterialLineArt: _lookup_materialLineArt,
     bpy.types.NodeTree: node_tree,
-    bpy.types.CurveProfile: _lookup_generic
+    bpy.types.CurveProfile: _lookup_generic,
+    bpy.types.RaytraceEEVEE: _lookup_generic,
+    bpy.types.CurveMapping: _lookup_generic,
+    bpy.types.MaterialGPencilStyle: _lookup_generic,
 }
 
 def convert_field(raw_value, field_name="", scan_node_tree=True):
@@ -233,11 +236,12 @@ def animation_hash(obj):
 # TODO: also how about our new "assets" custom properties ? those need to be check too
 def custom_properties_hash(obj):
     custom_properties = {}
-    for property_name in obj.keys():
-        if property_name not in '_RNA_UI' and property_name != 'components_meta':
-            print("custom properties stuff for", obj, property_name)
-            custom_properties[property_name] = obj[property_name]
-    print("custom props for hashing", custom_properties, str(h1_hash(str(custom_properties))) )
+    for property_name in obj.keys():        
+        if property_name not in '_RNA_UI' and property_name != 'components_meta' and property_name != 'user_assets':
+            custom_properties[property_name] = obj[property_name] #generic_fields_hasher_evolved(data=obj[property_name],fields_to_ignore=fields_to_ignore_generic)
+        """if property_name == "user_assets":
+        print("tptp")
+        custom_properties[property_name] = generic_fields_hasher_evolved(data=obj[property_name],fields_to_ignore=fields_to_ignore_generic)"""
     return str(h1_hash(str(custom_properties)))
 
 def camera_hash(obj):
@@ -273,12 +277,18 @@ def armature_hash(obj):
         print("bone", bone, bone_hash(bone))"""
     return str(fields)
 
-def material_hash(material, settings):
-    scan_node_tree = settings.auto_export.materials_in_depth_scan
-    #print("HASHING MATERIAL", material.name)
-    hashed_material = generic_fields_hasher_evolved(material, fields_to_ignore_generic, scan_node_tree=scan_node_tree)
-    #print("HASHED MATERIAL", hashed_material)
-    return str(hashed_material)
+def material_hash(material, cache, settings):
+    cached_hash = cache['materials'].get(material.name, None)
+    if cached_hash:
+        return cached_hash
+    else:
+        scan_node_tree = settings.auto_export.materials_in_depth_scan
+        #print("HASHING MATERIAL", material.name)
+        hashed_material = generic_fields_hasher_evolved(material, fields_to_ignore_generic, scan_node_tree=scan_node_tree)
+        #print("HASHED MATERIAL", hashed_material)
+        hashed_material = str(hashed_material)
+        cache['materials'][material.name] = hashed_material
+        return hashed_material
 
 # TODO: this is partially taken from export_materials utilities, perhaps we could avoid having to fetch things multiple times ?
 def materials_hash(obj, cache, settings):
@@ -286,16 +296,7 @@ def materials_hash(obj, cache, settings):
     materials = []
     for material_slot in obj.material_slots:
         material = material_slot.material
-        """cached_hash = cache['materials'].get(material.name, None)
-        if cached_hash:
-            materials.append(cached_hash)
-            print("CAACHED")
-        else:
-            mat = material_hash(material, settings)
-            cache['materials'][material.name] = mat
-            materials.append(mat)"""
-        mat = material_hash(material, settings)
-        cache['materials'][material.name] = mat
+        mat = material_hash(material, cache, settings)
         materials.append(mat)
 
     return str(h1_hash(str(materials)))
@@ -308,7 +309,6 @@ def modifier_hash(modifier_data, settings):
     #print("modifier", modifier_data.name, "hashed", hashed_modifier)
     return str(hashed_modifier)
     
-
 def modifiers_hash(object, settings):
     modifiers = []
     for modifier in object.modifiers:
@@ -317,26 +317,22 @@ def modifiers_hash(object, settings):
         #print("  ")
     return str(h1_hash(str(modifiers)))
 
+
 def serialize_project(settings): 
     cache = {"materials":{}}
-    print("serializing scenes")
-
+    print("serializing project")
 
     per_scene = {}
-
-
-    # render settings are injected into each scene
-
-
-    # TODO: only go through scenes actually in our list
-    for scene in bpy.data.scenes:
+    for scene in settings.main_scenes + settings.library_scenes: #bpy.data.scenes:
         print("scene", scene.name)
         # ignore temporary scenes
         if scene.name.startswith(TEMPSCENE_PREFIX):
             continue
         per_scene[scene.name] = {}
         
+
         custom_properties = custom_properties_hash(scene) if len(scene.keys()) > 0 else None
+        # render settings are injected into each scene
         eevee_settings = generic_fields_hasher_evolved(scene.eevee, fields_to_ignore=fields_to_ignore_generic) # TODO: ignore most of the fields
         view_settings = generic_fields_hasher_evolved(scene.view_settings, fields_to_ignore=fields_to_ignore_generic)
         
@@ -347,7 +343,6 @@ def serialize_project(settings):
         }
         #generic_fields_hasher_evolved(scene.eevee, fields_to_ignore=fields_to_ignore_generic)
         # FIXME: how to deal with this cleanly
-        print("SCENE CUSTOM PROPS", custom_properties)
         per_scene[scene.name]["____scene_settings"] = str(h1_hash(str(scene_field_hashes)))
 
 
@@ -387,39 +382,34 @@ def serialize_project(settings):
             objectHash = str(h1_hash(str(object_field_hashes_filtered)))
             per_scene[scene.name][object.name] = objectHash
 
-        per_collection = {}
-        # also hash collections (important to catch component changes per blueprints/collections)
-        collections_in_scene = [collection for collection in bpy.data.collections if scene.user_of_id(collection)]
-        for collection in bpy.data.collections:# collections_in_scene:
-            #loc, rot, scale = bpy.context.object.matrix_world.decompose()
-            #visibility = collection.visible_get()            
-            custom_properties = custom_properties_hash(collection) if len(collection.keys()) > 0 else None
-            # parent = collection.parent.name if collection.parent else None
-            #collections = [collection.name for collection in object.users_collection]
+    per_collection = {}
+    # also hash collections (important to catch component changes per blueprints/collections)
+    # collections_in_scene = [collection for collection in bpy.data.collections if scene.user_of_id(collection)]
+    for collection in bpy.data.collections:# collections_in_scene:
+        #loc, rot, scale = bpy.context.object.matrix_world.decompose()
+        #visibility = collection.visible_get()            
+        custom_properties = custom_properties_hash(collection) if len(collection.keys()) > 0 else None
+        # parent = collection.parent.name if collection.parent else None
+        #collections = [collection.name for collection in object.users_collection]
 
-            collection_field_hashes = {
-                "name": collection.name,
-                # "visibility": visibility,
-                "custom_properties": custom_properties,
-                #"parent": parent,
-                #"collections": collections,
-            }
+        collection_field_hashes = {
+            "name": collection.name,
+            # "visibility": visibility,
+            "custom_properties": custom_properties,
+            #"parent": parent,
+            #"collections": collections,
+        }
 
-            collection_field_hashes_filtered = {key: collection_field_hashes[key] for key in collection_field_hashes.keys() if collection_field_hashes[key] is not None}
-            collectionHash = str(h1_hash(str(collection_field_hashes_filtered)))
-            per_collection[collection.name] = collectionHash
+        collection_field_hashes_filtered = {key: collection_field_hashes[key] for key in collection_field_hashes.keys() if collection_field_hashes[key] is not None}
+
+        collectionHash = str(h1_hash(str(collection_field_hashes_filtered)))
+        per_collection[collection.name] = collectionHash
 
     # and also hash materials to avoid constanstly exporting materials libraries, and only 
     # actually this should be similar to change detections for scenes
     per_material = {}
     for material in bpy.data.materials:
-        per_material[material.name] = str(h1_hash(material_hash(material, settings)))
-    print("materials_hash", per_material)
-
-    """print("data", data)
-    print("")
-    print("")
-    print("data json", json.dumps(data))"""
+        per_material[material.name] = str(h1_hash(material_hash(material, cache, settings)))
 
     return {"scenes": per_scene, "collections": per_collection, "materials": per_material}
 

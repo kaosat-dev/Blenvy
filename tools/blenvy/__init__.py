@@ -152,6 +152,28 @@ def register():
     bpy.app.handlers.depsgraph_update_post.append(post_update)
     bpy.app.handlers.save_post.append(post_save)
 
+
+    """ handle = object()
+
+    subscribe_to = bpy.types.Scene, "name" # 
+
+    def notify_test(context):
+        #if (context.scene.type == 'MESH'):
+        print("Renamed", dir(context), context.scenes)
+
+    bpy.msgbus.subscribe_rna(
+        key=subscribe_to,
+        owner=bpy,
+        args=(bpy.context,),
+        notify=notify_test,
+    )"""
+
+
+    #bpy.msgbus.publish_rna(key=subscribe_to)
+
+
+
+
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
