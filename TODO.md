@@ -31,13 +31,13 @@ Assets:
  - [x] store assets 
    - [x] per main scene for level/world assets
    - [x] per blueprint for blueprint in lib scene
- - [ ] UI:
+ - [x] UI:
     - [x] we need to display all direct assets (stored in the scene)
     - [ ] indirect assets: 
         - QUESTION : do we want to include them in the list of assets per level ? 
             -  this would enable pre-loading ALL the assets, but is not ideal in most other cases
             - so add an option ?
-        - [ ] the assets of local blueprints 
+        - [x] the assets of local blueprints 
 
 Blueprints:
     - [x] on save: write IN THE COLLECTION PROPERTIES
@@ -119,7 +119,7 @@ General issues:
  - [x] load settings on file load
     - [x] auto_export
     - [x] components
-    - [ ] add handling of errors when trying to load settings
+    - [x] add handling of errors when trying to load settings
 
 
 - [x] fix auto export workflow
@@ -161,7 +161,7 @@ Blender side:
     - [ ] move the rename detection to AFTER scene serialization, otherwise we could have a naming mistmatch
         - weird behaviour, perhaps find another way , ie for example replace scene name in saved previous data
         - is post save causing the issue ? review
-- [ ] investigate weird issue of changes detected to all after a reload 
+- [x] investigate weird issue of changes detected to all after a reload 
 
 - [x] should we write the previous _xxx data only AFTER a sucessfull export only ?
 - [x] finer grained control of setting changes to trigger a re-export:
@@ -201,7 +201,7 @@ Blender side:
     - [x] change scene serialization to account for collections ...sigh
     - [x] also add one NOT PER scene for materials, to fix the above issue with materials
     - [x] move material caching into hash material
-- [ ] also remove ____dummy____.bin when export format is gltf
+- [x] also remove ____dummy____.bin when export format is gltf
 
 - [ ] fix/cleanup asset information injection (also needed for hot reload)
     - [ ] add back per blueprint assets
@@ -260,12 +260,12 @@ Bevy Side:
         - [x] fix/upgrade blueprint level animations
         - [x] fix/upgrade scene level animations
         - [ ] rename SceneAnimations to LevelAnimations (more coherent with the rest)
+        - [ ] add back & cleanup animation frame triggers
     - [x] move sub blueprint handling to blueprints_finalize_instances
 - [x] look into component overriding , it seems broken:
     - [x] blueprint level/ collection level components are now visible in instances in Blender
     - [x] they do not seem to be transfered to the (instance) entity above:
         could they be on the "empty node" ? 
-- [ ] add back & cleanup animation frame triggers
 
 - [ ] simplify testing example:
     - [x] remove use of rapier physics (or even the whole common boilerplate ?)
@@ -297,6 +297,10 @@ Bevy Side:
 - [ ] cleanup all the spurious debug messages
 - [x] fix animation handling
     - [x] how to deal with animation graphs ?
+
+
+- [ ] remove "Library" component & co
+- [ ] BlueprintDisabled => BlueprintInstanceDisabled
 
 - [ ] update main docs
     - [ ] rename project to Blenvy

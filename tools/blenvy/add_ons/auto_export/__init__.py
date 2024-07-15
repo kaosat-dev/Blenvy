@@ -1,5 +1,6 @@
 import os
 import json
+import pathlib
 import bpy
 from blenvy.settings import generate_complete_settings_dict
 from io_scene_gltf2 import ExportGLTF2_Base
@@ -9,6 +10,11 @@ def cleanup_file():
     gltf_filepath = bpy.context.window_manager.auto_export_tracker.dummy_file_path
     if os.path.exists(gltf_filepath):
         os.remove(gltf_filepath)
+        # in case of seperate gltf/bin files, also remove bin file
+        if gltf_filepath.endswith('gltf'):
+            bin_path = os.path.join(os.path.dirname(gltf_filepath), pathlib.Path(gltf_filepath).stem + ".bin")
+            if os.path.exists(bin_path):
+                os.remove(bin_path)
         return None
     else:
         return 1.0

@@ -1,35 +1,3 @@
-# gltf_auto_export
-
-This [Blender addon](./)  
-- automatically exports your level/world from Blender to gltf whenever you save your Blend file.
-- in Blueprints mode (highly recommended !) : 
-    - supports automatic exports of used collections as [Gltf blueprints](../../crates/bevy_gltf_blueprints/README.md)
-    - supports any number of main/level scenes 
-        - Blender scenes where you define your levels, and all collection instances are replaced with "pointers" to other gltf files (all automatic)
-    - supports any number of library scenes
-        - Blender scenes where you define the assets that you use in your levels, in the form of collections
-    - automatic export of **changed** objects & collections only ! a sort of "incremental export", where only the changed collections (if in use)
-        get exported when you save your blend file
-   
-
-## Installation: 
-
-
-* grab the latest release zip file
-
-![blender addon install](./docs/blender_addon_install_zip.png)
-
-
-* in Blender go to edit =>  preferences => install
-
-![blender addon install](./docs/blender_addon_install.png)
-
-* choose the path where ```gltf_auto_export.zip``` is stored
-
-![blender addon install](./docs/blender_addon_install2.png)
-
-
-
 
 ## Usage: 
 
@@ -172,7 +140,6 @@ To maximise reuse of meshes/components etc, you can also nest ***collections ins
 ![instance combine mode](./docs/blender_addon_use4.png)
 
 
-
 - To make things clearer: 
 
     ![nested-blueprints](./docs/nested_blueprints.png)
@@ -199,79 +166,141 @@ To maximise reuse of meshes/components etc, you can also nest ***collections ins
 
 TLDR: smaller, more reuseable blueprints which can share sub-parts with other entities !
 
-### Materials
-
-You can enable this option to automatically generate a **material library** file that combines all the materials in use in your blueprints.
-
-![material_library](./docs/blender_addon_materials2.png)
-
-Since each blueprint is normally a completely independant gltf file, without this option, if you have a material with a large texture for example, 
-**ALL** of your blueprints using that material will embed that large texture, leading to **significant bloat & memory use**.
 
 
-- When this option is enabled, you get a single material library per Blender project, and a **MaterialInfo** component is inserted into each object using a material.
-- The correct material will then be inserted on the Bevy side (that loads any number of material libraries that you need) into the correct mesh (see the configuration
-options in **bevy_gltf_blueprints** for more information on that)
-- Only one material per object is supported at this stage, ie the last material slot's material is the one that is going to be used
-
-![material_library](./docs/blender_addon_materials.png)
-
-TLDR: Use this option to make sure that each blueprint file does not contain a copy of the same materials 
 
 
-### Multiple blend file workflow
 
-If you want to use multiple blend files, use Blender's asset library etc, we got you coverred too !
-There are only a few things to keep in mind 
+### Create components from custom properties
 
-#### Assets/library/blueprints files
-- mark your library scenes as specified above, but **do NOT** specify a **main** scene
-- mark any collection in your scenes as "assets" (more convenient) or add the "AutoExport" custom property to the collection
-- choose "split" for the combine mode (as you want your gltf blueprints to be saved for external use)
-- do your Blender things as normal
-- anytime you save your file, it will automatically export any relevant collections/blueprints
-- (optional) activate the **material library** option, so you only have one set of material per asset library (recomended)
+- IF you have a valid component type  and the correct corresponding RON string in the custom_property value (this button will not appear if not), this add-on can automatically
+generate the corresponding component for you:
 
-#### Level/world files
-- mark your main scenes as specified above, but **do NOT** specify a **library** scene
-- configure your asset libraries as you would usually do , I recomend using the "link" mode so that any changes to asset files are reflected correctly
-- drag & drop any assets from the blueprints library (as you would normally do in Blender as well)
-- choose "split" for the combine mode (as you want your gltf blueprints to be external usually & use the gltf files generated from your assets library)
-- do your Blender things as normal
-- anytime you save your file, it will automatically export your level(s)
+- Fill/check your custom property (here for Aabb) 
+
+![generate_components 2](./docs/generate_components2.png)
+
+- click on the button
+
+![generate_components](./docs/generate_components.png)
+
+-voila !
+
+![generate_components 3](./docs/generate_components3.png)
 
 
-Take a look at the [relevant](../../examples/bevy_gltf_blueprints/multiple_levels_multiple_blendfiles/) example for more [details](../../examples/bevy_gltf_blueprints/multiple_levels_multiple_blendfiles/art/) 
 
 
-### Internal Process overview
-
-This is the internal logic of the export process with blueprints (simplified)
-
-![process](./docs/process.svg)
-
-ie this is an example scene...
-
-![](./docs/workflow_original.jpg)
-
-and what actually gets exported for the main scene/world/level
-
-![](./docs/workflow_empties.jpg)
-
-all collections instances replaced with empties, and all those collections exported to gltf files as seen above
 
 
-## Development 
 
-- since the code has now been split up into multiple modules, to make your life easier, I highly recomend (if you are using vscode like me) to use 
-[this](https://marketplace.visualstudio.com/items?itemName=JacquesLucke.blender-development) excellent extension , works easilly and fast , even for the latest 
-versions of Blender (v4.0 as of this writing)
-- this [article](https://polynook.com/learn/set-up-blender-addon-development-environment-in-windows) might also help out 
-(easy enough to get it working on linux too)
+## Use
 
-## License
 
-This tool, all its code, contents & assets is Dual-licensed under either of
+### Existing components & custom properties
 
-- Apache License, Version 2.0, ([LICENSE-APACHE](../LICENSE_APACHE.md) or https://www.apache.org/licenses/LICENSE-2.0)
-- MIT license ([LICENSE-MIT](../LICENSE_MIT.md) or https://opensource.org/licenses/MIT)
+* If you already have components defined manualy in Blender inside **custom properties** you will need to define them again using the UI!
+* avoid mixing & matching: if you change the values of **custom properties** that also have a component, the custom property will be **overriden** every time
+you change the component's value
+* you can of course still use non component custom properties as always, this add-on will only impact those that have corresponding Bevy components
+
+
+
+
+
+
+
+  
+
+## Advanced Tools
+
+In this section you will find various additional more advanced tooling
+
+### Invalid/unregistered type renaming / conversion
+
+If you have components that are
+  * invalid : ie some error was diagnosed
+  * unregistered: a custom property is present on the object, but there is no matching type in the registry
+
+Here you will get an overview, of ALL invalid and unregistered components in your Blender project, so you can find them, rename/convert them,
+or delete them, also in bulk
+
+![component rename overview](./docs/component_rename_overview2.png)
+
+* you can click on the button to select the object in your outliner (this also works across scenes, so you will be taken to the scene where the
+given object is located)
+
+![update custom properties](./docs/component_rename_object_select.png)
+
+
+#### Single object component renaming/ conversion
+
+  - to rename/convert a single component for a single object:
+    
+    * go to the row of the object you want to convert the component of
+    * in the dropdown menu, choose the target component
+    * click on the button with the magic wand to convert the component
+
+       ![single rename](./docs/component_rename_single.png)
+
+  > the tool will attempt to automatically convert the source component, including the field names/values, if the target component has the same ones
+    If it fails to do the conversion, you will get an error message, and you will either have to change the custom property yourself, or you can simply
+    change the values in the UI, which will automatically generate the custom property value
+
+  - to delete a single component for a single object:
+
+    * go to the row of the object you want to remove the component from
+    * click on the button with the "x" to remove the component  
+
+       ![single delete](./docs/component_remove_single.png)
+
+#### Bulk component renaming/ conversion
+
+  - use this method if you want to convert ALL components of a given type of ALL objects 
+
+    * click on this button to pick your source component
+
+      ![bulk convert remove](./docs/component_rename_remove_bulk.png)
+
+    * for conversion: in the dropdown menu, choose the target component & click apply to convert all matching components
+    * for deletion: clic on the "x" to remove all matching components
+
+      ![bulk convert remove](./docs/component_rename_remove_bulk2.png)
+
+
+ ### For conversion between custom properties & components & vice-versa
+
+ #### regenerate custom property values
+
+  - "update custom properties of current object" : will go over **all components** that you have defined for the **currently selected object**, and re-generate the 
+
+    corresponding custom property values 
+
+     ![update custom properties](./docs/other_options.png)
+
+
+  - "update custom properties of ALL objects" : same as above but it will do so for the **ALL objects in your blend file** (so can be slow!), and re-generate the 
+
+    corresponding custom property values 
+
+     ![update custom properties for all](./docs/other_options2.png)
+
+     > IMPORTANT !! use this if you have previously used v0.1 or v0.2 , as v0.3 had a breaking change, that makes it **necessary** to use this **once** to upgrade components data
+     You should also re-export your gltf files , otherwise you might run into issues
+
+  
+  #### regenerate component/ UI values
+
+   - since v0.2, you have the option to regenerate (for the selected object or all objects, as above) to regenerate your UI values from the custom property values
+
+   ![update UI FROM custom properties](./docs/update_ui_from_custom_properties.png)
+
+   > IMPORTANT !! use this if you have previously used v0.1 , as v0.2 had a breaking change, that makes it **necessary** to use this **once** to upgrade the UI data
+
+
+
+
+## Examples
+
+you can find an example [here](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_registry_export/)
+

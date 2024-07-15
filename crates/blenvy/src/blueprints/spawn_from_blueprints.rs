@@ -76,7 +76,7 @@ pub struct BlueprintDisabled;
 
 #[derive(Event, Debug)]
 pub enum BlueprintEvent {
-    /// event fired when a blueprint has finished loading all of its assets & before it attempts spawning
+    /// event fired when a blueprint instance has finished loading all of its assets & before it attempts spawning
     AssetsLoaded {
         entity: Entity,
         blueprint_name: String,
@@ -84,7 +84,10 @@ pub enum BlueprintEvent {
         // TODO: add assets list ?
     },
 
-    ///
+    /// event fired when a blueprint instance has completely finished spawning, ie
+    /// - all its assests have been loaded
+    /// - all of its child blueprint instances are ready
+    /// - all the post processing is finished (aabb calculation, material replacements etc)
     InstanceReady {
         entity: Entity,
         blueprint_name: String,
