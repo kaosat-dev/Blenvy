@@ -58,7 +58,7 @@ Components:
         - [x] BLENVY_OT_component_rename_component
         - [x] BLENVY_OT_component_fix
     - [x] add handling for core::ops::Range<f32> & other ranges
-    - [x] fix is_component_valid that is used in gltf_auto_export
+    - [x] fix is_component_valid that is used in blenvy 
     - [x] Hashmap Support
         - [x] fix parsing of keys's type either on Bevy side (prefered) or on the Blender side 
         - [x] fix weird issue with missing "0" property when adding new entry in empty hashmap => happens only if the values for the "setter" have never been set
@@ -286,7 +286,7 @@ Bevy Side:
     - [ ] invalidate despawned entity & parent entities AABB 
     - [ ] add unloading/cache removal of materials
 
-
+- [ ] add back and upgrade save-load
 
 - [x] review & change general component insertion & spawning ordering & logic
     - GltfComponentsSet::Injection => GltfBlueprintsSet::Spawn => GltfBlueprintsSet::AfterSpawn
@@ -299,8 +299,13 @@ Bevy Side:
     - [x] how to deal with animation graphs ?
 
 
-- [ ] remove "Library" component & co
-- [ ] BlueprintDisabled => BlueprintInstanceDisabled
+- [x] remove "Library" component & co
+- [x] make "InBlueprint" non optional, 
+- [ ] and perhaps rename it to "FromBlueprint(BlueprintInfo)"
+
+- [x] BlueprintInstanceDisabled => BlueprintInstanceDisabled
+- [x] fix "remove component" operator from the rename/fix/update components panel
+- [ ] replace string in BlueprintInfo path with PathBuf ?
 
 - [ ] update main docs
     - [ ] rename project to Blenvy

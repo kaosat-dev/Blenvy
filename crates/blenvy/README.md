@@ -33,7 +33,7 @@ Its main use case is as a backbone for the [```blenvy``` Blender add-on](https:/
     * ability to specify **which resources** to save or to exclude
     * small(er) save files (only a portion of the entities is saved)
 
-Particularly useful when using [Blender](https://www.blender.org/) as an editor for the [Bevy](https://bevyengine.org/) game engine, combined with the [Blender plugin](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/gltf_auto_export) that does a lot of the work for you (including spliting generating seperate gltf files for your static vs dynamic assets)
+Particularly useful when using [Blender](https://www.blender.org/) as an editor for the [Bevy](https://bevyengine.org/) game engine, combined with the [Blender plugin](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/blenvy) that does a lot of the work for you (including spliting generating seperate gltf files for your static vs dynamic assets)
 
 ## Usage
 
@@ -290,37 +290,25 @@ particularly from https://github.com/kaosat-dev/Blenvy/tree/main/examples/blenvy
 
 ## Materials
 
-You have the option of using "material libraries" to share common textures/materials between blueprints, in order to avoid asset & memory bloat:
-
+Ff you enable it on the blender side, Blenvy will be using "material libraries" to share common textures/materials between blueprints, in order to avoid asset & memory bloat:
 Ie for example without this option, 56 different blueprints using the same material with a large texture would lead to the material/texture being embeded
 56 times !!
 
 
-you can configure this with the settings:
-```rust
-material_library: true  // defaults to false, enable this to enable automatic injection of materials from material library files
-```
-
-> Important! you must take care of preloading your material librairy gltf files in advance, using for example ```bevy_asset_loader```since 
-```blenvy``` currently does NOT take care of loading those at runtime
-
-
-see https://github.com/kaosat-dev/Blenvy/tree/main/examples/blenvy/materials for how to set it up correctly
-
-Generating optimised blueprints and material libraries can be automated using the latests version of the [Blender plugin](https://github.com/kaosat-dev/Blenvy/tree/main/tools/gltf_auto_export)
+Generating optimised blueprints and material libraries can be automated using the latests version of the [Blender plugin](https://github.com/kaosat-dev/Blenvy/tree/main/tools/blenvy)
 
 
 ## Examples
 
-https://github.com/kaosat-dev/Blenvy/tree/main/examples/blenvy/basic
+https://github.com/kaosat-dev/Blenvy/tree/main/examples/blenvy/components
 
-https://github.com/kaosat-dev/Blenvy/tree/main/examples/blenvy/basic_xpbd_physics
+https://github.com/kaosat-dev/Blenvy/tree/main/examples/blenvy/blueprints
 
 https://github.com/kaosat-dev/Blenvy/tree/main/examples/blenvy/animation
 
-https://github.com/kaosat-dev/Blenvy/tree/main/examples/blenvy/materials
+https://github.com/kaosat-dev/Blenvy/tree/main/examples/blenvy/save_load
 
-https://github.com/kaosat-dev/Blenvy/tree/main/examples/blenvy/multiple_levels_multiple_blendfiles
+https://github.com/kaosat-dev/Blenvy/tree/main/examples/blenvy/demo (a full fledged demo)
 
 
 ## Compatible Bevy versions

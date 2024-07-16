@@ -45,7 +45,7 @@ pub struct AnimationInfo {
 }
 
 /// Stores information about animations, to make things a bit easier api wise:
-/// these components are automatically inserted by `gltf_auto_export` on entities that have animations
+/// these components are automatically inserted by the `blenvy` Blender add-on on entities that have animations
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
 pub struct AnimationInfos {

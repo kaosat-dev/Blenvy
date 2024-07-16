@@ -7,4 +7,3 @@ license = "MIT OR Apache-2.0"
 [dependencies]
 bevy = { version = "0.14", features = ["dynamic_linking"] }
 blenvy = { path = "../../../crates/blenvy" }
-#bevy_gltf_worlflow_examples_common_rapier = { path = "../../common_rapier" }

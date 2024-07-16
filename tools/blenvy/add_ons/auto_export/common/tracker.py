@@ -86,7 +86,7 @@ class AutoExportTracker(PropertyGroup):
         active_operator = getattr(bpy.context, 'active_operator' , None)
         if active_operator is not None:
             #print("Operator", active_operator.bl_label, active_operator.bl_idname)
-            if active_operator.bl_idname == "EXPORT_SCENE_OT_gltf" and active_operator.gltf_export_id == "gltf_auto_export":
+            if active_operator.bl_idname == "EXPORT_SCENE_OT_gltf" and active_operator.gltf_export_id == "blenvy":
                 # we backup any existing gltf export settings, if there were any
                 scene = bpy.context.scene
                 if "glTF2ExportSettings" in scene:

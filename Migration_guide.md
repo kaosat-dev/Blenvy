@@ -1,6 +1,6 @@
 # Blender add-ons
 
-- gltf_auto_export and bevy_components have been replaced with a single add-on for simplicity
+- gltf_auto_export and bevy_components have been replaced with a single Blenvy add-on for simplicity
 
 ## Components:
 
@@ -111,7 +111,7 @@ Blenvy will take care of loading all needed blueprints & other assets for you
 
     ```
 
-## BlueprintDisabled 
+## BlueprintInstanceDisabled 
 
 you can now query for this component
 

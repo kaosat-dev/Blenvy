@@ -21,7 +21,7 @@ def draw_settings_ui(layout, auto_export_settings):
         op.use_active_collection_with_nested=True
         op.use_active_scene = True
         op.filepath="____dummy____"
-        op.gltf_export_id = "gltf_auto_export" # we specify that we are in a special case
+        op.gltf_export_id = "blenvy" # we specify that we are in a special case
 
         section.prop(auto_export_settings, "export_scene_settings")    
 

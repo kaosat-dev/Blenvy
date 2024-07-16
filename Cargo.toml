@@ -1,7 +1,6 @@
 [workspace]
 members = [
     "crates/*",
-    "examples/common*",
     "examples/blenvy/*",
     "testing/bevy_example/",
 ]

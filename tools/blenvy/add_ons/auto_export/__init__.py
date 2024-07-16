@@ -28,7 +28,7 @@ def gltf_post_export_callback(data):
     gltf_settings_backup = tracker.gltf_settings_backup
     gltf_filepath = data["gltf_filepath"]
     gltf_export_id = data['gltf_export_id']
-    if gltf_export_id == "gltf_auto_export":
+    if gltf_export_id == "blenvy":
         # some more absurdity: apparently the file is not QUITE done when the export callback is called, so we have to introduce this timer to remove the temporary file correctly
         tracker.dummy_file_path = gltf_filepath
         try:

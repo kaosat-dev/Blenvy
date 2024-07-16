@@ -60,8 +60,8 @@ pub enum EnumTest {
     None,
 }
 
-pub struct ComponentsTestPlugin;
-impl Plugin for ComponentsTestPlugin {
+pub struct ComponentsExamplesPlugin;
+impl Plugin for ComponentsExamplesPlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<BasicTest>()
             .register_type::<UnitTest>()

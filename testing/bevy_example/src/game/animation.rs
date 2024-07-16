@@ -9,7 +9,7 @@ use bevy::{animation::RepeatAnimation, gltf::Gltf, prelude::*};
 
 use blenvy::{
     AnimationInfos, AnimationMarkerReached, BlueprintAnimationPlayerLink, BlueprintAnimations,
-    BlueprintDisabled, SceneAnimationPlayerLink, SceneAnimations,
+    BlueprintInstanceDisabled, SceneAnimationPlayerLink, SceneAnimations,
 };
 
 #[derive(Component, Reflect, Default, Debug)]
@@ -87,7 +87,7 @@ pub fn check_animations(
             Option<&BlueprintAnimationPlayerLink>,
             Option<&SceneAnimationPlayerLink>,
         ),
-        (With<MarkerAllFoxes>, Without<BlueprintDisabled>),
+        (With<MarkerAllFoxes>, Without<BlueprintInstanceDisabled>),
     >,
 
     foo: Query<
@@ -96,7 +96,7 @@ pub fn check_animations(
             Option<&BlueprintAnimationPlayerLink>,
             Option<&SceneAnimationPlayerLink>,
         ),
-        (With<Marker1>, Without<BlueprintDisabled>),
+        (With<Marker1>, Without<BlueprintInstanceDisabled>),
     >,
     bar: Query<
         (
@@ -104,7 +104,7 @@ pub fn check_animations(
             Option<&BlueprintAnimationPlayerLink>,
             Option<&SceneAnimationPlayerLink>,
         ),
-        (With<Marker2>, Without<BlueprintDisabled>),
+        (With<Marker2>, Without<BlueprintInstanceDisabled>),
     >,
     baz: Query<
         (
@@ -112,7 +112,7 @@ pub fn check_animations(
             Option<&BlueprintAnimationPlayerLink>,
             Option<&SceneAnimationPlayerLink>,
         ),
-        (With<Marker3>, Without<BlueprintDisabled>),
+        (With<Marker3>, Without<BlueprintInstanceDisabled>),
     >,
 
     bli: Query<(Entity, &AnimationInfos)>,
