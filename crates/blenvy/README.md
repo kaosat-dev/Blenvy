@@ -1,23 +1,39 @@
 [![Crates.io](https://img.shields.io/crates/v/blenvy)](https://crates.io/crates/blenvy)
 [![Docs](https://img.shields.io/docsrs/blenvy)](https://docs.rs/blenvy/latest/blenvy/)
-[![License](https://img.shields.io/crates/l/blenvy)](https://github.com/kaosat-dev/Blender_bevy_components_workflow/blob/main/crates/blenvy/License.md)
+[![License](https://img.shields.io/crates/l/blenvy)](https://github.com/kaosat-dev/Blenvy/blob/main/crates/blenvy/License.md)
 [![Bevy tracking](https://img.shields.io/badge/Bevy%20tracking-released%20version-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
 
 # blenvy
 
-this crate adds the ability to define Blueprints/Prefabs for [Bevy](https://bevyengine.org/) inside gltf files and spawn them in Bevy.
+This crate allows you to 
+- define [Bevy](https://bevyengine.org/) components direclty inside gltf files and instanciate the components on the Bevy side.
+- define Blueprints/Prefabs for [Bevy](https://bevyengine.org/) inside gltf files and spawn them in Bevy.
+    * Allows you to create lightweight levels, where all assets are different gltf files and loaded after the main level is loaded
+    * Allows you to spawn different entities from gtlf files at runtime in a clean manner, including simplified animation support !
 
-* Allows you to create lightweight levels, where all assets are different gltf files and loaded after the main level is loaded
-* Allows you to spawn different entities from gtlf files at runtime in a clean manner, including simplified animation support !
+    A blueprint is a set of **overrideable** components + a hierarchy: ie 
 
-A blueprint is a set of **overrideable** components + a hierarchy: ie 
+        * just a Gltf file with Gltf_extras specifying components 
+        * a component called BlueprintInfo
 
-    * just a Gltf file with Gltf_extras specifying components 
-    * a component called BlueprintInfo
+    Particularly useful when using [Blender](https://www.blender.org/) as an editor for the [Bevy](https://bevyengine.org/) game engine, combined with the Blender add-on that do a lot of the work for you 
+    - [blenvy](https://github.com/kaosat-dev/Blenvy/tree/main/tools/blenvy)
+- allows you to create a Json export of all your components/ registered types. 
+Its main use case is as a backbone for the [```blenvy``` Blender add-on](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/blenvy), that allows you to add & edit components directly in Blender, using the actual type definitions from Bevy 
+(and any of your custom types & components that you register in Bevy).
+- adds the ability to easilly **save** and **load** your game worlds for [Bevy](https://bevyengine.org/) .
 
-Particularly useful when using [Blender](https://www.blender.org/) as an editor for the [Bevy](https://bevyengine.org/) game engine, combined with the Blender add-on that do a lot of the work for you 
-- [blenvy](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/blenvy)
+* leverages blueprints & seperation between 
+    * **dynamic** entities : entities that can change during the lifetime of your app/game
+    * **static** entities : entities that do NOT change (typically, a part of your levels/ environements)
+* and allows allow for :
+    * a simple save/load workflow thanks to the above
+    * ability to specify **which entities** to save or to exclude
+    * ability to specify **which components** to save or to exclude
+    * ability to specify **which resources** to save or to exclude
+    * small(er) save files (only a portion of the entities is saved)
 
+Particularly useful when using [Blender](https://www.blender.org/) as an editor for the [Bevy](https://bevyengine.org/) game engine, combined with the [Blender plugin](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/gltf_auto_export) that does a lot of the work for you (including spliting generating seperate gltf files for your static vs dynamic assets)
 
 ## Usage
 
@@ -40,12 +56,27 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugins(BlenvyPlugin)
 
+        .add_systems(Startup, setup_game)
+        .add_systems(Update, spawn_blueprint_instance)
         .run();
 }
 
-// not shown here: any other setup that is not specific to blueprints
 
-fn spawn_blueprint(
+// this is how you setup & spawn a level from a blueprint
+fn setup_game(
+    mut commands: Commands,
+) {
+
+    // here we spawn our game world/level, which is also a blueprint !
+    commands.spawn((
+        BlueprintInfo::from_path("levels/World.glb"), // all we need is a Blueprint info...
+        SpawnBlueprint, // and spawnblueprint to tell blenvy to spawn the blueprint now
+        HideUntilReady, // only reveal the level once it is ready
+        GameWorldTag,
+    ));
+}
+
+fn spawn_blueprint_instance(
     mut commands: Commands,
     keycode: Res<Input<KeyCode>>,
 ){
@@ -152,7 +183,7 @@ any component you specify when spawning the Blueprint that is also specified **w
 for example 
 ```rust no_run
 commands.spawn((
-    BlueprintInfo("Health_Pickup".to_string()),
+    BlueprintInfo(path: "Health_Pickup.glb".into()),
     SpawnBlueprint,
     TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
     HealthPowerUp(20)// if this is component is also present inside the "Health_Pickup" blueprint, that one will be replaced with this component during spawning
@@ -168,7 +199,7 @@ There is also a ```BluePrintBundle``` for convenience , which just has
 
 ## Additional information
 
-- When a blueprint is spawned, all its children entities (and nested children etc) also have an ```InBlueprint``` component that gets insert
+- When a blueprint is spawned, an ```InBlueprint``` component is inserted into all its children entities (and nested children etc)
 - this crate also provides a special optional ```GameWorldTag``` component: this is useful when you want to keep all your spawned entities inside a root entity
 
 You can use it in your queries to add your entities as children of this "world"
@@ -177,16 +208,10 @@ This way all your levels, your dynamic entities etc, are kept seperated from UI 
 > Note: you should only have a SINGLE entity tagged with that component !
 
 ```rust no_run
-    commands.spawn((
-        SceneBundle {
-            scene: models
-                .get(game_assets.world.id())
-                .expect("main level should have been loaded")
-                .scenes[0]
-                .clone(),
-            ..default()
-        },
-        bevy::prelude::Name::from("world"),
+   commands.spawn((
+        BlueprintInfo::from_path("levels/World.glb"), 
+        SpawnBlueprint,
+        HideUntilReady,
         GameWorldTag, // here it is
     ));
 ```
@@ -204,7 +229,7 @@ Typically , the order of systems should be
 
 ***bevy_gltf_components (GltfComponentsSet::Injection)*** => ***blenvy (GltfBlueprintsSet::Spawn, GltfBlueprintsSet::AfterSpawn)*** => ***replace_proxies***
 
-see https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/blenvy/basic for how to set it up correctly
+see https://github.com/kaosat-dev/Blenvy/tree/main/examples/blenvy/basic for how to set it up correctly
 
 
 
@@ -258,9 +283,9 @@ pub fn animation_change_on_proximity_foxes(
 }
 ```
 
-see https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/blenvy/animation for how to set it up correctly
+see https://github.com/kaosat-dev/Blenvy/tree/main/examples/blenvy/animation for how to set it up correctly
 
-particularly from https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/blenvy/animation/game/in_game.rs
+particularly from https://github.com/kaosat-dev/Blenvy/tree/main/examples/blenvy/animation/game/in_game.rs
 
 
 ## Materials
@@ -280,22 +305,22 @@ material_library: true  // defaults to false, enable this to enable automatic in
 ```blenvy``` currently does NOT take care of loading those at runtime
 
 
-see https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/blenvy/materials for how to set it up correctly
+see https://github.com/kaosat-dev/Blenvy/tree/main/examples/blenvy/materials for how to set it up correctly
 
-Generating optimised blueprints and material libraries can be automated using the latests version of the [Blender plugin](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/gltf_auto_export)
+Generating optimised blueprints and material libraries can be automated using the latests version of the [Blender plugin](https://github.com/kaosat-dev/Blenvy/tree/main/tools/gltf_auto_export)
 
 
 ## Examples
 
-https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/blenvy/basic
+https://github.com/kaosat-dev/Blenvy/tree/main/examples/blenvy/basic
 
-https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/blenvy/basic_xpbd_physics
+https://github.com/kaosat-dev/Blenvy/tree/main/examples/blenvy/basic_xpbd_physics
 
-https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/blenvy/animation
+https://github.com/kaosat-dev/Blenvy/tree/main/examples/blenvy/animation
 
-https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/blenvy/materials
+https://github.com/kaosat-dev/Blenvy/tree/main/examples/blenvy/materials
 
-https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/blenvy/multiple_levels_multiple_blendfiles
+https://github.com/kaosat-dev/Blenvy/tree/main/examples/blenvy/multiple_levels_multiple_blendfiles
 
 
 ## Compatible Bevy versions

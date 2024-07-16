@@ -22,6 +22,10 @@ pub struct BlenvyConfig {
     pub(crate) aabbs: bool,
     pub(crate) aabb_cache: HashMap<String, Aabb>, // cache for aabbs
     pub(crate) materials_cache: HashMap<String, Handle<StandardMaterial>>, // cache for materials
+
+    // save & load
+    pub(crate) save_component_filter: SceneFilter,
+    pub(crate) save_resource_filter: SceneFilter,
 }
 
 #[derive(Debug, Clone)]
@@ -34,6 +38,10 @@ pub struct BlenvyPlugin {
 
     /// Automatically generate aabbs for the blueprints root objects
     pub aabbs: bool,
+
+    // for save & load
+    pub save_component_filter: SceneFilter,
+    pub save_resource_filter: SceneFilter,
 }
 
 impl Default for BlenvyPlugin {
@@ -43,6 +51,9 @@ impl Default for BlenvyPlugin {
             registry_component_filter: SceneFilter::default(),
             registry_resource_filter: SceneFilter::default(),
             aabbs: false,
+
+            save_component_filter: SceneFilter::default(),
+            save_resource_filter: SceneFilter::default(),
         }
     }
 }
@@ -63,6 +74,9 @@ impl Plugin for BlenvyPlugin {
             aabb_cache: HashMap::new(),
 
             materials_cache: HashMap::new(),
+
+            save_component_filter: self.save_component_filter.clone(),
+            save_resource_filter: self.save_resource_filter.clone()
         });
     }
 }
