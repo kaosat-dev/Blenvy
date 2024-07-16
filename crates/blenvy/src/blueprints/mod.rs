@@ -66,7 +66,7 @@ fn aabbs_enabled(blenvy_config: Res<BlenvyConfig>) -> bool {
 
 fn hot_reload(watching_for_changes: Res<WatchingForChanges>) -> bool {
     // println!("hot reload ? {}", watching_for_changes.0);
-    return watching_for_changes.0
+    watching_for_changes.0
 }
 
 trait BlenvyApp {

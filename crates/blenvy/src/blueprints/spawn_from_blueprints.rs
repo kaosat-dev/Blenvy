@@ -169,12 +169,12 @@ pub(crate) fn blueprints_prepare_spawn(
         let gltf = RawGltf::open(format!("assets/{}", blueprint_info.path)).unwrap();
         for scene in gltf.scenes() {
             let scene_extras = scene.extras().clone().unwrap();
-            let lookup: HashMap<String, Value> = serde_json::from_str(&scene_extras.get()).unwrap();
+            let lookup: HashMap<String, Value> = serde_json::from_str(scene_extras.get()).unwrap();
             if lookup.contains_key("BlueprintAssets") {
                 let assets_raw = &lookup["BlueprintAssets"];
                 //println!("ASSETS RAW {}", assets_raw);
                 let all_assets: BlueprintAssets =
-                    ron::from_str(&assets_raw.as_str().unwrap()).unwrap();
+                    ron::from_str(assets_raw.as_str().unwrap()).unwrap();
                 // println!("all_assets {:?}", all_assets);
 
                 for asset in all_assets.assets.iter() {
@@ -250,12 +250,8 @@ pub(crate) fn blueprints_check_assets_loading(
             let asset_id = tracker.id;
             let loaded = asset_server.is_loaded_with_dependencies(asset_id);
 
-            // FIXME: hack for now
-            let mut failed = false; // asset_server.load_state(asset_id) == bevy::asset::LoadState::Failed(_error);
-            match asset_server.load_state(asset_id) {
-                bevy::asset::LoadState::Failed(_) => failed = true,
-                _ => {}
-            }
+            let mut failed = false;
+            if let bevy::asset::LoadState::Failed(_) = asset_server.load_state(asset_id) { failed = true }
             tracker.loaded = loaded || failed;
             if loaded || failed {
                 loaded_amount += 1;
@@ -543,7 +539,7 @@ pub struct BlueprintReadyForPostProcess;
 /// - it removes one level of useless nesting
 /// - it copies the blueprint's root components to the entity it was spawned on (original entity)
 /// - it copies the children of the blueprint scene into the original entity
-/// - it adds an `AnimationLink` component containing the entity that has the AnimationPlayer so that animations can be controlled from the original entity
+/// - it adds an `AnimationLink` component containing the entity that has the `AnimationPlayer` so that animations can be controlled from the original entity
 pub(crate) fn blueprints_cleanup_spawned_scene(
     blueprint_scenes: Query<
         (

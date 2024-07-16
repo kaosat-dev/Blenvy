@@ -1,5 +1,5 @@
-use crate::{BlueprintAssetsLoadState, BlueprintAssetsLoaded, BlueprintChildrenReady, BlueprintInfo, BlueprintInstanceReady, BlueprintSpawning, InBlueprint, SpawnBlueprint, SubBlueprintsSpawnTracker};
-use bevy::asset::{AssetEvent, UntypedAssetId};
+use crate::{BlueprintAssetsLoadState, BlueprintAssetsLoaded, BlueprintInfo, BlueprintInstanceReady, BlueprintSpawning, SpawnBlueprint, SubBlueprintsSpawnTracker};
+use bevy::asset::AssetEvent;
 use bevy::prelude::*;
 use bevy::scene::SceneInstance;
 use bevy::utils::hashbrown::HashMap;
@@ -75,7 +75,7 @@ pub(crate) fn react_to_asset_changes(
                 }
             }
         }
-        if ! retained_candidates.contains(&entity) {
+        if ! retained_candidates.contains(entity) {
             retained_candidates.push(**entity);
         }
     }
