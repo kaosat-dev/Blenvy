@@ -1,5 +1,5 @@
 [package]
-name = "blenvy_animation_example"
+name = "blenvy_components_example"
 version = "0.0.1"
 edition = "2021"
 license = "MIT OR Apache-2.0"
@@ -7,4 +7,4 @@ license = "MIT OR Apache-2.0"
 [dependencies]
 bevy = { version = "0.14", features = ["dynamic_linking"] }
 blenvy = { path = "../../../crates/blenvy" }
-rand = "0.8.5"
+#bevy_gltf_worlflow_examples_common_rapier = { path = "../../common_rapier" }
