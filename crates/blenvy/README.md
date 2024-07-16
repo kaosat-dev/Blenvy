@@ -169,21 +169,6 @@ There is also a ```BluePrintBundle``` for convenience , which just has
 ## Additional information
 
 - When a blueprint is spawned, all its children entities (and nested children etc) also have an ```InBlueprint``` component that gets insert
-- In cases where that is undesirable, you can add a ```NoInBlueprint``` component on the entity you spawn the blueprint with, and the components above will not be add
-- if you want to overwrite the **path** where this crate looks for blueprints (gltf files) , you can add a ```Library``` component , and that will be used instead of the default path
-ie :
-
-```rust no_run
-commands
-    .spawn((
-        Name::from("test"),
-        BluePrintBundle {
-            blueprint: BlueprintInfo("TestBlueprint".to_string()),
-            ..Default::default()
-        },
-        Library("models".into()) // now the path to the blueprint above will be /assets/models/TestBlueprint.glb
-    ))
-```
 - this crate also provides a special optional ```GameWorldTag``` component: this is useful when you want to keep all your spawned entities inside a root entity
 
 You can use it in your queries to add your entities as children of this "world"

@@ -37,22 +37,10 @@ impl BlueprintInfo {
 #[reflect(Component)]
 pub struct SpawnBlueprint;
 
-
-
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-/// flag component marking any spwaned child of blueprints ..unless the original entity was marked with the `NoInBlueprint` marker component
+/// flag component marking any spwaned child of blueprints 
 pub struct InBlueprint;
-
-#[derive(Component, Reflect, Default, Debug)]
-#[reflect(Component)]
-/// flag component preventing any spawned child of blueprints to be marked with the `InBlueprint` component
-pub struct NoInBlueprint;
-
-#[derive(Component, Reflect, Default, Debug)]
-#[reflect(Component)]
-// this allows overriding the default library path for a given entity/blueprint
-pub struct Library(pub PathBuf);
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
@@ -72,7 +60,7 @@ pub struct HideUntilReady;
 
 #[derive(Component)]
 /// marker component, gets added to all children of a currently spawning blueprint instance, can be usefull to avoid manipulating still in progress entities
-pub struct BlueprintDisabled;
+pub struct BlueprintInstanceDisabled;
 
 #[derive(Event, Debug)]
 pub enum BlueprintEvent {
@@ -228,7 +216,7 @@ pub(crate) fn blueprints_prepare_spawn(
             .entity(entity)
             .insert(bevy::prelude::Name::from(blueprint_info.name.clone()));
         // add the blueprint spawning marker
-        commands.entity(entity).insert((BlueprintSpawning));
+        commands.entity(entity).insert(BlueprintSpawning);
     }
 }
 
@@ -510,7 +498,7 @@ pub(crate) fn blueprints_scenes_spawned(
                     }
                 }
                 // Mark all components as "Disabled" (until Bevy gets this as first class feature)
-                commands.entity(child).insert(BlueprintDisabled);
+                commands.entity(child).insert(BlueprintInstanceDisabled);
             }
         }
 
@@ -548,7 +536,6 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
             &OriginalChildren,
             Option<&Name>,
             &BlueprintAnimations,
-            Option<&NoInBlueprint>,
         ),
         Added<BlueprintChildrenReady>,
     >,
@@ -563,7 +550,7 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
 
     all_names: Query<&Name>,
 ) {
-    for (original, children, original_children, name, animations, no_inblueprint) in
+    for (original, children, original_children, name, animations) in
         blueprint_scenes.iter()
     {
         info!("YOOO ready !! removing empty nodes {:?}", name);
@@ -585,11 +572,10 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
 
         // we flag all children of the blueprint instance with 'InBlueprint'
         // can be usefull to filter out anything that came from blueprints vs normal children
-        if no_inblueprint.is_none() {
-            for child in all_children.iter_descendants(blueprint_root_entity) {
-                commands.entity(child).insert(InBlueprint); // we do this here in order to avoid doing it to normal children
-            }
+        for child in all_children.iter_descendants(blueprint_root_entity) {
+            commands.entity(child).insert(InBlueprint); // we do this here in order to avoid doing it to normal children
         }
+        
 
         // copy components into from blueprint instance's blueprint_root_entity to original entity
         commands.add(CopyComponents {
@@ -758,7 +744,7 @@ pub(crate) fn blueprints_finalize_instances(
         }
 
         for child in all_children.iter_descendants(entity) {
-            commands.entity(child).remove::<BlueprintDisabled>();
+            commands.entity(child).remove::<BlueprintInstanceDisabled>();
         }
 
         if hide_until_ready.is_some() {
