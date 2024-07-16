@@ -372,7 +372,7 @@ class BLENVY_PT_component_tools_panel(bpy.types.Panel):
         operator.target_name = target_component_name
         col.enabled = internal and registry_has_type_infos and component_name != "" and target_component_name != ""  and component_name != target_component_name
 
-
+        #print("target", target, target.name, "component_name", component_name, "item type", get_selection_type(target))
         col = row.column()
         operator = col.operator("blenvy.component_remove", text="", icon="X")
         operator.item_name = target.name

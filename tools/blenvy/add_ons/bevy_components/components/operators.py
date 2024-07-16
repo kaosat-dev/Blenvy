@@ -152,12 +152,21 @@ class BLENVY_OT_component_remove(Operator):
 
         print("removing component ", self.component_name, "from object  '"+target.name+"'")
 
-        if target is not None and 'bevy_components' in target :
-            component_value = get_bevy_component_value_by_long_name(target, self.component_name)
-            if component_value is not None:
-                remove_component_from_item(target, self.component_name)
-            else :
-                self.report({"ERROR"}, "The component to remove ("+ self.component_name +") does not exist")
+
+        if target is not None:
+            if 'bevy_components' in target:
+                component_value = get_bevy_component_value_by_long_name(target, self.component_name)
+                if component_value is not None:
+                    remove_component_from_item(target, self.component_name)
+                else :
+                    self.report({"ERROR"}, "The component to remove ("+ self.component_name +") does not exist")
+            else:
+                # for the classic "custom properties"
+                if self.component_name in target:
+                    del target[self.component_name]
+                else:
+                    self.report({"ERROR"}, "The component to remove ("+ self.component_name +") does not exist")
+
         else: 
             self.report({"ERROR"}, "The target to remove ("+ self.component_name +") from does not exist")
         return {'FINISHED'}
