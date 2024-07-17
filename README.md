@@ -32,7 +32,7 @@ It also allows you to setup 'blueprints' in Blender by using collections (the re
 
 One crate to rule them all !
 
-- [blenvy](./crates/blenvu/) This crate allows you to 
+- [blenvy](./crates/blenvy/) This crate allows you to 
     * define components direclty inside gltf files and instanciate/inject the components on the Bevy side.
     * export your project's Bevy registry to json, in order to be able to generate custom component UIs on the Blender side in the Blender [blenvy](./tools/blenvy/README.md) add-on
     * define Blueprints/Prefabs for Bevy inside gltf files and spawn them in Bevy. With the ability to override and add components when spawning, efficient "level" loading etc

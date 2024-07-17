@@ -199,7 +199,7 @@ There is also a ```BluePrintBundle``` for convenience , which just has
 
 ## Additional information
 
-- When a blueprint is spawned, an ```InBlueprint``` component is inserted into all its children entities (and nested children etc)
+- When a blueprint is spawned, an ```FromBlueprint``` component is inserted into all its children entities (and nested children etc)
 - this crate also provides a special optional ```GameWorldTag``` component: this is useful when you want to keep all your spawned entities inside a root entity
 
 You can use it in your queries to add your entities as children of this "world"

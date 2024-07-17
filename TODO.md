@@ -301,7 +301,8 @@ Bevy Side:
 
 - [x] remove "Library" component & co
 - [x] make "InBlueprint" non optional, 
-- [ ] and perhaps rename it to "FromBlueprint(BlueprintInfo)"
+- [x] and perhaps rename it to "FromBlueprint"
+- [ ] perhaps change it to FromBlueprint(BlueprintInfo)
 
 - [x] BlueprintInstanceDisabled => BlueprintInstanceDisabled
 - [x] fix "remove component" operator from the rename/fix/update components panel
