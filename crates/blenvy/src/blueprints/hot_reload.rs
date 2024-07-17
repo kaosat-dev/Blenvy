@@ -1,4 +1,4 @@
-use crate::{BlueprintAssetsLoadState, BlueprintAssetsLoaded, BlueprintInfo, BlueprintInstanceReady, BlueprintSpawning, SpawnBlueprint, SubBlueprintsSpawnTracker};
+use crate::{BlueprintAssetsLoadState, BlueprintAssetsLoaded, BlueprintInfo, BlueprintInstanceReady, BlueprintSpawning, FromBlueprint, SpawnBlueprint, SubBlueprintsSpawnTracker};
 use bevy::asset::AssetEvent;
 use bevy::prelude::*;
 use bevy::scene::SceneInstance;
@@ -21,7 +21,7 @@ pub(crate) fn react_to_asset_changes(
         &BlueprintInfo,
         Option<&Children>,
     )>,
-    // blueprint_children_entities: Query<&InBlueprint>, => can only be used if the entites are tagged, right now that is optional...perhaps do not make it optional
+    blueprint_children_entities: Query<&FromBlueprint>, //=> can only be used if the entites are tagged
     assets_to_blueprint_instances: Res<AssetToBlueprintInstancesMapper>,
     all_parents: Query<&Parent>,
     spawning_blueprints: Query<&BlueprintSpawning>,

@@ -4,7 +4,7 @@ use bevy::{gltf::Gltf, prelude::*, scene::SceneInstance, utils::hashbrown::HashM
 use serde_json::Value;
 
 use crate::{
-    AnimationInfos, AssetLoadTracker, AssetToBlueprintInstancesMapper, BlenvyConfig, BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintAssets, BlueprintAssetsLoadState, BlueprintAssetsLoaded, BlueprintAssetsNotLoaded, SceneAnimationPlayerLink, SceneAnimations
+    AnimationInfos, AssetLoadTracker, AssetToBlueprintInstancesMapper, BlenvyConfig, BlueprintAnimationInfosLink, BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintAssets, BlueprintAssetsLoadState, BlueprintAssetsLoaded, BlueprintAssetsNotLoaded, SceneAnimationInfosLink, SceneAnimationPlayerLink, SceneAnimations
 };
 
 /// this is a flag component for our levels/game world
@@ -40,7 +40,7 @@ pub struct SpawnBlueprint;
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
 /// flag component marking any spwaned child of blueprints 
-pub struct InBlueprint;
+pub struct FromBlueprint;
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
@@ -570,10 +570,10 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
             }
         }
 
-        // we flag all children of the blueprint instance with 'InBlueprint'
+        // we flag all children of the blueprint instance with 'FromBlueprint'
         // can be usefull to filter out anything that came from blueprints vs normal children
         for child in all_children.iter_descendants(blueprint_root_entity) {
-            commands.entity(child).insert(InBlueprint); // we do this here in order to avoid doing it to normal children
+            commands.entity(child).insert(FromBlueprint); // we do this here in order to avoid doing it to normal children
         }
         
 
@@ -626,9 +626,14 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
                             all_names.get(child),
                             all_names.get(original)
                         );
-                        /*commands
+                        commands
                         .entity(original)
-                        .insert((BlueprintAnimationPlayerLink(bla),)); */
+                        .insert((
+                            //BlueprintAnimationPlayerLink(bla),
+                            BlueprintAnimationInfosLink(child)
+                        ))
+                        ;
+
                     } else {
                         for parent in all_parents.iter_ancestors(child) {
                             if animation_players.get(parent).is_ok() {
@@ -650,6 +655,10 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
                                         graph: original_animations.graph.clone(),
                                     },
                                 ));
+                            }
+                            if with_animation_infos.get(parent).is_ok() {
+                                commands.entity(child).insert(SceneAnimationInfosLink(parent));
+
                             }
                         }
                     }
