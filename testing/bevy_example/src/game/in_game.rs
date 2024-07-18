@@ -15,7 +15,7 @@ pub fn setup_game(
 ) {
     // here we actually spawn our game world/level
     commands.spawn((
-        BlueprintInfo::from_path("levels/World.gltf"),
+        BlueprintInfo::from_path("levels/World.glb"),
         HideUntilReady,
         SpawnBlueprint,
         GameWorldTag,

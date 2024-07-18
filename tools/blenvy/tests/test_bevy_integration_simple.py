@@ -123,9 +123,10 @@ def test_export_complex(setup_data):
     user_asset.path = "audio/fake.mp3"'''
 
     # we have to cheat, since we cannot rely on the data injected when saving the library file (since we are not saving it as part of the tests)
-    '''bpy.data.collections["External_blueprint"]["export_path"] = "blueprints/External_blueprint.glb"
+    bpy.data.collections["External_blueprint"]["export_path"] = "blueprints/External_blueprint.glb"
     bpy.data.collections["External_blueprint2"]["export_path"] = "blueprints/External_blueprint2.glb"
-    bpy.data.collections["External_blueprint3"]["export_path"] = "blueprints/External_blueprint3.glb"'''
+    bpy.data.collections["External_blueprint3"]["export_path"] = "blueprints/External_blueprint3.glb"
+    #materials/testing_library_materials.glb
 
     # do the actual exporting
     prepare_and_export()
