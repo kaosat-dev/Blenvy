@@ -17,28 +17,18 @@ pub fn export_types(world: &mut World) {
 
     let asset_root = world.resource::<AssetRoot>();
     let registry_save_path = Path::join(&asset_root.0, &config.save_path);
+    println!("registry_save_path {}", registry_save_path.display());
     let writer = File::create(registry_save_path).expect("should have created schema file");
-
-    let components_to_filter_out = &config.component_filter.clone();
-    let resources_to_filter_out = &config.resource_filter.clone();
 
     let types = world.resource_mut::<AppTypeRegistry>();
     let types = types.read();
-    let schemas = types
-        .iter()
-        .filter(|type_info| {
-            let type_id = type_info.type_id();
-            components_to_filter_out.is_allowed_by_id(type_id)
-                && resources_to_filter_out.is_allowed_by_id(type_id)
-        })
-        .map(export_type)
-        .collect::<Map<_, _>>();
+    let schemas = types.iter().map(export_type).collect::<Map<_, _>>();
 
     serde_json::to_writer_pretty(
         writer,
         &json!({
             "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "long_name": "bevy component registry schema",
+            "title": "bevy component registry schema",
             "$defs": schemas,
         }),
     )
@@ -67,7 +57,7 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
             json!({
                 "type": "object",
                 "typeInfo": "Struct",
-                "long_name": t.type_path(),
+                "title": t.type_path(),
                 "properties": properties,
                 "additionalProperties": false,
                 "required": info
@@ -85,7 +75,7 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
                 json!({
                     "type": "string",
                     "typeInfo": "Enum",
-                    "long_name": t.type_path(),
+                    "title": t.type_path(),
                     "oneOf": info
                         .iter()
                         .map(|variant| match variant {
@@ -104,12 +94,12 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
                     VariantInfo::Struct(v) => json!({
                         "type": "object",
                         "typeInfo": "Struct",
-                        "long_name": v.name(),
+                        "title": v.name(),
                         "short_name": v.name().split("::").last().unwrap_or(v.name()),
                         "properties": v
                             .iter()
                             .enumerate()
-                            .map(|(variant_idx, field)| (field.name().to_owned(), add_min_max(json!({"type": typ(field.type_path()), "long_name": field.name()}), reg, field_idx, Some(variant_idx))))
+                            .map(|(variant_idx, field)| (field.name().to_owned(), add_min_max(json!({"type": typ(field.type_path()), "title": field.name()}), reg, field_idx, Some(variant_idx))))
                             .collect::<Map<_, _>>(),
                         "additionalProperties": false,
                         "required": v
@@ -121,7 +111,7 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
                     VariantInfo::Tuple(v) => json!({
                         "type": "array",
                         "typeInfo": "Tuple",
-                        "long_name": v.name(),
+                        "title": v.name(),
                         "short_name":v.name(),
                         "prefixItems": v
                             .iter()
@@ -131,7 +121,7 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
                         "items": false,
                     }),
                     VariantInfo::Unit(v) => json!({
-                        "long_name": v.name(),
+                        "title": v.name(),
                     }),
                 })
                 .collect::<Vec<_>>();
@@ -139,13 +129,13 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
                 json!({
                     "type": "object",
                     "typeInfo": "Enum",
-                    "long_name": t.type_path(),
+                    "title": t.type_path(),
                     "oneOf": variants,
                 })
             }
         }
         TypeInfo::TupleStruct(info) => json!({
-            "long_name": t.type_path(),
+            "title": t.type_path(),
             "type": "array",
             "typeInfo": "TupleStruct",
             "prefixItems": info
@@ -157,27 +147,26 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
         }),
         TypeInfo::List(info) => {
             json!({
-                "long_name": t.type_path(),
+                "title": t.type_path(),
                 "type": "array",
                 "typeInfo": "List",
                 "items": json!({"type": typ(info.item_type_path_table().path())}),
             })
         }
         TypeInfo::Array(info) => json!({
-            "long_name": t.type_path(),
+            "title": t.type_path(),
             "type": "array",
             "typeInfo": "Array",
             "items": json!({"type": typ(info.item_type_path_table().path())}),
         }),
         TypeInfo::Map(info) => json!({
-            "long_name": t.type_path(),
+            "title": t.type_path(),
             "type": "object",
             "typeInfo": "Map",
-            "valueType": json!({"type": typ(info.value_type_path_table().path())}),
-            "keyType": json!({"type": typ(info.key_type_path_table().path())}),
+            "additionalProperties": json!({"type": typ(info.value_type_path_table().path())}),
         }),
         TypeInfo::Tuple(info) => json!({
-            "long_name": t.type_path(),
+            "title": t.type_path(),
             "type": "array",
             "typeInfo": "Tuple",
             "prefixItems": info
@@ -188,7 +177,7 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
             "items": false,
         }),
         TypeInfo::Value(info) => json!({
-            "long_name": t.type_path(),
+            "title": t.type_path(),
             "type": map_json_type(info.type_path()),
             "typeInfo": "Value",
         }),

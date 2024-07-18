@@ -19,7 +19,7 @@ This crate allows you to
     Particularly useful when using [Blender](https://www.blender.org/) as an editor for the [Bevy](https://bevyengine.org/) game engine, combined with the Blender add-on that do a lot of the work for you 
     - [blenvy](https://github.com/kaosat-dev/Blenvy/tree/main/tools/blenvy)
 - allows you to create a Json export of all your components/ registered types. 
-Its main use case is as a backbone for the [```blenvy``` Blender add-on](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/blenvy), that allows you to add & edit components directly in Blender, using the actual type definitions from Bevy 
+Its main use case is as a backbone for the [```blenvy``` Blender add-on](https://github.com/kaosat-dev/Blenvy/tree/main/tools/blenvy), that allows you to add & edit components directly in Blender, using the actual type definitions from Bevy 
 (and any of your custom types & components that you register in Bevy).
 - adds the ability to easilly **save** and **load** your game worlds for [Bevy](https://bevyengine.org/) .
 
@@ -33,7 +33,7 @@ Its main use case is as a backbone for the [```blenvy``` Blender add-on](https:/
     * ability to specify **which resources** to save or to exclude
     * small(er) save files (only a portion of the entities is saved)
 
-Particularly useful when using [Blender](https://www.blender.org/) as an editor for the [Bevy](https://bevyengine.org/) game engine, combined with the [Blender plugin](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/blenvy) that does a lot of the work for you (including spliting generating seperate gltf files for your static vs dynamic assets)
+Particularly useful when using [Blender](https://www.blender.org/) as an editor for the [Bevy](https://bevyengine.org/) game engine, combined with the [Blender plugin](https://github.com/kaosat-dev/Blenvy/tree/main/tools/blenvy) that does a lot of the work for you (including spliting generating seperate gltf files for your static vs dynamic assets)
 
 ## Usage
 

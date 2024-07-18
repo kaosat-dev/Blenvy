@@ -354,12 +354,12 @@ pub(crate) fn blueprints_assets_loaded(
         // prepare data for animations
         let mut graph = AnimationGraph::new();
         let mut named_animations: HashMap<String, Handle<AnimationClip>> = HashMap::new();
-        let mut animation_indices: HashMap<String, AnimationNodeIndex> = HashMap::new();
+        let mut named_indices: HashMap<String, AnimationNodeIndex> = HashMap::new();
 
         for (key, clip) in blueprint_gltf.named_animations.iter() {
             named_animations.insert(key.to_string(), clip.clone());
             let animation_index = graph.add_clip(clip.clone(), 1.0, graph.root);
-            animation_indices.insert(key.to_string(), animation_index);
+            named_indices.insert(key.to_string(), animation_index);
         }
         let graph = graphs.add(graph);
 
@@ -377,7 +377,7 @@ pub(crate) fn blueprints_assets_loaded(
                 // TODO: perhaps swap this out with SceneAnimations depending on whether we are spawning a level or a simple blueprint
                 // these are animations specific to the blueprint
                 named_animations,
-                named_indices: animation_indices,
+                named_indices,
                 graph,
             },
         ));

@@ -16,9 +16,9 @@ use bevy::{
 pub struct ExportComponentsConfig {
     pub(crate) save_path: PathBuf,
     #[allow(dead_code)]
-    pub(crate) component_filter: SceneFilter,
+    pub(crate) component_filter: SceneFilter, // unused for now
     #[allow(dead_code)]
-    pub(crate) resource_filter: SceneFilter,
+    pub(crate) resource_filter: SceneFilter, // unused for now
 }
 
 pub struct ExportRegistryPlugin {
@@ -30,8 +30,8 @@ pub struct ExportRegistryPlugin {
 impl Default for ExportRegistryPlugin {
     fn default() -> Self {
         Self {
-            component_filter: SceneFilter::default(),
-            resource_filter: SceneFilter::default(),
+            component_filter: SceneFilter::default(),  // unused for now
+            resource_filter: SceneFilter::default(),   // unused for now
             save_path: PathBuf::from("registry.json"), // relative to assets folder
         }
     }

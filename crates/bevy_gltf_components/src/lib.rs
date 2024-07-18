@@ -10,7 +10,13 @@ pub use process_gltfs::*;
 pub mod blender_settings;
 
 use bevy::{
-    ecs::{component::Component, reflect::ReflectComponent, system::Resource},
+    app::Startup,
+    ecs::{
+        component::Component,
+        reflect::ReflectComponent,
+        system::{Res, Resource},
+    },
+    log::warn,
     prelude::{App, IntoSystemConfigs, Plugin, SystemSet, Update},
     reflect::Reflect,
 };
@@ -60,16 +66,34 @@ pub enum GltfComponentsSet {
 }
 
 #[derive(Clone, Resource)]
-pub struct GltfComponentsConfig {}
+pub struct GltfComponentsConfig {
+    pub(crate) legacy_mode: bool,
+}
 
-#[derive(Default)]
-pub struct ComponentsFromGltfPlugin {}
+pub struct ComponentsFromGltfPlugin {
+    pub legacy_mode: bool,
+}
+
+impl Default for ComponentsFromGltfPlugin {
+    fn default() -> Self {
+        Self { legacy_mode: true }
+    }
+}
+
+fn check_for_legacy_mode(gltf_components_config: Res<GltfComponentsConfig>) {
+    if gltf_components_config.legacy_mode {
+        warn!("using simplified component definitions is deprecated since 0.3, prefer defining components with real ron values (use the bevy_components tool for Blender for simplicity) ");
+    }
+}
 
 impl Plugin for ComponentsFromGltfPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(blender_settings::plugin)
             .register_type::<GltfProcessed>()
-            .insert_resource(GltfComponentsConfig {})
+            .insert_resource(GltfComponentsConfig {
+                legacy_mode: self.legacy_mode,
+            })
+            .add_systems(Startup, check_for_legacy_mode)
             .add_systems(
                 Update,
                 (add_components_from_gltf_extras).in_set(GltfComponentsSet::Injection),

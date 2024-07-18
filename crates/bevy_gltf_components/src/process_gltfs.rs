@@ -6,67 +6,23 @@ use bevy::{
         reflect::{AppTypeRegistry, ReflectComponent},
         world::World,
     },
-    gltf::{GltfExtras, GltfMaterialExtras, GltfMeshExtras, GltfSceneExtras},
+    gltf::GltfExtras,
     hierarchy::Parent,
     log::debug,
     reflect::{Reflect, TypeRegistration},
     utils::HashMap,
 };
 
-use crate::{ronstring_to_reflect_component, GltfProcessed};
-
-// , mut entity_components: HashMap<Entity, Vec<(Box<dyn Reflect>, TypeRegistration)>>
-fn find_entity_components(
-    entity: Entity,
-    name: &Name,
-    parent: &Parent,
-    reflect_components: Vec<(Box<dyn Reflect>, TypeRegistration)>,
-    entity_components: &HashMap<Entity, Vec<(Box<dyn Reflect>, TypeRegistration)>>,
-) -> (Entity, Vec<(Box<dyn Reflect>, TypeRegistration)>) {
-    // we assign the components specified /xxx_components objects to their parent node
-    let mut target_entity = entity;
-    // if the node contains "components" or ends with "_pa" (ie add to parent), the components will not be added to the entity itself but to its parent
-    // this is mostly used for Blender collections
-    if name.as_str().contains("components") || name.as_str().ends_with("_pa") {
-        debug!("adding components to parent");
-        target_entity = parent.get();
-    }
-    debug!("adding to {:?}", target_entity);
-
-    // if there where already components set to be added to this entity (for example when entity_data was refering to a parent), update the vec of entity_components accordingly
-    // this allows for example blender collection to provide basic ecs data & the instances to override/ define their own values
-    if entity_components.contains_key(&target_entity) {
-        let mut updated_components: Vec<(Box<dyn Reflect>, TypeRegistration)> = Vec::new();
-        let current_components = &entity_components[&target_entity];
-        // first inject the current components
-        for (component, type_registration) in current_components {
-            updated_components.push((component.clone_value(), type_registration.clone()));
-        }
-        // then inject the new components: this also enables overwrite components set in the collection
-        for (component, type_registration) in reflect_components {
-            updated_components.push((component.clone_value(), type_registration));
-        }
-        return (target_entity, updated_components);
-        //entity_components.insert(target_entity, updated_components);
-    } else {
-        return (target_entity, reflect_components);
-        // entity_components.insert(target_entity, reflect_components);
-    }
-}
+use crate::{ronstring_to_reflect_component, GltfComponentsConfig, GltfProcessed};
 
 /// main function: injects components into each entity in gltf files that have `gltf_extras`, using reflection
 pub fn add_components_from_gltf_extras(world: &mut World) {
     let mut extras =
         world.query_filtered::<(Entity, &Name, &GltfExtras, &Parent), (Added<GltfExtras>, Without<GltfProcessed>)>();
-
-    let mut scene_extras = world.query_filtered::<(Entity, &Name, &GltfSceneExtras, &Parent), (Added<GltfSceneExtras>, Without<GltfProcessed>)>();
-    let mut mesh_extras = world.query_filtered::<(Entity, &Name, &GltfMeshExtras, &Parent), (Added<GltfMeshExtras>, Without<GltfProcessed>)>();
-    let mut material_extras = world.query_filtered::<(Entity, &Name, &GltfMaterialExtras, &Parent), (Added<GltfMaterialExtras>, Without<GltfProcessed>)>();
-
     let mut entity_components: HashMap<Entity, Vec<(Box<dyn Reflect>, TypeRegistration)>> =
         HashMap::new();
 
-    // let gltf_components_config = world.resource::<GltfComponentsConfig>();
+    let gltf_components_config = world.resource::<GltfComponentsConfig>();
 
     for (entity, name, extra, parent) in extras.iter(world) {
         debug!(
@@ -76,56 +32,40 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
 
         let type_registry: &AppTypeRegistry = world.resource();
         let type_registry = type_registry.read();
-        let reflect_components = ronstring_to_reflect_component(&extra.value, &type_registry);
 
-        let (target_entity, updated_components) =
-            find_entity_components(entity, name, parent, reflect_components, &entity_components);
-        entity_components.insert(target_entity, updated_components);
-    }
-
-    for (entity, name, extra, parent) in scene_extras.iter(world) {
-        debug!(
-            "Name: {}, entity {:?}, parent: {:?}, scene_extras {:?}",
-            name, entity, parent, extra
+        let reflect_components = ronstring_to_reflect_component(
+            &extra.value,
+            &type_registry,
+            gltf_components_config.legacy_mode,
         );
 
-        let type_registry: &AppTypeRegistry = world.resource();
-        let type_registry = type_registry.read();
-        let reflect_components = ronstring_to_reflect_component(&extra.value, &type_registry);
+        // we assign the components specified /xxx_components objects to their parent node
+        let mut target_entity = entity;
+        // if the node contains "components" or ends with "_pa" (ie add to parent), the components will not be added to the entity itself but to its parent
+        // this is mostly used for Blender collections
+        if name.as_str().contains("components") || name.as_str().ends_with("_pa") {
+            debug!("adding components to parent");
+            target_entity = parent.get();
+        }
+        debug!("adding to {:?}", target_entity);
 
-        let (target_entity, updated_components) =
-            find_entity_components(entity, name, parent, reflect_components, &entity_components);
-        entity_components.insert(target_entity, updated_components);
-    }
-
-    for (entity, name, extra, parent) in mesh_extras.iter(world) {
-        debug!(
-            "Name: {}, entity {:?}, parent: {:?}, mesh_extras {:?}",
-            name, entity, parent, extra
-        );
-
-        let type_registry: &AppTypeRegistry = world.resource();
-        let type_registry = type_registry.read();
-        let reflect_components = ronstring_to_reflect_component(&extra.value, &type_registry);
-
-        let (target_entity, updated_components) =
-            find_entity_components(entity, name, parent, reflect_components, &entity_components);
-        entity_components.insert(target_entity, updated_components);
-    }
-
-    for (entity, name, extra, parent) in material_extras.iter(world) {
-        debug!(
-            "Name: {}, entity {:?}, parent: {:?}, material_extras {:?}",
-            name, entity, parent, extra
-        );
-
-        let type_registry: &AppTypeRegistry = world.resource();
-        let type_registry = type_registry.read();
-        let reflect_components = ronstring_to_reflect_component(&extra.value, &type_registry);
-
-        let (target_entity, updated_components) =
-            find_entity_components(entity, name, parent, reflect_components, &entity_components);
-        entity_components.insert(target_entity, updated_components);
+        // if there where already components set to be added to this entity (for example when entity_data was refering to a parent), update the vec of entity_components accordingly
+        // this allows for example blender collection to provide basic ecs data & the instances to override/ define their own values
+        if entity_components.contains_key(&target_entity) {
+            let mut updated_components: Vec<(Box<dyn Reflect>, TypeRegistration)> = Vec::new();
+            let current_components = &entity_components[&target_entity];
+            // first inject the current components
+            for (component, type_registration) in current_components {
+                updated_components.push((component.clone_value(), type_registration.clone()));
+            }
+            // then inject the new components: this also enables overwrite components set in the collection
+            for (component, type_registration) in reflect_components {
+                updated_components.push((component.clone_value(), type_registration));
+            }
+            entity_components.insert(target_entity, updated_components);
+        } else {
+            entity_components.insert(target_entity, reflect_components);
+        }
     }
 
     for (entity, components) in entity_components {

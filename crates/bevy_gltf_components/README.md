@@ -4,7 +4,9 @@
 [![Bevy tracking](https://img.shields.io/badge/Bevy%20tracking-released%20version-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
 
 
-# bevy_gltf_components
+# bevy_gltf_components (deprecated in favor of Blenvy)
+
+> bevy_gltf_components has been deprecated in favor of its successor [Blenvy](https://crates.io/crates/blenvy), part of the [Blenvy project](https://github.com/kaosat-dev/Blenvy). No further development or maintenance will be done for Bevy bevy_gltf_components. See [#194](https://github.com/kaosat-dev/Blenvy/issues/194) for background.
 
 This crate allows you to define [Bevy](https://bevyengine.org/) components direclty inside gltf files and instanciate the components on the Bevy side.
 
@@ -23,8 +25,8 @@ Here's a minimal usage example:
 ```toml
 # Cargo.toml
 [dependencies]
-bevy="0.13"
-bevy_gltf_components = { version = "0.5"} 
+bevy="0.14"
+bevy_gltf_components = { version = "0.6"} 
 
 ```
 
@@ -60,7 +62,7 @@ bevy_gltf_components = { version = "0.5"}
 Add the following to your `[dependencies]` section in `Cargo.toml`:
 
 ```toml
-bevy_gltf_components = "0.5"
+bevy_gltf_components = "0.6"
 ```
 
 Or use `cargo add`:
@@ -78,78 +80,17 @@ Use the default configuration:
 ComponentsFromGltfPlugin::default()
 ```
 
-As of v0.6 Legacy mode has been removed , you can emulate it using a system that should run BEFORE bevy_gltf_components
+Or disable the legacy mode: (enabled by default)
 
-```rust no run
-            if simplified_types {
-                if let TypeInfo::TupleStruct(info) = type_registration.type_info() {
-                    // we handle tupple strucs with only one field differently, as Blender's custom properties with custom ui (float, int, bool, etc) always give us a tupple struct
-                    if info.field_len() == 1 {
-                        let field = info
-                            .field_at(0)
-                            .expect("we should always have at least one field here");
-                        let field_name = field.type_path();
-                        let mut formated = parsed_value.clone();
-                        match field_name {
-                            "f32" => {
-                                formated = parsed_value.parse::<f32>().unwrap().to_string();
-                            }
-                            "f64" => {
-                                formated = parsed_value.parse::<f64>().unwrap().to_string();
-                            }
-                            "u8" => {
-                                formated = parsed_value.parse::<u8>().unwrap().to_string();
-                            }
-                            "u16" => {
-                                formated = parsed_value.parse::<u16>().unwrap().to_string();
-                            }
-                            "u32" => {
-                                formated = parsed_value.parse::<u32>().unwrap().to_string();
-                            }
-                            "u64" => {
-                                formated = parsed_value.parse::<u64>().unwrap().to_string();
-                            }
-                            "u128" => {
-                                formated = parsed_value.parse::<u128>().unwrap().to_string();
-                            }
-                            "glam::Vec2" => {
-                                let parsed: Vec<f32> = ron::from_str(&parsed_value).unwrap();
-                                formated = format!("(x:{},y:{})", parsed[0], parsed[1]);
-                            }
-                            "glam::Vec3" => {
-                                let parsed: Vec<f32> = ron::from_str(&parsed_value).unwrap();
-                                formated =
-                                    format!("(x:{},y:{},z:{})", parsed[0], parsed[1], parsed[2]);
-                            }
-                            "bevy_render::color::Color" => {
-                                let parsed: Vec<f32> = ron::from_str(&parsed_value).unwrap();
-                                if parsed.len() == 3 {
-                                    formated = format!(
-                                        "Rgba(red:{},green:{},blue:{}, alpha: 1.0)",
-                                        parsed[0], parsed[1], parsed[2]
-                                    );
-                                }
-                                if parsed.len() == 4 {
-                                    formated = format!(
-                                        "Rgba(red:{},green:{},blue:{}, alpha:{})",
-                                        parsed[0], parsed[1], parsed[2], parsed[3]
-                                    );
-                                }
-                            }
-                            _ => {}
-                        }
-
-                        parsed_value = format!("({formated})");
-                    }
-                }
-
-                if parsed_value.is_empty() {
-                    parsed_value = "()".to_string();
-                }
-            }
-
+```rust no_run
+ComponentsFromGltfPlugin{legacy_mode: false}
 ```
 
+You **need** to disable legacy mode if you want to use the [```bevy_components```](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/bevy_components) Blender addon + the [```bevy_registry_export crate```](https://crates.io/crates/bevy_registry_export) ! 
+As it create custom properties that are writen in real **ron** file format
+instead of a simplified version (the one in the legacy mode)
+
+> Note: the legacy mode support will be dropped in future versions, and the default behaviour will be NO legacy mode
 
 ## SystemSet
 
@@ -188,6 +129,7 @@ The main branch is compatible with the latest Bevy release, while the branch `be
 Compatibility of `bevy_gltf_components` versions:
 | `bevy_gltf_components` | `bevy` |
 | :--                 | :--    |
+| `0.6`               | `0.14` |
 | `0.5`               | `0.13` |
 | `0.2 - 0.4`         | `0.12` |
 | `0.1`               | `0.11` |

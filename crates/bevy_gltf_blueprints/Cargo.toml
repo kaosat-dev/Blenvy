@@ -15,7 +15,7 @@ workspace = true
 
 [dependencies]
 bevy_gltf_components = { version = "0.6", path = "../bevy_gltf_components" }
-bevy = { version = "0.14.0-rc.3", default-features = false, features = ["bevy_asset", "bevy_scene", "bevy_gltf", "bevy_animation", "animation"] }
+bevy = { version = "0.14", default-features = false, features = ["bevy_asset", "bevy_scene", "bevy_gltf", "bevy_animation", "animation"] }
 
 [dev-dependencies]
-bevy = { version = "0.14.0-rc.3", default-features = false, features = ["dynamic_linking"] }
+bevy = { version = "0.14", default-features = false, features = ["dynamic_linking"] }
