@@ -92,7 +92,7 @@ pub fn animation_change_on_proximity_foxes(
     players: Query<&GlobalTransform, With<Player>>,
     animated_foxes: Query<(&GlobalTransform, &AnimationPlayerLink, &Animations), With<Fox>>,
 
-    mut animation_players: Query<&mut AnimationPlayer>,
+    mut animation_players: Query<(&mut AnimationPlayer, &mut AnimationTransitions)>,
 ) {
     for player_transforms in players.iter() {
         for (fox_tranforms, link, animations) in animated_foxes.iter() {
@@ -108,14 +108,15 @@ pub fn animation_change_on_proximity_foxes(
                 anim_name = "Survey";
             }
             // now play the animation based on the chosen animation name
-            let mut animation_player = animation_players.get_mut(link.0).unwrap();
-            animation_player
-                .play_with_transition(
-                    animations
-                        .named_animations
+            let (mut animation_player, mut animation_transitions) =
+                animation_players.get_mut(link.0).unwrap();
+            animation_transitions
+                .play(
+                    &mut animation_player,
+                    *animations
+                        .named_indices
                         .get(anim_name)
-                        .expect("animation name should be in the list")
-                        .clone(),
+                        .expect("animation name should be in the list"),
                     Duration::from_secs(3),
                 )
                 .repeat();
@@ -128,7 +129,7 @@ pub fn animation_change_on_proximity_robots(
     players: Query<&GlobalTransform, With<Player>>,
     animated_robots: Query<(&GlobalTransform, &AnimationPlayerLink, &Animations), With<Robot>>,
 
-    mut animation_players: Query<&mut AnimationPlayer>,
+    mut animation_players: Query<(&mut AnimationPlayer, &mut AnimationTransitions)>,
 ) {
     for player_transforms in players.iter() {
         for (robot_tranforms, link, animations) in animated_robots.iter() {
@@ -146,14 +147,15 @@ pub fn animation_change_on_proximity_robots(
             }
 
             // now play the animation based on the chosen animation name
-            let mut animation_player = animation_players.get_mut(link.0).unwrap();
-            animation_player
-                .play_with_transition(
-                    animations
-                        .named_animations
+            let (mut animation_player, mut animation_transitions) =
+                animation_players.get_mut(link.0).unwrap();
+            animation_transitions
+                .play(
+                    &mut animation_player,
+                    *animations
+                        .named_indices
                         .get(anim_name)
-                        .expect("animation name should be in the list")
-                        .clone(),
+                        .expect("animation name should be in the list"),
                     Duration::from_secs(3),
                 )
                 .repeat();
@@ -165,7 +167,7 @@ pub fn animation_control(
     animated_enemies: Query<(&AnimationPlayerLink, &Animations), With<Robot>>,
     animated_foxes: Query<(&AnimationPlayerLink, &Animations), With<Fox>>,
 
-    mut animation_players: Query<&mut AnimationPlayer>,
+    mut animation_players: Query<(&mut AnimationPlayer, &mut AnimationTransitions)>,
 
     keycode: Res<ButtonInput<KeyCode>>,
     // mut entities_with_animations : Query<(&mut AnimationPlayer, &mut Animations)>,
@@ -173,15 +175,16 @@ pub fn animation_control(
     // robots
     if keycode.just_pressed(KeyCode::KeyB) {
         for (link, animations) in animated_enemies.iter() {
-            let mut animation_player = animation_players.get_mut(link.0).unwrap();
+            let (mut animation_player, mut animation_transitions) =
+                animation_players.get_mut(link.0).unwrap();
             let anim_name = "Scan";
-            animation_player
-                .play_with_transition(
-                    animations
-                        .named_animations
+            animation_transitions
+                .play(
+                    &mut animation_player,
+                    *animations
+                        .named_indices
                         .get(anim_name)
-                        .expect("animation name should be in the list")
-                        .clone(),
+                        .expect("animation name should be in the list"),
                     Duration::from_secs(5),
                 )
                 .repeat();
@@ -191,15 +194,16 @@ pub fn animation_control(
     // foxes
     if keycode.just_pressed(KeyCode::KeyW) {
         for (link, animations) in animated_foxes.iter() {
-            let mut animation_player = animation_players.get_mut(link.0).unwrap();
+            let (mut animation_player, mut animation_transitions) =
+                animation_players.get_mut(link.0).unwrap();
             let anim_name = "Walk";
-            animation_player
-                .play_with_transition(
-                    animations
-                        .named_animations
+            animation_transitions
+                .play(
+                    &mut animation_player,
+                    *animations
+                        .named_indices
                         .get(anim_name)
-                        .expect("animation name should be in the list")
-                        .clone(),
+                        .expect("animation name should be in the list"),
                     Duration::from_secs(5),
                 )
                 .repeat();
@@ -208,15 +212,16 @@ pub fn animation_control(
 
     if keycode.just_pressed(KeyCode::KeyX) {
         for (link, animations) in animated_foxes.iter() {
-            let mut animation_player = animation_players.get_mut(link.0).unwrap();
+            let (mut animation_player, mut animation_transitions) =
+                animation_players.get_mut(link.0).unwrap();
             let anim_name = "Run";
-            animation_player
-                .play_with_transition(
-                    animations
-                        .named_animations
+            animation_transitions
+                .play(
+                    &mut animation_player,
+                    *animations
+                        .named_indices
                         .get(anim_name)
-                        .expect("animation name should be in the list")
-                        .clone(),
+                        .expect("animation name should be in the list"),
                     Duration::from_secs(5),
                 )
                 .repeat();
@@ -225,15 +230,16 @@ pub fn animation_control(
 
     if keycode.just_pressed(KeyCode::KeyC) {
         for (link, animations) in animated_foxes.iter() {
-            let mut animation_player = animation_players.get_mut(link.0).unwrap();
+            let (mut animation_player, mut animation_transitions) =
+                animation_players.get_mut(link.0).unwrap();
             let anim_name = "Survey";
-            animation_player
-                .play_with_transition(
-                    animations
-                        .named_animations
+            animation_transitions
+                .play(
+                    &mut animation_player,
+                    *animations
+                        .named_indices
                         .get(anim_name)
-                        .expect("animation name should be in the list")
-                        .clone(),
+                        .expect("animation name should be in the list"),
                     Duration::from_secs(5),
                 )
                 .repeat();

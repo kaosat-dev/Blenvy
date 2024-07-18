@@ -4,7 +4,9 @@
 [![Bevy tracking](https://img.shields.io/badge/Bevy%20tracking-released%20version-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
 
 
-# bevy_gltf_components
+# bevy_gltf_components (deprecated in favor of Blenvy)
+
+> bevy_gltf_components has been deprecated in favor of its successor [Blenvy](https://crates.io/crates/blenvy), part of the [Blenvy project](https://github.com/kaosat-dev/Blenvy). No further development or maintenance will be done for Bevy bevy_gltf_components. See [#194](https://github.com/kaosat-dev/Blenvy/issues/194) for background.
 
 This crate allows you to define [Bevy](https://bevyengine.org/) components direclty inside gltf files and instanciate the components on the Bevy side.
 
@@ -23,8 +25,8 @@ Here's a minimal usage example:
 ```toml
 # Cargo.toml
 [dependencies]
-bevy="0.13"
-bevy_gltf_components = { version = "0.5"} 
+bevy="0.14"
+bevy_gltf_components = { version = "0.6"} 
 
 ```
 
@@ -60,7 +62,7 @@ bevy_gltf_components = { version = "0.5"}
 Add the following to your `[dependencies]` section in `Cargo.toml`:
 
 ```toml
-bevy_gltf_components = "0.5"
+bevy_gltf_components = "0.6"
 ```
 
 Or use `cargo add`:
@@ -127,6 +129,7 @@ The main branch is compatible with the latest Bevy release, while the branch `be
 Compatibility of `bevy_gltf_components` versions:
 | `bevy_gltf_components` | `bevy` |
 | :--                 | :--    |
+| `0.6`               | `0.14` |
 | `0.5`               | `0.13` |
 | `0.2 - 0.4`         | `0.12` |
 | `0.1`               | `0.11` |

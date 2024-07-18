@@ -1,5 +1,15 @@
 {
   "$defs": {
+    "()": {
+      "isComponent": false,
+      "isResource": false,
+      "items": false,
+      "prefixItems": [],
+      "short_name": "()",
+      "title": "()",
+      "type": "array",
+      "typeInfo": "Tuple"
+    },
     "(f32, f32)": {
       "isComponent": false,
       "isResource": false,
@@ -21,13 +31,26 @@
       "type": "array",
       "typeInfo": "Tuple"
     },
-    "alloc::borrow::Cow<std::path::Path>": {
+    "(u8, u8)": {
       "isComponent": false,
       "isResource": false,
-      "short_name": "Cow<Path>",
-      "title": "alloc::borrow::Cow<std::path::Path>",
-      "type": "object",
-      "typeInfo": "Value"
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/u8"
+          }
+        },
+        {
+          "type": {
+            "$ref": "#/$defs/u8"
+          }
+        }
+      ],
+      "short_name": "(u8, u8)",
+      "title": "(u8, u8)",
+      "type": "array",
+      "typeInfo": "Tuple"
     },
     "alloc::borrow::Cow<str>": {
       "isComponent": false,
@@ -84,6 +107,19 @@
       "type": "array",
       "typeInfo": "List"
     },
+    "alloc::vec::Vec<bevy_animation::transition::AnimationTransition>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/bevy_animation::transition::AnimationTransition"
+        }
+      },
+      "short_name": "Vec<AnimationTransition>",
+      "title": "alloc::vec::Vec<bevy_animation::transition::AnimationTransition>",
+      "type": "array",
+      "typeInfo": "List"
+    },
     "alloc::vec::Vec<bevy_bevy_registry_export_basic_example::test_components::TupleVec3>": {
       "isComponent": false,
       "isResource": false,
@@ -94,6 +130,19 @@
       },
       "short_name": "Vec<TupleVec3>",
       "title": "alloc::vec::Vec<bevy_bevy_registry_export_basic_example::test_components::TupleVec3>",
+      "type": "array",
+      "typeInfo": "List"
+    },
+    "alloc::vec::Vec<bevy_color::color::Color>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/bevy_color::color::Color"
+        }
+      },
+      "short_name": "Vec<Color>",
+      "title": "alloc::vec::Vec<bevy_color::color::Color>",
       "type": "array",
       "typeInfo": "List"
     },
@@ -110,16 +159,42 @@
       "type": "array",
       "typeInfo": "List"
     },
-    "alloc::vec::Vec<bevy_render::color::Color>": {
+    "alloc::vec::Vec<bevy_math::rects::urect::URect>": {
       "isComponent": false,
       "isResource": false,
       "items": {
         "type": {
-          "$ref": "#/$defs/bevy_render::color::Color"
+          "$ref": "#/$defs/bevy_math::rects::urect::URect"
         }
       },
-      "short_name": "Vec<Color>",
-      "title": "alloc::vec::Vec<bevy_render::color::Color>",
+      "short_name": "Vec<URect>",
+      "title": "alloc::vec::Vec<bevy_math::rects::urect::URect>",
+      "type": "array",
+      "typeInfo": "List"
+    },
+    "alloc::vec::Vec<bevy_pbr::light::Cascade>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/bevy_pbr::light::Cascade"
+        }
+      },
+      "short_name": "Vec<Cascade>",
+      "title": "alloc::vec::Vec<bevy_pbr::light::Cascade>",
+      "type": "array",
+      "typeInfo": "List"
+    },
+    "alloc::vec::Vec<bevy_text::glyph_brush::PositionedGlyph>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/bevy_text::glyph_brush::PositionedGlyph"
+        }
+      },
+      "short_name": "Vec<PositionedGlyph>",
+      "title": "alloc::vec::Vec<bevy_text::glyph_brush::PositionedGlyph>",
       "type": "array",
       "typeInfo": "List"
     },
@@ -133,6 +208,32 @@
       },
       "short_name": "Vec<TextSection>",
       "title": "alloc::vec::Vec<bevy_text::text::TextSection>",
+      "type": "array",
+      "typeInfo": "List"
+    },
+    "alloc::vec::Vec<bevy_ui::ui_node::GridTrack>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/bevy_ui::ui_node::GridTrack"
+        }
+      },
+      "short_name": "Vec<GridTrack>",
+      "title": "alloc::vec::Vec<bevy_ui::ui_node::GridTrack>",
+      "type": "array",
+      "typeInfo": "List"
+    },
+    "alloc::vec::Vec<bevy_ui::ui_node::RepeatedGridTrack>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/bevy_ui::ui_node::RepeatedGridTrack"
+        }
+      },
+      "short_name": "Vec<RepeatedGridTrack>",
+      "title": "alloc::vec::Vec<bevy_ui::ui_node::RepeatedGridTrack>",
       "type": "array",
       "typeInfo": "List"
     },
@@ -175,6 +276,32 @@
       "type": "array",
       "typeInfo": "List"
     },
+    "alloc::vec::Vec<u16>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/u16"
+        }
+      },
+      "short_name": "Vec<u16>",
+      "title": "alloc::vec::Vec<u16>",
+      "type": "array",
+      "typeInfo": "List"
+    },
+    "alloc::vec::Vec<u32>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/u32"
+        }
+      },
+      "short_name": "Vec<u32>",
+      "title": "alloc::vec::Vec<u32>",
+      "type": "array",
+      "typeInfo": "List"
+    },
     "bevy_animation::AnimationClip": {
       "additionalProperties": false,
       "isComponent": false,
@@ -182,23 +309,17 @@
       "properties": {
         "curves": {
           "type": {
-            "$ref": "#/$defs/alloc::vec::Vec<alloc::vec::Vec<bevy_animation::VariableCurve>>"
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<bevy_animation::AnimationTargetId, alloc::vec::Vec<bevy_animation::VariableCurve>, bevy_utils::NoOpHash>"
           }
         },
         "duration": {
           "type": {
             "$ref": "#/$defs/f32"
           }
-        },
-        "paths": {
-          "type": {
-            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<bevy_animation::EntityPath, usize, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
-          }
         }
       },
       "required": [
         "curves",
-        "paths",
         "duration"
       ],
       "short_name": "AnimationClip",
@@ -211,25 +332,66 @@
       "isComponent": true,
       "isResource": false,
       "properties": {
-        "animation": {
+        "active_animations": {
           "type": {
-            "$ref": "#/$defs/bevy_animation::PlayingAnimation"
+            "$ref": "#/$defs/std::collections::BTreeMap<petgraph::graph::NodeIndex, bevy_animation::ActiveAnimation>"
           }
         },
-        "paused": {
+        "blend_weights": {
           "type": {
-            "$ref": "#/$defs/bool"
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<petgraph::graph::NodeIndex, f32, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
           }
         }
       },
       "required": [
-        "paused",
-        "animation"
+        "active_animations",
+        "blend_weights"
       ],
       "short_name": "AnimationPlayer",
       "title": "bevy_animation::AnimationPlayer",
       "type": "object",
       "typeInfo": "Struct"
+    },
+    "bevy_animation::AnimationTarget": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "id": {
+          "type": {
+            "$ref": "#/$defs/bevy_animation::AnimationTargetId"
+          }
+        },
+        "player": {
+          "type": {
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "player"
+      ],
+      "short_name": "AnimationTarget",
+      "title": "bevy_animation::AnimationTarget",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_animation::AnimationTargetId": {
+      "isComponent": false,
+      "isResource": false,
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/uuid::Uuid"
+          }
+        }
+      ],
+      "short_name": "AnimationTargetId",
+      "title": "bevy_animation::AnimationTargetId",
+      "type": "array",
+      "typeInfo": "TupleStruct"
     },
     "bevy_animation::Interpolation": {
       "isComponent": false,
@@ -341,6 +503,111 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_animation::graph::AnimationGraph": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "graph": {
+          "type": {
+            "$ref": "#/$defs/petgraph::graph::DiGraph<bevy_animation::graph::AnimationGraphNode, (), u32>"
+          }
+        },
+        "root": {
+          "type": {
+            "$ref": "#/$defs/petgraph::graph::NodeIndex"
+          }
+        }
+      },
+      "required": [
+        "graph",
+        "root"
+      ],
+      "short_name": "AnimationGraph",
+      "title": "bevy_animation::graph::AnimationGraph",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_animation::transition::AnimationTransition": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "animation": {
+          "type": {
+            "$ref": "#/$defs/petgraph::graph::NodeIndex"
+          }
+        },
+        "current_weight": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "weight_decline_per_sec": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      },
+      "required": [
+        "current_weight",
+        "weight_decline_per_sec",
+        "animation"
+      ],
+      "short_name": "AnimationTransition",
+      "title": "bevy_animation::transition::AnimationTransition",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_animation::transition::AnimationTransitions": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "main_animation": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<petgraph::graph::NodeIndex>"
+          }
+        },
+        "transitions": {
+          "type": {
+            "$ref": "#/$defs/alloc::vec::Vec<bevy_animation::transition::AnimationTransition>"
+          }
+        }
+      },
+      "required": [
+        "transitions"
+      ],
+      "short_name": "AnimationTransitions",
+      "title": "bevy_animation::transition::AnimationTransitions",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_asset::assets::AssetIndex": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "generation": {
+          "type": {
+            "$ref": "#/$defs/u32"
+          }
+        },
+        "index": {
+          "type": {
+            "$ref": "#/$defs/u32"
+          }
+        }
+      },
+      "required": [
+        "generation",
+        "index"
+      ],
+      "short_name": "AssetIndex",
+      "title": "bevy_asset::assets::AssetIndex",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "bevy_asset::handle::Handle<()>": {
       "isComponent": true,
       "isResource": false,
@@ -417,6 +684,44 @@
       "type": "object",
       "typeInfo": "Enum"
     },
+    "bevy_asset::handle::Handle<bevy_animation::graph::AnimationGraph>": {
+      "isComponent": true,
+      "isResource": false,
+      "oneOf": [
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/std::sync::Arc<bevy_asset::handle::StrongHandle>"
+              }
+            }
+          ],
+          "short_name": "Strong",
+          "title": "Strong",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_asset::id::AssetId<bevy_animation::graph::AnimationGraph>"
+              }
+            }
+          ],
+          "short_name": "Weak",
+          "title": "Weak",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Handle<AnimationGraph>",
+      "title": "bevy_asset::handle::Handle<bevy_animation::graph::AnimationGraph>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
     "bevy_asset::handle::Handle<bevy_asset::assets::LoadedUntypedAsset>": {
       "isComponent": true,
       "isResource": false,
@@ -490,6 +795,44 @@
       ],
       "short_name": "Handle<LoadedFolder>",
       "title": "bevy_asset::handle::Handle<bevy_asset::folder::LoadedFolder>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "bevy_asset::handle::Handle<bevy_asset_loader::standard_dynamic_asset::StandardDynamicAssetArrayCollection>": {
+      "isComponent": true,
+      "isResource": false,
+      "oneOf": [
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/std::sync::Arc<bevy_asset::handle::StrongHandle>"
+              }
+            }
+          ],
+          "short_name": "Strong",
+          "title": "Strong",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_asset::id::AssetId<bevy_asset_loader::standard_dynamic_asset::StandardDynamicAssetArrayCollection>"
+              }
+            }
+          ],
+          "short_name": "Weak",
+          "title": "Weak",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Handle<StandardDynamicAssetArrayCollection>",
+      "title": "bevy_asset::handle::Handle<bevy_asset_loader::standard_dynamic_asset::StandardDynamicAssetArrayCollection>",
       "type": "object",
       "typeInfo": "Enum"
     },
@@ -832,44 +1175,6 @@
       ],
       "short_name": "Handle<StandardMaterial>",
       "title": "bevy_asset::handle::Handle<bevy_pbr::pbr_material::StandardMaterial>",
-      "type": "object",
-      "typeInfo": "Enum"
-    },
-    "bevy_asset::handle::Handle<bevy_pbr::wireframe::WireframeMaterial>": {
-      "isComponent": true,
-      "isResource": false,
-      "oneOf": [
-        {
-          "items": false,
-          "prefixItems": [
-            {
-              "type": {
-                "$ref": "#/$defs/std::sync::Arc<bevy_asset::handle::StrongHandle>"
-              }
-            }
-          ],
-          "short_name": "Strong",
-          "title": "Strong",
-          "type": "array",
-          "typeInfo": "Tuple"
-        },
-        {
-          "items": false,
-          "prefixItems": [
-            {
-              "type": {
-                "$ref": "#/$defs/bevy_asset::id::AssetId<bevy_pbr::wireframe::WireframeMaterial>"
-              }
-            }
-          ],
-          "short_name": "Weak",
-          "title": "Weak",
-          "type": "array",
-          "typeInfo": "Tuple"
-        }
-      ],
-      "short_name": "Handle<WireframeMaterial>",
-      "title": "bevy_asset::handle::Handle<bevy_pbr::wireframe::WireframeMaterial>",
       "type": "object",
       "typeInfo": "Enum"
     },
@@ -1243,7 +1548,7 @@
             "uuid": {
               "title": "uuid",
               "type": {
-                "$ref": "#/$defs/bevy_utils::Uuid"
+                "$ref": "#/$defs/uuid::Uuid"
               }
             }
           },
@@ -1289,7 +1594,7 @@
             "uuid": {
               "title": "uuid",
               "type": {
-                "$ref": "#/$defs/bevy_utils::Uuid"
+                "$ref": "#/$defs/uuid::Uuid"
               }
             }
           },
@@ -1304,6 +1609,52 @@
       ],
       "short_name": "AssetId<AnimationClip>",
       "title": "bevy_asset::id::AssetId<bevy_animation::AnimationClip>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "bevy_asset::id::AssetId<bevy_animation::graph::AnimationGraph>": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "index": {
+              "title": "index",
+              "type": {
+                "$ref": "#/$defs/bevy_asset::assets::AssetIndex"
+              }
+            }
+          },
+          "required": [
+            "index"
+          ],
+          "short_name": "Index",
+          "title": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "uuid": {
+              "title": "uuid",
+              "type": {
+                "$ref": "#/$defs/uuid::Uuid"
+              }
+            }
+          },
+          "required": [
+            "uuid"
+          ],
+          "short_name": "Uuid",
+          "title": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
+        }
+      ],
+      "short_name": "AssetId<AnimationGraph>",
+      "title": "bevy_asset::id::AssetId<bevy_animation::graph::AnimationGraph>",
       "type": "object",
       "typeInfo": "Enum"
     },
@@ -1335,7 +1686,7 @@
             "uuid": {
               "title": "uuid",
               "type": {
-                "$ref": "#/$defs/bevy_utils::Uuid"
+                "$ref": "#/$defs/uuid::Uuid"
               }
             }
           },
@@ -1381,7 +1732,7 @@
             "uuid": {
               "title": "uuid",
               "type": {
-                "$ref": "#/$defs/bevy_utils::Uuid"
+                "$ref": "#/$defs/uuid::Uuid"
               }
             }
           },
@@ -1396,6 +1747,52 @@
       ],
       "short_name": "AssetId<LoadedFolder>",
       "title": "bevy_asset::id::AssetId<bevy_asset::folder::LoadedFolder>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "bevy_asset::id::AssetId<bevy_asset_loader::standard_dynamic_asset::StandardDynamicAssetArrayCollection>": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "index": {
+              "title": "index",
+              "type": {
+                "$ref": "#/$defs/bevy_asset::assets::AssetIndex"
+              }
+            }
+          },
+          "required": [
+            "index"
+          ],
+          "short_name": "Index",
+          "title": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "uuid": {
+              "title": "uuid",
+              "type": {
+                "$ref": "#/$defs/uuid::Uuid"
+              }
+            }
+          },
+          "required": [
+            "uuid"
+          ],
+          "short_name": "Uuid",
+          "title": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
+        }
+      ],
+      "short_name": "AssetId<StandardDynamicAssetArrayCollection>",
+      "title": "bevy_asset::id::AssetId<bevy_asset_loader::standard_dynamic_asset::StandardDynamicAssetArrayCollection>",
       "type": "object",
       "typeInfo": "Enum"
     },
@@ -1427,7 +1824,7 @@
             "uuid": {
               "title": "uuid",
               "type": {
-                "$ref": "#/$defs/bevy_utils::Uuid"
+                "$ref": "#/$defs/uuid::Uuid"
               }
             }
           },
@@ -1473,7 +1870,7 @@
             "uuid": {
               "title": "uuid",
               "type": {
-                "$ref": "#/$defs/bevy_utils::Uuid"
+                "$ref": "#/$defs/uuid::Uuid"
               }
             }
           },
@@ -1519,7 +1916,7 @@
             "uuid": {
               "title": "uuid",
               "type": {
-                "$ref": "#/$defs/bevy_utils::Uuid"
+                "$ref": "#/$defs/uuid::Uuid"
               }
             }
           },
@@ -1565,7 +1962,7 @@
             "uuid": {
               "title": "uuid",
               "type": {
-                "$ref": "#/$defs/bevy_utils::Uuid"
+                "$ref": "#/$defs/uuid::Uuid"
               }
             }
           },
@@ -1611,7 +2008,7 @@
             "uuid": {
               "title": "uuid",
               "type": {
-                "$ref": "#/$defs/bevy_utils::Uuid"
+                "$ref": "#/$defs/uuid::Uuid"
               }
             }
           },
@@ -1657,7 +2054,7 @@
             "uuid": {
               "title": "uuid",
               "type": {
-                "$ref": "#/$defs/bevy_utils::Uuid"
+                "$ref": "#/$defs/uuid::Uuid"
               }
             }
           },
@@ -1703,7 +2100,7 @@
             "uuid": {
               "title": "uuid",
               "type": {
-                "$ref": "#/$defs/bevy_utils::Uuid"
+                "$ref": "#/$defs/uuid::Uuid"
               }
             }
           },
@@ -1749,7 +2146,7 @@
             "uuid": {
               "title": "uuid",
               "type": {
-                "$ref": "#/$defs/bevy_utils::Uuid"
+                "$ref": "#/$defs/uuid::Uuid"
               }
             }
           },
@@ -1795,7 +2192,7 @@
             "uuid": {
               "title": "uuid",
               "type": {
-                "$ref": "#/$defs/bevy_utils::Uuid"
+                "$ref": "#/$defs/uuid::Uuid"
               }
             }
           },
@@ -1810,52 +2207,6 @@
       ],
       "short_name": "AssetId<StandardMaterial>",
       "title": "bevy_asset::id::AssetId<bevy_pbr::pbr_material::StandardMaterial>",
-      "type": "object",
-      "typeInfo": "Enum"
-    },
-    "bevy_asset::id::AssetId<bevy_pbr::wireframe::WireframeMaterial>": {
-      "isComponent": false,
-      "isResource": false,
-      "oneOf": [
-        {
-          "additionalProperties": false,
-          "properties": {
-            "index": {
-              "title": "index",
-              "type": {
-                "$ref": "#/$defs/bevy_asset::assets::AssetIndex"
-              }
-            }
-          },
-          "required": [
-            "index"
-          ],
-          "short_name": "Index",
-          "title": "Index",
-          "type": "object",
-          "typeInfo": "Struct"
-        },
-        {
-          "additionalProperties": false,
-          "properties": {
-            "uuid": {
-              "title": "uuid",
-              "type": {
-                "$ref": "#/$defs/bevy_utils::Uuid"
-              }
-            }
-          },
-          "required": [
-            "uuid"
-          ],
-          "short_name": "Uuid",
-          "title": "Uuid",
-          "type": "object",
-          "typeInfo": "Struct"
-        }
-      ],
-      "short_name": "AssetId<WireframeMaterial>",
-      "title": "bevy_asset::id::AssetId<bevy_pbr::wireframe::WireframeMaterial>",
       "type": "object",
       "typeInfo": "Enum"
     },
@@ -1887,7 +2238,7 @@
             "uuid": {
               "title": "uuid",
               "type": {
-                "$ref": "#/$defs/bevy_utils::Uuid"
+                "$ref": "#/$defs/uuid::Uuid"
               }
             }
           },
@@ -1933,7 +2284,7 @@
             "uuid": {
               "title": "uuid",
               "type": {
-                "$ref": "#/$defs/bevy_utils::Uuid"
+                "$ref": "#/$defs/uuid::Uuid"
               }
             }
           },
@@ -1979,7 +2330,7 @@
             "uuid": {
               "title": "uuid",
               "type": {
-                "$ref": "#/$defs/bevy_utils::Uuid"
+                "$ref": "#/$defs/uuid::Uuid"
               }
             }
           },
@@ -2025,7 +2376,7 @@
             "uuid": {
               "title": "uuid",
               "type": {
-                "$ref": "#/$defs/bevy_utils::Uuid"
+                "$ref": "#/$defs/uuid::Uuid"
               }
             }
           },
@@ -2071,7 +2422,7 @@
             "uuid": {
               "title": "uuid",
               "type": {
-                "$ref": "#/$defs/bevy_utils::Uuid"
+                "$ref": "#/$defs/uuid::Uuid"
               }
             }
           },
@@ -2117,7 +2468,7 @@
             "uuid": {
               "title": "uuid",
               "type": {
-                "$ref": "#/$defs/bevy_utils::Uuid"
+                "$ref": "#/$defs/uuid::Uuid"
               }
             }
           },
@@ -2163,7 +2514,7 @@
             "uuid": {
               "title": "uuid",
               "type": {
-                "$ref": "#/$defs/bevy_utils::Uuid"
+                "$ref": "#/$defs/uuid::Uuid"
               }
             }
           },
@@ -2209,7 +2560,7 @@
             "uuid": {
               "title": "uuid",
               "type": {
-                "$ref": "#/$defs/bevy_utils::Uuid"
+                "$ref": "#/$defs/uuid::Uuid"
               }
             }
           },
@@ -2255,7 +2606,7 @@
             "uuid": {
               "title": "uuid",
               "type": {
-                "$ref": "#/$defs/bevy_utils::Uuid"
+                "$ref": "#/$defs/uuid::Uuid"
               }
             }
           },
@@ -2273,11 +2624,11 @@
       "type": "object",
       "typeInfo": "Enum"
     },
-    "bevy_asset::path::AssetPath<'static>": {
+    "bevy_asset::path::AssetPath": {
       "isComponent": false,
       "isResource": false,
-      "short_name": "AssetPath<'static>",
-      "title": "bevy_asset::path::AssetPath<'static>",
+      "short_name": "AssetPath",
+      "title": "bevy_asset::path::AssetPath",
       "type": "object",
       "typeInfo": "Value"
     },
@@ -2402,6 +2753,22 @@
       "title": "bevy_audio::audio::SpatialListener",
       "type": "object",
       "typeInfo": "Struct"
+    },
+    "bevy_audio::audio::SpatialScale": {
+      "isComponent": false,
+      "isResource": false,
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/glam::Vec3"
+          }
+        }
+      ],
+      "short_name": "SpatialScale",
+      "title": "bevy_audio::audio::SpatialScale",
+      "type": "array",
+      "typeInfo": "TupleStruct"
     },
     "bevy_audio::audio::Volume": {
       "isComponent": false,
@@ -2679,7 +3046,7 @@
       "prefixItems": [
         {
           "type": {
-            "$ref": "#/$defs/bevy_render::color::Color"
+            "$ref": "#/$defs/bevy_color::color::Color"
           }
         }
       ],
@@ -2818,7 +3185,7 @@
       "prefixItems": [
         {
           "type": {
-            "$ref": "#/$defs/alloc::vec::Vec<bevy_render::color::Color>"
+            "$ref": "#/$defs/alloc::vec::Vec<bevy_color::color::Color>"
           }
         }
       ],
@@ -2842,6 +3209,526 @@
       "title": "bevy_bevy_registry_export_basic_example::test_components::VecOfVec3s2",
       "type": "array",
       "typeInfo": "TupleStruct"
+    },
+    "bevy_color::color::Color": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_color::srgba::Srgba"
+              }
+            }
+          ],
+          "short_name": "Srgba",
+          "title": "Srgba",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_color::linear_rgba::LinearRgba"
+              }
+            }
+          ],
+          "short_name": "LinearRgba",
+          "title": "LinearRgba",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_color::hsla::Hsla"
+              }
+            }
+          ],
+          "short_name": "Hsla",
+          "title": "Hsla",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_color::hsva::Hsva"
+              }
+            }
+          ],
+          "short_name": "Hsva",
+          "title": "Hsva",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_color::hwba::Hwba"
+              }
+            }
+          ],
+          "short_name": "Hwba",
+          "title": "Hwba",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_color::laba::Laba"
+              }
+            }
+          ],
+          "short_name": "Laba",
+          "title": "Laba",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_color::lcha::Lcha"
+              }
+            }
+          ],
+          "short_name": "Lcha",
+          "title": "Lcha",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_color::oklaba::Oklaba"
+              }
+            }
+          ],
+          "short_name": "Oklaba",
+          "title": "Oklaba",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_color::oklcha::Oklcha"
+              }
+            }
+          ],
+          "short_name": "Oklcha",
+          "title": "Oklcha",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_color::xyza::Xyza"
+              }
+            }
+          ],
+          "short_name": "Xyza",
+          "title": "Xyza",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Color",
+      "title": "bevy_color::color::Color",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "bevy_color::hsla::Hsla": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "alpha": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "hue": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "lightness": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "saturation": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      },
+      "required": [
+        "hue",
+        "saturation",
+        "lightness",
+        "alpha"
+      ],
+      "short_name": "Hsla",
+      "title": "bevy_color::hsla::Hsla",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_color::hsva::Hsva": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "alpha": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "hue": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "saturation": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "value": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      },
+      "required": [
+        "hue",
+        "saturation",
+        "value",
+        "alpha"
+      ],
+      "short_name": "Hsva",
+      "title": "bevy_color::hsva::Hsva",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_color::hwba::Hwba": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "alpha": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "blackness": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "hue": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "whiteness": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      },
+      "required": [
+        "hue",
+        "whiteness",
+        "blackness",
+        "alpha"
+      ],
+      "short_name": "Hwba",
+      "title": "bevy_color::hwba::Hwba",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_color::laba::Laba": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "a": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "alpha": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "b": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "lightness": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      },
+      "required": [
+        "lightness",
+        "a",
+        "b",
+        "alpha"
+      ],
+      "short_name": "Laba",
+      "title": "bevy_color::laba::Laba",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_color::lcha::Lcha": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "alpha": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "chroma": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "hue": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "lightness": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      },
+      "required": [
+        "lightness",
+        "chroma",
+        "hue",
+        "alpha"
+      ],
+      "short_name": "Lcha",
+      "title": "bevy_color::lcha::Lcha",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_color::linear_rgba::LinearRgba": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "alpha": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "blue": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "green": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "red": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      },
+      "required": [
+        "red",
+        "green",
+        "blue",
+        "alpha"
+      ],
+      "short_name": "LinearRgba",
+      "title": "bevy_color::linear_rgba::LinearRgba",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_color::oklaba::Oklaba": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "a": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "alpha": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "b": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "lightness": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      },
+      "required": [
+        "lightness",
+        "a",
+        "b",
+        "alpha"
+      ],
+      "short_name": "Oklaba",
+      "title": "bevy_color::oklaba::Oklaba",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_color::oklcha::Oklcha": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "alpha": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "chroma": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "hue": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "lightness": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      },
+      "required": [
+        "lightness",
+        "chroma",
+        "hue",
+        "alpha"
+      ],
+      "short_name": "Oklcha",
+      "title": "bevy_color::oklcha::Oklcha",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_color::srgba::Srgba": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "alpha": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "blue": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "green": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "red": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      },
+      "required": [
+        "red",
+        "green",
+        "blue",
+        "alpha"
+      ],
+      "short_name": "Srgba",
+      "title": "bevy_color::srgba::Srgba",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_color::xyza::Xyza": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "alpha": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "x": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "y": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "z": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "z",
+        "alpha"
+      ],
+      "short_name": "Xyza",
+      "title": "bevy_color::xyza::Xyza",
+      "type": "object",
+      "typeInfo": "Struct"
     },
     "bevy_core::name::Name": {
       "additionalProperties": false,
@@ -3121,6 +4008,21 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_core_pipeline::fxaa::Sensitivity": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        "Low",
+        "Medium",
+        "High",
+        "Ultra",
+        "Extreme"
+      ],
+      "short_name": "Sensitivity",
+      "title": "bevy_core_pipeline::fxaa::Sensitivity",
+      "type": "string",
+      "typeInfo": "Enum"
+    },
     "bevy_core_pipeline::prepass::DeferredPrepass": {
       "additionalProperties": false,
       "isComponent": false,
@@ -3165,6 +4067,39 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_core_pipeline::smaa::SmaaPreset": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        "Low",
+        "Medium",
+        "High",
+        "Ultra"
+      ],
+      "short_name": "SmaaPreset",
+      "title": "bevy_core_pipeline::smaa::SmaaPreset",
+      "type": "string",
+      "typeInfo": "Enum"
+    },
+    "bevy_core_pipeline::smaa::SmaaSettings": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "preset": {
+          "type": {
+            "$ref": "#/$defs/bevy_core_pipeline::smaa::SmaaPreset"
+          }
+        }
+      },
+      "required": [
+        "preset"
+      ],
+      "short_name": "SmaaSettings",
+      "title": "bevy_core_pipeline::smaa::SmaaSettings",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "bevy_core_pipeline::tonemapping::DebandDither": {
       "isComponent": true,
       "isResource": false,
@@ -3195,66 +4130,6 @@
       "type": "string",
       "typeInfo": "Enum"
     },
-    "bevy_ecs::component::ComponentId": {
-      "isComponent": false,
-      "isResource": false,
-      "items": false,
-      "prefixItems": [
-        {
-          "type": {
-            "$ref": "#/$defs/usize"
-          }
-        }
-      ],
-      "short_name": "ComponentId",
-      "title": "bevy_ecs::component::ComponentId",
-      "type": "array",
-      "typeInfo": "TupleStruct"
-    },
-    "bevy_ecs::component::ComponentTicks": {
-      "additionalProperties": false,
-      "isComponent": false,
-      "isResource": false,
-      "properties": {
-        "added": {
-          "type": {
-            "$ref": "#/$defs/bevy_ecs::component::Tick"
-          }
-        },
-        "changed": {
-          "type": {
-            "$ref": "#/$defs/bevy_ecs::component::Tick"
-          }
-        }
-      },
-      "required": [
-        "added",
-        "changed"
-      ],
-      "short_name": "ComponentTicks",
-      "title": "bevy_ecs::component::ComponentTicks",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "bevy_ecs::component::Tick": {
-      "additionalProperties": false,
-      "isComponent": false,
-      "isResource": false,
-      "properties": {
-        "tick": {
-          "type": {
-            "$ref": "#/$defs/u32"
-          }
-        }
-      },
-      "required": [
-        "tick"
-      ],
-      "short_name": "Tick",
-      "title": "bevy_ecs::component::Tick",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
     "bevy_ecs::entity::Entity": {
       "isComponent": false,
       "isResource": false,
@@ -3263,30 +4138,6 @@
       "type": "object",
       "typeInfo": "Value"
     },
-    "bevy_egui::EguiSettings": {
-      "additionalProperties": false,
-      "isComponent": false,
-      "isResource": false,
-      "properties": {
-        "default_open_url_target": {
-          "type": {
-            "$ref": "#/$defs/core::option::Option<alloc::string::String>"
-          }
-        },
-        "scale_factor": {
-          "type": {
-            "$ref": "#/$defs/f32"
-          }
-        }
-      },
-      "required": [
-        "scale_factor"
-      ],
-      "short_name": "EguiSettings",
-      "title": "bevy_egui::EguiSettings",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
     "bevy_gizmos::aabb::AabbGizmoConfigGroup": {
       "additionalProperties": false,
       "isComponent": false,
@@ -3294,7 +4145,7 @@
       "properties": {
         "default_color": {
           "type": {
-            "$ref": "#/$defs/core::option::Option<bevy_render::color::Color>"
+            "$ref": "#/$defs/core::option::Option<bevy_color::color::Color>"
           }
         },
         "draw_all": {
@@ -3326,9 +4177,19 @@
             "$ref": "#/$defs/bool"
           }
         },
+        "line_joints": {
+          "type": {
+            "$ref": "#/$defs/bevy_gizmos::config::GizmoLineJoint"
+          }
+        },
         "line_perspective": {
           "type": {
             "$ref": "#/$defs/bool"
+          }
+        },
+        "line_style": {
+          "type": {
+            "$ref": "#/$defs/bevy_gizmos::config::GizmoLineStyle"
           }
         },
         "line_width": {
@@ -3346,11 +4207,145 @@
         "enabled",
         "line_width",
         "line_perspective",
+        "line_style",
         "depth_bias",
-        "render_layers"
+        "render_layers",
+        "line_joints"
       ],
       "short_name": "GizmoConfig",
       "title": "bevy_gizmos::config::GizmoConfig",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_gizmos::config::GizmoConfigStore": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": true,
+      "properties": {},
+      "required": [],
+      "short_name": "GizmoConfigStore",
+      "title": "bevy_gizmos::config::GizmoConfigStore",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_gizmos::config::GizmoLineJoint": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "title": "None"
+        },
+        {
+          "title": "Miter"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/u32"
+              }
+            }
+          ],
+          "short_name": "Round",
+          "title": "Round",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "title": "Bevel"
+        }
+      ],
+      "short_name": "GizmoLineJoint",
+      "title": "bevy_gizmos::config::GizmoLineJoint",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "bevy_gizmos::config::GizmoLineStyle": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        "Solid",
+        "Dotted"
+      ],
+      "short_name": "GizmoLineStyle",
+      "title": "bevy_gizmos::config::GizmoLineStyle",
+      "type": "string",
+      "typeInfo": "Enum"
+    },
+    "bevy_gizmos::light::LightGizmoColor": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_color::color::Color"
+              }
+            }
+          ],
+          "short_name": "Manual",
+          "title": "Manual",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "title": "Varied"
+        },
+        {
+          "title": "MatchLightColor"
+        },
+        {
+          "title": "ByLightType"
+        }
+      ],
+      "short_name": "LightGizmoColor",
+      "title": "bevy_gizmos::light::LightGizmoColor",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "bevy_gizmos::light::LightGizmoConfigGroup": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "color": {
+          "type": {
+            "$ref": "#/$defs/bevy_gizmos::light::LightGizmoColor"
+          }
+        },
+        "directional_light_color": {
+          "type": {
+            "$ref": "#/$defs/bevy_color::color::Color"
+          }
+        },
+        "draw_all": {
+          "type": {
+            "$ref": "#/$defs/bool"
+          }
+        },
+        "point_light_color": {
+          "type": {
+            "$ref": "#/$defs/bevy_color::color::Color"
+          }
+        },
+        "spot_light_color": {
+          "type": {
+            "$ref": "#/$defs/bevy_color::color::Color"
+          }
+        }
+      },
+      "required": [
+        "draw_all",
+        "color",
+        "point_light_color",
+        "spot_light_color",
+        "directional_light_color"
+      ],
+      "short_name": "LightGizmoConfigGroup",
+      "title": "bevy_gizmos::light::LightGizmoConfigGroup",
       "type": "object",
       "typeInfo": "Struct"
     },
@@ -3373,19 +4368,88 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_gltf::GltfMaterialExtras": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "value": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "short_name": "GltfMaterialExtras",
+      "title": "bevy_gltf::GltfMaterialExtras",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_gltf::GltfMeshExtras": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "value": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "short_name": "GltfMeshExtras",
+      "title": "bevy_gltf::GltfMeshExtras",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_gltf::GltfSceneExtras": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "value": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "short_name": "GltfSceneExtras",
+      "title": "bevy_gltf::GltfSceneExtras",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "bevy_gltf_blueprints::animation::Animations": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
       "properties": {
+        "graph": {
+          "type": {
+            "$ref": "#/$defs/bevy_asset::handle::Handle<bevy_animation::graph::AnimationGraph>"
+          }
+        },
         "named_animations": {
           "type": {
             "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<alloc::string::String, bevy_asset::handle::Handle<bevy_animation::AnimationClip>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
           }
+        },
+        "named_indices": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<alloc::string::String, petgraph::graph::NodeIndex, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+          }
         }
       },
       "required": [
-        "named_animations"
+        "named_animations",
+        "named_indices",
+        "graph"
       ],
       "short_name": "Animations",
       "title": "bevy_gltf_blueprints::animation::Animations",
@@ -3433,6 +4497,22 @@
       "type": "array",
       "typeInfo": "TupleStruct"
     },
+    "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintsList": {
+      "isComponent": true,
+      "isResource": false,
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<alloc::string::String, alloc::vec::Vec<alloc::string::String>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+          }
+        }
+      ],
+      "short_name": "BlueprintsList",
+      "title": "bevy_gltf_blueprints::spawn_from_blueprints::BlueprintsList",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
     "bevy_gltf_blueprints::spawn_from_blueprints::SpawnHere": {
       "additionalProperties": false,
       "isComponent": true,
@@ -3462,7 +4542,7 @@
       "properties": {
         "color": {
           "type": {
-            "$ref": "#/$defs/bevy_render::color::Color"
+            "$ref": "#/$defs/bevy_color::color::Color"
           }
         },
         "strength": {
@@ -3688,7 +4768,7 @@
       "prefixItems": [
         {
           "type": {
-            "$ref": "#/$defs/bevy_utils::smallvec::SmallVec<[bevy_ecs::entity::Entity; 8]>"
+            "$ref": "#/$defs/smallvec::SmallVec<[bevy_ecs::entity::Entity; 8]>"
           }
         }
       ],
@@ -3868,6 +4948,37 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_input::gamepad::GamepadAxisChangedEvent": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "axis_type": {
+          "type": {
+            "$ref": "#/$defs/bevy_input::gamepad::GamepadAxisType"
+          }
+        },
+        "gamepad": {
+          "type": {
+            "$ref": "#/$defs/bevy_input::gamepad::Gamepad"
+          }
+        },
+        "value": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      },
+      "required": [
+        "gamepad",
+        "axis_type",
+        "value"
+      ],
+      "short_name": "GamepadAxisChangedEvent",
+      "title": "bevy_input::gamepad::GamepadAxisChangedEvent",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "bevy_input::gamepad::GamepadAxisType": {
       "isComponent": false,
       "isResource": false,
@@ -3932,6 +5043,37 @@
       ],
       "short_name": "GamepadButton",
       "title": "bevy_input::gamepad::GamepadButton",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_input::gamepad::GamepadButtonChangedEvent": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "button_type": {
+          "type": {
+            "$ref": "#/$defs/bevy_input::gamepad::GamepadButtonType"
+          }
+        },
+        "gamepad": {
+          "type": {
+            "$ref": "#/$defs/bevy_input::gamepad::Gamepad"
+          }
+        },
+        "value": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      },
+      "required": [
+        "gamepad",
+        "button_type",
+        "value"
+      ],
+      "short_name": "GamepadButtonChangedEvent",
+      "title": "bevy_input::gamepad::GamepadButtonChangedEvent",
       "type": "object",
       "typeInfo": "Struct"
     },
@@ -4068,6 +5210,102 @@
       "type": "object",
       "typeInfo": "Enum"
     },
+    "bevy_input::gamepad::GamepadConnectionEvent": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "connection": {
+          "type": {
+            "$ref": "#/$defs/bevy_input::gamepad::GamepadConnection"
+          }
+        },
+        "gamepad": {
+          "type": {
+            "$ref": "#/$defs/bevy_input::gamepad::Gamepad"
+          }
+        }
+      },
+      "required": [
+        "gamepad",
+        "connection"
+      ],
+      "short_name": "GamepadConnectionEvent",
+      "title": "bevy_input::gamepad::GamepadConnectionEvent",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_input::gamepad::GamepadEvent": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_input::gamepad::GamepadConnectionEvent"
+              }
+            }
+          ],
+          "short_name": "Connection",
+          "title": "Connection",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_input::gamepad::GamepadButtonChangedEvent"
+              }
+            }
+          ],
+          "short_name": "Button",
+          "title": "Button",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_input::gamepad::GamepadAxisChangedEvent"
+              }
+            }
+          ],
+          "short_name": "Axis",
+          "title": "Axis",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "GamepadEvent",
+      "title": "bevy_input::gamepad::GamepadEvent",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "bevy_input::gamepad::GamepadInfo": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "name": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "short_name": "GamepadInfo",
+      "title": "bevy_input::gamepad::GamepadInfo",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "bevy_input::gamepad::GamepadSettings": {
       "additionalProperties": false,
       "isComponent": false,
@@ -4116,6 +5354,65 @@
       "title": "bevy_input::gamepad::GamepadSettings",
       "type": "object",
       "typeInfo": "Struct"
+    },
+    "bevy_input::gestures::DoubleTapGesture": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {},
+      "required": [],
+      "short_name": "DoubleTapGesture",
+      "title": "bevy_input::gestures::DoubleTapGesture",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_input::gestures::PanGesture": {
+      "isComponent": false,
+      "isResource": false,
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/glam::Vec2"
+          }
+        }
+      ],
+      "short_name": "PanGesture",
+      "title": "bevy_input::gestures::PanGesture",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
+    "bevy_input::gestures::PinchGesture": {
+      "isComponent": false,
+      "isResource": false,
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      ],
+      "short_name": "PinchGesture",
+      "title": "bevy_input::gestures::PinchGesture",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
+    "bevy_input::gestures::RotationGesture": {
+      "isComponent": false,
+      "isResource": false,
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      ],
+      "short_name": "RotationGesture",
+      "title": "bevy_input::gestures::RotationGesture",
+      "type": "array",
+      "typeInfo": "TupleStruct"
     },
     "bevy_input::keyboard::Key": {
       "isComponent": false,
@@ -5952,74 +7249,6 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_input::mouse::MouseMotion": {
-      "additionalProperties": false,
-      "isComponent": false,
-      "isResource": false,
-      "properties": {
-        "delta": {
-          "type": {
-            "$ref": "#/$defs/glam::Vec2"
-          }
-        }
-      },
-      "required": [
-        "delta"
-      ],
-      "short_name": "MouseMotion",
-      "title": "bevy_input::mouse::MouseMotion",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "bevy_input::mouse::MouseScrollUnit": {
-      "isComponent": false,
-      "isResource": false,
-      "oneOf": [
-        "Line",
-        "Pixel"
-      ],
-      "short_name": "MouseScrollUnit",
-      "title": "bevy_input::mouse::MouseScrollUnit",
-      "type": "string",
-      "typeInfo": "Enum"
-    },
-    "bevy_input::mouse::MouseWheel": {
-      "additionalProperties": false,
-      "isComponent": false,
-      "isResource": false,
-      "properties": {
-        "unit": {
-          "type": {
-            "$ref": "#/$defs/bevy_input::mouse::MouseScrollUnit"
-          }
-        },
-        "window": {
-          "type": {
-            "$ref": "#/$defs/bevy_ecs::entity::Entity"
-          }
-        },
-        "x": {
-          "type": {
-            "$ref": "#/$defs/f32"
-          }
-        },
-        "y": {
-          "type": {
-            "$ref": "#/$defs/f32"
-          }
-        }
-      },
-      "required": [
-        "unit",
-        "x",
-        "y",
-        "window"
-      ],
-      "short_name": "MouseWheel",
-      "title": "bevy_input::mouse::MouseWheel",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
     "bevy_input::touch::ForceTouch": {
       "isComponent": false,
       "isResource": false,
@@ -6131,39 +7360,7 @@
       "type": "string",
       "typeInfo": "Enum"
     },
-    "bevy_input::touchpad::TouchpadMagnify": {
-      "isComponent": false,
-      "isResource": false,
-      "items": false,
-      "prefixItems": [
-        {
-          "type": {
-            "$ref": "#/$defs/f32"
-          }
-        }
-      ],
-      "short_name": "TouchpadMagnify",
-      "title": "bevy_input::touchpad::TouchpadMagnify",
-      "type": "array",
-      "typeInfo": "TupleStruct"
-    },
-    "bevy_input::touchpad::TouchpadRotate": {
-      "isComponent": false,
-      "isResource": false,
-      "items": false,
-      "prefixItems": [
-        {
-          "type": {
-            "$ref": "#/$defs/f32"
-          }
-        }
-      ],
-      "short_name": "TouchpadRotate",
-      "title": "bevy_input::touchpad::TouchpadRotate",
-      "type": "array",
-      "typeInfo": "TupleStruct"
-    },
-    "bevy_math::Rect": {
+    "bevy_math::rects::rect::Rect": {
       "additionalProperties": false,
       "isComponent": false,
       "isResource": false,
@@ -6184,48 +7381,34 @@
         "max"
       ],
       "short_name": "Rect",
-      "title": "bevy_math::Rect",
+      "title": "bevy_math::rects::rect::Rect",
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_pbr::alpha::AlphaMode": {
+    "bevy_math::rects::urect::URect": {
+      "additionalProperties": false,
       "isComponent": false,
       "isResource": false,
-      "oneOf": [
-        {
-          "title": "Opaque"
+      "properties": {
+        "max": {
+          "type": {
+            "$ref": "#/$defs/glam::UVec2"
+          }
         },
-        {
-          "items": false,
-          "prefixItems": [
-            {
-              "type": {
-                "$ref": "#/$defs/f32"
-              }
-            }
-          ],
-          "short_name": "Mask",
-          "title": "Mask",
-          "type": "array",
-          "typeInfo": "Tuple"
-        },
-        {
-          "title": "Blend"
-        },
-        {
-          "title": "Premultiplied"
-        },
-        {
-          "title": "Add"
-        },
-        {
-          "title": "Multiply"
+        "min": {
+          "type": {
+            "$ref": "#/$defs/glam::UVec2"
+          }
         }
+      },
+      "required": [
+        "min",
+        "max"
       ],
-      "short_name": "AlphaMode",
-      "title": "bevy_pbr::alpha::AlphaMode",
+      "short_name": "URect",
+      "title": "bevy_math::rects::urect::URect",
       "type": "object",
-      "typeInfo": "Enum"
+      "typeInfo": "Struct"
     },
     "bevy_pbr::bundle::CascadesVisibleEntities": {
       "additionalProperties": false,
@@ -6246,6 +7429,145 @@
       "required": [],
       "short_name": "CubemapVisibleEntities",
       "title": "bevy_pbr::bundle::CubemapVisibleEntities",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_pbr::cluster::ClusterConfig": {
+      "isComponent": true,
+      "isResource": false,
+      "oneOf": [
+        {
+          "title": "None"
+        },
+        {
+          "title": "Single"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "dimensions": {
+              "title": "dimensions",
+              "type": {
+                "$ref": "#/$defs/glam::UVec3"
+              }
+            },
+            "dynamic_resizing": {
+              "title": "dynamic_resizing",
+              "type": {
+                "$ref": "#/$defs/bool"
+              }
+            },
+            "z_config": {
+              "title": "z_config",
+              "type": {
+                "$ref": "#/$defs/bevy_pbr::cluster::ClusterZConfig"
+              }
+            }
+          },
+          "required": [
+            "dimensions",
+            "z_config",
+            "dynamic_resizing"
+          ],
+          "short_name": "XYZ",
+          "title": "XYZ",
+          "type": "object",
+          "typeInfo": "Struct"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "dynamic_resizing": {
+              "title": "dynamic_resizing",
+              "type": {
+                "$ref": "#/$defs/bool"
+              }
+            },
+            "total": {
+              "title": "total",
+              "type": {
+                "$ref": "#/$defs/u32"
+              }
+            },
+            "z_config": {
+              "title": "z_config",
+              "type": {
+                "$ref": "#/$defs/bevy_pbr::cluster::ClusterZConfig"
+              }
+            },
+            "z_slices": {
+              "title": "z_slices",
+              "type": {
+                "$ref": "#/$defs/u32"
+              }
+            }
+          },
+          "required": [
+            "total",
+            "z_slices",
+            "z_config",
+            "dynamic_resizing"
+          ],
+          "short_name": "FixedZ",
+          "title": "FixedZ",
+          "type": "object",
+          "typeInfo": "Struct"
+        }
+      ],
+      "short_name": "ClusterConfig",
+      "title": "bevy_pbr::cluster::ClusterConfig",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "bevy_pbr::cluster::ClusterFarZMode": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "title": "MaxClusterableObjectRange"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/f32"
+              }
+            }
+          ],
+          "short_name": "Constant",
+          "title": "Constant",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "ClusterFarZMode",
+      "title": "bevy_pbr::cluster::ClusterFarZMode",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "bevy_pbr::cluster::ClusterZConfig": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "far_z_mode": {
+          "type": {
+            "$ref": "#/$defs/bevy_pbr::cluster::ClusterFarZMode"
+          }
+        },
+        "first_slice_depth": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      },
+      "required": [
+        "first_slice_depth",
+        "far_z_mode"
+      ],
+      "short_name": "ClusterZConfig",
+      "title": "bevy_pbr::cluster::ClusterZConfig",
       "type": "object",
       "typeInfo": "Struct"
     },
@@ -6352,12 +7674,12 @@
       "properties": {
         "color": {
           "type": {
-            "$ref": "#/$defs/bevy_render::color::Color"
+            "$ref": "#/$defs/bevy_color::color::Color"
           }
         },
         "directional_light_color": {
           "type": {
-            "$ref": "#/$defs/bevy_render::color::Color"
+            "$ref": "#/$defs/bevy_color::color::Color"
           }
         },
         "directional_light_exponent": {
@@ -6382,37 +7704,17 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_pbr::light::AmbientLight": {
-      "additionalProperties": false,
-      "isComponent": false,
-      "isResource": true,
-      "properties": {
-        "brightness": {
-          "type": {
-            "$ref": "#/$defs/f32"
-          }
-        },
-        "color": {
-          "type": {
-            "$ref": "#/$defs/bevy_render::color::Color"
-          }
-        }
-      },
-      "required": [
-        "color",
-        "brightness"
-      ],
-      "short_name": "AmbientLight",
-      "title": "bevy_pbr::light::AmbientLight",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
     "bevy_pbr::light::Cascade": {
       "additionalProperties": false,
       "isComponent": false,
       "isResource": false,
       "properties": {
-        "projection": {
+        "clip_from_cascade": {
+          "type": {
+            "$ref": "#/$defs/glam::Mat4"
+          }
+        },
+        "clip_from_world": {
           "type": {
             "$ref": "#/$defs/glam::Mat4"
           }
@@ -6422,21 +7724,16 @@
             "$ref": "#/$defs/f32"
           }
         },
-        "view_projection": {
-          "type": {
-            "$ref": "#/$defs/glam::Mat4"
-          }
-        },
-        "view_transform": {
+        "world_from_cascade": {
           "type": {
             "$ref": "#/$defs/glam::Mat4"
           }
         }
       },
       "required": [
-        "view_transform",
-        "projection",
-        "view_projection",
+        "world_from_cascade",
+        "clip_from_cascade",
+        "clip_from_world",
         "texel_size"
       ],
       "short_name": "Cascade",
@@ -6494,188 +7791,6 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_pbr::light::ClusterConfig": {
-      "isComponent": true,
-      "isResource": false,
-      "oneOf": [
-        {
-          "title": "None"
-        },
-        {
-          "title": "Single"
-        },
-        {
-          "additionalProperties": false,
-          "properties": {
-            "dimensions": {
-              "title": "dimensions",
-              "type": {
-                "$ref": "#/$defs/glam::UVec3"
-              }
-            },
-            "dynamic_resizing": {
-              "title": "dynamic_resizing",
-              "type": {
-                "$ref": "#/$defs/bool"
-              }
-            },
-            "z_config": {
-              "title": "z_config",
-              "type": {
-                "$ref": "#/$defs/bevy_pbr::light::ClusterZConfig"
-              }
-            }
-          },
-          "required": [
-            "dimensions",
-            "z_config",
-            "dynamic_resizing"
-          ],
-          "short_name": "XYZ",
-          "title": "XYZ",
-          "type": "object",
-          "typeInfo": "Struct"
-        },
-        {
-          "additionalProperties": false,
-          "properties": {
-            "dynamic_resizing": {
-              "title": "dynamic_resizing",
-              "type": {
-                "$ref": "#/$defs/bool"
-              }
-            },
-            "total": {
-              "title": "total",
-              "type": {
-                "$ref": "#/$defs/u32"
-              }
-            },
-            "z_config": {
-              "title": "z_config",
-              "type": {
-                "$ref": "#/$defs/bevy_pbr::light::ClusterZConfig"
-              }
-            },
-            "z_slices": {
-              "title": "z_slices",
-              "type": {
-                "$ref": "#/$defs/u32"
-              }
-            }
-          },
-          "required": [
-            "total",
-            "z_slices",
-            "z_config",
-            "dynamic_resizing"
-          ],
-          "short_name": "FixedZ",
-          "title": "FixedZ",
-          "type": "object",
-          "typeInfo": "Struct"
-        }
-      ],
-      "short_name": "ClusterConfig",
-      "title": "bevy_pbr::light::ClusterConfig",
-      "type": "object",
-      "typeInfo": "Enum"
-    },
-    "bevy_pbr::light::ClusterFarZMode": {
-      "isComponent": false,
-      "isResource": false,
-      "oneOf": [
-        {
-          "title": "MaxLightRange"
-        },
-        {
-          "items": false,
-          "prefixItems": [
-            {
-              "type": {
-                "$ref": "#/$defs/f32"
-              }
-            }
-          ],
-          "short_name": "Constant",
-          "title": "Constant",
-          "type": "array",
-          "typeInfo": "Tuple"
-        }
-      ],
-      "short_name": "ClusterFarZMode",
-      "title": "bevy_pbr::light::ClusterFarZMode",
-      "type": "object",
-      "typeInfo": "Enum"
-    },
-    "bevy_pbr::light::ClusterZConfig": {
-      "additionalProperties": false,
-      "isComponent": false,
-      "isResource": false,
-      "properties": {
-        "far_z_mode": {
-          "type": {
-            "$ref": "#/$defs/bevy_pbr::light::ClusterFarZMode"
-          }
-        },
-        "first_slice_depth": {
-          "type": {
-            "$ref": "#/$defs/f32"
-          }
-        }
-      },
-      "required": [
-        "first_slice_depth",
-        "far_z_mode"
-      ],
-      "short_name": "ClusterZConfig",
-      "title": "bevy_pbr::light::ClusterZConfig",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "bevy_pbr::light::DirectionalLight": {
-      "additionalProperties": false,
-      "isComponent": true,
-      "isResource": false,
-      "properties": {
-        "color": {
-          "type": {
-            "$ref": "#/$defs/bevy_render::color::Color"
-          }
-        },
-        "illuminance": {
-          "type": {
-            "$ref": "#/$defs/f32"
-          }
-        },
-        "shadow_depth_bias": {
-          "type": {
-            "$ref": "#/$defs/f32"
-          }
-        },
-        "shadow_normal_bias": {
-          "type": {
-            "$ref": "#/$defs/f32"
-          }
-        },
-        "shadows_enabled": {
-          "type": {
-            "$ref": "#/$defs/bool"
-          }
-        }
-      },
-      "required": [
-        "color",
-        "illuminance",
-        "shadows_enabled",
-        "shadow_depth_bias",
-        "shadow_normal_bias"
-      ],
-      "short_name": "DirectionalLight",
-      "title": "bevy_pbr::light::DirectionalLight",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
     "bevy_pbr::light::DirectionalLightShadowMap": {
       "additionalProperties": false,
       "isComponent": false,
@@ -6717,14 +7832,114 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_pbr::light::PointLight": {
+    "bevy_pbr::light::PointLightShadowMap": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": true,
+      "properties": {
+        "size": {
+          "type": {
+            "$ref": "#/$defs/usize"
+          }
+        }
+      },
+      "required": [
+        "size"
+      ],
+      "short_name": "PointLightShadowMap",
+      "title": "bevy_pbr::light::PointLightShadowMap",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_pbr::light::ShadowFilteringMethod": {
+      "isComponent": true,
+      "isResource": false,
+      "oneOf": [
+        "Hardware2x2",
+        "Gaussian",
+        "Temporal"
+      ],
+      "short_name": "ShadowFilteringMethod",
+      "title": "bevy_pbr::light::ShadowFilteringMethod",
+      "type": "string",
+      "typeInfo": "Enum"
+    },
+    "bevy_pbr::light::ambient_light::AmbientLight": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": true,
+      "properties": {
+        "brightness": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "color": {
+          "type": {
+            "$ref": "#/$defs/bevy_color::color::Color"
+          }
+        }
+      },
+      "required": [
+        "color",
+        "brightness"
+      ],
+      "short_name": "AmbientLight",
+      "title": "bevy_pbr::light::ambient_light::AmbientLight",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_pbr::light::directional_light::DirectionalLight": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
       "properties": {
         "color": {
           "type": {
-            "$ref": "#/$defs/bevy_render::color::Color"
+            "$ref": "#/$defs/bevy_color::color::Color"
+          }
+        },
+        "illuminance": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "shadow_depth_bias": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "shadow_normal_bias": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "shadows_enabled": {
+          "type": {
+            "$ref": "#/$defs/bool"
+          }
+        }
+      },
+      "required": [
+        "color",
+        "illuminance",
+        "shadows_enabled",
+        "shadow_depth_bias",
+        "shadow_normal_bias"
+      ],
+      "short_name": "DirectionalLight",
+      "title": "bevy_pbr::light::directional_light::DirectionalLight",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_pbr::light::point_light::PointLight": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "color": {
+          "type": {
+            "$ref": "#/$defs/bevy_color::color::Color"
           }
         },
         "intensity": {
@@ -6768,50 +7983,18 @@
         "shadow_normal_bias"
       ],
       "short_name": "PointLight",
-      "title": "bevy_pbr::light::PointLight",
+      "title": "bevy_pbr::light::point_light::PointLight",
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_pbr::light::PointLightShadowMap": {
-      "additionalProperties": false,
-      "isComponent": false,
-      "isResource": true,
-      "properties": {
-        "size": {
-          "type": {
-            "$ref": "#/$defs/usize"
-          }
-        }
-      },
-      "required": [
-        "size"
-      ],
-      "short_name": "PointLightShadowMap",
-      "title": "bevy_pbr::light::PointLightShadowMap",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "bevy_pbr::light::ShadowFilteringMethod": {
-      "isComponent": true,
-      "isResource": false,
-      "oneOf": [
-        "Hardware2x2",
-        "Castano13",
-        "Jimenez14"
-      ],
-      "short_name": "ShadowFilteringMethod",
-      "title": "bevy_pbr::light::ShadowFilteringMethod",
-      "type": "string",
-      "typeInfo": "Enum"
-    },
-    "bevy_pbr::light::SpotLight": {
+    "bevy_pbr::light::spot_light::SpotLight": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
       "properties": {
         "color": {
           "type": {
-            "$ref": "#/$defs/bevy_render::color::Color"
+            "$ref": "#/$defs/bevy_color::color::Color"
           }
         },
         "inner_angle": {
@@ -6867,7 +8050,7 @@
         "inner_angle"
       ],
       "short_name": "SpotLight",
-      "title": "bevy_pbr::light::SpotLight",
+      "title": "bevy_pbr::light::spot_light::SpotLight",
       "type": "object",
       "typeInfo": "Struct"
     },
@@ -7005,12 +8188,22 @@
       "properties": {
         "alpha_mode": {
           "type": {
-            "$ref": "#/$defs/bevy_pbr::alpha::AlphaMode"
+            "$ref": "#/$defs/bevy_render::alpha::AlphaMode"
+          }
+        },
+        "anisotropy_rotation": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "anisotropy_strength": {
+          "type": {
+            "$ref": "#/$defs/f32"
           }
         },
         "attenuation_color": {
           "type": {
-            "$ref": "#/$defs/bevy_render::color::Color"
+            "$ref": "#/$defs/bevy_color::color::Color"
           }
         },
         "attenuation_distance": {
@@ -7020,12 +8213,27 @@
         },
         "base_color": {
           "type": {
-            "$ref": "#/$defs/bevy_render::color::Color"
+            "$ref": "#/$defs/bevy_color::color::Color"
+          }
+        },
+        "base_color_channel": {
+          "type": {
+            "$ref": "#/$defs/bevy_pbr::pbr_material::UvChannel"
           }
         },
         "base_color_texture": {
           "type": {
             "$ref": "#/$defs/core::option::Option<bevy_asset::handle::Handle<bevy_render::texture::image::Image>>"
+          }
+        },
+        "clearcoat": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "clearcoat_perceptual_roughness": {
+          "type": {
+            "$ref": "#/$defs/f32"
           }
         },
         "deferred_lighting_pass_id": {
@@ -7055,7 +8263,17 @@
         },
         "emissive": {
           "type": {
-            "$ref": "#/$defs/bevy_render::color::Color"
+            "$ref": "#/$defs/bevy_color::linear_rgba::LinearRgba"
+          }
+        },
+        "emissive_channel": {
+          "type": {
+            "$ref": "#/$defs/bevy_pbr::pbr_material::UvChannel"
+          }
+        },
+        "emissive_exposure_weight": {
+          "type": {
+            "$ref": "#/$defs/f32"
           }
         },
         "emissive_texture": {
@@ -7093,14 +8311,29 @@
             "$ref": "#/$defs/f32"
           }
         },
+        "metallic_roughness_channel": {
+          "type": {
+            "$ref": "#/$defs/bevy_pbr::pbr_material::UvChannel"
+          }
+        },
         "metallic_roughness_texture": {
           "type": {
             "$ref": "#/$defs/core::option::Option<bevy_asset::handle::Handle<bevy_render::texture::image::Image>>"
           }
         },
+        "normal_map_channel": {
+          "type": {
+            "$ref": "#/$defs/bevy_pbr::pbr_material::UvChannel"
+          }
+        },
         "normal_map_texture": {
           "type": {
             "$ref": "#/$defs/core::option::Option<bevy_asset::handle::Handle<bevy_render::texture::image::Image>>"
+          }
+        },
+        "occlusion_channel": {
+          "type": {
+            "$ref": "#/$defs/bevy_pbr::pbr_material::UvChannel"
           }
         },
         "occlusion_texture": {
@@ -7147,13 +8380,22 @@
           "type": {
             "$ref": "#/$defs/bool"
           }
+        },
+        "uv_transform": {
+          "type": {
+            "$ref": "#/$defs/glam::Affine2"
+          }
         }
       },
       "required": [
         "base_color",
+        "base_color_channel",
         "emissive",
+        "emissive_exposure_weight",
+        "emissive_channel",
         "perceptual_roughness",
         "metallic",
+        "metallic_roughness_channel",
         "reflectance",
         "diffuse_transmission",
         "specular_transmission",
@@ -7161,7 +8403,13 @@
         "ior",
         "attenuation_distance",
         "attenuation_color",
+        "normal_map_channel",
         "flip_normal_map_y",
+        "occlusion_channel",
+        "clearcoat",
+        "clearcoat_perceptual_roughness",
+        "anisotropy_strength",
+        "anisotropy_rotation",
         "double_sided",
         "unlit",
         "fog_enabled",
@@ -7172,12 +8420,72 @@
         "max_parallax_layer_count",
         "lightmap_exposure",
         "opaque_render_method",
-        "deferred_lighting_pass_id"
+        "deferred_lighting_pass_id",
+        "uv_transform"
       ],
       "short_name": "StandardMaterial",
       "title": "bevy_pbr::pbr_material::StandardMaterial",
       "type": "object",
       "typeInfo": "Struct"
+    },
+    "bevy_pbr::pbr_material::UvChannel": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        "Uv0",
+        "Uv1"
+      ],
+      "short_name": "UvChannel",
+      "title": "bevy_pbr::pbr_material::UvChannel",
+      "type": "string",
+      "typeInfo": "Enum"
+    },
+    "bevy_pbr::ssao::ScreenSpaceAmbientOcclusionQualityLevel": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "title": "Low"
+        },
+        {
+          "title": "Medium"
+        },
+        {
+          "title": "High"
+        },
+        {
+          "title": "Ultra"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "samples_per_slice_side": {
+              "title": "samples_per_slice_side",
+              "type": {
+                "$ref": "#/$defs/u32"
+              }
+            },
+            "slice_count": {
+              "title": "slice_count",
+              "type": {
+                "$ref": "#/$defs/u32"
+              }
+            }
+          },
+          "required": [
+            "slice_count",
+            "samples_per_slice_side"
+          ],
+          "short_name": "Custom",
+          "title": "Custom",
+          "type": "object",
+          "typeInfo": "Struct"
+        }
+      ],
+      "short_name": "ScreenSpaceAmbientOcclusionQualityLevel",
+      "title": "bevy_pbr::ssao::ScreenSpaceAmbientOcclusionQualityLevel",
+      "type": "object",
+      "typeInfo": "Enum"
     },
     "bevy_pbr::ssao::ScreenSpaceAmbientOcclusionSettings": {
       "additionalProperties": false,
@@ -7198,71 +8506,158 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_pbr::wireframe::NoWireframe": {
-      "additionalProperties": false,
-      "isComponent": true,
-      "isResource": false,
-      "properties": {},
-      "required": [],
-      "short_name": "NoWireframe",
-      "title": "bevy_pbr::wireframe::NoWireframe",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "bevy_pbr::wireframe::Wireframe": {
-      "additionalProperties": false,
-      "isComponent": true,
-      "isResource": false,
-      "properties": {},
-      "required": [],
-      "short_name": "Wireframe",
-      "title": "bevy_pbr::wireframe::Wireframe",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "bevy_pbr::wireframe::WireframeColor": {
+    "bevy_pbr::ssr::ScreenSpaceReflectionsSettings": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
       "properties": {
-        "color": {
+        "bisection_steps": {
           "type": {
-            "$ref": "#/$defs/bevy_render::color::Color"
-          }
-        }
-      },
-      "required": [
-        "color"
-      ],
-      "short_name": "WireframeColor",
-      "title": "bevy_pbr::wireframe::WireframeColor",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "bevy_pbr::wireframe::WireframeConfig": {
-      "additionalProperties": false,
-      "isComponent": false,
-      "isResource": true,
-      "properties": {
-        "default_color": {
-          "type": {
-            "$ref": "#/$defs/bevy_render::color::Color"
+            "$ref": "#/$defs/u32"
           }
         },
-        "global": {
+        "linear_march_exponent": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "linear_steps": {
+          "type": {
+            "$ref": "#/$defs/u32"
+          }
+        },
+        "perceptual_roughness_threshold": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "thickness": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "use_secant": {
           "type": {
             "$ref": "#/$defs/bool"
           }
         }
       },
       "required": [
-        "global",
-        "default_color"
+        "perceptual_roughness_threshold",
+        "thickness",
+        "linear_steps",
+        "linear_march_exponent",
+        "bisection_steps",
+        "use_secant"
       ],
-      "short_name": "WireframeConfig",
-      "title": "bevy_pbr::wireframe::WireframeConfig",
+      "short_name": "ScreenSpaceReflectionsSettings",
+      "title": "bevy_pbr::ssr::ScreenSpaceReflectionsSettings",
       "type": "object",
       "typeInfo": "Struct"
+    },
+    "bevy_pbr::volumetric_fog::VolumetricFogSettings": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "absorption": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "ambient_color": {
+          "type": {
+            "$ref": "#/$defs/bevy_color::color::Color"
+          }
+        },
+        "ambient_intensity": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "density": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "fog_color": {
+          "type": {
+            "$ref": "#/$defs/bevy_color::color::Color"
+          }
+        },
+        "light_intensity": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "light_tint": {
+          "type": {
+            "$ref": "#/$defs/bevy_color::color::Color"
+          }
+        },
+        "max_depth": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "scattering": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "scattering_asymmetry": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "step_count": {
+          "type": {
+            "$ref": "#/$defs/u32"
+          }
+        }
+      },
+      "required": [
+        "fog_color",
+        "ambient_color",
+        "ambient_intensity",
+        "step_count",
+        "max_depth",
+        "absorption",
+        "scattering",
+        "density",
+        "scattering_asymmetry",
+        "light_tint",
+        "light_intensity"
+      ],
+      "short_name": "VolumetricFogSettings",
+      "title": "bevy_pbr::volumetric_fog::VolumetricFogSettings",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_pbr::volumetric_fog::VolumetricLight": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {},
+      "required": [],
+      "short_name": "VolumetricLight",
+      "title": "bevy_pbr::volumetric_fog::VolumetricLight",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_rapier3d::dynamics::CoefficientCombineRule": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        "Average",
+        "Min",
+        "Multiply",
+        "Max"
+      ],
+      "short_name": "CoefficientCombineRule",
+      "title": "bevy_rapier3d::dynamics::CoefficientCombineRule",
+      "type": "string",
+      "typeInfo": "Enum"
     },
     "bevy_rapier3d::dynamics::rigid_body::AdditionalMassProperties": {
       "isComponent": true,
@@ -7508,7 +8903,7 @@
             "$ref": "#/$defs/f32"
           }
         },
-        "linear_threshold": {
+        "normalized_linear_threshold": {
           "type": {
             "$ref": "#/$defs/f32"
           }
@@ -7520,12 +8915,31 @@
         }
       },
       "required": [
-        "linear_threshold",
+        "normalized_linear_threshold",
         "angular_threshold",
         "sleeping"
       ],
       "short_name": "Sleeping",
       "title": "bevy_rapier3d::dynamics::rigid_body::Sleeping",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_rapier3d::dynamics::rigid_body::SoftCcd": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "prediction": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      },
+      "required": [
+        "prediction"
+      ],
+      "short_name": "SoftCcd",
+      "title": "bevy_rapier3d::dynamics::rigid_body::SoftCcd",
       "type": "object",
       "typeInfo": "Struct"
     },
@@ -7561,7 +8975,7 @@
       "prefixItems": [
         {
           "type": {
-            "$ref": "#/$defs/bevy_utils::HashSet<bevy_ecs::entity::Entity>"
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashSet<bevy_ecs::entity::Entity, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
           }
         }
       ],
@@ -7608,6 +9022,22 @@
       ],
       "short_name": "ContactForceEventThreshold",
       "title": "bevy_rapier3d::geometry::collider::ContactForceEventThreshold",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
+    "bevy_rapier3d::geometry::collider::ContactSkin": {
+      "isComponent": true,
+      "isResource": false,
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      ],
+      "short_name": "ContactSkin",
+      "title": "bevy_rapier3d::geometry::collider::ContactSkin",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
@@ -7732,6 +9162,48 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_render::alpha::AlphaMode": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "title": "Opaque"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/f32"
+              }
+            }
+          ],
+          "short_name": "Mask",
+          "title": "Mask",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "title": "Blend"
+        },
+        {
+          "title": "Premultiplied"
+        },
+        {
+          "title": "AlphaToCoverage"
+        },
+        {
+          "title": "Add"
+        },
+        {
+          "title": "Multiply"
+        }
+      ],
+      "short_name": "AlphaMode",
+      "title": "bevy_render::alpha::AlphaMode",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
     "bevy_render::camera::camera::Camera": {
       "additionalProperties": false,
       "isComponent": true,
@@ -7804,57 +9276,40 @@
       "type": "object",
       "typeInfo": "Value"
     },
-    "bevy_render::camera::camera::RenderTarget": {
-      "isComponent": false,
+    "bevy_render::camera::camera::MipBias": {
+      "isComponent": true,
       "isResource": false,
-      "oneOf": [
+      "items": false,
+      "prefixItems": [
         {
-          "items": false,
-          "prefixItems": [
-            {
-              "type": {
-                "$ref": "#/$defs/bevy_window::window::WindowRef"
-              }
-            }
-          ],
-          "short_name": "Window",
-          "title": "Window",
-          "type": "array",
-          "typeInfo": "Tuple"
-        },
-        {
-          "items": false,
-          "prefixItems": [
-            {
-              "type": {
-                "$ref": "#/$defs/bevy_asset::handle::Handle<bevy_render::texture::image::Image>"
-              }
-            }
-          ],
-          "short_name": "Image",
-          "title": "Image",
-          "type": "array",
-          "typeInfo": "Tuple"
-        },
-        {
-          "items": false,
-          "prefixItems": [
-            {
-              "type": {
-                "$ref": "#/$defs/bevy_render::camera::manual_texture_view::ManualTextureViewHandle"
-              }
-            }
-          ],
-          "short_name": "TextureView",
-          "title": "TextureView",
-          "type": "array",
-          "typeInfo": "Tuple"
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
         }
       ],
-      "short_name": "RenderTarget",
-      "title": "bevy_render::camera::camera::RenderTarget",
+      "short_name": "MipBias",
+      "title": "bevy_render::camera::camera::MipBias",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
+    "bevy_render::camera::camera::TemporalJitter": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "offset": {
+          "type": {
+            "$ref": "#/$defs/glam::Vec2"
+          }
+        }
+      },
+      "required": [
+        "offset"
+      ],
+      "short_name": "TemporalJitter",
+      "title": "bevy_render::camera::camera::TemporalJitter",
       "type": "object",
-      "typeInfo": "Enum"
+      "typeInfo": "Struct"
     },
     "bevy_render::camera::camera::Viewport": {
       "additionalProperties": false,
@@ -7894,7 +9349,7 @@
       "prefixItems": [
         {
           "type": {
-            "$ref": "#/$defs/bevy_render::color::Color"
+            "$ref": "#/$defs/bevy_color::color::Color"
           }
         }
       ],
@@ -7915,7 +9370,7 @@
           "prefixItems": [
             {
               "type": {
-                "$ref": "#/$defs/bevy_render::color::Color"
+                "$ref": "#/$defs/bevy_color::color::Color"
               }
             }
           ],
@@ -7940,7 +9395,7 @@
       "properties": {
         "area": {
           "type": {
-            "$ref": "#/$defs/bevy_math::Rect"
+            "$ref": "#/$defs/bevy_math::rects::rect::Rect"
           }
         },
         "far": {
@@ -8184,172 +9639,6 @@
       "type": "object",
       "typeInfo": "Enum"
     },
-    "bevy_render::color::Color": {
-      "isComponent": false,
-      "isResource": false,
-      "oneOf": [
-        {
-          "additionalProperties": false,
-          "properties": {
-            "alpha": {
-              "title": "alpha",
-              "type": {
-                "$ref": "#/$defs/f32"
-              }
-            },
-            "blue": {
-              "title": "blue",
-              "type": {
-                "$ref": "#/$defs/f32"
-              }
-            },
-            "green": {
-              "title": "green",
-              "type": {
-                "$ref": "#/$defs/f32"
-              }
-            },
-            "red": {
-              "title": "red",
-              "type": {
-                "$ref": "#/$defs/f32"
-              }
-            }
-          },
-          "required": [
-            "red",
-            "green",
-            "blue",
-            "alpha"
-          ],
-          "short_name": "Rgba",
-          "title": "Rgba",
-          "type": "object",
-          "typeInfo": "Struct"
-        },
-        {
-          "additionalProperties": false,
-          "properties": {
-            "alpha": {
-              "title": "alpha",
-              "type": {
-                "$ref": "#/$defs/f32"
-              }
-            },
-            "blue": {
-              "title": "blue",
-              "type": {
-                "$ref": "#/$defs/f32"
-              }
-            },
-            "green": {
-              "title": "green",
-              "type": {
-                "$ref": "#/$defs/f32"
-              }
-            },
-            "red": {
-              "title": "red",
-              "type": {
-                "$ref": "#/$defs/f32"
-              }
-            }
-          },
-          "required": [
-            "red",
-            "green",
-            "blue",
-            "alpha"
-          ],
-          "short_name": "RgbaLinear",
-          "title": "RgbaLinear",
-          "type": "object",
-          "typeInfo": "Struct"
-        },
-        {
-          "additionalProperties": false,
-          "properties": {
-            "alpha": {
-              "title": "alpha",
-              "type": {
-                "$ref": "#/$defs/f32"
-              }
-            },
-            "hue": {
-              "title": "hue",
-              "type": {
-                "$ref": "#/$defs/f32"
-              }
-            },
-            "lightness": {
-              "title": "lightness",
-              "type": {
-                "$ref": "#/$defs/f32"
-              }
-            },
-            "saturation": {
-              "title": "saturation",
-              "type": {
-                "$ref": "#/$defs/f32"
-              }
-            }
-          },
-          "required": [
-            "hue",
-            "saturation",
-            "lightness",
-            "alpha"
-          ],
-          "short_name": "Hsla",
-          "title": "Hsla",
-          "type": "object",
-          "typeInfo": "Struct"
-        },
-        {
-          "additionalProperties": false,
-          "properties": {
-            "alpha": {
-              "title": "alpha",
-              "type": {
-                "$ref": "#/$defs/f32"
-              }
-            },
-            "chroma": {
-              "title": "chroma",
-              "type": {
-                "$ref": "#/$defs/f32"
-              }
-            },
-            "hue": {
-              "title": "hue",
-              "type": {
-                "$ref": "#/$defs/f32"
-              }
-            },
-            "lightness": {
-              "title": "lightness",
-              "type": {
-                "$ref": "#/$defs/f32"
-              }
-            }
-          },
-          "required": [
-            "lightness",
-            "chroma",
-            "hue",
-            "alpha"
-          ],
-          "short_name": "Lcha",
-          "title": "Lcha",
-          "type": "object",
-          "typeInfo": "Struct"
-        }
-      ],
-      "short_name": "Color",
-      "title": "bevy_render::color::Color",
-      "type": "object",
-      "typeInfo": "Enum"
-    },
     "bevy_render::globals::GlobalsUniform": {
       "additionalProperties": false,
       "isComponent": false,
@@ -8579,6 +9868,14 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_render::render_asset::RenderAssetUsages": {
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "RenderAssetUsages",
+      "title": "bevy_render::render_asset::RenderAssetUsages",
+      "type": "object",
+      "typeInfo": "Value"
+    },
     "bevy_render::texture::image::Image": {
       "isComponent": false,
       "isResource": false,
@@ -8592,7 +9889,98 @@
       "isComponent": true,
       "isResource": false,
       "properties": {
+        "global": {
+          "type": {
+            "$ref": "#/$defs/bevy_render::view::ColorGradingGlobal"
+          }
+        },
+        "highlights": {
+          "type": {
+            "$ref": "#/$defs/bevy_render::view::ColorGradingSection"
+          }
+        },
+        "midtones": {
+          "type": {
+            "$ref": "#/$defs/bevy_render::view::ColorGradingSection"
+          }
+        },
+        "shadows": {
+          "type": {
+            "$ref": "#/$defs/bevy_render::view::ColorGradingSection"
+          }
+        }
+      },
+      "required": [
+        "global",
+        "shadows",
+        "midtones",
+        "highlights"
+      ],
+      "short_name": "ColorGrading",
+      "title": "bevy_render::view::ColorGrading",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_render::view::ColorGradingGlobal": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
         "exposure": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "hue": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "midtones_range": {
+          "type": {
+            "$ref": "#/$defs/core::ops::Range<f32>"
+          }
+        },
+        "post_saturation": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "temperature": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "tint": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      },
+      "required": [
+        "exposure",
+        "temperature",
+        "tint",
+        "hue",
+        "post_saturation",
+        "midtones_range"
+      ],
+      "short_name": "ColorGradingGlobal",
+      "title": "bevy_render::view::ColorGradingGlobal",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_render::view::ColorGradingSection": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "contrast": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "gain": {
           "type": {
             "$ref": "#/$defs/f32"
           }
@@ -8602,25 +9990,26 @@
             "$ref": "#/$defs/f32"
           }
         },
-        "post_saturation": {
+        "lift": {
           "type": {
             "$ref": "#/$defs/f32"
           }
         },
-        "pre_saturation": {
+        "saturation": {
           "type": {
             "$ref": "#/$defs/f32"
           }
         }
       },
       "required": [
-        "exposure",
+        "saturation",
+        "contrast",
         "gamma",
-        "pre_saturation",
-        "post_saturation"
+        "gain",
+        "lift"
       ],
-      "short_name": "ColorGrading",
-      "title": "bevy_render::view::ColorGrading",
+      "short_name": "ColorGradingSection",
+      "title": "bevy_render::view::ColorGradingSection",
       "type": "object",
       "typeInfo": "Struct"
     },
@@ -8705,6 +10094,31 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_render::view::visibility::range::VisibilityRange": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "end_margin": {
+          "type": {
+            "$ref": "#/$defs/core::ops::Range<f32>"
+          }
+        },
+        "start_margin": {
+          "type": {
+            "$ref": "#/$defs/core::ops::Range<f32>"
+          }
+        }
+      },
+      "required": [
+        "start_margin",
+        "end_margin"
+      ],
+      "short_name": "VisibilityRange",
+      "title": "bevy_render::view::visibility::range::VisibilityRange",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "bevy_render::view::visibility::render_layers::RenderLayers": {
       "isComponent": true,
       "isResource": false,
@@ -8712,7 +10126,7 @@
       "prefixItems": [
         {
           "type": {
-            "$ref": "#/$defs/u32"
+            "$ref": "#/$defs/smallvec::SmallVec<[u64; 1]>"
           }
         }
       ],
@@ -8721,6 +10135,17 @@
       "type": "array",
       "typeInfo": "TupleStruct"
     },
+    "bevy_sprite::SpriteSource": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {},
+      "required": [],
+      "short_name": "SpriteSource",
+      "title": "bevy_sprite::SpriteSource",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "bevy_sprite::mesh2d::color_material::ColorMaterial": {
       "additionalProperties": false,
       "isComponent": false,
@@ -8728,7 +10153,7 @@
       "properties": {
         "color": {
           "type": {
-            "$ref": "#/$defs/bevy_render::color::Color"
+            "$ref": "#/$defs/bevy_color::color::Color"
           }
         },
         "texture": {
@@ -8880,7 +10305,7 @@
         },
         "color": {
           "type": {
-            "$ref": "#/$defs/bevy_render::color::Color"
+            "$ref": "#/$defs/bevy_color::color::Color"
           }
         },
         "custom_size": {
@@ -8900,7 +10325,7 @@
         },
         "rect": {
           "type": {
-            "$ref": "#/$defs/core::option::Option<bevy_math::Rect>"
+            "$ref": "#/$defs/core::option::Option<bevy_math::rects::rect::Rect>"
           }
         }
       },
@@ -8947,7 +10372,7 @@
       "properties": {
         "size": {
           "type": {
-            "$ref": "#/$defs/glam::Vec2"
+            "$ref": "#/$defs/glam::UVec2"
           }
         },
         "texture_handles": {
@@ -8957,7 +10382,7 @@
         },
         "textures": {
           "type": {
-            "$ref": "#/$defs/alloc::vec::Vec<bevy_math::Rect>"
+            "$ref": "#/$defs/alloc::vec::Vec<bevy_math::rects::urect::URect>"
           }
         }
       },
@@ -8969,6 +10394,74 @@
       "title": "bevy_sprite::texture_atlas::TextureAtlasLayout",
       "type": "object",
       "typeInfo": "Struct"
+    },
+    "bevy_sprite::texture_slice::border_rect::BorderRect": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "bottom": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "left": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "right": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "top": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      },
+      "required": [
+        "left",
+        "right",
+        "top",
+        "bottom"
+      ],
+      "short_name": "BorderRect",
+      "title": "bevy_sprite::texture_slice::border_rect::BorderRect",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_sprite::texture_slice::slicer::SliceScaleMode": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "title": "Stretch"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "stretch_value": {
+              "title": "stretch_value",
+              "type": {
+                "$ref": "#/$defs/f32"
+              }
+            }
+          },
+          "required": [
+            "stretch_value"
+          ],
+          "short_name": "Tile",
+          "title": "Tile",
+          "type": "object",
+          "typeInfo": "Struct"
+        }
+      ],
+      "short_name": "SliceScaleMode",
+      "title": "bevy_sprite::texture_slice::slicer::SliceScaleMode",
+      "type": "object",
+      "typeInfo": "Enum"
     },
     "bevy_sprite::texture_slice::slicer::TextureSlicer": {
       "additionalProperties": false,
@@ -9004,6 +10497,80 @@
       ],
       "short_name": "TextureSlicer",
       "title": "bevy_sprite::texture_slice::slicer::TextureSlicer",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_text::font_atlas_set::GlyphAtlasInfo": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "glyph_index": {
+          "type": {
+            "$ref": "#/$defs/usize"
+          }
+        },
+        "texture": {
+          "type": {
+            "$ref": "#/$defs/bevy_asset::handle::Handle<bevy_render::texture::image::Image>"
+          }
+        },
+        "texture_atlas": {
+          "type": {
+            "$ref": "#/$defs/bevy_asset::handle::Handle<bevy_sprite::texture_atlas::TextureAtlasLayout>"
+          }
+        }
+      },
+      "required": [
+        "texture_atlas",
+        "texture",
+        "glyph_index"
+      ],
+      "short_name": "GlyphAtlasInfo",
+      "title": "bevy_text::font_atlas_set::GlyphAtlasInfo",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_text::glyph_brush::PositionedGlyph": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "atlas_info": {
+          "type": {
+            "$ref": "#/$defs/bevy_text::font_atlas_set::GlyphAtlasInfo"
+          }
+        },
+        "byte_index": {
+          "type": {
+            "$ref": "#/$defs/usize"
+          }
+        },
+        "position": {
+          "type": {
+            "$ref": "#/$defs/glam::Vec2"
+          }
+        },
+        "section_index": {
+          "type": {
+            "$ref": "#/$defs/usize"
+          }
+        },
+        "size": {
+          "type": {
+            "$ref": "#/$defs/glam::Vec2"
+          }
+        }
+      },
+      "required": [
+        "position",
+        "size",
+        "atlas_info",
+        "section_index",
+        "byte_index"
+      ],
+      "short_name": "PositionedGlyph",
+      "title": "bevy_text::glyph_brush::PositionedGlyph",
       "type": "object",
       "typeInfo": "Struct"
     },
@@ -9140,7 +10707,7 @@
       "properties": {
         "color": {
           "type": {
-            "$ref": "#/$defs/bevy_render::color::Color"
+            "$ref": "#/$defs/bevy_color::color::Color"
           }
         },
         "font": {
@@ -9161,6 +10728,60 @@
       ],
       "short_name": "TextStyle",
       "title": "bevy_text::text::TextStyle",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_time::fixed::Fixed": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "overstep": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::Duration"
+          }
+        },
+        "timestep": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::Duration"
+          }
+        }
+      },
+      "required": [
+        "timestep",
+        "overstep"
+      ],
+      "short_name": "Fixed",
+      "title": "bevy_time::fixed::Fixed",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_time::real::Real": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "first_update": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<bevy_utils::Instant>"
+          }
+        },
+        "last_update": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<bevy_utils::Instant>"
+          }
+        },
+        "startup": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::Instant"
+          }
+        }
+      },
+      "required": [
+        "startup"
+      ],
+      "short_name": "Real",
+      "title": "bevy_time::real::Real",
       "type": "object",
       "typeInfo": "Struct"
     },
@@ -9548,6 +11169,18 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_time::timer::TimerMode": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        "Once",
+        "Repeating"
+      ],
+      "short_name": "TimerMode",
+      "title": "bevy_time::timer::TimerMode",
+      "type": "string",
+      "typeInfo": "Enum"
+    },
     "bevy_time::virt::Virtual": {
       "additionalProperties": false,
       "isComponent": false,
@@ -9685,7 +11318,7 @@
         },
         "normalized_visible_node_rect": {
           "type": {
-            "$ref": "#/$defs/bevy_math::Rect"
+            "$ref": "#/$defs/bevy_math::rects::rect::Rect"
           }
         }
       },
@@ -9905,7 +11538,7 @@
       "prefixItems": [
         {
           "type": {
-            "$ref": "#/$defs/bevy_render::color::Color"
+            "$ref": "#/$defs/bevy_color::color::Color"
           }
         }
       ],
@@ -9921,7 +11554,7 @@
       "prefixItems": [
         {
           "type": {
-            "$ref": "#/$defs/bevy_render::color::Color"
+            "$ref": "#/$defs/bevy_color::color::Color"
           }
         }
       ],
@@ -9930,6 +11563,43 @@
       "type": "array",
       "typeInfo": "TupleStruct"
     },
+    "bevy_ui::ui_node::BorderRadius": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "bottom_left": {
+          "type": {
+            "$ref": "#/$defs/bevy_ui::geometry::Val"
+          }
+        },
+        "bottom_right": {
+          "type": {
+            "$ref": "#/$defs/bevy_ui::geometry::Val"
+          }
+        },
+        "top_left": {
+          "type": {
+            "$ref": "#/$defs/bevy_ui::geometry::Val"
+          }
+        },
+        "top_right": {
+          "type": {
+            "$ref": "#/$defs/bevy_ui::geometry::Val"
+          }
+        }
+      },
+      "required": [
+        "top_left",
+        "top_right",
+        "bottom_left",
+        "bottom_right"
+      ],
+      "short_name": "BorderRadius",
+      "title": "bevy_ui::ui_node::BorderRadius",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "bevy_ui::ui_node::CalculatedClip": {
       "additionalProperties": false,
       "isComponent": true,
@@ -9937,7 +11607,7 @@
       "properties": {
         "clip": {
           "type": {
-            "$ref": "#/$defs/bevy_math::Rect"
+            "$ref": "#/$defs/bevy_math::rects::rect::Rect"
           }
         }
       },
@@ -9968,6 +11638,7 @@
       "oneOf": [
         "Flex",
         "Grid",
+        "Block",
         "None"
       ],
       "short_name": "Display",
@@ -10068,6 +11739,36 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_ui::ui_node::GridTrackRepetition": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/u16"
+              }
+            }
+          ],
+          "short_name": "Count",
+          "title": "Count",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "title": "AutoFill"
+        },
+        {
+          "title": "AutoFit"
+        }
+      ],
+      "short_name": "GridTrackRepetition",
+      "title": "bevy_ui::ui_node::GridTrackRepetition",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
     "bevy_ui::ui_node::JustifyContent": {
       "isComponent": false,
       "isResource": false,
@@ -10120,6 +11821,22 @@
       "type": "string",
       "typeInfo": "Enum"
     },
+    "bevy_ui::ui_node::MaxTrackSizingFunction": {
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "MaxTrackSizingFunction",
+      "title": "bevy_ui::ui_node::MaxTrackSizingFunction",
+      "type": "object",
+      "typeInfo": "Value"
+    },
+    "bevy_ui::ui_node::MinTrackSizingFunction": {
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "MinTrackSizingFunction",
+      "title": "bevy_ui::ui_node::MinTrackSizingFunction",
+      "type": "object",
+      "typeInfo": "Value"
+    },
     "bevy_ui::ui_node::Node": {
       "additionalProperties": false,
       "isComponent": true,
@@ -10170,7 +11887,7 @@
       "properties": {
         "color": {
           "type": {
-            "$ref": "#/$defs/bevy_render::color::Color"
+            "$ref": "#/$defs/bevy_color::color::Color"
           }
         },
         "offset": {
@@ -10224,7 +11941,8 @@
       "isResource": false,
       "oneOf": [
         "Visible",
-        "Clip"
+        "Clip",
+        "Hidden"
       ],
       "short_name": "OverflowAxis",
       "title": "bevy_ui::ui_node::OverflowAxis",
@@ -10255,7 +11973,7 @@
         },
         "tracks": {
           "type": {
-            "$ref": "#/$defs/bevy_utils::smallvec::SmallVec<[bevy_ui::ui_node::GridTrack; 1]>"
+            "$ref": "#/$defs/smallvec::SmallVec<[bevy_ui::ui_node::GridTrack; 1]>"
           }
         }
       },
@@ -10529,6 +12247,11 @@
       "isComponent": true,
       "isResource": false,
       "properties": {
+        "color": {
+          "type": {
+            "$ref": "#/$defs/bevy_color::color::Color"
+          }
+        },
         "flip_x": {
           "type": {
             "$ref": "#/$defs/bool"
@@ -10546,6 +12269,7 @@
         }
       },
       "required": [
+        "color",
         "texture",
         "flip_x",
         "flip_y"
@@ -10611,7 +12335,7 @@
       "properties": {
         "size": {
           "type": {
-            "$ref": "#/$defs/glam::Vec2"
+            "$ref": "#/$defs/glam::UVec2"
           }
         }
       },
@@ -10667,14 +12391,6 @@
       "type": "object",
       "typeInfo": "Value"
     },
-    "bevy_utils::HashSet<alloc::string::String>": {
-      "isComponent": false,
-      "isResource": false,
-      "short_name": "HashSet<String>",
-      "title": "bevy_utils::HashSet<alloc::string::String>",
-      "type": "object",
-      "typeInfo": "Value"
-    },
     "bevy_utils::Instant": {
       "isComponent": false,
       "isResource": false,
@@ -10683,26 +12399,143 @@
       "type": "object",
       "typeInfo": "Value"
     },
-    "bevy_utils::Uuid": {
-      "isComponent": false,
-      "isResource": false,
-      "short_name": "Uuid",
-      "title": "bevy_utils::Uuid",
-      "type": "object",
-      "typeInfo": "Value"
-    },
-    "bevy_utils::smallvec::SmallVec<[bevy_ecs::entity::Entity; 8]>": {
-      "isComponent": false,
-      "isResource": false,
-      "items": {
+    "bevy_utils::hashbrown::HashMap<alloc::string::String, alloc::vec::Vec<alloc::string::String>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "additionalProperties": {
         "type": {
-          "$ref": "#/$defs/bevy_ecs::entity::Entity"
+          "$ref": "#/$defs/alloc::vec::Vec<alloc::string::String>"
         }
       },
-      "short_name": "SmallVec<[Entity; 8]>",
-      "title": "bevy_utils::smallvec::SmallVec<[bevy_ecs::entity::Entity; 8]>",
-      "type": "array",
-      "typeInfo": "List"
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "HashMap<String, Vec<String>, DefaultHashBuilder>",
+      "title": "bevy_utils::hashbrown::HashMap<alloc::string::String, alloc::vec::Vec<alloc::string::String>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Map"
+    },
+    "bevy_utils::hashbrown::HashMap<alloc::string::String, bevy_asset::handle::Handle<bevy_animation::AnimationClip>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "additionalProperties": {
+        "type": {
+          "$ref": "#/$defs/bevy_asset::handle::Handle<bevy_animation::AnimationClip>"
+        }
+      },
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "HashMap<String, Handle<AnimationClip>, DefaultHashBuilder>",
+      "title": "bevy_utils::hashbrown::HashMap<alloc::string::String, bevy_asset::handle::Handle<bevy_animation::AnimationClip>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Map"
+    },
+    "bevy_utils::hashbrown::HashMap<alloc::string::String, petgraph::graph::NodeIndex, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "additionalProperties": {
+        "type": {
+          "$ref": "#/$defs/petgraph::graph::NodeIndex"
+        }
+      },
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "HashMap<String, NodeIndex, DefaultHashBuilder>",
+      "title": "bevy_utils::hashbrown::HashMap<alloc::string::String, petgraph::graph::NodeIndex, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Map"
+    },
+    "bevy_utils::hashbrown::HashMap<bevy_animation::AnimationTargetId, alloc::vec::Vec<bevy_animation::VariableCurve>, bevy_utils::NoOpHash>": {
+      "additionalProperties": {
+        "type": {
+          "$ref": "#/$defs/alloc::vec::Vec<bevy_animation::VariableCurve>"
+        }
+      },
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "HashMap<AnimationTargetId, Vec<VariableCurve>, NoOpHash>",
+      "title": "bevy_utils::hashbrown::HashMap<bevy_animation::AnimationTargetId, alloc::vec::Vec<bevy_animation::VariableCurve>, bevy_utils::NoOpHash>",
+      "type": "object",
+      "typeInfo": "Map"
+    },
+    "bevy_utils::hashbrown::HashMap<bevy_asset::id::AssetId<bevy_render::texture::image::Image>, usize, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "additionalProperties": {
+        "type": {
+          "$ref": "#/$defs/usize"
+        }
+      },
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "HashMap<AssetId<Image>, usize, DefaultHashBuilder>",
+      "title": "bevy_utils::hashbrown::HashMap<bevy_asset::id::AssetId<bevy_render::texture::image::Image>, usize, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Map"
+    },
+    "bevy_utils::hashbrown::HashMap<bevy_ecs::entity::Entity, alloc::vec::Vec<bevy_pbr::light::Cascade>, bevy_ecs::entity::hash::EntityHash>": {
+      "additionalProperties": {
+        "type": {
+          "$ref": "#/$defs/alloc::vec::Vec<bevy_pbr::light::Cascade>"
+        }
+      },
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "HashMap<Entity, Vec<Cascade>, EntityHash>",
+      "title": "bevy_utils::hashbrown::HashMap<bevy_ecs::entity::Entity, alloc::vec::Vec<bevy_pbr::light::Cascade>, bevy_ecs::entity::hash::EntityHash>",
+      "type": "object",
+      "typeInfo": "Map"
+    },
+    "bevy_utils::hashbrown::HashMap<bevy_input::gamepad::GamepadAxis, bevy_input::gamepad::AxisSettings, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "additionalProperties": {
+        "type": {
+          "$ref": "#/$defs/bevy_input::gamepad::AxisSettings"
+        }
+      },
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "HashMap<GamepadAxis, AxisSettings, DefaultHashBuilder>",
+      "title": "bevy_utils::hashbrown::HashMap<bevy_input::gamepad::GamepadAxis, bevy_input::gamepad::AxisSettings, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Map"
+    },
+    "bevy_utils::hashbrown::HashMap<bevy_input::gamepad::GamepadButton, bevy_input::gamepad::ButtonAxisSettings, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "additionalProperties": {
+        "type": {
+          "$ref": "#/$defs/bevy_input::gamepad::ButtonAxisSettings"
+        }
+      },
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "HashMap<GamepadButton, ButtonAxisSettings, DefaultHashBuilder>",
+      "title": "bevy_utils::hashbrown::HashMap<bevy_input::gamepad::GamepadButton, bevy_input::gamepad::ButtonAxisSettings, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Map"
+    },
+    "bevy_utils::hashbrown::HashMap<bevy_input::gamepad::GamepadButton, bevy_input::gamepad::ButtonSettings, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "additionalProperties": {
+        "type": {
+          "$ref": "#/$defs/bevy_input::gamepad::ButtonSettings"
+        }
+      },
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "HashMap<GamepadButton, ButtonSettings, DefaultHashBuilder>",
+      "title": "bevy_utils::hashbrown::HashMap<bevy_input::gamepad::GamepadButton, bevy_input::gamepad::ButtonSettings, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Map"
+    },
+    "bevy_utils::hashbrown::HashMap<petgraph::graph::NodeIndex, f32, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "additionalProperties": {
+        "type": {
+          "$ref": "#/$defs/f32"
+        }
+      },
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "HashMap<NodeIndex, f32, DefaultHashBuilder>",
+      "title": "bevy_utils::hashbrown::HashMap<petgraph::graph::NodeIndex, f32, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Map"
+    },
+    "bevy_utils::hashbrown::HashSet<bevy_ecs::entity::Entity, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "HashSet<Entity, DefaultHashBuilder>",
+      "title": "bevy_utils::hashbrown::HashSet<bevy_ecs::entity::Entity, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Value"
     },
     "bevy_window::cursor::CursorIcon": {
       "isComponent": false,
@@ -10748,16 +12581,18 @@
       "type": "string",
       "typeInfo": "Enum"
     },
-    "bevy_window::event::ApplicationLifetime": {
+    "bevy_window::event::AppLifecycle": {
       "isComponent": false,
       "isResource": false,
       "oneOf": [
-        "Started",
+        "Idle",
+        "Running",
+        "WillSuspend",
         "Suspended",
-        "Resumed"
+        "WillResume"
       ],
-      "short_name": "ApplicationLifetime",
-      "title": "bevy_window::event::ApplicationLifetime",
+      "short_name": "AppLifecycle",
+      "title": "bevy_window::event::AppLifecycle",
       "type": "string",
       "typeInfo": "Enum"
     },
@@ -11003,6 +12838,25 @@
       ],
       "short_name": "WindowClosed",
       "title": "bevy_window::event::WindowClosed",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_window::event::WindowClosing": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "window": {
+          "type": {
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
+          }
+        }
+      },
+      "required": [
+        "window"
+      ],
+      "short_name": "WindowClosing",
+      "title": "bevy_window::event::WindowClosing",
       "type": "object",
       "typeInfo": "Struct"
     },
@@ -11386,9 +13240,19 @@
             "$ref": "#/$defs/bool"
           }
         },
+        "desired_maximum_frame_latency": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<core::num::NonZeroU32>"
+          }
+        },
         "enabled_buttons": {
           "type": {
             "$ref": "#/$defs/bevy_window::window::EnabledButtons"
+          }
+        },
+        "fit_canvas_to_parent": {
+          "type": {
+            "$ref": "#/$defs/bool"
           }
         },
         "focused": {
@@ -11436,6 +13300,26 @@
             "$ref": "#/$defs/bool"
           }
         },
+        "recognize_doubletap_gesture": {
+          "type": {
+            "$ref": "#/$defs/bool"
+          }
+        },
+        "recognize_pan_gesture": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<(u8, u8)>"
+          }
+        },
+        "recognize_pinch_gesture": {
+          "type": {
+            "$ref": "#/$defs/bool"
+          }
+        },
+        "recognize_rotation_gesture": {
+          "type": {
+            "$ref": "#/$defs/bool"
+          }
+        },
         "resizable": {
           "type": {
             "$ref": "#/$defs/bool"
@@ -11449,6 +13333,11 @@
         "resolution": {
           "type": {
             "$ref": "#/$defs/bevy_window::window::WindowResolution"
+          }
+        },
+        "skip_taskbar": {
+          "type": {
+            "$ref": "#/$defs/bool"
           }
         },
         "title": {
@@ -11492,11 +13381,16 @@
         "transparent",
         "focused",
         "window_level",
+        "fit_canvas_to_parent",
         "prevent_default_event_handling",
         "internal",
         "ime_enabled",
         "ime_position",
-        "visible"
+        "visible",
+        "skip_taskbar",
+        "recognize_pinch_gesture",
+        "recognize_rotation_gesture",
+        "recognize_doubletap_gesture"
       ],
       "short_name": "Window",
       "title": "bevy_window::window::Window",
@@ -11672,6 +13566,30 @@
       "type": "string",
       "typeInfo": "Value"
     },
+    "core::num::NonZeroI16": {
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "NonZeroI16",
+      "title": "core::num::NonZeroI16",
+      "type": "object",
+      "typeInfo": "Value"
+    },
+    "core::num::NonZeroU16": {
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "NonZeroU16",
+      "title": "core::num::NonZeroU16",
+      "type": "object",
+      "typeInfo": "Value"
+    },
+    "core::num::NonZeroU32": {
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "NonZeroU32",
+      "title": "core::num::NonZeroU32",
+      "type": "object",
+      "typeInfo": "Value"
+    },
     "core::ops::Range<f32>": {
       "isComponent": false,
       "isResource": false,
@@ -11680,13 +13598,32 @@
       "type": "object",
       "typeInfo": "Value"
     },
-    "core::ops::Range<f64>": {
+    "core::option::Option<(u8, u8)>": {
       "isComponent": false,
       "isResource": false,
-      "short_name": "Range<f64>",
-      "title": "core::ops::Range<f64>",
+      "oneOf": [
+        {
+          "title": "None"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/(u8, u8)"
+              }
+            }
+          ],
+          "short_name": "Some",
+          "title": "Some",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Option<(u8, u8)>",
+      "title": "core::option::Option<(u8, u8)>",
       "type": "object",
-      "typeInfo": "Value"
+      "typeInfo": "Enum"
     },
     "core::option::Option<alloc::string::String>": {
       "isComponent": false,
@@ -11742,6 +13679,33 @@
       "type": "object",
       "typeInfo": "Enum"
     },
+    "core::option::Option<bevy_asset::handle::Handle<bevy_render::mesh::mesh::Mesh>>": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "title": "None"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_asset::handle::Handle<bevy_render::mesh::mesh::Mesh>"
+              }
+            }
+          ],
+          "short_name": "Some",
+          "title": "Some",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Option<Handle<Mesh>>",
+      "title": "core::option::Option<bevy_asset::handle::Handle<bevy_render::mesh::mesh::Mesh>>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
     "core::option::Option<bevy_asset::handle::Handle<bevy_render::texture::image::Image>>": {
       "isComponent": false,
       "isResource": false,
@@ -11766,6 +13730,114 @@
       ],
       "short_name": "Option<Handle<Image>>",
       "title": "core::option::Option<bevy_asset::handle::Handle<bevy_render::texture::image::Image>>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "core::option::Option<bevy_audio::audio::SpatialScale>": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "title": "None"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_audio::audio::SpatialScale"
+              }
+            }
+          ],
+          "short_name": "Some",
+          "title": "Some",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Option<SpatialScale>",
+      "title": "core::option::Option<bevy_audio::audio::SpatialScale>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "core::option::Option<bevy_color::color::Color>": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "title": "None"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_color::color::Color"
+              }
+            }
+          ],
+          "short_name": "Some",
+          "title": "Some",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Option<Color>",
+      "title": "core::option::Option<bevy_color::color::Color>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "core::option::Option<bevy_input::touch::ForceTouch>": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "title": "None"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_input::touch::ForceTouch"
+              }
+            }
+          ],
+          "short_name": "Some",
+          "title": "Some",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Option<ForceTouch>",
+      "title": "core::option::Option<bevy_input::touch::ForceTouch>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "core::option::Option<bevy_math::rects::rect::Rect>": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "title": "None"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_math::rects::rect::Rect"
+              }
+            }
+          ],
+          "short_name": "Some",
+          "title": "Some",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Option<Rect>",
+      "title": "core::option::Option<bevy_math::rects::rect::Rect>",
       "type": "object",
       "typeInfo": "Enum"
     },
@@ -11823,6 +13895,87 @@
       "type": "object",
       "typeInfo": "Enum"
     },
+    "core::option::Option<bevy_utils::Instant>": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "title": "None"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_utils::Instant"
+              }
+            }
+          ],
+          "short_name": "Some",
+          "title": "Some",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Option<Instant>",
+      "title": "core::option::Option<bevy_utils::Instant>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "core::option::Option<bevy_utils::hashbrown::HashMap<bevy_asset::id::AssetId<bevy_render::texture::image::Image>, usize, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>>": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "title": "None"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<bevy_asset::id::AssetId<bevy_render::texture::image::Image>, usize, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+              }
+            }
+          ],
+          "short_name": "Some",
+          "title": "Some",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Option<HashMap<AssetId<Image>, usize, DefaultHashBuilder>>",
+      "title": "core::option::Option<bevy_utils::hashbrown::HashMap<bevy_asset::id::AssetId<bevy_render::texture::image::Image>, usize, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "core::option::Option<bevy_window::window::WindowTheme>": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "title": "None"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_window::window::WindowTheme"
+              }
+            }
+          ],
+          "short_name": "Some",
+          "title": "Some",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Option<WindowTheme>",
+      "title": "core::option::Option<bevy_window::window::WindowTheme>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
     "core::option::Option<bool>": {
       "isComponent": false,
       "isResource": false,
@@ -11847,6 +14000,114 @@
       ],
       "short_name": "Option<bool>",
       "title": "core::option::Option<bool>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "core::option::Option<char>": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "title": "None"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/char"
+              }
+            }
+          ],
+          "short_name": "Some",
+          "title": "Some",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Option<char>",
+      "title": "core::option::Option<char>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "core::option::Option<core::num::NonZeroI16>": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "title": "None"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/core::num::NonZeroI16"
+              }
+            }
+          ],
+          "short_name": "Some",
+          "title": "Some",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Option<NonZeroI16>",
+      "title": "core::option::Option<core::num::NonZeroI16>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "core::option::Option<core::num::NonZeroU16>": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "title": "None"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/core::num::NonZeroU16"
+              }
+            }
+          ],
+          "short_name": "Some",
+          "title": "Some",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Option<NonZeroU16>",
+      "title": "core::option::Option<core::num::NonZeroU16>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "core::option::Option<core::num::NonZeroU32>": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "title": "None"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/core::num::NonZeroU32"
+              }
+            }
+          ],
+          "short_name": "Some",
+          "title": "Some",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Option<NonZeroU32>",
+      "title": "core::option::Option<core::num::NonZeroU32>",
       "type": "object",
       "typeInfo": "Enum"
     },
@@ -11931,6 +14192,60 @@
       "type": "object",
       "typeInfo": "Enum"
     },
+    "core::option::Option<glam::Vec2>": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "title": "None"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/glam::Vec2"
+              }
+            }
+          ],
+          "short_name": "Some",
+          "title": "Some",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Option<Vec2>",
+      "title": "core::option::Option<glam::Vec2>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "core::option::Option<petgraph::graph::NodeIndex>": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "title": "None"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/petgraph::graph::NodeIndex"
+              }
+            }
+          ],
+          "short_name": "Some",
+          "title": "Some",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Option<NodeIndex>",
+      "title": "core::option::Option<petgraph::graph::NodeIndex>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
     "f32": {
       "isComponent": false,
       "isResource": false,
@@ -11997,295 +14312,6 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "glam::BVec2": {
-      "additionalProperties": false,
-      "isComponent": false,
-      "isResource": false,
-      "properties": {
-        "x": {
-          "type": {
-            "$ref": "#/$defs/bool"
-          }
-        },
-        "y": {
-          "type": {
-            "$ref": "#/$defs/bool"
-          }
-        }
-      },
-      "required": [
-        "x",
-        "y"
-      ],
-      "short_name": "BVec2",
-      "title": "glam::BVec2",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "glam::BVec3": {
-      "additionalProperties": false,
-      "isComponent": false,
-      "isResource": false,
-      "properties": {
-        "x": {
-          "type": {
-            "$ref": "#/$defs/bool"
-          }
-        },
-        "y": {
-          "type": {
-            "$ref": "#/$defs/bool"
-          }
-        },
-        "z": {
-          "type": {
-            "$ref": "#/$defs/bool"
-          }
-        }
-      },
-      "required": [
-        "x",
-        "y",
-        "z"
-      ],
-      "short_name": "BVec3",
-      "title": "glam::BVec3",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "glam::BVec3A": {
-      "isComponent": false,
-      "isResource": false,
-      "short_name": "BVec3A",
-      "title": "glam::BVec3A",
-      "type": "object",
-      "typeInfo": "Value"
-    },
-    "glam::BVec4": {
-      "additionalProperties": false,
-      "isComponent": false,
-      "isResource": false,
-      "properties": {
-        "w": {
-          "type": {
-            "$ref": "#/$defs/bool"
-          }
-        },
-        "x": {
-          "type": {
-            "$ref": "#/$defs/bool"
-          }
-        },
-        "y": {
-          "type": {
-            "$ref": "#/$defs/bool"
-          }
-        },
-        "z": {
-          "type": {
-            "$ref": "#/$defs/bool"
-          }
-        }
-      },
-      "required": [
-        "x",
-        "y",
-        "z",
-        "w"
-      ],
-      "short_name": "BVec4",
-      "title": "glam::BVec4",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "glam::BVec4A": {
-      "isComponent": false,
-      "isResource": false,
-      "short_name": "BVec4A",
-      "title": "glam::BVec4A",
-      "type": "object",
-      "typeInfo": "Value"
-    },
-    "glam::DAffine2": {
-      "additionalProperties": false,
-      "isComponent": false,
-      "isResource": false,
-      "properties": {
-        "matrix2": {
-          "type": {
-            "$ref": "#/$defs/glam::DMat2"
-          }
-        },
-        "translation": {
-          "type": {
-            "$ref": "#/$defs/glam::DVec2"
-          }
-        }
-      },
-      "required": [
-        "matrix2",
-        "translation"
-      ],
-      "short_name": "DAffine2",
-      "title": "glam::DAffine2",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "glam::DAffine3": {
-      "additionalProperties": false,
-      "isComponent": false,
-      "isResource": false,
-      "properties": {
-        "matrix3": {
-          "type": {
-            "$ref": "#/$defs/glam::DMat3"
-          }
-        },
-        "translation": {
-          "type": {
-            "$ref": "#/$defs/glam::DVec3"
-          }
-        }
-      },
-      "required": [
-        "matrix3",
-        "translation"
-      ],
-      "short_name": "DAffine3",
-      "title": "glam::DAffine3",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "glam::DMat2": {
-      "additionalProperties": false,
-      "isComponent": false,
-      "isResource": false,
-      "properties": {
-        "x_axis": {
-          "type": {
-            "$ref": "#/$defs/glam::DVec2"
-          }
-        },
-        "y_axis": {
-          "type": {
-            "$ref": "#/$defs/glam::DVec2"
-          }
-        }
-      },
-      "required": [
-        "x_axis",
-        "y_axis"
-      ],
-      "short_name": "DMat2",
-      "title": "glam::DMat2",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "glam::DMat3": {
-      "additionalProperties": false,
-      "isComponent": false,
-      "isResource": false,
-      "properties": {
-        "x_axis": {
-          "type": {
-            "$ref": "#/$defs/glam::DVec3"
-          }
-        },
-        "y_axis": {
-          "type": {
-            "$ref": "#/$defs/glam::DVec3"
-          }
-        },
-        "z_axis": {
-          "type": {
-            "$ref": "#/$defs/glam::DVec3"
-          }
-        }
-      },
-      "required": [
-        "x_axis",
-        "y_axis",
-        "z_axis"
-      ],
-      "short_name": "DMat3",
-      "title": "glam::DMat3",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "glam::DMat4": {
-      "additionalProperties": false,
-      "isComponent": false,
-      "isResource": false,
-      "properties": {
-        "w_axis": {
-          "type": {
-            "$ref": "#/$defs/glam::DVec4"
-          }
-        },
-        "x_axis": {
-          "type": {
-            "$ref": "#/$defs/glam::DVec4"
-          }
-        },
-        "y_axis": {
-          "type": {
-            "$ref": "#/$defs/glam::DVec4"
-          }
-        },
-        "z_axis": {
-          "type": {
-            "$ref": "#/$defs/glam::DVec4"
-          }
-        }
-      },
-      "required": [
-        "x_axis",
-        "y_axis",
-        "z_axis",
-        "w_axis"
-      ],
-      "short_name": "DMat4",
-      "title": "glam::DMat4",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "glam::DQuat": {
-      "additionalProperties": false,
-      "isComponent": false,
-      "isResource": false,
-      "properties": {
-        "w": {
-          "type": {
-            "$ref": "#/$defs/f64"
-          }
-        },
-        "x": {
-          "type": {
-            "$ref": "#/$defs/f64"
-          }
-        },
-        "y": {
-          "type": {
-            "$ref": "#/$defs/f64"
-          }
-        },
-        "z": {
-          "type": {
-            "$ref": "#/$defs/f64"
-          }
-        }
-      },
-      "required": [
-        "x",
-        "y",
-        "z",
-        "w"
-      ],
-      "short_name": "DQuat",
-      "title": "glam::DQuat",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
     "glam::DVec2": {
       "additionalProperties": false,
       "isComponent": false,
@@ -12308,74 +14334,6 @@
       ],
       "short_name": "DVec2",
       "title": "glam::DVec2",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "glam::DVec3": {
-      "additionalProperties": false,
-      "isComponent": false,
-      "isResource": false,
-      "properties": {
-        "x": {
-          "type": {
-            "$ref": "#/$defs/f64"
-          }
-        },
-        "y": {
-          "type": {
-            "$ref": "#/$defs/f64"
-          }
-        },
-        "z": {
-          "type": {
-            "$ref": "#/$defs/f64"
-          }
-        }
-      },
-      "required": [
-        "x",
-        "y",
-        "z"
-      ],
-      "short_name": "DVec3",
-      "title": "glam::DVec3",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "glam::DVec4": {
-      "additionalProperties": false,
-      "isComponent": false,
-      "isResource": false,
-      "properties": {
-        "w": {
-          "type": {
-            "$ref": "#/$defs/f64"
-          }
-        },
-        "x": {
-          "type": {
-            "$ref": "#/$defs/f64"
-          }
-        },
-        "y": {
-          "type": {
-            "$ref": "#/$defs/f64"
-          }
-        },
-        "z": {
-          "type": {
-            "$ref": "#/$defs/f64"
-          }
-        }
-      },
-      "required": [
-        "x",
-        "y",
-        "z",
-        "w"
-      ],
-      "short_name": "DVec4",
-      "title": "glam::DVec4",
       "type": "object",
       "typeInfo": "Struct"
     },
@@ -12404,74 +14362,6 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "glam::IVec3": {
-      "additionalProperties": false,
-      "isComponent": false,
-      "isResource": false,
-      "properties": {
-        "x": {
-          "type": {
-            "$ref": "#/$defs/i32"
-          }
-        },
-        "y": {
-          "type": {
-            "$ref": "#/$defs/i32"
-          }
-        },
-        "z": {
-          "type": {
-            "$ref": "#/$defs/i32"
-          }
-        }
-      },
-      "required": [
-        "x",
-        "y",
-        "z"
-      ],
-      "short_name": "IVec3",
-      "title": "glam::IVec3",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "glam::IVec4": {
-      "additionalProperties": false,
-      "isComponent": false,
-      "isResource": false,
-      "properties": {
-        "w": {
-          "type": {
-            "$ref": "#/$defs/i32"
-          }
-        },
-        "x": {
-          "type": {
-            "$ref": "#/$defs/i32"
-          }
-        },
-        "y": {
-          "type": {
-            "$ref": "#/$defs/i32"
-          }
-        },
-        "z": {
-          "type": {
-            "$ref": "#/$defs/i32"
-          }
-        }
-      },
-      "required": [
-        "x",
-        "y",
-        "z",
-        "w"
-      ],
-      "short_name": "IVec4",
-      "title": "glam::IVec4",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
     "glam::Mat2": {
       "additionalProperties": false,
       "isComponent": false,
@@ -12494,37 +14384,6 @@
       ],
       "short_name": "Mat2",
       "title": "glam::Mat2",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "glam::Mat3": {
-      "additionalProperties": false,
-      "isComponent": false,
-      "isResource": false,
-      "properties": {
-        "x_axis": {
-          "type": {
-            "$ref": "#/$defs/glam::Vec3"
-          }
-        },
-        "y_axis": {
-          "type": {
-            "$ref": "#/$defs/glam::Vec3"
-          }
-        },
-        "z_axis": {
-          "type": {
-            "$ref": "#/$defs/glam::Vec3"
-          }
-        }
-      },
-      "required": [
-        "x_axis",
-        "y_axis",
-        "z_axis"
-      ],
-      "short_name": "Mat3",
-      "title": "glam::Mat3",
       "type": "object",
       "typeInfo": "Struct"
     },
@@ -12686,43 +14545,6 @@
       ],
       "short_name": "UVec3",
       "title": "glam::UVec3",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "glam::UVec4": {
-      "additionalProperties": false,
-      "isComponent": false,
-      "isResource": false,
-      "properties": {
-        "w": {
-          "type": {
-            "$ref": "#/$defs/u32"
-          }
-        },
-        "x": {
-          "type": {
-            "$ref": "#/$defs/u32"
-          }
-        },
-        "y": {
-          "type": {
-            "$ref": "#/$defs/u32"
-          }
-        },
-        "z": {
-          "type": {
-            "$ref": "#/$defs/u32"
-          }
-        }
-      },
-      "required": [
-        "x",
-        "y",
-        "z",
-        "w"
-      ],
-      "short_name": "UVec4",
-      "title": "glam::UVec4",
       "type": "object",
       "typeInfo": "Struct"
     },
@@ -12898,19 +14720,95 @@
       "type": "int",
       "typeInfo": "Value"
     },
-    "std::ffi::OsString": {
+    "petgraph::graph::DiGraph<bevy_animation::graph::AnimationGraphNode, (), u32>": {
       "isComponent": false,
       "isResource": false,
-      "short_name": "OsString",
-      "title": "std::ffi::OsString",
+      "short_name": "DiGraph<AnimationGraphNode, (), u32>",
+      "title": "petgraph::graph::DiGraph<bevy_animation::graph::AnimationGraphNode, (), u32>",
       "type": "object",
       "typeInfo": "Value"
+    },
+    "petgraph::graph::NodeIndex": {
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "NodeIndex",
+      "title": "petgraph::graph::NodeIndex",
+      "type": "object",
+      "typeInfo": "Value"
+    },
+    "smallvec::SmallVec<[bevy_ecs::entity::Entity; 8]>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/bevy_ecs::entity::Entity"
+        }
+      },
+      "short_name": "SmallVec<[Entity; 8]>",
+      "title": "smallvec::SmallVec<[bevy_ecs::entity::Entity; 8]>",
+      "type": "array",
+      "typeInfo": "List"
+    },
+    "smallvec::SmallVec<[bevy_ui::ui_node::GridTrack; 1]>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/bevy_ui::ui_node::GridTrack"
+        }
+      },
+      "short_name": "SmallVec<[GridTrack; 1]>",
+      "title": "smallvec::SmallVec<[bevy_ui::ui_node::GridTrack; 1]>",
+      "type": "array",
+      "typeInfo": "List"
+    },
+    "smallvec::SmallVec<[u64; 1]>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/u64"
+        }
+      },
+      "short_name": "SmallVec<[u64; 1]>",
+      "title": "smallvec::SmallVec<[u64; 1]>",
+      "type": "array",
+      "typeInfo": "List"
+    },
+    "smol_str::SmolStr": {
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "SmolStr",
+      "title": "smol_str::SmolStr",
+      "type": "object",
+      "typeInfo": "Value"
+    },
+    "std::collections::BTreeMap<petgraph::graph::NodeIndex, bevy_animation::ActiveAnimation>": {
+      "additionalProperties": {
+        "type": {
+          "$ref": "#/$defs/bevy_animation::ActiveAnimation"
+        }
+      },
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "BTreeMap<NodeIndex, ActiveAnimation>",
+      "title": "std::collections::BTreeMap<petgraph::graph::NodeIndex, bevy_animation::ActiveAnimation>",
+      "type": "object",
+      "typeInfo": "Map"
     },
     "std::path::PathBuf": {
       "isComponent": false,
       "isResource": false,
       "short_name": "PathBuf",
       "title": "std::path::PathBuf",
+      "type": "object",
+      "typeInfo": "Value"
+    },
+    "std::sync::Arc<bevy_asset::handle::StrongHandle>": {
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "Arc<StrongHandle>",
+      "title": "std::sync::Arc<bevy_asset::handle::StrongHandle>",
       "type": "object",
       "typeInfo": "Value"
     },
@@ -12960,6 +14858,14 @@
       "short_name": "usize",
       "title": "usize",
       "type": "uint",
+      "typeInfo": "Value"
+    },
+    "uuid::Uuid": {
+      "isComponent": false,
+      "isResource": false,
+      "short_name": "Uuid",
+      "title": "uuid::Uuid",
+      "type": "object",
       "typeInfo": "Value"
     }
   },

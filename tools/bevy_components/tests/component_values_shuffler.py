@@ -61,7 +61,10 @@ type_mappings = {
 
     "glam::Quat": lambda : random_vec(4, 'float'),
 
-    'bevy_render::color::Color': lambda : random_vec(4, 'float'),
+    'bevy_color::srgba::Srgba': lambda : random_vec(4, 'float'),
+    'bevy_color::linear_rgba::LinearRgba': lambda : random_vec(4, 'float'),
+    'bevy_color::hsva::Hsva': lambda : random_vec(4, 'float'),    
+    
     'alloc::string::String': lambda : random_word(8),
     'alloc::borrow::Cow<str>': lambda : random_word(8),
 

@@ -3,7 +3,9 @@
 [![License](https://img.shields.io/crates/l/bevy_gltf_save_load)](https://github.com/kaosat-dev/Blender_bevy_components_workflow/blob/main/crates/bevy_gltf_save_load/License.md)
 [![Bevy tracking](https://img.shields.io/badge/Bevy%20tracking-released%20version-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
 
-# bevy_gltf_save_load
+# bevy_gltf_save_load (deprecated in favor of Blenvy)
+
+> bevy_gltf_save_load has been deprecated in favor of its successor [Blenvy](https://crates.io/crates/blenvy), part of the [Blenvy project](https://github.com/kaosat-dev/Blenvy). No further development or maintenance will be done for Bevy bevy_gltf_save_load. See [#194](https://github.com/kaosat-dev/Blenvy/issues/194) for background.
 
 Built upon [bevy_gltf_blueprints](https://crates.io/crates/bevy_gltf_blueprints) this crate adds the ability to easilly **save** and **load** your game worlds for [Bevy](https://bevyengine.org/) .
 
@@ -34,9 +36,9 @@ Here's a minimal usage example:
 ```toml
 # Cargo.toml
 [dependencies]
-bevy="0.13"
-bevy_gltf_save_load = "0.4"
-bevy_gltf_blueprints = "0.10" // also needed
+bevy="0.14"
+bevy_gltf_save_load = "0.5"
+bevy_gltf_blueprints = "0.11" // also needed
 ```
 
 ```rust no_run
@@ -298,6 +300,7 @@ The main branch is compatible with the latest Bevy release, while the branch `be
 Compatibility of `bevy_gltf_save_load` versions:
 | `bevy_gltf_save_load` | `bevy` |
 | :--                 | :--    |
+| `0.5 `              | `0.14` |
 | `0.4 `              | `0.13` |
 | `0.1 -0.3`          | `0.12` |
 | branch `main`       | `0.12` |

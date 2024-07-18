@@ -89,7 +89,6 @@ pub struct BlueprintsPlugin {
     pub library_folder: PathBuf,
     /// Automatically generate aabbs for the blueprints root objects
     pub aabbs: bool,
-    ///
     pub material_library: bool,
     pub material_library_folder: PathBuf,
 }

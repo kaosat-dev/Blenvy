@@ -80,7 +80,7 @@ pub(crate) fn save_game(world: &mut World) {
 
     for event in events.get_reader().read(&events) {
         info!("SAVE EVENT !! {:?}", event);
-        save_path = event.path.clone();
+        save_path.clone_from(&event.path);
     }
     events.clear();
 
@@ -147,7 +147,7 @@ pub(crate) fn save_game(world: &mut World) {
     // dyn_scene.resources.append(&mut dyn_scene_root.resources);
 
     let serialized_scene = dyn_scene
-        .serialize_ron(world.resource::<AppTypeRegistry>())
+        .serialize(&world.resource::<AppTypeRegistry>().read())
         .unwrap();
 
     let save_path = Path::new("assets")

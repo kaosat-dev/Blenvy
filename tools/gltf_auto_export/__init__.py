@@ -1,7 +1,7 @@
 bl_info = {
     "name": "gltf_auto_export",
     "author": "kaosigh",
-    "version": (0, 16, 0),
+    "version": (0, 16, 1),
     "blender": (3, 4, 0),
     "location": "File > Import-Export",
     "description": "glTF/glb auto-export",
