@@ -32,7 +32,7 @@ pub(crate) fn mark_load_requested(
     let mut save_path: String = "".into();
     for load_request in load_requests.read() {
         if !load_request.path.is_empty() {
-            save_path = load_request.path.clone();
+            save_path.clone_from(&load_request.path);
         }
     }
     if !save_path.is_empty() {
