@@ -44,7 +44,7 @@ def ambient_color_to_component(world):
    
 
     if color is not None and strength is not None:
-        colorRgba = f"Rgba(red: {color[0]}, green: {color[1]}, blue: {color[2]}, alpha: {color[3]})"
+        colorRgba = f"LinearRgba((red: {color[0]}, green: {color[1]}, blue: {color[2]}, alpha: {color[3]}))"
         component = f"( color: {colorRgba}, strength: {strength})"
         return component
     return None
