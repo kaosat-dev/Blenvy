@@ -6,6 +6,8 @@ use bevy::utils::HashMap;
 /// storage for animations for a given entity (hierarchy), essentially a clone of gltf's `named_animations`
 pub struct Animations {
     pub named_animations: HashMap<String, Handle<AnimationClip>>,
+    pub named_indices: HashMap<String, AnimationNodeIndex>,
+    pub graph: Handle<AnimationGraph>,
 }
 
 #[derive(Component, Debug)]

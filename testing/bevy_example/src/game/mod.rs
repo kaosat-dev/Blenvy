@@ -94,7 +94,7 @@ fn generate_screenshot(
 }
 
 fn exit_game(mut app_exit_events: ResMut<Events<bevy::app::AppExit>>) {
-    app_exit_events.send(bevy::app::AppExit);
+    app_exit_events.send(AppExit::Success);
 }
 
 pub struct GamePlugin;

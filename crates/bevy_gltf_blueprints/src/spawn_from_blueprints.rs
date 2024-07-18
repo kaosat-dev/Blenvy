@@ -214,6 +214,7 @@ pub(crate) fn spawn_from_blueprints(
     mut game_world: Query<Entity, With<GameWorldTag>>,
 
     assets_gltf: Res<Assets<Gltf>>,
+    mut graphs: ResMut<Assets<AnimationGraph>>,
     asset_server: Res<AssetServer>,
     blueprints_config: Res<BluePrintsConfig>,
 
@@ -273,6 +274,18 @@ pub(crate) fn spawn_from_blueprints(
                 original_children.push(*child);
             }
         }
+
+        let mut graph = AnimationGraph::new();
+        let mut named_animations: HashMap<String, Handle<AnimationClip>> = HashMap::new();
+        let mut named_indices: HashMap<String, AnimationNodeIndex> = HashMap::new();
+
+        for (key, clip) in gltf.named_animations.iter() {
+            named_animations.insert(key.to_string(), clip.clone());
+            let animation_index = graph.add_clip(clip.clone(), 1.0, graph.root);
+            named_indices.insert(key.to_string(), animation_index);
+        }
+        let graph = graphs.add(graph);
+
         commands.entity(entity).insert((
             SceneBundle {
                 scene: scene.clone(),
@@ -280,7 +293,9 @@ pub(crate) fn spawn_from_blueprints(
                 ..Default::default()
             },
             Animations {
-                named_animations: gltf.named_animations.clone(),
+                named_animations,
+                named_indices,
+                graph
             },
             Spawned,
             OriginalChildren(original_children),
