@@ -156,41 +156,43 @@ pub(crate) fn blueprints_prepare_spawn(
         /* prefetch attempt */
         let gltf = RawGltf::open(format!("assets/{}", blueprint_info.path)).unwrap();
         for scene in gltf.scenes() {
-            let scene_extras = scene.extras().clone().unwrap();
-            let lookup: HashMap<String, Value> = serde_json::from_str(scene_extras.get()).unwrap();
-            if lookup.contains_key("BlueprintAssets") {
-                let assets_raw = &lookup["BlueprintAssets"];
-                //println!("ASSETS RAW {}", assets_raw);
-                let all_assets: BlueprintAssets =
-                    ron::from_str(assets_raw.as_str().unwrap()).unwrap();
-                // println!("all_assets {:?}", all_assets);
+            if let Some(scene_extras) = scene.extras().clone()
+            {
+                let lookup: HashMap<String, Value> = serde_json::from_str(scene_extras.get()).unwrap();
+                if lookup.contains_key("BlueprintAssets") {
+                    let assets_raw = &lookup["BlueprintAssets"];
+                    //println!("ASSETS RAW {}", assets_raw);
+                    let all_assets: BlueprintAssets =
+                        ron::from_str(assets_raw.as_str().unwrap()).unwrap();
+                    // println!("all_assets {:?}", all_assets);
 
-                for asset in all_assets.assets.iter() {
-                    println!("ASSET {}",asset.path);
-                    let untyped_handle = asset_server.load_untyped(&asset.path);
-                    let asset_id = untyped_handle.id();
-                    let loaded = asset_server.is_loaded_with_dependencies(asset_id);
-                    if !loaded {
-                        asset_infos.push(AssetLoadTracker {
-                            name: asset.name.clone(),
-                            path: asset.path.clone(),
-                            id: asset_id,
-                            loaded: false,
-                            handle: untyped_handle.clone(),
-                        });
-                    }
+                    for asset in all_assets.assets.iter() {
+                        println!("ASSET {}",asset.path);
+                        let untyped_handle = asset_server.load_untyped(&asset.path);
+                        let asset_id = untyped_handle.id();
+                        let loaded = asset_server.is_loaded_with_dependencies(asset_id);
+                        if !loaded {
+                            asset_infos.push(AssetLoadTracker {
+                                name: asset.name.clone(),
+                                path: asset.path.clone(),
+                                id: asset_id,
+                                loaded: false,
+                                handle: untyped_handle.clone(),
+                            });
+                        }
 
-                    // FIXME: dang, too early, asset server has not yet started loading yet
-                    // let path_id = asset_server.get_path_id(&asset.path).expect("we should have alread checked for this asset");
-                    let path_id = asset.path.clone();
-                    // TODO: make this dependant on if hot reload is enabled or not
-                    if !assets_to_blueprint_instances.untyped_id_to_blueprint_entity_ids.contains_key(&path_id) {
-                        assets_to_blueprint_instances.untyped_id_to_blueprint_entity_ids.insert(path_id.clone(), vec![]);
-                    }
-                    // only insert if not already present in mapping
-                    if !assets_to_blueprint_instances.untyped_id_to_blueprint_entity_ids[&path_id].contains(&entity) {
-                        println!("adding mapping between {} and entity {:?}", path_id, all_names.get(entity));
-                        assets_to_blueprint_instances.untyped_id_to_blueprint_entity_ids.get_mut(&path_id).unwrap().push(entity);
+                        // FIXME: dang, too early, asset server has not yet started loading yet
+                        // let path_id = asset_server.get_path_id(&asset.path).expect("we should have alread checked for this asset");
+                        let path_id = asset.path.clone();
+                        // TODO: make this dependant on if hot reload is enabled or not
+                        if !assets_to_blueprint_instances.untyped_id_to_blueprint_entity_ids.contains_key(&path_id) {
+                            assets_to_blueprint_instances.untyped_id_to_blueprint_entity_ids.insert(path_id.clone(), vec![]);
+                        }
+                        // only insert if not already present in mapping
+                        if !assets_to_blueprint_instances.untyped_id_to_blueprint_entity_ids[&path_id].contains(&entity) {
+                            println!("adding mapping between {} and entity {:?}", path_id, all_names.get(entity));
+                            assets_to_blueprint_instances.untyped_id_to_blueprint_entity_ids.get_mut(&path_id).unwrap().push(entity);
+                        }
                     }
                 }
             }
