@@ -296,7 +296,7 @@ pub(crate) fn spawn_from_blueprints(
             Animations {
                 named_animations,
                 named_indices,
-                graph
+                graph,
             },
             Spawned,
             OriginalChildren(original_children),

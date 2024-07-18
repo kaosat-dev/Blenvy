@@ -3,7 +3,6 @@ use bevy::render::mesh::PrimitiveTopology;
 // TAKEN VERBATIB FROM https://github.com/janhohenheim/foxtrot/blob/src/util/trait_extension.rs
 
 pub(crate) trait MeshExt {
-
     fn search_in_children<'a>(
         parent: Entity,
         children: &'a Query<&Children>,

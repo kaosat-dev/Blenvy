@@ -108,15 +108,15 @@ pub fn animation_change_on_proximity_foxes(
                 anim_name = "Survey";
             }
             // now play the animation based on the chosen animation name
-            let (mut animation_player, mut animation_transitions) = animation_players.get_mut(link.0).unwrap();
+            let (mut animation_player, mut animation_transitions) =
+                animation_players.get_mut(link.0).unwrap();
             animation_transitions
                 .play(
                     &mut animation_player,
                     *animations
                         .named_indices
                         .get(anim_name)
-                        .expect("animation name should be in the list")
-                        ,
+                        .expect("animation name should be in the list"),
                     Duration::from_secs(3),
                 )
                 .repeat();
@@ -147,15 +147,15 @@ pub fn animation_change_on_proximity_robots(
             }
 
             // now play the animation based on the chosen animation name
-            let (mut animation_player, mut animation_transitions) = animation_players.get_mut(link.0).unwrap();
+            let (mut animation_player, mut animation_transitions) =
+                animation_players.get_mut(link.0).unwrap();
             animation_transitions
                 .play(
                     &mut animation_player,
                     *animations
                         .named_indices
                         .get(anim_name)
-                        .expect("animation name should be in the list")
-                        ,
+                        .expect("animation name should be in the list"),
                     Duration::from_secs(3),
                 )
                 .repeat();
@@ -175,7 +175,8 @@ pub fn animation_control(
     // robots
     if keycode.just_pressed(KeyCode::KeyB) {
         for (link, animations) in animated_enemies.iter() {
-            let (mut animation_player, mut animation_transitions) = animation_players.get_mut(link.0).unwrap();
+            let (mut animation_player, mut animation_transitions) =
+                animation_players.get_mut(link.0).unwrap();
             let anim_name = "Scan";
             animation_transitions
                 .play(
@@ -183,8 +184,7 @@ pub fn animation_control(
                     *animations
                         .named_indices
                         .get(anim_name)
-                        .expect("animation name should be in the list")
-                        ,
+                        .expect("animation name should be in the list"),
                     Duration::from_secs(5),
                 )
                 .repeat();
@@ -194,7 +194,8 @@ pub fn animation_control(
     // foxes
     if keycode.just_pressed(KeyCode::KeyW) {
         for (link, animations) in animated_foxes.iter() {
-            let (mut animation_player, mut animation_transitions) = animation_players.get_mut(link.0).unwrap();
+            let (mut animation_player, mut animation_transitions) =
+                animation_players.get_mut(link.0).unwrap();
             let anim_name = "Walk";
             animation_transitions
                 .play(
@@ -211,7 +212,8 @@ pub fn animation_control(
 
     if keycode.just_pressed(KeyCode::KeyX) {
         for (link, animations) in animated_foxes.iter() {
-            let (mut animation_player, mut animation_transitions) = animation_players.get_mut(link.0).unwrap();
+            let (mut animation_player, mut animation_transitions) =
+                animation_players.get_mut(link.0).unwrap();
             let anim_name = "Run";
             animation_transitions
                 .play(
@@ -219,8 +221,7 @@ pub fn animation_control(
                     *animations
                         .named_indices
                         .get(anim_name)
-                        .expect("animation name should be in the list")
-                        ,
+                        .expect("animation name should be in the list"),
                     Duration::from_secs(5),
                 )
                 .repeat();
@@ -229,7 +230,8 @@ pub fn animation_control(
 
     if keycode.just_pressed(KeyCode::KeyC) {
         for (link, animations) in animated_foxes.iter() {
-            let (mut animation_player, mut animation_transitions) = animation_players.get_mut(link.0).unwrap();
+            let (mut animation_player, mut animation_transitions) =
+                animation_players.get_mut(link.0).unwrap();
             let anim_name = "Survey";
             animation_transitions
                 .play(
@@ -237,8 +239,7 @@ pub fn animation_control(
                     *animations
                         .named_indices
                         .get(anim_name)
-                        .expect("animation name should be in the list")
-                        ,
+                        .expect("animation name should be in the list"),
                     Duration::from_secs(5),
                 )
                 .repeat();
