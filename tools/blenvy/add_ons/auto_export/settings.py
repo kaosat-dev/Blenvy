@@ -75,7 +75,7 @@ class AutoExportSettings(PropertyGroup):
     export_materials_library: BoolProperty(
         name='Export materials library',
         description='remove materials from blueprints and use the material library instead',
-        default=False,
+        default=True,
         update=save_settings
     ) # type: ignore
 

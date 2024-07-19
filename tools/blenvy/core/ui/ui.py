@@ -98,7 +98,7 @@ class BLENVY_PT_SidePanel(bpy.types.Panel):
                 header.label(text="Components")
                 if panel:
                     components_ui.draw_settings_ui(panel, blenvy.components)
-                    
+
             if config_mode == 'EXPORT':
                 header, panel = layout.panel("auto_export", default_closed=False)
                 header.label(text="Auto Export")
@@ -129,7 +129,7 @@ def draw_common_settings_ui(layout, settings):
         layout.alert = True
         row.label(text="NO library or level scenes specified! at least one level scene or library scene is required!")
         row = layout.row()
-        row.label(text="Please select and add one using the UI below")
+        row.label(text="Please select and add at least one:")
 
     section = layout
     rows = 2

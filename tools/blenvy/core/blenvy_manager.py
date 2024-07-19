@@ -130,8 +130,8 @@ class BlenvyManager(PropertyGroup):
     auto_export: PointerProperty(type=auto_export_settings.AutoExportSettings) # type: ignore
     components: PointerProperty(type=component_settings.ComponentsSettings) # type: ignore
 
-    level_scene_selector: PointerProperty(type=bpy.types.Scene, name="level scene", description="level_scene_picker", poll=is_scene_already_in_use, update=save_settings)# type: ignore
-    library_scene_selector: PointerProperty(type=bpy.types.Scene, name="library scene", description="library_scene_picker", poll=is_scene_already_in_use, update=save_settings)# type: ignore
+    level_scene_selector: PointerProperty(type=bpy.types.Scene, name="level scene", description="level scene picker", poll=is_scene_already_in_use, update=save_settings)# type: ignore
+    library_scene_selector: PointerProperty(type=bpy.types.Scene, name="library scene", description="library scene picker", poll=is_scene_already_in_use, update=save_settings)# type: ignore
 
     @property
     def level_scenes(self):
