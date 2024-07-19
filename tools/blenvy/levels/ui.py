@@ -27,7 +27,7 @@ class BLENVY_PT_levels_panel(bpy.types.Panel):
         #blueprints_registry.refresh_blueprints()
         blueprints_data = blueprints_registry.blueprints_data
 
-        for scene in blenvy.main_scenes:
+        for scene in blenvy.level_scenes:
             header, panel = layout.box().panel(f"level_assets{scene.name}", default_closed=False)
             if header:
                 header.label(text=scene.name)#, icon="HIDE_OFF")

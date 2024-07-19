@@ -92,7 +92,7 @@ def test_export_no_parameters(setup_data):
 def test_export_auto_export_parameters_only(setup_data):
     auto_export_operator = bpy.ops.export_scenes.auto_gltf
     export_props = {
-        "main_scene_names" : ['World'],
+        "level_scene_names" : ['World'],
         "library_scene_names": ['Library'],
     }
   
@@ -119,7 +119,7 @@ def test_export_changed_parameters(setup_data):
     # first, configure things
     # we use the global settings for that
     export_props = {
-        "main_scene_names" : ['World'],
+        "level_scene_names" : ['World'],
         "library_scene_names": ['Library'],
     }
   
@@ -216,7 +216,7 @@ def test_export_changed_parameters(setup_data):
     print("fourth export, changed auto parameters")
 
     export_props = {
-        "main_scene_names" : ['World'],
+        "level_scene_names" : ['World'],
         "library_scene_names": ['Library'],
         "export_materials_library": False # we need to add it here, as the direct settings set on the operator will only be used for the NEXT run
     }

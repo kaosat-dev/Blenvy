@@ -38,7 +38,7 @@ def inject_export_path_into_internal_blueprints(internal_blueprints, blueprints_
             blueprint.collection["materials_path"] = materials_exported_path
 
 
-def inject_blueprints_list_into_main_scene(scene, blueprints_data, settings):
+def inject_blueprints_list_into_level_scene(scene, blueprints_data, settings):
     project_root_path = getattr(settings, "project_root_path")
     assets_path = getattr(settings,"assets_path")
     levels_path = getattr(settings,"levels_path")
@@ -49,7 +49,7 @@ def inject_blueprints_list_into_main_scene(scene, blueprints_data, settings):
     assets_list_name = f"assets_list_{scene.name}_components"
     assets_list_data = {}
 
-    blueprint_instance_names_for_scene = blueprints_data.blueprint_instances_per_main_scene.get(scene.name, None)
+    blueprint_instance_names_for_scene = blueprints_data.blueprint_instances_per_level_scene.get(scene.name, None)
     blueprint_assets_list = []
     if blueprint_instance_names_for_scene:
         for blueprint_name in blueprint_instance_names_for_scene:
@@ -74,7 +74,7 @@ def inject_blueprints_list_into_main_scene(scene, blueprints_data, settings):
 
     #print("blueprint assets", blueprint_assets_list)
 
-def remove_blueprints_list_from_main_scene(scene):
+def remove_blueprints_list_from_level_scene(scene):
     assets_list = None
     assets_list_name = f"assets_list_{scene.name}_components"
 

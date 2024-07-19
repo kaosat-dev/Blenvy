@@ -12,7 +12,7 @@ def scan_assets(scene, blueprints_data, settings):
     export_gltf_extension = getattr(settings, "export_gltf_extension")
 
     relative_blueprints_path = os.path.relpath(blueprints_path, project_root_path)
-    blueprint_instance_names_for_scene = blueprints_data.blueprint_instances_per_main_scene.get(scene.name, None)
+    blueprint_instance_names_for_scene = blueprints_data.blueprint_instances_per_level_scene.get(scene.name, None)
 
     blueprint_assets_list = []
     if blueprint_instance_names_for_scene:
@@ -89,12 +89,12 @@ def get_blueprint_assets_tree(blueprint, blueprints_data, parent, settings):
     assets_list += direct_assets
     return assets_list
 
-def get_main_scene_assets_tree(main_scene, blueprints_data, settings):
+def get_level_scene_assets_tree(level_scene, blueprints_data, settings):
     blueprints_path =  getattr(settings, "blueprints_path")
     export_gltf_extension = getattr(settings, "export_gltf_extension", ".glb")
-    blueprint_instance_names_for_scene = blueprints_data.blueprint_instances_per_main_scene.get(main_scene.name, None)
+    blueprint_instance_names_for_scene = blueprints_data.blueprint_instances_per_level_scene.get(level_scene.name, None)
 
-    assets_list = get_user_assets_as_list(main_scene)
+    assets_list = get_user_assets_as_list(level_scene)
     if blueprint_instance_names_for_scene:
         for blueprint_name in blueprint_instance_names_for_scene:
             blueprint = blueprints_data.blueprints_per_name.get(blueprint_name, None)
@@ -112,7 +112,7 @@ def get_main_scene_assets_tree(main_scene, blueprints_data, settings):
 
     print("TOTAL ASSETS", assets_list)
     # FIXME: do not do it here !!
-    scene = bpy.data.scenes[main_scene.name]
+    scene = bpy.data.scenes[level_scene.name]
     scene.generated_assets.clear()
     for asset in assets_list:
         if asset.get("generated", False):
@@ -122,12 +122,12 @@ def get_main_scene_assets_tree(main_scene, blueprints_data, settings):
     return assets_list
 
 # same as the above, withouth the clutter below : TODO: unify
-def get_main_scene_assets_tree2(main_scene, blueprints_data, settings):
+def get_level_scene_assets_tree2(level_scene, blueprints_data, settings):
     blueprints_path =  getattr(settings, "blueprints_path")
     export_gltf_extension = getattr(settings, "export_gltf_extension", ".glb")
-    blueprint_instance_names_for_scene = blueprints_data.blueprint_instances_per_main_scene.get(main_scene.name, None)
+    blueprint_instance_names_for_scene = blueprints_data.blueprint_instances_per_level_scene.get(level_scene.name, None)
 
-    assets_list = get_user_assets_as_list(main_scene)
+    assets_list = get_user_assets_as_list(level_scene)
     if blueprint_instance_names_for_scene:
         for blueprint_name in blueprint_instance_names_for_scene:
             blueprint = blueprints_data.blueprints_per_name.get(blueprint_name, None)

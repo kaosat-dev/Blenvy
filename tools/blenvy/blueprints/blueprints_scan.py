@@ -7,14 +7,14 @@ from .blueprint import Blueprint
 # - marked as asset
 # - with the "auto_export" flag
 # https://blender.stackexchange.com/questions/167878/how-to-get-all-collections-of-the-current-scene
-def blueprints_scan(main_scenes, library_scenes, settings):
+def blueprints_scan(level_scenes, library_scenes, settings):
     blueprints = {}
     blueprints_from_objects = {}
     blueprint_name_from_instances = {}
     collections = []
     
-    # main scenes
-    blueprint_instances_per_main_scene = {}
+    # level scenes
+    blueprint_instances_per_level_scene = {}
     internal_collection_instances = {}
     external_collection_instances = {}
 
@@ -26,7 +26,7 @@ def blueprints_scan(main_scenes, library_scenes, settings):
             collection_category[collection_name] = [] #.append(collection_name)
         collection_category[collection_name].append(object)
 
-    for scene in main_scenes:# should it only be main scenes ? what about collection instances inside other scenes ?
+    for scene in level_scenes:# should it only be level scenes ? what about collection instances inside other scenes ?
         for object in scene.objects:
             #print("object", object.name)
             if object.instance_type == 'COLLECTION':
@@ -52,19 +52,19 @@ def blueprints_scan(main_scenes, library_scenes, settings):
                 # blueprints[collection_name].instances.append(object)
 
                 # FIXME: this only account for direct instances of blueprints, not for any nested blueprint inside a blueprint
-                if scene.name not in blueprint_instances_per_main_scene.keys():
-                    blueprint_instances_per_main_scene[scene.name] = {}
-                if collection_name not in blueprint_instances_per_main_scene[scene.name].keys():
-                    blueprint_instances_per_main_scene[scene.name][collection_name] = []
-                blueprint_instances_per_main_scene[scene.name][collection_name].append(object)
+                if scene.name not in blueprint_instances_per_level_scene.keys():
+                    blueprint_instances_per_level_scene[scene.name] = {}
+                if collection_name not in blueprint_instances_per_level_scene[scene.name].keys():
+                    blueprint_instances_per_level_scene[scene.name][collection_name] = []
+                blueprint_instances_per_level_scene[scene.name][collection_name].append(object)
 
                 blueprint_name_from_instances[object] = collection_name
                 
                 """# add any indirect ones
                 # FIXME: needs to be recursive, either here or above
                 for nested_blueprint in blueprints[collection_name].nested_blueprints:
-                    if not nested_blueprint in blueprint_instances_per_main_scene[scene.name]:
-                        blueprint_instances_per_main_scene[scene.name].append(nested_blueprint)"""
+                    if not nested_blueprint in blueprint_instances_per_level_scene[scene.name]:
+                        blueprint_instances_per_level_scene[scene.name].append(nested_blueprint)"""
 
     for collection in bpy.data.collections: 
         #print("collection", collection, collection.name_full, "users", collection.users)
@@ -83,7 +83,7 @@ def blueprints_scan(main_scenes, library_scenes, settings):
         if (
             'AutoExport' in collection and collection['AutoExport'] == True # get marked collections
             or collection.asset_data is not None # or if you have marked collections as assets you can auto export them too
-            or collection.name in list(internal_collection_instances.keys()) # or if the collection has an instance in one of the main scenes
+            or collection.name in list(internal_collection_instances.keys()) # or if the collection has an instance in one of the level scenes
             ):
             blueprint = Blueprint(collection.name)
             blueprint.local = True
@@ -108,7 +108,7 @@ def blueprints_scan(main_scenes, library_scenes, settings):
         #
         collections.append(collection)
 
-    # EXTERNAL COLLECTIONS: add any collection that has an instance in the main scenes, but is not present in any of the scenes (IE NON LOCAL/ EXTERNAL)
+    # EXTERNAL COLLECTIONS: add any collection that has an instance in the level scenes, but is not present in any of the scenes (IE NON LOCAL/ EXTERNAL)
     for collection_name in external_collection_instances:
         collection = bpy.data.collections[collection_name]
         blueprint = Blueprint(collection.name)
@@ -165,7 +165,7 @@ def blueprints_scan(main_scenes, library_scenes, settings):
     print(blueprints_from_objects)"""
 
     print("BLUEPRINT INSTANCES PER MAIN SCENE")
-    print(blueprint_instances_per_main_scene)'''
+    print(blueprint_instances_per_level_scene)'''
 
 
     """changes_test = {'Library': {
@@ -173,11 +173,11 @@ def blueprints_scan(main_scenes, library_scenes, settings):
         'Fox_mesh': bpy.data.objects['Fox_mesh'],
         'External_blueprint2_Cylinder': bpy.data.objects['External_blueprint2_Cylinder']}
     }
-    # which main scene has been impacted by this
-    # does one of the main scenes contain an INSTANCE of an impacted blueprint
-    for scene in main_scenes:
+    # which level scene has been impacted by this
+    # does one of the level scenes contain an INSTANCE of an impacted blueprint
+    for scene in level_scenes:
         changed_objects = list(changes_test["Library"].keys()) # just a hack for testing
-        #bluprint_instances_in_scene = blueprint_instances_per_main_scene[scene.name]
+        #bluprint_instances_in_scene = blueprint_instances_per_level_scene[scene.name]
         #print("instances per scene", bluprint_instances_in_scene, "changed_objects", changed_objects)
 
         changed_blueprints_with_instances_in_scene = [blueprints_from_objects[changed] for changed in changed_objects if changed in blueprints_from_objects]
@@ -226,7 +226,7 @@ def blueprints_scan(main_scenes, library_scenes, settings):
         "external_blueprints": external_blueprints,
         "blueprints_per_scenes": blueprints_per_scenes,
 
-        "blueprint_instances_per_main_scene": blueprint_instances_per_main_scene,
+        "blueprint_instances_per_level_scene": blueprint_instances_per_level_scene,
         "blueprint_instances_per_library_scene": blueprint_instances_per_library_scene,
 
         # not sure about these two

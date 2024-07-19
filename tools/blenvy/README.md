@@ -112,7 +112,7 @@ If you want to use multiple blend files, use Blender's asset library etc, we got
 There are only a few things to keep in mind 
 
 #### Assets/library/blueprints files
-- mark your library scenes as specified above, but **do NOT** specify a **main** scene
+- mark your library scenes as specified above, but **do NOT** specify a **level** scene
 - mark any collection in your scenes as "assets"
 - choose "split" for the combine mode (as you want your gltf blueprints to be saved for external use)
 - do your Blender things as normal
@@ -120,7 +120,7 @@ There are only a few things to keep in mind
 - (optional) activate the **material library** option, so you only have one set of material per asset library (recomended)
 
 #### Level/world files
-- mark your main scenes as specified above ( personally I recommended **NOT** specifying a **library** scene in this case to keep things tidy, but that is up to you)
+- mark your level scenes as specified above ( personally I recommended **NOT** specifying a **library** scene in this case to keep things tidy, but that is up to you)
 - configure your asset libraries as you would usually do, I recomend using the "link" mode so that any changes to asset files are reflected correctly
 - drag & drop any assets from the blueprints library (as you would normally do in Blender as well)
 - choose "split" for the combine mode (as you want your gltf blueprints to be external usually & use the gltf files generated from your assets library)
@@ -259,7 +259,7 @@ ie this is an example scene...
 
 ![](./docs/workflow_original.jpg)
 
-and what actually gets exported for the main scene/world/level
+and what actually gets exported for the level scene/world/level
 
 ![](./docs/workflow_empties.jpg)
 

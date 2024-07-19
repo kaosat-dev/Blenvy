@@ -67,6 +67,6 @@ class BlueprintsRegistry(PropertyGroup):
         #print("titi", self)
         blenvy = bpy.context.window_manager.blenvy
         settings = blenvy
-        blueprints_data = blueprints_scan(settings.main_scenes, settings.library_scenes, settings)
+        blueprints_data = blueprints_scan(settings.level_scenes, settings.library_scenes, settings)
         self.blueprints_data = blueprints_data
         return blueprints_data

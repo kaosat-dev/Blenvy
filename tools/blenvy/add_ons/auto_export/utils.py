@@ -1,7 +1,7 @@
 import bpy
 import os
 from pathlib import Path
-from blenvy.assets.assets_scan import get_blueprint_asset_tree, get_main_scene_assets_tree2
+from blenvy.assets.assets_scan import get_blueprint_asset_tree, get_level_scene_assets_tree2
 
 def assets_to_fake_ron(list_like):
     result = []
@@ -15,14 +15,14 @@ def assets_to_fake_ron(list_like):
 
 # TODO : move to assets
 def upsert_scene_assets(scene, blueprints_data, settings):
-    """print("main scene", scene)
+    """print("level scene", scene)
     for asset in scene.user_assets:
         print("  user asset", asset.name, asset.path)
     for asset in scene.generated_assets:
         print("  generated asset", asset)"""
     """for blueprint in blueprints_data.blueprints_per_scenes[scene.name]:
         print("BLUEPRINT", blueprint)"""
-    blueprint_instances_in_scene = blueprints_data.blueprint_instances_per_main_scene.get(scene.name, {}).keys()
+    blueprint_instances_in_scene = blueprints_data.blueprint_instances_per_level_scene.get(scene.name, {}).keys()
     blueprints_in_scene = [blueprints_data.blueprints_per_name[blueprint_name] for blueprint_name in blueprint_instances_in_scene]
     #yala = [blueprint.collection.user_assets for blueprint in blueprints_in_scene]
     #print("dsfsdf", yala)
@@ -61,7 +61,7 @@ def upsert_scene_assets(scene, blueprints_data, settings):
     print("material_assets", material_assets, "extension", export_gltf_extension)
 
 
-    all_assets_raw = get_main_scene_assets_tree2(main_scene=scene, blueprints_data=blueprints_data, settings=settings)
+    all_assets_raw = get_level_scene_assets_tree2(level_scene=scene, blueprints_data=blueprints_data, settings=settings)
     local_assets =  [{"name": asset["name"], "path": asset["path"]} for asset in all_assets_raw if asset['parent'] is None and asset["path"] != "" ] 
     all_assets = [{"name": asset["name"], "path": asset["path"]} for asset in all_assets_raw if asset["path"] != "" ] 
     print("all_assets_raw", all_assets_raw)

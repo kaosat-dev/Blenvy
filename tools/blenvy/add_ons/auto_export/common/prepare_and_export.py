@@ -11,9 +11,13 @@ def prepare_and_export():
     #bpy.context.window_manager.auto_export_tracker.disable_change_detection()
     blenvy = bpy.context.window_manager.blenvy
     auto_export_settings = blenvy.auto_export
-    if auto_export_settings.auto_export: # only do the actual exporting if auto export is actually enabled
 
-        
+    # if there are no level or blueprint scenes, bail out early
+    if len(blenvy.level_scenes) == 0 and len(blenvy.library_scenes) == 0:
+        print("no level or library scenes, skipping auto export")
+        return 
+
+    if auto_export_settings.auto_export: # only do the actual exporting if auto export is actually enabled
         # determine changed objects
         per_scene_changes, per_collection_changes, per_material_changes, project_hash = get_changes_per_scene(settings=blenvy)
         # determine changed parameters 

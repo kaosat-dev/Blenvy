@@ -6,7 +6,7 @@ def changed_object_in_scene(scene_name, changes_per_scene, blueprints_data, coll
     # Embed / EmbedExternal
     blueprints_from_objects = blueprints_data.blueprints_from_objects
 
-    blueprint_instances_in_scene = blueprints_data.blueprint_instances_per_main_scene.get(scene_name, None)
+    blueprint_instances_in_scene = blueprints_data.blueprint_instances_per_level_scene.get(scene_name, None)
     if blueprint_instances_in_scene is not None:
         changed_objects = [object_name for change in changes_per_scene.values() for object_name in change.keys()] 
         changed_blueprints = [blueprints_from_objects[changed] for changed in changed_objects if changed in blueprints_from_objects]
@@ -27,7 +27,7 @@ def changed_object_in_scene(scene_name, changes_per_scene, blueprints_data, coll
             elif combine_mode == 'EmbedExternal' and not blueprint.local:
                 level_needs_export = True
                 break
-        # changes => list of changed objects (regardless of wether they have been changed in main scene or in lib scene)
+        # changes => list of changed objects (regardless of wether they have been changed in level scene or in lib scene)
         # wich of those objects are blueprint instances
         # we need a list of changed objects that are blueprint instances
         return level_needs_export
@@ -56,8 +56,8 @@ def should_level_be_exported(scene_name, changed_export_parameters, changes_per_
 
 # this also takes the split/embed mode into account: if a collection instance changes AND embed is active, its container level/world should also be exported
 def get_levels_to_export(changes_per_scene, changes_per_collection, changed_export_parameters, blueprints_data, settings):
-    # determine list of main scenes to export
-    # we have more relaxed rules to determine if the main scenes have changed : any change is ok, (allows easier handling of changes, render settings etc)
-    main_scenes_to_export = [scene_name for scene_name in settings.main_scenes_names if should_level_be_exported(scene_name, changed_export_parameters, changes_per_scene, blueprints_data, settings)]
+    # determine list of level scenes to export
+    # we have more relaxed rules to determine if the level scenes have changed : any change is ok, (allows easier handling of changes, render settings etc)
+    level_scenes_to_export = [scene_name for scene_name in settings.level_scenes_names if should_level_be_exported(scene_name, changed_export_parameters, changes_per_scene, blueprints_data, settings)]
 
-    return (main_scenes_to_export)
+    return (level_scenes_to_export)

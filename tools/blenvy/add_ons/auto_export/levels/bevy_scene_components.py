@@ -1,5 +1,5 @@
-def upsert_scene_components(main_scenes):
-    for scene in main_scenes:
+def upsert_scene_components(level_scenes):
+    for scene in level_scenes:
         if scene.world is not None:
             scene['BlenderBackgroundShader'] = ambient_color_to_component(scene.world)
         scene['BlenderShadowSettings'] = scene_shadows_to_component(scene)
@@ -17,7 +17,7 @@ def upsert_scene_components(main_scenes):
         scene['BlenderToneMapping'] = scene_tonemapping_to_component(scene)
         scene['BlenderColorGrading'] = scene_colorgrading_to_component(scene)
 
-def remove_scene_components(main_scenes):
+def remove_scene_components(level_scenes):
     pass
 
 def scene_tonemapping_to_component(scene):

@@ -1,10 +1,5 @@
-import json
 import os
-from pathlib import Path
-from types import SimpleNamespace
-
-import bpy
-from blenvy.blueprints.blueprint_helpers import inject_blueprints_list_into_main_scene, remove_blueprints_list_from_main_scene
+from blenvy.blueprints.blueprint_helpers import inject_blueprints_list_into_level_scene, remove_blueprints_list_from_level_scene
 from ..constants import TEMPSCENE_PREFIX
 from ..common.generate_temporary_scene_and_export import generate_temporary_scene_and_export, copy_hollowed_collection_into, clear_hollow_scene
 from ..common.export_gltf import (generate_gltf_export_settings, export_gltf)
@@ -12,7 +7,7 @@ from .is_object_dynamic import is_object_dynamic, is_object_static
 from ..utils import upsert_scene_assets
 
 
-def export_main_scene(scene, settings, blueprints_data): 
+def export_level_scene(scene, settings, blueprints_data): 
     gltf_export_settings = generate_gltf_export_settings(settings)
     assets_path_full = getattr(settings,"assets_path_full")
     levels_path_full = getattr(settings,"levels_path_full")
@@ -32,7 +27,7 @@ def export_main_scene(scene, settings, blueprints_data):
     if export_blueprints : 
         gltf_output_path = os.path.join(levels_path_full, scene.name)
 
-        inject_blueprints_list_into_main_scene(scene, blueprints_data, settings)
+        inject_blueprints_list_into_level_scene(scene, blueprints_data, settings)
         upsert_scene_assets(scene, blueprints_data=blueprints_data, settings=settings)
 
         if export_separate_dynamic_and_static_objects:
@@ -72,7 +67,7 @@ def export_main_scene(scene, settings, blueprints_data):
                 tempScene_cleaner= lambda temp_scene, params: clear_hollow_scene(original_root_collection=scene.collection, temp_scene=temp_scene, **params)
             )
 
-        remove_blueprints_list_from_main_scene(scene)
+        remove_blueprints_list_from_level_scene(scene)
 
     else:
         gltf_output_path = os.path.join(assets_path_full, scene.name)

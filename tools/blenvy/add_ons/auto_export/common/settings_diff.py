@@ -10,7 +10,7 @@ parameter_names_whitelist_common = [
     'blueprints_path',
     'levels_path',
     'materials_path',
-    'main_scene_names',
+    'level_scene_names',
     'library_scene_names',
 ]
 

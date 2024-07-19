@@ -19,7 +19,7 @@ class AutoExportSettings(PropertyGroup):
     auto_export: BoolProperty(
         name='Auto export',
         description='Automatically export to gltf on save',
-        default=False,
+        default=True,
         update=save_settings
     ) # type: ignore
 

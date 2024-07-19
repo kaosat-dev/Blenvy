@@ -8,14 +8,14 @@ import blenvy.add_ons.bevy_components.settings as component_settings
 
 
 # list of settings we do NOT want to save
-settings_black_list = ['settings_save_enabled', 'main_scene_selector', 'library_scene_selector']
+settings_black_list = ['settings_save_enabled', 'level_scene_selector', 'library_scene_selector']
 
 def save_settings(settings, context):  
     if settings.settings_save_enabled:
         settings_dict =  generate_complete_settings_dict(settings, BlenvyManager, [])
         raw_settings =  {key: settings_dict[key] for key in settings_dict.keys() if key not in settings_black_list}
         # we need to inject the main & library scene names as they are computed properties, not blender ones
-        raw_settings['main_scenes_names'] = settings.main_scenes_names
+        raw_settings['level_scenes_names'] = settings.level_scenes_names
         raw_settings['library_scenes_names'] = settings.library_scenes_names
         upsert_settings(settings.settings_save_path, raw_settings, overwrite=True)
 
@@ -29,10 +29,10 @@ def update_asset_folders(settings, context):
 
 def is_scene_already_in_use(self, scene):
     try:
-        current_main_scene_names = list(map(lambda x: x.name, self.main_scenes))
+        current_level_scene_names = list(map(lambda x: x.name, self.level_scenes))
         current_library_scene_names = list(map(lambda x: x.name, self.library_scenes))
-        #print("scene ", scene.name, current_main_scene_names, current_library_scene_names)
-        return scene.name not in current_main_scene_names and scene.name not in current_library_scene_names
+        #print("scene ", scene.name, current_level_scene_names, current_library_scene_names)
+        return scene.name not in current_level_scene_names and scene.name not in current_library_scene_names
     except:
         return True
 
@@ -93,7 +93,7 @@ class BlenvyManager(PropertyGroup):
 
     levels_path: StringProperty(
         name='Levels path',
-        description='path to export the levels (main scenes) to (relative to the assets folder)',
+        description='path to export the levels (level scenes) to (relative to the assets folder)',
         default='levels',
         update= save_settings
     ) # type: ignore
@@ -119,16 +119,16 @@ class BlenvyManager(PropertyGroup):
     auto_export: PointerProperty(type=auto_export_settings.AutoExportSettings) # type: ignore
     components: PointerProperty(type=component_settings.ComponentsSettings) # type: ignore
 
-    main_scene_selector: PointerProperty(type=bpy.types.Scene, name="main scene", description="main_scene_picker", poll=is_scene_already_in_use, update=save_settings)# type: ignore
+    level_scene_selector: PointerProperty(type=bpy.types.Scene, name="level scene", description="level_scene_picker", poll=is_scene_already_in_use, update=save_settings)# type: ignore
     library_scene_selector: PointerProperty(type=bpy.types.Scene, name="library scene", description="library_scene_picker", poll=is_scene_already_in_use, update=save_settings)# type: ignore
 
     @property
-    def main_scenes(self):
+    def level_scenes(self):
         return [scene for scene in bpy.data.scenes if scene.blenvy_scene_type == 'Level']
     
     @property
-    def main_scenes_names(self):
-        return [scene.name for scene in self.main_scenes]
+    def level_scenes_names(self):
+        return [scene.name for scene in self.level_scenes]
     
     @property
     def library_scenes(self):
@@ -148,7 +148,7 @@ class BlenvyManager(PropertyGroup):
         bpy.types.Scene.blenvy_scene_type = EnumProperty(
             items= (
                 ('None', 'None', 'No blenvy type specified'),
-                ('Level', 'Level','Main/ Level scene'),
+                ('Level', 'Level','Level scene'),
                 ('Library', 'Library', 'Library scene'),
             ),
          default='None'

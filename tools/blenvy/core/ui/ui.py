@@ -95,27 +95,31 @@ class BLENVY_PT_SidePanel(bpy.types.Panel):
 
                 panel.separator()
                 # scenes selection
-                if len(blenvy.main_scenes) == 0 and len(blenvy.library_scenes) == 0:
+                if len(blenvy.level_scenes) == 0 and len(blenvy.library_scenes) == 0:
                     row = panel.row()
                     row.alert = True
                     panel.alert = True
-                    row.label(text="NO library or main scenes specified! at least one main scene or library scene is required!")
+                    row.label(text="NO library or level scenes specified! at least one level scene or library scene is required!")
                     row = panel.row()
                     row.label(text="Please select and add one using the UI below")
 
                 section = panel
                 rows = 2
                 row = section.row()
-                row.label(text="main scenes")
-                row.prop(blenvy, "main_scene_selector", text='')
-                add_operator = row.operator("blenvy.scenes_list_actions", icon='ADD', text="")
+                col = row.column()
+                col.label(text="level scenes")
+                col = row.column()
+                col.prop(blenvy, "level_scene_selector", text='')
+                col = row.column()
+                add_operator = col.operator("blenvy.scenes_list_actions", icon='ADD', text="")
                 add_operator.action = 'ADD'
                 add_operator.scene_type = 'LEVEL'
-                #sub_row.enabled = blenvy.main_scene_selector is not None
+                col.enabled = blenvy.level_scene_selector is not None
+
 
                 row = section.row()
                 col = row.column()
-                for scene in blenvy.main_scenes:
+                for scene in blenvy.level_scenes:
                     sub_row = col.box().row()
                     sub_row.label(text=scene.name)
                     remove_operator = sub_row.operator("blenvy.scenes_list_actions", icon='TRASH', text="")
@@ -127,11 +131,16 @@ class BLENVY_PT_SidePanel(bpy.types.Panel):
 
                 # library scenes
                 row = section.row()
-                row.label(text="library scenes")
-                row.prop(blenvy, "library_scene_selector", text='')
-                add_operator = row.operator("blenvy.scenes_list_actions", icon='ADD', text="")
+
+                col = row.column()
+                col.label(text="library scenes")
+                col = row.column()
+                col.prop(blenvy, "library_scene_selector", text='')
+                col = row.column()
+                add_operator = col.operator("blenvy.scenes_list_actions", icon='ADD', text="")
                 add_operator.action = 'ADD'
                 add_operator.scene_type = 'LIBRARY'
+                col.enabled = blenvy.library_scene_selector is not None
 
                 row = section.row()
                 col = row.column()

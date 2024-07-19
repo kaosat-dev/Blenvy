@@ -323,7 +323,7 @@ def serialize_project(settings):
     print("serializing project")
 
     per_scene = {}
-    for scene in settings.main_scenes + settings.library_scenes: #bpy.data.scenes:
+    for scene in settings.level_scenes + settings.library_scenes: #bpy.data.scenes:
         print("scene", scene.name)
         # ignore temporary scenes
         if scene.name.startswith(TEMPSCENE_PREFIX):

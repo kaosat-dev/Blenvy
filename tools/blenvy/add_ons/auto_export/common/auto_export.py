@@ -10,7 +10,7 @@ from ..blueprints.get_blueprints_to_export import get_blueprints_to_export
 from ..levels.get_levels_to_export import get_levels_to_export
 from .export_gltf import get_standard_exporter_settings
 
-from ..levels.export_levels import export_main_scene
+from ..levels.export_levels import export_level_scene
 from ..blueprints.export_blueprints import export_blueprints
 from .export_materials import cleanup_materials, export_materials
 from ..levels.bevy_scene_components import remove_scene_components, upsert_scene_components
@@ -52,7 +52,7 @@ def auto_export(changes_per_scene, changes_per_collection, changes_per_material,
 
         if export_scene_settings:
             # inject/ update scene components
-            upsert_scene_components(settings.main_scenes)
+            upsert_scene_components(settings.level_scenes)
         #inject/ update light shadow information
         for light in bpy.data.lights:
             enabled = 'true' if light.use_shadow else 'false'
@@ -65,8 +65,8 @@ def auto_export(changes_per_scene, changes_per_collection, changes_per_material,
             # get blueprints/collections infos
             (blueprints_to_export) = get_blueprints_to_export(changes_per_scene, changes_per_collection, changed_export_parameters, blueprints_data, settings)
              
-            # get level/main scenes infos
-            (main_scenes_to_export) = get_levels_to_export(changes_per_scene, changes_per_collection, changed_export_parameters, blueprints_data, settings)
+            # get level scenes infos
+            (level_scenes_to_export) = get_levels_to_export(changes_per_scene, changes_per_collection, changed_export_parameters, blueprints_data, settings)
 
             # since materials export adds components we need to call this before blueprints are exported
             # export materials & inject materials components into relevant objects
@@ -75,7 +75,7 @@ def auto_export(changes_per_scene, changes_per_collection, changes_per_material,
                 export_materials(blueprints_data.blueprint_names, settings.library_scenes, settings)
 
             # update the list of tracked exports
-            exports_total = len(blueprints_to_export) + len(main_scenes_to_export) + (1 if export_materials_library else 0)
+            exports_total = len(blueprints_to_export) + len(level_scenes_to_export) + (1 if export_materials_library else 0)
             bpy.context.window_manager.auto_export_tracker.exports_total = exports_total
             bpy.context.window_manager.auto_export_tracker.exports_count = exports_total
 
@@ -92,19 +92,19 @@ def auto_export(changes_per_scene, changes_per_collection, changes_per_material,
             print("-------------------------------")
             print("BLUEPRINTS:          to export:", [blueprint.name for blueprint in blueprints_to_export])
             print("-------------------------------")
-            print("MAIN SCENES:         to export:", main_scenes_to_export)
+            print("MAIN SCENES:         to export:", level_scenes_to_export)
             print("-------------------------------")
             # backup current active scene
             old_current_scene = bpy.context.scene
             # backup current selections
             old_selections = bpy.context.selected_objects
 
-            # first export any main/level/world scenes
-            if len(main_scenes_to_export) > 0:
+            # first export any level/world scenes
+            if len(level_scenes_to_export) > 0:
                 print("export MAIN scenes")
-                for scene_name in main_scenes_to_export:
+                for scene_name in level_scenes_to_export:
                     print("     exporting scene:", scene_name)
-                    export_main_scene(bpy.data.scenes[scene_name], settings, blueprints_data)
+                    export_level_scene(bpy.data.scenes[scene_name], settings, blueprints_data)
 
             # now deal with blueprints/collections
             do_export_library_scene = not change_detection or changed_export_parameters or len(blueprints_to_export) > 0
@@ -122,8 +122,8 @@ def auto_export(changes_per_scene, changes_per_collection, changes_per_material,
                 cleanup_materials(blueprints_data.blueprint_names, settings.library_scenes)
 
         else:
-            for scene in settings.main_scenes:
-                export_main_scene(scene, settings, [])
+            for scene in settings.level_scenes:
+                export_level_scene(scene, settings, [])
 
 
 
@@ -139,5 +139,5 @@ def auto_export(changes_per_scene, changes_per_collection, changes_per_material,
         # FIXME: error handling ? also redundant
         if export_scene_settings:
             # inject/ update scene components
-            remove_scene_components(settings.main_scenes)
+            remove_scene_components(settings.level_scenes)
 

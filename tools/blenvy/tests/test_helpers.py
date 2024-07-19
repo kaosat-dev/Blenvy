@@ -8,7 +8,7 @@ def prepare_auto_export(auto_export_overrides={}, gltf_export_settings = {"expor
     # first, configure things
     # we use the global settings for that
     export_props = {
-        "main_scene_names" : ['World'],
+        "level_scene_names" : ['World'],
         "library_scene_names": ['Library'],
         **auto_export_overrides
     }

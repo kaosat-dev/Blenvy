@@ -112,7 +112,6 @@ General issues:
     - they normally need/have unique export paths (otherwise, user error, perhaps show it ?)
     - perhaps a simple hashing of the parent's path would be enought 
 
-
  - [x] addon-prefs => settings
  - [x] generate_gltf_export_settings => should not use add-on prefs at all ? since we are not overriding gltf settings that way anymore ?
  - [x] remove hard coded path for standard gltf settings
@@ -120,7 +119,6 @@ General issues:
     - [x] auto_export
     - [x] components
     - [x] add handling of errors when trying to load settings
-
 
 - [x] fix auto export workflow
 - [x] add hashing of modifiers/ geometry nodes in serialize scene
@@ -240,6 +238,10 @@ Blender side:
     - [ ] blueprint instances as children of blueprint instances
     - [ ] blueprint instances as children of empties
 
+- [x] check/ fix behaviour of blender plugin if all folders are the same (ie, all in assets for example)
+- [x] rename all "main scene xx" to "level scene"
+- [x] make sure the "add scene" button is not available unless you have actually selected one
+- [x] make auto export be on by default, however bail out early by detecting if there are any level/blueprint scenes
 
 Bevy Side:
 - [x] deprecate BlueprintName & BlueprintPath & use BlueprintInfo instead
@@ -309,9 +311,9 @@ Bevy Side:
 - [ ] replace string in BlueprintInfo path with PathBuf ?
 
 - [ ] update main docs
-    - [ ] rename project to Blenvy
+    - [x] rename project to Blenvy
     - [ ] replace all references to the old 2 add-ons with those to Blenvy
-- [ ] rename repo to "Blenvy"
-- [ ] do a deprecation release of all bevy_gltf_xxx crates to point at the new Blenvy crate
+- [x] rename repo to "Blenvy"
+- [x] do a deprecation release of all bevy_gltf_xxx crates to point at the new Blenvy crate
 
 clear && pytest -svv --blender-template ../../testing/bevy_example/art/testing_library.blend --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration_prepare.py  && pytest -svv --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration.py

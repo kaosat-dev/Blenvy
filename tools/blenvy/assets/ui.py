@@ -1,6 +1,6 @@
 from types import SimpleNamespace
 import bpy
-from .assets_scan import get_main_scene_assets_tree
+from .assets_scan import get_level_scene_assets_tree
 from .asset_helpers import get_user_assets, does_asset_exist
 
 def draw_assets(layout, name, title, asset_registry, target_type, target_name, editable=True, user_assets= [], generated_assets = []):
@@ -92,15 +92,15 @@ class BLENVY_PT_assets_panel(bpy.types.Panel):
         settings = SimpleNamespace(**settings)
 
         if panel:
-            for scene in blenvy.main_scenes:
+            for scene in blenvy.level_scenes:
                 user_assets = get_user_assets(scene)
 
                 row = panel.row()
                 row.prop(scene, "always_export")
 
                 scene_assets_panel = draw_assets(layout=row, name=scene.name, title=f"{scene.name} Assets", asset_registry=asset_registry, user_assets=user_assets, target_type="SCENE", target_name=scene.name)
-                """if scene.name in blueprints_data.blueprint_instances_per_main_scene:
-                    for blueprint_name in blueprints_data.blueprint_instances_per_main_scene[scene.name].keys():
+                """if scene.name in blueprints_data.blueprint_instances_per_level_scene:
+                    for blueprint_name in blueprints_data.blueprint_instances_per_level_scene[scene.name].keys():
                         blueprint = blueprints_data.blueprints_per_name[blueprint_name]
                         blueprint_assets = get_user_assets(blueprint.collection)
                         if scene_assets_panel:

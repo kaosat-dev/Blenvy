@@ -63,9 +63,9 @@ def test_export_change_tracking_custom_properties(setup_data):
     prepare_auto_export()
 
     def first_change():
-        # now add a custom property to the cube in the main scene & export again
+        # now add a custom property to the cube in the level scene & export again
         print("----------------")
-        print("main scene change (custom property)")
+        print("level scene change (custom property)")
         print("----------------")
         bpy.data.objects["Cube"]["test_property"] = 42
 
@@ -86,7 +86,7 @@ def test_export_change_tracking_custom_properties_collection_instances_combine_m
 
     def second_change():
         # add a custom property to the cube in the library scene & export again
-        # this should trigger changes in the main scene as well since the mode is embed & this blueprints has an instance in the main scene
+        # this should trigger changes in the level scene as well since the mode is embed & this blueprints has an instance in the level scene
         print("----------------")
         print("library change (custom property)")
         print("----------------")
@@ -94,7 +94,7 @@ def test_export_change_tracking_custom_properties_collection_instances_combine_m
 
     def third_change():
         # now we set the _combine mode of the instance to "split", so auto_export should:
-        # * not take the changes into account in the main scene
+        # * not take the changes into account in the level scene
         # * export the blueprint (so file for Blueprint1 will be changed)
         bpy.data.objects["Blueprint1"]["_combine"] = "Split"
 
@@ -117,9 +117,9 @@ def test_export_change_tracking_light_properties(setup_data):
     prepare_auto_export()
 
     def first_change():
-        # now add a custom property to the cube in the main scene & export again
+        # now add a custom property to the cube in the level scene & export again
         print("----------------")
-        print("main scene change (light, energy)")
+        print("level scene change (light, energy)")
         print("----------------")
 
         bpy.data.lights["Light"].energy = 100
@@ -128,14 +128,14 @@ def test_export_change_tracking_light_properties(setup_data):
 
     def second_change():
         print("----------------")
-        print("main scene change (light, shadow_cascade_count)")
+        print("level scene change (light, shadow_cascade_count)")
         print("----------------")
 
         bpy.data.lights["Light"].shadow_cascade_count = 2
 
     def third_change():
         print("----------------")
-        print("main scene change (light, use_shadow)")
+        print("level scene change (light, use_shadow)")
         print("----------------")
 
         bpy.data.lights["Light"].use_shadow = False
@@ -153,7 +153,7 @@ def test_export_change_tracking_camera_properties(setup_data):
 
     def first_change():
         print("----------------")
-        print("main scene change (camera)")
+        print("level scene change (camera)")
         print("----------------")
 
         bpy.data.cameras["Camera"].angle = 0.5
@@ -170,20 +170,20 @@ def test_export_change_tracking_material_properties(setup_data):
 
     def first_change():
         print("----------------")
-        print("main scene change (material, clip)")
+        print("level scene change (material, clip)")
         print("----------------")
 
         bpy.data.materials["Material.001"].blend_method = 'CLIP'
     
     def second_change():
         print("----------------")
-        print("main scene change (material, alpha_threshold)")
+        print("level scene change (material, alpha_threshold)")
         print("----------------")
         bpy.data.materials["Material.001"].alpha_threshold = 0.2
 
     def third_change():
         print("----------------")
-        print("main scene change (material, diffuse_color)")
+        print("level scene change (material, diffuse_color)")
         print("----------------")
         bpy.data.materials["Material.001"].diffuse_color[0] = 0.2
 
@@ -200,7 +200,7 @@ def test_export_change_tracking_material_properties(setup_data):
 - setup gltf parameters & auto_export parameters
 - calls exporter on the testing scene
 - saves timestamps of generated files
-- changes things in the main scene and/or library
+- changes things in the level scene and/or library
 - checks if timestamps have changed
 - if all worked => test is a-ok
 - removes generated files
@@ -219,7 +219,7 @@ def test_export_various_chained_changes(setup_data):
     def second_change():
         # now move the main cube & export again
         print("----------------")
-        print("main scene change")
+        print("level scene change")
         print("----------------")
 
         bpy.context.window_manager.auto_export_tracker.enable_change_detection() # FIXME: should not be needed, but ..

@@ -70,7 +70,7 @@ def test_export_do_not_export_blueprints(setup_data):
     # first, configure things
     # we use the global settings for that
     export_props = {
-        "main_scene_names" : ['World'],
+        "level_scene_names" : ['World'],
         "library_scene_names": ['Library']
     }
     stored_auto_settings = bpy.data.texts[".gltf_auto_export_settings"] if ".gltf_auto_export_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_settings")
@@ -96,7 +96,7 @@ def test_export_custom_blueprints_path(setup_data):
     # first, configure things
     # we use the global settings for that
     export_props = {
-        "main_scene_names" : ['World'],
+        "level_scene_names" : ['World'],
         "library_scene_names": ['Library']
     }
 
@@ -123,7 +123,7 @@ def test_export_materials_library(setup_data):
     # first, configure things
     # we use the global settings for that
     export_props = {
-        "main_scene_names" : ['World'],
+        "level_scene_names" : ['World'],
         "library_scene_names": ['Library']
     }
     stored_settings = bpy.data.texts[".gltf_auto_export_settings"] if ".gltf_auto_export_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_settings")
@@ -150,7 +150,7 @@ def test_export_materials_library_custom_path(setup_data):
     # first, configure things
     # we use the global settings for that
     export_props = {
-        "main_scene_names" : ['World'],
+        "level_scene_names" : ['World'],
         "library_scene_names": ['Library']
     }
     stored_settings = bpy.data.texts[".gltf_auto_export_settings"] if ".gltf_auto_export_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_settings")
@@ -179,7 +179,7 @@ def test_export_collection_instances_combine_mode(setup_data): # There is more i
     # first, configure things
     # we use the global settings for that
     export_props = {
-        "main_scene_names" : ['World'],
+        "level_scene_names" : ['World'],
         "library_scene_names": ['Library']
     }
     stored_settings = bpy.data.texts[".gltf_auto_export_settings"] if ".gltf_auto_export_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_settings")
@@ -209,7 +209,7 @@ def test_export_do_not_export_marked_assets(setup_data):
     # first, configure things
     # we use the global settings for that
     export_props = {
-        "main_scene_names" : ['World'],
+        "level_scene_names" : ['World'],
         "library_scene_names": ['Library']
     }
     stored_settings = bpy.data.texts[".gltf_auto_export_settings"] if ".gltf_auto_export_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_settings")
@@ -239,7 +239,7 @@ def test_export_separate_dynamic_and_static_objects(setup_data):
     # first, configure things
     # we use the global settings for that
     export_props = {
-        "main_scene_names" : ['World'],
+        "level_scene_names" : ['World'],
         "library_scene_names": ['Library']
     }
     stored_settings = bpy.data.texts[".gltf_auto_export_settings"] if ".gltf_auto_export_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_settings")
@@ -270,7 +270,7 @@ def test_export_should_not_generate_orphan_data(setup_data):
     # first, configure things
     # we use the global settings for that
     export_props = {
-        "main_scene_names" : ['World'],
+        "level_scene_names" : ['World'],
         "library_scene_names": ['Library']
     }
     stored_settings = bpy.data.texts[".gltf_auto_export_settings"] if ".gltf_auto_export_settings" in bpy.data.texts else bpy.data.texts.new(".gltf_auto_export_settings")
