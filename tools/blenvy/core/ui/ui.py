@@ -72,95 +72,111 @@ class BLENVY_PT_SidePanel(bpy.types.Panel):
         tool_switch_components = target.operator(operator="bevy.tooling_switch", text="", icon="TOOL_SETTINGS")
         tool_switch_components.tool = "TOOLS"
 
-        # Debug stuff
-        """layout.label(text="Active Blueprint: "+ active_collection.name.upper())
-        layout.label(text="World scene active: "+ str(world_scene_active))
-        layout.label(text="Library scene active: "+ str(library_scene_active))
-        layout.label(text=blenvy.mode)"""
-
         if blenvy.mode == "SETTINGS":
-            header, panel = layout.panel("common", default_closed=False)
-            header.label(text="Common")
-            if panel:
-                row = panel.row()
-                draw_folder_browser(layout=row, label="Root Folder", prop_origin=blenvy, target_property="project_root_path")
-                row = panel.row()
-                draw_folder_browser(layout=row, label="Assets Folder", prop_origin=blenvy, target_property="assets_path")
-                row = panel.row()
-                draw_folder_browser(layout=row, label="Blueprints Folder", prop_origin=blenvy, target_property="blueprints_path")
-                row = panel.row()
-                draw_folder_browser(layout=row, label="Levels Folder", prop_origin=blenvy, target_property="levels_path")
-                row = panel.row()
-                draw_folder_browser(layout=row, label="Materials Folder", prop_origin=blenvy, target_property="materials_path")
+            config_mode = blenvy.config_mode
+            row = layout.row()
+            config_target = row.box() if config_mode == 'COMMON' else row
+            config_switch = config_target.operator(operator="bevy.config_switch", text="", icon="OPTIONS")
+            config_switch.tool = "COMMON"
 
-                panel.separator()
-                # scenes selection
-                if len(blenvy.level_scenes) == 0 and len(blenvy.library_scenes) == 0:
-                    row = panel.row()
-                    row.alert = True
-                    panel.alert = True
-                    row.label(text="NO library or level scenes specified! at least one level scene or library scene is required!")
-                    row = panel.row()
-                    row.label(text="Please select and add one using the UI below")
+            config_target = row.box() if config_mode == 'COMPONENTS' else row
+            config_switch = config_target.operator(operator="bevy.config_switch", text="", icon="PROPERTIES")
+            config_switch.tool = "COMPONENTS"
 
-                section = panel
-                rows = 2
-                row = section.row()
-                col = row.column()
-                col.label(text="level scenes")
-                col = row.column()
-                col.prop(blenvy, "level_scene_selector", text='')
-                col = row.column()
-                add_operator = col.operator("blenvy.scenes_list_actions", icon='ADD', text="")
-                add_operator.action = 'ADD'
-                add_operator.scene_type = 'LEVEL'
-                col.enabled = blenvy.level_scene_selector is not None
+            config_target = row.box() if config_mode == 'EXPORT' else row
+            config_switch = config_target.operator(operator="bevy.config_switch", text="", icon="EXPORT")
+            config_switch.tool = "EXPORT"
+
+            if config_mode == 'COMMON':
+                header, panel = layout.panel("common", default_closed=False)
+                header.label(text="Common")
+                if panel:
+                    draw_common_settings_ui(panel, blenvy)
+
+            if config_mode == 'COMPONENTS':
+                header, panel = layout.panel("components", default_closed=False)
+                header.label(text="Components")
+                if panel:
+                    components_ui.draw_settings_ui(panel, blenvy.components)
+                    
+            if config_mode == 'EXPORT':
+                header, panel = layout.panel("auto_export", default_closed=False)
+                header.label(text="Auto Export")
+                if panel:
+                    auto_export_ui.draw_settings_ui(panel, blenvy.auto_export)
 
 
-                row = section.row()
-                col = row.column()
-                for scene in blenvy.level_scenes:
-                    sub_row = col.box().row()
-                    sub_row.label(text=scene.name)
-                    remove_operator = sub_row.operator("blenvy.scenes_list_actions", icon='TRASH', text="")
-                    remove_operator.action = 'REMOVE'
-                    remove_operator.scene_type = 'LEVEL'
-                    remove_operator.scene_name = scene.name
-
-                col.separator()
-
-                # library scenes
-                row = section.row()
-
-                col = row.column()
-                col.label(text="library scenes")
-                col = row.column()
-                col.prop(blenvy, "library_scene_selector", text='')
-                col = row.column()
-                add_operator = col.operator("blenvy.scenes_list_actions", icon='ADD', text="")
-                add_operator.action = 'ADD'
-                add_operator.scene_type = 'LIBRARY'
-                col.enabled = blenvy.library_scene_selector is not None
-
-                row = section.row()
-                col = row.column()
-                for scene in blenvy.library_scenes:
-                    sub_row = col.box().row()
-                    sub_row.label(text=scene.name)
-                    remove_operator = sub_row.operator("blenvy.scenes_list_actions", icon='TRASH', text="")
-                    remove_operator.action = 'REMOVE'
-                    remove_operator.scene_type = 'LEVEL'
-                    remove_operator.scene_name = scene.name
-                col.separator()
-            
-            header, panel = layout.panel("components", default_closed=False)
-            header.label(text="Components")
-            if panel:
-                components_ui.draw_settings_ui(panel, blenvy.components)
-
-            header, panel = layout.panel("auto_export", default_closed=False)
-            header.label(text="Auto Export")
-            if panel:
-                auto_export_ui.draw_settings_ui(panel, blenvy.auto_export)
 
 
+def draw_common_settings_ui(layout, settings):
+    blenvy = settings
+    row = layout.row()
+    draw_folder_browser(layout=row, label="Root Folder", prop_origin=blenvy, target_property="project_root_path")
+    row = layout.row()
+    draw_folder_browser(layout=row, label="Assets Folder", prop_origin=blenvy, target_property="assets_path")
+    row = layout.row()
+    draw_folder_browser(layout=row, label="Blueprints Folder", prop_origin=blenvy, target_property="blueprints_path")
+    row = layout.row()
+    draw_folder_browser(layout=row, label="Levels Folder", prop_origin=blenvy, target_property="levels_path")
+    row = layout.row()
+    draw_folder_browser(layout=row, label="Materials Folder", prop_origin=blenvy, target_property="materials_path")
+
+    layout.separator()
+    # scenes selection
+    if len(blenvy.level_scenes) == 0 and len(blenvy.library_scenes) == 0:
+        row = layout.row()
+        row.alert = True
+        layout.alert = True
+        row.label(text="NO library or level scenes specified! at least one level scene or library scene is required!")
+        row = layout.row()
+        row.label(text="Please select and add one using the UI below")
+
+    section = layout
+    rows = 2
+    row = section.row()
+    col = row.column()
+    col.label(text="level scenes")
+    col = row.column()
+    col.prop(blenvy, "level_scene_selector", text='')
+    col = row.column()
+    add_operator = col.operator("blenvy.scenes_list_actions", icon='ADD', text="")
+    add_operator.action = 'ADD'
+    add_operator.scene_type = 'LEVEL'
+    col.enabled = blenvy.level_scene_selector is not None
+
+
+    row = section.row()
+    col = row.column()
+    for scene in blenvy.level_scenes:
+        sub_row = col.box().row()
+        sub_row.label(text=scene.name)
+        remove_operator = sub_row.operator("blenvy.scenes_list_actions", icon='TRASH', text="")
+        remove_operator.action = 'REMOVE'
+        remove_operator.scene_type = 'LEVEL'
+        remove_operator.scene_name = scene.name
+
+    col.separator()
+
+    # library scenes
+    row = section.row()
+
+    col = row.column()
+    col.label(text="library scenes")
+    col = row.column()
+    col.prop(blenvy, "library_scene_selector", text='')
+    col = row.column()
+    add_operator = col.operator("blenvy.scenes_list_actions", icon='ADD', text="")
+    add_operator.action = 'ADD'
+    add_operator.scene_type = 'LIBRARY'
+    col.enabled = blenvy.library_scene_selector is not None
+
+    row = section.row()
+    col = row.column()
+    for scene in blenvy.library_scenes:
+        sub_row = col.box().row()
+        sub_row.label(text=scene.name)
+        remove_operator = sub_row.operator("blenvy.scenes_list_actions", icon='TRASH', text="")
+        remove_operator.action = 'REMOVE'
+        remove_operator.scene_type = 'LEVEL'
+        remove_operator.scene_name = scene.name
+    col.separator()

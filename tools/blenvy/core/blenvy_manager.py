@@ -53,6 +53,17 @@ class BlenvyManager(PropertyGroup):
         default="SETTINGS",
         update=save_settings
     ) # type: ignore
+
+    config_mode: EnumProperty(
+        items=(
+                ('COMMON', "Common", "Switch to common configuration"),
+                ('COMPONENTS', "Components", "Switch to components configuration"),
+                ('EXPORT', "Export", "Switch to export configuration"),
+        ),
+        default="COMMON",
+        update=save_settings
+    ) # type: ignore
+
     
     project_root_path: StringProperty(
         name = "Project Root Path",
