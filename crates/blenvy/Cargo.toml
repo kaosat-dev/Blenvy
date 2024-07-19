@@ -1,6 +1,6 @@
 [package]
 name = "blenvy"
-version = "0.1.0"
+version = "0.1.0-alpha.1"
 authors = ["Mark 'kaosat-dev' Moissette"]
 description = "Allows you to define Bevy components direclty inside gltf files and instanciate the components on the Bevy side."
 homepage = "https://github.com/kaosat-dev/Blenvy"
