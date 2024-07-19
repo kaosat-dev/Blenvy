@@ -192,6 +192,7 @@ pub(crate) fn check_for_loaded(
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn spawn_from_blueprints(
     spawn_placeholders: Query<
         (
@@ -295,7 +296,7 @@ pub(crate) fn spawn_from_blueprints(
             Animations {
                 named_animations,
                 named_indices,
-                graph
+                graph,
             },
             Spawned,
             OriginalChildren(original_children),

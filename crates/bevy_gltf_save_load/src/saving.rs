@@ -80,7 +80,7 @@ pub(crate) fn save_game(world: &mut World) {
 
     for event in events.get_reader().read(&events) {
         info!("SAVE EVENT !! {:?}", event);
-        save_path = event.path.clone();
+        save_path.clone_from(&event.path);
     }
     events.clear();
 
