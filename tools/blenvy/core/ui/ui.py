@@ -101,7 +101,7 @@ class BLENVY_PT_SidePanel(bpy.types.Panel):
 
             if config_mode == 'EXPORT':
                 header, panel = layout.panel("auto_export", default_closed=False)
-                header.label(text="Auto Export")
+                header.label(text="Export")
                 if panel:
                     auto_export_ui.draw_settings_ui(panel, blenvy.auto_export)
 

@@ -6,13 +6,13 @@ This [Blender addon](https://github.com/kaosat-dev/Blender_bevy_components_workf
     - the UI is **automatically generated** based on a **registry schema** file, an export of all your **registered** Bevy components's information, generated
 by the registry export part of the [Blenvy](https://crates.io/crates/blenvy) crate
     - the ability to **toggle components** on/off without having to remove the component from the object
-
+- an easy way to create blueprints/prefabs (just collections !) & levels 
+- a way to setup you assets for your levels & blueprints
 - an automatic export of your level/world from Blender to gltf whenever you save your Blend file.
     - export of used /marked collections as [Gltf blueprints](../../crates/blenvy/README.md)
     - change detection, so that only the levels & blueprints you have changed get exported when you save your blend file
     - export of material librairies
 
-- a way to setup you assets for your levels & blueprints in Blender
 
 If you want to know more about the technical details , see [here]()
 
@@ -36,12 +36,22 @@ If you can I would generally recommend starting fresh, but a lot of effort has b
 
 ![blender addon install](./docs/blender_addon_install2.png)
 
+  * up to Blender 4.1
+  * for Blender 4.2 , just drag & drop the zip file onto Blender to start the installation process
+
 
 ## Quickstart
 
+* set your level & library scenes (the only things that are not pre-configured)
+
+![blenvy common settings](./docs/blenvy_configuration_common.png)
+
+* create your blueprints & levels
+* add components (remember to configure the Bevy side first )
+* save your blend file at any point , the rest is done automatically (export of levels & blueprints, etc)
+
 
 ## Configuration:
-
 
 ### Bevy side
 
@@ -49,21 +59,67 @@ If you can I would generally recommend starting fresh, but a lot of effort has b
 
 ### Blender side
 
-> The add-on comes almost mostly pre-configured with sensible defaults, but you can set the following settings to your liking
+
+> The add-on comes almost completely pre-configured with sensible defaults, but you can set the following settings to your liking
 
 #### Common
 
+The first tab (and the one that is open by default in a new project) contains the common settings:
+
+![blenvy common settings](./docs/blenvy_configuration_common.png)
+
 you **need** to tell Blenvy 
-    - what your level scenes are (what Blender scenes should become levels in Bevy) 
-    - what your library scenes are (what Blender scenes will store your library of re-useable blueprints) 
+
+  - what your level scenes are (what Blender scenes should become levels in Bevy) 
+  - what your library scenes are (what Blender scenes will store your library of re-useable blueprints) 
 
 Blenvy is opinionated ! 
-    - keep you art/sources (usually not delivered with your game) seperate from your game assets
-    - keep your blueprints/levels/materials gltf files seperate
+
+  - keep you art/sources (usually not delivered with your game) seperate from your game assets
+  - keep your blueprints/levels/materials gltf files seperate
+
+##### Root Folder
+
+- this is the same folder as your Bevy projects main folder: the path here is relative to the current .blend file
+
+##### Assets Folder
+
+- a path, relative to the *root* folder above, where you want to store your assets (delivered with your game)
+
+##### Library Folder
+
+- a path, relative to the *assets* folder above, where you want to store your *blueprints*
+
+##### Levels Folder
+
+- a path, relative to the *assets* folder above, where you want to store your *levels*
+
+##### Materials Folder
+
+- a path, relative to the *assets* folder above, where you want to store your *materials*
+
+#####
+  - level scenes: what are the scenes in your .blend file that are levels/worlds
+  - library scenes: what are the scenes in your .blend file that contain your libraries of blueprints (that you then use in your levels)
+
+
+#### Recomended folder structure
+
+![recomended folder structure](./docs/blenvy_recommended_folder_structure.png)
+
+![recomended folder structure art](./docs/blenvy_recommended_folder_structure_art.png)
+
+![recomended folder structure assets](./docs/blenvy_recommended_folder_structure_assets.png)
+
 
 #### Components
 
-> the defaults are already pre-set to match those on the Bevy side for the location of the ```registry.json``` file, unless you want to store it somewhere other than ```assets/registry.json```
+The second tab contains the component settings:
+
+![blenvy component settings](./docs/blenvy_configuration_components.png)
+
+
+> you normally do not need to do anything, as the defaults are already pre-set to match those on the Bevy side for the location of the ```registry.json``` file, unless you want to store it somewhere other than ```assets/registry.json```
 
 - Go to the new Components tab in the **configuration** tab
 
@@ -85,7 +141,11 @@ Blenvy is opinionated !
 
 ![registry file polling](./docs/registry_polling.png)
 
-#### Auto-export
+#### Export
+
+Last but not least, the export/ auto-export settings tab
+
+![blenvy export settings](./docs/blenvy_configuration_export.png)
 
 ### Materials
 
@@ -128,6 +188,8 @@ There are only a few things to keep in mind
 - anytime you save your file, it will automatically export your level(s)
 
 Take a look at the [relevant](../../examples/demo/) example for more [details](../../examples/demo/art/) 
+
+
 
 
 ## Useage
