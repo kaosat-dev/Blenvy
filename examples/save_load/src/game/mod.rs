@@ -12,7 +12,7 @@ pub mod in_game_saving;
 pub use in_game_saving::*;
 
 use bevy::prelude::*;
-use bevy_gltf_save_load::{LoadRequest, LoadingFinished, SaveRequest, SavingFinished};
+use blenvy::{LoadRequest, LoadingFinished, SaveRequest, SavingFinished};
 
 pub fn request_save(
     mut save_requests: EventWriter<SaveRequest>,

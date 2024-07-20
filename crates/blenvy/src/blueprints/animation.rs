@@ -3,7 +3,7 @@ use bevy::utils::HashMap;
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-/// storage for animations for a given entity's BLUEPRINT (ie for example a characters animations), essentially a clone of gltf's `named_animations`
+/// storage for animations for a given entity's BLUEPRINT (ie for example a characters animations)
 pub struct BlueprintAnimations {
     pub named_animations: HashMap<String, Handle<AnimationClip>>,
     pub named_indices: HashMap<String, AnimationNodeIndex>,
@@ -24,8 +24,8 @@ pub struct BlueprintAnimationInfosLink(pub Entity);
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-/// storage for scene level animations for a given entity (hierarchy), essentially a clone of gltf's `named_animations`
-pub struct SceneAnimations {
+/// storage for per instance / scene level animations for a given entity (hierarchy)
+pub struct InstanceAnimations {
     pub named_animations: HashMap<String, Handle<AnimationClip>>,
     pub named_indices: HashMap<String, AnimationNodeIndex>,
     pub graph: Handle<AnimationGraph>,
@@ -36,12 +36,12 @@ pub struct SceneAnimations {
 /// so that the root entity knows which of its children contains an actualy `AnimationPlayer` component
 /// this is for convenience, because currently , Bevy's gltf parsing inserts `AnimationPlayers` "one level down"
 /// ie armature/root for animated models, which means more complex queries to trigger animations that we want to avoid
-pub struct SceneAnimationPlayerLink(pub Entity);
+pub struct InstanceAnimationPlayerLink(pub Entity);
 
 #[derive(Component, Debug)]
 /// Same as the above but for scene's `AnimationInfos` components which get added (on the Blender side) to the entities that actually have the animations
 /// which often is not the Blueprint or blueprint instance entity itself.
-pub struct SceneAnimationInfosLink(pub Entity);
+pub struct InstanceAnimationInfosLink(pub Entity);
 
 /// Stores Animation information: name, frame informations etc
 #[derive(Reflect, Default, Debug)]
@@ -161,8 +161,8 @@ pub fn trigger_instance_animation_markers_events(
     animation_infos: Query<(
         Entity,
         &AnimationMarkers,
-        &SceneAnimationPlayerLink,
-        &SceneAnimations,
+        &InstanceAnimationPlayerLink,
+        &InstanceAnimations,
         &AnimationInfos,
     )>,
     animation_players: Query<&AnimationPlayer>,

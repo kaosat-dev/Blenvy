@@ -43,7 +43,7 @@ Here's a minimal usage example:
 # Cargo.toml
 [dependencies]
 bevy="0.14"
-blenvy = { version = "0.1.0"} 
+blenvy = { version = "0.1.0-alpha.1"} 
 
 ```
 
@@ -54,7 +54,7 @@ use blenvy::*;
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_plugins(BlenvyPlugin)
+        .add_plugins(BlenvyPlugin::default())
 
         .add_systems(Startup, setup_game)
         .add_systems(Update, spawn_blueprint_instance)
@@ -78,13 +78,13 @@ fn setup_game(
 
 fn spawn_blueprint_instance(
     mut commands: Commands,
-    keycode: Res<Input<KeyCode>>,
+    keycode: Res<ButtonInput<KeyCode>>,
 ){
-    if keycode.just_pressed(KeyCode::S) {
+    if keycode.just_pressed(KeyCode::KeyS) {
         let new_entity = commands.spawn((
-            BlueprintInfo(name: "Health_Pickup".to_string(), path:""), // mandatory !!
+            BlueprintInfo::from_path("spawnable.glb"), // mandatory !!
             SpawnBlueprint, // mandatory !!
-            TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)), // VERY important !!
+            TransformBundle::from_transform(Transform::from_xyz(0.0, 2.0, 0.2)), // VERY important !!
             // any other component you want to insert
         ));
     }
@@ -96,7 +96,7 @@ fn spawn_blueprint_instance(
 Add the following to your `[dependencies]` section in `Cargo.toml`:
 
 ```toml
-blenvy = "0.1.0"
+blenvy = "0.1.0-alpha.1"
 ```
 
 Or use `cargo add`:
@@ -114,14 +114,13 @@ use blenvy::*;
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_plugin(BlenvyPlugin)
-
+        .add_plugin(BlenvyPlugin::default())
         .run();
 }
 
 ```
 
-you may want to configure your "library"/"blueprints" settings:
+you may want to configure your settings:
 
 ```rust no_run
 use bevy::prelude::*;
@@ -145,7 +144,8 @@ fn main() {
 You can spawn entities from blueprints like this:
 ```rust no_run
 commands.spawn((
-    BlueprintInfo("Health_Pickup".to_string()), // mandatory !!
+    BlueprintInfo::from_path("Health_Pickup.glb"), // mandatory !!
+    // or the alterive: BlueprintInfo{name:"health pickup1".into(), path:"Health_Pickup.glb".into()}
     SpawnBlueprint, // mandatory !!
     
     TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)), // optional
@@ -154,7 +154,7 @@ commands.spawn((
 
 ``` 
 
-Once spawning of the actual entity is done, the spawned Blueprint will be *gone/merged* with the contents of Blueprint !
+Once spawning of the actual entity is done, the contents (components, children etc) of the Blueprint will have been merged with those of the entity itself.
 
 > Important :
 you can **add** or **override** components present inside your Blueprint when spawning the BluePrint itself: ie
@@ -165,7 +165,7 @@ you can just add any additional components you need when spawning :
 
 ```rust no_run
 commands.spawn((
-    BlueprintInfo("Health_Pickup".to_string()),
+    BlueprintInfo::from_path("Health_Pickup.glb"),
     SpawnBlueprint,
     TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
     // from Rapier/bevy_xpbd: this means the entity will also have a velocity component when inserted into the world
@@ -183,7 +183,7 @@ any component you specify when spawning the Blueprint that is also specified **w
 for example 
 ```rust no_run
 commands.spawn((
-    BlueprintInfo(path: "Health_Pickup.glb".into()),
+    BlueprintInfo::from_path("Health_Pickup.glb"),
     SpawnBlueprint,
     TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
     HealthPowerUp(20)// if this is component is also present inside the "Health_Pickup" blueprint, that one will be replaced with this component during spawning
@@ -217,76 +217,11 @@ This way all your levels, your dynamic entities etc, are kept seperated from UI 
 ```
 
 
-## SystemSet
+## Registry
 
-the ordering of systems is very important ! 
-
-For example to replace your proxy components (stand-in components when you cannot/ do not want to use real components in the gltf file) with actual ones, which should happen **AFTER** the Blueprint based spawning, 
-
-so ```blenvy``` provides a **SystemSet** for that purpose: ```GltfBlueprintsSet```
-
-Typically , the order of systems should be
-
-***bevy_gltf_components (GltfComponentsSet::Injection)*** => ***blenvy (GltfBlueprintsSet::Spawn, GltfBlueprintsSet::AfterSpawn)*** => ***replace_proxies***
-
-see https://github.com/kaosat-dev/Blenvy/tree/main/examples/blenvy/basic for how to set it up correctly
-
-
-
-## Animation
-
-```blenvy``` provides some lightweight helpers to deal with animations stored in gltf files
-
- * an ```Animations``` component that gets inserted into spawned (root) entities that contains a hashmap of all animations contained inside that entity/gltf file .
- (this is a copy of the ```named_animations``` inside Bevy's gltf structures )
- * an ```AnimationPlayerLink``` component that gets inserted into spawned (root) entities, to make it easier to trigger/ control animations than it usually is inside Bevy + Gltf files
-
-The workflow for animations is as follows:
-* create a gltf file with animations (using Blender & co) as you would normally do
-* inside Bevy, use the ```blenvy``` boilerplate (see sections above), no specific setup beyond that is required
-* to control the animation of an entity, you need to query for entities that have both ```AnimationPlayerLink``` and ```Animations``` components (added by ```blenvy```) AND entities with the ```AnimationPlayer``` component
- 
-For example:
-
-```rust no_run
-// example of changing animation of entities based on proximity to the player, for "fox" entities (Tag component)
-pub fn animation_change_on_proximity_foxes(
-    players: Query<&GlobalTransform, With<Player>>,
-    animated_foxes: Query<(&GlobalTransform, &AnimationPlayerLink, &Animations ), With<Fox>>,
-
-    mut animation_players: Query<&mut AnimationPlayer>,
-
-){
-    for player_transforms in players.iter() {
-        for (fox_tranforms, link, animations) in animated_foxes.iter() {
-            let distance = player_transforms
-                .translation()
-                .distance(fox_tranforms.translation());
-            let mut anim_name = "Walk"; 
-            if distance < 8.5 {
-                anim_name = "Run"; 
-            }
-            else if distance >= 8.5 && distance < 10.0{
-                anim_name = "Walk";
-            }
-            else if distance >= 10.0 && distance < 15.0{
-                anim_name = "Survey";
-            }
-            // now play the animation based on the chosen animation name
-            let mut animation_player = animation_players.get_mut(link.0).unwrap();
-            animation_player.play_with_transition(
-                animations.named_animations.get(anim_name).expect("animation name should be in the list").clone(), 
-                Duration::from_secs(3)
-            ).repeat();
-        }
-    }
-}
-```
-
-see https://github.com/kaosat-dev/Blenvy/tree/main/examples/blenvy/animation for how to set it up correctly
-
-particularly from https://github.com/kaosat-dev/Blenvy/tree/main/examples/blenvy/animation/game/in_game.rs
-
+Blenvy automatically exports a Json file containing of all your registered components/ types, in order to be able to create UIs that allows you to add & edit your components directly in Blender in the [Blenvy](https://github.com/kaosat-dev/Blenvy/tree/main/tools/blenvy) Blender add-on
+- The output file will be generated in the ```Startup``` schedule whenever you run your app.
+- Every time you compile & run your app, the output json file will be updated.
 
 ## Materials
 
@@ -295,7 +230,17 @@ Ie for example without this option, 56 different blueprints using the same mater
 56 times !!
 
 
-Generating optimised blueprints and material libraries can be automated using the latests version of the [Blender plugin](https://github.com/kaosat-dev/Blenvy/tree/main/tools/blenvy)
+Generating optimised blueprints and material libraries can be automated using the [Blender plugin](https://github.com/kaosat-dev/Blenvy/tree/main/tools/blenvy)
+
+
+## Additional features
+
+this crate also includes automatic handling of lights in gltf files, to attempt to match Blender's eevee rendering as close as possible:
+ * **BlenderLightShadows** (automatically generated by the gltf_auto_export Blender add-on) allows you to toggle light's shadows on/off in Blender and have matching
+ behaviour in Bevy
+ * **BlenderBackgroundShader** aka background color is also automatically set on the Bevy side
+ * **BlenderShadowSettings** sets the cascade_size on the bevy side to match the one configured in Blender
+
 
 
 ## Examples
@@ -318,7 +263,7 @@ The main branch is compatible with the latest Bevy release, while the branch `be
 Compatibility of `blenvy` versions:
 | `blenvy` | `bevy` |
 | :--                 | :--    |
-| `0.1 - 0.2`         | `0.14` |
+| `0.1`               | `0.14` |
 | branch `main`       | `0.14` |
 | branch `bevy_main`  | `main` |
 

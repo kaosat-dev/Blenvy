@@ -21,7 +21,7 @@ use bevy::{
 /// ```
 /// # use bevy::prelude::*;
 /// # use bevy::gltf::*;
-/// # use bevy_gltf_components::ComponentsFromGltfPlugin;
+/// # use blenvy::ComponentsFromGltfPlugin;
 ///
 /// //too barebones of an example to be meaningfull, please see https://github.com/kaosat-dev/Blenvy/examples/basic for a real example
 /// fn main() {

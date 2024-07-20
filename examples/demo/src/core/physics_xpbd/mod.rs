@@ -9,7 +9,7 @@ pub(crate) use controls::*;
 use bevy::prelude::*;
 use bevy_xpbd_3d::prelude::*;
 
-use bevy_gltf_blueprints::GltfBlueprintsSet;
+use blenvy::GltfBlueprintsSet;
 use bevy_gltf_worlflow_examples_common::state::GameState;
 
 pub(crate) fn plugin(app: &mut App) {

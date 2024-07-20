@@ -12,7 +12,7 @@ pub use loading::*;
 use bevy::core_pipeline::core_3d::{Camera3dDepthTextureUsage, ScreenSpaceTransmissionQuality};
 use bevy::prelude::*;
 use bevy::prelude::{App, IntoSystemConfigs, Plugin};
-use bevy_gltf_blueprints::GltfBlueprintsSet;
+use blenvy::GltfBlueprintsSet;
 
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
 pub enum SavingSet {

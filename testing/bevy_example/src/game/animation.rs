@@ -1,15 +1,15 @@
 use std::time::Duration;
 
-/*use bevy_gltf_blueprints::{
+/*use blenvy::{
     AnimationInfos, AnimationMarkerReached, BlueprintAnimationPlayerLink, BlueprintAnimations,
-    SceneAnimationPlayerLink, SceneAnimations,
+    InstanceAnimationPlayerLink, InstanceAnimations,
 };*/
 
 use bevy::{animation::RepeatAnimation, gltf::Gltf, prelude::*};
 
 use blenvy::{
     AnimationInfos, AnimationMarkerReached, BlueprintAnimationPlayerLink, BlueprintAnimations,
-    BlueprintInstanceDisabled, SceneAnimationPlayerLink, SceneAnimations,
+    BlueprintInstanceDisabled, InstanceAnimationPlayerLink, InstanceAnimations,
 };
 
 #[derive(Component, Reflect, Default, Debug)]
@@ -63,7 +63,7 @@ pub fn animations(
                 name, entity
             );
             println!("Found match {:?}", gltf.named_animations);
-            commands.entity(entity).insert(SceneAnimations {
+            commands.entity(entity).insert(InstanceAnimations {
                 named_animations: gltf.named_animations.clone(),
             });
             for ancestor in parents.iter_ancestors(entity) {
@@ -71,7 +71,7 @@ pub fn animations(
                     // println!("found match with animationPlayer !! {:?}",names.get(ancestor));
                     commands
                         .entity(entity)
-                        .insert(SceneAnimationPlayerLink(ancestor));
+                        .insert(InstanceAnimationPlayerLink(ancestor));
                 }
                 // info!("{:?} is an ancestor of {:?}", ancestor, player);
             }
@@ -85,7 +85,7 @@ pub fn check_animations(
         (
             Entity,
             Option<&BlueprintAnimationPlayerLink>,
-            Option<&SceneAnimationPlayerLink>,
+            Option<&InstanceAnimationPlayerLink>,
         ),
         (With<MarkerAllFoxes>, Without<BlueprintInstanceDisabled>),
     >,
@@ -94,7 +94,7 @@ pub fn check_animations(
         (
             Entity,
             Option<&BlueprintAnimationPlayerLink>,
-            Option<&SceneAnimationPlayerLink>,
+            Option<&InstanceAnimationPlayerLink>,
         ),
         (With<Marker1>, Without<BlueprintInstanceDisabled>),
     >,
@@ -102,7 +102,7 @@ pub fn check_animations(
         (
             Entity,
             Option<&BlueprintAnimationPlayerLink>,
-            Option<&SceneAnimationPlayerLink>,
+            Option<&InstanceAnimationPlayerLink>,
         ),
         (With<Marker2>, Without<BlueprintInstanceDisabled>),
     >,
@@ -110,7 +110,7 @@ pub fn check_animations(
         (
             Entity,
             Option<&BlueprintAnimationPlayerLink>,
-            Option<&SceneAnimationPlayerLink>,
+            Option<&InstanceAnimationPlayerLink>,
         ),
         (With<Marker3>, Without<BlueprintInstanceDisabled>),
     >,
@@ -153,19 +153,19 @@ pub fn play_animations(
     >,
 
     animated_marker1: Query<
-        (&SceneAnimationPlayerLink, &SceneAnimations),
+        (&InstanceAnimationPlayerLink, &InstanceAnimations),
         (With<AnimationInfos>, With<Marker1>),
     >,
 
     animated_marker2: Query<
-        (&SceneAnimationPlayerLink, &SceneAnimations),
+        (&InstanceAnimationPlayerLink, &InstanceAnimations),
         (With<AnimationInfos>, With<Marker2>),
     >,
 
     with_blueprint_and_scene_animations: Query<
         (
-            &SceneAnimationPlayerLink,
-            &SceneAnimations,
+            &InstanceAnimationPlayerLink,
+            &InstanceAnimations,
             &BlueprintAnimationPlayerLink,
             &BlueprintAnimations,
         ),

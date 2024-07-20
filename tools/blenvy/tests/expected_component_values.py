@@ -83,18 +83,18 @@ expected_custom_property_values = {'bevy_animation::AnimationPlayer': '(animatio
  'bevy_example::test_components::VecOfF32s': '([])',
  'bevy_example::test_components::VecOfVec3s2': '([])',
  'bevy_gltf::GltfExtras': '(value: " ")',
- 'bevy_gltf_blueprints::animation::AnimationInfos': '(animations: [])',
- 'bevy_gltf_blueprints::animation::AnimationMarkers': '({})',
- 'bevy_gltf_blueprints::animation::BlueprintAnimations': '(named_animations: "")',
- 'bevy_gltf_blueprints::animation::SceneAnimations': '(named_animations: "")',
- 'bevy_gltf_blueprints::materials::MaterialInfo': '(name: " ", source: " ")',
- 'bevy_gltf_blueprints::spawn_from_blueprints::BlueprintsList': '({})',
- 'bevy_gltf_blueprints::spawn_from_blueprints::SpawnBlueprint': '()',
- 'bevy_gltf_components::GltfProcessed': '()',
- 'bevy_gltf_components::blender_settings::lighting::BlenderBackgroundShader': '(color: Rgba(red:1.0, green:1.0, '
+ 'blenvy::animation::AnimationInfos': '(animations: [])',
+ 'blenvy::animation::AnimationMarkers': '({})',
+ 'blenvy::animation::BlueprintAnimations': '(named_animations: "")',
+ 'blenvy::animation::InstanceAnimations': '(named_animations: "")',
+ 'blenvy::materials::MaterialInfo': '(name: " ", source: " ")',
+ 'blenvy::spawn_from_blueprints::BlueprintsList': '({})',
+ 'blenvy::spawn_from_blueprints::SpawnBlueprint': '()',
+ 'blenvy::GltfProcessed': '()',
+ 'blenvy::blender_settings::lighting::BlenderBackgroundShader': '(color: Rgba(red:1.0, green:1.0, '
                                                                               'blue:0.0, alpha:1.0), strength: 0.0)',
- 'bevy_gltf_components::blender_settings::lighting::BlenderLightShadows': '(buffer_bias: 0.0, enabled: true)',
- 'bevy_gltf_components::blender_settings::lighting::BlenderShadowSettings': '(cascade_size: 0)',
+ 'blenvy::blender_settings::lighting::BlenderLightShadows': '(buffer_bias: 0.0, enabled: true)',
+ 'blenvy::blender_settings::lighting::BlenderShadowSettings': '(cascade_size: 0)',
  'bevy_gltf_worlflow_examples_common::core::camera::camera_replace_proxies::SSAOSettings': '()',
  'bevy_gltf_worlflow_examples_common::core::camera::camera_tracking::CameraTrackable': '()',
  'bevy_gltf_worlflow_examples_common::core::camera::camera_tracking::CameraTracking': '(offset: Vec3(x:0.0, y:0.0, '
@@ -338,25 +338,25 @@ expected_custom_property_values_randomized = {'bevy_animation::AnimationPlayer':
  'bevy_example::test_components::VecOfVec3s2': '([(Vec3(x:0.42888906598091125, y:0.5780913233757019, '
                                                'z:0.20609822869300842))])',
  'bevy_gltf::GltfExtras': '(value: "sbnpsago")',
- 'bevy_gltf_blueprints::animation::AnimationInfos': '(animations: [(frame_end: 0.42888906598091125, '
+ 'blenvy::animation::AnimationInfos': '(animations: [(frame_end: 0.42888906598091125, '
                                                     'frame_end_override: 0.5780913233757019, frame_start: '
                                                     '0.20609822869300842, frame_start_override: 0.8133212327957153, '
                                                     'frames_length: 0.8235888481140137, name: "uzfbqpkc")])',
- 'bevy_gltf_blueprints::animation::AnimationMarkers': '({})',
- 'bevy_gltf_blueprints::animation::BlueprintAnimations': '(named_animations: "")',
- 'bevy_gltf_blueprints::animation::SceneAnimations': '(named_animations: "")',
- 'bevy_gltf_blueprints::materials::MaterialInfo': '(name: "sbnpsago", source: "piuzfbqp")',
- 'bevy_gltf_blueprints::spawn_from_blueprints::BlueprintsList': '({})',
- 'bevy_gltf_blueprints::spawn_from_blueprints::SpawnBlueprint': '()',
- 'bevy_gltf_components::GltfProcessed': '()',
- 'bevy_gltf_components::blender_settings::lighting::BlenderBackgroundShader': '(color: Rgba(red:0.5714026093482971, '
+ 'blenvy::animation::AnimationMarkers': '({})',
+ 'blenvy::animation::BlueprintAnimations': '(named_animations: "")',
+ 'blenvy::animation::InstanceAnimations': '(named_animations: "")',
+ 'blenvy::materials::MaterialInfo': '(name: "sbnpsago", source: "piuzfbqp")',
+ 'blenvy::spawn_from_blueprints::BlueprintsList': '({})',
+ 'blenvy::spawn_from_blueprints::SpawnBlueprint': '()',
+ 'blenvy::GltfProcessed': '()',
+ 'blenvy::blender_settings::lighting::BlenderBackgroundShader': '(color: Rgba(red:0.5714026093482971, '
                                                                               'green:0.42888906598091125, '
                                                                               'blue:0.5780913233757019, '
                                                                               'alpha:0.20609822869300842), strength: '
                                                                               '0.8133212327957153)',
- 'bevy_gltf_components::blender_settings::lighting::BlenderLightShadows': '(buffer_bias: 0.5714026093482971, enabled: '
+ 'blenvy::blender_settings::lighting::BlenderLightShadows': '(buffer_bias: 0.5714026093482971, enabled: '
                                                                           'false)',
- 'bevy_gltf_components::blender_settings::lighting::BlenderShadowSettings': '(cascade_size: 73)',
+ 'blenvy::blender_settings::lighting::BlenderShadowSettings': '(cascade_size: 73)',
  'bevy_gltf_worlflow_examples_common::core::camera::camera_replace_proxies::SSAOSettings': '()',
  'bevy_gltf_worlflow_examples_common::core::camera::camera_tracking::CameraTrackable': '()',
  'bevy_gltf_worlflow_examples_common::core::camera::camera_tracking::CameraTracking': '(offset: '

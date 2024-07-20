@@ -261,7 +261,7 @@ Bevy Side:
     - [ ] fix animations handling
         - [x] fix/upgrade blueprint level animations
         - [x] fix/upgrade scene level animations
-        - [ ] rename SceneAnimations to LevelAnimations (more coherent with the rest)
+        - [x] rename SceneAnimations to InstanceAnimations (more coherent with the rest)
         - [ ] add back & cleanup animation frame triggers
     - [x] move sub blueprint handling to blueprints_finalize_instances
 - [x] look into component overriding , it seems broken:
@@ -295,7 +295,7 @@ Bevy Side:
         Injection => inject lights & co => spawn => afterSpawn
                                                  => Injection => inject lights & co 
 
-- [ ] add a way of overriding assets for collection instances => doubt this is possible
+- [ ] add a way of overriding assets for collection instances => how can we make this possible
 - [ ] cleanup all the spurious debug messages
 - [x] fix animation handling
     - [x] how to deal with animation graphs ?
@@ -305,6 +305,7 @@ Bevy Side:
 - [x] make "InBlueprint" non optional, 
 - [x] and perhaps rename it to "FromBlueprint"
 - [ ] perhaps change it to FromBlueprint(BlueprintInfo)
+    - [ ] in order for this to work correctly, stop iterating descendants as soon as there is one with an Existing FromBlueprint component
 
 - [x] BlueprintInstanceDisabled => BlueprintInstanceDisabled
 - [x] fix "remove component" operator from the rename/fix/update components panel
@@ -312,8 +313,9 @@ Bevy Side:
 
 - [ ] update main docs
     - [x] rename project to Blenvy
-    - [ ] replace all references to the old 2 add-ons with those to Blenvy
+    - [x] replace all references to the old 2 add-ons with those to Blenvy
 - [x] rename repo to "Blenvy"
 - [x] do a deprecation release of all bevy_gltf_xxx crates to point at the new Blenvy crate
+- [ ] material assets seem to be added to list regardless of whether material exports are enabled or not
 
 clear && pytest -svv --blender-template ../../testing/bevy_example/art/testing_library.blend --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration_prepare.py  && pytest -svv --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration.py

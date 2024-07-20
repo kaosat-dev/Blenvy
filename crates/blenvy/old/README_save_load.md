@@ -1,6 +1,6 @@
 [![Crates.io](https://img.shields.io/crates/v/bevy_gltf_save_load)](https://crates.io/crates/bevy_gltf_save_load)
 [![Docs](https://img.shields.io/docsrs/bevy_gltf_save_load)](https://docs.rs/bevy_gltf_save_load/latest/bevy_gltf_save_load/)
-[![License](https://img.shields.io/crates/l/bevy_gltf_save_load)](https://github.com/kaosat-dev/Blender_bevy_components_workflow/blob/main/crates/bevy_gltf_save_load/License.md)
+[![License](https://img.shields.io/crates/l/bevy_gltf_save_load)](https://github.com/kaosat-dev/Blenvy/blob/main/crates/bevy_gltf_save_load/License.md)
 [![Bevy tracking](https://img.shields.io/badge/Bevy%20tracking-released%20version-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
 
 # bevy_gltf_save_load (deprecated in favor of Blenvy)
@@ -19,7 +19,7 @@ Built upon [bevy_gltf_blueprints](https://crates.io/crates/bevy_gltf_blueprints)
     * ability to specify **which resources** to save or to exclude
     * small(er) save files (only a portion of the entities is saved)
 
-Particularly useful when using [Blender](https://www.blender.org/) as an editor for the [Bevy](https://bevyengine.org/) game engine, combined with the [Blender plugin](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/gltf_auto_export) that does a lot of the work for you (including spliting generating seperate gltf files for your static vs dynamic assets)
+Particularly useful when using [Blender](https://www.blender.org/) as an editor for the [Bevy](https://bevyengine.org/) game engine, combined with the [Blender plugin](https://github.com/kaosat-dev/Blenvy/tree/main/tools/gltf_auto_export) that does a lot of the work for you (including spliting generating seperate gltf files for your static vs dynamic assets)
 
 
 A bit of heads up:
@@ -135,7 +135,7 @@ pub fn setup_game(
 
 ```
 
-take a look at the [example](https://github.com/kaosat-dev/Blender_bevy_components_workflow/blob/main/examples/bevy_gltf_save_load/basic/src/game/mod.rs) for more clarity
+take a look at the [example](https://github.com/kaosat-dev/Blenvy/blob/main/examples/bevy_gltf_save_load/basic/src/game/mod.rs) for more clarity
 
 
 ##  Installation
@@ -265,7 +265,7 @@ pub fn request_load(
     - ```LoadingFinished``` for loading
 
 > Note: I **highly** recomend you change states when you start/finish saving & loading, otherwise things **will** get unpredictable
-Please see [the example](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_save_load/basic/src/game/mod.rs) for this.
+Please see [the example](https://github.com/kaosat-dev/Blenvy/tree/main/examples/bevy_gltf_save_load/basic/src/game/mod.rs) for this.
 
 ## Additional notes
 
@@ -284,13 +284,13 @@ For convenience ```bevy_gltf_save_load``` provides two **SystemSets**
 Highly advised to get a better understanding of how things work !
 To get started I recomend looking at 
 
-- [world setup](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_save_load/basic/src/game/in_game.rs)
-- [various events & co](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_save_load/basic/src/game/mod.rs)
+- [world setup](https://github.com/kaosat-dev/Blenvy/tree/main/examples/bevy_gltf_save_load/basic/src/game/in_game.rs)
+- [various events & co](https://github.com/kaosat-dev/Blenvy/tree/main/examples/bevy_gltf_save_load/basic/src/game/mod.rs)
 
 
 All examples are here:
 
-- https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_save_load/basic
+- https://github.com/kaosat-dev/Blenvy/tree/main/examples/bevy_gltf_save_load/basic
 
 
 ## Compatible Bevy versions

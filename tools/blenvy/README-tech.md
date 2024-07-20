@@ -10,11 +10,11 @@ You can enable this option to automatically replace all the **collection instanc
 - this means you will have 
     * one small main gltf file (your level/world)
     * as many gltf files as you have used collections in the level scene , in the library path you specified :
-    for the included [basic](../../examples/bevy_gltf_blueprints/basic/) example's [assets](../../examples/bevy_gltf_blueprints/basic/assets/), it looks something like this: 
+    for the included [basic](../../examples/blenvy/basic/) example's [assets](../../examples/blenvy/basic/assets/), it looks something like this: 
 
     ![library](./docs/exported_library_files.png)
     
-    the .blend file that they are generated from can be found [here](../../examples/bevy_gltf_blueprints/basic/assets/advanced.blend)
+    the .blend file that they are generated from can be found [here](../../examples/blenvy/basic/assets/advanced.blend)
 
 - the above only applies to collections that have **instances** in your level scene!
     if you want a specific collection in your library to always get exported regardless of its use, you need to add 

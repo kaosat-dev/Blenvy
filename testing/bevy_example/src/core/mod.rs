@@ -3,8 +3,8 @@ use std::any::TypeId;
 use bevy::{prelude::*, utils::HashSet};
 use blenvy::*;
 
-/*use bevy_gltf_blueprints::*;
-use bevy_registry_export::*; */
+/*use blenvy::*;
+use blenvy::*; */
 
 use crate::{ComponentAToFilterOut, ComponentBToFilterOut};
 

@@ -232,5 +232,5 @@ given object is located)
 
 ## Examples
 
-you can find an example [here](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_registry_export/)
+you can find an example [here](https://github.com/kaosat-dev/Blenvy/tree/main/examples/bevy_registry_export/)
 

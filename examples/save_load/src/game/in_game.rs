@@ -1,6 +1,6 @@
 use bevy::prelude::*;
-use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, GameWorldTag, Library, NoInBlueprint};
-use bevy_gltf_save_load::{Dynamic, DynamicEntitiesRoot, StaticEntitiesRoot};
+use blenvy::{BluePrintBundle, BlueprintName, GameWorldTag, Library, NoInBlueprint};
+use blenvy::{Dynamic, DynamicEntitiesRoot, StaticEntitiesRoot};
 use bevy_gltf_worlflow_examples_common_rapier::{GameState, InAppRunning, Player};
 use bevy_rapier3d::prelude::Velocity;
 use rand::Rng;

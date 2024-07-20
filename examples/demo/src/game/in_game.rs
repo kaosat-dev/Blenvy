@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, GameWorldTag};
+use blenvy::{BluePrintBundle, BlueprintName, GameWorldTag};
 use bevy_gltf_worlflow_examples_common_rapier::{assets::GameAssets, GameState, InAppRunning};
 
 use bevy_rapier3d::prelude::Velocity;

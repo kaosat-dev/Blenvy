@@ -1,6 +1,6 @@
 [![Crates.io](https://img.shields.io/crates/v/bevy_gltf_blueprints)](https://crates.io/crates/bevy_gltf_blueprints)
 [![Docs](https://img.shields.io/docsrs/bevy_gltf_blueprints)](https://docs.rs/bevy_gltf_blueprints/latest/bevy_gltf_blueprints/)
-[![License](https://img.shields.io/crates/l/bevy_gltf_blueprints)](https://github.com/kaosat-dev/Blender_bevy_components_workflow/blob/main/crates/bevy_gltf_blueprints/License.md)
+[![License](https://img.shields.io/crates/l/bevy_gltf_blueprints)](https://github.com/kaosat-dev/Blenvy/blob/main/crates/bevy_gltf_blueprints/License.md)
 [![Bevy tracking](https://img.shields.io/badge/Bevy%20tracking-released%20version-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
 
 # bevy_gltf_blueprints (deprecated in favor of Blenvy)
@@ -18,8 +18,8 @@ A blueprint is a set of **overrideable** components + a hierarchy: ie
     * a component called BlueprintName
 
 Particularly useful when using [Blender](https://www.blender.org/) as an editor for the [Bevy](https://bevyengine.org/) game engine, combined with the Blender add-ons that do a lot of the work for you 
-- [gltf_auto_export](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/gltf_auto_export)
-- [bevy_components](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/bevy_components) 
+- [gltf_auto_export](https://github.com/kaosat-dev/Blenvy/tree/main/tools/gltf_auto_export)
+- [bevy_components](https://github.com/kaosat-dev/Blenvy/tree/main/tools/bevy_components) 
 
 
 ## Usage
@@ -226,7 +226,7 @@ Typically , the order of systems should be
 
 ***bevy_gltf_components (GltfComponentsSet::Injection)*** => ***bevy_gltf_blueprints (GltfBlueprintsSet::Spawn, GltfBlueprintsSet::AfterSpawn)*** => ***replace_proxies***
 
-see an example [here](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/basic) for how to set it up correctly
+see an example [here](https://github.com/kaosat-dev/Blenvy/tree/main/examples/bevy_gltf_blueprints/basic) for how to set it up correctly
 
 
 
@@ -280,9 +280,9 @@ pub fn animation_change_on_proximity_foxes(
 }
 ```
 
-see [here](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/animation) for how to set it up correctly
+see [here](https://github.com/kaosat-dev/Blenvy/tree/main/examples/bevy_gltf_blueprints/animation) for how to set it up correctly
 
-particularly from [here](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/animation/src/game/in_game.rs)
+particularly from [here](https://github.com/kaosat-dev/Blenvy/tree/main/examples/bevy_gltf_blueprints/animation/src/game/in_game.rs)
 
 
 ## Materials
@@ -303,9 +303,9 @@ material_library_folder: "materials".into() //defaults to "materials" the folder
 ```bevy_gltf_blueprints``` currently does NOT take care of loading those at runtime
 
 
-see an example [here](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/materials) for how to set it up correctly
+see an example [here](https://github.com/kaosat-dev/Blenvy/tree/main/examples/bevy_gltf_blueprints/materials) for how to set it up correctly
 
-Generating optimised blueprints and material libraries can be automated using the latests version of the [Blender plugin](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/gltf_auto_export)
+Generating optimised blueprints and material libraries can be automated using the latests version of the [Blender plugin](https://github.com/kaosat-dev/Blenvy/tree/main/tools/gltf_auto_export)
 
 
 ## Legacy mode
@@ -319,7 +319,7 @@ BlueprintsPlugin{legacy_mode: false}
 ```
 
 
-You **need** to disable legacy mode if you want to use the [```bevy_components```](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/tools_bevy_blueprints/tools/bevy_components) Blender addon + the [```bevy_registry_export crate```](https://crates.io/crates/bevy_registry_export) ! 
+You **need** to disable legacy mode if you want to use the [```bevy_components```](https://github.com/kaosat-dev/Blenvy/tree/tools_bevy_blueprints/tools/bevy_components) Blender addon + the [```bevy_registry_export crate```](https://crates.io/crates/bevy_registry_export) ! 
 As it create custom properties that are writen in real **ron** file format instead of a simplified version (the one in the legacy mode)
 
 
@@ -328,15 +328,15 @@ As it create custom properties that are writen in real **ron** file format inste
 
 ## Examples
 
-* [basic](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/basic)
+* [basic](https://github.com/kaosat-dev/Blenvy/tree/main/examples/bevy_gltf_blueprints/basic)
 
-* [xbpd](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/basic_xpbd_physics)
+* [xbpd](https://github.com/kaosat-dev/Blenvy/tree/main/examples/bevy_gltf_blueprints/basic_xpbd_physics)
 
-* [animation](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/animation)
+* [animation](https://github.com/kaosat-dev/Blenvy/tree/main/examples/bevy_gltf_blueprints/animation)
 
-* [materials](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/materials)
+* [materials](https://github.com/kaosat-dev/Blenvy/tree/main/examples/bevy_gltf_blueprints/materials)
 
-* [multiple_levels_multiple_blendfiles](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/examples/bevy_gltf_blueprints/multiple_levels_multiple_blendfiles)
+* [multiple_levels_multiple_blendfiles](https://github.com/kaosat-dev/Blenvy/tree/main/examples/bevy_gltf_blueprints/multiple_levels_multiple_blendfiles)
 
 
 ## Compatible Bevy versions

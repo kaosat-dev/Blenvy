@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_gltf_blueprints::*;
+use blenvy::*;
 
 pub struct CorePlugin;
 impl Plugin for CorePlugin {

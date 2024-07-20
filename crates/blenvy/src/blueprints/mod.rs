@@ -99,8 +99,10 @@ impl Plugin for BlueprintsPlugin {
             .register_type::<BlueprintInfo>()
             .register_type::<MaterialInfo>()
             .register_type::<SpawnBlueprint>()
+            .register_type::<BlueprintInstanceDisabled>()
+            .register_type::<HideUntilReady>()
             .register_type::<BlueprintAnimations>()
-            .register_type::<SceneAnimations>()
+            .register_type::<InstanceAnimations>()
             .register_type::<AnimationInfo>()
             .register_type::<AnimationInfos>()
             .register_type::<Vec<AnimationInfo>>()
@@ -113,7 +115,6 @@ impl Plugin for BlueprintsPlugin {
             .register_type::<Vec<String>>()
             .register_type::<BlueprintAssets>()
             .register_type::<HashMap<String, Vec<String>>>()
-            .register_type::<HideUntilReady>()
             .configure_sets(
                 Update,
                 (GltfBlueprintsSet::Spawn, GltfBlueprintsSet::AfterSpawn)
@@ -128,7 +129,7 @@ impl Plugin for BlueprintsPlugin {
                     blueprints_assets_loaded,
                     blueprints_scenes_spawned,
                     blueprints_cleanup_spawned_scene,
-                    // post process
+                    // beyond this point : post processing to finalize blueprint instances
                     inject_materials,
                     compute_scene_aabbs, // .run_if(aabbs_enabled),
                     blueprints_finalize_instances,
@@ -145,6 +146,7 @@ impl Plugin for BlueprintsPlugin {
                     trigger_instance_animation_markers_events
                 ),
             )
+            
             // hot reload
             .add_systems(Update, react_to_asset_changes.run_if(hot_reload));
     }

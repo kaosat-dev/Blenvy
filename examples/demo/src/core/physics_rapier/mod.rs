@@ -7,7 +7,7 @@ pub(crate) mod controls;
 pub(crate) use controls::*;
 
 use bevy::prelude::*;
-use bevy_gltf_blueprints::GltfBlueprintsSet;
+use blenvy::GltfBlueprintsSet;
 use bevy_gltf_worlflow_examples_common::state::GameState;
 use bevy_rapier3d::{
     prelude::{NoUserData, RapierPhysicsPlugin},

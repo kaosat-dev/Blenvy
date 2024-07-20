@@ -1,5 +1,4 @@
 use bevy::prelude::*;
-use bevy_gltf_worlflow_examples_common_rapier::CommonPlugin;
 
 mod core;
 use crate::core::*;
@@ -15,7 +14,6 @@ fn main() {
         .add_plugins((
             DefaultPlugins.set(AssetPlugin::default()),
             // our custom plugins
-            CommonPlugin,
             CorePlugin,           // reusable plugins
             GamePlugin,           // specific to our game
             ComponentsTestPlugin, // Showcases different type of components /structs

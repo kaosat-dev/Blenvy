@@ -1,5 +1,5 @@
 use bevy::{prelude::*, scene::SceneInstance};
-use bevy_gltf_blueprints::{BluePrintBundle, BlueprintName, GameWorldTag, Library};
+use blenvy::{BluePrintBundle, BlueprintName, GameWorldTag, Library};
 use std::path::Path;
 
 use crate::{DynamicEntitiesRoot, SaveLoadConfig, StaticEntitiesRoot, StaticEntitiesStorage};

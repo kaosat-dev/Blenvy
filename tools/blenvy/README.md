@@ -1,7 +1,7 @@
 # Blenvy: Blender add-on
 
 
-This [Blender addon](https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/tools/blenvy) gives you:
+This [Blender addon](https://github.com/kaosat-dev/Blenvy/tree/main/tools/blenvy) gives you:
 - an easy to use UI to add and configure your [Bevy](https://bevyengine.org/) components inside Blender 
     - the UI is **automatically generated** based on a **registry schema** file, an export of all your **registered** Bevy components's information, generated
 by the registry export part of the [Blenvy](https://crates.io/crates/blenvy) crate

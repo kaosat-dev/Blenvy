@@ -12264,11 +12264,11 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "blenvy::blueprints::animation::SceneAnimations": {
+    "blenvy::blueprints::animation::InstanceAnimations": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
-      "long_name": "blenvy::blueprints::animation::SceneAnimations",
+      "long_name": "blenvy::blueprints::animation::InstanceAnimations",
       "properties": {
         "graph": {
           "type": {
@@ -12291,7 +12291,7 @@
         "named_indices",
         "graph"
       ],
-      "short_name": "SceneAnimations",
+      "short_name": "InstanceAnimations",
       "type": "object",
       "typeInfo": "Struct"
     },

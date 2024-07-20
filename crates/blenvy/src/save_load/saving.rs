@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use bevy::tasks::IoTaskPool;
-use bevy_gltf_blueprints::{BlueprintName, InBlueprint, Library, SpawnHere};
+use blenvy::{BlueprintName, InBlueprint, Library, SpawnHere};
 
 use std::fs::File;
 use std::io::Write;

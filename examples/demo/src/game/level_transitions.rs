@@ -1,5 +1,5 @@
 use bevy::{gltf::Gltf, prelude::*};
-use bevy_gltf_blueprints::GameWorldTag;
+use blenvy::GameWorldTag;
 use bevy_gltf_worlflow_examples_common_rapier::{
     assets::GameAssets, GameState, InAppRunning, Player,
 };

@@ -8,7 +8,7 @@ use std::{collections::HashMap, fs, time::Duration};
 
 use blenvy::{
     BlueprintAnimationPlayerLink, BlueprintAssets, BlueprintEvent, BlueprintInfo,
-    GltfBlueprintsSet, SceneAnimations,
+    GltfBlueprintsSet, InstanceAnimations,
 };
 
 use crate::{AppState, GameState};
@@ -37,7 +37,7 @@ fn validate_export(
     names: Query<&Name>,
     blueprints: Query<(Entity, &Name, &BlueprintInfo)>,
     animation_player_links: Query<(Entity, &BlueprintAnimationPlayerLink)>,
-    scene_animations: Query<(Entity, &SceneAnimations)>,
+    scene_animations: Query<(Entity, &InstanceAnimations)>,
     empties_candidates: Query<(Entity, &Name, &GlobalTransform)>,
 
     assets_list: Query<(Entity, &BlueprintAssets)>,

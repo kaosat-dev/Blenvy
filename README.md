@@ -1,5 +1,5 @@
 [![Bevy tracking](https://img.shields.io/badge/Bevy%20tracking-released%20version-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
-[![License](https://img.shields.io/crates/l/bevy_gltf_components)](https://github.com/kaosat-dev/Blender_bevy_components_workflow/blob/main/LICENSE.md)
+[![License](https://img.shields.io/crates/l/blenvy)](https://github.com/kaosat-dev/Blenvy/blob/main/LICENSE.md)
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/F1F5TO32O)
 
 # BLENVY: a friendly Blender <=> Bevy workflow !

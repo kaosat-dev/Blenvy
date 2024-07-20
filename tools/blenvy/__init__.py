@@ -6,8 +6,8 @@ bl_info = {
     "location": "File > Import-Export",
     "description": "tooling for the Bevy engine",
     "warning": "",
-    "wiki_url": "https://github.com/kaosat-dev/Blender_bevy_components_workflow",
-    "tracker_url": "https://github.com/kaosat-dev/Blender_bevy_components_workflow/issues/new",
+    "wiki_url": "https://github.com/kaosat-dev/Blenvy",
+    "tracker_url": "https://github.com/kaosat-dev/Blenvy/issues/new",
     "category": "Import-Export"
 }
 
