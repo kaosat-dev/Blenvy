@@ -2,10 +2,14 @@ def draw_settings_ui(layout, component_settings):
 
     row = layout.row()
     col = row.column()
-    col.enabled = False
-    col.prop(component_settings, "schema_path", text="Registry Schema path")
+    col.label(text="Registry Schema path")
+
     col = row.column()
-    col.operator(operator="blenvy.components_registry_browse_schema", text="Browse for registry schema file (json)")
+    col.enabled = False
+    col.prop(component_settings, "schema_path", text="")
+
+    col = row.column()
+    col.operator(operator="blenvy.components_registry_browse_schema", text="", icon="FILE_FOLDER")
 
     layout.separator()
     layout.operator(operator="blenvy.components_registry_reload", text="reload registry" , icon="FILE_REFRESH")

@@ -78,28 +78,32 @@ Blenvy is opinionated !
   - keep you art/sources (usually not delivered with your game) seperate from your game assets
   - keep your blueprints/levels/materials gltf files seperate
 
-##### Root Folder
+##### Root Folder (default: ../)
 
 - this is the same folder as your Bevy projects main folder: the path here is relative to the current .blend file
 
-##### Assets Folder
+##### Assets Folder (default: ./assets)
 
 - a path, relative to the *root* folder above, where you want to store your assets (delivered with your game)
 
-##### Library Folder
+##### Blueprints Folder (default: blueprints)
 
 - a path, relative to the *assets* folder above, where you want to store your *blueprints*
 
-##### Levels Folder
+##### Levels Folder (default: levels)
 
 - a path, relative to the *assets* folder above, where you want to store your *levels*
 
-##### Materials Folder
+##### Materials Folder (default: materials)
 
 - a path, relative to the *assets* folder above, where you want to store your *materials*
 
-#####
-  - level scenes: what are the scenes in your .blend file that are levels/worlds
+##### Level scenes
+
+  -  what are the scenes in your .blend file that are levels/worlds
+
+##### library scenes
+
   - library scenes: what are the scenes in your .blend file that contain your libraries of blueprints (that you then use in your levels)
 
 
@@ -121,17 +125,13 @@ The second tab contains the component settings:
 
 > you normally do not need to do anything, as the defaults are already pre-set to match those on the Bevy side for the location of the ```registry.json``` file, unless you want to store it somewhere other than ```assets/registry.json```
 
-- Go to the new Components tab in the **configuration** tab
-
-![configuration](./docs/configuration.png)
+###### registry file (default: assets/registry.json)
 
 - click on the button to select your registry.json file (in the "configuration" panel)
 
-![configuration 2](./docs/configuration2.png)
+###### reload registry
 
-- the list of available components will appear
-
-![configuration 3](./docs/configuration3.png)
+- click on the button to force refresh the list of components from the registry.json file
 
 
 ##### registry file polling
@@ -139,36 +139,89 @@ The second tab contains the component settings:
 * by default, the add-on will check for changes in your registry file every second, and refresh the UI accordingly
 * you can set the polling frequency or turn it off if you do not want auto-refresh
 
-![registry file polling](./docs/registry_polling.png)
-
 #### Export
 
 Last but not least, the export/ auto-export settings tab
 
 ![blenvy export settings](./docs/blenvy_configuration_export.png)
 
-### Materials
+##### Auto export (default: True)
 
-You can enable this option to automatically generate a **material library** files that combines all the materials in use in your blueprints.
+- toggle this to turn the whole auto-export system on or off : 
+ when enabled, **every time you save your blend file** Blenvy will automatically export a set of gltf files , for levels, blueprints, materials etc depending on your settings, see below.
 
-![material_library](./docs/blender_addon_materials2.png)
+##### Gltf settings
 
-Since each blueprint is normally a completely independant gltf file, without this option, if you have a material with a large texture for example, 
-**ALL** of your blueprints using that material will embed that large texture, leading to **significant bloat & memory use**.
+- click on this button to open Blender's standard gltf exporter settings **specific to Blenvy** : ie you have access to all of the normal gltf settings, but there is additional boilerplate
+to gather these settings for Blenvy only, so it does not impact your normal export settings
+- you *must* keep the "remember export settings" checkbox checked in order for the settings to be useable by Blenvy
 
-- When this option is enabled, you get a single material library per Blender project, and a **MaterialInfo** component is inserted into each object using a material.
-- The correct material will then be inserted on the Bevy side (that loads any number of material libraries that you need) into the correct mesh (see the configuration
-options in **bevy_gltf_blueprints** for more information on that)
-- Only one material per object is supported at this stage, ie the last material slot's material is the one that is going to be used
+> Important ! Do not use Blender's default gltf exporter (under file => export => gltf), as it does not impact Blenvy's settings
 
-![material_library](./docs/blender_addon_materials.png)
+##### Export scene settings (default: True)
 
-TLDR: Use this option to make sure that each blueprint file does not contain a copy of the same materials 
+- toggle this to export additional settings like ambient color, bloom, ao, etc from Blender to Bevy: this automatically generates additional components at the scene level that get processed by the Blenvy crate
 
+##### Use change detection (default: True)
+
+- toggle this to enable change detection: ie, to make sure that only the blueprints , levels or materials that have actually **changed since your last save** get exported to gltf files, a sort of "incremental export".
+
+> Under the hood, Blenvy serializes your whole Blender project to a simplified representation, to be able to tell the differents between successive changes
+
+##### Detailed materials scan (default: True)
+
+- this options enables more detailed materials scanning & thus detecting smaller changes, even **changes in material nodes** . This comes at a potential additional processing cost, so if you notice performance issues in projects with complex materials
+you can turn this off
+
+##### Detailed modifiers scan (default: True)
+
+- similar to the one above but for modifiers, this options enables more finer grained change detection in modifiers, even **changes in geometry nodes** . This comes at a potential additional processing cost, so if you notice performance issues in projects with complex modifiers
+you can turn this off
+
+##### Export blueprints (default: True)
+
+- check this if you want to automatically export blueprints 
+
+##### Collection instances (default: split)
+
+select which option you want to use to deal with collection instances (aka combine mode) (both inside blueprint collections & main collections)
+
+  * split (default, highly recomended) : the addon will 'split out' any nested collections/ blueprints & export them
+  * embed: choose this option if you want to keep everything inside a gltf file (less efficient, not recomended)
+  * embedExternal: this will embed ONLY collection instances whose collections have not been found inside the current blend file
+
+  These options can also be **overridden** on a per collection instance basis: (if you want to split out most collection instances, but keep a few specific ones embeded
+  inside your gltf file)
+      
+  ![combine override](./docs/combine_override.png) 
+
+  - simply add a custom property called **_combine** to the collection instance, and set it to one of the options above
+
+##### Export dynamic and static objects seperatly (default: False)
+ 
+
+For levels scenes only, toggle this to generate 2 files per level: 
+
+  - one with all dynamic data: collections or instances marked as dynamic (aka saveable)
+  - one with all static data: anything else that is NOT marked as dynamic, the file name will have the suffix **_dynamic**
+
+  Ie if you add a **Dynamic** custom/ component to either your collection instances or your blueprint, you get a clean seperation between 
+
+  - your static level data (anything that will never change during the lifetime of your Bevy app)
+  - your dynamic objects (anything that will change during the lifetime of your Bevy app, that can be saved & reloaded in save files for example)
+
+##### export materials library (default: True)
+
+check this if you want to automatically export material libraries 
+please read the dedicated [section](./README-export.md#materials) below for more information
+
+#### Additional export settings
+
+- you can also force per level or per blueprint systematic export (regardless of change detection), see the relevant sections in the levels & blueprint documentation
 
 ### Multiple blend file workflow
 
-If you want to use multiple blend files, use Blender's asset library etc, we got you coverred too !
+If you want to use multiple blend files (recomended if your project starts to grow even a bit), use Blender's asset library etc, we got you coverred too !
 There are only a few things to keep in mind 
 
 #### Assets/library/blueprints files
@@ -190,149 +243,24 @@ There are only a few things to keep in mind
 Take a look at the [relevant](../../examples/demo/) example for more [details](../../examples/demo/art/) 
 
 
-
-
 ## Useage
 
 ### Components
 
-#### adding components
+- for a detailed overview on how to add, edit, remove etc components please see [here](./README-components.md)
 
-- to add a component, select an object, collection, mesh or material and then select the component from the components list: (the full type information will be displayed as tooltip)
+### Export
 
-![components list](./docs/components_list.png)
+- for a detailed overview on auto exporting gltf files please see [here](./README-export.md)
 
-- click on the dropdown to get the full list of available components
+### Levels
 
-![components list](./docs/components_list2.png)
+- for a detailed overview of blueprints please see [here](./README-levels.md)
 
-- you can also filter components by name for convenience
 
-![filter components](./docs/filter_components.png)
+### Blueprints
 
-- add a component by clicking on the "add component" button once you have selected your desired component
-  
-  it will appear in the component list for that object
-
-![add component](./docs/add_component.png)
-
-
-#### editing components
-
-- to edit a component's value just use the UI: 
-
-![edit component](./docs/edit_component.png)
-
-#### copy & pasting 
-
-- you can also copy & paste components between objects
-
-- click on the "copy component button" of the component you want to copy
-
-![copy component](./docs/copy_component.png)
-
-- then select the object you want to copy the component (& its value) to, and click on the paste button.
-
-It will add the component to the select object
-
-![paste component](./docs/paste_component.png)
-
-> if the target object already has the same component, its values will be overwritten
-
-
-#### Additional components UI features
-
-
-##### Toggling component details
-
-- for large/ complex components you can toggle the details of that component:
-
-![toggle details](./docs/toggle_details.png)
-
-
-##### Supported components
-
-- normally (minus any bugs, please report those!) all components using **registered** types should be useable and editable
-- this includes (non exhaustive list):
-  * enums (even complex ones !)
-
-    ![enums](./docs/enums.png)
-
-    ![enums](./docs/enums2.png)
-
-  
-  * complex structs, with various types of fields (including nested ones)
-
-    ![complex](./docs/complex_components2.png)
-
-  * lists/ vecs (here a vec of tuples)
-
-    ![lists](./docs/vecs_lists.png)
-
-  * etc !
-
-##### Unregistered types & error handling
-
-- non registered types can be viewed in this panel : (can be practical to see if you have any missing registrations too!)
-
-    ![unregistered types](./docs/unregistered_types.png)
-
-- if you have a component made up of unregistered structs/enums etc, you will get visual feedback & the component will be deactivated
-
-    ![invalid component](./docs/invalid_components.png)
-
-  > see [here](#invalidunregistered-type-renaming--conversion) for ways to convert invalid / unregistered components to other types.
-
-
-- if you are encountering this type of view: don't panic your component data is not gone ! It just means you need to reload the registry data by clicking on the relevant button
-
-    ![missing registry data](./docs/missing_registry_data.png)
-
-## Levels
-
-## Blueprints
-
-
-## Technical details
-
-- adds **metadata** to objects containing information about what components it uses + some extra information
-- uses Blender's **PropertyGroups** to generate custom UIs & connects those groups with the custom properties so that no matter the complexity
-of your Bevy components you get a nicely packed custom_property to use with ...
-- supports any number of main/level scenes 
-    - Blender scenes where you define your levels, and all collection instances are replaced with "pointers" to other gltf files (all automatic)
-- supports any number of library scenes
-    - Blender scenes where you define the assets that you use in your levels, in the form of collections
-- automatic export of **changed** objects & collections only ! a sort of "incremental export", where only the changed collections (if in use)
-        get exported when you save your blend file
-
-### Components
-
-changing the values of a component in the UI  will automatically update the value of the underlying entry in the ```bevy_components``` custom property
-
-![edit component](./docs/edit_component2.png)
-
-### Internal process (simplified)
-
-This is the internal logic of the export process with blueprints (simplified)
-
-![process](./docs/process.svg)
-
-ie this is an example scene...
-
-![](./docs/workflow_original.jpg)
-
-and what actually gets exported for the level scene/world/level
-
-![](./docs/workflow_empties.jpg)
-
-all collections instances replaced with empties, and all those collections exported to gltf files as seen above
-
-
-## Known issues & limitations:
-
-* **Range** data (ie ```Range<f32>``` etc) are not handled at this time (issue seems to be on the Bevy side)
-* **Entity** structs are always set to 0 (setting entity values on the Blender side at this time does not make much sense anyway) 
-
+- for a detailed overview of blueprints please see [here](./README-blueprints.md)
 
 ## Development 
 

@@ -257,7 +257,6 @@ def draw_component_ui(layout, object_or_collection, registry, selected_component
         # we fetch the matching ui property group
         root_propertyGroup_name = registry.get_propertyGroupName_from_longName(component_name)
         """print("root_propertyGroup_name", root_propertyGroup_name)"""
-
         if root_propertyGroup_name:
             propertyGroup = getattr(component_meta, root_propertyGroup_name, None)
             """print("propertyGroup", propertyGroup)"""
@@ -279,6 +278,9 @@ def draw_component_ui(layout, object_or_collection, registry, selected_component
             else:
                 error_message = invalid_details if component_invalid else "Missing component UI data, please reload registry !"
                 row.label(text=error_message)
+        else:
+            error_message = invalid_details if component_invalid else "Missing component UI data, please reload registry !"
+            row.label(text=error_message)
 
         # "footer" with additional controls
         if component_invalid:

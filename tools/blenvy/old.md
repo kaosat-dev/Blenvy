@@ -36,9 +36,6 @@ This issue has been resolved in v0.9.
 
 
     - export folder: root folder to export models too
-    - export scene settings: exports "global"/scene settings like ambient color, bloom, ao, etc 
-        
-        This automatically generates additional components at the scene level 
 
     - pick your main (level) scenes and/or library scenes (see the chapter about [Blueprints](#blueprints) and [multiple Blend filles workflow](#multiple-blend-file-workflow) below)   
         - click in the scene picker & select your scene
@@ -53,79 +50,12 @@ This issue has been resolved in v0.9.
         
         ![select scene3](./docs/blender_addon_add_scene3.png) 
 
-    - export blueprints: check this if you want to automatically export blueprints (default: True)
     - blueprints path: the path to export blueprints to , relative to the main **export folder** (default: library)
-    - collection instances: select which option you want to use to deal with collection instances (aka combine mode) (both inside blueprint collections & main collections)
 
-        * split (default, highly recomended) : the addon will 'split out' any nested collections/ blueprints & export them
-        * embed: choose this option if you want to keep everything inside a gltf file (less efficient, not recomended)
-        * embedExternal: this will embed ONLY collection instances whose collections have not been found inside the current blend file
-
-        These options can also be **overridden** on a per collection instance basis: (if you want to split out most collection instances, but keep a few specific ones embeded
-        inside your gltf file)
-            
-        ![combine override](./docs/combine_override.png) 
-
-        - simply add a custom property called **_combine** to the collection instance, and set it to one of the options above
 
         please read the dedicated [section](#collection-instances--nested-blueprints) below for more information
 
 
-    - Export dynamic and static objects seperatly : For MAIN scenes only (aka levels), toggle this to generate 2 files per level: 
-
-        - one with all dynamic data: collection or instances marked as dynamic (aka saveable)
-        - one with all static data: anything else that is NOT marked as dynamic, the file name will have the suffix **_dynamic**
-
-        Ie if you add a "Dynamic" custom property/ component to either your collection instances or your blueprint, you get a clean seperation between 
-
-        - your static level data (anything that will never change during the lifetime of your Bevy app)
-        - your dynamic objects (anything that will change during the lifetime of your Bevy app, that can be saved & reloaded in save files for example)
-
-    - export materials library: check this if you want to automatically export material libraries (default: False)
-    please read the dedicated [section](#materials) below for more information
-
-        > This only works together with blueprints !
-
-    - materials path: where to export materials to
-
-* and your standard gltf export parameters in the **gltf** panel
-
-    ![blender addon use2](./docs/blender_addon_use2.png)
-
-
-* click on "apply settings"
-* now next time you save your blend file you will get an automatically exported gltf file (or more than one, depending on your settings, see below)
-
-### Blueprints
-
-You can enable this option to automatically replace all the **collection instances** inside your level scene with blueprints
-- whenever you change your level scene (or your library scene , if that option is enabled), all your collection instances 
-    * will be replaced with empties (this will not be visible to you)
-    * those empties will have additional custom properties / components : ```BlueprintInfo``` & ```SpawnBlueprint```
-    * your level scene/ level will be exported to a much more trimmed down gltf file (see next point)
-    * all the original collections (that you used to create the instances) will be exported as **seperate gltf files** into the "library" folder
-
-- this means you will have 
-    * one small main gltf file (your level/world)
-    * as many gltf files as you have used collections in the level scene , in the library path you specified :
-    for the included [basic](../../examples/bevy_gltf_blueprints/basic/) example's [assets](../../examples/bevy_gltf_blueprints/basic/assets/), it looks something like this: 
-
-    ![library](./docs/exported_library_files.png)
-    
-    the .blend file that they are generated from can be found [here](../../examples/bevy_gltf_blueprints/basic/assets/advanced.blend)
-
-- the above only applies to collections that have **instances** in your level scene!
-    if you want a specific collection in your library to always get exported regardless of its use, you need to add 
-    a **COLLECTION** (boolean) custom property called ```AutoExport``` set to true
-    > not at the object level ! the collection level !
-
-    ![force-export](./docs/force_export.jpg)
-
-    It will get automatically exported like any of the "in-use" collections.
-
-- you can also get an overview of all the exported collections in the export menu
-
-    ![exported collections](./docs/exported_collections.png)
 
 - there are some workflow specificities for multi blend file [workflows](#multiple-blend-file-workflow)
 
