@@ -1,12 +1,17 @@
 # Blender add-ons
 
-- gltf_auto_export and bevy_components have been replaced with a single Blenvy add-on for simplicity
+- gltf_auto_export and bevy_components have been replaced with a single Blenvy add-on for simplicity , I recomend reading the [documentation](./tools/blenvy/README.md)
+    * settings are **not** transfered from the legacy add-ons !
+    * first uninstall the old add-ons
+    * install Blenvy
+    * configure Blenvy (for these , see the Blenvy add-on docs)
+    * [upgrade your components](./tools/blenvy/README-components.md#renamingupgradingfixing-components)
+
 
 ## Components:
 
 - no more need to add your components to an empty called xxx_components, you can now directly add your components to the blueprint's collection itself
 - you will need to "upgrade" your components from the previous add-on, as they are stored in a completely different way
-- bonus: you can also visualize & edit your blueprint's component directly on each instance
 
 ## Multiple components with the same short name
 

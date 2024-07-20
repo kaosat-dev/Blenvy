@@ -13,9 +13,6 @@ by the registry export part of the [Blenvy](https://crates.io/crates/blenvy) cra
     - change detection, so that only the levels & blueprints you have changed get exported when you save your blend file
     - export of material librairies
 
-
-If you want to know more about the technical details , see [here]()
-
 > IMPORTANT !! if you have previously used the "old" add-ons (*gltf_auto_export* & *bevy_components*), please see the [migration guide](../../Migration_guide.md)
 If you can I would generally recommend starting fresh, but a lot of effort has been put to make transitioning easier
 
@@ -27,22 +24,19 @@ If you can I would generally recommend starting fresh, but a lot of effort has b
 
 ![blender addon install](./docs/blender_addon_install_zip.png)
 
+* up to Blender 4.1 go to edit => preferences => add-ons, click on install and choose the path where ```blenvy.zip``` is stored
 
-* in Blender go to edit =>  preferences => install
+  ![blender addon install](./docs/blender_addon_install.png)
 
-![blender addon install](./docs/blender_addon_install.png)
-
-* choose the path where ```blenvy.zip``` is stored
-
-![blender addon install](./docs/blender_addon_install2.png)
-
-  * up to Blender 4.1
-  * for Blender 4.2 , just drag & drop the zip file onto Blender to start the installation process
+* for Blender 4.2 , just drag & drop the zip file onto Blender to start the installation process
 
 
 ## Quickstart
 
-* set your level & library scenes (the only things that are not pre-configured)
+* create your Bevy project
+* setup the Blenvy crate
+* create a Blender project
+* set your level & library scenes (the **only** things that are not pre-configured)
 
 ![blenvy common settings](./docs/blenvy_configuration_common.png)
 
@@ -116,108 +110,11 @@ Blenvy is opinionated !
 ![recomended folder structure assets](./docs/blenvy_recommended_folder_structure_assets.png)
 
 
-#### Components
+##### Components & export settings:
 
-The second tab contains the component settings:
+- for components please see [here](./README-components.md#configuration)
+- for export please see [here](./README-export.md#configuration)
 
-![blenvy component settings](./docs/blenvy_configuration_components.png)
-
-
-> you normally do not need to do anything, as the defaults are already pre-set to match those on the Bevy side for the location of the ```registry.json``` file, unless you want to store it somewhere other than ```assets/registry.json```
-
-###### registry file (default: assets/registry.json)
-
-- click on the button to select your registry.json file (in the "configuration" panel)
-
-###### reload registry
-
-- click on the button to force refresh the list of components from the registry.json file
-
-
-##### registry file polling
-
-* by default, the add-on will check for changes in your registry file every second, and refresh the UI accordingly
-* you can set the polling frequency or turn it off if you do not want auto-refresh
-
-#### Export
-
-Last but not least, the export/ auto-export settings tab
-
-![blenvy export settings](./docs/blenvy_configuration_export.png)
-
-##### Auto export (default: True)
-
-- toggle this to turn the whole auto-export system on or off : 
- when enabled, **every time you save your blend file** Blenvy will automatically export a set of gltf files , for levels, blueprints, materials etc depending on your settings, see below.
-
-##### Gltf settings
-
-- click on this button to open Blender's standard gltf exporter settings **specific to Blenvy** : ie you have access to all of the normal gltf settings, but there is additional boilerplate
-to gather these settings for Blenvy only, so it does not impact your normal export settings
-- you *must* keep the "remember export settings" checkbox checked in order for the settings to be useable by Blenvy
-
-> Important ! Do not use Blender's default gltf exporter (under file => export => gltf), as it does not impact Blenvy's settings
-
-##### Export scene settings (default: True)
-
-- toggle this to export additional settings like ambient color, bloom, ao, etc from Blender to Bevy: this automatically generates additional components at the scene level that get processed by the Blenvy crate
-
-##### Use change detection (default: True)
-
-- toggle this to enable change detection: ie, to make sure that only the blueprints , levels or materials that have actually **changed since your last save** get exported to gltf files, a sort of "incremental export".
-
-> Under the hood, Blenvy serializes your whole Blender project to a simplified representation, to be able to tell the differents between successive changes
-
-##### Detailed materials scan (default: True)
-
-- this options enables more detailed materials scanning & thus detecting smaller changes, even **changes in material nodes** . This comes at a potential additional processing cost, so if you notice performance issues in projects with complex materials
-you can turn this off
-
-##### Detailed modifiers scan (default: True)
-
-- similar to the one above but for modifiers, this options enables more finer grained change detection in modifiers, even **changes in geometry nodes** . This comes at a potential additional processing cost, so if you notice performance issues in projects with complex modifiers
-you can turn this off
-
-##### Export blueprints (default: True)
-
-- check this if you want to automatically export blueprints 
-
-##### Collection instances (default: split)
-
-select which option you want to use to deal with collection instances (aka combine mode) (both inside blueprint collections & main collections)
-
-  * split (default, highly recomended) : the addon will 'split out' any nested collections/ blueprints & export them
-  * embed: choose this option if you want to keep everything inside a gltf file (less efficient, not recomended)
-  * embedExternal: this will embed ONLY collection instances whose collections have not been found inside the current blend file
-
-  These options can also be **overridden** on a per collection instance basis: (if you want to split out most collection instances, but keep a few specific ones embeded
-  inside your gltf file)
-      
-  ![combine override](./docs/combine_override.png) 
-
-  - simply add a custom property called **_combine** to the collection instance, and set it to one of the options above
-
-##### Export dynamic and static objects seperatly (default: False)
- 
-
-For levels scenes only, toggle this to generate 2 files per level: 
-
-  - one with all dynamic data: collections or instances marked as dynamic (aka saveable)
-  - one with all static data: anything else that is NOT marked as dynamic, the file name will have the suffix **_dynamic**
-
-  Ie if you add a **Dynamic** custom/ component to either your collection instances or your blueprint, you get a clean seperation between 
-
-  - your static level data (anything that will never change during the lifetime of your Bevy app)
-  - your dynamic objects (anything that will change during the lifetime of your Bevy app, that can be saved & reloaded in save files for example)
-
-##### export materials library (default: True)
-
-check this if you want to automatically export material libraries 
-please read the dedicated [section](./README-export.md#materials) below for more information
-
-#### Additional export settings
-
-- you can also force per level or per blueprint systematic export (regardless of change detection), see the relevant sections in the levels & blueprint documentation
 
 ### Multiple blend file workflow
 
@@ -256,7 +153,6 @@ Take a look at the [relevant](../../examples/demo/) example for more [details](.
 ### Levels
 
 - for a detailed overview of blueprints please see [here](./README-levels.md)
-
 
 ### Blueprints
 

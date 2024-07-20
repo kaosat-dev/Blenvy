@@ -1,5 +1,29 @@
 # Components
 
+## Configuration
+
+The second tab in the settings contains the component settings:
+
+![blenvy component settings](./docs/blenvy_configuration_components.png)
+
+
+> you normally do not need to do anything, as the defaults are already pre-set to match those on the Bevy side for the location of the ```registry.json``` file, unless you want to store it somewhere other than ```assets/registry.json```
+
+###### registry file (default: assets/registry.json)
+
+- click on the button to select your registry.json file (in the "configuration" panel)
+
+###### reload registry
+
+- click on the button to force refresh the list of components from the registry.json file
+
+
+##### registry file polling
+
+* by default, the add-on will check for changes in your registry file every second, and refresh the UI accordingly
+* you can set the polling frequency or turn it off if you do not want auto-refresh
+
+
 ## Supported components
 
 - normally (minus any bugs, please report those!) all components using **registered** types should be useable and editable

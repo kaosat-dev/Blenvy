@@ -57,3 +57,9 @@ If you want to view all of your blueprints, navigate to the Blueprints tab
 * those blueprints will be exported on every save
 * this option is disabled for external blueprints
     
+
+## Adding assets to blueprints
+
+- you can add references to any external file to be used as assets
+- the paths to these assets will be passed on to the Bevy side
+- the Blenvy crate will load the assets and they will be available at the same time as your blueprint instance is ready

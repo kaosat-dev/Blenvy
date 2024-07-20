@@ -1,7 +1,7 @@
 [workspace]
 members = [
     "crates/*",
-    "examples/blenvy/*",
+    "examples/*",
     "testing/bevy_example/",
 ]
 resolver = "2"
