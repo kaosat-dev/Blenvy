@@ -62,7 +62,7 @@ Components:
     - [x] Hashmap Support
         - [x] fix parsing of keys's type either on Bevy side (prefered) or on the Blender side 
         - [x] fix weird issue with missing "0" property when adding new entry in empty hashmap => happens only if the values for the "setter" have never been set
-        - [ ] handle missing types in registry for keys & values
+        - [x] handle missing types in registry for keys & values
         - [x] adding a hashmap nukes every existing component ??
     - [x] Add correct upgrade handling from individual component to bevy_components
     - [x] Settings handling:
@@ -218,10 +218,15 @@ Blender side:
 
 - [ ] add option to 'split out' meshes from blueprints ? 
     - [ ] ie considering meshletts etc , it would make sense to keep blueprints seperate from purely mesh gltfs
-- [ ] persist exported materials path in blueprints so that it can be read from library file users
-    - [ ] just like "export_path" write it into each blueprint's collection
-    - [ ] scan for used materials per blueprint !
-    - [ ] for scenes, scan for used materials of all non instance objects (TODO: what about overrides ?)
+
+- [ ] materials fixes & upgrades
+    - [x] materials do not get exported again if the files are missing, until you change a material
+    - [x] materials do not get exported when a material is added ?
+    - [ ] material assets seem to be added to list regardless of whether material exports are enabled or not
+    - [ ] persist exported materials path in blueprints so that it can be read from library file users
+        - [ ] just like "export_path" write it into each blueprint's collection
+        - [ ] scan for used materials per blueprint !
+        - [ ] for scenes, scan for used materials of all non instance objects (TODO: what about overrides ?)
 
 - [ ] add a way of visualizing per blueprint instances ?
 - [ ] display export path of blueprints (mostly external) ?
@@ -284,7 +289,7 @@ Bevy Side:
     - [x] for sub blueprint tracking: do not propagate/ deal with parent blueprints if they are not themselves Spawning (ie filter out by "BlueprintSpawning")
     - [x] cleanup internals
     - [ ] analyse what is off with blueprint level components 
-    - [ ] add the root blueprint itself to the assets either on the blender side or on the bevy side programatically
+    - [x] add the root blueprint itself to the assets either on the blender side or on the bevy side programatically
     - [ ] invalidate despawned entity & parent entities AABB 
     - [ ] add unloading/cache removal of materials
 
@@ -316,6 +321,11 @@ Bevy Side:
     - [x] replace all references to the old 2 add-ons with those to Blenvy
 - [x] rename repo to "Blenvy"
 - [x] do a deprecation release of all bevy_gltf_xxx crates to point at the new Blenvy crate
-- [ ] material assets seem to be added to list regardless of whether material exports are enabled or not
+- [ ] consider finding a way of having unique ids for all objects & collections in Blender (not trivial, if not impossible)
+    this would allow things such as 
+        - [ ] mapping uuids to blueprint paths
+        - [ ] solving problems with scene renames
+        - [ ] the ability to map external TEXT files to data in BLender (git-able, hand editable)
+- [x] make aabbs calculation non configurable, getting rid of the last setting (for now)
 
 clear && pytest -svv --blender-template ../../testing/bevy_example/art/testing_library.blend --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration_prepare.py  && pytest -svv --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration.py

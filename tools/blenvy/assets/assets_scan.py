@@ -1,5 +1,6 @@
 import os
 import json
+import posixpath
 import bpy
 
 from .asset_helpers import does_asset_exist, get_user_assets, get_user_assets_as_list
@@ -22,7 +23,7 @@ def scan_assets(scene, blueprints_data, settings):
                 #print("BLUEPRINT", blueprint)
                 blueprint_exported_path = None
                 if blueprint.local:
-                    blueprint_exported_path = os.path.join(relative_blueprints_path, f"{blueprint.name}{export_gltf_extension}")
+                    blueprint_exported_path = posixpath.join(relative_blueprints_path, f"{blueprint.name}{export_gltf_extension}")
                 else:
                     # get the injected path of the external blueprints
                     blueprint_exported_path = blueprint.collection['Export_path'] if 'Export_path' in blueprint.collection else None
@@ -71,7 +72,7 @@ def get_blueprint_assets_tree(blueprint, blueprints_data, parent, settings):
         if child_blueprint:
             blueprint_exported_path = None
             if blueprint.local:
-                blueprint_exported_path = os.path.join(blueprints_path, f"{child_blueprint.name}{export_gltf_extension}")
+                blueprint_exported_path = posixpath.join(blueprints_path, f"{child_blueprint.name}{export_gltf_extension}")
             else:
                 # get the injected path of the external blueprints
                 blueprint_exported_path = child_blueprint.collection['export_path'] if 'export_path' in child_blueprint.collection else None
@@ -101,7 +102,7 @@ def get_level_scene_assets_tree(level_scene, blueprints_data, settings):
             if blueprint is not None: 
                 blueprint_exported_path = None
                 if blueprint.local:
-                    blueprint_exported_path = os.path.join(blueprints_path, f"{blueprint.name}{export_gltf_extension}")
+                    blueprint_exported_path = posixpath.join(blueprints_path, f"{blueprint.name}{export_gltf_extension}")
                 else:
                     # get the injected path of the external blueprints
                     blueprint_exported_path = blueprint.collection['export_path'] if 'export_path' in blueprint.collection else None
@@ -134,7 +135,7 @@ def get_level_scene_assets_tree2(level_scene, blueprints_data, settings):
             if blueprint is not None: 
                 blueprint_exported_path = None
                 if blueprint.local:
-                    blueprint_exported_path = os.path.join(blueprints_path, f"{blueprint.name}{export_gltf_extension}")
+                    blueprint_exported_path = posixpath.join(blueprints_path, f"{blueprint.name}{export_gltf_extension}")
                 else:
                     # get the injected path of the external blueprints
                     blueprint_exported_path = blueprint.collection['export_path'] if 'export_path' in blueprint.collection else None
@@ -156,7 +157,7 @@ def get_blueprint_asset_tree(blueprint, blueprints_data, settings):
         if sub_blueprint is not None: 
             sub_blueprint_exported_path = None
             if sub_blueprint.local:
-                sub_blueprint_exported_path = os.path.join(blueprints_path, f"{sub_blueprint.name}{export_gltf_extension}")
+                sub_blueprint_exported_path = posixpath.join(blueprints_path, f"{sub_blueprint.name}{export_gltf_extension}")
             else:
                 # get the injected path of the external blueprints
                 sub_blueprint_exported_path = sub_blueprint.collection['export_path'] if 'export_path' in sub_blueprint.collection else None

@@ -5,8 +5,8 @@ from pathlib import Path
 from blenvy.core.helpers_collections import (traverse_tree)
 from blenvy.core.object_makers import make_cube
 from blenvy.materials.materials_helpers import add_material_info_to_objects, get_all_materials
-from .generate_temporary_scene_and_export import generate_temporary_scene_and_export
-from .export_gltf import (generate_gltf_export_settings)
+from ..common.generate_temporary_scene_and_export import generate_temporary_scene_and_export
+from ..common.export_gltf import (generate_gltf_export_settings)
 
 # material library logic
 # To avoid redundant materials (can be very costly, mostly when using high res textures)
@@ -65,35 +65,38 @@ def clear_materials_scene(temp_scene):
 
 # exports the materials used inside the current project:
 # the name of the output path is <materials_folder>/<name_of_your_blend_file>_materials_library.gltf/glb
-def export_materials(collections, library_scenes, settings):
-    gltf_export_settings = generate_gltf_export_settings(settings)
-    materials_path_full = getattr(settings,"materials_path_full")
+def export_materials(materials_to_export, settings, blueprints_data):
+    if len(materials_to_export) >0:
+        gltf_export_settings = generate_gltf_export_settings(settings)
+        materials_path_full = getattr(settings,"materials_path_full")
 
-    (used_material_names, materials_per_object) = get_all_materials(collections, library_scenes)
-    add_material_info_to_objects(materials_per_object, settings)
+        (used_material_names, materials_per_object) = get_all_materials(blueprints_data.blueprint_names, settings.library_scenes)
+        add_material_info_to_objects(materials_per_object, settings)
 
-    gltf_export_settings = { **gltf_export_settings, 
-                    'use_active_scene': True, 
-                    'use_active_collection':True, 
-                    'use_active_collection_with_nested':True,  
-                    'use_visible': False,
-                    'use_renderable': False,
-                    'export_apply':True
-                    }
+        gltf_export_settings = { **gltf_export_settings, 
+                        'use_active_scene': True, 
+                        'use_active_collection':True, 
+                        'use_active_collection_with_nested':True,  
+                        'use_visible': False,
+                        'use_renderable': False,
+                        'export_apply':True
+                        }
 
-    current_project_name = Path(bpy.context.blend_data.filepath).stem
-    gltf_output_path = os.path.join(materials_path_full, current_project_name + "_materials")
+        current_project_name = Path(bpy.context.blend_data.filepath).stem
+        gltf_output_path = os.path.join(materials_path_full, current_project_name + "_materials")
 
-    print("       exporting Materials to", gltf_output_path, ".gltf/glb")
+        print("       exporting Materials to", gltf_output_path, ".gltf/glb")
 
-    generate_temporary_scene_and_export(
-        settings=settings, 
-        gltf_export_settings=gltf_export_settings,
-        temp_scene_name="__materials_scene",
-        gltf_output_path=gltf_output_path,
-        tempScene_filler= lambda temp_collection: generate_materials_scene_content(temp_collection, used_material_names),
-        tempScene_cleaner= lambda temp_scene, params: clear_materials_scene(temp_scene=temp_scene)
-    )
+        generate_temporary_scene_and_export(
+            settings=settings, 
+            gltf_export_settings=gltf_export_settings,
+            temp_scene_name="__materials_scene",
+            gltf_output_path=gltf_output_path,
+            tempScene_filler= lambda temp_collection: generate_materials_scene_content(temp_collection, used_material_names),
+            tempScene_cleaner= lambda temp_scene, params: clear_materials_scene(temp_scene=temp_scene)
+        )
+    
+  
 
 
 def cleanup_materials(collections, library_scenes):

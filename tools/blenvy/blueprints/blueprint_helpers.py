@@ -3,6 +3,7 @@ import os
 import json
 import bpy
 from pathlib import Path
+import posixpath
 
 from ..core.scene_helpers import add_scene_property
 
@@ -28,10 +29,10 @@ def inject_export_path_into_internal_blueprints(internal_blueprints, blueprints_
     materials_path =  getattr(settings, "materials_path")
     current_project_name = Path(bpy.context.blend_data.filepath).stem
     materials_library_name = f"{current_project_name}_materials"
-    materials_exported_path = os.path.join(materials_path, f"{materials_library_name}{export_gltf_extension}")
+    materials_exported_path = posixpath.join(materials_path, f"{materials_library_name}{export_gltf_extension}")
 
     for blueprint in internal_blueprints:
-        blueprint_exported_path = os.path.join(blueprints_path, f"{blueprint.name}{gltf_extension}")
+        blueprint_exported_path = posixpath.join(blueprints_path, f"{blueprint.name}{gltf_extension}")
         # print("injecting blueprint path", blueprint_exported_path, "for", blueprint.name)
         blueprint.collection["export_path"] = blueprint_exported_path
         if export_materials_library:
@@ -58,7 +59,7 @@ def inject_blueprints_list_into_level_scene(scene, blueprints_data, settings):
                 #print("BLUEPRINT", blueprint)
                 blueprint_exported_path = None
                 if blueprint.local:
-                    blueprint_exported_path = os.path.join(blueprints_path, f"{blueprint.name}{export_gltf_extension}")
+                    blueprint_exported_path = posixpath.join(blueprints_path, f"{blueprint.name}{export_gltf_extension}")
                 else:
                     # get the injected path of the external blueprints
                     blueprint_exported_path = blueprint.collection['Export_path'] if 'Export_path' in blueprint.collection else None
