@@ -1,6 +1,6 @@
 use bevy::prelude::*;
-use blenvy::{BluePrintBundle, BlueprintName, GameWorldTag};
 use bevy_gltf_worlflow_examples_common_rapier::{assets::GameAssets, GameState, InAppRunning};
+use blenvy::{BluePrintBundle, BlueprintName, GameWorldTag};
 
 use bevy_rapier3d::prelude::Velocity;
 use rand::Rng;

@@ -1,7 +1,11 @@
 use std::time::Duration;
 
 use bevy::prelude::*;
-use blenvy::{AddToGameWorld, BlenvyPlugin, BluePrintBundle, BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintInfo, DynamicBlueprintInstance, GameWorldTag, HideUntilReady, SpawnBlueprint};
+use blenvy::{
+    AddToGameWorld, BlenvyPlugin, BluePrintBundle, BlueprintAnimationPlayerLink,
+    BlueprintAnimations, BlueprintInfo, DynamicBlueprintInstance, GameWorldTag, HideUntilReady,
+    SpawnBlueprint,
+};
 use rand::Rng;
 
 mod component_examples;
@@ -22,31 +26,24 @@ pub struct Fox;
 /// Demo marker component
 pub struct Robot;
 
-
 fn main() {
     App::new()
         .add_plugins((
             DefaultPlugins.set(AssetPlugin::default()),
             // our custom plugins
             ComponentsExamplesPlugin, // Showcases different type of components /structs
-            BlenvyPlugin::default()
+            BlenvyPlugin::default(),
         ))
         .register_type::<Player>()
         .register_type::<Fox>()
         .register_type::<Robot>()
-
         .add_systems(Startup, setup_game)
-        .add_systems(Update, 
-            (animation_control,)
-        )
+        .add_systems(Update, (animation_control,))
         .run();
 }
 
 // this is how you setup & spawn a level from a blueprint
-fn setup_game(
-    mut commands: Commands,
-) {
-
+fn setup_game(mut commands: Commands) {
     // here we actually spawn our game world/level
     commands.spawn((
         BlueprintInfo::from_path("levels/World.glb"), // all we need is a Blueprint info...
@@ -55,7 +52,6 @@ fn setup_game(
         GameWorldTag,
     ));
 }
-
 
 //////////////////////////////////
 
@@ -94,7 +90,7 @@ pub fn animation_control(
     if keycode.just_pressed(KeyCode::KeyW) {
         for (link, animations) in animated_foxes.iter() {
             let (mut animation_player, mut animation_transitions) =
-            animation_players.get_mut(link.0).unwrap();
+                animation_players.get_mut(link.0).unwrap();
 
             let anim_name = "Walk";
             animation_transitions
@@ -114,7 +110,7 @@ pub fn animation_control(
     if keycode.just_pressed(KeyCode::KeyX) {
         for (link, animations) in animated_foxes.iter() {
             let (mut animation_player, mut animation_transitions) =
-            animation_players.get_mut(link.0).unwrap();
+                animation_players.get_mut(link.0).unwrap();
 
             let anim_name = "Run";
             animation_transitions
@@ -134,7 +130,7 @@ pub fn animation_control(
     if keycode.just_pressed(KeyCode::KeyC) {
         for (link, animations) in animated_foxes.iter() {
             let (mut animation_player, mut animation_transitions) =
-            animation_players.get_mut(link.0).unwrap();
+                animation_players.get_mut(link.0).unwrap();
 
             let anim_name = "Survey";
             animation_transitions

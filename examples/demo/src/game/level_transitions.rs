@@ -1,9 +1,9 @@
 use bevy::{gltf::Gltf, prelude::*};
-use blenvy::GameWorldTag;
 use bevy_gltf_worlflow_examples_common_rapier::{
     assets::GameAssets, GameState, InAppRunning, Player,
 };
 use bevy_rapier3d::prelude::*;
+use blenvy::GameWorldTag;
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]

@@ -10,18 +10,13 @@ fn main() {
             DefaultPlugins.set(AssetPlugin::default()),
             // our custom plugins
             ComponentsExamplesPlugin, // Showcases different type of components /structs
-            BlenvyPlugin::default()
+            BlenvyPlugin::default(),
         ))
-
         .add_systems(Startup, setup_game)
         .run();
 }
 
-
-fn setup_game(
-    mut commands: Commands,
-) {
-
+fn setup_game(mut commands: Commands) {
     // here we actually spawn our game world/level
     commands.spawn((
         BlueprintInfo::from_path("levels/World.glb"), // all we need is a Blueprint info...

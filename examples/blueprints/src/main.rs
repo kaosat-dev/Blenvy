@@ -1,5 +1,8 @@
 use bevy::prelude::*;
-use blenvy::{AddToGameWorld, BlenvyPlugin, BluePrintBundle, BlueprintInfo, DynamicBlueprintInstance, GameWorldTag, HideUntilReady, SpawnBlueprint};
+use blenvy::{
+    AddToGameWorld, BlenvyPlugin, BluePrintBundle, BlueprintInfo, DynamicBlueprintInstance,
+    GameWorldTag, HideUntilReady, SpawnBlueprint,
+};
 use rand::Rng;
 
 mod component_examples;
@@ -11,20 +14,15 @@ fn main() {
             DefaultPlugins.set(AssetPlugin::default()),
             // our custom plugins
             ComponentsExamplesPlugin, // Showcases different type of components /structs
-            BlenvyPlugin::default()
+            BlenvyPlugin::default(),
         ))
-
         .add_systems(Startup, setup_game)
         .add_systems(Update, spawn_blueprint_instance)
-
         .run();
 }
 
 // this is how you setup & spawn a level from a blueprint
-fn setup_game(
-    mut commands: Commands,
-) {
-
+fn setup_game(mut commands: Commands) {
     // here we spawn our game world/level, which is also a blueprint !
     commands.spawn((
         BlueprintInfo::from_path("levels/World.glb"), // all we need is a Blueprint info...
@@ -33,7 +31,6 @@ fn setup_game(
         GameWorldTag,
     ));
 }
-
 
 // you can also spawn blueprint instances at runtime
 pub fn spawn_blueprint_instance(
@@ -67,10 +64,8 @@ pub fn spawn_blueprint_instance(
                 HideUntilReady,
                 AddToGameWorld,
                 TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
-              
             ))
             .id();
         //         commands.entity(world).add_child(new_entity);
-
     }
 }
