@@ -50,7 +50,7 @@ fn components_string_to_components(
     {
         debug!("TYPE INFO {:?}", type_registration.type_info());
 
-        let ron_string = format!(
+        let mut ron_string = format!(
             "{{ \"{}\":{} }}",
             type_registration.type_info().type_path(),
             parsed_value
@@ -67,6 +67,9 @@ fn components_string_to_components(
         */
 
         debug!("component data ron string {}", ron_string);
+        if cfg!(windows) {
+            ron_string = ron_string.replace("\\", "/");
+        }
         let mut deserializer = ron::Deserializer::from_str(ron_string.as_str())
             .expect("deserialzer should have been generated from string");
         let reflect_deserializer = ReflectDeserializer::new(type_registry);
