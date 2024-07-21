@@ -65,7 +65,6 @@ fn components_string_to_components(
             ron::ser::to_string_pretty(&serializer, ron::ser::PrettyConfig::default()).unwrap();
         println!("serialized Component {}", serialized);
         */
-
         debug!("component data ron string {}", ron_string);
         let mut deserializer = ron::Deserializer::from_str(ron_string.as_str())
             .expect("deserialzer should have been generated from string");

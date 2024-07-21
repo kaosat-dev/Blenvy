@@ -6,9 +6,11 @@ pub use export_types::*;
 use bevy::{
     app::Startup,
     asset::AssetPlugin,
-    prelude::{App, Plugin, Resource},
+    prelude::{App, IntoSystemConfigs, Plugin, Res, Resource},
     scene::SceneFilter,
 };
+
+use crate::BlenvyConfig;
 
 pub struct ExportRegistryPlugin {
     pub component_filter: SceneFilter,
@@ -26,9 +28,14 @@ impl Default for ExportRegistryPlugin {
     }
 }
 
+fn export_registry(blenvy_config: Res<BlenvyConfig>) -> bool {
+    // TODO: add detection of Release builds, wasm, and android in order to avoid exporting registry in those cases
+    blenvy_config.export_registry
+}
+
 impl Plugin for ExportRegistryPlugin {
     fn build(&self, app: &mut App) {
-        app.register_asset_root().add_systems(Startup, export_types);
+        app.register_asset_root().add_systems(Startup, export_types.run_if(export_registry));
     }
 }
 

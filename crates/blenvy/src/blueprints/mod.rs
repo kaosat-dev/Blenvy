@@ -50,19 +50,14 @@ impl Default for BluePrintBundle {
 #[derive(Debug, Clone)]
 /// Plugin for gltf blueprints
 pub struct BlueprintsPlugin {
-    /// Automatically generate aabbs for the blueprints root objects
-    pub aabbs: bool,
 }
 
 impl Default for BlueprintsPlugin {
     fn default() -> Self {
-        Self { aabbs: false }
+        Self { }
     }
 }
 
-fn aabbs_enabled(blenvy_config: Res<BlenvyConfig>) -> bool {
-    blenvy_config.aabbs
-}
 
 fn hot_reload(watching_for_changes: Res<WatchingForChanges>) -> bool {
     // println!("hot reload ? {}", watching_for_changes.0);
@@ -131,7 +126,7 @@ impl Plugin for BlueprintsPlugin {
                     blueprints_cleanup_spawned_scene,
                     // beyond this point : post processing to finalize blueprint instances
                     inject_materials,
-                    compute_scene_aabbs, // .run_if(aabbs_enabled),
+                    compute_scene_aabbs,
                     blueprints_finalize_instances,
                 )
                     .chain()

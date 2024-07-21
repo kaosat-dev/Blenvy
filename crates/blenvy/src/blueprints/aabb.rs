@@ -37,8 +37,7 @@ pub fn compute_scene_aabbs(
         }
     }
     for entity in other_entities.iter() {
-        println!("already got AABB");
-        commands.entity(entity).insert(BlueprintReadyForFinalizing); // FIXME ! Yikes !!
+        commands.entity(entity).insert(BlueprintReadyForFinalizing);
     }
 }
 

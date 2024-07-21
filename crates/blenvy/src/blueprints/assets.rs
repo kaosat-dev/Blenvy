@@ -37,7 +37,6 @@ pub struct BlueprintAllAssets {
     pub assets: Vec<BlueprintAsset>,
 }
 
-
 ////////////////////////
 ///
 /// flag component, usually added when a blueprint is loaded

@@ -1,26 +1,23 @@
-use crate::{BlueprintAssetsLoadState, BlueprintAssetsLoaded, BlueprintInfo, BlueprintInstanceReady, BlueprintSpawning, FromBlueprint, SpawnBlueprint, SubBlueprintsSpawnTracker};
+use crate::{
+    BlueprintAssetsLoadState, BlueprintAssetsLoaded, BlueprintInfo, BlueprintInstanceReady,
+    BlueprintSpawning, FromBlueprint, SpawnBlueprint, SubBlueprintsSpawnTracker,
+};
 use bevy::asset::AssetEvent;
 use bevy::prelude::*;
 use bevy::scene::SceneInstance;
 use bevy::utils::hashbrown::HashMap;
 
-
-/// Resource mapping asset paths (ideally untyped ids, but more complex) to a list of blueprint instance entity ids 
+/// Resource mapping asset paths (ideally untyped ids, but more complex) to a list of blueprint instance entity ids
 #[derive(Debug, Clone, Resource, Default)]
-pub(crate) struct AssetToBlueprintInstancesMapper{
+pub(crate) struct AssetToBlueprintInstancesMapper {
     // pub(crate) untyped_id_to_blueprint_entity_ids: HashMap<UntypedAssetId, Vec<Entity>>
-    pub(crate) untyped_id_to_blueprint_entity_ids: HashMap<String, Vec<Entity>>
+    pub(crate) untyped_id_to_blueprint_entity_ids: HashMap<String, Vec<Entity>>,
 }
 
 pub(crate) fn react_to_asset_changes(
     mut gltf_events: EventReader<AssetEvent<Gltf>>, // FIXME: Problem: we need to react to any asset change, not just gltf files !
     // mut untyped_events: EventReader<AssetEvent<LoadedUntypedAsset>>,
-    blueprint_assets: Query<(
-        Entity,
-        Option<&Name>,
-        &BlueprintInfo,
-        Option<&Children>,
-    )>,
+    blueprint_assets: Query<(Entity, Option<&Name>, &BlueprintInfo, Option<&Children>)>,
     blueprint_children_entities: Query<&FromBlueprint>, //=> can only be used if the entites are tagged
     assets_to_blueprint_instances: Res<AssetToBlueprintInstancesMapper>,
     all_parents: Query<&Parent>,
@@ -28,7 +25,6 @@ pub(crate) fn react_to_asset_changes(
 
     asset_server: Res<AssetServer>,
     mut commands: Commands,
-
 ) {
     let mut respawn_candidates: Vec<&Entity> = vec![];
 
@@ -44,15 +40,19 @@ pub(crate) fn react_to_asset_changes(
                     // let bla = untyped.unwrap().id();
                     // asset_server.get
                     // in order to avoid respawn both a parent & a child , which would crash Bevy, we do things in two steps
-                    if let Some(entities) = assets_to_blueprint_instances.untyped_id_to_blueprint_entity_ids.get(&asset_path.to_string()) {
+                    if let Some(entities) = assets_to_blueprint_instances
+                        .untyped_id_to_blueprint_entity_ids
+                        .get(&asset_path.to_string())
+                    {
                         for entity in entities.iter() {
-                            println!("matching blueprint instance {}", entity);
-                            // disregard entities that are already (re) spawning 
-                            if !respawn_candidates.contains(&entity) && blueprint_assets.get(*entity).is_ok() && spawning_blueprints.get(*entity).is_err()
+                            // println!("matching blueprint instance {}", entity);
+                            // disregard entities that are already (re) spawning
+                            if !respawn_candidates.contains(&entity)
+                                && blueprint_assets.get(*entity).is_ok()
+                                && spawning_blueprints.get(*entity).is_err()
                             {
                                 respawn_candidates.push(entity);
                             }
-                           
                         }
                     }
                 }
@@ -65,27 +65,29 @@ pub(crate) fn react_to_asset_changes(
     // TODO: improve this, very inneficient
     let mut retained_candidates: Vec<Entity> = vec![];
     'outer: for entity in respawn_candidates.iter() {
-        for parent in all_parents.iter_ancestors(**entity){
+        for parent in all_parents.iter_ancestors(**entity) {
             for ent in respawn_candidates.iter() {
                 if **ent == parent {
-                    if ! retained_candidates.contains(&parent) {
+                    if !retained_candidates.contains(&parent) {
                         retained_candidates.push(parent);
                     }
                     continue 'outer;
                 }
             }
         }
-        if ! retained_candidates.contains(entity) {
+        if !retained_candidates.contains(entity) {
             retained_candidates.push(**entity);
         }
     }
     // println!("respawn candidates {:?}", respawn_candidates);
     for retained in retained_candidates.iter() {
-        println!("retained {}", retained);
+        // println!("retained {}", retained);
 
-        if let Ok((entity, entity_name, _blueprint_info, children)) = blueprint_assets.get(*retained) {
-            println!("HOLY MOLY IT DETECTS !!, now respawn {:?}", entity_name);
-            
+        if let Ok((entity, entity_name, _blueprint_info, children)) =
+            blueprint_assets.get(*retained)
+        {
+            info!("Change detected !!, now respawn {:?}", entity_name);
+
             // TODO: only remove those that are "in blueprint"
             if children.is_some() {
                 for child in children.unwrap().iter() {
@@ -100,7 +102,7 @@ pub(crate) fn react_to_asset_changes(
                 .remove::<BlueprintAssetsLoadState>()
                 .remove::<SubBlueprintsSpawnTracker>()
                 .insert(SpawnBlueprint);
-        } 
+        }
     }
 
     // println!("done with asset updates");

@@ -87,10 +87,14 @@ pub struct AnimationMarkerReached {
 
 /////////////////////
 
-
 /// triggers events when a given animation marker is reached for BLUEPRINT animations
 pub fn trigger_blueprint_animation_markers_events(
-    animation_data: Query<(Entity, &BlueprintAnimationPlayerLink, &BlueprintAnimationInfosLink, &BlueprintAnimations)>,
+    animation_data: Query<(
+        Entity,
+        &BlueprintAnimationPlayerLink,
+        &BlueprintAnimationInfosLink,
+        &BlueprintAnimations,
+    )>,
     // FIXME: annoying hiearchy issue yet again: the Markers & AnimationInfos are stored INSIDE the blueprint, so we need to access them differently
     animation_infos: Query<(&AnimationInfos, &AnimationMarkers)>,
     animation_players: Query<&AnimationPlayer>,
@@ -99,9 +103,7 @@ pub fn trigger_blueprint_animation_markers_events(
     animation_clips: Res<Assets<AnimationClip>>,
 ) {
     for (entity, player_link, infos_link, animations) in animation_data.iter() {
-       
         for (animation_name, node_index) in animations.named_indices.iter() {
-
             let animation_player = animation_players.get(player_link.0).unwrap();
             let (animation_infos, animation_markers) = animation_infos.get(infos_link.0).unwrap();
 
@@ -109,21 +111,24 @@ pub fn trigger_blueprint_animation_markers_events(
                 if let Some(animation) = animation_player.animation(*node_index) {
                     // animation.speed()
                     // animation.completions()
-                    if let Some(animation_clip_handle) = animations.named_animations.get(animation_name) {
+                    if let Some(animation_clip_handle) =
+                        animations.named_animations.get(animation_name)
+                    {
                         if let Some(animation_clip) = animation_clips.get(animation_clip_handle) {
                             let animation_length_seconds = animation_clip.duration();
-                            let animation_length_frames = animation_infos // FIXME: horribly inneficient
-                                .animations
-                                .iter()
-                                .find(|anim| &anim.name == animation_name)
-                                .unwrap()
-                                .frames_length;
+                            let animation_length_frames =
+                                animation_infos // FIXME: horribly inneficient
+                                    .animations
+                                    .iter()
+                                    .find(|anim| &anim.name == animation_name)
+                                    .unwrap()
+                                    .frames_length;
 
-                            
                             // TODO: we also need to take playback speed into account
                             let time_in_animation = animation.elapsed()
-                            - (animation.completions() as f32) * animation_length_seconds;
-                            let frame_seconds = (animation_length_frames / animation_length_seconds)
+                                - (animation.completions() as f32) * animation_length_seconds;
+                            let frame_seconds = (animation_length_frames
+                                / animation_length_seconds)
                                 * time_in_animation;
                             // println!("frame seconds {}", frame_seconds);
                             let frame = frame_seconds.ceil() as u32; // FIXME , bad hack
@@ -133,7 +138,10 @@ pub fn trigger_blueprint_animation_markers_events(
                             if matching_animation_marker.contains_key(&frame) {
                                 let matching_markers_per_frame =
                                     matching_animation_marker.get(&frame).unwrap();
-                                println!("FOUND A MARKER {:?} at frame {}", matching_markers_per_frame, frame);
+                                println!(
+                                    "FOUND A MARKER {:?} at frame {}",
+                                    matching_markers_per_frame, frame
+                                );
                                 // FIXME: complete hack-ish solution , otherwise this can fire multiple times in a row, depending on animation length , speed , etc
                                 let diff = frame as f32 - frame_seconds;
                                 if diff < 0.1 {
@@ -154,7 +162,6 @@ pub fn trigger_blueprint_animation_markers_events(
         }
     }
 }
-
 
 /// triggers events when a given animation marker is reached for INSTANCE animations
 pub fn trigger_instance_animation_markers_events(
@@ -178,9 +185,10 @@ pub fn trigger_instance_animation_markers_events(
             let animation_player = animation_players.get(player_link.0).unwrap();
             if animation_player.animation_is_playing(*node_index) {
                 if let Some(animation) = animation_player.animation(*node_index) {
-                    if let Some(animation_clip_handle) = animations.named_animations.get(animation_name) {
+                    if let Some(animation_clip_handle) =
+                        animations.named_animations.get(animation_name)
+                    {
                         if let Some(animation_clip) = animation_clips.get(animation_clip_handle) {
-
                             println!("helooo")
                         }
                     }

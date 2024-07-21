@@ -53,7 +53,12 @@ pub(crate) fn inject_materials(
             material_found = Some(material);
         } else {
             let model_handle: Handle<Gltf> = asset_server.load(material_info.path.clone()); // FIXME: kinda weird now
-            let mat_gltf = assets_gltf.get(model_handle.id()).unwrap_or_else(|| panic!("materials file {} should have been preloaded", material_info.path));
+            let mat_gltf = assets_gltf.get(model_handle.id()).unwrap_or_else(|| {
+                panic!(
+                    "materials file {} should have been preloaded",
+                    material_info.path
+                )
+            });
             if mat_gltf
                 .named_materials
                 .contains_key(&material_info.name as &str)

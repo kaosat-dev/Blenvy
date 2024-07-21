@@ -4,7 +4,10 @@ use bevy::{gltf::Gltf, prelude::*, scene::SceneInstance, utils::hashbrown::HashM
 use serde_json::Value;
 
 use crate::{
-    AnimationInfos, AssetLoadTracker, AssetToBlueprintInstancesMapper, BlenvyConfig, BlueprintAnimationInfosLink, BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintAssets, BlueprintAssetsLoadState, BlueprintAssetsLoaded, BlueprintAssetsNotLoaded, InstanceAnimationInfosLink, InstanceAnimationPlayerLink, InstanceAnimations, WatchingForChanges
+    AnimationInfos, AssetLoadTracker, AssetToBlueprintInstancesMapper, BlueprintAnimationInfosLink,
+    BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintAssets, BlueprintAssetsLoadState,
+    BlueprintAssetsLoaded, BlueprintAssetsNotLoaded, InstanceAnimationInfosLink,
+    InstanceAnimationPlayerLink, InstanceAnimations, WatchingForChanges,
 };
 
 /// this is a flag component for our levels/game world
@@ -38,7 +41,7 @@ pub struct SpawnBlueprint;
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-/// flag component marking any spawned child of blueprints 
+/// flag component marking any spawned child of blueprints
 pub struct FromBlueprint;
 
 // TODO: move to save_load
@@ -89,14 +92,12 @@ pub enum BlueprintEvent {
     },
 }
 
-
 #[derive(Component, Reflect, Debug, Default)]
 #[reflect(Component)]
 /// component gets added when a blueprint starts spawning, removed when spawning is completely done
 pub struct BlueprintSpawning;
 
 use gltf::Gltf as RawGltf;
-
 
 /*
 Overview of the Blueprint Spawning process
@@ -115,10 +116,7 @@ Overview of the Blueprint Spawning process
 */
 
 pub(crate) fn blueprints_prepare_spawn(
-    blueprint_instances_to_spawn: Query<
-        (Entity, &BlueprintInfo),
-        Added<SpawnBlueprint>,
-    >,
+    blueprint_instances_to_spawn: Query<(Entity, &BlueprintInfo), Added<SpawnBlueprint>>,
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     // for hot reload
@@ -153,9 +151,9 @@ pub(crate) fn blueprints_prepare_spawn(
         /* prefetch attempt */
         let gltf = RawGltf::open(format!("assets/{}", blueprint_info.path)).unwrap();
         for scene in gltf.scenes() {
-            if let Some(scene_extras) = scene.extras().clone()
-            {
-                let lookup: HashMap<String, Value> = serde_json::from_str(scene_extras.get()).unwrap();
+            if let Some(scene_extras) = scene.extras().clone() {
+                let lookup: HashMap<String, Value> =
+                    serde_json::from_str(scene_extras.get()).unwrap();
                 if lookup.contains_key("BlueprintAssets") {
                     let assets_raw = &lookup["BlueprintAssets"];
                     //println!("ASSETS RAW {}", assets_raw);
@@ -183,18 +181,56 @@ pub(crate) fn blueprints_prepare_spawn(
 
                         // Only do this if hot reload is enabled
                         if watching_for_changes.0 {
-                            if !assets_to_blueprint_instances.untyped_id_to_blueprint_entity_ids.contains_key(&path_id) {
-                                assets_to_blueprint_instances.untyped_id_to_blueprint_entity_ids.insert(path_id.clone(), vec![]);
+                            if !assets_to_blueprint_instances
+                                .untyped_id_to_blueprint_entity_ids
+                                .contains_key(&path_id)
+                            {
+                                assets_to_blueprint_instances
+                                    .untyped_id_to_blueprint_entity_ids
+                                    .insert(path_id.clone(), vec![]);
                             }
+
                             // only insert if not already present in mapping
-                            if !assets_to_blueprint_instances.untyped_id_to_blueprint_entity_ids[&path_id].contains(&entity) {
+                            if !assets_to_blueprint_instances.untyped_id_to_blueprint_entity_ids
+                                [&path_id]
+                                .contains(&entity)
+                            {
                                 // println!("adding mapping between {} and entity {:?}", path_id, all_names.get(entity));
-                                assets_to_blueprint_instances.untyped_id_to_blueprint_entity_ids.get_mut(&path_id).unwrap().push(entity);
+                                assets_to_blueprint_instances
+                                    .untyped_id_to_blueprint_entity_ids
+                                    .get_mut(&path_id)
+                                    .unwrap()
+                                    .push(entity);
                             }
                         }
-                        
                     }
                 }
+            }
+        }
+
+        // Only do this if hot reload is enabled
+        // TODO: should this be added to the list of "all assets" on the blender side instead
+        if watching_for_changes.0 {
+            // also add the root blueprint info to the list of hot reload items
+            if !assets_to_blueprint_instances
+                .untyped_id_to_blueprint_entity_ids
+                .contains_key(&blueprint_info.path)
+            {
+                assets_to_blueprint_instances
+                    .untyped_id_to_blueprint_entity_ids
+                    .insert(blueprint_info.path.clone(), vec![]);
+            }
+            // only insert if not already present in mapping
+            if !assets_to_blueprint_instances.untyped_id_to_blueprint_entity_ids
+                [&blueprint_info.path]
+                .contains(&entity)
+            {
+                // println!("adding mapping between {} and entity {:?}", path_id, all_names.get(entity));
+                assets_to_blueprint_instances
+                    .untyped_id_to_blueprint_entity_ids
+                    .get_mut(&blueprint_info.path)
+                    .unwrap()
+                    .push(entity);
             }
         }
 
@@ -243,7 +279,9 @@ pub(crate) fn blueprints_check_assets_loading(
             let loaded = asset_server.is_loaded_with_dependencies(asset_id);
 
             let mut failed = false;
-            if let bevy::asset::LoadState::Failed(_) = asset_server.load_state(asset_id) { failed = true }
+            if let bevy::asset::LoadState::Failed(_) = asset_server.load_state(asset_id) {
+                failed = true
+            }
             tracker.loaded = loaded || failed;
             if loaded || failed {
                 loaded_amount += 1;
@@ -267,12 +305,10 @@ pub(crate) fn blueprints_check_assets_loading(
             commands
                 .entity(entity)
                 .insert(BlueprintAssetsLoaded)
-                .remove::<BlueprintAssetsNotLoaded>()
-                ;
+                .remove::<BlueprintAssetsNotLoaded>();
 
             if !watching_for_changes.0 {
-                commands.entity(entity)
-                    .remove::<BlueprintAssetsLoadState>(); //we REMOVE this component when in hot reload is OFF, as we 
+                commands.entity(entity).remove::<BlueprintAssetsLoadState>(); //we REMOVE this component when in hot reload is OFF, as we
             }
         }
     }
@@ -556,12 +592,11 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
 
     all_names: Query<&Name>,
 ) {
-    for (original, children, original_children, name, animations) in
-        blueprint_scenes.iter()
-    {
+    for (original, children, original_children, name, animations) in blueprint_scenes.iter() {
         info!("Cleaning up spawned scene {:?}", name);
 
-        if children.len() == 0 { // TODO: investigate, Honestly not sure if this issue from Bevy 0.12 is still present at all anymore
+        if children.len() == 0 {
+            // TODO: investigate, Honestly not sure if this issue from Bevy 0.12 is still present at all anymore
             warn!("timing issue ! no children found, please restart your bevy app (bug being investigated)");
             continue;
         }
@@ -581,7 +616,6 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
         for child in all_children.iter_descendants(blueprint_root_entity) {
             commands.entity(child).insert(FromBlueprint); // we do this here in order to avoid doing it to normal children
         }
-        
 
         // copy components into from blueprint instance's blueprint_root_entity to original entity
         commands.add(CopyComponents {
@@ -632,14 +666,10 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
                             all_names.get(child),
                             all_names.get(original)
                         );
-                        commands
-                        .entity(original)
-                        .insert(
+                        commands.entity(original).insert(
                             //BlueprintAnimationPlayerLink(bla),
-                            BlueprintAnimationInfosLink(child)
-                        )
-                        ;
-
+                            BlueprintAnimationInfosLink(child),
+                        );
                     } else {
                         for parent in all_parents.iter_ancestors(child) {
                             if animation_players.get(parent).is_ok() {
@@ -663,8 +693,9 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
                                 ));
                             }
                             if with_animation_infos.get(parent).is_ok() {
-                                commands.entity(child).insert(InstanceAnimationInfosLink(parent));
-
+                                commands
+                                    .entity(child)
+                                    .insert(InstanceAnimationInfosLink(parent));
                             }
                         }
                     }
