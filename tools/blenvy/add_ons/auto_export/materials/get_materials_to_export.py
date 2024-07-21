@@ -14,6 +14,7 @@ def get_materials_to_export(changes_per_material, changed_export_parameters, blu
     local_materials = [material for material in all_materials if material.library is None]
     #and (changed_export_parameters or len(changes_per_material.keys()) > 0 )
 
+    materials_to_export = []
     if change_detection and not changed_export_parameters:
         changed_materials = []
 
@@ -25,7 +26,6 @@ def get_materials_to_export(changes_per_material, changed_export_parameters, blu
         #materials_always_export = [material for material in internal_materials if is_material_always_export(material)]
         materials_always_export = []
         materials_to_export =  list(set(changed_materials + materials_not_on_disk + materials_always_export))
-
 
 
     return materials_to_export

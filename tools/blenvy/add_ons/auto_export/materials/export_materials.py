@@ -66,7 +66,7 @@ def clear_materials_scene(temp_scene):
 # exports the materials used inside the current project:
 # the name of the output path is <materials_folder>/<name_of_your_blend_file>_materials_library.gltf/glb
 def export_materials(materials_to_export, settings, blueprints_data):
-    if len(materials_to_export) >0:
+    if len(materials_to_export) > 0:
         gltf_export_settings = generate_gltf_export_settings(settings)
         materials_path_full = getattr(settings,"materials_path_full")
 
