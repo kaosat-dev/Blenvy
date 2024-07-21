@@ -229,8 +229,59 @@ Ff you enable it on the blender side, Blenvy will be using "material libraries" 
 Ie for example without this option, 56 different blueprints using the same material with a large texture would lead to the material/texture being embeded
 56 times !!
 
-
 Generating optimised blueprints and material libraries can be automated using the [Blender plugin](https://github.com/kaosat-dev/Blenvy/tree/main/tools/blenvy)
+
+## Animation
+
+```blenvy``` provides some lightweight helpers to deal with animations stored in gltf files
+
+It has both support for blueprint level animations (shared by all blueprint instance of the same blueprint)
+
+ * an ```BlueprintAnimations``` component that gets inserted into spawned (root) entities that contains a hashmap of all animations contained inside that entity/gltf file .
+ * an ```BlueprintAnimationPlayerLink``` component that gets inserted into spawned (root) entities, to make it easier to find Bevy's ```AnimationPlayer``` and ```AnimationTransitions``` components
+
+And instance level animations (specific to one instance)
+
+ * an ```InstanceAnimations``` component that gets inserted into spawned (root) entities that contains a hashmap of all animations **specific to that instance** .
+ * an ```InstanceAnimationPlayerLink``` component that gets inserted into spawned (root) entities, to make it easier to find Bevy's ```AnimationPlayer``` and ```AnimationTransitions``` components for the animations above
+
+
+The workflow for animations is as follows:
+* create a gltf file with animations (using Blender & co) as you would normally do
+* inside Bevy, use the ```blenvy``` boilerplate (see sections above), no specific setup beyond that is required
+* to control the animation of an entity, you need to query for entities that have both ```BlueprintAnimationPlayerLink``` and ```BlueprintAnimations``` components (added by ```blenvy```) AND entities with the ```AnimationPlayer``` component
+ 
+For example (blueprint animations):
+
+```rust no_run
+pub fn trigger_blueprint_animations(
+    animated_foxes: Query<(&BlueprintAnimationPlayerLink, &BlueprintAnimations), With<Fox>>,
+    mut animation_players: Query<(&mut AnimationPlayer, &mut AnimationTransitions)>,
+    keycode: Res<ButtonInput<KeyCode>>,
+){
+    if keycode.just_pressed(KeyCode::KeyW) {
+        for (link, animations) in animated_foxes.iter() {
+            let (mut animation_player, mut animation_transitions) =
+            animation_players.get_mut(link.0).unwrap();
+
+            let anim_name = "Walk";
+            animation_transitions
+                .play(
+                    &mut animation_player,
+                    animations
+                        .named_indices
+                        .get(anim_name)
+                        .expect("animation name should be in the list")
+                        .clone(),
+                    Duration::from_secs(5),
+                )
+                .repeat();
+        }
+    }
+}
+```
+
+see https://github.com/kaosat-dev/Blenvy/tree/main/examples/blenvy/animation for how to set it up correctly
 
 
 ## Additional features
