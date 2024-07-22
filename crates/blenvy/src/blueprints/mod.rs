@@ -119,6 +119,7 @@ impl Plugin for BlueprintsPlugin {
             .add_systems(
                 Update,
                 (
+                    load_raw_gltf,
                     blueprints_prepare_spawn,
                     blueprints_check_assets_loading,
                     blueprints_assets_loaded,

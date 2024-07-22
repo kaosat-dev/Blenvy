@@ -145,14 +145,24 @@ impl AssetLoader for RawGltfAssetLoader {
     }
 }
 
+#[derive(Debug, Component, Deref, DerefMut)]
+pub struct AssociatedRawGltfHandle(pub Handle<RawGltfAsset>);
+
+pub(crate) fn load_raw_gltf(
+    blueprint_instances_to_spawn: Query<(Entity, &BlueprintInfo), Added<SpawnBlueprint>>,
+    asset_server: Res<AssetServer>,
+    mut commands: Commands,
+) {
+    for (entity, blueprint_info) in blueprint_instances_to_spawn.iter() {
+        let gltf_handle: Handle<RawGltfAsset> = asset_server.load(&blueprint_info.path);
+        commands
+            .entity(entity)
+            .insert(AssociatedRawGltfHandle(gltf_handle));
+    }
+}
+
 pub(crate) fn blueprints_prepare_spawn(
-    blueprint_instances_to_spawn: Query<
-        (Entity, &BlueprintInfo),
-        (
-            Without<BlueprintSpawning>,
-            Without<BlueprintAssetsNotLoaded>,
-        ),
-    >,
+    blueprint_instances_to_spawn: Query<(Entity, &BlueprintInfo, &AssociatedRawGltfHandle)>,
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     // for hot reload
@@ -162,7 +172,7 @@ pub(crate) fn blueprints_prepare_spawn(
     // for debug
     // all_names: Query<&Name>
 ) {
-    for (entity, blueprint_info) in blueprint_instances_to_spawn.iter() {
+    for (entity, blueprint_info, raw_gltf_handle) in blueprint_instances_to_spawn.iter() {
         info!(
             "BLUEPRINT: to spawn detected: {:?} path:{:?}",
             blueprint_info.name, blueprint_info.path
@@ -186,10 +196,11 @@ pub(crate) fn blueprints_prepare_spawn(
 
         // and we also add all its assets
         /* prefetch attempt */
-        let gltf_handle: Handle<RawGltfAsset> = asset_server.load(&blueprint_info.path);
-        let Some(RawGltfAsset(gltf)) = raw_gltf_assets.get(&gltf_handle) else {
+        let Some(RawGltfAsset(gltf)) = raw_gltf_assets.get(&raw_gltf_handle.0) else {
+            info!("heck");
             continue;
         };
+        info!("yay");
         for scene in gltf.scenes() {
             if let Some(scene_extras) = scene.extras().clone() {
                 let lookup: HashMap<String, Value> =
@@ -294,7 +305,10 @@ pub(crate) fn blueprints_prepare_spawn(
             .entity(entity)
             .insert(bevy::prelude::Name::from(blueprint_info.name.clone()));
         // add the blueprint spawning marker
-        commands.entity(entity).insert(BlueprintSpawning);
+        commands
+            .entity(entity)
+            .insert(BlueprintSpawning)
+            .remove::<AssociatedRawGltfHandle>();
     }
 }
 
