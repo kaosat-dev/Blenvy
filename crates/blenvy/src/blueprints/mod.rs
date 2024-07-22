@@ -49,15 +49,13 @@ impl Default for BluePrintBundle {
 
 #[derive(Debug, Clone)]
 /// Plugin for gltf blueprints
-pub struct BlueprintsPlugin {
-}
+pub struct BlueprintsPlugin {}
 
 impl Default for BlueprintsPlugin {
     fn default() -> Self {
-        Self { }
+        Self {}
     }
 }
-
 
 fn hot_reload(watching_for_changes: Res<WatchingForChanges>) -> bool {
     // println!("hot reload ? {}", watching_for_changes.0);
@@ -110,6 +108,8 @@ impl Plugin for BlueprintsPlugin {
             .register_type::<Vec<String>>()
             .register_type::<BlueprintAssets>()
             .register_type::<HashMap<String, Vec<String>>>()
+            .init_asset::<RawGltfAsset>()
+            .init_asset_loader::<RawGltfAssetLoader>()
             .configure_sets(
                 Update,
                 (GltfBlueprintsSet::Spawn, GltfBlueprintsSet::AfterSpawn)
@@ -132,16 +132,14 @@ impl Plugin for BlueprintsPlugin {
                     .chain()
                     .in_set(GltfBlueprintsSet::Spawn),
             )
-
             // animation
             .add_systems(
                 Update,
                 (
                     trigger_blueprint_animation_markers_events,
-                    trigger_instance_animation_markers_events
+                    trigger_instance_animation_markers_events,
                 ),
             )
-            
             // hot reload
             .add_systems(Update, react_to_asset_changes.run_if(hot_reload));
     }
