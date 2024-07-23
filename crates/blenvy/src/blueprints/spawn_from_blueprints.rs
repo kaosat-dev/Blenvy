@@ -1,6 +1,12 @@
 use std::path::Path;
 
-use bevy::{gltf::Gltf, prelude::*, scene::SceneInstance, utils::hashbrown::HashMap};
+use bevy::{
+    asset::{io::Reader, AssetLoader, AsyncReadExt, LoadContext},
+    gltf::Gltf,
+    prelude::*,
+    scene::SceneInstance,
+    utils::hashbrown::HashMap,
+};
 use serde_json::Value;
 
 use crate::{
@@ -115,17 +121,59 @@ Overview of the Blueprint Spawning process
  => distinguish between blueprint instances inside blueprint instances vs blueprint instances inside blueprints ??
 */
 
-pub(crate) fn blueprints_prepare_spawn(
+#[derive(Asset, TypePath, Debug)]
+pub struct RawGltfAsset(pub RawGltf);
+
+#[derive(Default)]
+pub(super) struct RawGltfAssetLoader;
+
+impl AssetLoader for RawGltfAssetLoader {
+    type Asset = RawGltfAsset;
+    type Settings = ();
+    type Error = gltf::Error;
+
+    async fn load<'a>(
+        &'a self,
+        reader: &'a mut Reader<'_>,
+        _settings: &'a (),
+        _load_context: &'a mut LoadContext<'_>,
+    ) -> Result<Self::Asset, Self::Error> {
+        let mut bytes = Vec::new();
+        reader.read_to_end(&mut bytes).await?;
+        let gltf = RawGltf::from_slice_without_validation(&bytes)?;
+        Ok(RawGltfAsset(gltf))
+    }
+}
+
+#[derive(Debug, Component, Deref, DerefMut)]
+#[component(storage = "SparseSet")]
+pub(super) struct AssociatedRawGltfHandle(Handle<RawGltfAsset>);
+
+pub(super) fn load_raw_gltf(
     blueprint_instances_to_spawn: Query<(Entity, &BlueprintInfo), Added<SpawnBlueprint>>,
+    asset_server: Res<AssetServer>,
+    mut commands: Commands,
+) {
+    for (entity, blueprint_info) in blueprint_instances_to_spawn.iter() {
+        let gltf_handle: Handle<RawGltfAsset> = asset_server.load(&blueprint_info.path);
+        commands
+            .entity(entity)
+            .insert(AssociatedRawGltfHandle(gltf_handle));
+    }
+}
+
+pub(super) fn blueprints_prepare_spawn(
+    blueprint_instances_to_spawn: Query<(Entity, &BlueprintInfo, &AssociatedRawGltfHandle)>,
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     // for hot reload
     watching_for_changes: Res<WatchingForChanges>,
     mut assets_to_blueprint_instances: ResMut<AssetToBlueprintInstancesMapper>,
+    raw_gltf_assets: Res<Assets<RawGltfAsset>>,
     // for debug
     // all_names: Query<&Name>
 ) {
-    for (entity, blueprint_info) in blueprint_instances_to_spawn.iter() {
+    for (entity, blueprint_info, raw_gltf_handle) in blueprint_instances_to_spawn.iter() {
         info!(
             "BLUEPRINT: to spawn detected: {:?} path:{:?}",
             blueprint_info.name, blueprint_info.path
@@ -149,7 +197,9 @@ pub(crate) fn blueprints_prepare_spawn(
 
         // and we also add all its assets
         /* prefetch attempt */
-        let gltf = RawGltf::open(format!("assets/{}", blueprint_info.path)).unwrap();
+        let Some(RawGltfAsset(gltf)) = raw_gltf_assets.get(&raw_gltf_handle.0) else {
+            continue;
+        };
         for scene in gltf.scenes() {
             if let Some(scene_extras) = scene.extras().clone() {
                 let lookup: HashMap<String, Value> =
@@ -254,7 +304,10 @@ pub(crate) fn blueprints_prepare_spawn(
             .entity(entity)
             .insert(bevy::prelude::Name::from(blueprint_info.name.clone()));
         // add the blueprint spawning marker
-        commands.entity(entity).insert(BlueprintSpawning);
+        commands
+            .entity(entity)
+            .insert(BlueprintSpawning)
+            .remove::<AssociatedRawGltfHandle>();
     }
 }
 
