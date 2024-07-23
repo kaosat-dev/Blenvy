@@ -125,7 +125,7 @@ Overview of the Blueprint Spawning process
 pub struct RawGltfAsset(pub RawGltf);
 
 #[derive(Default)]
-pub struct RawGltfAssetLoader;
+pub(super) struct RawGltfAssetLoader;
 
 impl AssetLoader for RawGltfAssetLoader {
     type Asset = RawGltfAsset;
@@ -146,7 +146,8 @@ impl AssetLoader for RawGltfAssetLoader {
 }
 
 #[derive(Debug, Component, Deref, DerefMut)]
-pub struct AssociatedRawGltfHandle(pub Handle<RawGltfAsset>);
+#[component(storage = "SparseSet")]
+struct AssociatedRawGltfHandle(Handle<RawGltfAsset>);
 
 pub(crate) fn load_raw_gltf(
     blueprint_instances_to_spawn: Query<(Entity, &BlueprintInfo), Added<SpawnBlueprint>>,
