@@ -149,7 +149,7 @@ impl AssetLoader for RawGltfAssetLoader {
 #[component(storage = "SparseSet")]
 struct AssociatedRawGltfHandle(Handle<RawGltfAsset>);
 
-pub(crate) fn load_raw_gltf(
+pub(super) fn load_raw_gltf(
     blueprint_instances_to_spawn: Query<(Entity, &BlueprintInfo), Added<SpawnBlueprint>>,
     asset_server: Res<AssetServer>,
     mut commands: Commands,
@@ -162,7 +162,7 @@ pub(crate) fn load_raw_gltf(
     }
 }
 
-pub(crate) fn blueprints_prepare_spawn(
+pub(super) fn blueprints_prepare_spawn(
     blueprint_instances_to_spawn: Query<(Entity, &BlueprintInfo, &AssociatedRawGltfHandle)>,
     mut commands: Commands,
     asset_server: Res<AssetServer>,
