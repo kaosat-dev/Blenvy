@@ -147,7 +147,7 @@ impl AssetLoader for RawGltfAssetLoader {
 
 #[derive(Debug, Component, Deref, DerefMut)]
 #[component(storage = "SparseSet")]
-struct AssociatedRawGltfHandle(Handle<RawGltfAsset>);
+pub(super) struct AssociatedRawGltfHandle(Handle<RawGltfAsset>);
 
 pub(super) fn load_raw_gltf(
     blueprint_instances_to_spawn: Query<(Entity, &BlueprintInfo), Added<SpawnBlueprint>>,
