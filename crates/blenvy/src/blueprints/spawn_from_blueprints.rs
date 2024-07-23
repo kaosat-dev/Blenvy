@@ -197,10 +197,8 @@ pub(crate) fn blueprints_prepare_spawn(
         // and we also add all its assets
         /* prefetch attempt */
         let Some(RawGltfAsset(gltf)) = raw_gltf_assets.get(&raw_gltf_handle.0) else {
-            info!("heck");
             continue;
         };
-        info!("yay");
         for scene in gltf.scenes() {
             if let Some(scene_extras) = scene.extras().clone() {
                 let lookup: HashMap<String, Value> =
