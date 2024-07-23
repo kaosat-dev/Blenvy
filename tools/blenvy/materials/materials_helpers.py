@@ -4,14 +4,24 @@ import bpy
 from pathlib import Path
 from ..core.helpers_collections import (traverse_tree)
 
-def find_materials_not_on_disk(materials, folder_path, extension):
+def find_materials_not_on_disk(materials, materials_path_full, extension):
     not_found_materials = []
+
+    current_project_name = Path(bpy.context.blend_data.filepath).stem
+    materials_library_name = f"{current_project_name}_materials"
+    materials_exported_path = os.path.join(materials_path_full, f"{materials_library_name}{extension}")
+
+    found = os.path.exists(materials_exported_path) and os.path.isfile(materials_exported_path)
     for material in materials:
-        gltf_output_path = os.path.join(folder_path, material.name + extension)
+        if not found:
+                not_found_materials.append(material)
+
+    """for material in materials:
+        gltf_output_path = os.path.join(materials_path_full, material.name + extension)
         # print("gltf_output_path", gltf_output_path)
         found = os.path.exists(gltf_output_path) and os.path.isfile(gltf_output_path)
         if not found:
-            not_found_materials.append(material)
+            not_found_materials.append(material)"""
     return not_found_materials
 
 def check_if_material_on_disk(scene_name, folder_path, extension):

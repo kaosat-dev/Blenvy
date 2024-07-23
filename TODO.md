@@ -222,7 +222,9 @@ Blender side:
 - [ ] materials fixes & upgrades
     - [x] materials do not get exported again if the files are missing, until you change a material
     - [x] materials do not get exported when a material is added ?
+    - [ ] if material library is toggled, then changes to materials should not change the blueprints that are using them ?
     - [ ] material assets seem to be added to list regardless of whether material exports are enabled or not
+    - [ ] review & upgrade overall logic of material libraries, their names & output path
     - [ ] persist exported materials path in blueprints so that it can be read from library file users
         - [ ] just like "export_path" write it into each blueprint's collection
         - [ ] scan for used materials per blueprint !
