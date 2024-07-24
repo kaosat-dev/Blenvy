@@ -60,6 +60,7 @@ impl Plugin for BlenvyPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
             ComponentsFromGltfPlugin::default(),
+            #[cfg(not(target_arch = "wasm32"))]
             ExportRegistryPlugin::default(),
             BlueprintsPlugin::default(),
         ))
