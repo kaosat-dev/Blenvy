@@ -170,7 +170,11 @@ def add_metadata_to_components_without_metadata(item):
         if component_name == "components_meta":
             continue
         upsert_component_in_item(item, component_name, registry)
-                    
+
+# adds a component to an item (including metadata) WITHOUT a component definition
+def add_component_to_item_without_registry():
+    pass
+
 # adds a component to an item (including metadata) using the provided component definition & optional value
 def add_component_to_item(item, component_definition, value=None):
     warnings = []

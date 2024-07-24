@@ -101,22 +101,23 @@ def auto_export(changes_per_scene, changes_per_collection, changes_per_material,
             # backup current selections
             old_selections = bpy.context.selected_objects
 
-            # first export any level/world scenes
+            # deal with materials
+            if export_materials_library:
+                print("export MATERIALS")
+                export_materials(materials_to_export, settings, blueprints_data)
+
+            # export any level/world scenes
             if len(level_scenes_to_export) > 0:
-                print("export MAIN scenes")
+                print("export LEVELS")
                 for scene_name in level_scenes_to_export:
                     print("     exporting scene:", scene_name)
                     export_level_scene(bpy.data.scenes[scene_name], settings, blueprints_data)
 
             # now deal with blueprints/collections
-            do_export_library_scene = not change_detection or changed_export_parameters or len(blueprints_to_export) > 0
-            if do_export_library_scene:
-                print("export LIBRARY")
+            do_export_blueprints = not change_detection or changed_export_parameters or len(blueprints_to_export) > 0
+            if do_export_blueprints:
+                print("export BLUEPRINTS")
                 export_blueprints(blueprints_to_export, settings, blueprints_data)
-
-            # then deal with materials
-            if export_materials_library:
-                export_materials(materials_to_export, settings, blueprints_data)#blueprints_data.blueprint_names, settings.library_scenes, settings)
 
             # reset current scene from backup
             bpy.context.window.scene = old_current_scene

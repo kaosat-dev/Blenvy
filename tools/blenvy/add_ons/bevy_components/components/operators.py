@@ -19,15 +19,42 @@ class BLENVY_OT_component_add(Operator):
         description="component type to add",
     ) # type: ignore
 
+    component_value: StringProperty(
+        name="component_value",
+        description="value of the newly added component"
+    ) # type: ignore
+
+    target_item_name: StringProperty(
+        name="target item name",
+        description="name of the object/collection/mesh/material to add the component to",
+    ) # type: ignore
+
+    target_item_type: EnumProperty(
+        name="target item type",
+        description="type of the object/collection/mesh/material to add the component to",
+        items=(
+            ('OBJECT', "Object", ""),
+            ('COLLECTION', "Collection", ""),
+            ('MESH', "Mesh", ""),
+            ('MATERIAL', "Material", ""),
+            ),
+        default="OBJECT"
+    ) # type: ignore
+
     def execute(self, context):
-        target = get_selected_item(context)
-        print("adding component ", self.component_type, "to target  '"+target.name+"'")
-    
+        if self.target_item_name == "" or self.target_item_type == "":
+            target_item = get_selected_item(context)
+            print("adding component ", self.component_type, "to target  '"+target_item.name+"'")
+        else:
+            target_item = get_item_by_type(self.target_item_type, self.target_item_name)
+            print("adding component ", self.component_type, "to target  '"+target_item.name+"'")
+
         has_component_type = self.component_type != ""
-        if has_component_type and target is not None:
+        if has_component_type and target_item is not None:
             type_infos = context.window_manager.components_registry.type_infos
             component_definition = type_infos[self.component_type]
-            add_component_to_item(target, component_definition)
+            component_value = self.component_value if self.component_value != "" else None
+            add_component_to_item(target_item, component_definition, value=component_value)
 
         return {'FINISHED'}
 

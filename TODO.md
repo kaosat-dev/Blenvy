@@ -222,6 +222,10 @@ Blender side:
 - [ ] materials fixes & upgrades
     - [x] materials do not get exported again if the files are missing, until you change a material
     - [x] materials do not get exported when a material is added ?
+    - [x] add_material_info_to_objects is now called AFTER the blueprint export, making it useless, needs change !
+    - [ ] materials_path custom property should be ignored both in the list of fixable component AND on export
+    - [ ] if we want to add material_infos & others as normal components they should not be editable, so we need another attribute, and adapt the UI for that
+
     - [ ] if material library is toggled, then changes to materials should not change the blueprints that are using them ?
     - [ ] material assets seem to be added to list regardless of whether material exports are enabled or not
     - [ ] review & upgrade overall logic of material libraries, their names & output path

@@ -2,6 +2,7 @@ import os
 import posixpath
 import bpy
 from pathlib import Path
+
 from ..core.helpers_collections import (traverse_tree)
 
 def find_materials_not_on_disk(materials, materials_path_full, extension):
@@ -65,11 +66,18 @@ def add_material_info_to_objects(materials_per_object, settings):
     current_project_name = Path(bpy.context.blend_data.filepath).stem
     materials_library_name = f"{current_project_name}_materials"
     materials_exported_path = posixpath.join(materials_path, f"{materials_library_name}{export_gltf_extension}")
+    #print("ADDING MAERIAL INFOS")
     for object in materials_per_object.keys():
         material = materials_per_object[object]
-        # TODO: switch to using actual components ?
+
+        # problem with using actual components: you NEED the type registry/component infos, so if there is none , or it is not loaded yet, it does not work
+        # for a few components we could hardcode this
+        component_value = f'(name: "{material.name}", path: "{materials_exported_path}")' 
+        #bpy.ops.blenvy.component_add(target_item_name=object.name, target_item_type="OBJECT", component_type="blenvy::blueprints::materials::MaterialInfo", component_value=component_value)
+
         materials_exported_path = posixpath.join(materials_path, f"{materials_library_name}{export_gltf_extension}")
-        object['MaterialInfo'] = f'(name: "{material.name}", path: "{materials_exported_path}")' 
+        object['MaterialInfo'] = component_value
+        print("adding materialInfo to object", object, "material info", component_value)
 
 
 # get all the materials of all objects in a given scene

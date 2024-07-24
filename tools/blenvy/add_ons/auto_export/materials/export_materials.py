@@ -15,6 +15,7 @@ from ..common.export_gltf import (generate_gltf_export_settings)
 #
 
 def clear_material_info(collection_names, library_scenes):
+    pass
     for scene in library_scenes:
         root_collection = scene.collection
         for cur_collection in traverse_tree(root_collection):
