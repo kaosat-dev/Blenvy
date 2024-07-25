@@ -7,5 +7,5 @@ custom_properties_to_filter_out = [
     'components_meta', 'Components_meta', 
     '_combine', 'template', 
     'Blenvy_scene_type', 'blenvy_scene_type',
-    'Materials_path', 'Export_path'
+    'materials_path', 'export_path',
     ]

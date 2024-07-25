@@ -6,6 +6,9 @@ from .duplicate_object import duplicate_object
 from .export_gltf import export_gltf
 from blenvy.core.scene_helpers import add_scene_property
 from ..constants import custom_properties_to_filter_out
+from ..utils import remove_unwanted_custom_properties
+
+
 """ 
 generates a temporary scene, fills it with data, cleans up after itself
     * named using temp_scene_name 
@@ -27,6 +30,9 @@ def generate_temporary_scene_and_export(settings, gltf_export_settings, gltf_out
                 print("entry in additional data", entry, "value", additional_data[entry], "in", additional_data.name)
                 temp_scene[entry] = additional_data[entry]
 
+    # we remove everything from the black list
+    remove_unwanted_custom_properties(temp_scene)
+  
     # save active scene
     active_scene = bpy.context.window.scene
     # and selected collection

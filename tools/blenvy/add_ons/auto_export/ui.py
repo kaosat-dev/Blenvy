@@ -58,10 +58,7 @@ def draw_settings_ui(layout, auto_export_settings):
 
         # materials
         section.prop(auto_export_settings, "export_materials_library")
-        section = section.box()
-        section.enabled = controls_enabled and auto_export_settings.export_materials_library
-        #section.prop(auto_export_settings, "materials_path")
-
+        
 
 
 

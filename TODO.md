@@ -226,7 +226,7 @@ Blender side:
     - [ ] materials_path custom property should be ignored both in the list of fixable component AND on export
     - [ ] if we want to add material_infos & others as normal components they should not be editable, so we need another attribute, and adapt the UI for that
 
-    - [ ] if material library is toggled, then changes to materials should not change the blueprints that are using them ?
+    - [ ] if material library is toggled, then changes to materials should not change the blueprints that are using them => not really: as the name & co might change
     - [ ] material assets seem to be added to list regardless of whether material exports are enabled or not
     - [ ] review & upgrade overall logic of material libraries, their names & output path
     - [ ] persist exported materials path in blueprints so that it can be read from library file users
@@ -253,6 +253,7 @@ Blender side:
 - [x] rename all "main scene xx" to "level scene"
 - [x] make sure the "add scene" button is not available unless you have actually selected one
 - [x] make auto export be on by default, however bail out early by detecting if there are any level/blueprint scenes
+- [x] remove custom components to filter out correctly from exported blueprints list 
 
 Bevy Side:
 - [x] deprecate BlueprintName & BlueprintPath & use BlueprintInfo instead

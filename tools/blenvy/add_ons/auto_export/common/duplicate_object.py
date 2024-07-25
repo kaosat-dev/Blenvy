@@ -3,16 +3,7 @@ import bpy
 from blenvy.core.object_makers import (make_empty)
 from blenvy.add_ons.bevy_components.utils import is_component_valid_and_enabled
 from ..constants import custom_properties_to_filter_out
-
-def remove_unwanted_custom_properties(object):
-    to_remove = []
-    component_names = list(object.keys()) # to avoid 'IDPropertyGroup changed size during iteration' issues
-    for component_name in component_names:
-        if not is_component_valid_and_enabled(object, component_name):
-            to_remove.append(component_name)
-    for cp in custom_properties_to_filter_out + to_remove:
-        if cp in object:
-            del object[cp]
+from ..utils import remove_unwanted_custom_properties
 
 # TODO: rename actions ?
 # reference https://github.com/KhronosGroup/glTF-Blender-IO/blob/main/addons/io_scene_gltf2/blender/exp/animation/gltf2_blender_gather_action.py#L481

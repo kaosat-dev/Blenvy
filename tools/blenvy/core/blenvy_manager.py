@@ -183,13 +183,6 @@ class BlenvyManager(PropertyGroup):
                     print("setting", setting, settings[setting])
                     setattr(self, setting, settings[setting])
             except:pass
-            """if "mode" in settings:
-                self.mode = settings["mode"]
-
-            asset_path_names = ['project_root_path', 'assets_path', 'blueprints_path', 'levels_path', 'materials_path']
-            for asset_path_name in asset_path_names:
-                if asset_path_name in settings:
-                    setattr(self, asset_path_name, settings[asset_path_name])"""
 
         self.settings_save_enabled = True
  

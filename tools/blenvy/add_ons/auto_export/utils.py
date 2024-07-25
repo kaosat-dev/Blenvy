@@ -2,6 +2,18 @@ import posixpath
 import bpy
 from pathlib import Path
 from blenvy.assets.assets_scan import get_blueprint_asset_tree, get_level_scene_assets_tree2
+from blenvy.add_ons.bevy_components.utils import is_component_valid_and_enabled
+from .constants import custom_properties_to_filter_out
+
+def remove_unwanted_custom_properties(object):
+    to_remove = []
+    component_names = list(object.keys()) # to avoid 'IDPropertyGroup changed size during iteration' issues
+    for component_name in component_names:
+        if not is_component_valid_and_enabled(object, component_name):
+            to_remove.append(component_name)
+    for cp in custom_properties_to_filter_out + to_remove:
+        if cp in object:
+            del object[cp]
 
 def assets_to_fake_ron(list_like):
     result = []
