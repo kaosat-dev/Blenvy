@@ -91,6 +91,8 @@ impl Plugin for BlueprintsPlugin {
             .add_event::<BlueprintEvent>()
             .register_type::<BlueprintInfo>()
             .register_type::<MaterialInfo>()
+            .register_type::<MaterialInfos>()
+
             .register_type::<SpawnBlueprint>()
             .register_type::<BlueprintInstanceDisabled>()
             .register_type::<HideUntilReady>()

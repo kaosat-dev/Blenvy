@@ -46,6 +46,13 @@ def generate_materials_scene_content(root_collection, used_material_names):
         make_material_object("Material_"+material_name, [index * 0.2,0,0], material=material, collection=root_collection)
     return {}
 
+# generates a scene for a given material
+def generate_material_scene_content(root_collection, material_name):
+    material = bpy.data.materials[material_name]
+    make_material_object(f"Material_{material_name}", [0,0,0], material=material, collection=root_collection)
+    return {}
+
+
 def clear_materials_scene(temp_scene):
     root_collection = temp_scene.collection 
     scene_objects = [o for o in root_collection.objects]
@@ -83,9 +90,23 @@ def export_materials(materials_to_export, settings, blueprints_data):
                         'export_apply':True
                         }
 
+
+
+        for material in materials_to_export:
+            print("exporting material", material.name)
+            gltf_output_path = os.path.join(materials_path_full, material.name)
+
+            generate_temporary_scene_and_export(
+                settings=settings, 
+                gltf_export_settings=gltf_export_settings,
+                temp_scene_name="__materials_scene",
+                gltf_output_path=gltf_output_path,
+                tempScene_filler= lambda temp_collection: generate_material_scene_content(temp_collection, material.name),
+                tempScene_cleaner= lambda temp_scene, params: clear_materials_scene(temp_scene=temp_scene)
+            )
+
         current_project_name = Path(bpy.context.blend_data.filepath).stem
         gltf_output_path = os.path.join(materials_path_full, current_project_name + "_materials")
-
         print("       exporting Materials to", gltf_output_path, ".gltf/glb")
 
         generate_temporary_scene_and_export(

@@ -40,7 +40,9 @@ def get_materials(object, materials_per_object):
         # print("    slot", m, "material", material)
         used_materials_names.append(material.name)
         # TODO:, also respect slots & export multiple materials if applicable ! 
-        materials_per_object[object] = material
+        if not object in materials_per_object:
+            materials_per_object[object] = []
+        materials_per_object[object].append(material)
     return used_materials_names
 
 
@@ -68,16 +70,18 @@ def add_material_info_to_objects(materials_per_object, settings):
     materials_exported_path = posixpath.join(materials_path, f"{materials_library_name}{export_gltf_extension}")
     #print("ADDING MAERIAL INFOS")
     for object in materials_per_object.keys():
-        material = materials_per_object[object]
+        material_infos = []
+        for material in materials_per_object[object]:
+            # problem with using actual components: you NEED the type registry/component infos, so if there is none , or it is not loaded yet, it does not work
+            # for a few components we could hardcode this
+            material_info = f'(name: "{material.name}", path: "{materials_exported_path}")' 
+            #bpy.ops.blenvy.component_add(target_item_name=object.name, target_item_type="OBJECT", component_type="blenvy::blueprints::materials::MaterialInfo", component_value=component_value)
 
-        # problem with using actual components: you NEED the type registry/component infos, so if there is none , or it is not loaded yet, it does not work
-        # for a few components we could hardcode this
-        component_value = f'(name: "{material.name}", path: "{materials_exported_path}")' 
-        #bpy.ops.blenvy.component_add(target_item_name=object.name, target_item_type="OBJECT", component_type="blenvy::blueprints::materials::MaterialInfo", component_value=component_value)
-
-        materials_exported_path = posixpath.join(materials_path, f"{materials_library_name}{export_gltf_extension}")
-        object['MaterialInfo'] = component_value
-        print("adding materialInfo to object", object, "material info", component_value)
+            materials_exported_path = posixpath.join(materials_path, f"{materials_library_name}{export_gltf_extension}")
+            #object['MaterialInfo'] = component_value
+            material_infos.append(material_info)
+        object['MaterialInfos'] = f"({material_infos})".replace("'","") 
+        print("adding materialInfos to object", object, "material infos", material_infos)
 
 
 # get all the materials of all objects in a given scene

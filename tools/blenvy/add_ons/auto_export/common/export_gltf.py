@@ -73,7 +73,7 @@ def generate_gltf_export_settings(settings):
         if str(key) not in constant_keys:
             gltf_export_settings[key] =  standard_gltf_exporter_settings.get(key)
 
-    print("GLTF EXPORT SETTINGS", gltf_export_settings)
+    #print("GLTF EXPORT SETTINGS", gltf_export_settings)
     return gltf_export_settings
 
 

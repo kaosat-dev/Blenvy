@@ -102,7 +102,7 @@ def auto_export(changes_per_scene, changes_per_collection, changes_per_material,
             old_selections = bpy.context.selected_objects
 
             # deal with materials
-            if export_materials_library:
+            if export_materials_library and len(materials_to_export) > 0:
                 print("export MATERIALS")
                 export_materials(materials_to_export, settings, blueprints_data)
 
