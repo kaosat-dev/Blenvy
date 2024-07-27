@@ -8,4 +8,4 @@ custom_properties_to_filter_out = [
     '_combine', 'template', 
     'Blenvy_scene_type', 'blenvy_scene_type',
     'materials_path', 'export_path',
-    ]
+]

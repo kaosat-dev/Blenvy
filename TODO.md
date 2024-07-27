@@ -226,10 +226,13 @@ Blender side:
     - [ ] materials_path custom property should be ignored both in the list of fixable component AND on export
     - [ ] if we want to add material_infos & others as normal components they should not be editable, so we need another attribute, and adapt the UI for that
 
-    - [ ] if material library is toggled, then changes to materials should not change the blueprints that are using them => not really: as the name & co might change
+    - [x] if material library is toggled, then changes to materials should not change the blueprints that are using them => not really: as the name & co might change
     - [ ] material assets seem to be added to list regardless of whether material exports are enabled or not
-    - [ ] review & upgrade overall logic of material libraries, their names & output path
-    - [ ] persist exported materials path in blueprints so that it can be read from library file users
+    - [x] review & upgrade overall logic of material libraries, their names & output path
+    - [x] change materials logic to work with multiple materials per mesh
+        - [x] the index of the generated gltf files is reliable, and can be used both in Blender & Bevy
+        - [x] change MaterialInfo to MaterialInfos & turn it into a vec/list & updated logic both on Blender & Bevy side
+    - [ ] persist exported materials paths in blueprints so that it can be read from library file users
         - [ ] just like "export_path" write it into each blueprint's collection
         - [ ] scan for used materials per blueprint !
         - [ ] for scenes, scan for used materials of all non instance objects (TODO: what about overrides ?)
@@ -323,7 +326,7 @@ Bevy Side:
 - [x] fix "remove component" operator from the rename/fix/update components panel
 - [ ] replace string in BlueprintInfo path with PathBuf ?
 
-- [ ] update main docs
+- [x] update main docs
     - [x] rename project to Blenvy
     - [x] replace all references to the old 2 add-ons with those to Blenvy
 - [x] rename repo to "Blenvy"

@@ -1,5 +1,4 @@
 import os
-from blenvy.blueprints.blueprint_helpers import inject_blueprints_list_into_level_scene, remove_blueprints_list_from_level_scene
 from ..constants import TEMPSCENE_PREFIX
 from ..common.generate_temporary_scene_and_export import generate_temporary_scene_and_export, copy_hollowed_collection_into, clear_hollow_scene
 from ..common.export_gltf import (generate_gltf_export_settings, export_gltf)
@@ -26,8 +25,8 @@ def export_level_scene(scene, settings, blueprints_data):
 
     if export_blueprints : 
         gltf_output_path = os.path.join(levels_path_full, scene.name)
-
-        inject_blueprints_list_into_level_scene(scene, blueprints_data, settings)
+        # we inject assets into the scene before it gets exported
+        # TODO: this should be done in the temporary scene !
         upsert_scene_assets(scene, blueprints_data=blueprints_data, settings=settings)
 
         if export_separate_dynamic_and_static_objects:
@@ -66,8 +65,6 @@ def export_level_scene(scene, settings, blueprints_data):
                 tempScene_filler= lambda temp_collection: copy_hollowed_collection_into(scene.collection, temp_collection, blueprints_data=blueprints_data, settings=settings),
                 tempScene_cleaner= lambda temp_scene, params: clear_hollow_scene(original_root_collection=scene.collection, temp_scene=temp_scene, **params)
             )
-
-        remove_blueprints_list_from_level_scene(scene)
 
     else:
         gltf_output_path = os.path.join(assets_path_full, scene.name)

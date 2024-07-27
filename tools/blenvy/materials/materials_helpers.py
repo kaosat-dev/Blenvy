@@ -1,28 +1,15 @@
 import os
 import posixpath
-import bpy
-from pathlib import Path
-
 from ..core.helpers_collections import (traverse_tree)
 
 def find_materials_not_on_disk(materials, materials_path_full, extension):
     not_found_materials = []
-
-    current_project_name = Path(bpy.context.blend_data.filepath).stem
-    materials_library_name = f"{current_project_name}_materials"
-    materials_exported_path = os.path.join(materials_path_full, f"{materials_library_name}{extension}")
-
-    found = os.path.exists(materials_exported_path) and os.path.isfile(materials_exported_path)
     for material in materials:
-        if not found:
-                not_found_materials.append(material)
-
-    """for material in materials:
         gltf_output_path = os.path.join(materials_path_full, material.name + extension)
         # print("gltf_output_path", gltf_output_path)
         found = os.path.exists(gltf_output_path) and os.path.isfile(gltf_output_path)
         if not found:
-            not_found_materials.append(material)"""
+            not_found_materials.append(material)
     return not_found_materials
 
 def check_if_material_on_disk(scene_name, folder_path, extension):
@@ -64,22 +51,15 @@ def get_all_materials(collection_names, library_scenes):
 def add_material_info_to_objects(materials_per_object, settings):
     materials_path =  getattr(settings, "materials_path")
     export_gltf_extension = getattr(settings, "export_gltf_extension", ".glb")
-
-    current_project_name = Path(bpy.context.blend_data.filepath).stem
-    materials_library_name = f"{current_project_name}_materials"
-    materials_exported_path = posixpath.join(materials_path, f"{materials_library_name}{export_gltf_extension}")
-    #print("ADDING MAERIAL INFOS")
     for object in materials_per_object.keys():
         material_infos = []
         for material in materials_per_object[object]:
-            # problem with using actual components: you NEED the type registry/component infos, so if there is none , or it is not loaded yet, it does not work
-            # for a few components we could hardcode this
+            materials_exported_path = posixpath.join(materials_path, f"{material.name}{export_gltf_extension}")
             material_info = f'(name: "{material.name}", path: "{materials_exported_path}")' 
-            #bpy.ops.blenvy.component_add(target_item_name=object.name, target_item_type="OBJECT", component_type="blenvy::blueprints::materials::MaterialInfo", component_value=component_value)
-
-            materials_exported_path = posixpath.join(materials_path, f"{materials_library_name}{export_gltf_extension}")
-            #object['MaterialInfo'] = component_value
             material_infos.append(material_info)
+        # problem with using actual components: you NEED the type registry/component infos, so if there is none , or it is not loaded yet, it does not work
+        # for a few components we could hardcode this
+        #bpy.ops.blenvy.component_add(target_item_name=object.name, target_item_type="OBJECT", component_type="blenvy::blueprints::materials::MaterialInfos", component_value=component_value)
         object['MaterialInfos'] = f"({material_infos})".replace("'","") 
         print("adding materialInfos to object", object, "material infos", material_infos)
 

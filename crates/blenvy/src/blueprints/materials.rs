@@ -2,8 +2,7 @@ use bevy::prelude::*;
 
 use crate::BlenvyConfig;
 
-#[derive(Component, Reflect, Default, Debug)]
-#[reflect(Component)]
+#[derive(Reflect, Default, Debug)]
 /// struct containing the name & path of the material to apply
 pub struct MaterialInfo {
     pub name: String,
@@ -12,6 +11,7 @@ pub struct MaterialInfo {
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
+/// component containing the full list of MaterialInfos for a given entity/object
 pub struct MaterialInfos(Vec<MaterialInfo>);
 
 #[derive(Component, Default, Debug)]
@@ -45,7 +45,6 @@ pub(crate) fn inject_materials(
         for (material_index, material_info) in material_infos.0.iter().enumerate() {
             let material_full_path = format!("{}#{}", material_info.path, material_info.name);
             let mut material_found: Option<&Handle<StandardMaterial>> = None;
-    
             if blenvy_config
                 .materials_cache
                 .contains_key(&material_full_path)

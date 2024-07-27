@@ -70,11 +70,6 @@ class BLENVY_OT_assets_add(Operator):
             context.window_manager.assets_registry.asset_type_selector = "MODEL"
             context.window_manager.assets_registry.asset_path_selector = ""
 
-        """if blueprint_assets:
-            bpy.data.collections[self.target_name]["assets"] = json.dumps(assets)
-        else:
-            bpy.data.scenes[self.target_name]["assets"] = json.dumps(assets)"""
-
         return {'FINISHED'}
     
 

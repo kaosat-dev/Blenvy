@@ -3,6 +3,7 @@ import json
 import posixpath
 import bpy
 
+from ..materials.materials_helpers import get_blueprint_materials
 from .asset_helpers import does_asset_exist, get_user_assets, get_user_assets_as_list
 
 def scan_assets(scene, blueprints_data, settings):
@@ -62,6 +63,7 @@ def get_userTextures():
     print("textures", textures)
 
 def get_blueprint_assets_tree(blueprint, blueprints_data, parent, settings):
+    print("blueprint", blueprint.name)
     blueprints_path = getattr(settings, "blueprints_path")
     export_gltf_extension = getattr(settings, "export_gltf_extension", ".glb")
     assets_list = []
@@ -88,6 +90,15 @@ def get_blueprint_assets_tree(blueprint, blueprints_data, parent, settings):
         asset["parent"] = parent
         asset["internal"] = blueprint.local
     assets_list += direct_assets
+
+    # now get materials used by this blueprint
+    (blueprint_materials_names, materials_per_object) = get_blueprint_materials(blueprint=blueprint)
+    print("blueprint_materials", blueprint_materials_names)
+    for material_name in blueprint_materials_names:
+        materials_path =  getattr(settings, "materials_path")
+        materials_exported_path = posixpath.join(materials_path, f"{material_name}{export_gltf_extension}")
+        assets_list.append({"name": material_name, "path": materials_exported_path, "type": "MATERIAL", "generated": True,"internal":blueprint.local, "parent": blueprint.name})
+
     return assets_list
 
 def get_level_scene_assets_tree(level_scene, blueprints_data, settings):
