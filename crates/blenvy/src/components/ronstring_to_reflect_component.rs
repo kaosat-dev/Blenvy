@@ -69,14 +69,21 @@ fn components_string_to_components(
         let mut deserializer = ron::Deserializer::from_str(ron_string.as_str())
             .expect("deserialzer should have been generated from string");
         let reflect_deserializer = ReflectDeserializer::new(type_registry);
-        let component = reflect_deserializer
+        /*let component = reflect_deserializer
             .deserialize(&mut deserializer)
             .unwrap_or_else(|_| {
                 panic!(
                     "failed to deserialize component {} with value: {:?}",
                     name, value
                 )
-            });
+            });*/
+        let Ok(component) = reflect_deserializer.deserialize(&mut deserializer) else {
+            warn!(
+                "failed to deserialize component {} with value: {:?}",
+                name, value
+            );
+            return;
+        };
 
         debug!("component {:?}", component);
         debug!("real type {:?}", component.get_represented_type_info());
