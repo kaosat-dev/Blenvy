@@ -81,10 +81,13 @@ def generate_temporary_scene_and_export(settings, gltf_export_settings, gltf_out
 # copies the contents of a collection into another one while replacing library instances with empties
 def copy_hollowed_collection_into(source_collection, destination_collection, parent_empty=None, filter=None, blueprints_data=None, settings={}):
     collection_instances_combine_mode = getattr(settings.auto_export, "collection_instances_combine_mode")
+
     for object in source_collection.objects:
         if object.name.endswith("____bak"): # some objects could already have been handled, ignore them
             continue       
         if filter is not None and filter(object) is False:
+            continue
+        if object.parent is not None: # if there is a parent, this object is not a direct child of the collection, and should be ignored (it will get picked up by the recursive scan inside duplicate_object)
             continue
         #check if a specific collection instance does not have an ovveride for combine_mode
         combine_mode = object['_combine'] if '_combine' in object else collection_instances_combine_mode
