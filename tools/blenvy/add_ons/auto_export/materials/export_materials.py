@@ -74,34 +74,30 @@ def clear_materials_scene(temp_scene):
 # exports the materials used inside the current project:
 # the name of the output path is <materials_folder>/<name_of_your_blend_file>_materials_library.gltf/glb
 def export_materials(materials_to_export, settings, blueprints_data):
-    if len(materials_to_export) > 0:
-        gltf_export_settings = generate_gltf_export_settings(settings)
-        materials_path_full = getattr(settings,"materials_path_full")
+    gltf_export_settings = generate_gltf_export_settings(settings)
+    materials_path_full = getattr(settings,"materials_path_full")
 
-        (used_material_names, materials_per_object) = get_all_materials(blueprints_data.blueprint_names, settings.library_scenes)
-        add_material_info_to_objects(materials_per_object, settings)
+    gltf_export_settings = { **gltf_export_settings, 
+                    'use_active_scene': True, 
+                    'use_active_collection':True, 
+                    'use_active_collection_with_nested':True,  
+                    'use_visible': False,
+                    'use_renderable': False,
+                    'export_apply':True
+                    }
 
-        gltf_export_settings = { **gltf_export_settings, 
-                        'use_active_scene': True, 
-                        'use_active_collection':True, 
-                        'use_active_collection_with_nested':True,  
-                        'use_visible': False,
-                        'use_renderable': False,
-                        'export_apply':True
-                        }
+    for material in materials_to_export:
+        print("exporting material", material.name)
+        gltf_output_path = os.path.join(materials_path_full, material.name)
 
-        for material in materials_to_export:
-            print("exporting material", material.name)
-            gltf_output_path = os.path.join(materials_path_full, material.name)
-
-            generate_temporary_scene_and_export(
-                settings=settings, 
-                gltf_export_settings=gltf_export_settings,
-                temp_scene_name="__materials_scene",
-                gltf_output_path=gltf_output_path,
-                tempScene_filler= lambda temp_collection: generate_material_scene_content(temp_collection, material.name),
-                tempScene_cleaner= lambda temp_scene, params: clear_materials_scene(temp_scene=temp_scene)
-            )
+        generate_temporary_scene_and_export(
+            settings=settings, 
+            gltf_export_settings=gltf_export_settings,
+            temp_scene_name="__materials_scene",
+            gltf_output_path=gltf_output_path,
+            tempScene_filler= lambda temp_collection: generate_material_scene_content(temp_collection, material.name),
+            tempScene_cleaner= lambda temp_scene, params: clear_materials_scene(temp_scene=temp_scene)
+        )
 
     
 def cleanup_materials(collections, library_scenes):

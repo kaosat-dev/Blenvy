@@ -2,6 +2,7 @@ import os
 import bpy
 from blenvy.assets.assets_scan import get_blueprint_asset_tree
 from blenvy.assets.generate_asset_file import write_ron_assets_file
+from ....materials.materials_helpers import add_material_info_to_objects, get_blueprint_materials
 from ..constants import TEMPSCENE_PREFIX
 from ..common.generate_temporary_scene_and_export import generate_temporary_scene_and_export, copy_hollowed_collection_into, clear_hollow_scene
 from ..common.export_gltf import generate_gltf_export_settings
@@ -26,7 +27,11 @@ def export_blueprints(blueprints, settings, blueprints_data):
             if export_materials_library:
                 gltf_export_settings['export_materials'] = 'PLACEHOLDER'  
 
+            # inject blueprint asset data
             upsert_blueprint_assets(blueprint, blueprints_data=blueprints_data, settings=settings)
+            # upsert material infos if needed
+            (_, materials_per_object) = get_blueprint_materials(blueprint)
+            add_material_info_to_objects(materials_per_object, settings)
 
             # do the actual export
             generate_temporary_scene_and_export(

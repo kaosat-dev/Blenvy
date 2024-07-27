@@ -26,7 +26,7 @@ def auto_export(changes_per_scene, changes_per_collection, changes_per_material,
         #should we use change detection or not 
         change_detection = getattr(settings.auto_export, "change_detection")
         export_scene_settings = getattr(settings.auto_export, "export_scene_settings")
-        do_export_blueprints = getattr(settings.auto_export, "export_blueprints")
+        export_blueprints_enabled = getattr(settings.auto_export, "export_blueprints")
         export_materials_library = getattr(settings.auto_export, "export_materials_library")
 
         # standard gltf export settings are stored differently
@@ -62,7 +62,7 @@ def auto_export(changes_per_scene, changes_per_collection, changes_per_material,
             light['BlenderLightShadows'] = f"(enabled: {enabled}, buffer_bias: {light.shadow_buffer_bias})"
 
         # export
-        if do_export_blueprints:
+        if export_blueprints_enabled:
             print("EXPORTING")
             # get blueprints/collections infos
             (blueprints_to_export) = get_blueprints_to_export(changes_per_scene, changes_per_collection, changed_export_parameters, blueprints_data, settings)
@@ -100,22 +100,21 @@ def auto_export(changes_per_scene, changes_per_collection, changes_per_material,
             old_current_scene = bpy.context.scene
             # backup current selections
             old_selections = bpy.context.selected_objects
-
+        
             # deal with materials
-            if export_materials_library and len(materials_to_export) > 0:
+            if export_materials_library and (not change_detection or changed_export_parameters or len(materials_to_export) > 0) :
                 print("export MATERIALS")
                 export_materials(materials_to_export, settings, blueprints_data)
 
             # export any level/world scenes
-            if len(level_scenes_to_export) > 0:
+            if not change_detection or changed_export_parameters or len(level_scenes_to_export) > 0:
                 print("export LEVELS")
                 for scene_name in level_scenes_to_export:
                     print("     exporting scene:", scene_name)
                     export_level_scene(bpy.data.scenes[scene_name], settings, blueprints_data)
 
             # now deal with blueprints/collections
-            do_export_blueprints = not change_detection or changed_export_parameters or len(blueprints_to_export) > 0
-            if do_export_blueprints:
+            if not change_detection or changed_export_parameters or len(blueprints_to_export) > 0:
                 print("export BLUEPRINTS")
                 export_blueprints(blueprints_to_export, settings, blueprints_data)
 

@@ -17,19 +17,50 @@ def check_if_material_on_disk(scene_name, folder_path, extension):
     found = os.path.exists(gltf_output_path) and os.path.isfile(gltf_output_path)
     return found
 
+
 # get materials per object, and injects the materialInfo component
 def get_materials(object, materials_per_object):
     material_slots = object.material_slots
     used_materials_names = []
+   
+    if not hasattr(object, "data"):
+        return used_materials_names
+    if not hasattr(object.data,"materials"):
+        return used_materials_names
+    if len(object.data.materials) == 0:
+        return used_materials_names
+    
+    # since we are scanning polygons to get the actually used materials, we do not get them in the correct order
+    materials_per_object_unordered = []
 
-    for m in material_slots:
-        material = m.material
-        # print("    slot", m, "material", material)
-        used_materials_names.append(material.name)
-        # TODO:, also respect slots & export multiple materials if applicable ! 
-        if not object in materials_per_object:
-            materials_per_object[object] = []
-        materials_per_object[object].append(material)
+    """materials_count = len(material_slots)
+    print("materials_count", materials_count)
+    material_indices = np.empty(materials_count, dtype=np.int64)
+    object.data.polygons.foreach_get("material_index", material_indices)
+    #for material_index in object.data.polygons.foreach_get("material_index", storage):
+    print("polygon material_indices", material_indices)"""
+    # TODO: perhaps optimise it using foreach_get
+    for polygon in object.data.polygons:
+        slot = material_slots[polygon.material_index]
+        material = slot.material
+        if not material.name in used_materials_names:
+            used_materials_names.append(material.name)
+            materials_per_object_unordered.append((material, polygon.material_index))
+
+        if len(used_materials_names) == len(material_slots): # we found all materials, bail out
+            break
+
+    # now re-order the materials as per the object's material slots 
+    sorted_materials = sorted(materials_per_object_unordered, key=lambda tup: tup[1])
+
+    # and add them
+    if not object in materials_per_object:
+        materials_per_object[object] = []
+    materials_per_object[object] = [material[0] for material in sorted_materials]#.append(material)
+
+    """for m in material_slots:
+        material = m.material"""
+
     return used_materials_names
 
 

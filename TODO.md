@@ -226,6 +226,8 @@ Blender side:
     - [ ] materials_path custom property should be ignored both in the list of fixable component AND on export
     - [ ] if we want to add material_infos & others as normal components they should not be editable, so we need another attribute, and adapt the UI for that
 
+    - [x] injection of materials_infos should be done outside of export_materials as it should run even if materials do not need exporting
+
     - [x] if material library is toggled, then changes to materials should not change the blueprints that are using them => not really: as the name & co might change
     - [ ] material assets seem to be added to list regardless of whether material exports are enabled or not
     - [x] review & upgrade overall logic of material libraries, their names & output path
