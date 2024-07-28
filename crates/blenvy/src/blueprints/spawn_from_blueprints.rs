@@ -844,7 +844,7 @@ pub(crate) fn blueprints_finalize_instances(
         }
 
         if hide_until_ready.is_some() {
-            commands.entity(entity).insert(Visibility::Visible);
+            commands.entity(entity).insert(Visibility::Inherited);
         }
 
         blueprint_events.send(BlueprintEvent::InstanceReady {
