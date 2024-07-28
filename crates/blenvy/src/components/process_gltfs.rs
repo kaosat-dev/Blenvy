@@ -8,7 +8,7 @@ use bevy::{
     },
     gltf::{GltfExtras, GltfMaterialExtras, GltfMeshExtras, GltfSceneExtras},
     hierarchy::Parent,
-    log::debug,
+    log::{debug, warn},
     reflect::{Reflect, TypeRegistration},
     utils::HashMap,
 };
@@ -145,10 +145,11 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
 
             {
                 let mut entity_mut = world.entity_mut(entity);
-                type_registration
-                    .data::<ReflectComponent>()
-                    .expect("Unable to reflect component")
-                    .insert(&mut entity_mut, &*component, &type_registry);
+                let Some(reflected_component) = type_registration.data::<ReflectComponent>() else {
+                    warn!(?component, "unable to reflect component");
+                    continue;
+                };
+                reflected_component.insert(&mut entity_mut, &*component, &type_registry);
 
                 entity_mut.insert(GltfProcessed); //
             }
