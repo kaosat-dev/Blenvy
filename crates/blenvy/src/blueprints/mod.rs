@@ -1,4 +1,5 @@
 pub mod spawn_from_blueprints;
+use bevy_common_assets::ron::RonAssetPlugin;
 pub use spawn_from_blueprints::*;
 
 pub mod animation;
@@ -110,8 +111,10 @@ impl Plugin for BlueprintsPlugin {
             .register_type::<Vec<String>>()
             .register_type::<BlueprintAssets>()
             .register_type::<HashMap<String, Vec<String>>>()
-            .init_asset::<RawGltfAsset>()
-            .init_asset_loader::<RawGltfAssetLoader>()
+            //.init_asset::<RawGltfAsset>()
+            //.init_asset_loader::<RawGltfAssetLoader>()
+            .add_plugins(RonAssetPlugin::<BlueprintPreloadAssets>::new(&["meta.ron"]),)
+
             .configure_sets(
                 Update,
                 (GltfBlueprintsSet::Spawn, GltfBlueprintsSet::AfterSpawn)
@@ -121,7 +124,8 @@ impl Plugin for BlueprintsPlugin {
             .add_systems(
                 Update,
                 (
-                    load_raw_gltf,
+                    blueprints_prepare_metadata_file_for_spawn,
+                    blueprints_check_assets_metadata_files_loading,
                     blueprints_prepare_spawn,
                     blueprints_check_assets_loading,
                     blueprints_assets_loaded,

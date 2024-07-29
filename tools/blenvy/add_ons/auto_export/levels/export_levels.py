@@ -1,9 +1,10 @@
 import os
+
 from ..constants import TEMPSCENE_PREFIX
 from ..common.generate_temporary_scene_and_export import generate_temporary_scene_and_export, copy_hollowed_collection_into, clear_hollow_scene
 from ..common.export_gltf import (generate_gltf_export_settings, export_gltf)
 from .is_object_dynamic import is_object_dynamic, is_object_static
-from ..utils import upsert_scene_assets
+from ..utils import upsert_scene_assets, write_level_metadata_file
 
 
 def export_level_scene(scene, settings, blueprints_data): 
@@ -28,6 +29,7 @@ def export_level_scene(scene, settings, blueprints_data):
         # we inject assets into the scene before it gets exported
         # TODO: this should be done in the temporary scene !
         upsert_scene_assets(scene, blueprints_data=blueprints_data, settings=settings)
+        write_level_metadata_file(scene=scene, blueprints_data=blueprints_data, settings=settings)
 
         if export_separate_dynamic_and_static_objects:
             #print("SPLIT STATIC AND DYNAMIC")

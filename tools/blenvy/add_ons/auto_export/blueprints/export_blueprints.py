@@ -1,12 +1,10 @@
 import os
 import bpy
-from blenvy.assets.assets_scan import get_blueprint_asset_tree
-from blenvy.assets.generate_asset_file import write_ron_assets_file
 from ....materials.materials_helpers import add_material_info_to_objects, get_blueprint_materials
 from ..constants import TEMPSCENE_PREFIX
 from ..common.generate_temporary_scene_and_export import generate_temporary_scene_and_export, copy_hollowed_collection_into, clear_hollow_scene
 from ..common.export_gltf import generate_gltf_export_settings
-from ..utils import upsert_blueprint_assets
+from ..utils import upsert_blueprint_assets, write_blueprint_metadata_file
 
 def export_blueprints(blueprints, settings, blueprints_data):
     blueprints_path_full = getattr(settings, "blueprints_path_full")
@@ -32,6 +30,9 @@ def export_blueprints(blueprints, settings, blueprints_data):
             # upsert material infos if needed
             (_, materials_per_object) = get_blueprint_materials(blueprint)
             add_material_info_to_objects(materials_per_object, settings)
+
+            write_blueprint_metadata_file(blueprint=blueprint, blueprints_data=blueprints_data, settings=settings)
+
 
             # do the actual export
             generate_temporary_scene_and_export(

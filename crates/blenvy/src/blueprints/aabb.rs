@@ -29,7 +29,7 @@ pub fn compute_scene_aabbs(
         } else {
             let aabb = compute_descendant_aabb(root_entity, &children, &existing_aabbs);
             blenvy_config.aabb_cache.insert(name.to_string(), aabb);
-            info!("generating aabb for {:?}", name);
+            info!("Step 7: generating aabb for {:?}", name);
             commands
                 .entity(root_entity)
                 .insert(aabb)

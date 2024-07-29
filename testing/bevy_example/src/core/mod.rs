@@ -13,7 +13,6 @@ impl Plugin for CorePlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(
             BlenvyPlugin {
-                aabbs: true,
                 registry_component_filter: SceneFilter::Denylist(HashSet::from([
                     // this is using Bevy's build in SceneFilter, you can compose what components you want to allow/deny
                     TypeId::of::<ComponentAToFilterOut>(),

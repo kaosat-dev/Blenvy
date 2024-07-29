@@ -65,8 +65,9 @@ def generate_temporary_scene_and_export(settings, gltf_export_settings, gltf_out
         except Exception as error:
             print("failed to export gltf !", error) 
             raise error
-        # restore everything
-        tempScene_cleaner(temp_scene, scene_filler_data)
+        finally:
+            # restore everything
+            tempScene_cleaner(temp_scene, scene_filler_data)
 
     # reset active scene
     bpy.context.window.scene = active_scene

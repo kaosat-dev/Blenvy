@@ -339,5 +339,6 @@ Bevy Side:
         - [ ] solving problems with scene renames
         - [ ] the ability to map external TEXT files to data in BLender (git-able, hand editable)
 - [x] make aabbs calculation non configurable, getting rid of the last setting (for now)
+- [ ] add information & screenshots about adding assets to the Blender add-on docs
 
 clear && pytest -svv --blender-template ../../testing/bevy_example/art/testing_library.blend --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration_prepare.py  && pytest -svv --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration.py
