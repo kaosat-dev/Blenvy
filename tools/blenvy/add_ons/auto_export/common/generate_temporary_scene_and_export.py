@@ -1,13 +1,11 @@
-import json
 import bpy
 from blenvy.core.helpers_collections import (set_active_collection)
 from blenvy.core.object_makers import (make_empty)
 from .duplicate_object import duplicate_object
 from .export_gltf import export_gltf
-from blenvy.core.scene_helpers import add_scene_property
 from ..constants import custom_properties_to_filter_out
 from ..utils import remove_unwanted_custom_properties
-
+from ....core.utils import exception_traceback, show_message_box
 
 """ 
 generates a temporary scene, fills it with data, cleans up after itself
@@ -52,22 +50,23 @@ def generate_temporary_scene_and_export(settings, gltf_export_settings, gltf_out
         # detect scene mistmatch
         scene_mismatch = bpy.context.scene.name != bpy.context.window.scene.name
         if scene_mismatch:
-            raise Exception("Context scene mismatch, aborting", bpy.context.scene.name, bpy.context.window.scene.name)
-        
-        set_active_collection(bpy.context.scene, temp_root_collection.name)
-        # generate contents of temporary scene
-        scene_filler_data = tempScene_filler(temp_root_collection)
-        # export the temporary scene
-        try:
-            print("dry_run MODE", settings.auto_export.dry_run)
-            if settings.auto_export.dry_run == "DISABLED":
-                export_gltf(gltf_output_path, gltf_export_settings)
-        except Exception as error:
-            print("failed to export gltf !", error) 
-            raise error
-        finally:
-            # restore everything
-            tempScene_cleaner(temp_scene, scene_filler_data)
+            show_message_box("Error in Gltf Exporter", icon="ERROR", lines=[f"Context scene mismatch, aborting: {bpy.context.scene.name} vs {bpy.context.window.scene.name}"])
+        else:
+            set_active_collection(bpy.context.scene, temp_root_collection.name)
+            # generate contents of temporary scene
+            scene_filler_data = tempScene_filler(temp_root_collection)
+            # export the temporary scene
+            try:
+                print("dry_run MODE", settings.auto_export.dry_run)
+                if settings.auto_export.dry_run == "DISABLED":           
+                    export_gltf(gltf_output_path, gltf_export_settings)
+            except Exception as error:
+                print("failed to export gltf !", error) 
+                show_message_box("Error in Gltf Exporter", icon="ERROR", lines=exception_traceback(error))
+            finally:
+                print("restoring state of scene")
+                # restore everything
+                tempScene_cleaner(temp_scene, scene_filler_data)
 
     # reset active scene
     bpy.context.window.scene = active_scene
