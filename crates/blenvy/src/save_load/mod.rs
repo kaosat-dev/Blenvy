@@ -1,108 +1,59 @@
-pub mod saveable;
-use std::path::PathBuf;
-
-pub use saveable::*;
-
-pub mod saving;
-pub use saving::*;
-
-pub mod loading;
-pub use loading::*;
-
-use bevy::core_pipeline::core_3d::{Camera3dDepthTextureUsage, ScreenSpaceTransmissionQuality};
 use bevy::prelude::*;
-use bevy::prelude::{App, IntoSystemConfigs, Plugin};
-use blenvy::GltfBlueprintsSet;
 
-#[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
-pub enum SavingSet {
-    Save,
-}
+#[derive(Component, Reflect, Debug, Default)]
+#[reflect(Component)]
+/// component used to mark any entity as Dynamic: aka add this to make sure your entity is going to be saved
+pub struct Dynamic;
 
-#[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
-pub enum LoadingSet {
-    Load,
-}
+#[derive(Component, Reflect, Debug, Default)]
+#[reflect(Component)]
+/// marker component for entities that do not have parents, or whose parents should be ignored when serializing
+pub(crate) struct RootEntity;
 
-// Plugin configuration
+#[derive(Component, Debug)]
+/// internal helper component to store parents before resetting them
+pub(crate) struct OriginalParent(pub(crate) Entity);
 
-#[derive(Clone, Resource)]
-pub struct SaveLoadConfig {
-    pub(crate) save_path: PathBuf,
-    pub(crate) component_filter: SceneFilter,
-    pub(crate) resource_filter: SceneFilter,
-}
 
-// define the plugin
-
-pub struct SaveLoadPlugin {
-    pub component_filter: SceneFilter,
-    pub resource_filter: SceneFilter,
-    pub save_path: PathBuf,
-}
-
-impl Default for SaveLoadPlugin {
-    fn default() -> Self {
-        Self {
-            component_filter: SceneFilter::default(),
-            resource_filter: SceneFilter::default(),
-            save_path: PathBuf::from("scenes"),
-        }
-    }
-}
-
+/// Marker component to Flag the root entity of all static entities (immutables)
 #[derive(Component, Reflect, Debug, Default)]
 #[reflect(Component)]
 pub struct StaticEntitiesRoot;
 
+/// Marker component to Flag the root entity of all dynamic entities (mutables)
 #[derive(Component, Reflect, Debug, Default)]
 #[reflect(Component)]
 pub struct DynamicEntitiesRoot;
+
+
+#[derive(Resource, Clone, Debug, Default, Reflect)]
+#[reflect(Resource)]
+pub struct StaticEntitiesBlueprintInfo {
+    //pub blueprint_info: BlueprintInfo,
+    pub path: String,
+}
+
+
+pub mod saving;
+pub use saving::*;
+
+#[derive(Debug, Clone, Default)]
+/// Plugin for saving & loading
+pub struct SaveLoadPlugin {}
 
 impl Plugin for SaveLoadPlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<Dynamic>()
             .register_type::<StaticEntitiesRoot>()
-            // TODO: remove these in bevy 0.13, as these are now registered by default
-            .register_type::<Camera3dDepthTextureUsage>()
-            .register_type::<ScreenSpaceTransmissionQuality>()
-            .register_type::<StaticEntitiesStorage>()
-            .add_event::<SaveRequest>()
-            .add_event::<LoadRequest>()
-            .add_event::<LoadingFinished>()
-            .add_event::<SavingFinished>()
-            .insert_resource(SaveLoadConfig {
-                save_path: self.save_path.clone(),
 
-                component_filter: self.component_filter.clone(),
-                resource_filter: self.resource_filter.clone(),
-            })
-            .configure_sets(
-                Update,
-                (LoadingSet::Load).chain().before(GltfBlueprintsSet::Spawn), //.before(GltfComponentsSet::Injection)
-            )
+            .add_event::<SaveRequest>()
+            .add_event::<SaveFinished>()
             .add_systems(
-                PreUpdate,
+                Update,
                 (prepare_save_game, apply_deferred, save_game, cleanup_save)
                     .chain()
                     .run_if(should_save),
             )
-            .add_systems(Update, mark_load_requested)
-            .add_systems(
-                Update,
-                (unload_world, apply_deferred, load_game)
-                    .chain()
-                    .run_if(resource_exists::<LoadRequested>)
-                    .run_if(not(resource_exists::<LoadFirstStageDone>))
-                    .in_set(LoadingSet::Load),
-            )
-            .add_systems(
-                Update,
-                (load_static, apply_deferred, cleanup_loaded_scene)
-                    .chain()
-                    .run_if(resource_exists::<LoadFirstStageDone>)
-                    // .run_if(in_state(AppState::LoadingGame))
-                    .in_set(LoadingSet::Load),
-            );
+        ;
     }
 }

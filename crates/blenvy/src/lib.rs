@@ -10,6 +10,9 @@ pub use registry::*;
 pub mod blueprints;
 pub use blueprints::*;
 
+pub mod save_load;
+pub use save_load::*;
+
 #[derive(Clone, Resource)]
 pub struct BlenvyConfig {
     // registry
@@ -26,6 +29,8 @@ pub struct BlenvyConfig {
     // save & load
     pub(crate) save_component_filter: SceneFilter,
     pub(crate) save_resource_filter: SceneFilter,
+    //pub(crate) save_path: PathBuf,
+    // save_path: PathBuf::from("saves"),
 }
 
 #[derive(Debug, Clone)]
@@ -63,6 +68,7 @@ impl Plugin for BlenvyPlugin {
             #[cfg(not(target_arch = "wasm32"))]
             ExportRegistryPlugin::default(),
             BlueprintsPlugin::default(),
+            SaveLoadPlugin::default()
         ))
         .insert_resource(BlenvyConfig {
             export_registry: self.export_registry,
