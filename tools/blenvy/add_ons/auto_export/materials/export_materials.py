@@ -1,10 +1,8 @@
 import os
 import bpy
-from pathlib import Path
 
 from blenvy.core.helpers_collections import (traverse_tree)
 from blenvy.core.object_makers import make_cube
-from blenvy.materials.materials_helpers import add_material_info_to_objects, get_all_materials
 from ..common.generate_temporary_scene_and_export import generate_temporary_scene_and_export
 from ..common.export_gltf import (generate_gltf_export_settings)
 
