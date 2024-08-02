@@ -27,7 +27,7 @@ Want to jump right in? See the [quickstart guide](./docs/quickstart/readme.md) f
 * automatically load all assets for each blueprint (gltf files, manually added assets), with no setup required
 * hot reload of your levels & blueprints
 * minimal setup & code, you can have something basic running fast
-* minimal dependencies: Bevy, Serde & Ron only !
+* minimal dependencies: Bevy, Serde & RON only!
 * opensource
 
 > If you were previously using the individual bevy_gltf_xxx crates & Blender add-ons please see the [migration guide](./Migration_guide.md)
@@ -81,6 +81,12 @@ The workflow goes as follows (once you got your Bevy code setup)
 * have fun !
 
 * then add your components to objects in Blender **with a nice UI** see [here](./README-workflow-ui.md) for more details
+
+See the [quickstart](./docs/quickstart/readme.md) for a full step-by-step guide.
+
+## Third Party Integration
+
+Read about the [Avian Physics Integration](docs/avian/readme) to learn how to setup colliders in Blender that will be used by the Avian physics engine in Bevy.
 
 ## Limitations / issues
 

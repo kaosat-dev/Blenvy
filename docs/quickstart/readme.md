@@ -5,6 +5,16 @@ This guide assumes you use Blender 4.2 or newer and have set it to English.
 > [!NOTE]  
 > This is not a Blender tutorial. No worries, we will make sure you find all necessary buttons to click, but we will not explain in detail what Blender concepts like "collections" or "scenes" are. If you are not familiar with Blender, you might want to look up some basic tutorials first.
 
+## Table of Contents
+
+- [Install the Blender Addon](#install-the-blender-addon)
+- [Setup the Bevy side](#setup-the-bevy-side)
+- [Setup the Blender addon for your project](#setup-the-blender-addon-for-your-project)
+- [Create a blueprint](#create-a-blueprint)
+- [Compose the world](#compose-the-world)
+- [Run your game](#run-your-game)
+- [Next Steps](#next-steps)
+
 ## Install the Blender Addon
 
 - Download `blenvy.zip` from the [release page](https://github.com/kaosat-dev/Blenvy/releases/tag/blenvy_v0.1.0_pre_alpha)
@@ -91,7 +101,7 @@ Create a directory under `my_game` called `art`. Hop back into Blender and save 
 </details>
 
 Now, clear the default scene of any objects or collections.
-The fastest way to do this is to look for the collection named simply `Collection` all the way on the right of Blender. Right-click on it and select `Delete Hierachy`.
+The fastest way to do this is to look for the collection named simply `Collection` all the way on the right of Blender. Right-click on it and select `Delete Hierachy`. For future reference, the place where you just did this is called the *outliner*.
 
 <details>
 <summary>The default collection to delete</summary>
@@ -156,9 +166,13 @@ Run, run your game with `cargo run`. It may crash because the scene is empty, bu
 <img src="img/registry.png" width = 50%/>
 </details>
 
+This concludes the setup portion of the guide.
+
 ## Create a blueprint
 
-Now, we will create an object for the `Player` component we defined earlier. While still in the `Library` scene, right-click on the `Scene Collection` all the way on the right. Select `New Collection`. Double-click on the new collection that appeared and rename it to `Player`. Click on it to have it selected.
+Alright, let's jump into the actual workflow you'll be using to create your game.
+We will first create an object for the `Player` component we defined earlier.
+While still in the `Library` scene, right-click on the `Scene Collection` in the outliner to the right. Select `New Collection`. Double-click on the new collection that appeared and rename it to `Player`. Click on it to have it selected.
 
 <details>
 <summary>The player collection</summary>
@@ -203,7 +217,7 @@ Now click `Add`. You can now set all the player's fields in a neat Blender UI. N
 
 Congratulations, you have just created your first blueprint.
 
-## Composing the world
+## Compose the world
 
 Let's populate our world now. Switch back to the `World` scene in Blender as described before.
 
@@ -214,7 +228,10 @@ We will add the following kinds of objects to our world:
 - A light
 - The player character, which will be a blueprint instance
 
-First, let's add a camera through `Add` -> `Camera`. Blender will make the camera face whatever direction the viewport is aimed at, which will probably be completely arbitrary. Move the camera a bit so that it faces the world origin and is rotated the right way. You can just copy our transform if you like:
+First, let's add a camera through `Add` -> `Camera`. Blender will make the camera face whatever direction the viewport is aimed at, which will probably be completely arbitrary.
+Move the camera a bit so that it faces the world origin and is rotated the right way.
+Pressing `0` on your numpad will show you a preview of what the camera sees.
+You can just copy our transform if you like:
 
 - Location:
   - X: `0`
@@ -285,3 +302,9 @@ Congrats, you're done! Just run your game with `cargo run` and you should see yo
 </details>
 
 Okay, maybe not that much glory. But the important part is that the player is visible in the scene and has a `Player` component on it. You can now add more components to the player, create more blueprints, and populate your world with them. They can have animations, materials, etc. Have fun!
+
+## Next Steps
+
+- Read the [Blevy for Bevy](../../crates/blenvy/README.md) documentation for more features on the Bevy side.
+- Read the [Blevy for Blender](../../tools/blenvy/README.md) documentation for more features on the Blender side.
+- Read about the [Avian Physics Integration](../avian/readme.md) to learn how to setup colliders in Blender that will be used by the Avian physics engine in Bevy.
