@@ -1,6 +1,6 @@
 # Quickstart
 
-This guide assumes you use Blender 4.2 or newer.
+This guide assumes you use Blender 4.2 or newer and have set it to English.
 
 > [!NOTE]  
 > This is not a Blender tutorial. No worries, we will make sure you find all necessary buttons to click, but we will not explain in detail what Blender concepts like "collections" or "scenes" are. If you are not familiar with Blender, you might want to look up some basic tutorials first.
@@ -31,6 +31,8 @@ cd my_game
 cargo add bevy
 cargo add blenvy --git https://github.com/kaosat-dev/Blenvy/ --branch blenvy
 ```
+
+This guide will tell you to `cargo run` at multiple points. We expect that you are still in the `my_game` directory when you do so.
 
 Now, replace the contents of `src/main.rs` with the following:
 
