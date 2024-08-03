@@ -235,7 +235,7 @@ If you have only the `Empty` set to visible and selected it, your viewport shoul
 
 The important bit here is that the empty's outlines perferctly match the attached collider's size.
 
-Now, drag and drop the empty into the `Board` collection. With the empty selected, hold `CTRL` and select the `Board` object.
+Now, drag and drop the empty into the `With Empty` collection. With the empty selected, hold `CTRL` and select the `Board` object.
 
 > [!IMPORTANT]  
 > It is essential that you *first* select the `Empty` and *then* select the `Board`. The order is key!
@@ -270,7 +270,7 @@ While you could (and sometimes should) scale this manually, there is a nice way 
 </details>
 
 > [!TIP]
-> If you are not seeing this screen, you have probably clicked on the `Board` collection, and not on the item within it.
+> If you are not seeing this screen, you have probably clicked on the `With Empty` collection, and not on the item within it.
 
 As you can see, its dimensions are:
 
@@ -339,7 +339,7 @@ Now add a `ColliderConstructor` to it. This time, use the `Cylinder` variant. Se
 <img src="img/cylinder_collider.png" width = 50%/>
 </details>
 
-The rest of the steps are identical to the empty: Drag-and-drop the cylinder collider into the `Cylinder` collection, make it a child of your `Cylinder` object and scale it accordingly. The result should look like this:
+The rest of the steps are identical to the empty: Drag-and-drop the cylinder collider into the `Wireframe` collection, make it a child of your `Cylinder` object and scale it accordingly. The result should look like this:
 
 <details>
 <summary>Cylinder collider on mesh</summary>
