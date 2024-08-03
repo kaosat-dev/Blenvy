@@ -292,7 +292,7 @@ You should now see both objects fall to the ground.
 
 <details>
 <summary>The cube and board falling to the ground</summary>
-<img src="img/falling_empty.png" width = 50%/>
+<img src="img/falling_empty.gif" width = 50%/>
 </details>
 
 ### Wireframes
