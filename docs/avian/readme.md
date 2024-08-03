@@ -3,6 +3,20 @@
 This guide assumes that you have a basic Blenvy setup ready to tinker in.
 If you don't have that yet, please refer to the [quickstart](../quickstart/readme.md) guide.
 
+## Table of Contents
+
+- [Add Avian to Bevy](#add-avian-to-bevy)
+- [Prepare your Scenes](#prepare-your-scenes)
+- [Create a Rigid Body](#create-a-rigid-body)
+- [Add Primitive Colliders](#add-primitive-colliders)
+  - [Direct](#direct)
+  - [With Empty](#with-empty)
+  - [Wireframes](#wireframes)
+- [Add Dynamic Colliders](#add-dynamic-colliders)
+  - [Convex](#convex)
+  - [Concave](#concave)
+- [Other useful components](#other-useful-components)
+
 ## Add Avian to Bevy
 
 No big surprises here. Simply add `avian3d` as a dependency by running the following from your project root:
@@ -42,76 +56,41 @@ fn setup(mut commands: Commands) {
 
 Run this once with `cargo.run` to generate a `registry.json` that contains the Avian components.
 
-## Prepare the Blueprints
+## Prepare your Scenes
 
-Set up your `World` and `Library` scenes in Blender. Switch to the `Library` scene.
+Set up your `World` and `Library` scenes in Blender.
+
+Go into your `World` scene. If you are coming from the [quickstart guide](../quickstart/readme.md), you can remove the `Player` instance as we don't need it in this guide.
+If you have created this scene yourself in advance, make sure that it contains a camera, a light, and some kind of ground.
+
+Since the objects are quite big, you may need to move the camera a bit further away to see them all.
+We set its Y location to `-15` and the X rotation to `90` for this reason.
+Pressing `0` on your numpad will show you a preview of what the camera sees.
+
+For reference, this is how our world setup looks:
+
+<details>
+<summary>The world setup before adding any physics</summary>
+<img src="img/empty_world.png" width = 100%/>
+</details>
+
+Now switch to the `Library` scene.
 If you're coming from the [quickstart](../quickstart/readme.md) guide, you may now delete the `Player` collection by
-right-clicking it in the outliner and selecting `Delete Hierarchy` as we don't need it in this guide.
+right-clicking it in the outliner and selecting `Delete Hierarchy`.
 Remember, you can find the outliner all the way to the right.
 
-We will be showing different ways to add colliders, so we need to add a blueprint for each approach.
-Create three new collections in the outliner by doing `rightclick` -> `New Collection` and name them as follows:
+## Create a Rigid Body
 
-- Cube
-- Board
-- Cylinder
+Create a new collection with `rightclick` -> `New Collection` and name it `Direct`. This name will make sense in the next section.
 
-Your outliner should now look like this:
-
-<details>
-<summary>Our empty collections</summary>
-<img src="img/empty_collections.png" width = 50%/>
-</details>
-
-If you accidentally created a collection as a child of another, simply drag-and-drop them around to reorder them until they look like the image above.
-
-### Cube
-
-Click on the `Cube` collection we just created to select it. Then, go to `Add` -> `Mesh` -> `Cube` in the upper left corner to add a cube to the collection. Leave it at the default transform.
-
-### Board
-
-Click on the `Board` collection. Again, go to `Add` -> `Mesh` -> `Cube`. This time, scale it until it looks like a flat board:
-
-<details>
-<summary>The cylinder in Blender</summary>
-<img src="img/cylinder.png" width = 50%/>
-</details>
-
-> [!TIP]
-> The above screenshot was made after disabling the visibility of the `Cube` collection by clicking the eye icon in the outliner.
->
-> <details>
-> <summary>Hiding objects</summary>
-> <img src="img/hiding.png" width = 50%/>
-> </details>
->
-> Hiding other collections becomes quickly essential when working with blueprints.
-
-The scaling we used was the following:
-
-- X: `2.5`
-- Y: `0.5`
-- Z: `1.5`
-
-### Cylinder
-
-Finally, click on the `Cylinder` collection. Go to `Add` -> `Mesh` -> `Cylinder`. Leave it at the default transform.
-
-You should now have three collections with different shapes in them:
-<details>
-<summary>Collections with objects in the outliner</summary>
-<img src="img/three_object_collection.png" width = 50%/>
-</details>
-
-## Add RigidBody Components
+Click on the `Direct` collection we just created to select it. Then, go to `Add` -> `Mesh` -> `Cube` in the upper left corner to add a cube to the collection. Leave it at the default transform.
 
 Avian makes a distinction between a *rigid body* and its associated *colliders*.
 In general, the best practice is to have a parent object be a rigid body and then have at least one descendant object be a collider.
 
-Adding the `RigidBody` is the same for all approaches:
+Add the `RigidBody` as follows:
 
-- select the object in the viewport
+- select the object in the viewport, i.e. the cube.
 - go to the Blenvy menu's component manager. Remember, if are missing the side menu, you can open it with `N`.
 - type `rigidbody` in the search bar
 - select `avian3d::dynamics::rigid_body::RigidBody`
@@ -129,7 +108,7 @@ The result should look like this:
 </details>
 
 The default value for `RigidBody` is `Dynamic`, which is what we want for all three objects.
-It means that they will be affected by gravity and other forces. Repeat this step for the `Board` and `Cylinder` objects.
+It means that they will be affected by gravity and other forces.
 
 ## Add Primitive Colliders
 
@@ -137,9 +116,9 @@ Colliders come in two flavors: primitive and dynamic. Primitives are made up of 
 
 There are three different ways to add primitive colliders to the objects, in order of increasing complexity.
 
-### Quick and Dirty
+### Direct
 
-Select the cube and search in the components for `colliderconstructor`. Select `avian3d::collision::collider::constructor::ColliderConstructor` and add it.
+Select the cube we just created and search in the components for `colliderconstructor`. Select `avian3d::collision::collider::constructor::ColliderConstructor` and add it.
 By default, the collider will be of the variant `Sphere`. Change it to `Cuboid`.
 Since the standard cube in Blender is of size 2 m, set the `x_length`, `y_length`, and `z_length` all to `2.0`:
 <details>
@@ -153,10 +132,83 @@ That's already it.
 > This method brings a major footgun: Blender uses Z-up coordinates, while Bevy uses Y-up coordinates.
 > The information you enter into the `ColliderConstructor` is in Bevy's coordinate system, so don't mix them up!
 
-### Using Empties
+To see it in action, we switch to the `World` scene and add and instance of our `Direct` collection with `Add` -> `Collection Instance`.
+
+<details>
+<summary>The world scene with the direct collider cube</summary>
+<img src="img/direct_in_world.png" width = 50%/>
+</details>
+
+Save the scene to let Blenvy export everything and run the game with `cargo run`.
+
+<details>
+<summary>The cube falls down</summary>
+<img src="img/falling_direct.gif" width = 50%/>
+</details>
+
+If everything went right, your cube should fall into the void due to gravity.
+Note that it phases right through the ground because we have not yet added a rigid body and collider to it yet.
+
+Click on the ground and add a `RigidBody` component as described before to it, but this time set it to `Static`.
+This means that the ground itself will not react to forces such as gravity, but will still affect other rigid bodies.
+
+Add a collider to the ground as before. Make sure that the dimensions of the collider match the dimensions of the ground.
+
+<details>
+<summary>Ground collider</summary>
+<img src="img/ground collider.png" width = 100%/>
+</details>
+
+> [!CAUTION]
+> As mentioned before, when using this method you should be aware that the component
+> is in Bevy's coordinate system, so set the `y_length` to the *height* of the ground.
+
+Run your game again with `cargo run` to see the cube landing on the ground.
+
+<details>
+<summary>The cube falls onto the ground</summary>
+<img src="img/falling_direct_on_static.gif" width = 50%/>
+</details>
+
+> [!TIP]
+> If your scene is doing something weird, try adding Avian's
+> [`PhysicsDebugPlugin`](https://docs.rs/avian3d/latest/avian3d/debug_render/struct.PhysicsDebugPlugin.html)
+> to your Bevy app to see the colliders at runtime.  
+> If the collider looks flipped, try switching the Y and Z lengths.
+
+### With Empty
+
+Go back to the `Library` scene. Add a collection named `With Empty`.
+
+> [!TIP]
+> If you accidentally created a collection as a child of another, simply drag-and-drop them around to reorder them
+
+With the new collection selected, go to `Add` -> `Mesh` -> `Cube`. Name the new object `Board`.
+This time, scale it until it looks like a flat board:
+
+<details>
+<summary>The board in Blender</summary>
+<img src="img/board.png" width = 50%/>
+</details>
+
+> [!TIP]
+> The above screenshot was made after disabling the visibility of the `Direct` collection by clicking the eye icon in the outliner.
+>
+> <details>
+> <summary>Hiding objects</summary>
+> <img src="img/hiding.png" width = 50%/>
+> </details>
+>
+> Hiding other collections becomes quickly essential when working with blueprints.
+
+The scaling we used was the following:
+
+- X: `2.5`
+- Y: `0.5`
+- Z: `1.5`
 
 You'll notice that the last variant does not actually show you a preview of the collider. Let's fix that.
-Click on the `Board` and then select `Add` -> `Empty` -> `Cube`.
+Click on the `With Empty` collection and then select `Add` -> `Empty` -> `Cube`.
 To make its properties a bit nice to work with, go to the `Data` tab of the `Properties` window in the lower right:
 
 <details>
@@ -171,7 +223,7 @@ You'll notice that it says "Size: 1m". This is a little bit misleading, as we've
 <img src="img/data.png" width = 50%/>
 </details>
 
-Add a collider to this empty like you did in the ["Quick and Dirty" section](#quick-and-dirty).
+Add a collider to this empty like you did in the ["Direct" section](#direct).
 Set its lengths to `1` this time.
 
 If you have only the `Empty` set to visible and selected it, your viewport should now look as follows:
@@ -235,7 +287,18 @@ You can just use these values as the scale for the `Empty`. After everything is 
 
 Note that the orange collider outlines should align nicely with the board's mesh.
 
-### Using Wireframes
+Add an instance of the `With Empty` collection to the `World` scene just as before and run the game.
+You should now see both objects fall to the ground.
+
+<details>
+<summary>The cube and board falling to the ground</summary>
+<img src="img/falling_empty.png" width = 50%/>
+</details>
+
+### Wireframes
+
+Add a new collection named `Wireframe`. With it selected,
+go to `Add` -> `Mesh` -> `Cylinder`. Leave it at the default transform.
 
 The last variant is a bit of a workaround for the fact that empties in Blender cannot have an arbitrary shape.
 For example, a cylinder is not supported. So, we are going to create a new cylinder preview by hand.
@@ -289,45 +352,12 @@ The rest of the steps are identical to the empty: Drag-and-drop the cylinder col
 > You can use the builtin [Add Mesh Extra Objects](https://docs.blender.org/manual/en/latest/addons/add_mesh/mesh_extra_objects.html)
 > extension to fill this gap.
 
-## Populate the world
-
-Go into your `World` scene. If you are coming from the [quickstart guide](../quickstart/readme.md), you can remove the `Player` empty that is left over.
-If you have created this scene yourself in advance, make sure that it contains a camera, a light, and some kind of ground.
-For reference, this is how our world setup looks:
+Add an instance of the `Wireframe` collection to the `World` scene and run the game to see all kinds of primitive colliders tumble around.
 
 <details>
-<summary>The world setup before adding any physics</summary>
-<img src="img/empty_world.png" width = 100%/>
+<summary>Cylinder collider falling down</summary>
+<img src="img/falling_wireframe.gif" width = 50%/>
 </details>
-
-Before we add any objects, we'll make the ground a rigid body as well. Add a `RigidBody` component as described before to it, but this time set it to `Static`. Add a collider to it in any of the ways described above. We used the `Quick and Dirty` method for this:
-
-<details>
-<summary>Ground collider</summary>
-<img src="img/ground collider.png" width = 100%/>
-</details>
-
-> [!CAUTION]
-> As mentioned before, when using this method you should be aware that the component
-> is in Bevy's coordinate system, so set the `y_length` to the height of the ground.
-
-Now add instances of the `Cube`, `Board`, and `Cylinder` to the world by selecting `Add` -> `Collection Instance`.
-
-Since the objects are quite big, you may need to move the camera a bit further away to see them all.
-We set its Y location to `-15` and the X rotation to `90` for this reason.
-Pressing `0` on your numpad will show you a preview of what the camera sees.
-
-Save the scene to let Blenvy export everything. Run your game with `cargo run` and you should see some objects falling onto the ground!
-
-<details>
-<summary>Objects falling onto the ground</summary>
-<img src="img/falling.gif" width = 100%/>
-</details>
-
-> [!TIP]
-> If your scene is doing something weird, try adding Avian's
-> [`PhysicsDebugPlugin`](https://docs.rs/avian3d/latest/avian3d/debug_render/struct.PhysicsDebugPlugin.html)
-> to your Bevy app to see the colliders at runtime.
 
 ## Add Dynamic Colliders
 
@@ -337,7 +367,7 @@ or just quickly want to test something. For this, we are going to use dynamic co
 
 ### Convex
 
-Go back to the `Library` scene, add a new collection, and name it `Torus`. Select `Add` -> `Mesh` -> `Torus`. Leave it at the default transform. Add a `RigidBody` to it. Your scene should now look like this:
+Go back to the `Library` scene, add a new collection, and name it `Convex`. Select `Add` -> `Mesh` -> `Torus`. Leave it at the default transform. Add a `RigidBody` to it. Your scene should now look like this:
 
 <details>
 <summary>A simple torus</summary>
@@ -355,7 +385,7 @@ You can access it by expanding your object in the outliner. Its icon is a green 
 
 <details>
 <summary>The selected mesh</summary>
-<img src="img/selected_mesh.png" width = 50%/>
+<img src="img/select_mesh.png" width = 50%/>
 </details>
 
 With the *mesh* selected, add a `ColliderConstructor` to it. Set the variant to `ConvexHullFromMesh`.
@@ -366,11 +396,21 @@ If you did everything correctly, the component manager should say "Components fo
 <img src="img/torus_component.png" width = 50%/>
 </details>
 
-That's all for now
+Go to the `World` scene and add an instance of the `Convex` collection. Save the scene, then run the game to see the torus fall down.
+
+<details>
+<summary>The convex collider falling</summary>
+<img src="img/falling_convex.gif" width = 50%/>
+</details>
+
+> [!TIP]
+> Is your game crashing with `Tried to add a collider to entity Torus via ConvexHullFromMesh that requires a mesh, but no mesh handle was found`?
+> That means you added your `ColliderConstructor` to the object instead of the mesh.
+> Go back to the screenshots above and make sure you have the mesh selected when adding the component.
 
 ### Concave
 
-Add a new collection and name it `Monkey`. Select `Add` -> `Mesh` -> `Monkey`.
+Add a new collection and name it `Concave`. Select `Add` -> `Mesh` -> `Monkey`.
 Yes, Blender has a builtin method for creating Suzanne, its monkey mascot. Isn't it great?
 Anyways, add a rigid body to it. Afterwards, just as before, select the *mesh* of the monkey.
 Add a `ColliderConstructor` to it. This time, set the variant to `TrimeshFromMesh`.
@@ -381,21 +421,12 @@ Add a `ColliderConstructor` to it. This time, set the variant to `TrimeshFromMes
 > That means that any objects that are completely inside the mesh will not collide with it.
 > Only use a concave collider if you *really* need it.
 
-## Add the Dynamic Colliders to the World
-
-Save the scene to let Blenvy export everything.
-Go back to the `World` scene. Add instances of the `Torus` and `Monkey` collections to the world and run the game with `cargo run`.
-They should now fall onto the ground and interact with the other objects:
+Just as before, go to the `World` scene and add an instance of the `Concave` collection. Save the scene, then run the game to see the torus fall down.
 
 <details>
-<summary>The primitive and dynamic colliders falling down</summary>
-<img src="img/falling_dyn.gif" width = 100%/>
+<summary>The concave collider falling</summary>
+<img src="img/falling_concave.gif" width = 50%/>
 </details>
-
-> [!TIP]
-> Is your game crashing with `Tried to add a collider to entity Torus via <ConvexHullFromMesh or TrimeshFromMesh> that requires a mesh, but no mesh handle was found`?
-> That means you added your `ColliderConstructor` to the object instead of the mesh.
-> Go back to the screenshots above and make sure you have the mesh selected when adding the component.
 
 ## Other useful components
 
