@@ -103,6 +103,11 @@ Create a directory under `my_game` called `art`. Hop back into Blender and save 
 Now, clear the default scene of any objects or collections.
 The fastest way to do this is to look for the collection named simply `Collection` all the way on the right of Blender. Right-click on it and select `Delete Hierachy`. For future reference, the place where you just did this is called the *outliner*.
 
+> [!TIP]
+> Technically, we could leave the default setup as-is since we are going to recreate it later anyway.
+> However, we are starting from a clean slate in order to make it explicit what we are doing
+> and which data is being exported to Bevy.
+
 <details>
 <summary>The default collection to delete</summary>
 
