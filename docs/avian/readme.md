@@ -90,7 +90,7 @@ In general, the best practice is to have a parent object be a rigid body and the
 
 Add the `RigidBody` as follows:
 
-- select the object in the viewport, i.e. the cube.
+- select the collection named `Direct` in the outliner.
 - go to the Blenvy menu's component manager. Remember, if are missing the side menu, you can open it with `N`.
 - type `rigidbody` in the search bar
 - select `avian3d::dynamics::rigid_body::RigidBody`
@@ -118,7 +118,8 @@ There are three different ways to add primitive colliders to the objects, in ord
 
 ### Direct
 
-Select the cube we just created and search in the components for `colliderconstructor`. Select `avian3d::collision::collider::constructor::ColliderConstructor` and add it.
+Select the collection named `Direct` and search in the component manager for `colliderconstructor`.
+Select `avian3d::collision::collider::constructor::ColliderConstructor` and add it.
 By default, the collider will be of the variant `Sphere`. Change it to `Cuboid`.
 Since the standard cube in Blender is of size 2 m, set the `x_length`, `y_length`, and `z_length` all to `2.0`:
 <details>
@@ -149,10 +150,11 @@ Save the scene to let Blenvy export everything and run the game with `cargo run`
 If everything went right, your cube should fall into the void due to gravity.
 Note that it phases right through the ground because we have not yet added a rigid body and collider to it yet.
 
-Click on the ground and add a `RigidBody` component as described before to it, but this time set it to `Static`.
+Click on the ground object and add a `RigidBody` component as described before to it, but this time set it to `Static`.
 This means that the ground itself will not react to forces such as gravity, but will still affect other rigid bodies.
+Note that since we are not working with a blueprint here, you'll need to add the component to the object itself rather than a collection.
 
-Add a collider to the ground as before. Make sure that the dimensions of the collider match the dimensions of the ground.
+Also add a collider to the ground as before. Make sure that the dimensions of the collider match the dimensions of the ground.
 
 <details>
 <summary>Ground collider</summary>
@@ -178,11 +180,14 @@ Run your game again with `cargo run` to see the cube landing on the ground.
 
 ### With Empty
 
+You'll notice that the last variant does not actually show you a preview of the collider. Let's fix that.
+
 Go back to the `Library` scene. Add a collection named `With Empty`.
 
 > [!TIP]
 > If you accidentally created a collection as a child of another, simply drag-and-drop them around to reorder them
 
+Click on the `With Empty` collection to select it. Add a `RigidBody` to it as described before, but do not add a collider to it.
 With the new collection selected, go to `Add` -> `Mesh` -> `Cube`. Name the new object `Board`.
 This time, scale it until it looks like a flat board:
 
@@ -207,8 +212,7 @@ The scaling we used was the following:
 - Y: `0.5`
 - Z: `1.5`
 
-You'll notice that the last variant does not actually show you a preview of the collider. Let's fix that.
-Click on the `With Empty` collection and then select `Add` -> `Empty` -> `Cube`.
+Now spawn an [*empty*](https://docs.blender.org/manual/en/latest/modeling/empties.html) with `Add` -> `Empty` -> `Cube`.
 To make its properties a bit nice to work with, go to the `Data` tab of the `Properties` window in the lower right:
 
 <details>
@@ -223,8 +227,10 @@ You'll notice that it says "Size: 1m". This is a little bit misleading, as we've
 <img src="img/data.png" width = 50%/>
 </details>
 
-Add a collider to this empty like you did in the ["Direct" section](#direct).
-Set its lengths to `1` this time.
+Select the empty in the outliner and add collider to this empty like you did in the ["Direct" section](#direct).
+Note that you are now adding the collider to the empty itself, not the overarching collection.
+
+Set the cuboid collider's lengths to `1` this time.
 
 If you have only the `Empty` set to visible and selected it, your viewport should now look as follows:
 
@@ -233,7 +239,7 @@ If you have only the `Empty` set to visible and selected it, your viewport shoul
 <img src="img/empty_selected.png" width = 50%/>
 </details>
 
-The important bit here is that the empty's outlines perferctly match the attached collider's size.
+The important bit to realize here is that the empty's outlines perferctly match the attached collider's size.
 
 Now, drag and drop the empty into the `With Empty` collection. With the empty selected, hold `CTRL` and select the `Board` object.
 
@@ -297,8 +303,8 @@ You should now see both objects fall to the ground.
 
 ### Wireframes
 
-Add a new collection named `Wireframe`. With it selected,
-go to `Add` -> `Mesh` -> `Cylinder`. Leave it at the default transform.
+Add a new collection named `Wireframe`. With it selected, add a `RigidBody` to it.
+Then go to `Add` -> `Mesh` -> `Cylinder`. Leave it at the default transform.
 
 The last variant is a bit of a workaround for the fact that empties in Blender cannot have an arbitrary shape.
 For example, a cylinder is not supported. So, we are going to create a new cylinder preview by hand.
@@ -367,7 +373,8 @@ or just quickly want to test something. For this, we are going to use dynamic co
 
 ### Convex
 
-Go back to the `Library` scene, add a new collection, and name it `Convex`. Select `Add` -> `Mesh` -> `Torus`. Leave it at the default transform. Add a `RigidBody` to it. Your scene should now look like this:
+Go back to the `Library` scene, add a new collection, and name it `Convex`. Add a `RigidBody` to it.
+Select `Add` -> `Mesh` -> `Torus`. Leave it at the default transform. Your scene should now look like this:
 
 <details>
 <summary>A simple torus</summary>
@@ -410,9 +417,9 @@ Go to the `World` scene and add an instance of the `Convex` collection. Save the
 
 ### Concave
 
-Add a new collection and name it `Concave`. Select `Add` -> `Mesh` -> `Monkey`.
+Add a new collection and name it `Concave`. Add a `RigidBody` to it. Select `Add` -> `Mesh` -> `Monkey`.
 Yes, Blender has a builtin method for creating Suzanne, its monkey mascot. Isn't it great?
-Anyways, add a rigid body to it. Afterwards, just as before, select the *mesh* of the monkey.
+Anyways, just as before, select the *mesh* of the monkey.
 Add a `ColliderConstructor` to it. This time, set the variant to `TrimeshFromMesh`.
 
 > [!CAUTION]

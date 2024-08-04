@@ -159,7 +159,8 @@ Save your Blender file by pressing `Ctrl + S` on Windows or Linux and `Cmd + S` 
 <summary>The newly created level assets</summary>
 <img src="img/level_asset.png" width = 50%/>
 </details>
-Run, run your game with `cargo run`. It may crash because the scene is empty, but don't worry. The point is that now will have generated another new file, namely `assets/registry.json`. This file contains the information about all components exported by your game so that Blenvy can pso them in Blender.
+
+Now run your game with `cargo run`. It may crash because the scene is empty, but don't worry. The point is that now will have generated another new file, namely `assets/registry.json`. This file contains the information about all components exported by your game so that Blenvy can pso them in Blender.
 
 <details>
 <summary>The final file structure for an empty world</summary>
@@ -179,14 +180,16 @@ While still in the `Library` scene, right-click on the `Scene Collection` in the
 <img src="img/player_collection.png" width = 50%/>
 </details>
 
-Now, on the upper left of Blender, click on `Add` -> `Mesh` -> `Cube`. This will be our player. We will now add the `Player` component to it. Go to the Blenvy menu we opened earlier. Select the icon in its upper left corner. This is where components are managed.
+Now, on the upper left of Blender, click on `Add` -> `Mesh` -> `Cube`. This will be our player.
+Select the `Player` collection again. We will now add the `Player` component to it.
+Go to the Blenvy menu we opened earlier. Select the icon in its upper left corner. This is where components are managed.
 
 <details>
 <summary>The component manager</summary>
 <img src="img/component_manager.png" width = 50%/>
 </details>
 
-If your component manager says "Select an object to edit its components", make sure you have the *Cube* we just created selected by clicking on it in the 3D viewport.
+If your component manager says "Select an object to edit its components", make sure you have the `Player` collection we just created selected by clicking on it in the outliner.
 
 Click on `Components`. If it says "No results found", we need to explicitly reload the registry. In the Blenvy menu, click on the gear icon (the fourth one from the left). In the submenu, click on the second icon. Your menu should now look like this:
 
