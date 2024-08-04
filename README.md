@@ -86,7 +86,7 @@ See the [quickstart](./docs/quickstart/readme.md) for a full step-by-step guide.
 
 ## Third Party Integration
 
-Read about the [Avian Physics Integration](docs/avian/readme) to learn how to setup colliders in Blender that will be used by the Avian physics engine in Bevy.
+Read about the [Avian Physics Integration](docs/avian/readme.md) to learn how to setup colliders in Blender that will be used by the Avian physics engine in Bevy.
 
 ## Limitations / issues
 
