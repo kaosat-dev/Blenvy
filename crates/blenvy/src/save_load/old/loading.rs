@@ -5,7 +5,7 @@ use std::path::Path;
 use crate::{DynamicEntitiesRoot, SaveLoadConfig, StaticEntitiesRoot, StaticEntitiesStorage};
 
 #[derive(Event)]
-pub struct LoadRequest {
+pub struct LoadingRequest {
     pub path: String,
 }
 
@@ -26,7 +26,7 @@ pub(crate) struct CleanupScene;
 
 /// helper system that "converts" loadRequest events to `LoadRequested` resources
 pub(crate) fn mark_load_requested(
-    mut load_requests: EventReader<LoadRequest>,
+    mut load_requests: EventReader<LoadingRequest>,
     mut commands: Commands,
 ) {
     let mut save_path: String = "".into();

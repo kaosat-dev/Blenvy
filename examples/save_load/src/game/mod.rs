@@ -12,10 +12,10 @@ pub mod in_game_saving;
 pub use in_game_saving::*;
 
 use bevy::prelude::*;
-use blenvy::{LoadRequest, LoadingFinished, SaveRequest, SavingFinished};
+use blenvy::{LoadRequest, LoadingFinished, SavingRequest, SavingFinished};
 
 pub fn request_save(
-    mut save_requests: EventWriter<SaveRequest>,
+    mut save_requests: EventWriter<SavingRequest>,
     keycode: Res<ButtonInput<KeyCode>>,
 
     current_state: Res<State<GameState>>,
@@ -26,7 +26,7 @@ pub fn request_save(
         && (current_state.get() != &GameState::InSaving)
     {
         next_game_state.set(GameState::InSaving);
-        save_requests.send(SaveRequest {
+        save_requests.send(SavingRequest {
             path: "save.scn.ron".into(),
         });
     }

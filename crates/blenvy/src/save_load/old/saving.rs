@@ -9,14 +9,14 @@ use std::path::Path;
 use crate::{DynamicEntitiesRoot, SaveLoadConfig, StaticEntitiesRoot};
 
 #[derive(Event, Debug)]
-pub struct SaveRequest {
+pub struct SavingRequest {
     pub path: String,
 }
 
 #[derive(Event)]
 pub struct SavingFinished;
 
-pub fn should_save(save_requests: EventReader<SaveRequest>) -> bool {
+pub fn should_save(save_requests: EventReader<SavingRequest>) -> bool {
     !save_requests.is_empty()
 }
 
@@ -77,7 +77,7 @@ pub(crate) fn save_game(world: &mut World) {
     info!("saving");
 
     let mut save_path: String = "".into();
-    let mut events = world.resource_mut::<Events<SaveRequest>>();
+    let mut events = world.resource_mut::<Events<SavingRequest>>();
 
     for event in events.get_reader().read(&events) {
         info!("SAVE EVENT !! {:?}", event);

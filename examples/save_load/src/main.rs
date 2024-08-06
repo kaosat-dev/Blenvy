@@ -1,7 +1,7 @@
 use std::any::TypeId;
 
 use bevy::{prelude::*, utils::hashbrown::HashSet};
-use blenvy::{AddToGameWorld, BlenvyPlugin, BluePrintBundle, BlueprintInfo, Dynamic, DynamicBlueprintInstance, GameWorldTag, HideUntilReady, SaveRequest, SpawnBlueprint};
+use blenvy::{AddToGameWorld, BlenvyPlugin, BlueprintInfo, BlueprintWorld, Dynamic, DynamicBlueprintInstance, GameWorldTag, HideUntilReady, LoadingRequest, SavingRequest, SpawnBlueprint};
 use rand::Rng;
 
 // mod game;
@@ -9,11 +9,13 @@ use rand::Rng;
 
 mod component_examples;
 use component_examples::*;
+use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
 fn main() {
     App::new()
         .add_plugins((
             DefaultPlugins.set(AssetPlugin::default()),
+            WorldInspectorPlugin::new(),
             BlenvyPlugin {
                 save_component_filter: SceneFilter::Allowlist(HashSet::from([
                     TypeId::of::<Name>(),
@@ -49,19 +51,10 @@ fn setup_game(
     mut commands: Commands,
 ) {
 
-    // here we spawn our game world/level, which is also a blueprint !
+    
+    // would be nice: contains both static & dynamic stuff
     commands.spawn((
-        BlueprintInfo::from_path("levels/World.glb"), // all we need is a Blueprint info...
-        SpawnBlueprint, // and spawnblueprint to tell blenvy to spawn the blueprint now
-        HideUntilReady, // only reveal the level once it is ready
-        GameWorldTag,
-    ));
-
-     // here we spawn our game world/level, which is also a blueprint !
-     commands.spawn((
-        BlueprintInfo::from_path("levels/World_dynamic.glb"), // all we need is a Blueprint info...
-        SpawnBlueprint, // and spawnblueprint to tell blenvy to spawn the blueprint now
-        HideUntilReady, // only reveal the level once it is ready
+        BlueprintWorld::from_path("levels/World.glb"), // will take care of loading both static & dynamic data
     ));
 }
 
@@ -97,47 +90,30 @@ fn move_movers(
     mut movers: Query<(&mut Transform), With<Dynamic>>
 ) {
     for mut transform in movers.iter_mut(){
-        println!("moving dynamic entity");
-        transform.translation.x += 0.01;
+        // println!("moving dynamic entity");
+        transform.translation.x += 0.005;
     }
 }
 
 fn save_game(
     keycode: Res<ButtonInput<KeyCode>>,
-    mut save_requests: EventWriter<SaveRequest>,
+    mut save_requests: EventWriter<SavingRequest>,
 ) {
     if keycode.just_pressed(KeyCode::KeyS) {
-        save_requests.send(SaveRequest {
+        save_requests.send(SavingRequest {
             path: "scenes/save.scn.ron".into(),
         });
     }
 }
 
-/* 
-pub fn request_save(
-    mut save_requests: EventWriter<SaveRequest>,
-    keycode: Res<ButtonInput<KeyCode>>,
-
-    current_state: Res<State<GameState>>,
-    mut next_game_state: ResMut<NextState<GameState>>,
-) {
-    if keycode.just_pressed(KeyCode::KeyS)
-        && (current_state.get() != &GameState::InLoading)
-        && (current_state.get() != &GameState::InSaving)
-    {
-        next_game_state.set(GameState::InSaving);
-        save_requests.send(SaveRequest {
-            path: "save.scn.ron".into(),
-        });
-    }
-}*/
-
-
 
 fn load_game(
     keycode: Res<ButtonInput<KeyCode>>,
+    mut load_requests: EventWriter<LoadingRequest>,
 ) {
     if keycode.just_pressed(KeyCode::KeyL) {
-
+        load_requests.send(LoadingRequest {
+            path: "scenes/save.scn.ron".into(),
+        });
     }
 }

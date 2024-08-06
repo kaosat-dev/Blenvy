@@ -58,12 +58,12 @@ fn main() {
 
 // add a system to trigger saving
 pub fn request_save(
-    mut save_requests: EventWriter<SaveRequest>,
+    mut save_requests: EventWriter<SavingRequest>,
     keycode: Res<Input<KeyCode>>,
 )
 {
     if keycode.just_pressed(KeyCode::S) {
-        save_requests.send(SaveRequest {
+        save_requests.send(SavingRequest {
             path: "save.scn.ron".into(),
         })
     }
@@ -225,16 +225,16 @@ fn main() {
 ## Events
 
 
-- to trigger **saving** use the ```SaveRequest``` event 
+- to trigger **saving** use the ```SavingRequest``` event 
 ```rust no_run
 // add a system to trigger saving
 pub fn request_save(
-    mut save_requests: EventWriter<SaveRequest>,
+    mut save_requests: EventWriter<SavingRequest>,
     keycode: Res<Input<KeyCode>>,
 )
 {
     if keycode.just_pressed(KeyCode::S) {
-        save_requests.send(SaveRequest {
+        save_requests.send(SavingRequest {
             path: "save.scn.ron".into(),
         })
     }

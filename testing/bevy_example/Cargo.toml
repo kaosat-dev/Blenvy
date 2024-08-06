@@ -10,3 +10,6 @@ blenvy = { path = "../../crates/blenvy" }
 #bevy_editor_pls = { version = "0.8" }
 rand = "0.8.5"
 json-writer ="0.3"
+
+[dev-dependencies]
+bevy-inspector-egui = { version = "0.25.1"}

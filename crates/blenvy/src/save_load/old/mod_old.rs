@@ -41,8 +41,8 @@ impl Plugin for SaveLoadPlugin {
             .register_type::<Camera3dDepthTextureUsage>()
             .register_type::<ScreenSpaceTransmissionQuality>()
             .register_type::<StaticEntitiesStorage>()
-            .add_event::<SaveRequest>()
-            .add_event::<LoadRequest>()
+            .add_event::<SavingRequest>()
+            .add_event::<LoadingRequest>()
             .add_event::<LoadingFinished>()
             .add_event::<SavingFinished>()
             .configure_sets(

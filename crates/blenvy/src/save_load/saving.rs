@@ -11,14 +11,38 @@ use crate::{BlenvyConfig, BlueprintInfo, Dynamic, FromBlueprint, RootEntity, Spa
 use super::{DynamicEntitiesRoot, OriginalParent, StaticEntitiesRoot};
 
 #[derive(Event, Debug)]
-pub struct SaveRequest {
+pub struct SavingRequest {
     pub path: String,
 }
 #[derive(Event)]
 pub struct SaveFinished; // TODO: merge the the events above
 
-pub fn should_save(save_requests: EventReader<SaveRequest>) -> bool {
-    !save_requests.is_empty()
+
+/// resource that keeps track of the current save request
+#[derive(Resource, Default)]
+pub struct SavingRequested {
+    pub path: String,
+}
+
+
+pub fn process_save_requests(
+    mut saving_requests: EventReader<SavingRequest>,
+    mut commands: Commands
+) {
+    let mut save_path: String = "".into();
+    for saving_request in saving_requests.read() {
+        if !saving_request.path.is_empty() {
+            save_path.clone_from(&saving_request.path);
+        }
+    }
+    if !save_path.is_empty() {
+        commands.insert_resource(SavingRequested { path: save_path });
+    }
+}
+
+
+pub fn should_save(saving_requests: Option<Res<SavingRequested>>) -> bool {
+    return resource_exists::<SavingRequested>(saving_requests)
 }
 
 
@@ -31,12 +55,12 @@ pub(crate) fn prepare_save_game(
 
     mut commands: Commands,
 ) {
-    for entity in saveables.iter() {
+    for entity in saveables.iter() { // FIXME : not sure about this one
         commands.entity(entity).insert(SpawnBlueprint);
     }
 
     for (entity, parent, children) in dynamic_entities.iter() {
-        println!("prepare save game");
+        println!("prepare save game for entity");
         let parent = parent.get();
         if root_entities.contains(parent) {
             commands.entity(entity).insert(RootEntity);
@@ -66,7 +90,7 @@ pub(crate) fn save_game(world: &mut World) {
     info!("saving");
 
     let mut save_path: String = "".into();
-    let mut events = world.resource_mut::<Events<SaveRequest>>();
+    let mut events = world.resource_mut::<Events<SavingRequest>>();
 
     for event in events.get_reader().read(&events) {
         info!("SAVE EVENT !! {:?}", event);
@@ -75,14 +99,14 @@ pub(crate) fn save_game(world: &mut World) {
     events.clear();
 
     let saveable_entities: Vec<Entity> = world
-        // .query_filtered::<Entity, (With<Dynamic>, Without<FromBlueprint>, Without<RootEntity>)>()
         .query_filtered::<Entity, (With<Dynamic>, Without<RootEntity>)>()
+        // .query_filtered::<Entity, (With<Dynamic>, Without<FromBlueprint>, Without<RootEntity>)>()
         .iter(world)
         .collect();
 
     let saveable_root_entities: Vec<Entity> = world
-        .query_filtered::<Entity, (With<Dynamic>, With<RootEntity>)>()
-        //.query_filtered::<Entity, (With<Dynamic>, Without<FromBlueprint>, With<RootEntity>)>()
+        // .query_filtered::<Entity, (With<Dynamic>, With<RootEntity>)>()
+        .query_filtered::<Entity, (With<Dynamic>, Without<FromBlueprint>, With<RootEntity>)>()
         .iter(world)
         .collect();
 
@@ -97,7 +121,7 @@ pub(crate) fn save_game(world: &mut World) {
     let filter = config
         .save_component_filter
         .clone()
-        .allow::<Parent>()
+        //.allow::<Parent>() // TODO: add back
         .allow::<Children>()
         .allow::<BlueprintInfo>()
         .allow::<SpawnBlueprint>()
@@ -115,7 +139,6 @@ pub(crate) fn save_game(world: &mut World) {
     let filter_resources = config.clone()
         .save_resource_filter
         .deny::<Time<Real>>()
-
         .clone();
         //.allow::<StaticEntitiesStorage>();
 
@@ -150,20 +173,35 @@ pub(crate) fn save_game(world: &mut World) {
         .serialize(&world.resource::<AppTypeRegistry>().read())
         .expect("filtered scene should serialize correctly");
 
-    let save_path = Path::new("assets")
+    let save_path_assets = Path::new("assets")
         //.join(&config.save_path)
         .join(Path::new(save_path.as_str())); // Path::new(&save_load_config.save_path).join(Path::new(save_path.as_str()));
-    info!("saving game to {:?}", save_path);
+    info!("saving game to {:?}", save_path_assets);
 
     // world.send_event(SavingFinished);
+    let bla = save_path_assets.clone().to_string_lossy().into_owned();
 
     #[cfg(not(target_arch = "wasm32"))]
     IoTaskPool::get()
         .spawn(async move {
             // Write the scene RON data to file
-            File::create(save_path)
+            File::create(save_path_assets)
                 .and_then(|mut file| file.write(serialized_scene.as_bytes()))
                 .expect("Error while writing save to file");
+        })
+        .detach();
+
+    
+    let static_world_path = "levels/world.glb";
+    let fake_foo = format!("(dynamic: {bla}, static: {static_world_path})");
+    let real_save_path = format!("{bla}.save.ron");
+    #[cfg(not(target_arch = "wasm32"))]
+    IoTaskPool::get()
+        .spawn(async move {
+            // Write the scene RON data to file
+            File::create(real_save_path)
+                .and_then(|mut file| file.write(fake_foo.as_bytes()))
+                .expect("Error while writing scene to file");
         })
         .detach();
 }
@@ -178,4 +216,7 @@ pub(crate) fn cleanup_save(
     }
     // commands.remove_resource::<StaticEntitiesStorage>();
     saving_finished.send(SaveFinished);
+
+    commands.remove_resource::<SavingRequested>();
+
 }
