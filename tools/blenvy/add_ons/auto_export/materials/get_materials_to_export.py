@@ -15,9 +15,10 @@ def get_materials_to_export(changes_per_material, changed_export_parameters, blu
     local_materials = [material for material in all_materials if material.library is None]
     materials_to_export = []
 
+    # print("export_materials_library", export_materials_library, "change detection", change_detection, "changed_export_parameters", changed_export_parameters)
     if export_materials_library and change_detection:
         if changed_export_parameters:
-            materials_to_export = [bpy.data.materials[material_name] for material_name in list(changes_per_material.keys())] # TODO: should be based on the list of materials in use
+            materials_to_export = local_materials
         else :
             changed_materials = [bpy.data.materials[material_name] for material_name in list(changes_per_material.keys())]
 

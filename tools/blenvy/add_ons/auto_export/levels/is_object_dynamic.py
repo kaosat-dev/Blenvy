@@ -26,7 +26,7 @@ def is_object_dynamic(object):
                     if component_name == 'Dynamic':
                         is_dynamic = True
                         break"""
-    print("IS OBJECT DYNAMIC", object, is_dynamic)
+    #print("IS OBJECT DYNAMIC", object, is_dynamic)
 
     return is_dynamic
 

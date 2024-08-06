@@ -54,6 +54,7 @@ def generate_temporary_scene_and_export(settings, gltf_export_settings, gltf_out
         else:
             set_active_collection(bpy.context.scene, temp_root_collection.name)
             # generate contents of temporary scene
+            
             scene_filler_data = tempScene_filler(temp_root_collection)
             # export the temporary scene
             try:
