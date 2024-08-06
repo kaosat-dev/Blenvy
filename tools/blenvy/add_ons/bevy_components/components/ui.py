@@ -5,7 +5,7 @@ from ..utils import get_selected_item, get_selection_type
 from .metadata import do_item_custom_properties_have_missing_metadata, get_bevy_components
 
 
-def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None, item_type="OBJECT", item_name=""):
+def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None, item_type="OBJECT", item_name="", enabled=True):
     is_enum = getattr(propertyGroup, "with_enum")
     is_list = getattr(propertyGroup, "with_list") 
     is_map = getattr(propertyGroup, "with_map")
@@ -13,6 +13,7 @@ def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None, item_
 
     # if it is an enum, the first field name is always the list of enum variants, the others are the variants
     field_names = propertyGroup.field_names
+    layout.enabled = enabled
     #print("")
     #print("drawing", propertyGroup, nesting, "component_name", rootName)
     if is_enum:
@@ -31,7 +32,7 @@ def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None, item_
                 nested = getattr(nestedPropertyGroup, "nested", False)
                 #print("nestedPropertyGroup", nestedPropertyGroup, fname, nested)
                 if nested:
-                    draw_propertyGroup(nestedPropertyGroup, subrow.column(), nesting + [fname], rootName, item_type, item_name )
+                    draw_propertyGroup(nestedPropertyGroup, subrow.column(), nesting + [fname], rootName, item_type, item_name, enabled=enabled )
                 # if an enum variant is not a propertyGroup
                 break
     elif is_list:
@@ -39,12 +40,13 @@ def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None, item_
         list_index = getattr(propertyGroup, "list_index")
         box = layout.box()
         split = box.split(factor=0.9)
+        box.enabled = enabled
         list_column, buttons_column = (split.column(),split.column())
 
         list_column = list_column.box()
         for index, item  in enumerate(item_list):
             row = list_column.row()
-            draw_propertyGroup(item, row, nesting, rootName, item_type)
+            draw_propertyGroup(item, row, nesting, rootName, item_type, enabled=enabled)
             icon = 'CHECKBOX_HLT' if list_index == index else 'CHECKBOX_DEHLT'
             op = row.operator('blenvy.component_list_actions', icon=icon, text="")
             op.action = 'SELECT'
@@ -100,10 +102,10 @@ def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None, item_
             row = box.row()
             row.label(text="Add entry:")
             keys_setter = getattr(propertyGroup, "keys_setter")
-            draw_propertyGroup(keys_setter, row, nesting, rootName, item_type, item_name)
+            draw_propertyGroup(keys_setter, row, nesting, rootName, item_type, item_name, enabled=enabled)
 
             values_setter = getattr(propertyGroup, "values_setter")
-            draw_propertyGroup(values_setter, row, nesting, rootName, item_type, item_name)
+            draw_propertyGroup(values_setter, row, nesting, rootName, item_type, item_name, enabled=enabled)
 
             op = row.operator('blenvy.component_map_actions', icon='ADD', text="")
             op.action = 'ADD'
@@ -119,10 +121,10 @@ def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None, item_
 
             for index, item  in enumerate(keys_list):
                 row = list_column.row()
-                draw_propertyGroup(item, row, nesting, rootName, item_type, item_name)
+                draw_propertyGroup(item, row, nesting, rootName, item_type, item_name, enabled=enabled)
 
                 value = values_list[index]
-                draw_propertyGroup(value, row, nesting, rootName, item_type, item_name)
+                draw_propertyGroup(value, row, nesting, rootName, item_type, item_name, enabled=enabled)
 
                 op = row.operator('blenvy.component_map_actions', icon='REMOVE', text="")
                 op.action = 'REMOVE'
@@ -151,7 +153,7 @@ def draw_propertyGroup( propertyGroup, layout, nesting =[], rootName=None, item_
                 layout.label(text=display_name) #  this is the name of the field/sub field
                 layout.separator()
                 subrow = layout.row()
-                draw_propertyGroup(nestedPropertyGroup, subrow, nesting + [fname], rootName, item_type, item_name )
+                draw_propertyGroup(nestedPropertyGroup, subrow, nesting + [fname], rootName, item_type, item_name, enabled )
             else:
                 subrow = layout.row()
                 subrow.prop(propertyGroup, fname, text=display_name)
@@ -233,6 +235,9 @@ def draw_component_ui(layout, object_or_collection, registry, selected_component
     item_name = object_or_collection.name
     #print("components_names", dict(components_bla).keys())
 
+    #FIXME: move out, highly inneficient
+    internal_components = ['BlueprintInfos', 'blenvy::blueprints::materials::MaterialInfos']
+
     for component_name in sorted(get_bevy_components(object_or_collection)) : # sorted by component name, practical
         if component_name == "components_meta": 
             continue
@@ -244,7 +249,9 @@ def draw_component_ui(layout, object_or_collection, registry, selected_component
         component_invalid = getattr(component_meta, "invalid")
         invalid_details = getattr(component_meta, "invalid_details")
         component_visible = getattr(component_meta, "visible")
+        component_internal = component_name in internal_components # internal components are not editable ?
         single_field = False
+        label = f"{component_name}{' (internal)' if component_internal else ''}"
 
         # our whole row 
         box = layout.box() 
@@ -252,7 +259,8 @@ def draw_component_ui(layout, object_or_collection, registry, selected_component
         # "header"
         row.alert = component_invalid
         row.prop(component_meta, "enabled", text="")
-        row.label(text=component_name)
+        row.label(text=label)
+        #row.enabled = not component_internal
 
         # we fetch the matching ui property group
         root_propertyGroup_name = registry.get_propertyGroupName_from_longName(component_name)
@@ -272,7 +280,7 @@ def draw_component_ui(layout, object_or_collection, registry, selected_component
                         error_message = invalid_details if component_invalid else "Missing component UI data, please reload registry !"
                         prop_group_location.label(text=error_message)
                     else:
-                        draw_propertyGroup(propertyGroup, prop_group_location, [root_propertyGroup_name], component_name, item_type, item_name)
+                        draw_propertyGroup(propertyGroup, prop_group_location, [root_propertyGroup_name], component_name, item_type, item_name, enabled=not component_internal)
                 else :
                     row.label(text="details hidden, click on toggle to display")
             else:
@@ -293,17 +301,18 @@ def draw_component_ui(layout, object_or_collection, registry, selected_component
                         op.component_name = component_name
                         row.separator()
 
-        op = row.operator("blenvy.component_remove", text="", icon="X")
-        op.component_name = component_name
-        op.item_name = object_or_collection.name
-        op.item_type = get_selection_type(object_or_collection)
-        row.separator()
-        
-        op = row.operator("blenvy.component_copy", text="", icon="COPYDOWN")
-        op.source_component_name = component_name
-        op.source_item_name = object_or_collection.name
-        op.source_item_type = get_selection_type(object_or_collection)
-        row.separator()
+        if not component_internal:
+            op = row.operator("blenvy.component_remove", text="", icon="X")
+            op.component_name = component_name
+            op.item_name = object_or_collection.name
+            op.item_type = get_selection_type(object_or_collection)
+            row.separator()
+            
+            op = row.operator("blenvy.component_copy", text="", icon="COPYDOWN")
+            op.source_component_name = component_name
+            op.source_item_name = object_or_collection.name
+            op.source_item_type = get_selection_type(object_or_collection)
+            row.separator()
         
         #if not single_field:
         toggle_icon = "TRIA_DOWN" if component_visible else "TRIA_RIGHT"
@@ -388,7 +397,7 @@ class BLENVY_PT_component_tools_panel(bpy.types.Panel):
             self.draw_invalid_or_unregistered(layout, status, custom_property, item, item_type)
 
     def gather_invalid_item_data(self, item, invalid_component_names, items_with_invalid_components, items_with_original_components, original_name, item_type):
-        blenvy_custom_properties = ['components_meta', 'bevy_components', 'user_assets', 'generated_assets', 'BlueprintAssets', 'export_path' ] # some of our own hard coded custom properties that should be ignored
+        blenvy_custom_properties = ['components_meta', 'bevy_components', 'user_assets', 'generated_assets', 'BlueprintAssets', 'export_path', 'MaterialInfos' ] # some of our own hard coded custom properties that should be ignored
         upgreadable_entries = []
 
         if "components_meta" in item or hasattr(item, "components_meta"): # FIXME; wrong way of determining

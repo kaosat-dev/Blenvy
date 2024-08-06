@@ -32,6 +32,7 @@ def watch_schema():
     blenvy = bpy.context.window_manager.blenvy
     component_settings = blenvy.components
     #print("watching schema file for changes")
+    reloading_registry = False
     try:
         stamp = os.stat(component_settings.schema_path_full).st_mtime
         stamp = str(stamp)
@@ -47,11 +48,19 @@ def watch_schema():
             # we need to add an additional delay as the file might not have loaded yet
             bpy.app.timers.register(lambda: bpy.ops.blenvy.components_registry_reload(), first_interval=1)
             component_settings.schemaTimeStamp = stamp
+            reloading_registry = True
 
         if component_settings.schemaTimeStamp == "":
             component_settings.schemaTimeStamp = stamp
     except Exception as error:
         pass
+
+    # if there is no registry loaded yet, try to load it
+    """registry = bpy.context.window_manager.components_registry
+    if not reloading_registry and len(list(registry.type_infos.keys())) == 0:
+        print("reload registry here")
+        bpy.app.timers.register(lambda: bpy.ops.blenvy.components_registry_reload(), first_interval=1)"""
+
     return component_settings.watcher_poll_frequency if component_settings.watcher_enabled else None
 
 class ComponentsSettings(PropertyGroup):

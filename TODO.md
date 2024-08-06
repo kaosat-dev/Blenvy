@@ -259,6 +259,23 @@ Blender side:
 - [x] make sure the "add scene" button is not available unless you have actually selected one
 - [x] make auto export be on by default, however bail out early by detecting if there are any level/blueprint scenes
 - [x] remove custom components to filter out correctly from exported blueprints list 
+- [ ] for built in Component types that need to be injected to be used by blueprints, 
+      namely: 
+    - BlueprintInfos (not 100% sure for this one)
+    - MaterialInfos
+    - the various scene Components 
+    - BlueprintAssets (although not really needed anymore with the meta files)
+
+    - [ ] Inject real components instead of just custom properties
+    - [ ] add boilerplate to generate real component values from type definitions instead of hacking pseudo ron strings
+    - [ ] fall back to bevy_components if that fails (missing registry) or just basic custom properties
+    - [ ] If that fails as well ?
+- [ ] auto reload registry if absent/possible
+    - cannot be done from UI possibly polling with increasing timeout
+    - bpy.ops.blenvy.components_registry_reload()
+
+- [x] filter out MaterialInfos from list of "fixable components"
+
 
 Bevy Side:
 - [x] deprecate BlueprintName & BlueprintPath & use BlueprintInfo instead

@@ -1,6 +1,7 @@
 import os
 import posixpath
 from ..core.helpers_collections import (traverse_tree)
+from ..add_ons.bevy_components.components.metadata import apply_propertyGroup_values_to_item_customProperties_for_component, upsert_bevy_component, get_bevy_component_value_by_long_name
 
 def find_materials_not_on_disk(materials, materials_path_full, extension):
     not_found_materials = []
@@ -79,6 +80,7 @@ def get_all_materials(collection_names, library_scenes):
     used_material_names = list(set(used_material_names))
     return (used_material_names, materials_per_object)
 
+import bpy
 def add_material_info_to_objects(materials_per_object, settings):
     materials_path =  getattr(settings, "materials_path")
     export_gltf_extension = getattr(settings, "export_gltf_extension", ".glb")
@@ -90,8 +92,13 @@ def add_material_info_to_objects(materials_per_object, settings):
             material_infos.append(material_info)
         # problem with using actual components: you NEED the type registry/component infos, so if there is none , or it is not loaded yet, it does not work
         # for a few components we could hardcode this
-        #bpy.ops.blenvy.component_add(target_item_name=object.name, target_item_type="OBJECT", component_type="blenvy::blueprints::materials::MaterialInfos", component_value=component_value)
-        object['MaterialInfos'] = f"({material_infos})".replace("'","") 
+        component_value = f"({material_infos})".replace("'","")
+        try:
+            bpy.ops.blenvy.component_add(target_item_name=object.name, target_item_type="OBJECT", component_type="blenvy::blueprints::materials::MaterialInfos", component_value=component_value )
+        except:
+            object['MaterialInfos'] = f"({material_infos})".replace("'","") 
+            #upsert_bevy_component(object, "blenvy::blueprints::materials::MaterialInfos", f"({material_infos})".replace("'","") )
+            #apply_propertyGroup_values_to_item_customProperties_for_component(object, "MaterialInfos")
         print("adding materialInfos to object", object, "material infos", material_infos)
 
 
