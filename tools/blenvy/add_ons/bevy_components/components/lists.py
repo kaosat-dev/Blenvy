@@ -1,7 +1,7 @@
 import json
 from bpy_types import Operator
 from bpy.props import (StringProperty, EnumProperty, IntProperty)
-from blenvy.add_ons.bevy_components.utils import get_item_by_type
+from ..utils import get_item_by_type
 
 class BLENVY_OT_component_list_actions(Operator):
     """Move items up and down, add and remove"""

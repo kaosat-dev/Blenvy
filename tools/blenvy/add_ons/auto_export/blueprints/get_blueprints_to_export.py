@@ -1,6 +1,5 @@
 
-from blenvy.blueprints.blueprint_helpers import find_blueprints_not_on_disk
-
+from ....blueprints.blueprint_helpers  import find_blueprints_not_on_disk
 
 def is_blueprint_always_export(blueprint):
     return blueprint.collection['always_export'] if 'always_export' in blueprint.collection else False

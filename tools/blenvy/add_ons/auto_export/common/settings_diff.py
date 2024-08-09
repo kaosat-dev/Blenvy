@@ -1,6 +1,4 @@
-import bpy
-
-from blenvy.settings import are_settings_identical, load_settings, changed_settings
+from ....settings import are_settings_identical, load_settings, changed_settings
 
 # which common settings changes should trigger a re-export 
 parameter_names_whitelist_common = [

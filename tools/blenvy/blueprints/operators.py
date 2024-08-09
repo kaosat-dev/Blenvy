@@ -2,7 +2,7 @@ import os
 import bpy
 from bpy_types import (Operator)
 from bpy.props import (StringProperty)
-from blenvy.core.helpers_collections import set_active_collection
+from ..core.helpers_collections import set_active_collection
 
 class BLENVY_OT_blueprint_select(Operator):
     """Select blueprint """

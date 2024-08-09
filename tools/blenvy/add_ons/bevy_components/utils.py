@@ -1,10 +1,9 @@
+import json
 import bpy
-from .constants import HIDDEN_COMPONENTS
 from bpy.props import StringProperty, EnumProperty
 from bpy_types import Operator
-from blenvy.core.helpers_collections import (set_active_collection)
-
-import json
+from ...core.helpers_collections import set_active_collection
+from .constants import HIDDEN_COMPONENTS
 
 def select_area(context, area_name):
     for area in context.screen.areas:

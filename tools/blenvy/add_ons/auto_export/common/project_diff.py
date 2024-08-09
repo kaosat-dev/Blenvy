@@ -2,7 +2,7 @@ import json
 import traceback
 import bpy
 from .serialize_project import serialize_project
-from blenvy.settings import load_settings, upsert_settings
+from ....settings import load_settings
 
 def bubble_up_changes(object, changes_per_scene):
     if object is not None and object.parent:

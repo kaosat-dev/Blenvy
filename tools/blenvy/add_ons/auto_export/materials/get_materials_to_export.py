@@ -1,6 +1,6 @@
 
 import bpy
-from blenvy.materials.materials_helpers import find_materials_not_on_disk
+from ....materials.materials_helpers import find_materials_not_on_disk
 
 def get_materials_to_export(changes_per_material, changed_export_parameters, blueprints_data, settings):
     export_gltf_extension = getattr(settings, "export_gltf_extension", ".glb")

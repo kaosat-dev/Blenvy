@@ -3,7 +3,7 @@ import bpy
 from .project_diff import get_changes_per_scene
 from .auto_export import auto_export
 from .settings_diff import get_setting_changes
-from blenvy.settings import load_settings, upsert_settings
+from ....settings import upsert_settings
 
 # prepare export by gather the changes to the scenes & settings
 def prepare_and_export():

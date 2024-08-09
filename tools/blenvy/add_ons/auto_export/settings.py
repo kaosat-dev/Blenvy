@@ -1,7 +1,7 @@
 import bpy
 from bpy_types import (PropertyGroup)
 from bpy.props import (EnumProperty, PointerProperty, StringProperty, BoolProperty, CollectionProperty, IntProperty)
-from blenvy.settings import load_settings, upsert_settings, generate_complete_settings_dict
+from ...settings import load_settings, upsert_settings, generate_complete_settings_dict
 
 # list of settings we do NOT want to save
 settings_black_list = ['settings_save_enabled', 'dry_run']

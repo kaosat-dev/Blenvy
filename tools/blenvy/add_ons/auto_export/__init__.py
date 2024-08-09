@@ -2,7 +2,7 @@ import os
 import json
 import pathlib
 import bpy
-from blenvy.settings import generate_complete_settings_dict
+from ...settings import generate_complete_settings_dict
 from io_scene_gltf2 import ExportGLTF2_Base
 
 

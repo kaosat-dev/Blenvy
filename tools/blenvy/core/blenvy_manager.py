@@ -3,9 +3,8 @@ import bpy
 from bpy_types import (PropertyGroup)
 from bpy.props import (BoolProperty, EnumProperty, PointerProperty, StringProperty, CollectionProperty, IntProperty)
 from ..settings import upsert_settings, load_settings, generate_complete_settings_dict
-import blenvy.add_ons.auto_export.settings as auto_export_settings
-import blenvy.add_ons.bevy_components.settings as component_settings
-
+from ..add_ons.auto_export.settings import AutoExportSettings
+from ..add_ons.bevy_components.settings import ComponentsSettings
 
 # list of settings we do NOT want to save
 settings_black_list = ['settings_save_enabled', 'level_scene_selector', 'library_scene_selector']
@@ -127,8 +126,8 @@ class BlenvyManager(PropertyGroup):
     ) # type: ignore
 
     # sub ones
-    auto_export: PointerProperty(type=auto_export_settings.AutoExportSettings) # type: ignore
-    components: PointerProperty(type=component_settings.ComponentsSettings) # type: ignore
+    auto_export: PointerProperty(type=AutoExportSettings) # type: ignore
+    components: PointerProperty(type=ComponentsSettings) # type: ignore
 
     level_scene_selector: PointerProperty(type=bpy.types.Scene, name="level scene", description="level scene picker", poll=is_scene_already_in_use, update=save_settings)# type: ignore
     library_scene_selector: PointerProperty(type=bpy.types.Scene, name="library scene", description="library scene picker", poll=is_scene_already_in_use, update=save_settings)# type: ignore

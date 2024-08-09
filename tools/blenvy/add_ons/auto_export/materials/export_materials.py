@@ -1,8 +1,7 @@
 import os
 import bpy
-
-from blenvy.core.helpers_collections import (traverse_tree)
-from blenvy.core.object_makers import make_cube
+from ....core.helpers_collections import traverse_tree
+from ....core.object_makers import make_cube
 from ..common.generate_temporary_scene_and_export import generate_temporary_scene_and_export
 from ..common.export_gltf import (generate_gltf_export_settings)
 

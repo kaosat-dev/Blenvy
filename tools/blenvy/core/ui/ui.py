@@ -1,7 +1,8 @@
 import bpy
-import blenvy.add_ons.bevy_components.ui as components_ui
-import blenvy.add_ons.auto_export.ui as auto_export_ui
 # from ...bevy_components.components import ui# as components_ui
+from ...add_ons.bevy_components import ui as components_ui
+from ...add_ons.auto_export import ui as auto_export_ui
+
 ######################################################
 
 ## ui logic & co

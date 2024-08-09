@@ -1,6 +1,6 @@
 import bpy
-from blenvy.core.helpers_collections import (set_active_collection)
-from blenvy.core.object_makers import (make_empty)
+from ....core.helpers_collections import set_active_collection
+from ....core.object_makers import make_empty
 from .duplicate_object import duplicate_object
 from .export_gltf import export_gltf
 from ..constants import custom_properties_to_filter_out

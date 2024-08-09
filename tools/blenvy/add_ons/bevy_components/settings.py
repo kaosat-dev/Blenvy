@@ -2,7 +2,8 @@ import os
 import bpy
 from bpy_types import (PropertyGroup)
 from bpy.props import (EnumProperty, PointerProperty, StringProperty, BoolProperty, CollectionProperty, FloatProperty)
-from blenvy.settings import load_settings, upsert_settings, generate_complete_settings_dict
+from ...settings import load_settings, upsert_settings, generate_complete_settings_dict
+
 from .propGroups.prop_groups import generate_propertyGroups_for_components
 from .components.metadata import ensure_metadata_for_all_items
 from .utils import add_component_to_ui_list

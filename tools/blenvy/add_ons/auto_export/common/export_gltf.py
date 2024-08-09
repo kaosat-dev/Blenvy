@@ -2,7 +2,7 @@ import json
 import os
 import bpy
 
-from blenvy.settings import load_settings
+from ....settings import load_settings
 
 def get_standard_exporter_settings():
     standard_gltf_exporter_settings = load_settings(".blenvy_gltf_settings")

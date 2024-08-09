@@ -1,8 +1,8 @@
 import posixpath
 import bpy
 from pathlib import Path
-from blenvy.assets.assets_scan import get_blueprint_asset_tree, get_level_scene_assets_tree2
-from blenvy.add_ons.bevy_components.utils import is_component_valid_and_enabled
+from ...assets.assets_scan import get_blueprint_asset_tree, get_level_scene_assets_tree2
+from ..bevy_components.utils import is_component_valid_and_enabled
 from .constants import custom_properties_to_filter_out
 from ...assets.assets_scan import get_level_scene_assets_tree2
 

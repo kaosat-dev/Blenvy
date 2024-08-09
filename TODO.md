@@ -273,6 +273,7 @@ Blender side:
 - [ ] auto reload registry if absent/possible
     - cannot be done from UI possibly polling with increasing timeout
     - bpy.ops.blenvy.components_registry_reload()
+    - double check bpy.context.components_registry
 
 - [x] filter out MaterialInfos from list of "fixable components"
 

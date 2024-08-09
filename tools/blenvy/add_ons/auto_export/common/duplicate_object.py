@@ -1,7 +1,7 @@
 import json
 import bpy
-from blenvy.core.object_makers import (make_empty)
-from blenvy.add_ons.bevy_components.utils import is_component_valid_and_enabled
+from ....core.object_makers import make_empty
+from ...bevy_components.utils import is_component_valid_and_enabled
 from ..constants import custom_properties_to_filter_out
 from ..utils import remove_unwanted_custom_properties
 

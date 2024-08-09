@@ -3,8 +3,7 @@ import os
 import bpy
 import traceback
 
-from blenvy.blueprints.blueprints_scan import blueprints_scan
-from blenvy.blueprints.blueprint_helpers import inject_export_path_into_internal_blueprints
+from ....blueprints.blueprint_helpers import inject_export_path_into_internal_blueprints
 
 from ..blueprints.get_blueprints_to_export import get_blueprints_to_export
 from ..levels.get_levels_to_export import get_levels_to_export
