@@ -1,7 +1,7 @@
 bl_info = {
     "name": "blenvy",
     "author": "kaosigh",
-    "version": (0, 1, 0),
+    "version": (0, 1, 0, "alpha.1"),
     "blender": (3, 4, 0),
     "location": "File > Import-Export",
     "description": "tooling for the Bevy engine",

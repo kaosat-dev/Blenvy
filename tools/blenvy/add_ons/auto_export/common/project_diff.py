@@ -13,12 +13,12 @@ import uuid
 def serialize_current(settings):
     # sigh... you need to save & reset the frame otherwise it saves the values AT THE CURRENT FRAME WHICH CAN DIFFER ACROSS SCENES
     current_frames = [scene.frame_current for scene in bpy.data.scenes]
-    for scene in bpy.data.scenes:
+    """for scene in bpy.data.scenes:
         scene.frame_set(0)
         if scene.id_test == '':
             print("GENERATE ID")
             scene.id_test = str(uuid.uuid4())
-        print("SCENE ID", scene.id_test)
+        print("SCENE ID", scene.id_test)"""
     #https://blender.stackexchange.com/questions/216411/whats-the-replacement-for-id-or-hash-on-bpy-objects
 
     current_scene = bpy.context.window.scene

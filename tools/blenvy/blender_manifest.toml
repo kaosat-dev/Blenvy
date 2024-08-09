@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 
 id = "Blenvy"
-version = "0.1.0"
+version = "0.1.0-alpha.1"
 name = "Blenvy"
 tagline = "Tools to add/edit components of objects, collections etc & create blueprints & levels for the Bevy Engine in Blender"
 maintainer = "kaosat-dev <https://github.com/kaosat-dev/>"
