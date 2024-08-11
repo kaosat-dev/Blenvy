@@ -57,7 +57,10 @@ def draw_settings_ui(layout, auto_export_settings):
         section.separator()
 
         # materials
-        section.prop(auto_export_settings, "export_materials_library")
+        section.prop(auto_export_settings, "split_out_materials")
+
+        # animations
+        section.prop(auto_export_settings, "split_out_animations")
         
 
 

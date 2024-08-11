@@ -9,7 +9,8 @@ from ..utils import upsert_blueprint_assets, write_blueprint_metadata_file
 def export_blueprints(blueprints, settings, blueprints_data):
     blueprints_path_full = getattr(settings, "blueprints_path_full")
     gltf_export_settings = generate_gltf_export_settings(settings)
-    export_materials_library = getattr(settings.auto_export, "export_materials_library")
+    split_out_materials = getattr(settings.auto_export, "split_out_materials")
+    split_out_animations = getattr(settings.auto_export, "split_out_animations")
 
     try:
         # save current active collection
@@ -21,9 +22,12 @@ def export_blueprints(blueprints, settings, blueprints_data):
             gltf_export_settings = { **gltf_export_settings, 'use_active_scene': True, 'use_active_collection': True, 'use_active_collection_with_nested':True}
             
             collection = bpy.data.collections[blueprint.name]
-            # if we are using the material library option, do not export materials, use placeholder instead
-            if export_materials_library:
+            # if we are using the split material option, do not export materials, use placeholder instead
+            if split_out_materials:
                 gltf_export_settings['export_materials'] = 'PLACEHOLDER'  
+            # if we are using the split animations options, do not export animations
+            if split_out_animations:
+                gltf_export_settings['export_animations'] = False
 
             # inject blueprint asset data
             upsert_blueprint_assets(blueprint, blueprints_data=blueprints_data, settings=settings)

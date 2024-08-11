@@ -76,7 +76,6 @@ def duplicate_object(object, parent, combine_mode, destination_collection, bluep
     internal_blueprint_names = [blueprint.name for blueprint in blueprints_data.internal_blueprints]
     # print("COMBINE MODE", combine_mode)
     if object.instance_type == 'COLLECTION' and (combine_mode == 'Split' or (combine_mode == 'EmbedExternal' and (object.instance_collection.name in internal_blueprint_names)) ): 
-        #print("creating empty for", object.name, object.instance_collection.name, internal_blueprint_names, combine_mode)
         original_collection = object.instance_collection
         original_name = object.name
         blueprint_name = original_collection.name

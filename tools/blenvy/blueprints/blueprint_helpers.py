@@ -25,5 +25,5 @@ def inject_export_path_into_internal_blueprints(internal_blueprints, blueprints_
         blueprint_exported_path = posixpath.join(blueprints_path, f"{blueprint.name}{gltf_extension}")
         # print("injecting blueprint path", blueprint_exported_path, "for", blueprint.name)
         blueprint.collection["export_path"] = blueprint_exported_path
-        """if export_materials_library:
+        """if split_out_materials:
             blueprint.collection["materials_path"] = materials_exported_path"""

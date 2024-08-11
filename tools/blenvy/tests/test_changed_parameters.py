@@ -81,7 +81,7 @@ def test_export_no_parameters(setup_data):
     auto_export_operator(
         auto_export=True,
         direct_mode=True,
-        export_materials_library=True,
+        split_out_materials=True,
         project_root_path = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
     )
@@ -106,7 +106,7 @@ def test_export_auto_export_parameters_only(setup_data):
         direct_mode=True,
         project_root_path = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
-        export_materials_library=True
+        split_out_materials=True
     )
 
     world_file_path = os.path.join(setup_data["levels_path"], "World.glb")
@@ -144,7 +144,7 @@ def test_export_changed_parameters(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_materials_library=True
+        split_out_materials=True
     )
 
     world_file_path = os.path.join(setup_data["levels_path"], "World.glb")
@@ -163,7 +163,7 @@ def test_export_changed_parameters(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_materials_library=True
+        split_out_materials=True
     )
 
     modification_times_no_change = list(map(lambda file_path: os.path.getmtime(file_path), model_library_file_paths))
@@ -188,7 +188,7 @@ def test_export_changed_parameters(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_materials_library=True
+        split_out_materials=True
     )
 
     modification_times_changed_gltf = list(map(lambda file_path: os.path.getmtime(file_path), model_library_file_paths))
@@ -204,7 +204,7 @@ def test_export_changed_parameters(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_materials_library=True
+        split_out_materials=True
     )
 
     modification_times_changed_gltf = list(map(lambda file_path: os.path.getmtime(file_path), model_library_file_paths))
@@ -218,7 +218,7 @@ def test_export_changed_parameters(setup_data):
     export_props = {
         "level_scene_names" : ['World'],
         "library_scene_names": ['Library'],
-        "export_materials_library": False # we need to add it here, as the direct settings set on the operator will only be used for the NEXT run
+        "split_out_materials": False # we need to add it here, as the direct settings set on the operator will only be used for the NEXT run
     }
   
     # store settings for the auto_export part
@@ -233,7 +233,7 @@ def test_export_changed_parameters(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_materials_library=False
+        split_out_materials=False
     )
 
     modification_times_changed_auto = list(map(lambda file_path: os.path.getmtime(file_path), model_library_file_paths))
@@ -249,7 +249,7 @@ def test_export_changed_parameters(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_materials_library=False
+        split_out_materials=False
     )
 
     modification_times_changed_gltf = list(map(lambda file_path: os.path.getmtime(file_path), model_library_file_paths))

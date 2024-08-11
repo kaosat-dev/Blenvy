@@ -18,7 +18,7 @@ parameter_names_whitelist_auto_export = [
     'export_scene_settings',
     'export_blueprints',
     'export_separate_dynamic_and_static_objects',
-    'export_materials_library',
+    'split_out_materials',
     'collection_instances_combine_mode',
 ]
 

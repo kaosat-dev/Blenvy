@@ -121,6 +121,8 @@ def draw_common_settings_ui(layout, settings):
     draw_folder_browser(layout=row, label="Levels Folder", prop_origin=blenvy, target_property="levels_path")
     row = layout.row()
     draw_folder_browser(layout=row, label="Materials Folder", prop_origin=blenvy, target_property="materials_path")
+    row = layout.row()
+    draw_folder_browser(layout=row, label="Animations Folder", prop_origin=blenvy, target_property="animations_path")
 
     layout.separator()
     # scenes selection

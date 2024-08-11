@@ -33,7 +33,7 @@ def run_auto_export(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_materials_library=False
+        split_out_materials=False
     )
 
     levels_path = setup_data["levels_path"]

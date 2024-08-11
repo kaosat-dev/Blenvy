@@ -93,10 +93,10 @@ def add_material_info_to_objects(materials_per_object, settings):
         # problem with using actual components: you NEED the type registry/component infos, so if there is none , or it is not loaded yet, it does not work
         # for a few components we could hardcode this
         component_value = f"({material_infos})".replace("'","")
-        try:
+        '''try:
             bpy.ops.blenvy.component_add(target_item_name=object.name, target_item_type="OBJECT", component_type="blenvy::blueprints::materials::MaterialInfos", component_value=component_value )
-        except:
-            object['MaterialInfos'] = f"({material_infos})".replace("'","") 
+        except:'''
+        object['MaterialInfos'] = f"({material_infos})".replace("'","") 
             #upsert_bevy_component(object, "blenvy::blueprints::materials::MaterialInfos", f"({material_infos})".replace("'","") )
             #apply_propertyGroup_values_to_item_customProperties_for_component(object, "MaterialInfos")
         print("adding materialInfos to object", object, "material infos", material_infos)

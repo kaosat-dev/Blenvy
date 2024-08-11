@@ -192,10 +192,10 @@ def mesh_hash(obj):
     h = str(h1_hash(vertices_np.tobytes()))
     return h
 
-# TODO: redo this one, this is essentially modifiec copy & pasted data, not fitting
+# TODO: redo this one, this is essentially modified copy & pasted data, not fitting
 def animation_hash(obj):
     animation_data = obj.animation_data
-    if not animation_data:
+    if animation_data is None:
         return None
     blender_actions = []
     blender_tracks = {}

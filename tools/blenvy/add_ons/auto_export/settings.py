@@ -72,13 +72,19 @@ class AutoExportSettings(PropertyGroup):
         update=save_settings
     ) # type: ignore
 
-    export_materials_library: BoolProperty(
-        name='Export materials library',
-        description='remove materials from blueprints and use the material library instead',
+    split_out_materials: BoolProperty(
+        name='Split out materials',
+        description='removes materials from blueprints and exports them separately ',
         default=True,
         update=save_settings
     ) # type: ignore
 
+    split_out_animations: BoolProperty(
+        name='Split out animations',
+        description='removes animations/armatures from blueprints and exports them separately ',
+        default=False,
+        update=save_settings
+    ) # type: ignore
 
     """ combine mode can be 
               - 'Split' (default): replace with an empty, creating links to sub blueprints 

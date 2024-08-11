@@ -137,7 +137,7 @@ def test_export_materials_library(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_materials_library = True
+        split_out_materials = True
     )
 
     assert os.path.exists(os.path.join(setup_data["blueprints_path"], "Blueprint1.glb")) == True
@@ -164,7 +164,7 @@ def test_export_materials_library_custom_path(setup_data):
         export_output_folder="./models",
         export_scene_settings=True,
         export_blueprints=True,
-        export_materials_library = True,
+        split_out_materials = True,
         materials_path="assets/other_materials"
     )
 

@@ -4,19 +4,17 @@ from ....materials.materials_helpers import find_materials_not_on_disk
 
 def get_materials_to_export(changes_per_material, changed_export_parameters, blueprints_data, settings):
     export_gltf_extension = getattr(settings, "export_gltf_extension", ".glb")
-    blueprints_path_full = getattr(settings,"blueprints_path_full", "")
-    materials_path_full = getattr(settings,"materials_path_full", "")
+    materials_path_full = getattr(settings, "materials_path_full", "")
 
     change_detection = getattr(settings.auto_export, "change_detection")
-    export_materials_library = getattr(settings.auto_export, "export_materials_library")
-    collection_instances_combine_mode = getattr(settings.auto_export, "collection_instances_combine_mode")
+    split_out_materials = getattr(settings.auto_export, "split_out_materials")
 
     all_materials = bpy.data.materials
     local_materials = [material for material in all_materials if material.library is None]
     materials_to_export = []
 
-    # print("export_materials_library", export_materials_library, "change detection", change_detection, "changed_export_parameters", changed_export_parameters)
-    if export_materials_library and change_detection:
+    # print("split_out_materials", split_out_materials, "change detection", change_detection, "changed_export_parameters", changed_export_parameters)
+    if split_out_materials and change_detection:
         if changed_export_parameters:
             materials_to_export = local_materials
         else :

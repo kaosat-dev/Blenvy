@@ -115,14 +115,26 @@ class BlenvyManager(PropertyGroup):
 
     materials_path: StringProperty(
         name='Materials path',
-        description='path to export the materials libraries to (relative to the assets folder)',
+        description='path to export the materials to (relative to the assets folder)',
         default='materials',
         update= save_settings
     ) # type: ignore
 
-    # computed property for the absolute path of blueprints
+    # computed property for the absolute path of materials
     materials_path_full: StringProperty(
         get=lambda self: os.path.abspath(os.path.join(os.path.dirname(bpy.data.filepath), self.project_root_path, self.assets_path, self.materials_path))
+    ) # type: ignore
+
+    animations_path: StringProperty(
+        name='Animations path',
+        description='path to export the animations to (relative to the assets folder)',
+        default='animations',
+        update= save_settings
+    ) # type: ignore
+
+    # computed property for the absolute path of animations
+    animations_path_full: StringProperty(
+        get=lambda self: os.path.abspath(os.path.join(os.path.dirname(bpy.data.filepath), self.project_root_path, self.assets_path, self.animations_path))
     ) # type: ignore
 
     # sub ones
