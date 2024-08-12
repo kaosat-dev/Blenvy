@@ -65,9 +65,10 @@ impl Plugin for BlenvyPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
             ComponentsFromGltfPlugin::default(),
-            #[cfg(not(target_arch = "wasm32"))]
+            #[cfg(debug_assertions)] // we only need the export registry plugin at dev time
             ExportRegistryPlugin::default(),
             BlueprintsPlugin::default(),
+            #[cfg(not(target_arch = "wasm32"))] // save & load is only for non wasm platforms
             SaveLoadPlugin::default()
         ))
         .insert_resource(BlenvyConfig {
