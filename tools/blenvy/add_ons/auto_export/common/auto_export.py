@@ -26,7 +26,7 @@ def auto_export(changes_per_scene, changes_per_collection, changes_per_material,
     try:
         #should we use change detection or not 
         change_detection = getattr(settings.auto_export, "change_detection")
-        export_scene_settings = getattr(settings.auto_export, "export_scene_settings")
+        match_blender_visuals = getattr(settings.auto_export, "match_blender_visuals")
         export_blueprints_enabled = getattr(settings.auto_export, "export_blueprints")
         split_out_materials = getattr(settings.auto_export, "split_out_materials")
         split_out_animations = getattr(settings.auto_export, "split_out_animations")
@@ -54,7 +54,7 @@ def auto_export(changes_per_scene, changes_per_collection, changes_per_material,
             bpy.context.window_manager.blueprints_registry.add_blueprint(blueprint)
         #bpy.context.window_manager.blueprints_registry.refresh_blueprints()
 
-        if export_scene_settings:
+        if match_blender_visuals:
             # inject/ update scene components
             upsert_scene_components(settings.level_scenes)
         #inject/ update light shadow information
@@ -153,7 +153,7 @@ def auto_export(changes_per_scene, changes_per_collection, changes_per_material,
 
     finally:
         # FIXME: error handling ? also redundant
-        if export_scene_settings:
+        if match_blender_visuals:
             # inject/ update scene components
             remove_scene_components(settings.level_scenes)
 

@@ -31,7 +31,7 @@ def run_auto_export(setup_data):
         direct_mode=True,
         project_root_path = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
-        export_scene_settings=True,
+        match_blender_visuals=True,
         export_blueprints=True,
         split_out_materials=False
     )

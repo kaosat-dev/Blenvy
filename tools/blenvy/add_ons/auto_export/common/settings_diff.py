@@ -15,7 +15,7 @@ parameter_names_whitelist_common = [
 # which auto export settings changes should trigger a re-export 
 parameter_names_whitelist_auto_export = [
     # auto export
-    'export_scene_settings',
+    'match_blender_visuals',
     'export_blueprints',
     'export_separate_dynamic_and_static_objects',
     'split_out_materials',

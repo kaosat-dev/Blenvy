@@ -82,7 +82,7 @@ def test_export_do_not_export_blueprints(setup_data):
         direct_mode=True,
         project_root_path = os.path.abspath(setup_data["root_path"]),
         export_output_folder="assets/models",
-        export_scene_settings=True,
+        match_blender_visuals=True,
         export_blueprints=False,
     )
     assert os.path.exists(os.path.join(setup_data["models_path"], "World.glb")) == True
@@ -109,7 +109,7 @@ def test_export_custom_blueprints_path(setup_data):
         direct_mode=True,
         project_root_path = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
-        export_scene_settings=True,
+        match_blender_visuals=True,
         export_blueprints=True,
         blueprints_path = "assets/other_blueprints"
     )
@@ -135,7 +135,7 @@ def test_export_materials_library(setup_data):
         direct_mode=True,
         project_root_path = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
-        export_scene_settings=True,
+        match_blender_visuals=True,
         export_blueprints=True,
         split_out_materials = True
     )
@@ -162,7 +162,7 @@ def test_export_materials_library_custom_path(setup_data):
         direct_mode=True,
         project_root_path = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
-        export_scene_settings=True,
+        match_blender_visuals=True,
         export_blueprints=True,
         split_out_materials = True,
         materials_path="assets/other_materials"
@@ -221,7 +221,7 @@ def test_export_do_not_export_marked_assets(setup_data):
         direct_mode=True,
         project_root_path = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
-        export_scene_settings=True,
+        match_blender_visuals=True,
         export_blueprints=True,
     )
     assert os.path.exists(os.path.join(setup_data["levels_path"], "World.glb")) == True
@@ -254,7 +254,7 @@ def test_export_separate_dynamic_and_static_objects(setup_data):
         direct_mode=True,
         project_root_path = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
-        export_scene_settings=True,
+        match_blender_visuals=True,
         export_blueprints=True,
         export_separate_dynamic_and_static_objects = True
     )
@@ -282,7 +282,7 @@ def test_export_should_not_generate_orphan_data(setup_data):
         direct_mode=True,
         project_root_path = os.path.abspath(setup_data["root_path"]),
         export_output_folder="./models",
-        export_scene_settings=True,
+        match_blender_visuals=True,
         export_blueprints=True,
     )
     assert os.path.exists(os.path.join(setup_data["levels_path"], "World.glb")) == True

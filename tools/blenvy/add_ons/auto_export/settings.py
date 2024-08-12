@@ -45,12 +45,10 @@ class AutoExportSettings(PropertyGroup):
         update=save_settings
     ) # type: ignore
 
-    # scenes 
-
-    # scene components
-    export_scene_settings: BoolProperty(
-        name='Export scene settings',
-        description='Export scene settings ie AmbientLighting, Bloom, AO etc',
+    # matching visuals between Blender & Bevy
+    match_blender_visuals: BoolProperty(
+        name='Match Blender visuals in Bevy',
+        description='Adds a number of components for AmbientLighting, Bloom, AO to try and match the look & feel of visuals from Blender in Bevy',
         default=False,
         update=save_settings
     ) # type: ignore

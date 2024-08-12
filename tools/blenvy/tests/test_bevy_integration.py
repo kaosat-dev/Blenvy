@@ -104,7 +104,7 @@ def test_export_complex(setup_data):
     #blenvy.project_root_path = 
     #blenvy.blueprints_path
     blenvy.auto_export.auto_export = True
-    blenvy.auto_export.export_scene_settings = True
+    blenvy.auto_export.match_blender_visuals = True
     blenvy.auto_export.export_blueprints = True
     blenvy.auto_export.split_out_materials = True
 

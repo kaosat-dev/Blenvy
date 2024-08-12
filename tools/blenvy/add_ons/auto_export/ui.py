@@ -23,7 +23,7 @@ def draw_settings_ui(layout, auto_export_settings):
         op.filepath="____dummy____"
         op.gltf_export_id = "blenvy" # we specify that we are in a special case
 
-        section.prop(auto_export_settings, "export_scene_settings")    
+        section.prop(auto_export_settings, "match_blender_visuals")    
 
     header, panel = layout.panel("Change Detection", default_closed=False)
     header.label(text="Change Detection")
