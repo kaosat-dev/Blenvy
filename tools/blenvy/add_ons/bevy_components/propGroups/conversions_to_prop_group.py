@@ -171,7 +171,7 @@ type_mappings = {
     "bevy_color::linear_rgba::LinearRgba":  lambda value: parse_color_rgba(value, float, "LinearRgba"),
     "bevy_color::hsva::Hsva":  lambda value: parse_color_hsva(value, float, "Hsva"),
 
-    'bevy_ecs::entity::Entity': lambda value: int(value),
+    'bevy_ecs::entity::Entity': lambda value: int(value), # TODO: whatdafuq do we do here?
 }
 
 def is_def_value_type(definition, registry):
