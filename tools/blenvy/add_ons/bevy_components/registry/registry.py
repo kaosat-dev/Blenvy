@@ -25,6 +25,9 @@ def property_group_from_infos(property_group_name, property_group_parameters):
     
     return (property_group_pointer, property_group_class)
 
+def is_entity_poll(self, object):
+    return True # TODO: only select `object.type`s that get converted to entities
+
 # this is where we store the information for all available components
 class ComponentsRegistry(PropertyGroup):
     registry: bpy.props. StringProperty(
@@ -50,7 +53,6 @@ class ComponentsRegistry(PropertyGroup):
         "u32": dict(type=IntProperty, presets=dict(min=0)),
         "u64": dict(type=IntProperty, presets=dict(min=0)),
         "u128": dict(type=IntProperty, presets=dict(min=0)),
-        "u64": dict(type=IntProperty, presets=dict(min=0)),
         "usize": dict(type=IntProperty, presets=dict(min=0)),
 
         "i8": dict(type=IntProperty, presets=dict()),
@@ -90,19 +92,19 @@ class ComponentsRegistry(PropertyGroup):
 
         "enum":  dict(type=EnumProperty, presets=dict()), 
 
-        'bevy_ecs::entity::Entity': {"type": IntProperty, "presets": {"min":0} },
-        'bevy_utils::Uuid':  dict(type=StringProperty, presets=dict()),
+        "bevy_ecs::entity::Entity": dict(type = PointerProperty, presets=dict(type = bpy.types.Object, poll = is_entity_poll)),
+        "bevy_utils::Uuid": dict(type = StringProperty, presets=dict()),
     }
 
     value_types_defaults = {
         "string":" ",
-        "boolean": True,
+        "boolean": False,
         "float": 0.0,
         "uint": 0,
         "int":0,
 
         # todo : we are re-doing the work of the bevy /rust side here, but it seems more pratical to alway look for the same field name on the blender side for matches
-        "bool": True,
+        "bool": False,
 
         "u8": 0,
         "u16":0,
@@ -144,8 +146,7 @@ class ComponentsRegistry(PropertyGroup):
         "bevy_color::linear_rgba::LinearRgba": [1.0, 1.0, 0.0, 1.0],
         "bevy_color::hsva::Hsva": [1.0, 1.0, 0.0, 1.0],
 
-        'bevy_ecs::entity::Entity': 0,#4294967295, # this is the same as Bevy's Entity::Placeholder, too big for Blender..sigh
-        'bevy_utils::Uuid': '"'+str(uuid.uuid4())+'"'
+        "bevy_utils::Uuid": '"'+str(uuid.uuid4())+'"'
 
     }
 
