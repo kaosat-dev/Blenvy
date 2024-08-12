@@ -1,3 +1,4 @@
+import bpy
 from bpy_types import PropertyGroup
 import re
 
@@ -126,6 +127,10 @@ def parse_color_hsva(value, caster, typeName):
     parsed = parse_struct_string(value.replace(typeName,"").replace("(", "").replace(")","") )
     return [caster(parsed['hue']), caster(parsed['saturation']), caster(parsed['value']), caster(parsed['alpha'])]
 
+def parse_entity(value):
+    parsed = parse_struct_string(value.replace("Entity","").replace("(", "").replace(")","") )
+    bpy.context.scene.objects[parsed["name"]]
+
 def to_int(input):
     return int(float(input))
 
@@ -171,7 +176,7 @@ type_mappings = {
     "bevy_color::linear_rgba::LinearRgba":  lambda value: parse_color_rgba(value, float, "LinearRgba"),
     "bevy_color::hsva::Hsva":  lambda value: parse_color_hsva(value, float, "Hsva"),
 
-    'bevy_ecs::entity::Entity': lambda value: int(value), # TODO: whatdafuq do we do here?
+    "bevy_ecs::entity::Entity": parse_entity,
 }
 
 def is_def_value_type(definition, registry):
