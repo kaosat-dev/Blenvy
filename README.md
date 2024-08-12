@@ -18,6 +18,9 @@ It also allows you to setup 'blueprints' in Blender by using collections (the re
 > Blenvy is currently in **Alpha 1** state so there are still quite a few bugs, missing functionality, missing docs, broken examples etc
 > Please make sure you back up your Blender files before using it !
 
+> [!CAUTION]
+> Please make sure to use matching versions numbers for the Blender add-on & the rust crate ! 
+> This is the only way to make sure everything works as intended
 
 ## Quickstart
 

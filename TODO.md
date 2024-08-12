@@ -364,11 +364,15 @@ clear && pytest -svv --blender-template ../../testing/bevy_example/art/testing_l
 
 -----------
 PRE ALPHA1 RELEASE:
-- compress images in blender docs
-- add a small note about using the same version of the Blender add-on & the Bevy crate
-- merge blenvy branch into main
-- push to crates.io
-- tag
+- [x] compress images in blender docs
+- [x] add a small note about using the same version of the Blender add-on & the Bevy crate
+- [x] do a quick check for the basics
+    - [x] blender add-on
+    - [x] barebones bevy test
+    - [x] hot reload => some of it works, the rest not anymore ? (see bug https://github.com/bevyengine/bevy/issues/14698)
+- [ ] merge blenvy branch into main
+- [ ] push to crates.io
+- [ ] tag
 
 ------------
 POST ALPHA1 RELEASE:
