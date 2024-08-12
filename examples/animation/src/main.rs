@@ -2,9 +2,8 @@ use std::time::Duration;
 
 use bevy::prelude::*;
 use blenvy::{
-     BlenvyPlugin, BlueprintAnimationPlayerLink,
-    BlueprintAnimations, BlueprintInfo, GameWorldTag, HideUntilReady,
-    SpawnBlueprint,
+    BlenvyPlugin, BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintInfo, GameWorldTag,
+    HideUntilReady, SpawnBlueprint,
 };
 
 mod component_examples;

@@ -1,16 +1,14 @@
 use std::path::Path;
 
-use bevy::{
-    gltf::Gltf,
-    prelude::*,
-    scene::SceneInstance,
-    utils::hashbrown::HashMap,
-};
+use bevy::{gltf::Gltf, prelude::*, scene::SceneInstance, utils::hashbrown::HashMap};
 
 use crate::{
-    AnimationInfos, AssetLoadTracker, AssetToBlueprintInstancesMapper, BlueprintAnimationInfosLink, BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintAssetsLoadState, BlueprintAssetsLoaded, BlueprintAssetsNotLoaded, BlueprintMetaLoaded, BlueprintMetaLoading, BlueprintPreloadAssets, InstanceAnimationInfosLink, InstanceAnimationPlayerLink, InstanceAnimations, WatchingForChanges
+    AnimationInfos, AssetLoadTracker, AssetToBlueprintInstancesMapper, BlueprintAnimationInfosLink,
+    BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintAssetsLoadState,
+    BlueprintAssetsLoaded, BlueprintAssetsNotLoaded, BlueprintMetaLoaded, BlueprintMetaLoading,
+    BlueprintPreloadAssets, InstanceAnimationInfosLink, InstanceAnimationPlayerLink,
+    InstanceAnimations, WatchingForChanges,
 };
-
 
 /// this is a flag component for our levels/game world
 #[derive(Component)]
@@ -67,8 +65,6 @@ pub struct HideUntilReady;
 /// Companion to the `HideUntilReady` component: this stores the visibility of the entity before the blueprint was inserted into it
 pub(crate) struct OriginalVisibility(Visibility);
 
-
-
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
 /// marker component, gets added to all children of a currently spawning blueprint instance, can be usefull to avoid manipulating still in progress entities
@@ -117,25 +113,45 @@ Overview of the Blueprint Spawning process
 */
 
 pub(super) fn blueprints_prepare_metadata_file_for_spawn(
-    blueprint_instances_to_spawn: Query<(
-        Entity, 
-        &BlueprintInfo, 
-        Option<&Name>,
-        Option<&Parent>,
-        Option<&HideUntilReady>,
-        Option<&Visibility>,
-        Option<&AddToGameWorld>,
-
-    ), (Without<BlueprintMetaLoading>, Without<BlueprintSpawning>, Without<BlueprintInstanceReady>)>,
+    blueprint_instances_to_spawn: Query<
+        (
+            Entity,
+            &BlueprintInfo,
+            Option<&Name>,
+            Option<&Parent>,
+            Option<&HideUntilReady>,
+            Option<&Visibility>,
+            Option<&AddToGameWorld>,
+        ),
+        (
+            Without<BlueprintMetaLoading>,
+            Without<BlueprintSpawning>,
+            Without<BlueprintInstanceReady>,
+        ),
+    >,
     mut game_world: Query<Entity, With<GameWorldTag>>,
     asset_server: Res<AssetServer>,
     mut commands: Commands,
 ) {
-    for (entity, blueprint_info, entity_name, original_parent, hide_until_ready, original_visibility, add_to_world) in blueprint_instances_to_spawn.iter() {
+    for (
+        entity,
+        blueprint_info,
+        entity_name,
+        original_parent,
+        hide_until_ready,
+        original_visibility,
+        add_to_world,
+    ) in blueprint_instances_to_spawn.iter()
+    {
         // get path to assets / metadata file
-        info!("Step 1: spawn request detected: loading metadata file for {:?}", blueprint_info);
+        info!(
+            "Step 1: spawn request detected: loading metadata file for {:?}",
+            blueprint_info
+        );
         let blueprint_path = blueprint_info.path.clone();
-        let metadata_path = blueprint_path.replace(".glb", ".meta.ron").replace(".gltf", ".meta.ron"); // FIXME: horrible
+        let metadata_path = blueprint_path
+            .replace(".glb", ".meta.ron")
+            .replace(".gltf", ".meta.ron"); // FIXME: horrible
         let mut asset_infos: Vec<AssetLoadTracker> = vec![];
         //let foo_handle:Handle<BlueprintPreloadAssets> = asset_server.load(metadata_path);
         let untyped_handle = asset_server.load_untyped(metadata_path.clone());
@@ -157,11 +173,11 @@ pub(super) fn blueprints_prepare_metadata_file_for_spawn(
                 ..Default::default()
             },
             BlueprintMetaLoading,
-            BlueprintSpawning
+            BlueprintSpawning,
         ));
 
         // if the entity has no name, add one based on the blueprint's
-        if entity_name.is_none(){
+        if entity_name.is_none() {
             commands
                 .entity(entity)
                 .insert(bevy::prelude::Name::from(blueprint_info.name.clone()));
@@ -170,14 +186,14 @@ pub(super) fn blueprints_prepare_metadata_file_for_spawn(
         if original_parent.is_none() {
             // only allow hiding until ready when the entity does not have a parent (?)
             if hide_until_ready.is_some() {
-                
                 // if there is already a set visibility, save it for later
                 if let Some(original_visibility) = original_visibility {
-                    commands.entity(entity).insert(OriginalVisibility(*original_visibility));
+                    commands
+                        .entity(entity)
+                        .insert(OriginalVisibility(*original_visibility));
                 }
                 // & now hide the instance until it is ready
-                commands.entity(entity)
-                    .insert(Visibility::Hidden); 
+                commands.entity(entity).insert(Visibility::Hidden);
             }
 
             // only allow automatically adding a newly spawned blueprint instance to the "world", if the entity does not have a parent
@@ -200,9 +216,7 @@ pub(crate) fn blueprints_check_assets_metadata_files_loading(
     asset_server: Res<AssetServer>,
     mut commands: Commands,
 ) {
-
     for (entity, _blueprint_info, mut assets_to_load) in blueprint_assets_to_load.iter_mut() {
-
         let mut all_loaded = true;
         let mut loaded_amount = 0;
         let total = assets_to_load.asset_infos.len();
@@ -221,10 +235,12 @@ pub(crate) fn blueprints_check_assets_metadata_files_loading(
                 all_loaded = false;
             }
             if all_loaded {
-                commands.entity(entity).insert(BlueprintMetaHandle(asset_server.load(tracker.path.clone()))).remove::<BlueprintAssetsLoadState>();
+                commands
+                    .entity(entity)
+                    .insert(BlueprintMetaHandle(asset_server.load(tracker.path.clone())))
+                    .remove::<BlueprintAssetsLoadState>();
                 break;
             }
-            
         }
         let progress: f32 = loaded_amount as f32 / total as f32;
         assets_to_load.progress = progress;
@@ -232,9 +248,11 @@ pub(crate) fn blueprints_check_assets_metadata_files_loading(
     }
 }
 
-
 pub(super) fn blueprints_prepare_spawn(
-    blueprint_instances_to_spawn: Query<(Entity, &BlueprintInfo, &BlueprintMetaHandle), Added<BlueprintMetaHandle>>,
+    blueprint_instances_to_spawn: Query<
+        (Entity, &BlueprintInfo, &BlueprintMetaHandle),
+        Added<BlueprintMetaHandle>,
+    >,
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     // for hot reload
@@ -243,12 +261,11 @@ pub(super) fn blueprints_prepare_spawn(
     // for debug
     // all_names: Query<&Name>
     blueprint_metas: Res<Assets<BlueprintPreloadAssets>>,
-
 ) {
     for (entity, blueprint_info, blueprint_meta_handle) in blueprint_instances_to_spawn.iter() {
         info!(
             "Step 2: metadata loaded: loading assets for {:?}",
-            blueprint_info, 
+            blueprint_info,
         );
         // we add the asset of the blueprint itself
         // TODO: add detection of already loaded data
@@ -270,56 +287,55 @@ pub(super) fn blueprints_prepare_spawn(
         // and we also add all its assets
         /* prefetch attempt */
         if let Some(blenvy_metadata) = blueprint_metas.get(&blueprint_meta_handle.0) {
-        for asset in blenvy_metadata.assets.iter() {
-            let asset_path = asset.1.path.clone();
-            let asset_name = asset.0.clone();
+            for asset in blenvy_metadata.assets.iter() {
+                let asset_path = asset.1.path.clone();
+                let asset_name = asset.0.clone();
 
-            let untyped_handle = asset_server.load_untyped(&asset_path);
-            let asset_id = untyped_handle.id();
-            let loaded = asset_server.is_loaded_with_dependencies(asset_id);
-            if !loaded {
-                asset_infos.push(AssetLoadTracker {
-                    name: asset_name.clone(),
-                    path: asset_path.clone(),
-                    id: asset_id,
-                    loaded: false,
-                    handle: untyped_handle.clone(),
-                });
-            }
-
-            // FIXME: dang, too early, asset server has not yet started loading yet
-            // let path_id = asset_server.get_path_id(&asset.path).expect("we should have alread checked for this asset");
-            let path_id = asset_path.clone();
-
-            // Only do this if hot reload is enabled
-            if watching_for_changes.0 {
-                if !assets_to_blueprint_instances
-                    .untyped_id_to_blueprint_entity_ids
-                    .contains_key(&path_id)
-                {
-                    assets_to_blueprint_instances
-                        .untyped_id_to_blueprint_entity_ids
-                        .insert(path_id.clone(), vec![]);
+                let untyped_handle = asset_server.load_untyped(&asset_path);
+                let asset_id = untyped_handle.id();
+                let loaded = asset_server.is_loaded_with_dependencies(asset_id);
+                if !loaded {
+                    asset_infos.push(AssetLoadTracker {
+                        name: asset_name.clone(),
+                        path: asset_path.clone(),
+                        id: asset_id,
+                        loaded: false,
+                        handle: untyped_handle.clone(),
+                    });
                 }
 
-                // only insert if not already present in mapping
-                if !assets_to_blueprint_instances.untyped_id_to_blueprint_entity_ids
-                    [&path_id]
-                    .contains(&entity)
-                {
-                    // println!("adding mapping between {} and entity {:?}", path_id, all_names.get(entity));
-                    assets_to_blueprint_instances
+                // FIXME: dang, too early, asset server has not yet started loading yet
+                // let path_id = asset_server.get_path_id(&asset.path).expect("we should have alread checked for this asset");
+                let path_id = asset_path.clone();
+
+                // Only do this if hot reload is enabled
+                if watching_for_changes.0 {
+                    if !assets_to_blueprint_instances
                         .untyped_id_to_blueprint_entity_ids
-                        .get_mut(&path_id)
-                        .unwrap()
-                        .push(entity);
+                        .contains_key(&path_id)
+                    {
+                        assets_to_blueprint_instances
+                            .untyped_id_to_blueprint_entity_ids
+                            .insert(path_id.clone(), vec![]);
+                    }
+
+                    // only insert if not already present in mapping
+                    if !assets_to_blueprint_instances.untyped_id_to_blueprint_entity_ids[&path_id]
+                        .contains(&entity)
+                    {
+                        // println!("adding mapping between {} and entity {:?}", path_id, all_names.get(entity));
+                        assets_to_blueprint_instances
+                            .untyped_id_to_blueprint_entity_ids
+                            .get_mut(&path_id)
+                            .unwrap()
+                            .push(entity);
+                    }
                 }
             }
+        } else {
+            warn!("no asset metadata found for {}, please make sure to generate them using the Blender add-on, or preload your assets manually", blueprint_info.path);
         }
-    }else {
-        warn!("no asset metadata found for {}, please make sure to generate them using the Blender add-on, or preload your assets manually", blueprint_info.path);
-    }
-        
+
         // Only do this if hot reload is enabled
         // TODO: should this be added to the list of "all assets" on the blender side instead
         if watching_for_changes.0 {
@@ -361,7 +377,8 @@ pub(super) fn blueprints_prepare_spawn(
             commands.entity(entity).insert(BlueprintAssetsLoaded);
         }
 
-        commands.entity(entity)
+        commands
+            .entity(entity)
             .insert(BlueprintMetaLoaded)
             .remove::<BlueprintMetaLoading>()
             .remove::<BlueprintMetaHandle>();
@@ -423,12 +440,7 @@ pub(crate) fn blueprints_check_assets_loading(
 
 pub(crate) fn blueprints_assets_loaded(
     spawn_placeholders: Query<
-        (
-            Entity,
-            &BlueprintInfo,
-            Option<&Transform>,
-            Option<&Name>,
-        ),
+        (Entity, &BlueprintInfo, Option<&Transform>, Option<&Name>),
         (
             Added<BlueprintAssetsLoaded>,
             Without<BlueprintAssetsNotLoaded>,
@@ -442,13 +454,7 @@ pub(crate) fn blueprints_assets_loaded(
 
     mut commands: Commands,
 ) {
-    for (
-        entity,
-        blueprint_info,
-        transform,
-        name,
-    ) in spawn_placeholders.iter()
-    {
+    for (entity, blueprint_info, transform, name) in spawn_placeholders.iter() {
         /*info!(
             "BLUEPRINT: all assets loaded, attempting to spawn blueprint SCENE {:?} for entity {:?}, id: {:}, parent:{:?}",
             blueprint_info.name, name, entity, original_parent
@@ -522,8 +528,6 @@ pub(crate) fn blueprints_assets_loaded(
                 graph,
             },
         ));
-
-      
     }
 }
 
@@ -875,8 +879,9 @@ pub(crate) fn blueprints_finalize_instances(
             }
         }
 
-        
-        commands.entity(entity).remove::<BlueprintInstanceDisabled>();
+        commands
+            .entity(entity)
+            .remove::<BlueprintInstanceDisabled>();
         for child in all_children.iter_descendants(entity) {
             commands.entity(child).remove::<BlueprintInstanceDisabled>();
         }
@@ -884,7 +889,7 @@ pub(crate) fn blueprints_finalize_instances(
         if hide_until_ready.is_some() {
             if let Some(original_visibility) = original_visibility {
                 commands.entity(entity).insert(original_visibility.0);
-            }else {
+            } else {
                 commands.entity(entity).insert(Visibility::Inherited);
             }
         }

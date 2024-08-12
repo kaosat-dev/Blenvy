@@ -21,7 +21,6 @@ pub(crate) struct RootEntity;
 /// internal helper component to store parents before resetting them
 pub(crate) struct OriginalParent(pub(crate) Entity);
 
-
 /// Marker component to Flag the root entity of all static entities (immutables)
 #[derive(Component, Reflect, Debug, Default)]
 #[reflect(Component)]
@@ -32,7 +31,6 @@ pub struct StaticEntitiesRoot;
 #[reflect(Component)]
 pub struct DynamicEntitiesRoot;
 
-
 #[derive(Resource, Clone, Debug, Default, Reflect)]
 #[reflect(Resource)]
 pub struct StaticEntitiesBlueprintInfo {
@@ -40,9 +38,8 @@ pub struct StaticEntitiesBlueprintInfo {
     pub path: String,
 }
 
-
 #[derive(Component, Debug)]
-pub struct BlueprintWorld{
+pub struct BlueprintWorld {
     pub path: String,
 }
 impl BlueprintWorld {
@@ -55,8 +52,6 @@ impl BlueprintWorld {
     }
 }
 
-
-
 #[derive(Debug, Clone, Default)]
 /// Plugin for saving & loading
 pub struct SaveLoadPlugin {}
@@ -65,13 +60,10 @@ impl Plugin for SaveLoadPlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<Dynamic>()
             .register_type::<StaticEntitiesRoot>()
-
             .add_event::<SavingRequest>()
             .add_event::<SaveFinished>()
-
             // common
-            .add_systems(Update, (spawn_from_blueprintworld, )) // inject_dynamic_into_children
-
+            .add_systems(Update, (spawn_from_blueprintworld,)) // inject_dynamic_into_children
             // saving
             .add_systems(Update, process_save_requests)
             .add_systems(
@@ -79,9 +71,7 @@ impl Plugin for SaveLoadPlugin {
                 (prepare_save_game, apply_deferred, save_game, cleanup_save)
                     .chain()
                     .run_if(should_save),
-
             )
-
             .add_event::<LoadingRequest>()
             .add_event::<LoadingFinished>()
             //loading
@@ -91,9 +81,8 @@ impl Plugin for SaveLoadPlugin {
                 (prepare_loading, apply_deferred, load_game)
                     .chain()
                     .run_if(should_load),
-                    //.run_if(not(resource_exists::<LoadFirstStageDone>))
-                    // .in_set(LoadingSet::Load),
-            )
-        ;
+                //.run_if(not(resource_exists::<LoadFirstStageDone>))
+                // .in_set(LoadingSet::Load),
+            );
     }
 }

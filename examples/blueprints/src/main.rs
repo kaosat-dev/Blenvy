@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 use blenvy::{
-    AddToGameWorld, BlenvyPlugin, BluePrintBundle, BlueprintInfo, Dynamic, GameWorldTag, HideUntilReady, SpawnBlueprint
+    AddToGameWorld, BlenvyPlugin, BluePrintBundle, BlueprintInfo, Dynamic, GameWorldTag,
+    HideUntilReady, SpawnBlueprint,
 };
 use rand::Rng;
 
@@ -32,12 +33,8 @@ fn setup_game(mut commands: Commands) {
 }
 
 // you can also spawn blueprint instances at runtime
-pub fn spawn_blueprint_instance(
-    keycode: Res<ButtonInput<KeyCode>>,
-    mut commands: Commands,
-) {
+pub fn spawn_blueprint_instance(keycode: Res<ButtonInput<KeyCode>>, mut commands: Commands) {
     if keycode.just_pressed(KeyCode::KeyS) {
-
         let mut rng = rand::thread_rng();
         let range = 5.5;
         let x: f32 = rng.gen_range(-range..range);

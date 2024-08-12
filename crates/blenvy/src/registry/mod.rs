@@ -35,7 +35,8 @@ fn export_registry(blenvy_config: Res<BlenvyConfig>) -> bool {
 
 impl Plugin for ExportRegistryPlugin {
     fn build(&self, app: &mut App) {
-        app.register_asset_root().add_systems(Startup, export_types.run_if(export_registry));
+        app.register_asset_root()
+            .add_systems(Startup, export_types.run_if(export_registry));
     }
 }
 

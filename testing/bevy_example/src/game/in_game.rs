@@ -1,8 +1,8 @@
 use crate::{GameState, InAppRunning};
 use bevy::prelude::*;
 use blenvy::{
-    AddToGameWorld, BluePrintBundle, BlueprintInfo, Dynamic, GameWorldTag,
-    HideUntilReady, SpawnBlueprint,
+    AddToGameWorld, BluePrintBundle, BlueprintInfo, Dynamic, GameWorldTag, HideUntilReady,
+    SpawnBlueprint,
 };
 
 //use bevy_rapier3d::prelude::Velocity;

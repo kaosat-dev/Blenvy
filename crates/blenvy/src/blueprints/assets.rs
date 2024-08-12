@@ -77,15 +77,14 @@ impl Default for BlueprintAssetsLoadState {
 
 // for preloading asset files
 #[derive(serde::Deserialize, bevy::asset::Asset, bevy::reflect::TypePath, Debug)]
-pub(crate) struct File{
+pub(crate) struct File {
     pub(crate) path: String,
 }
 
 #[derive(serde::Deserialize, bevy::asset::Asset, bevy::reflect::TypePath, Debug)]
-pub(crate) struct BlueprintPreloadAssets{
-    pub(crate) assets: Vec<(String, File)>
+pub(crate) struct BlueprintPreloadAssets {
+    pub(crate) assets: Vec<(String, File)>,
 }
-
 
 #[derive(Component)]
 pub(crate) struct BlueprintMetaHandle(pub Handle<BlueprintPreloadAssets>);
@@ -93,7 +92,6 @@ pub(crate) struct BlueprintMetaHandle(pub Handle<BlueprintPreloadAssets>);
 /// flag component, usually added when a blueprint meta file is loaded
 #[derive(Component)]
 pub(crate) struct BlueprintMetaLoaded;
-
 
 #[derive(Component)]
 pub(crate) struct BlueprintMetaLoading;

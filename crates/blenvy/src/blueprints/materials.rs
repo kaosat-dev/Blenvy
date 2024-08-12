@@ -58,9 +58,11 @@ pub(crate) fn inject_materials(
             } else {
                 let model_handle: Handle<Gltf> = asset_server.load(material_info.path.clone()); // FIXME: kinda weird now
                 let Some(mat_gltf) = assets_gltf.get(model_handle.id()) else {
-                    warn!("materials file {} should have been preloaded skipping",material_info.path);
+                    warn!(
+                        "materials file {} should have been preloaded skipping",
+                        material_info.path
+                    );
                     continue;
-
                 };
                 /*let mat_gltf = assets_gltf.get(model_handle.id()).unwrap_or_else(|| {
                     panic!(
@@ -93,18 +95,14 @@ pub(crate) fn inject_materials(
                                 material_info.name,
                                 material_info.path.clone()
                             );
-        
+
                             commands.entity(*child).insert(material.clone());
                         }
                     }
-                    
                 }
             }
         }
-       
 
         commands.entity(entity).insert(MaterialProcessed);
-
-        
     }
 }

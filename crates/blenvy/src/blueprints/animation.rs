@@ -178,7 +178,8 @@ pub fn trigger_instance_animation_markers_events(
     __animation_graphs: Res<Assets<AnimationGraph>>,
     mut _animation_marker_events: EventWriter<AnimationMarkerReached>,
 ) {
-    for (__entity, __markers, player_link, animations, __animation_infos) in animation_infos.iter() {
+    for (__entity, __markers, player_link, animations, __animation_infos) in animation_infos.iter()
+    {
         //let (animation_player, animation_transitions) = animation_players.get(player_link.0).unwrap();
         //let foo = animation_transitions.get_main_animation().unwrap();
 

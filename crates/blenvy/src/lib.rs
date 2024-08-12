@@ -45,7 +45,7 @@ pub struct BlenvyPlugin {
     // for save & load
     pub save_component_filter: SceneFilter,
     pub save_resource_filter: SceneFilter,
-    pub save_path: PathBuf
+    pub save_path: PathBuf,
 }
 
 impl Default for BlenvyPlugin {
@@ -58,7 +58,7 @@ impl Default for BlenvyPlugin {
 
             save_component_filter: SceneFilter::default(),
             save_resource_filter: SceneFilter::default(),
-            save_path: PathBuf::from("blenvy_saves") // TODO: use https://docs.rs/dirs/latest/dirs/ to default to the correct user directory
+            save_path: PathBuf::from("blenvy_saves"), // TODO: use https://docs.rs/dirs/latest/dirs/ to default to the correct user directory
         }
     }
 }
@@ -71,7 +71,7 @@ impl Plugin for BlenvyPlugin {
             ExportRegistryPlugin::default(),
             BlueprintsPlugin::default(),
             #[cfg(not(target_arch = "wasm32"))] // save & load is only for non wasm platforms
-            SaveLoadPlugin::default()
+            SaveLoadPlugin::default(),
         ))
         .insert_resource(BlenvyConfig {
             export_registry: self.export_registry,
@@ -85,7 +85,7 @@ impl Plugin for BlenvyPlugin {
 
             save_component_filter: self.save_component_filter.clone(),
             save_resource_filter: self.save_resource_filter.clone(),
-            save_path: self.save_path.clone()
+            save_path: self.save_path.clone(),
         });
     }
 }

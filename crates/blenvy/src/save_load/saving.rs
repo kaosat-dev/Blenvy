@@ -2,8 +2,8 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 
-use bevy::{prelude::*, tasks::IoTaskPool};
 use bevy::prelude::World;
+use bevy::{prelude::*, tasks::IoTaskPool};
 
 use crate::{BlenvyConfig, BlueprintInfo, Dynamic, FromBlueprint, RootEntity, SpawnBlueprint};
 
@@ -16,17 +16,15 @@ pub struct SavingRequest {
 #[derive(Event)]
 pub struct SaveFinished; // TODO: merge the the events above
 
-
 /// resource that keeps track of the current save request
 #[derive(Resource, Default)]
 pub struct SavingRequested {
     pub path: String,
 }
 
-
 pub fn process_save_requests(
     mut saving_requests: EventReader<SavingRequest>,
-    mut commands: Commands
+    mut commands: Commands,
 ) {
     let mut save_path: String = "".into();
     for saving_request in saving_requests.read() {
@@ -39,11 +37,9 @@ pub fn process_save_requests(
     }
 }
 
-
 pub fn should_save(saving_requests: Option<Res<SavingRequested>>) -> bool {
-    return resource_exists::<SavingRequested>(saving_requests)
+    return resource_exists::<SavingRequested>(saving_requests);
 }
-
 
 // any child of dynamic/ saveable entities that is not saveable itself should be removed from the list of children
 pub(crate) fn prepare_save_game(
@@ -54,7 +50,8 @@ pub(crate) fn prepare_save_game(
 
     mut commands: Commands,
 ) {
-    for entity in saveables.iter() { // FIXME : not sure about this one
+    for entity in saveables.iter() {
+        // FIXME : not sure about this one
         commands.entity(entity).insert(SpawnBlueprint);
     }
 
@@ -82,8 +79,6 @@ pub(crate) fn prepare_save_game(
         });
     }*/
 }
-
-
 
 pub(crate) fn save_game(world: &mut World) {
     info!("saving");
@@ -125,7 +120,6 @@ pub(crate) fn save_game(world: &mut World) {
         .allow::<BlueprintInfo>()
         .allow::<SpawnBlueprint>()
         .allow::<Dynamic>()
-        
         /*.deny::<CameraRenderGraph>()
         .deny::<CameraMainTextureUsages>()
         .deny::<Handle<Mesh>>()
@@ -135,11 +129,12 @@ pub(crate) fn save_game(world: &mut World) {
     // for root entities, it is the same EXCEPT we make sure parents are not included
     let filter_root = filter.clone().deny::<Parent>();
 
-    let filter_resources = config.clone()
+    let filter_resources = config
+        .clone()
         .save_resource_filter
         .deny::<Time<Real>>()
         .clone();
-        //.allow::<StaticEntitiesStorage>();
+    //.allow::<StaticEntitiesStorage>();
 
     // for default stuff
     let scene_builder = DynamicSceneBuilder::from_world(world)
@@ -190,7 +185,6 @@ pub(crate) fn save_game(world: &mut World) {
         })
         .detach();
 
-    
     let static_world_path = "levels/world.glb";
     let fake_foo = format!("(dynamic: {bla}, static: {static_world_path})");
     let real_save_path = format!("{bla}.save.ron");
@@ -217,5 +211,4 @@ pub(crate) fn cleanup_save(
     saving_finished.send(SaveFinished);
 
     commands.remove_resource::<SavingRequested>();
-
 }

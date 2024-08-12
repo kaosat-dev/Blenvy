@@ -110,8 +110,7 @@ impl Plugin for BlueprintsPlugin {
             .register_type::<Vec<String>>()
             .register_type::<BlueprintAssets>()
             .register_type::<HashMap<String, Vec<String>>>()
-            .add_plugins(RonAssetPlugin::<BlueprintPreloadAssets>::new(&["meta.ron"]),)
-
+            .add_plugins(RonAssetPlugin::<BlueprintPreloadAssets>::new(&["meta.ron"]))
             .configure_sets(
                 Update,
                 (GltfBlueprintsSet::Spawn, GltfBlueprintsSet::AfterSpawn)
