@@ -78,7 +78,7 @@ class AutoExportSettings(PropertyGroup):
     ) # type: ignore
 
     split_out_animations: BoolProperty(
-        name='Split out animations',
+        name='Split out animations (not functional yet)',
         description='removes animations/armatures from blueprints and exports them separately ',
         default=False,
         update=save_settings
