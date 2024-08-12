@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 use blenvy::{
-    AddToGameWorld, BlenvyPlugin, BluePrintBundle, BlueprintInfo, DynamicBlueprintInstance,
-    GameWorldTag, HideUntilReady, SpawnBlueprint,
+    AddToGameWorld, BlenvyPlugin, BluePrintBundle, BlueprintInfo, Dynamic, GameWorldTag, HideUntilReady, SpawnBlueprint
 };
 use rand::Rng;
 
@@ -36,12 +35,8 @@ fn setup_game(mut commands: Commands) {
 pub fn spawn_blueprint_instance(
     keycode: Res<ButtonInput<KeyCode>>,
     mut commands: Commands,
-
-    mut game_world: Query<(Entity, &Children), With<GameWorldTag>>,
 ) {
     if keycode.just_pressed(KeyCode::KeyS) {
-        let world = game_world.single_mut();
-        let world = world.1[0];
 
         let mut rng = rand::thread_rng();
         let range = 5.5;
@@ -50,7 +45,7 @@ pub fn spawn_blueprint_instance(
 
         let name_index: u64 = rng.gen();
 
-        let new_entity = commands
+        let __new_entity = commands
             .spawn((
                 BluePrintBundle {
                     blueprint: BlueprintInfo {
@@ -59,7 +54,7 @@ pub fn spawn_blueprint_instance(
                     }, // FIXME
                     ..Default::default()
                 },
-                DynamicBlueprintInstance,
+                Dynamic,
                 bevy::prelude::Name::from(format!("test{}", name_index)),
                 HideUntilReady,
                 AddToGameWorld,

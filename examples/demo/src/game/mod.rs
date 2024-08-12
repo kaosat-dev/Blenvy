@@ -8,7 +8,6 @@ pub mod level_transitions;
 pub use level_transitions::*;
 
 use bevy::prelude::*;
-use bevy_gltf_worlflow_examples_common_rapier::{AppState, GameState};
 
 pub struct GamePlugin;
 impl Plugin for GamePlugin {

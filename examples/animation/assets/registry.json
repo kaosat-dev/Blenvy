@@ -203,6 +203,19 @@
       "type": "array",
       "typeInfo": "List"
     },
+    "alloc::vec::Vec<blenvy::blueprints::materials::MaterialInfo>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/blenvy::blueprints::materials::MaterialInfo"
+        }
+      },
+      "long_name": "alloc::vec::Vec<blenvy::blueprints::materials::MaterialInfo>",
+      "short_name": "Vec<MaterialInfo>",
+      "type": "array",
+      "typeInfo": "List"
+    },
     "alloc::vec::Vec<f32>": {
       "isComponent": false,
       "isResource": false,
@@ -1410,6 +1423,44 @@
       "type": "object",
       "typeInfo": "Enum"
     },
+    "bevy_asset::handle::Handle<blenvy::blueprints::assets::BlueprintPreloadAssets>": {
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "bevy_asset::handle::Handle<blenvy::blueprints::assets::BlueprintPreloadAssets>",
+      "oneOf": [
+        {
+          "items": false,
+          "long_name": "Strong",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/std::sync::Arc<bevy_asset::handle::StrongHandle>"
+              }
+            }
+          ],
+          "short_name": "Strong",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "long_name": "Weak",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_asset::id::AssetId<blenvy::blueprints::assets::BlueprintPreloadAssets>"
+              }
+            }
+          ],
+          "short_name": "Weak",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Handle<BlueprintPreloadAssets>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
     "bevy_asset::id::AssetId<()>": {
       "isComponent": false,
       "isResource": false,
@@ -2419,6 +2470,52 @@
         }
       ],
       "short_name": "AssetId<Font>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "bevy_asset::id::AssetId<blenvy::blueprints::assets::BlueprintPreloadAssets>": {
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "bevy_asset::id::AssetId<blenvy::blueprints::assets::BlueprintPreloadAssets>",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "long_name": "Index",
+          "properties": {
+            "index": {
+              "long_name": "index",
+              "type": {
+                "$ref": "#/$defs/bevy_asset::assets::AssetIndex"
+              }
+            }
+          },
+          "required": [
+            "index"
+          ],
+          "short_name": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
+        },
+        {
+          "additionalProperties": false,
+          "long_name": "Uuid",
+          "properties": {
+            "uuid": {
+              "long_name": "uuid",
+              "type": {
+                "$ref": "#/$defs/uuid::Uuid"
+              }
+            }
+          },
+          "required": [
+            "uuid"
+          ],
+          "short_name": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
+        }
+      ],
+      "short_name": "AssetId<BlueprintPreloadAssets>",
       "type": "object",
       "typeInfo": "Enum"
     },
@@ -12353,7 +12450,7 @@
     },
     "blenvy::blueprints::materials::MaterialInfo": {
       "additionalProperties": false,
-      "isComponent": true,
+      "isComponent": false,
       "isResource": false,
       "long_name": "blenvy::blueprints::materials::MaterialInfo",
       "properties": {
@@ -12375,6 +12472,22 @@
       "short_name": "MaterialInfo",
       "type": "object",
       "typeInfo": "Struct"
+    },
+    "blenvy::blueprints::materials::MaterialInfos": {
+      "isComponent": true,
+      "isResource": false,
+      "items": false,
+      "long_name": "blenvy::blueprints::materials::MaterialInfos",
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/alloc::vec::Vec<blenvy::blueprints::materials::MaterialInfo>"
+          }
+        }
+      ],
+      "short_name": "MaterialInfos",
+      "type": "array",
+      "typeInfo": "TupleStruct"
     },
     "blenvy::blueprints::spawn_from_blueprints::BlueprintInfo": {
       "additionalProperties": false,
@@ -12398,6 +12511,17 @@
         "path"
       ],
       "short_name": "BlueprintInfo",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "blenvy::blueprints::spawn_from_blueprints::BlueprintInstanceDisabled": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "blenvy::blueprints::spawn_from_blueprints::BlueprintInstanceDisabled",
+      "properties": {},
+      "required": [],
+      "short_name": "BlueprintInstanceDisabled",
       "type": "object",
       "typeInfo": "Struct"
     },
@@ -12540,6 +12664,28 @@
       "short_name": "BlenderToneMapping",
       "type": "string",
       "typeInfo": "Enum"
+    },
+    "blenvy::save_load::Dynamic": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "blenvy::save_load::Dynamic",
+      "properties": {},
+      "required": [],
+      "short_name": "Dynamic",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "blenvy::save_load::StaticEntitiesRoot": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "blenvy::save_load::StaticEntitiesRoot",
+      "properties": {},
+      "required": [],
+      "short_name": "StaticEntitiesRoot",
+      "type": "object",
+      "typeInfo": "Struct"
     },
     "blenvy_animation_example::Fox": {
       "additionalProperties": false,

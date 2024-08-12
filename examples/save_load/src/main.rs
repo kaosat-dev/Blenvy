@@ -1,7 +1,7 @@
 use std::any::TypeId;
 
 use bevy::{prelude::*, utils::hashbrown::HashSet};
-use blenvy::{AddToGameWorld, BlenvyPlugin, BlueprintInfo, BlueprintWorld, Dynamic, DynamicBlueprintInstance, GameWorldTag, HideUntilReady, LoadingRequest, SavingRequest, SpawnBlueprint};
+use blenvy::{AddToGameWorld, BlenvyPlugin, BlueprintInfo, BlueprintWorld, Dynamic, GameWorldTag, HideUntilReady, LoadingRequest, SavingRequest, SpawnBlueprint};
 use rand::Rng;
 
 // mod game;
@@ -77,7 +77,7 @@ fn spawn_blueprint_instance(
             .spawn((
                 BlueprintInfo::from_path("blueprints/test.glb"),
                 SpawnBlueprint,
-                DynamicBlueprintInstance,
+                Dynamic,
                 bevy::prelude::Name::from(format!("test{}", name_index)),
                 HideUntilReady,
                 AddToGameWorld,
