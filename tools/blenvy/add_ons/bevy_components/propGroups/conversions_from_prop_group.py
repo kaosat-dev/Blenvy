@@ -25,6 +25,8 @@ conversion_tables = {
     "bevy_color::srgba::Srgba":  lambda value: "Srgba(red:"+str(value[0])+ ", green:"+str(value[1])+ ", blue:"+str(value[2])+ ", alpha:"+str(value[3])+   ")",
     "bevy_color::linear_rgba::LinearRgba":  lambda value: "LinearRgba(red:"+str(value[0])+ ", green:"+str(value[1])+ ", blue:"+str(value[2])+ ", alpha:"+str(value[3])+   ")",
     "bevy_color::hsva::Hsva":  lambda value: "Hsva(hue:"+str(value[0])+ ", saturation:"+str(value[1])+ ", value:"+str(value[2])+ ", alpha:"+str(value[3])+   ")",
+
+    "bevy_ecs::entity::Entity": lambda value: "Entity(name:" + str(value) + ")"
 }
 
 #converts the value of a property group(no matter its complexity) into a single custom property value
