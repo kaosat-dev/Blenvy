@@ -15,7 +15,7 @@ It also allows you to setup 'blueprints' in Blender by using collections (the re
 
 
 > [!CAUTION]
-> Blenvy is currently in **Alpha** so there are still quite a few bugs, missing functionality, missing docs, broken examples etc
+> Blenvy is currently in **Alpha 1** state so there are still quite a few bugs, missing functionality, missing docs, broken examples etc
 > Please make sure you back up your Blender files before using it !
 
 
