@@ -361,3 +361,25 @@ Bevy Side:
 - [x] finally deal cleanly with gltf export failures & make sure to always reset the state of the blend file
 
 clear && pytest -svv --blender-template ../../testing/bevy_example/art/testing_library.blend --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration_prepare.py  && pytest -svv --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration.py
+
+------------
+POST ALPHA1 RELEASE:
+BEVY:
+- [ ] split up "spawn from blueprint"
+- [ ] cleanup very verbose messages
+- [ ] fix & cleanup trigger_instance_animation_markers_events
+- [ ] fix & cleanup save & load
+- [ ] experiment with Bevy side for splitting out animations
+- [ ] test hot reload a bit more , improve missing parts (see above)
+- [ ] make a fleshed out demo
+
+BLENDER:
+- [ ] add "right click to edit blueprint"
+- [ ] overall cleanup
+- [ ] review wonky logic for cross file components injections
+- [ ] update & fix tests
+
+------------
+BEFORE FINAL RELASE:
+- [ ] cleanup & regenerate all examples assets
+- [ ] cleanup & improve all docs

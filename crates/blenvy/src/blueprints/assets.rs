@@ -90,7 +90,7 @@ pub(crate) struct BlueprintPreloadAssets{
 #[derive(Component)]
 pub(crate) struct BlueprintMetaHandle(pub Handle<BlueprintPreloadAssets>);
 
-/// flag component, usually added when a blueprint is loaded
+/// flag component, usually added when a blueprint meta file is loaded
 #[derive(Component)]
 pub(crate) struct BlueprintMetaLoaded;
 

@@ -2,7 +2,6 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 
-use bevy::render::camera::{CameraMainTextureUsages, CameraRenderGraph};
 use bevy::{prelude::*, tasks::IoTaskPool};
 use bevy::prelude::World;
 
@@ -51,7 +50,7 @@ pub(crate) fn prepare_save_game(
     saveables: Query<Entity, (With<Dynamic>, With<BlueprintInfo>)>,
     root_entities: Query<Entity, Or<(With<DynamicEntitiesRoot>, Without<Parent>)>>, //  With<DynamicEntitiesRoot>
     dynamic_entities: Query<(Entity, &Parent, Option<&Children>), With<Dynamic>>,
-    static_entities: Query<(Entity, &BlueprintInfo), With<StaticEntitiesRoot>>,
+    _static_entities: Query<(Entity, &BlueprintInfo), With<StaticEntitiesRoot>>,
 
     mut commands: Commands,
 ) {
@@ -147,7 +146,7 @@ pub(crate) fn save_game(world: &mut World) {
         .with_filter(filter.clone())
         .with_resource_filter(filter_resources.clone());
 
-    let mut dyn_scene = scene_builder
+    let dyn_scene = scene_builder
         .extract_resources()
         .extract_entities(saveable_entities.clone().into_iter())
         .remove_empty_entities()
@@ -158,7 +157,7 @@ pub(crate) fn save_game(world: &mut World) {
         .with_filter(filter_root.clone())
         .with_resource_filter(filter_resources.clone());
 
-    let mut dyn_scene_root = scene_builder_root
+    let mut __dyn_scene_root = scene_builder_root
         .extract_resources()
         .extract_entities(
             saveable_root_entities.clone().into_iter(), // .chain(static_world_markers.into_iter()),

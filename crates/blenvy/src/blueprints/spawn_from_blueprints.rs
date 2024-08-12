@@ -4,11 +4,11 @@ use bevy::{
     gltf::Gltf,
     prelude::*,
     scene::SceneInstance,
-    utils::{hashbrown::HashMap, warn},
+    utils::hashbrown::HashMap,
 };
 
 use crate::{
-    AnimationInfos, AssetLoadTracker, AssetToBlueprintInstancesMapper, BlueprintAnimationInfosLink, BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintAssets, BlueprintAssetsLoadState, BlueprintAssetsLoaded, BlueprintMetaLoading, BlueprintAssetsNotLoaded, BlueprintPreloadAssets, InstanceAnimationInfosLink, InstanceAnimationPlayerLink, InstanceAnimations, WatchingForChanges
+    AnimationInfos, AssetLoadTracker, AssetToBlueprintInstancesMapper, BlueprintAnimationInfosLink, BlueprintAnimationPlayerLink, BlueprintAnimations, BlueprintAssetsLoadState, BlueprintAssetsLoaded, BlueprintAssetsNotLoaded, BlueprintMetaLoaded, BlueprintMetaLoading, BlueprintPreloadAssets, InstanceAnimationInfosLink, InstanceAnimationPlayerLink, InstanceAnimations, WatchingForChanges
 };
 
 
@@ -45,12 +45,6 @@ pub struct SpawnBlueprint;
 #[reflect(Component)]
 /// flag component marking any spawned child of blueprints
 pub struct FromBlueprint;
-
-// TODO: move to save_load
-#[derive(Component, Reflect, Debug, Default)]
-#[reflect(Component)]
-/// component used to mark any entity as Dynamic: aka add this to make sure your entity is going to be saved
-pub struct DynamicBlueprintInstance;
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
@@ -207,7 +201,7 @@ pub(crate) fn blueprints_check_assets_metadata_files_loading(
     mut commands: Commands,
 ) {
 
-    for (entity, blueprint_info, mut assets_to_load) in blueprint_assets_to_load.iter_mut() {
+    for (entity, _blueprint_info, mut assets_to_load) in blueprint_assets_to_load.iter_mut() {
 
         let mut all_loaded = true;
         let mut loaded_amount = 0;
@@ -240,7 +234,7 @@ pub(crate) fn blueprints_check_assets_metadata_files_loading(
 
 
 pub(super) fn blueprints_prepare_spawn(
-    blueprint_instances_to_spawn: Query<(Entity, &BlueprintInfo, &BlueprintMetaHandle, Option<&Name>), Added<BlueprintMetaHandle>>,
+    blueprint_instances_to_spawn: Query<(Entity, &BlueprintInfo, &BlueprintMetaHandle), Added<BlueprintMetaHandle>>,
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     // for hot reload
@@ -251,7 +245,7 @@ pub(super) fn blueprints_prepare_spawn(
     blueprint_metas: Res<Assets<BlueprintPreloadAssets>>,
 
 ) {
-    for (entity, blueprint_info, blueprint_meta_handle, entity_name) in blueprint_instances_to_spawn.iter() {
+    for (entity, blueprint_info, blueprint_meta_handle) in blueprint_instances_to_spawn.iter() {
         info!(
             "Step 2: metadata loaded: loading assets for {:?}",
             blueprint_info, 
@@ -368,6 +362,7 @@ pub(super) fn blueprints_prepare_spawn(
         }
 
         commands.entity(entity)
+            .insert(BlueprintMetaLoaded)
             .remove::<BlueprintMetaLoading>()
             .remove::<BlueprintMetaHandle>();
     }
@@ -376,14 +371,14 @@ pub(super) fn blueprints_prepare_spawn(
 /// This system tracks & updates the loading state of all blueprints assets
 pub(crate) fn blueprints_check_assets_loading(
     mut blueprint_assets_to_load: Query<
-        (Entity, &BlueprintInfo, &mut BlueprintAssetsLoadState, Option<&Name>),
+        (Entity, &BlueprintInfo, &mut BlueprintAssetsLoadState),
         With<BlueprintAssetsNotLoaded>,
     >,
     asset_server: Res<AssetServer>,
     mut commands: Commands,
     mut blueprint_events: EventWriter<BlueprintEvent>,
 ) {
-    for (entity, blueprint_info, mut assets_to_load, entity_name) in blueprint_assets_to_load.iter_mut() {
+    for (entity, blueprint_info, mut assets_to_load) in blueprint_assets_to_load.iter_mut() {
         let mut all_loaded = true;
         let mut loaded_amount = 0;
         let total = assets_to_load.asset_infos.len();
@@ -433,7 +428,6 @@ pub(crate) fn blueprints_assets_loaded(
             &BlueprintInfo,
             Option<&Transform>,
             Option<&Name>,
-            Option<&AnimationInfos>,
         ),
         (
             Added<BlueprintAssetsLoaded>,
@@ -453,7 +447,6 @@ pub(crate) fn blueprints_assets_loaded(
         blueprint_info,
         transform,
         name,
-        animation_infos,
     ) in spawn_placeholders.iter()
     {
         /*info!(
@@ -652,7 +645,7 @@ pub(crate) fn blueprints_scenes_spawned(
 use crate::CopyComponents;
 use std::any::TypeId;
 
-use super::{BlueprintMetaHandle, BlueprintMetaLoaded};
+use super::BlueprintMetaHandle;
 
 #[derive(Component, Reflect, Debug)]
 #[reflect(Component)]
@@ -840,6 +833,7 @@ pub(crate) fn blueprints_finalize_instances(
         info!("Step 8: Finalizing blueprint instance {:?}", name);
         commands
             .entity(entity)
+            .remove::<BlueprintMetaLoaded>()
             .remove::<BlueprintReadyForFinalizing>()
             .remove::<BlueprintReadyForPostProcess>()
             .remove::<BlueprintSpawning>()

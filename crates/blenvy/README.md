@@ -219,7 +219,7 @@ This way all your levels, your dynamic entities etc, are kept seperated from UI 
 
 ## Registry
 
-Blenvy automatically exports a Json file containing of all your registered components/ types, in order to be able to create UIs that allows you to add & edit your components directly in Blender in the [Blenvy](https://github.com/kaosat-dev/Blenvy/tree/main/tools/blenvy) Blender add-on
+Blenvy automatically exports a Json file containing of all your registered components/ types, in order to create UIs that allows you to add & edit your components directly in Blender in the [Blenvy](https://github.com/kaosat-dev/Blenvy/tree/main/tools/blenvy) Blender add-on
 - The output file will be generated in the ```Startup``` schedule whenever you run your app.
 - Every time you compile & run your app, the output json file will be updated.
 
@@ -314,7 +314,7 @@ The main branch is compatible with the latest Bevy release, while the branch `be
 Compatibility of `blenvy` versions:
 | `blenvy` | `bevy` |
 | :--                 | :--    |
-| `0.1`               | `0.14` |
+| `0.1.0-alpha.1`     | `0.14` |
 | branch `main`       | `0.14` |
 | branch `bevy_main`  | `main` |
 

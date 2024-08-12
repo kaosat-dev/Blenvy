@@ -22,7 +22,7 @@ pub(crate) use hot_reload::*;
 
 use bevy::{prelude::*, utils::hashbrown::HashMap};
 
-use crate::{BlenvyConfig, GltfComponentsSet};
+use crate::GltfComponentsSet;
 
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
 /// set for the two stages of blueprint based spawning :
@@ -93,7 +93,6 @@ impl Plugin for BlueprintsPlugin {
             .register_type::<BlueprintInfo>()
             .register_type::<MaterialInfo>()
             .register_type::<MaterialInfos>()
-
             .register_type::<SpawnBlueprint>()
             .register_type::<BlueprintInstanceDisabled>()
             .register_type::<HideUntilReady>()
@@ -111,8 +110,6 @@ impl Plugin for BlueprintsPlugin {
             .register_type::<Vec<String>>()
             .register_type::<BlueprintAssets>()
             .register_type::<HashMap<String, Vec<String>>>()
-            //.init_asset::<RawGltfAsset>()
-            //.init_asset_loader::<RawGltfAssetLoader>()
             .add_plugins(RonAssetPlugin::<BlueprintPreloadAssets>::new(&["meta.ron"]),)
 
             .configure_sets(

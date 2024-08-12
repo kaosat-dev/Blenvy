@@ -164,6 +164,7 @@ pub fn trigger_blueprint_animation_markers_events(
 }
 
 /// triggers events when a given animation marker is reached for INSTANCE animations
+// TODO: implement this correctly
 pub fn trigger_instance_animation_markers_events(
     animation_infos: Query<(
         Entity,
@@ -174,21 +175,21 @@ pub fn trigger_instance_animation_markers_events(
     )>,
     animation_players: Query<&AnimationPlayer>,
     animation_clips: Res<Assets<AnimationClip>>,
-    animation_graphs: Res<Assets<AnimationGraph>>,
-    mut animation_marker_events: EventWriter<AnimationMarkerReached>,
+    __animation_graphs: Res<Assets<AnimationGraph>>,
+    mut _animation_marker_events: EventWriter<AnimationMarkerReached>,
 ) {
-    for (entity, markers, player_link, animations, animation_infos) in animation_infos.iter() {
+    for (__entity, __markers, player_link, animations, __animation_infos) in animation_infos.iter() {
         //let (animation_player, animation_transitions) = animation_players.get(player_link.0).unwrap();
         //let foo = animation_transitions.get_main_animation().unwrap();
 
         for (animation_name, node_index) in animations.named_indices.iter() {
             let animation_player = animation_players.get(player_link.0).unwrap();
             if animation_player.animation_is_playing(*node_index) {
-                if let Some(animation) = animation_player.animation(*node_index) {
+                if let Some(__animation) = animation_player.animation(*node_index) {
                     if let Some(animation_clip_handle) =
                         animations.named_animations.get(animation_name)
                     {
-                        if let Some(animation_clip) = animation_clips.get(animation_clip_handle) {
+                        if let Some(__animation_clip) = animation_clips.get(animation_clip_handle) {
                             println!("helooo")
                         }
                     }

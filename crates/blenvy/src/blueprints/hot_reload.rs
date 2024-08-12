@@ -18,7 +18,7 @@ pub(crate) fn react_to_asset_changes(
     mut gltf_events: EventReader<AssetEvent<Gltf>>, // FIXME: Problem: we need to react to any asset change, not just gltf files !
     // mut untyped_events: EventReader<AssetEvent<LoadedUntypedAsset>>,
     blueprint_assets: Query<(Entity, Option<&Name>, &BlueprintInfo, Option<&Children>)>,
-    blueprint_children_entities: Query<&FromBlueprint>, //=> can only be used if the entites are tagged
+    _blueprint_children_entities: Query<&FromBlueprint>, //=> can only be used if the entites are tagged
     assets_to_blueprint_instances: Res<AssetToBlueprintInstancesMapper>,
     all_parents: Query<&Parent>,
     spawning_blueprints: Query<&BlueprintSpawning>,

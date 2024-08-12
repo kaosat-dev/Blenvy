@@ -1,7 +1,7 @@
 use crate::{GameState, InAppRunning};
 use bevy::prelude::*;
 use blenvy::{
-    AddToGameWorld, BluePrintBundle, BlueprintInfo, DynamicBlueprintInstance, GameWorldTag,
+    AddToGameWorld, BluePrintBundle, BlueprintInfo, Dynamic, GameWorldTag,
     HideUntilReady, SpawnBlueprint,
 };
 
@@ -61,7 +61,7 @@ pub fn spawn_test(
                     }, // FIXME
                     ..Default::default()
                 },
-                DynamicBlueprintInstance,
+                Dynamic,
                 bevy::prelude::Name::from(format!("test{}", name_index)),
                 HideUntilReady,
                 AddToGameWorld,

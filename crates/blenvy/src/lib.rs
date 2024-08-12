@@ -1,4 +1,4 @@
-use bevy::{prelude::*, render::primitives::Aabb, utils::HashMap};
+use bevy::{render::primitives::Aabb, utils::HashMap};
 use std::path::PathBuf;
 
 pub mod components;
@@ -29,8 +29,8 @@ pub struct BlenvyConfig {
     // save & load
     pub(crate) save_component_filter: SceneFilter,
     pub(crate) save_resource_filter: SceneFilter,
-    //pub(crate) save_path: PathBuf,
-    // save_path: PathBuf::from("saves"),
+    #[allow(dead_code)]
+    pub(crate) save_path: PathBuf,
 }
 
 #[derive(Debug, Clone)]
@@ -45,6 +45,7 @@ pub struct BlenvyPlugin {
     // for save & load
     pub save_component_filter: SceneFilter,
     pub save_resource_filter: SceneFilter,
+    pub save_path: PathBuf
 }
 
 impl Default for BlenvyPlugin {
@@ -57,6 +58,7 @@ impl Default for BlenvyPlugin {
 
             save_component_filter: SceneFilter::default(),
             save_resource_filter: SceneFilter::default(),
+            save_path: PathBuf::from("blenvy_saves") // TODO: use https://docs.rs/dirs/latest/dirs/ to default to the correct user directory
         }
     }
 }
@@ -83,6 +85,7 @@ impl Plugin for BlenvyPlugin {
 
             save_component_filter: self.save_component_filter.clone(),
             save_resource_filter: self.save_resource_filter.clone(),
+            save_path: self.save_path.clone()
         });
     }
 }

@@ -2,17 +2,17 @@ pub use bevy::prelude::*;
 
 use crate::{BlueprintInfo, GameWorldTag, HideUntilReady, SpawnBlueprint};
 
-use super::{BlueprintWorld, Dynamic};
+use super::BlueprintWorld;
 
 pub(crate) fn spawn_from_blueprintworld(
     added_blueprint_worlds: Query<(Entity, &BlueprintWorld), Added<BlueprintWorld> >,
     mut commands: Commands,
 ){
-    for (entity, blueprint_world) in added_blueprint_worlds.iter(){
+    for (__entity, blueprint_world) in added_blueprint_worlds.iter(){
         println!("added blueprintWorld {:?}", blueprint_world);
 
         // here we spawn the static part our game world/level, which is also a blueprint !
-        let static_world = commands.spawn((
+        let __static_world = commands.spawn((
             BlueprintInfo::from_path(blueprint_world.path.as_str()), // all we need is a Blueprint info...
             SpawnBlueprint, // and spawnblueprint to tell blenvy to spawn the blueprint now
             HideUntilReady, // only reveal the level once it is ready
@@ -20,7 +20,7 @@ pub(crate) fn spawn_from_blueprintworld(
         )).id();
 
         // here we spawn the dynamic entities part of our game world/level, which is also a blueprint !
-        let dynamic_world = commands.spawn((
+        let __dynamic_world = commands.spawn((
             BlueprintInfo::from_path(blueprint_world.path.replace(".glb", "_dynamic.glb").replace(".gltf", "_dynamic.gltf").as_str()), // all we need is a Blueprint info...
             SpawnBlueprint, // and spawnblueprint to tell blenvy to spawn the blueprint now
             HideUntilReady, // only reveal the level once it is ready
@@ -32,6 +32,7 @@ pub(crate) fn spawn_from_blueprintworld(
     } 
 }
 
+/* 
 pub(crate) fn inject_dynamic_into_children(
     added_dynamic: Query<Entity, Added<Dynamic> >,
     all_children: Query<&Children>,
@@ -42,4 +43,4 @@ pub(crate) fn inject_dynamic_into_children(
             commands.entity(child).insert(Dynamic);
         }
     }
-}
+}*/

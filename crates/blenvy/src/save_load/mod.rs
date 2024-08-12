@@ -1,6 +1,3 @@
-use std::path::Path;
-use bevy::prelude::*;
-
 pub mod common;
 pub use common::*;
 
@@ -44,14 +41,13 @@ pub struct StaticEntitiesBlueprintInfo {
 }
 
 
-
 #[derive(Component, Debug)]
 pub struct BlueprintWorld{
     pub path: String,
 }
 impl BlueprintWorld {
     pub fn from_path(path: &str) -> BlueprintWorld {
-        let p = Path::new(&path);
+        // let p = Path::new(&path);
         return BlueprintWorld {
             // name: p.file_stem().unwrap().to_os_string().into_string().unwrap(), // seriously ? , also unwraps !!
             path: path.into(),
