@@ -362,6 +362,14 @@ Bevy Side:
 
 clear && pytest -svv --blender-template ../../testing/bevy_example/art/testing_library.blend --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration_prepare.py  && pytest -svv --blender-executable /home/ckaos/tools/blender/blender-4.1.0-linux-x64/blender tests/test_bevy_integration.py
 
+-----------
+PRE ALPHA1 RELEASE:
+- compress images in blender docs
+- add a small note about using the same version of the Blender add-on & the Bevy crate
+- merge blenvy branch into main
+- push to crates.io
+- tag
+
 ------------
 POST ALPHA1 RELEASE:
 BEVY:

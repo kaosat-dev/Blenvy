@@ -13,6 +13,12 @@ inside Blender. Aka "Blender as editor for Bevy"
 
 It also allows you to setup 'blueprints' in Blender by using collections (the recomended way to go most of the time), or directly on single use objects .
 
+
+> [!CAUTION]
+> Blenvy is currently in **Alpha** so there are still quite a few bugs, missing functionality, missing docs, broken examples etc
+> Please make sure you back up your Blender files before using it !
+
+
 ## Quickstart
 
 Want to jump right in? See the [quickstart guide](./docs/quickstart/readme.md) for how to setup a basic project as fast as possible.
