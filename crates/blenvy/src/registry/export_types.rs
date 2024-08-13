@@ -229,8 +229,9 @@ fn add_min_max(
     field_index: usize,
     variant_index: Option<usize>,
 ) -> Value {
-    #[cfg(feature = "support-inspector")]
-    fn get_min_max(
+
+
+    /*fn get_min_max(
         reg: &TypeRegistration,
         field_index: usize,
         variant_index: Option<usize>,
@@ -252,9 +253,8 @@ fn add_min_max(
             })
             .and_then(|o| o.downcast_ref::<NumberOptions<f32>>())
             .map(|num| (num.min, num.max))
-    }
+    }*/
 
-    #[cfg(not(feature = "support-inspector"))]
     fn get_min_max(
         _reg: &TypeRegistration,
         _field_index: usize,
