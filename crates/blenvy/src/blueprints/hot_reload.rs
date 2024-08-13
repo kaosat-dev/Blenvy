@@ -14,6 +14,7 @@ pub(crate) struct AssetToBlueprintInstancesMapper {
     pub(crate) untyped_id_to_blueprint_entity_ids: HashMap<String, Vec<Entity>>,
 }
 
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn react_to_asset_changes(
     mut gltf_events: EventReader<AssetEvent<Gltf>>, // FIXME: Problem: we need to react to any asset change, not just gltf files !
     // mut untyped_events: EventReader<AssetEvent<LoadedUntypedAsset>>,
@@ -30,34 +31,32 @@ pub(crate) fn react_to_asset_changes(
 
     for event in gltf_events.read() {
         // LoadedUntypedAsset
-        match event {
-            AssetEvent::Modified { id } => {
-                // React to the gltf file being modified
-                // println!("Modified gltf {:?}", asset_server.get_path(*id));
-                if let Some(asset_path) = asset_server.get_path(*id) {
-                    // let untyped = asset_server.get_handle_untyped(asset_path.clone());
-                    // println!("matching untyped handle {:?}", untyped);
-                    // let bla = untyped.unwrap().id();
-                    // asset_server.get
-                    // in order to avoid respawn both a parent & a child , which would crash Bevy, we do things in two steps
-                    if let Some(entities) = assets_to_blueprint_instances
-                        .untyped_id_to_blueprint_entity_ids
-                        .get(&asset_path.to_string())
-                    {
-                        for entity in entities.iter() {
-                            // println!("matching blueprint instance {}", entity);
-                            // disregard entities that are already (re) spawning
-                            if !respawn_candidates.contains(&entity)
-                                && blueprint_assets.get(*entity).is_ok()
-                                && spawning_blueprints.get(*entity).is_err()
-                            {
-                                respawn_candidates.push(entity);
-                            }
+
+        if let AssetEvent::Modified { id } = event {
+            // React to the gltf file being modified
+            // println!("Modified gltf {:?}", asset_server.get_path(*id));
+            if let Some(asset_path) = asset_server.get_path(*id) {
+                // let untyped = asset_server.get_handle_untyped(asset_path.clone());
+                // println!("matching untyped handle {:?}", untyped);
+                // let bla = untyped.unwrap().id();
+                // asset_server.get
+                // in order to avoid respawn both a parent & a child , which would crash Bevy, we do things in two steps
+                if let Some(entities) = assets_to_blueprint_instances
+                    .untyped_id_to_blueprint_entity_ids
+                    .get(&asset_path.to_string())
+                {
+                    for entity in entities.iter() {
+                        // println!("matching blueprint instance {}", entity);
+                        // disregard entities that are already (re) spawning
+                        if !respawn_candidates.contains(&entity)
+                            && blueprint_assets.get(*entity).is_ok()
+                            && spawning_blueprints.get(*entity).is_err()
+                        {
+                            respawn_candidates.push(entity);
                         }
                     }
                 }
             }
-            _ => {}
         }
     }
     // we process all candidates here to deal with the case where multiple assets have changed in a single frame, which could cause respawn chaos

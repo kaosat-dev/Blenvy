@@ -173,8 +173,6 @@ fn process_colorgrading(
                     gamma: blender_colorgrading.gamma,
                     ..Default::default()
                 },
-
-                ..Default::default()
             });
             commands.entity(scene_id).remove::<ColorGrading>();
         }

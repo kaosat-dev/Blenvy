@@ -226,7 +226,7 @@ pub(crate) fn blueprints_check_assets_metadata_files_loading(
 
             let mut failed = false;
             if let bevy::asset::LoadState::Failed(_) = asset_server.load_state(asset_id) {
-                failed = true
+                failed = true;
             }
             tracker.loaded = loaded || failed;
             if loaded || failed {
@@ -408,7 +408,7 @@ pub(crate) fn blueprints_check_assets_loading(
             let mut failed = false;
             if let bevy::asset::LoadState::Failed(_) = asset_server.load_state(asset_id) {
                 warn!("FAILED TO LOAD {}", tracker.path.clone());
-                failed = true
+                failed = true;
             }
             tracker.loaded = loaded || failed;
             if loaded || failed {
@@ -660,6 +660,7 @@ pub struct BlueprintReadyForPostProcess;
 /// - it copies the blueprint's root components to the entity it was spawned on (original entity)
 /// - it copies the children of the blueprint scene into the original entity
 /// - it adds an `AnimationLink` component containing the entity that has the `AnimationPlayer` so that animations can be controlled from the original entity
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn blueprints_cleanup_spawned_scene(
     blueprint_scenes: Query<
         (

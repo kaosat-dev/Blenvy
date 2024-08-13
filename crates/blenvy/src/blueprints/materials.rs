@@ -11,13 +11,13 @@ pub struct MaterialInfo {
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
-/// component containing the full list of MaterialInfos for a given entity/object
+/// component containing the full list of `MaterialInfos` for a given entity/object
 pub struct MaterialInfos(Vec<MaterialInfo>);
 
 #[derive(Component, Default, Debug)]
 pub struct MaterialProcessed;
 
-/// system that injects / replaces materials from material library
+/// system that injects / replaces materials from materials library
 pub(crate) fn inject_materials(
     mut blenvy_config: ResMut<BlenvyConfig>,
     material_infos_query: Query<
@@ -88,16 +88,14 @@ pub(crate) fn inject_materials(
             if let Some(material) = material_found {
                 info!("Step 6: injecting/replacing materials");
                 for (child_index, child) in children.iter().enumerate() {
-                    if child_index == material_index {
-                        if with_materials_and_meshes.contains(*child) {
-                            info!(
-                                "injecting material {}, path: {:?}",
-                                material_info.name,
-                                material_info.path.clone()
-                            );
+                    if child_index == material_index && with_materials_and_meshes.contains(*child) {
+                        info!(
+                            "injecting material {}, path: {:?}",
+                            material_info.name,
+                            material_info.path.clone()
+                        );
 
-                            commands.entity(*child).insert(material.clone());
-                        }
+                        commands.entity(*child).insert(material.clone());
                     }
                 }
             }

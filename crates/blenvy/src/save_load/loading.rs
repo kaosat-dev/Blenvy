@@ -45,7 +45,7 @@ pub fn process_load_requests(
 }
 
 pub fn should_load(loading_requests: Option<Res<LoadingRequested>>) -> bool {
-    return resource_exists::<LoadingRequested>(loading_requests);
+    resource_exists::<LoadingRequested>(loading_requests)
 }
 
 // TODO: replace with generic despawner ?

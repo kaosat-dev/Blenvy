@@ -191,7 +191,7 @@ pub fn trigger_instance_animation_markers_events(
                         animations.named_animations.get(animation_name)
                     {
                         if let Some(__animation_clip) = animation_clips.get(animation_clip_handle) {
-                            println!("helooo")
+                            println!("found the animation clip");
                         }
                     }
                 }

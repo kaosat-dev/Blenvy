@@ -48,15 +48,9 @@ impl Default for BluePrintBundle {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Default, Clone)]
 /// Plugin for gltf blueprints
 pub struct BlueprintsPlugin {}
-
-impl Default for BlueprintsPlugin {
-    fn default() -> Self {
-        Self {}
-    }
-}
 
 fn hot_reload(watching_for_changes: Res<WatchingForChanges>) -> bool {
     // println!("hot reload ? {}", watching_for_changes.0);

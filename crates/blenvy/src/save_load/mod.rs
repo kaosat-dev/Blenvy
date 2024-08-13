@@ -45,10 +45,10 @@ pub struct BlueprintWorld {
 impl BlueprintWorld {
     pub fn from_path(path: &str) -> BlueprintWorld {
         // let p = Path::new(&path);
-        return BlueprintWorld {
+        BlueprintWorld {
             // name: p.file_stem().unwrap().to_os_string().into_string().unwrap(), // seriously ? , also unwraps !!
             path: path.into(),
-        };
+        }
     }
 }
 

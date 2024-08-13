@@ -73,11 +73,10 @@ pub fn animation_control(
             animation_transitions
                 .play(
                     &mut animation_player,
-                    animations
+                    *animations
                         .named_indices
                         .get(anim_name)
-                        .expect("animation name should be in the list")
-                        .clone(),
+                        .expect("animation name should be in the list"),
                     Duration::from_secs(5),
                 )
                 .repeat();
@@ -94,11 +93,10 @@ pub fn animation_control(
             animation_transitions
                 .play(
                     &mut animation_player,
-                    animations
+                    *animations
                         .named_indices
                         .get(anim_name)
-                        .expect("animation name should be in the list")
-                        .clone(),
+                        .expect("animation name should be in the list"),
                     Duration::from_secs(5),
                 )
                 .repeat();
@@ -114,11 +112,10 @@ pub fn animation_control(
             animation_transitions
                 .play(
                     &mut animation_player,
-                    animations
+                    *animations
                         .named_indices
                         .get(anim_name)
-                        .expect("animation name should be in the list")
-                        .clone(),
+                        .expect("animation name should be in the list"),
                     Duration::from_secs(5),
                 )
                 .repeat();
@@ -134,11 +131,10 @@ pub fn animation_control(
             animation_transitions
                 .play(
                     &mut animation_player,
-                    animations
+                    *animations
                         .named_indices
                         .get(anim_name)
-                        .expect("animation name should be in the list")
-                        .clone(),
+                        .expect("animation name should be in the list"),
                     Duration::from_secs(5),
                 )
                 .repeat();

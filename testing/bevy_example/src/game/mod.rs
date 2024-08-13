@@ -8,7 +8,7 @@ use std::{collections::HashMap, fs, time::Duration};
 
 use blenvy::{
     BlueprintAnimationPlayerLink, BlueprintAssets, BlueprintEvent, BlueprintInfo,
-    GltfBlueprintsSet, InstanceAnimations,
+    InstanceAnimations,
 };
 
 use crate::{AppState, GameState};
@@ -136,8 +136,8 @@ fn check_for_gltf_events(
         match event {
             BlueprintEvent::InstanceReady {
                 entity,
-                blueprint_name,
-                blueprint_path,
+                blueprint_name: _,
+                blueprint_path: _,
             } => {
                 info!(
                     "BLUEPRINT EVENT: {:?} for {:?}",
@@ -147,17 +147,14 @@ fn check_for_gltf_events(
             }
             BlueprintEvent::AssetsLoaded {
                 entity,
-                blueprint_name,
-                blueprint_path,
+                blueprint_name: _,
+                blueprint_path: _,
             } => {
                 info!(
                     "BLUEPRINT EVENT: {:?} for {:?}",
                     event,
                     all_names.get(*entity)
                 );
-            }
-            _ => {
-                info!("BLUEPRINT EVENT: {:?}", event);
             }
         }
     }
@@ -183,14 +180,14 @@ impl Plugin for GamePlugin {
                 .run_if(in_state(AppState::AppRunning))
                 .after(GltfBlueprintsSet::AfterSpawn)
             )*/
-            .add_systems(Update, (play_animations, check_animations))
+            .add_systems(Update, play_animations) // check_animations
             //.add_systems(Update, react_to_animation_markers)
 
-             /*.add_systems(Update, generate_screenshot.run_if(on_timer(Duration::from_secs_f32(0.2)))) // TODO: run once
+            .add_systems(Update, generate_screenshot.run_if(on_timer(Duration::from_secs_f32(0.2)))) // TODO: run once
             .add_systems(
                 Update,
                 exit_game.run_if(on_timer(Duration::from_secs_f32(0.5))),
-            ) // shut down the app after this time*/
+            ) // shut down the app after this time
             ;
     }
 }

@@ -5,11 +5,11 @@ use std::time::Duration;
     InstanceAnimationPlayerLink, InstanceAnimations,
 };*/
 
-use bevy::{animation::RepeatAnimation, gltf::Gltf, prelude::*};
+use bevy::prelude::*;
 
 use blenvy::{
     AnimationInfos, AnimationMarkerReached, BlueprintAnimationPlayerLink, BlueprintAnimations,
-    BlueprintInstanceDisabled, InstanceAnimationPlayerLink, InstanceAnimations,
+    InstanceAnimationPlayerLink, InstanceAnimations,
 };
 
 #[derive(Component, Reflect, Default, Debug)]
@@ -79,68 +79,6 @@ pub fn animations(
     }
 }*/
 
-pub fn check_animations(
-    // (&BlueprintAnimationPlayerLink, &BlueprintAnimations)
-    foxes: Query<
-        (
-            Entity,
-            Option<&BlueprintAnimationPlayerLink>,
-            Option<&InstanceAnimationPlayerLink>,
-        ),
-        (With<MarkerAllFoxes>, Without<BlueprintInstanceDisabled>),
-    >,
-
-    foo: Query<
-        (
-            Entity,
-            Option<&BlueprintAnimationPlayerLink>,
-            Option<&InstanceAnimationPlayerLink>,
-        ),
-        (With<Marker1>, Without<BlueprintInstanceDisabled>),
-    >,
-    bar: Query<
-        (
-            Entity,
-            Option<&BlueprintAnimationPlayerLink>,
-            Option<&InstanceAnimationPlayerLink>,
-        ),
-        (With<Marker2>, Without<BlueprintInstanceDisabled>),
-    >,
-    baz: Query<
-        (
-            Entity,
-            Option<&BlueprintAnimationPlayerLink>,
-            Option<&InstanceAnimationPlayerLink>,
-        ),
-        (With<Marker3>, Without<BlueprintInstanceDisabled>),
-    >,
-
-    bli: Query<(Entity, &AnimationInfos)>,
-    anim_players: Query<(Entity, &AnimationPlayer)>,
-    all_names: Query<&Name>,
-) {
-    /*for bla in foxes.iter() {
-        println!("MarkerAllFoxes {:?} {:?} {:?}", all_names.get(bla.0), bla.1, bla.2)
-    }
-    for bla in foo.iter() {
-        println!("Marker1 {:?} {:?} {:?}", all_names.get(bla.0), bla.1, bla.2)
-    }
-
-    for bla in bar.iter() {
-        println!("Marker2 {:?} {:?} {:?}", all_names.get(bla.0), bla.1, bla.2)
-    }
-    for bla in baz.iter() {
-        println!("Marker3 {:?} {:?} {:?}", all_names.get(bla.0), bla.1, bla.2)
-    }
-    println!(""); */
-    /*for blo in bli.iter() {
-        println!("YOOOOO {:?}", all_names.get(blo.0))
-    }
-    for anim in anim_players.iter() {
-        println!("Players {:?}", all_names.get(anim.0))
-    }*/
-}
-
 #[allow(clippy::type_complexity)]
 pub fn play_animations(
     animated_foxes: Query<
@@ -183,11 +121,10 @@ pub fn play_animations(
             let (mut animation_player, mut animation_transitions) =
                 animation_players.get_mut(link.0).unwrap();
             let anim_name = "Survey";
-            let animation_index = animations
+            let animation_index = *animations
                 .named_indices
                 .get(anim_name)
-                .expect("animation name should be in the list")
-                .clone();
+                .expect("animation name should be in the list");
 
             animation_transitions
                 .play(
@@ -204,23 +141,19 @@ pub fn play_animations(
             println!("Playing animation {:?}", playing_animation);
             playing_animation.set_repeat(RepeatAnimation::Forever);*/
         }
-        println!("");
     }
 
     if keycode.just_pressed(KeyCode::KeyP) {
         println!("playing fox blueprint animation requested");
         for (link, animations) in animated_foxes.iter() {
-            println!("FOO");
-
             // println!("animations {:?}", animations.named_animations);
             let (mut animation_player, mut animation_transitions) =
                 animation_players.get_mut(link.0).unwrap();
             let anim_name = "Run";
-            let animation_index = animations
+            let animation_index = *animations
                 .named_indices
                 .get(anim_name)
-                .expect("animation name should be in the list")
-                .clone();
+                .expect("animation name should be in the list");
 
             animation_transitions
                 .play(
@@ -237,7 +170,7 @@ pub fn play_animations(
             println!("Playing animation {:?}", playing_animation);
             playing_animation.set_repeat(RepeatAnimation::Forever);*/
         }
-        println!("");
+        println!(" ");
     }
 
     if keycode.just_pressed(KeyCode::KeyO) {
@@ -248,11 +181,10 @@ pub fn play_animations(
             let (mut animation_player, mut animation_transitions) =
                 animation_players.get_mut(link.0).unwrap();
             let anim_name = "Walk";
-            let animation_index = animations
+            let animation_index = *animations
                 .named_indices
                 .get(anim_name)
-                .expect("animation name should be in the list")
-                .clone();
+                .expect("animation name should be in the list");
 
             animation_transitions
                 .play(
@@ -271,11 +203,10 @@ pub fn play_animations(
             let (mut animation_player, mut animation_transitions) =
                 animation_players.get_mut(link.0).unwrap();
             let anim_name = "Blueprint8_move";
-            let animation_index = animations
+            let animation_index = *animations
                 .named_indices
                 .get(anim_name)
-                .expect("animation name should be in the list")
-                .clone();
+                .expect("animation name should be in the list");
 
             animation_transitions
                 .play(
@@ -294,11 +225,10 @@ pub fn play_animations(
                 animation_players.get_mut(link.0).unwrap();
 
             let anim_name = "Blueprint1_move";
-            let animation_index = animations
+            let animation_index = *animations
                 .named_indices
                 .get(anim_name)
-                .expect("animation name should be in the list")
-                .clone();
+                .expect("animation name should be in the list");
 
             animation_transitions
                 .play(
@@ -316,11 +246,10 @@ pub fn play_animations(
                 animation_players.get_mut(link.0).unwrap();
 
             let anim_name = "Blueprint1_jump";
-            let animation_index = animations
+            let animation_index = *animations
                 .named_indices
                 .get(anim_name)
-                .expect("animation name should be in the list")
-                .clone();
+                .expect("animation name should be in the list");
 
             animation_transitions
                 .play(
@@ -338,11 +267,10 @@ pub fn play_animations(
                 animation_players.get_mut(link.0).unwrap();
 
             let anim_name = "Blueprint1_move";
-            let animation_index = animations
+            let animation_index = *animations
                 .named_indices
                 .get(anim_name)
-                .expect("animation name should be in the list")
-                .clone();
+                .expect("animation name should be in the list");
 
             animation_transitions
                 .play(
@@ -355,7 +283,7 @@ pub fn play_animations(
     }
 }
 
-pub fn react_to_animation_markers(
+pub fn __react_to_animation_markers(
     mut animation_marker_events: EventReader<AnimationMarkerReached>,
 ) {
     for event in animation_marker_events.read() {

@@ -38,7 +38,7 @@ pub fn process_save_requests(
 }
 
 pub fn should_save(saving_requests: Option<Res<SavingRequested>>) -> bool {
-    return resource_exists::<SavingRequested>(saving_requests);
+    resource_exists::<SavingRequested>(saving_requests)
 }
 
 // any child of dynamic/ saveable entities that is not saveable itself should be removed from the list of children

@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Default, States)]
 pub enum AppState {
     CoreLoading,
@@ -10,6 +11,7 @@ pub enum AppState {
     AppEnding,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Default, States)]
 pub enum GameState {
     #[default]
@@ -25,8 +27,6 @@ pub enum GameState {
 }
 
 // tag components for all entities within a certain state (for despawning them if needed) , FIXME: seems kinda hack-ish
-#[derive(Component)]
-pub struct InCoreLoading;
 #[derive(Component, Default)]
 pub struct InMenuRunning;
 #[derive(Component)]

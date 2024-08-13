@@ -2,8 +2,8 @@ use std::any::TypeId;
 
 use bevy::{prelude::*, utils::hashbrown::HashSet};
 use blenvy::{
-    AddToGameWorld, BlenvyPlugin, BlueprintInfo, BlueprintWorld, Dynamic, GameWorldTag,
-    HideUntilReady, LoadingRequest, SavingRequest, SpawnBlueprint,
+    AddToGameWorld, BlenvyPlugin, BlueprintInfo, BlueprintWorld, Dynamic, HideUntilReady,
+    LoadingRequest, SavingRequest, SpawnBlueprint,
 };
 use rand::Rng;
 
@@ -82,7 +82,7 @@ fn spawn_blueprint_instance(keycode: Res<ButtonInput<KeyCode>>, mut commands: Co
     }
 }
 
-fn move_movers(mut movers: Query<(&mut Transform), With<Dynamic>>) {
+fn move_movers(mut movers: Query<&mut Transform, With<Dynamic>>) {
     for mut transform in movers.iter_mut() {
         // println!("moving dynamic entity");
         transform.translation.x += 0.005;

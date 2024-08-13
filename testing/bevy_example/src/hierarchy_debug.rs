@@ -2,14 +2,13 @@ use bevy::{
     gltf::{GltfMaterialExtras, GltfMeshExtras, GltfSceneExtras},
     prelude::*,
 };
-use blenvy::{BlueprintAssets, BlueprintInstanceReady};
 
-use crate::{BasicTest, EnumComplex, EnumTest, RedirectPropHitImpulse};
+use crate::{EnumTest, RedirectPropHitImpulse};
 
 #[derive(Component)]
 pub struct HiearchyDebugTag;
 
-pub fn setup_hierarchy_debug(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn setup_hierarchy_debug(mut commands: Commands) {
     // a place to display the extras on screen
     commands.spawn((
         TextBundle::from_section(
@@ -40,25 +39,25 @@ pub fn get_descendants(
     all_children: &Query<&Children>,
     all_names: &Query<&Name>,
     root: &Entity,
-    all_transforms: &Query<&Transform>,
-    all_global_transforms: &Query<&GlobalTransform>,
+    __all_transforms: &Query<&Transform>,
+    __all_global_transforms: &Query<&GlobalTransform>,
     nesting: usize,
     to_check: &Query<&EnumTest>, //&Query<(&BlueprintInstanceReady, &BlueprintAssets)>,
 ) -> String {
     let mut hierarchy_display: Vec<String> = vec![];
     let root_name = all_names.get(*root);
     let name;
-    if root_name.is_ok() {
-        name = root_name.unwrap().to_string();
+    if let Ok(root_name) = root_name {
+        name = root_name.to_string();
     } else {
-        name = "no_name".to_string()
+        name = "no_name".to_string();
     }
 
     let mut component_display: String = "".into();
-    let components_to_check = to_check.get(*root);
+    let __components_to_check = to_check.get(*root);
 
     if let Ok(compo) = to_check.get(*root) {
-        component_display = format!("{:?}", compo).clone();
+        component_display = format!("{:?}", compo);
     }
 
     hierarchy_display.push(format!(
@@ -72,22 +71,22 @@ pub fn get_descendants(
     if let Ok(children) = all_children.get(*root) {
         for child in children.iter() {
             let child_descendants_display = get_descendants(
-                &all_children,
-                &all_names,
-                &child,
-                &all_transforms,
-                &all_global_transforms,
+                all_children,
+                all_names,
+                child,
+                __all_transforms,
+                __all_global_transforms,
                 nesting + 4,
-                &to_check,
+                to_check,
             );
             hierarchy_display.push(child_descendants_display);
         }
     }
-    return hierarchy_display.join("\n");
+    hierarchy_display.join("\n")
 }
 
 pub fn draw_hierarchy_debug(
-    root: Query<(Entity, Option<&Name>, &Children), (Without<Parent>)>,
+    root: Query<Entity, Without<Parent>>,
     all_children: Query<&Children>,
     all_names: Query<&Name>,
     all_transforms: Query<&Transform>,
@@ -98,7 +97,7 @@ pub fn draw_hierarchy_debug(
 ) {
     let mut hierarchy_display: Vec<String> = vec![];
 
-    for (root_entity, name, children) in root.iter() {
+    for root_entity in root.iter() {
         // hierarchy_display.push( format!("Hierarchy root{:?}", name) );
 
         hierarchy_display.push(get_descendants(
@@ -124,7 +123,8 @@ pub fn draw_hierarchy_debug(
 }
 
 ////////:just some testing for gltf extras
-fn check_for_gltf_extras(
+#[allow(clippy::type_complexity)]
+fn __check_for_gltf_extras(
     gltf_extras_per_entity: Query<(
         Entity,
         Option<&Name>,
@@ -137,7 +137,7 @@ fn check_for_gltf_extras(
 ) {
     let mut gltf_extra_infos_lines: Vec<String> = vec![];
 
-    for (id, name, scene_extras, extras, mesh_extras, material_extras) in
+    for (id, name, scene_extras, __extras, mesh_extras, material_extras) in
         gltf_extras_per_entity.iter()
     {
         if scene_extras.is_some()
@@ -165,12 +165,12 @@ fn check_for_gltf_extras(
     }
 }
 
-fn check_for_component(
-    foo: Query<(Entity, Option<&Name>, &RedirectPropHitImpulse)>,
+fn __check_for_component(
+    specific_components: Query<(Entity, Option<&Name>, &RedirectPropHitImpulse)>,
     mut display: Query<&mut Text, With<HiearchyDebugTag>>,
 ) {
     let mut info_lines: Vec<String> = vec![];
-    for (entiity, name, enum_complex) in foo.iter() {
+    for (__entiity, name, enum_complex) in specific_components.iter() {
         let data = format!(
             " We have a matching component: {:?} (on {:?})",
             enum_complex, name
