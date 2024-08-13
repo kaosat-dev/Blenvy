@@ -229,8 +229,6 @@ fn add_min_max(
     field_index: usize,
     variant_index: Option<usize>,
 ) -> Value {
-
-
     /*fn get_min_max(
         reg: &TypeRegistration,
         field_index: usize,
