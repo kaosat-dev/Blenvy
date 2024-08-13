@@ -112,6 +112,8 @@ Thanks to all the contributors helping out with this project ! Big kudos to you,
 * [killercup](https://github.com/killercup)
 * [janhohenheim](https://github.com/janhohenheim)
 * [BUGO07](https://github.com/BUGO07)
+* [ChristopherBiscardi](https://github.com/ChristopherBiscardi)
+* [slyedoc](https://github.com/slyedoc)
 
 ## License
 

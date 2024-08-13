@@ -34,7 +34,6 @@ def get_object_scene(object):
             return scenes_of_object[0]
     return None
 
-
 def get_mesh_object(mesh):
     for object in bpy.data.objects:
         if isinstance(object.data, bpy.types.Mesh) and mesh.name == object.data.name:
@@ -69,6 +68,12 @@ class BLENVY_OT_item_select(Operator):
         description="target to select's name ",
     ) # type: ignore
 
+    override_scene_name: StringProperty(
+        name="override scene name",
+        description="use this to override the scene selection mecanism",
+        default=""
+    ) # type: ignore
+
 
     @classmethod
     def register(cls):
@@ -96,8 +101,9 @@ class BLENVY_OT_item_select(Operator):
                     select_area(context=context, area_name="OBJECT")
 
             elif self.item_type == 'COLLECTION':
+                print("selecting collection")
                 collection = bpy.data.collections[self.target_name]
-                scene_of_collection = get_collection_scene(collection)
+                scene_of_collection = get_collection_scene(collection) if self.override_scene_name == "" else bpy.data.scenes.get(self.override_scene_name, None)
                 if scene_of_collection is not None:
                     bpy.ops.object.select_all(action='DESELECT')
                     bpy.context.window.scene = scene_of_collection
@@ -105,7 +111,7 @@ class BLENVY_OT_item_select(Operator):
                     context.window_manager.blenvy_item_selected_ids = json.dumps({"name": collection.name, "type": self.item_type})
                     set_active_collection(bpy.context.window.scene, collection.name)
 
-                    select_area(context=context, area_name="COLLECTION")
+                    #select_area(context=context, area_name="COLLECTION")
 
             elif self.item_type == 'MESH':
                 mesh = bpy.data.meshes[self.target_name]

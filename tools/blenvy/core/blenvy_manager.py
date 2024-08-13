@@ -137,6 +137,28 @@ class BlenvyManager(PropertyGroup):
         get=lambda self: os.path.abspath(os.path.join(os.path.dirname(bpy.data.filepath), self.project_root_path, self.assets_path, self.animations_path))
     ) # type: ignore
 
+    # Edit blueprint settings
+    edit_blueprint_previous_scene: StringProperty(
+        name="edit_blueprint_previous_scene",
+        description="name of the scene we started from for editing the current Blueprint",
+        default="",
+        update=save_settings        
+    )# type: ignore
+
+    edit_blueprint_current_scene: StringProperty(
+        name="edit_blueprint_current_scene",
+        description="name of the scene where we are currently editing a Blueprint in",
+        default="",
+        update=save_settings        
+    )# type: ignore
+
+    edit_blueprint_previous_mode: StringProperty(
+        name="edit_blueprint_previous_mode",
+        description="previous blenvy mode before starting editing the current blueprint",
+        default="",
+        update=save_settings        
+    )# type: ignore
+
     # sub ones
     auto_export: PointerProperty(type=AutoExportSettings) # type: ignore
     components: PointerProperty(type=ComponentsSettings) # type: ignore

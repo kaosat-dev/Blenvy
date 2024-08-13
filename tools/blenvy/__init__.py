@@ -52,6 +52,7 @@ from .core.blenvy_manager import BlenvyManager
 from .core.operators import BLENVY_OT_configuration_switch, BLENVY_OT_tooling_switch
 from .core.ui.ui import (BLENVY_PT_SidePanel)
 from .core.ui.scenes_list import BLENVY_OT_scenes_list_actions
+from .core.ui.menus_and_shortcuts import BLENVY_OT_ui_blueprint_create, BLENVY_OT_ui_blueprint_edit_start, BLENVY_OT_ui_blueprint_edit_end, BLENVY_OT_ui_blueprint_create_or_edit, edit_or_create_blueprint_menu
 from .assets.assets_folder_browser import BLENVY_OT_assets_paths_browse
 
 
@@ -126,6 +127,11 @@ classes = [
     BlueprintsRegistry,
     BLENVY_OT_blueprint_select,
     BLENVY_PT_blueprints_panel,
+
+    BLENVY_OT_ui_blueprint_create,
+    BLENVY_OT_ui_blueprint_edit_start,
+    BLENVY_OT_ui_blueprint_edit_end,
+    BLENVY_OT_ui_blueprint_create_or_edit
 ]
 
 
@@ -139,40 +145,37 @@ def post_save(scene, depsgraph):
 
 @persistent
 def post_load(file_name):
-    print("POST LOAD")
     blenvy = bpy.context.window_manager.blenvy
     if blenvy is not None:
         blenvy.load_settings()
 
+def init_keymaps():
+    window_manager = bpy.context.window_manager
+    if window_manager.keyconfigs.addon:
+        km = window_manager.keyconfigs.addon.keymaps.new(name='3D View', space_type='VIEW_3D')
+        kmi = [
+            km.keymap_items.new(BLENVY_OT_ui_blueprint_create_or_edit.bl_idname, "F", "PRESS", shift=True),
+        ]
+    return km, kmi
+
+addon_keymaps = []
+
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-
     bpy.app.handlers.load_post.append(post_load)
     # for some reason, adding these directly to the tracker class in register() do not work reliably
     bpy.app.handlers.depsgraph_update_post.append(post_update)
     bpy.app.handlers.save_post.append(post_save)
 
+    bpy.types.VIEW3D_MT_object.append(edit_or_create_blueprint_menu)
+    bpy.types.VIEW3D_MT_object_context_menu.append(edit_or_create_blueprint_menu)
 
-    """ handle = object()
-
-    subscribe_to = bpy.types.Scene, "name" # 
-
-    def notify_test(context):
-        #if (context.scene.type == 'MESH'):
-        print("Renamed", dir(context), context.scenes)
-
-    bpy.msgbus.subscribe_rna(
-        key=subscribe_to,
-        owner=bpy,
-        args=(bpy.context,),
-        notify=notify_test,
-    )"""
-
-
-    #bpy.msgbus.publish_rna(key=subscribe_to)
-
-
+    if not bpy.app.background:
+        km, kmi = init_keymaps()
+        for k in kmi:
+            k.active = True
+            addon_keymaps.append((km, k))
 
 
 def unregister():
@@ -181,3 +184,12 @@ def unregister():
     bpy.app.handlers.load_post.remove(post_load)
     bpy.app.handlers.depsgraph_update_post.remove(post_update)
     bpy.app.handlers.save_post.remove(post_save)
+
+
+    for km, kmi in addon_keymaps:
+        km.keymap_items.remove(kmi)
+    addon_keymaps.clear()
+
+
+    bpy.types.VIEW3D_MT_object.remove(edit_or_create_blueprint_menu)
+    bpy.types.VIEW3D_MT_object_context_menu.remove(edit_or_create_blueprint_menu)
