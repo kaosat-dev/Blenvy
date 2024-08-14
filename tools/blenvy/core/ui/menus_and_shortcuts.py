@@ -28,24 +28,27 @@ def edit_or_create_blueprint_menu(self, context):
     blenvy = context.window_manager.blenvy # type: BlenvyManager      
     selected_objects = context.selected_objects
     selected_object = selected_objects[0] if len(selected_objects) > 0 else None          
-    text = ""
+    text = "Start editing Blueprint"
     if selected_object is not None and selected_object.instance_collection:
         if blenvy.edit_blueprint_current_scene != "": # if there is already editing in progress, close it first
             text = "Exit editing previous Blueprint and start editing Blueprint"
         else:
             text = "Start editing Blueprint"
+        self.layout.operator(BLENVY_OT_ui_blueprint_create_or_edit.bl_idname, text=text)
+
     else:
         prev_scene = bpy.data.scenes.get(blenvy.edit_blueprint_previous_scene)
         if prev_scene is not None:
             text = "Exit editing Blueprint"
+            self.layout.operator(BLENVY_OT_ui_blueprint_create_or_edit.bl_idname, text=text)
         else:
             if len(selected_objects) == 0: # do not go into creation mode if any object was selected
                 if blenvy.edit_blueprint_current_scene != "": # if there is already editing in progress, close it first
                     text = "Exit editing previous Blueprint and start editing new Blueprint"
                 else:
                     text = "Create & start editing Blueprint"
+                self.layout.operator(BLENVY_OT_ui_blueprint_create_or_edit.bl_idname, text=text)
 
-    self.layout.operator(BLENVY_OT_ui_blueprint_create_or_edit.bl_idname, text=text)
 
 # for camera save & reset
 def find_area():

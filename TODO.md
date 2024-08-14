@@ -370,6 +370,7 @@ PRE ALPHA1 RELEASE:
     - [x] blender add-on
     - [x] barebones bevy test
     - [x] hot reload => some of it works, the rest not anymore ? (see bug https://github.com/bevyengine/bevy/issues/14698)
+- [x] add "right click to edit blueprint"
 - [ ] merge blenvy branch into main
 - [ ] push to crates.io
 - [ ] tag
@@ -386,7 +387,6 @@ BEVY:
 - [ ] make a fleshed out demo
 
 BLENDER:
-- [ ] add "right click to edit blueprint"
 - [ ] overall cleanup
 - [ ] review wonky logic for cross file components injections
 - [ ] update & fix tests

@@ -158,6 +158,11 @@ Take a look at the [relevant](../../examples/demo/) example for more [details](.
 
 - for a detailed overview of blueprints please see [here](./README-blueprints.md)
 
+> [!TIP]
+> you can right click on a Blueprint instance in your level scenes or press SHIFT  + F to edit a Blueprint in a seperate temprary scene !
+> you can right click or press SHIFT + F to create a new empty Blueprint and an instance of it from your main scenes
+> right click again & select the option to stop editing it, or 
+
 ## Development 
 
 - I highly recomend (if you are using vscode like me) to use 
