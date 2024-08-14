@@ -17,7 +17,7 @@ This guide assumes you use Blender 4.2 or newer and have set it to English.
 
 ## Install the Blender Addon
 
-- Download `blenvy.zip` from the [release page](https://github.com/kaosat-dev/Blenvy/releases/tag/blenvy_v0.1.0_pre_alpha)
+- Download `blenvy.zip` from the [release page](https://github.com/kaosat-dev/Blenvy/releases/tag/blenvy_0.1.0-alpha.1)
 - Open Blender
 - Drag and drop `blenvy.zip` into Blender
   - <details>
@@ -39,7 +39,7 @@ Run the following commands:
 cargo new my_game
 cd my_game
 cargo add bevy
-cargo add blenvy --git https://github.com/kaosat-dev/Blenvy/ --branch blenvy
+cargo add blenvy
 ```
 
 This guide will tell you to `cargo run` at multiple points. We expect that you are still in the `my_game` directory when you do so.
