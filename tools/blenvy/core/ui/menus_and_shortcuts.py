@@ -1,8 +1,6 @@
 import bpy
-import json
 from mathutils import Vector
-
-from ..helpers_collections import set_active_collection
+from bpy.props import (EnumProperty)
 from ..blenvy_manager import BlenvyManager
 
 """ This file contains quality of life operators/menus/shortcuts to make working with blueprints more pleasant
@@ -96,6 +94,29 @@ class BLENVY_OT_ui_blueprint_create_or_edit(bpy.types.Operator):
     bl_label = "Edit Blueprint"
     bl_options = {"REGISTER", "UNDO"}
 
+    @classmethod
+    def description(cls, context, properties):
+        blenvy = context.window_manager.blenvy # type: BlenvyManager    
+        selected_objects = context.selected_objects
+        selected_object = selected_objects[0] if len(selected_objects) > 0 else None
+        if selected_object is not None and selected_object.instance_collection:
+            if blenvy.edit_blueprint_current_scene != "": # if there is already editing in progress, close it first
+                return "End editing Blueprint"
+            else:
+                return "Start editing Blueprint in a new temporary scene"
+        else:
+            prev_scene = bpy.data.scenes.get(blenvy.edit_blueprint_previous_scene)
+            if prev_scene is not None:
+                return "End editing Blueprint"
+            else:
+                if len(selected_objects) == 0: # do not go into creation mode if any object was selected
+                    if blenvy.edit_blueprint_current_scene != "": # if there is already editing in progress, close it first
+                        return "End editing Blueprint"
+                    else: 
+                        return "Create and start editing Blueprint in a new Scene"
+
+        return "Create/Edit start/stop Blueprint in a new Scene"
+
     def execute(self, context):        
         blenvy = context.window_manager.blenvy # type: BlenvyManager    
         selected_objects = context.selected_objects
@@ -106,7 +127,6 @@ class BLENVY_OT_ui_blueprint_create_or_edit(bpy.types.Operator):
                 bpy.ops.window_manager.blenvy_exit_edit_blueprint()
             bpy.ops.window_manager.blenvy_blueprint_edit_start()
         else:
-            blenvy = context.window_manager.blenvy # type: BlenvyManager                
             prev_scene = bpy.data.scenes.get(blenvy.edit_blueprint_previous_scene)
             if prev_scene is not None:
                 bpy.ops.window_manager.blenvy_exit_edit_blueprint()
