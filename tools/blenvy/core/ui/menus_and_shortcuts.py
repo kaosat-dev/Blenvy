@@ -8,14 +8,21 @@ from ..blenvy_manager import BlenvyManager
 """ This file contains quality of life operators/menus/shortcuts to make working with blueprints more pleasant
 * based on the excellent work by slyedoc: https://github.com/slyedoc/bevy_sly_blender/tree/4223cc0ff86255f82bb555ffc8eddf65e91aa636
 
-- [ ] detect editing in progress
+- [x] detect editing in progress
 - [x] select collection instead of objects 
-- [ ] if current scene (before edit) 
+- [x] if current scene (before edit) 
     - is library: do not create instance
     - is main scene: create instance
-- or alternative: sub menu to choose instance creation or not
+    - or alternative: sub menu to choose instance creation or not
 - [x] save & restore blenvy mode
 - [x] add a contextual shortcut to easilly jump in/out of editing mode
+- [ ] if editing is already in progress close it first
+    - [ ] do this for the wrapper
+    - [x] do this for the shortcut
+    - [ ] move the "close first" logic to inside create & edit operators
+- [ ] also allow triggering editing from library scene with collection selected
+    => requires checking if collection is a blueprint's collection
+- [x] do not go in create mode if there is an object (not a collection !) selected
 - [ ] save & reset camera
 """
 
@@ -30,6 +37,38 @@ def edit_or_create_blueprint_menu(self, context):
         else:
             self.layout.operator(BLENVY_OT_ui_blueprint_create.bl_idname)
         
+def find_viewport_camera():
+    def find_area():
+        try:
+            for a in bpy.data.window_managers[0].windows[0].screen.areas:
+                if a.type == "VIEW_3D":
+                    return a
+            return None
+        except:
+            return None
+
+    area = find_area()
+
+    if area is None:
+        print("area not find")
+    else:
+        # print(dir(area))
+        r3d = area.spaces[0].region_3d
+        view_mat = r3d.view_matrix
+        print("view matrix: ", view_mat)
+
+        loc, rot, sca = view_mat.decompose()
+        print("location xyz: ", loc)
+        print("rotation wxyz: ", rot)
+        print("scale xyz: ", sca)
+        print("")
+        print("view_distance: ", r3d.view_distance)
+        print("view_location: ", r3d.view_location)
+        print("view_rotation: ", r3d.view_rotation)
+        print("view_camera_zoom: ", r3d.view_camera_zoom)
+        print("view_distance: ", r3d.view_distance)
+        print("view_camera_offset: ", r3d.view_camera_offset)
+
 
 class BLENVY_OT_ui_blueprint_create_or_edit(bpy.types.Operator):
     """Create Blueprint in a new Scene"""
@@ -40,14 +79,19 @@ class BLENVY_OT_ui_blueprint_create_or_edit(bpy.types.Operator):
     def execute(self, context):        
         blenvy = context.window_manager.blenvy # type: BlenvyManager    
         if bpy.context.active_object and bpy.context.active_object.instance_collection:
-            bpy.ops.window_manager.blenvy_edit_blueprinrt()
+            if blenvy.edit_blueprint_current_scene != "": # if there is already editing in progress, close it first
+                bpy.ops.window_manager.blenvy_exit_edit_blueprint()
+            bpy.ops.window_manager.blenvy_blueprint_edit_start()
         else:
             blenvy = context.window_manager.blenvy # type: BlenvyManager                
             prev_scene = bpy.data.scenes.get(blenvy.edit_blueprint_previous_scene)
             if prev_scene is not None:
                 bpy.ops.window_manager.blenvy_exit_edit_blueprint()
             else:
-                bpy.ops.window_manager.blenvy_create_blueprint()
+                if len(context.selected_objects) == 0: # do not go into creation mode if any object was selected
+                    if blenvy.edit_blueprint_current_scene != "": # if there is already editing in progress, close it first
+                        bpy.ops.window_manager.blenvy_exit_edit_blueprint()
+                    bpy.ops.window_manager.blenvy_create_blueprint()
         
         return {"FINISHED"}
 
@@ -64,7 +108,7 @@ class BLENVY_OT_ui_blueprint_create(bpy.types.Operator):
         blenvy.edit_blueprint_previous_scene = bpy.context.scene.name
         blenvy.edit_blueprint_previous_mode = blenvy.mode
 
-        # set mode to components
+        # set mode to components for easier editing
         blenvy.mode = "COMPONENTS"
 
         blueprint_name = "new_blueprint"
@@ -78,27 +122,32 @@ class BLENVY_OT_ui_blueprint_create(bpy.types.Operator):
         # automatically add it to the library : find library scene, if any, if not, create it 
         bpy.data.scenes[library_scene_name].collection.children.link(collection)
         
+        
 
-        # create an instance of the 
-        source_collection = collection
-        instance_obj = bpy.data.objects.new(
-            name=collection.name, 
-            object_data=None
-        )
-        instance_obj.instance_collection = source_collection
-        instance_obj.instance_type = 'COLLECTION'
-        parent_collection = bpy.context.view_layer.active_layer_collection
-        parent_collection.collection.objects.link(instance_obj)
+
+        # create an instance of the blueprint ONLY the current scene we are in is a level scene
+        if context.scene.blenvy_scene_type == 'Level':
+            source_collection = collection
+            instance_obj = bpy.data.objects.new(
+                name=collection.name, 
+                object_data=None
+            )
+            instance_obj.instance_collection = source_collection
+            instance_obj.instance_type = 'COLLECTION'
+            parent_collection = bpy.context.view_layer.active_layer_collection
+            parent_collection.collection.objects.link(instance_obj)
 
         # now open the temporary scene
-        scene_name = f"temp:{blueprint_name}"
+        scene_name = f"EDITING:{blueprint_name}"
         bpy.ops.scene.new(type="EMPTY")
         new_scene = bpy.context.scene
         new_scene.name = scene_name
         bpy.context.window.scene = new_scene
 
-   
         new_scene.collection.children.link(collection)
+
+        # flag the current temporary scene as an active edit
+        blenvy.edit_blueprint_current_scene = scene_name
 
         # deselect all objects then select the first object in new scene
         bpy.ops.object.select_all(action='DESELECT')        
@@ -112,7 +161,7 @@ class BLENVY_OT_ui_blueprint_create(bpy.types.Operator):
 
 class BLENVY_OT_ui_blueprint_edit_start(bpy.types.Operator):
     """Edit the Blueprint referenced by this Blueprint Instance in a new Scene"""
-    bl_idname = "window_manager.blenvy_edit_blueprinrt"
+    bl_idname = "window_manager.blenvy_blueprint_edit_start"
     bl_label = "Start Editing Blueprint"
     bl_options = {"REGISTER", "UNDO"}
 
@@ -132,12 +181,16 @@ class BLENVY_OT_ui_blueprint_edit_start(bpy.types.Operator):
             self.report({"WARNING"}, "Active item is not a Blueprint/Collection instance")
             return {"CANCELLED"}
 
-        scene_name = f"temp:{collection.name}"
+        scene_name = f"EDITING:{collection.name}"
         bpy.ops.scene.new(type="EMPTY")
         new_scene = bpy.context.scene
         new_scene.name = scene_name
         bpy.context.window.scene = new_scene
         new_scene.collection.children.link(collection)
+
+        # flag the current temporary scene as an active edit
+        blenvy.edit_blueprint_current_scene = scene_name
+
 
         # Assuming you want to focus on the objects from the linked collection
         # Switch to the new scene context        
@@ -212,14 +265,30 @@ class BLENVY_OT_ui_blueprint_edit_end(bpy.types.Operator):
         if prev_scene is None:
             print("No scene to return to")
             return {'CANCELLED'}
-        
-        if current_scene.name.startswith("temp:"):
-            bpy.data.scenes.remove(bpy.context.scene)
-            bpy.context.window.scene = prev_scene
+        if blenvy.edit_blueprint_current_scene != "":
+            active_edit_scene = bpy.data.scenes.get(blenvy.edit_blueprint_current_scene, None)
+            if active_edit_scene is not None:
+                bpy.data.scenes.remove(active_edit_scene)
+
+                # if we are not in the active edit scene
+                try:
+                    if blenvy.edit_blueprint_current_scene != current_scene.name:
+                        bpy.context.window.scene = current_scene
+                    else:
+                        bpy.context.window.scene = prev_scene
+                except: 
+                    bpy.context.window.scene = prev_scene
+            """if current_scene.name.startswith("EDITING:"):
+                bpy.data.scenes.remove(bpy.context.scene)
+                bpy.context.window.scene = prev_scene"""
+            blenvy.edit_blueprint_current_scene = ""
+
         else:
-            #if 
+            blenvy.edit_blueprint_current_scene = ""
             print("Not in temp scene")
             return {'CANCELLED'}
+        
+        
 
         return {'FINISHED'}
 
