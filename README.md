@@ -4,7 +4,7 @@
 
 # BLENVY: a friendly Blender <=> Bevy workflow
 
-![demo](./docs/blender_bevy.png)
+![demo](https://github.com/kaosat-dev/Blenvy/blob/main/docs/blender_bevy.png)
 
 Crates & tools for adding components from gltf files in the [Bevy](https://bevyengine.org/) game engine.
 
@@ -24,7 +24,7 @@ It also allows you to setup 'blueprints' in Blender by using collections (the re
 
 ## Quickstart
 
-Want to jump right in? See the [quickstart guide](./docs/quickstart/readme.md) for how to setup a basic project as fast as possible.
+Want to jump right in? See the [quickstart guide](https://github.com/kaosat-dev/Blenvy/blob/main/docs/quickstart/README.md) for how to setup a basic project as fast as possible.
 
 ## Features
 
@@ -82,7 +82,7 @@ The workflow goes as follows (once you got your Bevy code setup)
 
 * create & register all your components you want to be able to set from the Blender side (this is basic Bevy, no specific work needed)
 
-![component registration](./docs/component_registration.png)
+![component registration](https://github.com/kaosat-dev/Blenvy/blob/main/docs/component_registration.png)
 
 * setup & then use the Blenvy [Bevy crate](./crates/blenvy/README.md)
 * setup & then use the Blenvy [Blender add-on](./tools/blenvy/README.md)
@@ -91,11 +91,11 @@ The workflow goes as follows (once you got your Bevy code setup)
 
 * then add your components to objects in Blender **with a nice UI** see [here](./README-workflow-ui.md) for more details
 
-See the [quickstart](./docs/quickstart/readme.md) for a full step-by-step guide.
+See the [quickstart](https://github.com/kaosat-dev/Blenvy/blob/main/docs/quickstart/README.md) for a full step-by-step guide.
 
 ## Third Party Integration
 
-Read about the [Avian Physics Integration](docs/avian/readme.md) to learn how to setup colliders in Blender that will be used by the Avian physics engine in Bevy.
+Read about the [Avian Physics Integration](https://github.com/kaosat-dev/Blenvy/blob/main/docs/avian/README.md) to learn how to setup colliders in Blender that will be used by the Avian physics engine in Bevy.
 
 ## Limitations / issues
 
