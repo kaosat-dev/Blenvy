@@ -183,3 +183,8 @@ def draw_common_settings_ui(layout, settings):
         remove_operator.scene_type = 'LEVEL'
         remove_operator.scene_name = scene.name
     col.separator()
+
+    # reset settings
+    row = section.row()
+    row.label(text="Reset settings")
+    row.operator("bevy.config_reset")

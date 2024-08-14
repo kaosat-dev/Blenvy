@@ -1,8 +1,8 @@
 import os
 import bpy
 from bpy_types import (PropertyGroup)
-from bpy.props import (EnumProperty, PointerProperty, StringProperty, BoolProperty, CollectionProperty, FloatProperty)
-from ...settings import load_settings, upsert_settings, generate_complete_settings_dict
+from bpy.props import (StringProperty, BoolProperty, FloatProperty)
+from ...settings import load_settings, upsert_settings, generate_complete_settings_dict, clear_settings
 
 from .propGroups.prop_groups import generate_propertyGroups_for_components
 from .components.metadata import ensure_metadata_for_all_items
@@ -154,3 +154,10 @@ class ComponentsSettings(PropertyGroup):
             except:pass
 
         self.settings_save_enabled = True
+
+    def reset_settings(self):
+        for property_name in self.bl_rna.properties.keys():
+            if property_name not in ["name", "rna_type"]:
+                self.property_unset(property_name)
+        # clear the stored settings         
+        clear_settings(".blenvy_components_settings")

@@ -25,6 +25,14 @@ def load_settings(name):
             return None
     return None
 
+def clear_settings(name):
+    texts  = bpy.data.texts
+    stored_settings = texts.get(name, None)
+    if stored_settings is not None:
+        stored_settings.clear()
+        texts.remove(texts[name], do_unlink=True)
+
+
 
 # given the input (actual) settings, filters out any invalid/useless params & params that are equal to defaults
 def generate_complete_settings_dict(settings, presets, ignore_list=[], preset_defaults=True):

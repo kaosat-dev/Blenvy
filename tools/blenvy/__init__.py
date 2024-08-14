@@ -49,7 +49,7 @@ from .blueprints.operators import BLENVY_OT_blueprint_select
 
 # blenvy core
 from .core.blenvy_manager import BlenvyManager
-from .core.operators import BLENVY_OT_configuration_switch, BLENVY_OT_tooling_switch
+from .core.operators import BLENVY_OT_tooling_switch, BLENVY_OT_configuration_switch, BLENVY_OT_configuration_reset
 from .core.ui.ui import (BLENVY_PT_SidePanel)
 from .core.ui.scenes_list import BLENVY_OT_scenes_list_actions
 from .core.ui.menus_and_shortcuts import BLENVY_OT_ui_blueprint_create, BLENVY_OT_ui_blueprint_edit_start, BLENVY_OT_ui_blueprint_edit_end, BLENVY_OT_ui_blueprint_create_or_edit, edit_or_create_blueprint_menu
@@ -112,6 +112,7 @@ classes = [
     BlenvyManager,
     BLENVY_OT_tooling_switch,
     BLENVY_OT_configuration_switch,
+    BLENVY_OT_configuration_reset,
 
     Asset,
     AssetsRegistry,

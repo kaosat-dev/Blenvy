@@ -1,7 +1,7 @@
 import bpy
 from bpy_types import (PropertyGroup)
-from bpy.props import (EnumProperty, PointerProperty, StringProperty, BoolProperty, CollectionProperty, IntProperty)
-from ...settings import load_settings, upsert_settings, generate_complete_settings_dict
+from bpy.props import (EnumProperty, BoolProperty)
+from ...settings import load_settings, upsert_settings, generate_complete_settings_dict, clear_settings
 
 # list of settings we do NOT want to save
 settings_black_list = ['settings_save_enabled', 'dry_run']
@@ -128,3 +128,13 @@ class AutoExportSettings(PropertyGroup):
         
         self.settings_save_enabled = True
 
+    def reset_settings(self):
+        for property_name in self.bl_rna.properties.keys():
+            if property_name not in ["name", "rna_type"]:
+                self.property_unset(property_name)
+
+        # clear the stored settings 
+        clear_settings(".blenvy_export_settings")
+        clear_settings(".blenvy_export_settings_previous")
+        clear_settings(".blenvy_gltf_settings_previous")
+        clear_settings(".blenvy.project_serialized_previous")

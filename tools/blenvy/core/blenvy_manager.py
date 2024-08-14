@@ -1,8 +1,8 @@
 import os
 import bpy
 from bpy_types import (PropertyGroup)
-from bpy.props import (BoolProperty, EnumProperty, PointerProperty, StringProperty, CollectionProperty, IntProperty)
-from ..settings import upsert_settings, load_settings, generate_complete_settings_dict
+from bpy.props import (BoolProperty, EnumProperty, PointerProperty, StringProperty, CollectionProperty, IntProperty, FloatProperty, FloatVectorProperty)
+from ..settings import upsert_settings, load_settings, generate_complete_settings_dict, clear_settings
 from ..add_ons.auto_export.settings import AutoExportSettings
 from ..add_ons.bevy_components.settings import ComponentsSettings
 
@@ -154,9 +154,20 @@ class BlenvyManager(PropertyGroup):
 
     edit_blueprint_previous_mode: StringProperty(
         name="edit_blueprint_previous_mode",
-        description="previous blenvy mode before starting editing the current blueprint",
+        description="previous blenvy mode before starting editing the current Blueprint",
         default="",
         update=save_settings        
+    )# type: ignore
+
+    edit_blueprint_previous_view_distance: FloatProperty(
+        name="edit_blueprint_previous_view_distance",
+        description="previous view distance before focusing in on the specific Blueprint to edit",
+        default=0.0,
+    )# type: ignore
+
+    edit_blueprint_previous_view_position: FloatVectorProperty(
+        name="edit_blueprint_previous_view_position",
+        description="previous view position before focusing in on the specific Blueprint to edit",
     )# type: ignore
 
     # sub ones
@@ -195,7 +206,7 @@ class BlenvyManager(PropertyGroup):
                 ('Level', 'Level','Level scene'),
                 ('Library', 'Library', 'Library scene'),
             ),
-         default='None'
+            default='None'
         )
 
     @classmethod
@@ -228,3 +239,18 @@ class BlenvyManager(PropertyGroup):
 
         for scene in bpy.data.scenes:
             self.scenes_to_scene_names[scene] = scene.name
+
+    def reset_settings(self):
+        for property_name in self.bl_rna.properties.keys():
+            if property_name not in ["name", "rna_type"]:
+                self.property_unset(property_name)
+
+        # now reset auto_export settings
+        self.auto_export.reset_settings()
+
+        # now reset component settings
+        self.components.reset_settings()
+
+        # clear the stored settings 
+        clear_settings(".blenvy_common_settings")
+        clear_settings(".blenvy_common_settings_previous")

@@ -101,7 +101,6 @@ class BLENVY_OT_item_select(Operator):
                     select_area(context=context, area_name="OBJECT")
 
             elif self.item_type == 'COLLECTION':
-                print("selecting collection")
                 collection = bpy.data.collections[self.target_name]
                 scene_of_collection = get_collection_scene(collection) if self.override_scene_name == "" else bpy.data.scenes.get(self.override_scene_name, None)
                 if scene_of_collection is not None:

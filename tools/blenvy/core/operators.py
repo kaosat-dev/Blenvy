@@ -1,6 +1,8 @@
 from bpy_types import (Operator)
 from bpy.props import (EnumProperty)
 
+from ..settings import clear_settings
+
 class BLENVY_OT_tooling_switch(Operator):
     """Switch blenvy tooling"""
     bl_idname = "bevy.tooling_switch"
@@ -26,8 +28,6 @@ class BLENVY_OT_tooling_switch(Operator):
         context.window_manager.blenvy.mode = self.tool
         return {'FINISHED'}
     
-
-
 class BLENVY_OT_configuration_switch(Operator):
     """Switch tooling configuration"""
     bl_idname = "bevy.config_switch"
@@ -48,5 +48,22 @@ class BLENVY_OT_configuration_switch(Operator):
 
     def execute(self, context):
         context.window_manager.blenvy.config_mode = self.tool
+        return {'FINISHED'}
+    
+
+class BLENVY_OT_configuration_reset(Operator):
+    """Reset all blenvy settings to default"""
+    bl_idname = "bevy.config_reset"
+    bl_label = "Clear stored setting & reset configuration to default"
+    #bl_options = {}
+
+    def execute(self, context):
+        print("reset configuration")
+        blenvy = context.window_manager.blenvy
+        try:
+            blenvy.reset_settings()
+        except Exception as error:
+            self.report({"ERROR"}, f"Failed to reset settings: {error}")
+            return {"CANCELLED"}
         return {'FINISHED'}
     
