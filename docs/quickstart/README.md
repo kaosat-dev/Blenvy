@@ -17,7 +17,7 @@ This guide assumes you use Blender 4.2 or newer and have set it to English.
 
 ## Install the Blender Addon
 
-- Download `blenvy.zip` from the [release page](https://github.com/kaosat-dev/Blenvy/releases/tag/blenvy_0.1.0-alpha.1)
+- Download `blenvy.zip` from the [release page](https://github.com/kaosat-dev/Blenvy/releases/tag/blenvy_v0.1.0-alpha.1)
 - Open Blender
 - Drag and drop `blenvy.zip` into Blender
   - <details>
