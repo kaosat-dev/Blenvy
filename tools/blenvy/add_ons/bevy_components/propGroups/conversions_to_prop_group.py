@@ -128,7 +128,7 @@ def parse_color_hsva(value, caster, typeName):
     return [caster(parsed['hue']), caster(parsed['saturation']), caster(parsed['value']), caster(parsed['alpha'])]
 
 def parse_entity(value):
-    parsed = parse_struct_string(value.replace("Entity","").replace("(", "").replace(")","") )
+    parsed = parse_struct_string(value.replace("Entity","").replace("(", "").replace(")","").replace('"', ""))
     bpy.context.scene.objects[parsed["name"]]
 
 def to_int(input):
