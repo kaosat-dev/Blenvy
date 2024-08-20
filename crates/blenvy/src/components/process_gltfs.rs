@@ -74,8 +74,8 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
         );
 
         let type_registry: &AppTypeRegistry = world.resource();
-        let type_registry = type_registry.read();
-        let reflect_components = ronstring_to_reflect_component(&extra.value, &type_registry);
+        let mut type_registry = type_registry.write();
+        let reflect_components = ronstring_to_reflect_component(&extra.value, &mut type_registry);
         // let name = name.unwrap_or(&Name::new(""));
 
         let (target_entity, updated_components) =
@@ -90,8 +90,8 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
         );
 
         let type_registry: &AppTypeRegistry = world.resource();
-        let type_registry = type_registry.read();
-        let reflect_components = ronstring_to_reflect_component(&extra.value, &type_registry);
+        let mut type_registry = type_registry.write();
+        let reflect_components = ronstring_to_reflect_component(&extra.value, &mut type_registry);
 
         let (target_entity, updated_components) =
             find_entity_components(entity, name, parent, reflect_components, &entity_components);
@@ -105,8 +105,8 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
         );
 
         let type_registry: &AppTypeRegistry = world.resource();
-        let type_registry = type_registry.read();
-        let reflect_components = ronstring_to_reflect_component(&extra.value, &type_registry);
+        let mut type_registry = type_registry.write();
+        let reflect_components = ronstring_to_reflect_component(&extra.value, &mut type_registry);
 
         let (target_entity, updated_components) =
             find_entity_components(entity, name, parent, reflect_components, &entity_components);
@@ -120,8 +120,8 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
         );
 
         let type_registry: &AppTypeRegistry = world.resource();
-        let type_registry = type_registry.read();
-        let reflect_components = ronstring_to_reflect_component(&extra.value, &type_registry);
+        let mut type_registry = type_registry.write();
+        let reflect_components = ronstring_to_reflect_component(&extra.value, &mut type_registry);
 
         let (target_entity, updated_components) =
             find_entity_components(entity, name, parent, reflect_components, &entity_components);
