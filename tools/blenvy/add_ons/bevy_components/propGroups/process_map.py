@@ -3,6 +3,7 @@ from .utils import generate_wrapper_propertyGroup
 from . import process_component
 
 def process_map(registry, definition, update, nesting_long_names=[]):
+    blender_property_mapping = registry.blender_property_mapping
     value_types_defaults = registry.value_types_defaults 
     type_infos = registry.type_infos
 
@@ -19,7 +20,7 @@ def process_map(registry, definition, update, nesting_long_names=[]):
     if key_ref_name in type_infos:
         key_definition = type_infos[key_ref_name]
         original_long_name = key_definition["long_name"]
-        is_key_value_type = original_long_name in value_types_defaults
+        is_key_value_type = original_long_name in blender_property_mapping
         definition_link = definition["keyType"]["type"]["$ref"]
 
         #if the content of the list is a unit type, we need to generate a fake wrapper, otherwise we cannot use layout.prop(group, "propertyName") as there is no propertyName !
@@ -38,7 +39,7 @@ def process_map(registry, definition, update, nesting_long_names=[]):
     if value_ref_name in type_infos:
         value_definition = type_infos[value_ref_name]
         original_long_name = value_definition["long_name"]
-        is_value_value_type = original_long_name in value_types_defaults
+        is_value_value_type = original_long_name in blender_property_mapping
         definition_link = definition["valueType"]["type"]["$ref"]
 
         #if the content of the list is a unit type, we need to generate a fake wrapper, otherwise we cannot use layout.prop(group, "propertyName") as there is no propertyName !
