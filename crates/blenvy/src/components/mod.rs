@@ -8,8 +8,6 @@ pub mod process_gltfs;
 pub use process_gltfs::*;
 
 mod fake_entity;
-mod patch_entity;
-mod reflect_ext;
 
 pub mod blender_settings;
 
