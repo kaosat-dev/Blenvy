@@ -124,15 +124,23 @@ const _: () = {
         }
         #[inline]
         fn into_any(self: ::std::boxed::Box<Self>) -> ::std::boxed::Box<dyn ::core::any::Any> {
-            self
+            // this is changed
+            unsafe {
+                core::mem::transmute::<
+                    ::std::boxed::Box<Entity>,
+                    ::std::boxed::Box<bevy::ecs::entity::Entity>,
+                >(self)
+            }
         }
         #[inline]
         fn as_any(&self) -> &dyn ::core::any::Any {
-            self
+            // this is changed
+            unsafe { core::mem::transmute::<&Entity, &bevy::ecs::entity::Entity>(self) }
         }
         #[inline]
         fn as_any_mut(&mut self) -> &mut dyn ::core::any::Any {
-            self
+            // this is changed
+            unsafe { core::mem::transmute::<&mut Entity, &mut bevy::ecs::entity::Entity>(self) }
         }
         #[inline]
         fn into_reflect(
