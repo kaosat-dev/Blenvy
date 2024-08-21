@@ -7,7 +7,7 @@ use bevy::utils::HashMap;
 use ron::Value;
 use serde::de::DeserializeSeed;
 
-use super::{capitalize_first_letter, fake_entity, patch_entity::patch_reflect_entity};
+use super::{capitalize_first_letter, fake_entity};
 
 pub fn ronstring_to_reflect_component(
     ron_string: &str,
@@ -127,7 +127,7 @@ fn bevy_components_string_to_components(
             let mut deserializer = ron::Deserializer::from_str(ron_string.as_str())
                 .expect("deserialzer should have been generated from string");
             let reflect_deserializer = ReflectDeserializer::new(type_registry);
-            let mut component = reflect_deserializer
+            let component = reflect_deserializer
                 .deserialize(&mut deserializer)
                 .unwrap_or_else(|e| {
                     panic!(
@@ -135,8 +135,6 @@ fn bevy_components_string_to_components(
                         key, value, e
                     )
                 });
-
-            patch_reflect_entity(component.as_mut());
 
             debug!("component {:?}", component);
             debug!("real type {:?}", component.get_represented_type_info());
