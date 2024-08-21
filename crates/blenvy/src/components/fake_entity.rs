@@ -1,5 +1,5 @@
 pub(crate) struct Entity {
-    name: Option<String>,
+    pub name: Option<String>,
 }
 
 const _: () = {
