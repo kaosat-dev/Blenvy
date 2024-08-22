@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use blenvy::{BlenvyPlugin, BlueprintInfo, GameWorldTag, HideUntilReady, SpawnBlueprint};
 
 #[derive(Component, Reflect, Debug)]
@@ -17,6 +18,7 @@ fn main() {
         .add_plugins((
             DefaultPlugins.set(AssetPlugin::default()),
             BlenvyPlugin::default(),
+            WorldInspectorPlugin::new(),
         ))
         .register_type::<TupleRelations>()
         .register_type::<BigRelations>()
