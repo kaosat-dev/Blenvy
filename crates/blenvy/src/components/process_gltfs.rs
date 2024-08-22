@@ -1,19 +1,25 @@
+use std::ops::Deref;
+
 use bevy::{
     core::Name,
     ecs::{
         entity::Entity,
         query::{Added, Without},
         reflect::{AppTypeRegistry, ReflectComponent},
-        world::World,
+        world::{DeferredWorld, World},
     },
     gltf::{GltfExtras, GltfMaterialExtras, GltfMeshExtras, GltfSceneExtras},
     hierarchy::Parent,
     log::{debug, warn},
+    prelude::HierarchyQueryExt,
     reflect::{Reflect, TypeRegistration},
+    scene::SceneInstance,
     utils::HashMap,
 };
 
 use crate::{ronstring_to_reflect_component, GltfProcessed};
+
+use super::fake_entity::{self, BadWorldAccess};
 
 // , mut entity_components: HashMap<Entity, Vec<(Box<dyn Reflect>, TypeRegistration)>>
 fn find_entity_components(
@@ -57,21 +63,43 @@ fn find_entity_components(
 
 /// main function: injects components into each entity in gltf files that have `gltf_extras`, using reflection
 pub fn add_components_from_gltf_extras(world: &mut World) {
-    let mut extras = world.query_filtered::<(Entity, Option<&Name>, &GltfExtras, Option<&Parent>), (Added<GltfExtras>, Without<GltfProcessed>)>();
-    let mut scene_extras = world.query_filtered::<(Entity, Option<&Name>, &GltfSceneExtras, Option<&Parent>), (Added<GltfSceneExtras>, Without<GltfProcessed>)>();
-    let mut mesh_extras = world.query_filtered::<(Entity, Option<&Name>, &GltfMeshExtras, Option<&Parent>), (Added<GltfMeshExtras>, Without<GltfProcessed>)>();
-    let mut material_extras = world.query_filtered::<(Entity, Option<&Name>, &GltfMaterialExtras, Option<&Parent>), (Added<GltfMaterialExtras>, Without<GltfProcessed>)>();
+    let mut extras = world.query_filtered::<(Entity, Option<&Name>, &GltfExtras), (Added<GltfExtras>, Without<GltfProcessed>)>();
+    let mut scene_extras = world.query_filtered::<(Entity, Option<&Name>, &GltfSceneExtras), (Added<GltfSceneExtras>, Without<GltfProcessed>)>();
+    let mut mesh_extras = world.query_filtered::<(Entity, Option<&Name>, &GltfMeshExtras), (Added<GltfMeshExtras>, Without<GltfProcessed>)>();
+    let mut material_extras = world.query_filtered::<(Entity, Option<&Name>, &GltfMaterialExtras), (Added<GltfMaterialExtras>, Without<GltfProcessed>)>();
+
+    let mut scene_instances = world.query::<&SceneInstance>();
+
+    let mut hierarchy_state = world.query::<&Parent>();
+    let mut __unsafe_dw = DeferredWorld::from(unsafe { &mut *(world as *mut _) });
+    let hierarchy = __unsafe_dw.query(&mut hierarchy_state);
 
     let mut entity_components: HashMap<Entity, Vec<(Box<dyn Reflect>, TypeRegistration)>> =
         HashMap::new();
 
     // let gltf_components_config = world.resource::<GltfComponentsConfig>();
 
-    for (entity, name, extra, parent) in extras.iter(world) {
+    unsafe {
+        // SAFETY: we don't do anything harmful until taking this, and have full world access
+        fake_entity::BAD_WORLD_ACCESS.set(Some(BadWorldAccess::new(world)));
+    }
+
+    for (entity, name, extra) in extras.iter(world) {
+        let parent = hierarchy.get(entity).ok();
         debug!(
             "Gltf Extra: Name: {:?}, entity {:?}, parent: {:?}, extras {:?}",
             name, entity, parent, extra
         );
+
+        if let Some(instance) = hierarchy
+            .iter_ancestors(entity)
+            .find_map(|p| scene_instances.get(world, p).ok())
+        {
+            fake_entity::INSTANCE_ID.set(Some(*instance.deref()));
+        } else {
+            warn!("Can't find higher-hierarchy `SceneInstance` for entity '{name:?}'");
+            fake_entity::INSTANCE_ID.set(None);
+        };
 
         let type_registry: &AppTypeRegistry = world.resource();
         let mut type_registry = type_registry.write();
@@ -80,15 +108,27 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
 
         let (target_entity, updated_components) =
             find_entity_components(entity, name, parent, reflect_components, &entity_components);
+
         entity_components.insert(target_entity, updated_components);
     }
 
-    for (entity, name, extra, parent) in scene_extras.iter(world) {
+    for (entity, name, extra) in scene_extras.iter(world) {
+        let parent = hierarchy.get(entity).ok();
         debug!(
             "Gltf Scene Extra: Name: {:?}, entity {:?}, parent: {:?}, scene_extras {:?}",
             name, entity, parent, extra
         );
 
+        if let Some(instance) = hierarchy
+            .iter_ancestors(entity)
+            .find_map(|p| scene_instances.get(world, p).ok())
+        {
+            fake_entity::INSTANCE_ID.set(Some(*instance.deref()));
+        } else {
+            warn!("Can't find higher-hierarchy `SceneInstance` for entity '{name:?}'");
+            fake_entity::INSTANCE_ID.set(None);
+        };
+
         let type_registry: &AppTypeRegistry = world.resource();
         let mut type_registry = type_registry.write();
         let reflect_components = ronstring_to_reflect_component(&extra.value, &mut type_registry);
@@ -98,12 +138,23 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
         entity_components.insert(target_entity, updated_components);
     }
 
-    for (entity, name, extra, parent) in mesh_extras.iter(world) {
+    for (entity, name, extra) in mesh_extras.iter(world) {
+        let parent = hierarchy.get(entity).ok();
         debug!(
             "Gltf Mesh Extra: Name: {:?}, entity {:?}, parent: {:?}, mesh_extras {:?}",
             name, entity, parent, extra
         );
 
+        if let Some(instance) = hierarchy
+            .iter_ancestors(entity)
+            .find_map(|p| scene_instances.get(world, p).ok())
+        {
+            fake_entity::INSTANCE_ID.set(Some(*instance.deref()));
+        } else {
+            warn!("Can't find higher-hierarchy `SceneInstance` for entity '{name:?}'");
+            fake_entity::INSTANCE_ID.set(None);
+        };
+
         let type_registry: &AppTypeRegistry = world.resource();
         let mut type_registry = type_registry.write();
         let reflect_components = ronstring_to_reflect_component(&extra.value, &mut type_registry);
@@ -113,12 +164,23 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
         entity_components.insert(target_entity, updated_components);
     }
 
-    for (entity, name, extra, parent) in material_extras.iter(world) {
+    for (entity, name, extra) in material_extras.iter(world) {
+        let parent = hierarchy.get(entity).ok();
         debug!(
             "Name: {:?}, entity {:?}, parent: {:?}, material_extras {:?}",
             name, entity, parent, extra
         );
 
+        if let Some(instance) = hierarchy
+            .iter_ancestors(entity)
+            .find_map(|p| scene_instances.get(world, p).ok())
+        {
+            fake_entity::INSTANCE_ID.set(Some(*instance.deref()));
+        } else {
+            warn!("Can't find higher-hierarchy `SceneInstance` for entity '{name:?}'");
+            fake_entity::INSTANCE_ID.set(None);
+        };
+
         let type_registry: &AppTypeRegistry = world.resource();
         let mut type_registry = type_registry.write();
         let reflect_components = ronstring_to_reflect_component(&extra.value, &mut type_registry);
@@ -127,6 +189,9 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
             find_entity_components(entity, name, parent, reflect_components, &entity_components);
         entity_components.insert(target_entity, updated_components);
     }
+
+    fake_entity::BAD_WORLD_ACCESS.set(None);
+    fake_entity::INSTANCE_ID.set(None);
 
     for (entity, components) in entity_components {
         let type_registry: &AppTypeRegistry = world.resource();

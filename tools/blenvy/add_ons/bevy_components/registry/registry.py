@@ -26,7 +26,7 @@ def property_group_from_infos(property_group_name, property_group_parameters):
     return (property_group_pointer, property_group_class)
 
 def is_entity_poll(self, object):
-    return bpy.context.scene in object.users_scene # TODO: only select `object.type`s that get converted to entities and maybe something against other collection(instances)?
+    return True # TODO: only select `object.type`s that get converted to entities and maybe something against other collection(instances)?
 
 # this is where we store the information for all available components
 class ComponentsRegistry(PropertyGroup):
