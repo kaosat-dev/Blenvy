@@ -4,7 +4,7 @@ use blenvy::{BlenvyPlugin, BlueprintInfo, GameWorldTag, HideUntilReady, SpawnBlu
 
 #[derive(Component, Reflect, Debug)]
 #[reflect(Component)]
-pub struct TupleRelations(Entity); // TODO: Serialization on blender side currently is broken
+pub struct TupleRelations(Entity);
 
 #[derive(Component, Reflect)]
 #[reflect(Component)]
