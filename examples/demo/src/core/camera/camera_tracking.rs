@@ -1,20 +1,5 @@
 use bevy::prelude::*;
 
-#[derive(Component, Reflect, Debug)]
-#[reflect(Component)]
-/// Component for cameras, with an offset from the Trackable target  
-///
-pub struct CameraTracking {
-    pub offset: Vec3,
-}
-impl Default for CameraTracking {
-    fn default() -> Self {
-        CameraTracking {
-            offset: Vec3::new(0.0, 6.0, 8.0),
-        }
-    }
-}
-
 #[derive(Component, Reflect, Debug, Deref, DerefMut)]
 #[reflect(Component)]
 /// Component for cameras, with an offset from the Trackable target  
