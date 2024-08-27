@@ -315,4 +315,4 @@ Okay, maybe not that much glory. But the important part is that the player is vi
 
 - Read the [Blenvy for Bevy](../../crates/blenvy/README.md) documentation for more features on the Bevy side.
 - Read the [Blenvy for Blender](../../tools/blenvy/README.md) documentation for more features on the Blender side.
-- Read about the [Avian Physics Integration](../avian/readme.md) to learn how to setup colliders in Blender that will be used by the Avian physics engine in Bevy.
+- Read about the [Avian Physics Integration](../avian/README.md) to learn how to setup colliders in Blender that will be used by the Avian physics engine in Bevy.
