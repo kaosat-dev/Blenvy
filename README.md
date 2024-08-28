@@ -70,11 +70,11 @@ One crate to rule them all !
 
 you can find all examples, [here](./examples/blenvy)
 
-* [components](./examples/blenvy/components/) use of ```components``` only, to spawn entities with components defined inside gltf files
-* [blueprints](./examples/blenvy/blueprints/) use of ```blueprints``` and ```levels``` to spawn a level and then populate it with entities coming from different gltf files, live (at runtime) spawning of entities etc
-* [animation](./examples/blenvy/animation/) how to use and trigger animations from gltf files
-* [save_load](./examples/blenvy/save_load/) how to save & load levels
-* [demo](./examples/demo/) a full demo showcasing all features , including physics, animation
+* [`components`](./examples/blenvy/components/) use of ```components``` only, to spawn entities with components defined inside gltf files
+* [`blueprints`](./examples/blenvy/blueprints/) use of ```blueprints``` and ```levels``` to spawn a level and then populate it with entities coming from different gltf files, live (at runtime) spawning of entities etc
+* [`animation`](./examples/blenvy/animation/) how to use and trigger animations from gltf files
+* [`save_load`](./examples/blenvy/save_load/) how to save & load levels
+* [`demo`](./examples/demo/) a full demo showcasing all features , including physics, animation
 
 ## Workflow
 
