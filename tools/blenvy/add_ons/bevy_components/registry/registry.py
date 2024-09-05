@@ -65,17 +65,17 @@ class ComponentsRegistry(PropertyGroup):
 
         "glam::Vec2": {"type": FloatVectorProperty, "presets": dict(size = 2) },
         "glam::DVec2": {"type": FloatVectorProperty, "presets": dict(size = 2) },
-        "glam::UVec2": {"type": FloatVectorProperty, "presets": dict(size = 2) },
+        "glam::UVec2": {"type": IntVectorProperty, "presets": {"size": 2, "min": 0} },
 
         "glam::Vec3": {"type": FloatVectorProperty, "presets": {"size":3} },
         "glam::Vec3A":{"type": FloatVectorProperty, "presets": {"size":3} },
         "glam::DVec3":{"type": FloatVectorProperty, "presets": {"size":3} },
-        "glam::UVec3":{"type": FloatVectorProperty, "presets": {"size":3} },
+        "glam::UVec3":{"type": IntVectorProperty, "presets": {"size":3, "min":0} },
 
         "glam::Vec4": {"type": FloatVectorProperty, "presets": {"size":4} },
         "glam::Vec4A": {"type": FloatVectorProperty, "presets": {"size":4} },
         "glam::DVec4": {"type": FloatVectorProperty, "presets": {"size":4} },
-        "glam::UVec4":{"type": FloatVectorProperty, "presets": {"size":4, "min":0.0} },
+        "glam::UVec4":{"type": IntVectorProperty, "presets": {"size":4, "min":0} },
 
         "glam::Quat": {"type": FloatVectorProperty, "presets": {"size":4} },
 
