@@ -2,37 +2,24 @@ use std::{alloc::Layout, cell::Cell, num::NonZeroU32};
 
 use bevy::{
     core::Name,
-    ecs::world::DeferredWorld,
+    ecs::system::SystemParam,
     gltf::GltfExtras,
     log::{info, warn},
-    prelude::{HierarchyQueryExt, Parent, QueryState, With, World},
+    prelude::{HierarchyQueryExt, Parent, Query, With},
     reflect::ReflectDeserialize,
     scene::{InstanceId, SceneInstance},
 };
 use serde::Deserialize;
 
-pub(crate) struct BadWorldAccess {
-    world: *mut World,
-    names: QueryState<(bevy::ecs::entity::Entity, &'static Name), With<GltfExtras>>,
-    hierarchy: QueryState<&'static Parent, ()>,
-    scene_instances: QueryState<&'static SceneInstance, ()>,
-}
-
-impl BadWorldAccess {
-    pub unsafe fn new(world: &mut World) -> Self {
-        BadWorldAccess {
-            world,
-            // We have to check that we focus on a node, not a mesh with the same name.
-            // Currently, the only possible way of checking this is with `GltfExtras`, so selected entities must at least have one component.
-            names: world.query_filtered::<(bevy::ecs::entity::Entity, &Name), With<GltfExtras>>(),
-            hierarchy: world.query::<&Parent>(),
-            scene_instances: world.query::<&SceneInstance>(),
-        }
-    }
+#[derive(SystemParam)]
+pub(crate) struct BadWorldAccess<'w, 's> {
+    pub(crate) names: Query<'w, 's, (bevy::ecs::entity::Entity, &'static Name), With<GltfExtras>>,
+    pub(crate) hierarchy: Query<'w, 's, &'static Parent, ()>,
+    pub(crate) scene_instances: Query<'w, 's, &'static SceneInstance, ()>,
 }
 
 thread_local! {
-    pub(crate) static BAD_WORLD_ACCESS: Cell<Option<BadWorldAccess>> = Cell::new(None);
+    pub(crate) static BAD_WORLD_ACCESS: Cell<Option<BadWorldAccess<'static, 'static>>> = Cell::new(None);
     pub(crate) static INSTANCE_ID: Cell<Option<InstanceId>> = Cell::new(None);
 }
 
@@ -70,25 +57,20 @@ impl<'de> Deserialize<'de> for Entity {
         let entity = if let Some(name) = entity_data.name {
             info!("Found name {name}");
             let BadWorldAccess {
-                world,
-                mut names,
-                mut hierarchy,
-                mut scene_instances,
+                names,
+                hierarchy,
+                scene_instances,
             } = BAD_WORLD_ACCESS.take().expect("No bad world access :c");
             let instance = INSTANCE_ID.get().expect("No instance id set :c");
 
             let mut target = None;
-            let w = unsafe { &*world.cast_const() };
-            'search: for (e, n) in names.iter(w) {
+            'search: for (e, n) in names.iter() {
                 if !name.eq(n.as_str()) {
                     continue;
                 }
 
-                let mut dw = DeferredWorld::from(unsafe { &mut *world });
-                let hierarchy = dw.query(&mut hierarchy);
-
                 for parent in hierarchy.iter_ancestors(e) {
-                    let Ok(id) = scene_instances.get(w, parent) else {
+                    let Ok(id) = scene_instances.get(parent) else {
                         continue;
                     };
                     if instance.eq(id) {
@@ -99,7 +81,6 @@ impl<'de> Deserialize<'de> for Entity {
             }
 
             BAD_WORLD_ACCESS.set(Some(BadWorldAccess {
-                world,
                 names,
                 hierarchy,
                 scene_instances,
