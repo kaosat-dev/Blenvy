@@ -7,6 +7,8 @@ pub use ronstring_to_reflect_component::*;
 pub mod process_gltfs;
 pub use process_gltfs::*;
 
+mod fake_entity;
+
 pub mod blender_settings;
 
 use bevy::{

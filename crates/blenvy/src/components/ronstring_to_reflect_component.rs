@@ -1,15 +1,17 @@
+use std::any::TypeId;
+
 use bevy::log::{debug, warn};
 use bevy::reflect::serde::ReflectDeserializer;
-use bevy::reflect::{Reflect, TypeRegistration, TypeRegistry};
+use bevy::reflect::{GetTypeRegistration, Reflect, TypeRegistration, TypeRegistry};
 use bevy::utils::HashMap;
 use ron::Value;
 use serde::de::DeserializeSeed;
 
-use super::capitalize_first_letter;
+use super::{capitalize_first_letter, fake_entity};
 
 pub fn ronstring_to_reflect_component(
     ron_string: &str,
-    type_registry: &TypeRegistry,
+    type_registry: &mut TypeRegistry,
 ) -> Vec<(Box<dyn Reflect>, TypeRegistration)> {
     let lookup: HashMap<String, Value> = ron::from_str(ron_string).unwrap();
     let mut components: Vec<(Box<dyn Reflect>, TypeRegistration)> = Vec::new();
@@ -96,10 +98,16 @@ fn components_string_to_components(
 
 fn bevy_components_string_to_components(
     parsed_value: String,
-    type_registry: &TypeRegistry,
+    type_registry: &mut TypeRegistry,
     components: &mut Vec<(Box<dyn Reflect>, TypeRegistration)>,
 ) {
     let lookup: HashMap<String, Value> = ron::from_str(&parsed_value).unwrap();
+
+    let recovery_entity_type = type_registry
+        .get(TypeId::of::<bevy::ecs::entity::Entity>())
+        .cloned();
+    type_registry.overwrite_registration(fake_entity::Entity::get_type_registration());
+
     for (key, value) in lookup.into_iter() {
         let parsed_value: String = match value.clone() {
             Value::String(str) => str,
@@ -121,10 +129,10 @@ fn bevy_components_string_to_components(
             let reflect_deserializer = ReflectDeserializer::new(type_registry);
             let component = reflect_deserializer
                 .deserialize(&mut deserializer)
-                .unwrap_or_else(|_| {
+                .unwrap_or_else(|e| {
                     panic!(
-                        "failed to deserialize component {} with value: {:?}",
-                        key, value
+                        "failed to deserialize component '{}' with value '{:?}': {:?}",
+                        key, value, e
                     )
                 });
 
@@ -135,5 +143,11 @@ fn bevy_components_string_to_components(
         } else {
             warn!("no type registration for {}", key);
         }
+    }
+
+    if let Some(original_entity) = recovery_entity_type {
+        type_registry.overwrite_registration(original_entity);
+    } else {
+        warn!("There isn't an original type registration for `bevy_ecs::entity::Entity` but it was overwriten. Stuff may break and/or panic. Make sure that you register it!");
     }
 }

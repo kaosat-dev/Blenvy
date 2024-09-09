@@ -11,7 +11,9 @@ from bpy_types import PropertyGroup
 def generate_wrapper_propertyGroup(wrapped_type_long_name, item_long_name, definition_link, registry, update, nesting_long_names=[]):
     value_types_defaults = registry.value_types_defaults 
     blender_property_mapping = registry.blender_property_mapping
-    is_item_value_type = item_long_name in value_types_defaults
+
+    is_item_value_type = item_long_name in blender_property_mapping
+    has_item_default_value = item_long_name in value_types_defaults
 
 
     wrapper_name = "wrapper_" + wrapped_type_long_name
@@ -42,15 +44,23 @@ def generate_wrapper_propertyGroup(wrapped_type_long_name, item_long_name, defin
 
 
     blender_property = StringProperty(default="", update=update)
-    if item_long_name in blender_property_mapping:
-        value = value_types_defaults[item_long_name] if is_item_value_type else None
-        blender_property_def = blender_property_mapping[item_long_name]
-        blender_property = blender_property_def["type"](
-            **blender_property_def["presets"],# we inject presets first
-            name = "property_name",
-            default = value,
-            update = update
-        )
+    if is_item_value_type:
+        value = value_types_defaults[item_long_name] if has_item_default_value else None
+        if has_item_default_value:
+            blender_property_def = blender_property_mapping[item_long_name]
+            blender_property = blender_property_def["type"](
+                **blender_property_def["presets"],# we inject presets first
+                name = "property_name",
+                default = value,
+                update = update
+            )
+        else:
+            blender_property_def = blender_property_mapping[item_long_name]
+            blender_property = blender_property_def["type"](
+                **blender_property_def["presets"],# we inject presets first
+                name = "property_name",
+                update = update
+            )
         
     wrapper_annotations = {
         '0' : blender_property
