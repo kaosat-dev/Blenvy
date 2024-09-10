@@ -107,9 +107,12 @@ impl Plugin for BlueprintsPlugin {
             .add_plugins(RonAssetPlugin::<BlueprintPreloadAssets>::new(&["meta.ron"]))
             .configure_sets(
                 Update,
-                (GltfBlueprintsSet::Spawn, GltfBlueprintsSet::AfterSpawn)
-                    .chain()
-                    .after(GltfComponentsSet::Injection),
+                (
+                    GltfComponentsSet::Injection,
+                    GltfBlueprintsSet::Spawn,
+                    GltfBlueprintsSet::AfterSpawn,
+                )
+                    .chain(),
             )
             .add_systems(
                 Update,
