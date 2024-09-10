@@ -440,7 +440,12 @@ pub(crate) fn blueprints_check_assets_loading(
 
 pub(crate) fn blueprints_assets_loaded(
     spawn_placeholders: Query<
-        (Entity, &BlueprintInfo, Option<&Transform>, Option<&Name>),
+        (
+            Entity,
+            &BlueprintInfo,
+            Option<(&Transform, &GlobalTransform)>,
+            Option<&Name>,
+        ),
         (
             Added<BlueprintAssetsLoaded>,
             Without<BlueprintAssetsNotLoaded>,
@@ -454,7 +459,7 @@ pub(crate) fn blueprints_assets_loaded(
 
     mut commands: Commands,
 ) {
-    for (entity, blueprint_info, transform, name) in spawn_placeholders.iter() {
+    for (entity, blueprint_info, maybe_transform, name) in spawn_placeholders.iter() {
         /*info!(
             "BLUEPRINT: all assets loaded, attempting to spawn blueprint SCENE {:?} for entity {:?}, id: {:}, parent:{:?}",
             blueprint_info.name, name, entity, original_parent
@@ -485,10 +490,10 @@ pub(crate) fn blueprints_assets_loaded(
         let scene = &blueprint_gltf.named_scenes[main_scene_name];
 
         // transforms are optional, but still deal with them correctly
-        let mut transforms: Transform = Transform::default();
-        if transform.is_some() {
-            transforms = *transform.unwrap();
-        }
+        let (transform, global_transform) = match maybe_transform {
+            Some((transform, global_transform)) => (*transform, *global_transform),
+            None => (Transform::default(), GlobalTransform::default()),
+        };
 
         let mut original_children: Vec<Entity> = vec![];
         if let Ok(c) = all_children.get(entity) {
@@ -516,7 +521,8 @@ pub(crate) fn blueprints_assets_loaded(
         commands.entity(entity).insert((
             SceneBundle {
                 scene: scene.clone(),
-                transform: transforms,
+                transform,
+                global_transform,
                 ..Default::default()
             },
             OriginalChildren(original_children),
