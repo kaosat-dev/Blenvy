@@ -29,8 +29,8 @@ Want to jump right in? See the [quickstart guide](https://github.com/kaosat-dev/
 ## Features
 
 * Useful if you want to use Blender as your Editor
-* define Bevy components as custom properties in Blender with an UI tool to add & edit Bevy components, automatically export gltf blueprints & more in [Blender](https://github.com/kaosat-dev/Blenvy/tree/blenvy/tools/blenvy)
-* blueprints & levels system : turn your Blender collections into [gltf Blueprints](https://github.com/kaosat-dev/Blenvy/tree/blenvy/crates/blenvy) for reuse inside levels that are just Blender scenes
+* define Bevy components as custom properties in Blender with an UI tool to add & edit Bevy components, automatically export gltf blueprints & more in [Blender](https://github.com/kaosat-dev/Blenvy/tree/main/tools/blenvy)
+* blueprints & levels system : turn your Blender collections into [gltf Blueprints](https://github.com/kaosat-dev/Blenvy/tree/main/crates/blenvy) for reuse inside levels that are just Blender scenes
 * setup & tweak components in Blender Collections & override any of them in your collection instances if you want
 * setup & tweak components for objects, meshes and materials as well !
 * automatically load all assets for each blueprint (gltf files, manually added assets), with no setup required
@@ -39,15 +39,15 @@ Want to jump right in? See the [quickstart guide](https://github.com/kaosat-dev/
 * minimal dependencies: Bevy, Serde & RON only!
 * opensource
 
-> If you were previously using the individual bevy_gltf_xxx crates & Blender add-ons please see the [migration guide](https://github.com/kaosat-dev/Blenvy/blob/blenvy/Migration_guide.md)
+> If you were previously using the individual bevy_gltf_xxx crates & Blender add-ons please see the [migration guide](https://github.com/kaosat-dev/Blenvy/blob/main/Migration_guide.md)
 
 ## Crates
 
 One crate to rule them all !
 
-* [blenvy](https://github.com/kaosat-dev/Blenvy/tree/blenvy/crates/blenvy) This crate allows you to
+* [blenvy](https://github.com/kaosat-dev/Blenvy/tree/main/crates/blenvy) This crate allows you to
   * define components direclty inside gltf files and instanciate/inject the components on the Bevy side.
-  * export your project's Bevy registry to json, in order to be able to generate custom component UIs on the Blender side in the Blender [blenvy](https://github.com/kaosat-dev/Blenvy/tree/blenvy/tools/blenvy) add-on
+  * export your project's Bevy registry to json, in order to be able to generate custom component UIs on the Blender side in the Blender [blenvy](https://github.com/kaosat-dev/Blenvy/tree/main/tools/blenvy) add-on
   * define Blueprints/Prefabs for Bevy inside gltf files and spawn them in Bevy. With the ability to override and add components when spawning, efficient "level" loading etc
   * the ability to save & load your game state in a relatively simple way, by leveraging the blueprint functionality to only save a minimal subset of dynamic data, seperating dynamic & static parts of levels etc.
 
@@ -55,26 +55,26 @@ One crate to rule them all !
     There is a [video tutorial/explanation](https://youtu.be/-lcScjQCA3c) if you want, or you can read the crate docs.
     There is a [video tutorial/explanation](https://youtu.be/CgyNtwgYwdM) for this one too, or you can read the crate docs
 
-    The examples for the crate are [here](https://github.com/kaosat-dev/Blenvy/tree/blenvy/examples)
+    The examples for the crate are [here](https://github.com/kaosat-dev/Blenvy/tree/main/examples)
 
 ## Tools
 
 ### Blender: blenvy
 
-* an all in one [Blender addon](https://github.com/kaosat-dev/Blenvy/tree/blenvy/tools/blenvy) for the Blender side of the workflow:
+* an all in one [Blender addon](https://github.com/kaosat-dev/Blenvy/tree/main/tools/blenvy) for the Blender side of the workflow:
   * allow easilly adding & editing Bevy components , using automatically generated UIs for each component
   * automatically exports your level/world from Blender to gltf whenever you save your Blend file
-  * automatically export your [Gltf blueprints](https://github.com/kaosat-dev/Blenvy/tree/blenvy/crates/blenvy) & assets
+  * automatically export your [Gltf blueprints](https://github.com/kaosat-dev/Blenvy/tree/main/crates/blenvy) & assets
 
 ## Examples
 
-you can find all examples, [here](https://github.com/kaosat-dev/Blenvy/tree/blenvy/examples)
+you can find all examples, [here](https://github.com/kaosat-dev/Blenvy/tree/main/examples)
 
-* [`components`](https://github.com/kaosat-dev/Blenvy/tree/blenvy/examples/components/) use of ```components``` only, to spawn entities with components defined inside gltf files
-* [`blueprints`](https://github.com/kaosat-dev/Blenvy/tree/blenvy/examples/blueprints/) use of ```blueprints``` and ```levels``` to spawn a level and then populate it with entities coming from different gltf files, live (at runtime) spawning of entities etc
-* [`animation`](https://github.com/kaosat-dev/Blenvy/tree/blenvy/examples/animation/) how to use and trigger animations from gltf files
-* [`save_load`](https://github.com/kaosat-dev/Blenvy/tree/blenvy/examples/save_load/) how to save & load levels
-* [`demo`](https://github.com/kaosat-dev/Blenvy/tree/blenvy/examples/demo/) a full demo showcasing all features , including physics, animation
+* [`components`](https://github.com/kaosat-dev/Blenvy/tree/main/examples/components/) use of ```components``` only, to spawn entities with components defined inside gltf files
+* [`blueprints`](https://github.com/kaosat-dev/Blenvy/tree/main/examples/blueprints/) use of ```blueprints``` and ```levels``` to spawn a level and then populate it with entities coming from different gltf files, live (at runtime) spawning of entities etc
+* [`animation`](https://github.com/kaosat-dev/Blenvy/tree/main/examples/animation/) how to use and trigger animations from gltf files
+* [`save_load`](https://github.com/kaosat-dev/Blenvy/tree/main/examples/save_load/) how to save & load levels
+* [`demo`](https://github.com/kaosat-dev/Blenvy/tree/main/examples/demo/) a full demo showcasing all features , including physics, animation
 
 ## Workflow
 
@@ -84,8 +84,8 @@ The workflow goes as follows (once you got your Bevy code setup)
 
 ![component registration](https://github.com/kaosat-dev/Blenvy/blob/main/docs/component_registration.png)
 
-* setup & then use the Blenvy [Bevy crate](https://github.com/kaosat-dev/Blenvy/tree/blenvy/crates/blenvy)
-* setup & then use the Blenvy [Blender add-on](https://github.com/kaosat-dev/Blenvy/tree/blenvy/tools/blenvy)
+* setup & then use the Blenvy [Bevy crate](https://github.com/kaosat-dev/Blenvy/tree/main/crates/blenvy)
+* setup & then use the Blenvy [Blender add-on](https://github.com/kaosat-dev/Blenvy/tree/main/tools/blenvy)
 * iterate
 * have fun !
 
