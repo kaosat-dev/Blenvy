@@ -130,7 +130,7 @@ pub fn trigger_blueprint_animation_markers_events(
                             let frame_seconds = (animation_length_frames
                                 / animation_length_seconds)
                                 * time_in_animation;
-                            // println!("frame seconds {}", frame_seconds);
+                            // debug!("frame seconds {}", frame_seconds);
                             let frame = frame_seconds.ceil() as u32; // FIXME , bad hack
 
                             let matching_animation_marker = &animation_markers.0[animation_name];
@@ -138,7 +138,7 @@ pub fn trigger_blueprint_animation_markers_events(
                             if matching_animation_marker.contains_key(&frame) {
                                 let matching_markers_per_frame =
                                     matching_animation_marker.get(&frame).unwrap();
-                                println!(
+                                debug!(
                                     "FOUND A MARKER {:?} at frame {}",
                                     matching_markers_per_frame, frame
                                 );
@@ -191,7 +191,7 @@ pub fn trigger_instance_animation_markers_events(
                         animations.named_animations.get(animation_name)
                     {
                         if let Some(__animation_clip) = animation_clips.get(animation_clip_handle) {
-                            println!("found the animation clip");
+                            debug!("found the animation clip");
                         }
                     }
                 }
@@ -202,8 +202,8 @@ pub fn trigger_instance_animation_markers_events(
         // animation_player.play(animation)
 
         if animation_clip.is_some() {
-            // println!("Entity {:?} markers {:?}", entity, markers);
-            // println!("Player {:?} {}", animation_player.elapsed(), animation_player.completions());
+            // debug!("Entity {:?} markers {:?}", entity, markers);
+            // debug!("Player {:?} {}", animation_player.elapsed(), animation_player.completions());
             // FIMXE: yikes ! very inneficient ! perhaps add boilerplate to the "start playing animation" code so we know what is playing
             let animation_name = animations.named_animations.iter().find_map(|(key, value)| {
                 if value == animation_player.animation_clip() {
@@ -234,8 +234,8 @@ pub fn trigger_instance_animation_markers_events(
                     let matching_markers_per_frame = matching_animation_marker.get(&frame).unwrap();
 
                     // let timediff = animation_length_seconds - time_in_animation;
-                    // println!("timediff {}", timediff);
-                    // println!("FOUND A MARKER {:?} at frame {}", matching_markers_per_frame, frame);
+                    // debug!("timediff {}", timediff);
+                    // debug!("FOUND A MARKER {:?} at frame {}", matching_markers_per_frame, frame);
                     // emit an event AnimationMarkerReached(entity, animation_name, frame, marker_name)
                     // FIXME: problem, this can fire multiple times in a row, depending on animation length , speed , etc
                     for marker in matching_markers_per_frame {

@@ -56,7 +56,7 @@ pub(crate) fn prepare_save_game(
     }
 
     for (entity, parent, children) in dynamic_entities.iter() {
-        println!("prepare save game for entity");
+        debug!("prepare save game for entity");
         let parent = parent.get();
         if root_entities.contains(parent) {
             commands.entity(entity).insert(RootEntity);

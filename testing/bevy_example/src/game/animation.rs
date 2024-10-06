@@ -48,7 +48,7 @@ pub fn animations(
     parents: Query<&Parent>,
 ) {
     for (entity, name, animation_infos) in added_animation_infos.iter() {
-        //println!("animated stuf {:?} on entity {}", animation_infos, name);
+        //debug!("animated stuf {:?} on entity {}", animation_infos, name);
         let gltf = assets_gltf.get(&animtest.0).unwrap();
         let mut matching_data = true;
         for animation_info in &animation_infos.animations {
@@ -58,17 +58,17 @@ pub fn animations(
             }
         }
         if matching_data {
-            println!(
+            debug!(
                 "inserting Animations components into {} ({:?})",
                 name, entity
             );
-            println!("Found match {:?}", gltf.named_animations);
+            debug!("Found match {:?}", gltf.named_animations);
             commands.entity(entity).insert(InstanceAnimations {
                 named_animations: gltf.named_animations.clone(),
             });
             for ancestor in parents.iter_ancestors(entity) {
                 if added_animation_players.contains(ancestor) {
-                    // println!("found match with animationPlayer !! {:?}",names.get(ancestor));
+                    // debug!("found match with animationPlayer !! {:?}",names.get(ancestor));
                     commands
                         .entity(entity)
                         .insert(InstanceAnimationPlayerLink(ancestor));
@@ -113,11 +113,11 @@ pub fn play_animations(
     keycode: Res<ButtonInput<KeyCode>>,
 ) {
     if keycode.just_pressed(KeyCode::KeyQ) {
-        println!("playing fox blueprint animation requested");
+        debug!("playing fox blueprint animation requested");
         for (link, animations) in animated_fox.iter() {
-            println!("BAR");
+            debug!("BAR");
 
-            // println!("animations {:?}", animations.named_animations);
+            // debug!("animations {:?}", animations.named_animations);
             let (mut animation_player, mut animation_transitions) =
                 animation_players.get_mut(link.0).unwrap();
             let anim_name = "Survey";
@@ -138,15 +138,15 @@ pub fn play_animations(
                 continue;
             };
             let playing_animation = animation_player.animation_mut(playing_animation_index).unwrap();
-            println!("Playing animation {:?}", playing_animation);
+            debug!("Playing animation {:?}", playing_animation);
             playing_animation.set_repeat(RepeatAnimation::Forever);*/
         }
     }
 
     if keycode.just_pressed(KeyCode::KeyP) {
-        println!("playing fox blueprint animation requested");
+        debug!("playing fox blueprint animation requested");
         for (link, animations) in animated_foxes.iter() {
-            // println!("animations {:?}", animations.named_animations);
+            // debug!("animations {:?}", animations.named_animations);
             let (mut animation_player, mut animation_transitions) =
                 animation_players.get_mut(link.0).unwrap();
             let anim_name = "Run";
@@ -167,17 +167,17 @@ pub fn play_animations(
                 continue;
             };
             let playing_animation = animation_player.animation_mut(playing_animation_index).unwrap();
-            println!("Playing animation {:?}", playing_animation);
+            debug!("Playing animation {:?}", playing_animation);
             playing_animation.set_repeat(RepeatAnimation::Forever);*/
         }
-        println!(" ");
+        debug!(" ");
     }
 
     if keycode.just_pressed(KeyCode::KeyO) {
-        println!("playing marker 3 blueprint animation requested");
+        debug!("playing marker 3 blueprint animation requested");
         for (_, _, link, animations) in with_blueprint_and_scene_animations.iter() {
             // This only works for entities that are spawned as part of the level, as scene animations are only there in that case
-            // println!("animations {:?}", animations.named_animations.keys());
+            // debug!("animations {:?}", animations.named_animations.keys());
             let (mut animation_player, mut animation_transitions) =
                 animation_players.get_mut(link.0).unwrap();
             let anim_name = "Walk";
@@ -197,9 +197,9 @@ pub fn play_animations(
     }
 
     if keycode.just_pressed(KeyCode::KeyI) {
-        println!("playing marker 3 scene animation requested");
+        debug!("playing marker 3 scene animation requested");
         for (link, animations, _, _) in with_blueprint_and_scene_animations.iter() {
-            //println!("animations {:?}", animations.named_animations.keys());
+            //debug!("animations {:?}", animations.named_animations.keys());
             let (mut animation_player, mut animation_transitions) =
                 animation_players.get_mut(link.0).unwrap();
             let anim_name = "Blueprint8_move";
@@ -220,7 +220,7 @@ pub fn play_animations(
 
     if keycode.just_pressed(KeyCode::KeyU) {
         for (link, animations) in animated_marker1.iter() {
-            println!("animations {:?}", animations.named_animations);
+            debug!("animations {:?}", animations.named_animations);
             let (mut animation_player, mut animation_transitions) =
                 animation_players.get_mut(link.0).unwrap();
 
@@ -241,7 +241,7 @@ pub fn play_animations(
     }
     if keycode.just_pressed(KeyCode::KeyY) {
         for (link, animations) in animated_marker1.iter() {
-            println!("animations {:?}", animations.named_animations);
+            debug!("animations {:?}", animations.named_animations);
             let (mut animation_player, mut animation_transitions) =
                 animation_players.get_mut(link.0).unwrap();
 
@@ -262,7 +262,7 @@ pub fn play_animations(
     }
     if keycode.just_pressed(KeyCode::KeyT) {
         for (link, animations) in animated_marker2.iter() {
-            println!("animations {:?}", animations.named_animations);
+            debug!("animations {:?}", animations.named_animations);
             let (mut animation_player, mut animation_transitions) =
                 animation_players.get_mut(link.0).unwrap();
 
@@ -287,6 +287,6 @@ pub fn __react_to_animation_markers(
     mut animation_marker_events: EventReader<AnimationMarkerReached>,
 ) {
     for event in animation_marker_events.read() {
-        println!("animation marker event {:?}", event)
+        debug!("animation marker event {:?}", event)
     }
 }

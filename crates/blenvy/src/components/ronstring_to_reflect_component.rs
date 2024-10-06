@@ -13,7 +13,7 @@ pub fn ronstring_to_reflect_component(
 ) -> Vec<(Box<dyn Reflect>, TypeRegistration)> {
     let lookup: HashMap<String, Value> = ron::from_str(ron_string).unwrap();
     let mut components: Vec<(Box<dyn Reflect>, TypeRegistration)> = Vec::new();
-    // println!("ron_string {:?}", ron_string);
+    // debug!("ron_string {:?}", ron_string);
     for (name, value) in lookup.into_iter() {
         let parsed_value: String = match value.clone() {
             Value::String(str) => str,
@@ -63,7 +63,7 @@ fn components_string_to_components(
         let serializer = ReflectSerializer::new(&test_struct, &type_registry);
         let serialized =
             ron::ser::to_string_pretty(&serializer, ron::ser::PrettyConfig::default()).unwrap();
-        println!("serialized Component {}", serialized);
+        debug!("serialized Component {}", serialized);
         */
         debug!("component data ron string {}", ron_string);
         let mut deserializer = ron::Deserializer::from_str(ron_string.as_str())

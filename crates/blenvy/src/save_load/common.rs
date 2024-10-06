@@ -9,7 +9,7 @@ pub(crate) fn spawn_from_blueprintworld(
     mut commands: Commands,
 ) {
     for (__entity, blueprint_world) in added_blueprint_worlds.iter() {
-        println!("added blueprintWorld {:?}", blueprint_world);
+        debug!("added blueprintWorld {:?}", blueprint_world);
 
         // here we spawn the static part our game world/level, which is also a blueprint !
         let __static_world = commands

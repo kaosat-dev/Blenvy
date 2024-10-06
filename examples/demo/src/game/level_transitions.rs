@@ -33,7 +33,7 @@ pub fn trigger_level_transition(
                     || level_transition_triggers.get(entity1_parent.get()).is_ok()
                     || level_transition_triggers.get(entity2_parent.get()).is_ok()
                 {
-                    println!("collision started, we can transition to level");
+                    debug!("collision started, we can transition to level");
                     let transition_trigger;
                     if level_transition_triggers.get(*entity1).is_ok() {
                         transition_trigger = level_transition_triggers.get(*entity1).unwrap();
@@ -52,7 +52,7 @@ pub fn trigger_level_transition(
                         || players.get(*entity2).is_ok()
                         || players.get(entity2_parent.get()).is_ok()
                     {
-                        println!("one entity is the player, we can enter")
+                        debug!("one entity is the player, we can enter")
                     } else {
                         // if none of our entities is a player, bail out, as only entities with player components should trigger a transition
                         return;
@@ -66,7 +66,7 @@ pub fn trigger_level_transition(
 
                     let target_level = &transition_trigger.target;
                     let level: Handle<Gltf>;
-                    println!("target level {}", target_level);
+                    debug!("target level {}", target_level);
                     if target_level == "Level1" {
                         level = game_assets.level1.clone().unwrap();
                     } else if target_level == "Level2" {
@@ -92,7 +92,7 @@ pub fn trigger_level_transition(
                 }
             }
             CollisionEvent::Stopped(_entity1, _entity2, _) => {
-                // println!("collision ended")
+                // debug!("collision ended")
             }
         }
     }

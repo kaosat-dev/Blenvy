@@ -64,11 +64,11 @@ pub fn animation_control(
 ) {
     // robots
     if keycode.just_pressed(KeyCode::KeyB) {
-        println!("scan animation for robots");
+        debug!("scan animation for robots");
         for (link, animations) in animated_robots.iter() {
             let (mut animation_player, mut animation_transitions) =
                 animation_players.get_mut(link.0).unwrap();
-            println!("got some animations");
+            debug!("got some animations");
             let anim_name = "Scan";
             animation_transitions
                 .play(

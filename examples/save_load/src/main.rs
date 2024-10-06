@@ -84,7 +84,7 @@ fn spawn_blueprint_instance(keycode: Res<ButtonInput<KeyCode>>, mut commands: Co
 
 fn move_movers(mut movers: Query<&mut Transform, With<Dynamic>>) {
     for mut transform in movers.iter_mut() {
-        // println!("moving dynamic entity");
+        // debug!("moving dynamic entity");
         transform.translation.x += 0.005;
     }
 }

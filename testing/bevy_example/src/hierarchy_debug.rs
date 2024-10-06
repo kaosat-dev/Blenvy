@@ -176,7 +176,7 @@ fn __check_for_component(
             enum_complex, name
         );
         info_lines.push(data);
-        println!("yoho component");
+        debug!("yoho component");
     }
     let mut display = display.single_mut();
     display.sections[0].value = info_lines.join("\n");
