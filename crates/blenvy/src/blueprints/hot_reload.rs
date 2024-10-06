@@ -34,10 +34,10 @@ pub(crate) fn react_to_asset_changes(
 
         if let AssetEvent::Modified { id } = event {
             // React to the gltf file being modified
-            // println!("Modified gltf {:?}", asset_server.get_path(*id));
+            // debug!("Modified gltf {:?}", asset_server.get_path(*id));
             if let Some(asset_path) = asset_server.get_path(*id) {
                 // let untyped = asset_server.get_handle_untyped(asset_path.clone());
-                // println!("matching untyped handle {:?}", untyped);
+                // debug!("matching untyped handle {:?}", untyped);
                 // let bla = untyped.unwrap().id();
                 // asset_server.get
                 // in order to avoid respawn both a parent & a child , which would crash Bevy, we do things in two steps
@@ -46,7 +46,7 @@ pub(crate) fn react_to_asset_changes(
                     .get(&asset_path.to_string())
                 {
                     for entity in entities.iter() {
-                        // println!("matching blueprint instance {}", entity);
+                        // debug!("matching blueprint instance {}", entity);
                         // disregard entities that are already (re) spawning
                         if !respawn_candidates.contains(&entity)
                             && blueprint_assets.get(*entity).is_ok()
@@ -78,9 +78,9 @@ pub(crate) fn react_to_asset_changes(
             retained_candidates.push(**entity);
         }
     }
-    // println!("respawn candidates {:?}", respawn_candidates);
+    // debug!("respawn candidates {:?}", respawn_candidates);
     for retained in retained_candidates.iter() {
-        // println!("retained {}", retained);
+        // debug!("retained {}", retained);
 
         if let Ok((entity, entity_name, _blueprint_info, children)) =
             blueprint_assets.get(*retained)
@@ -104,5 +104,5 @@ pub(crate) fn react_to_asset_changes(
         }
     }
 
-    // println!("done with asset updates");
+    // debug!("done with asset updates");
 }

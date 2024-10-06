@@ -95,7 +95,7 @@ impl CopyComponents {
                 .get_entity_mut(self.destination)
                 .expect("destination entity should exist");
 
-            // println!("contains typeid {:?} {}", type_id, destination.contains_type_id(type_id));
+            // debug!("contains typeid {:?} {}", type_id, destination.contains_type_id(type_id));
             // we only want to copy components that are NOT already in the destination (ie no overwriting existing components)
             if !destination.contains_type_id(type_id) {
                 component.insert(&mut destination, &*source, &type_registry);

@@ -20,7 +20,7 @@ use bevy::{
 use json_writer::to_json_string;
 
 fn start_game(mut next_app_state: ResMut<NextState<AppState>>) {
-    println!("START GAME");
+    debug!("START GAME");
     //next_app_state.set(AppState::AppLoading);
     next_app_state.set(AppState::AppRunning);
 }
@@ -91,7 +91,7 @@ fn validate_export(
             let child_name: String = names
                 .get(child)
                 .map_or(String::from("no_name"), |e| e.to_string()); //|e| e.to_string(), || "no_name".to_string());
-                                                                     //println!("  child {}", child_name);
+                                                                     //debug!("  child {}", child_name);
             let parent = parents.get(child).unwrap();
             let parent_name: String = names
                 .get(parent.get())
