@@ -3,6 +3,7 @@ from .utils import generate_wrapper_propertyGroup
 from . import process_component
 
 def process_list(registry, definition, update, nesting_long_names=[]):
+    blender_property_mapping = registry.blender_property_mapping
     value_types_defaults = registry.value_types_defaults 
     type_infos = registry.type_infos
 
@@ -13,7 +14,7 @@ def process_list(registry, definition, update, nesting_long_names=[]):
     
     item_definition = type_infos[ref_name]
     item_long_name = item_definition["long_name"]
-    is_item_value_type = item_long_name in value_types_defaults
+    is_item_value_type = item_long_name in blender_property_mapping
 
     property_group_class = None
     #if the content of the list is a unit type, we need to generate a fake wrapper, otherwise we cannot use layout.prop(group, "propertyName") as there is no propertyName !

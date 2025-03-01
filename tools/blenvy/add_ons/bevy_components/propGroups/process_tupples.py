@@ -20,19 +20,30 @@ def process_tupples(registry, definition, prefixItems, update, nesting_long_name
         if ref_name in type_infos:
             original = type_infos[ref_name]
             original_long_name = original["long_name"]
-            is_value_type = original_long_name in value_types_defaults
 
-            value = value_types_defaults[original_long_name] if is_value_type else None
+            is_value_type = original_long_name in blender_property_mapping
+            has_default_value = original_long_name in value_types_defaults
+
+            value = value_types_defaults[original_long_name] if has_default_value else None
             default_values.append(value)
             prefix_infos.append(original)
 
             if is_value_type:
-                if original_long_name in blender_property_mapping:
+                if has_default_value:
                     blender_property_def = blender_property_mapping[original_long_name]
                     blender_property = blender_property_def["type"](
                         **blender_property_def["presets"],# we inject presets first
                         name = property_name, 
                         default=value,
+                        update= update
+                    )
+                  
+                    __annotations__[property_name] = blender_property
+                else:
+                    blender_property_def = blender_property_mapping[original_long_name]
+                    blender_property = blender_property_def["type"](
+                        **blender_property_def["presets"],# we inject presets first
+                        name = property_name,
                         update= update
                     )
                   
