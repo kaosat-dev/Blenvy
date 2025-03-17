@@ -53,7 +53,7 @@ pub fn spawn_test(keycode: Res<ButtonInput<KeyCode>>, mut commands: Commands) {
                 bevy::prelude::Name::from(format!("test{}", name_index)),
                 HideUntilReady,
                 AddToGameWorld,
-                TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
+                Transform::from_xyz(x, 2.0, y),
                 /*Velocity {
                     linvel: Vec3::new(vel_x, vel_y, vel_z),
                     angvel: Vec3::new(0.0, 0.0, 0.0),

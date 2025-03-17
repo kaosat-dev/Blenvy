@@ -130,15 +130,15 @@ fn process_tonemapping(
         for (scene_id, tone_mapping) in tonemappings.iter() {
             match tone_mapping {
                 BlenderToneMapping::None => {
-                    //debug!("TONEMAPPING NONE");
+                    //println!("TONEMAPPING NONE");
                     commands.entity(entity).remove::<Tonemapping>();
                 }
                 BlenderToneMapping::AgX => {
-                    //debug!("TONEMAPPING Agx");
+                    //println!("TONEMAPPING Agx");
                     commands.entity(entity).insert(Tonemapping::AgX);
                 }
                 BlenderToneMapping::Filmic => {
-                    //debug!("TONEMAPPING Filmic");
+                    //println!("TONEMAPPING Filmic");
                     commands.entity(entity).insert(Tonemapping::BlenderFilmic);
                 }
             }

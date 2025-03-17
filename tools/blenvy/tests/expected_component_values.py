@@ -97,6 +97,8 @@ expected_custom_property_values = {'bevy_animation::AnimationPlayer': '(animatio
  'blenvy::blender_settings::lighting::BlenderShadowSettings': '(cascade_size: 0)',
  'bevy_gltf_worlflow_examples_common::core::camera::camera_replace_proxies::SSAOSettings': '()',
  'bevy_gltf_worlflow_examples_common::core::camera::camera_tracking::CameraTrackable': '()',
+ 'bevy_gltf_worlflow_examples_common::core::camera::camera_tracking::CameraTracking': '(offset: Vec3(x:0.0, y:0.0, '
+                                                                                      'z:0.0))',
  'bevy_gltf_worlflow_examples_common::core::camera::camera_tracking::CameraTrackingOffset': '(Vec3(x:0.0, y:0.0, '
                                                                                             'z:0.0))',
  'bevy_gltf_worlflow_examples_common::game::picking::Pickable': '()',
@@ -357,6 +359,10 @@ expected_custom_property_values_randomized = {'bevy_animation::AnimationPlayer':
  'blenvy::blender_settings::lighting::BlenderShadowSettings': '(cascade_size: 73)',
  'bevy_gltf_worlflow_examples_common::core::camera::camera_replace_proxies::SSAOSettings': '()',
  'bevy_gltf_worlflow_examples_common::core::camera::camera_tracking::CameraTrackable': '()',
+ 'bevy_gltf_worlflow_examples_common::core::camera::camera_tracking::CameraTracking': '(offset: '
+                                                                                      'Vec3(x:0.5714026093482971, '
+                                                                                      'y:0.42888906598091125, '
+                                                                                      'z:0.5780913233757019))',
  'bevy_gltf_worlflow_examples_common::core::camera::camera_tracking::CameraTrackingOffset': '(Vec3(x:0.5714026093482971, '
                                                                                             'y:0.42888906598091125, '
                                                                                             'z:0.5780913233757019))',

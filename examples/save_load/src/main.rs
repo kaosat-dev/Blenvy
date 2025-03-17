@@ -16,32 +16,29 @@ use component_examples::*;
 
 fn main() {
     App::new()
-        .add_plugins((
-            DefaultPlugins.set(AssetPlugin::default()),
-            WorldInspectorPlugin::new(),
-            BlenvyPlugin {
-                save_component_filter: SceneFilter::Allowlist(HashSet::from([
-                    TypeId::of::<Name>(),
-                    TypeId::of::<Transform>(),
-                    //TypeId::of::<Velocity>(),
-                    TypeId::of::<InheritedVisibility>(),
-                    TypeId::of::<Camera>(),
-                    TypeId::of::<Camera3d>(),
-                    //TypeId::of::<Tonemapping>(),
-                    //TypeId::of::<CameraTrackingOffset>(),
-                    TypeId::of::<Projection>(),
-                    //TypeId::of::<CameraRenderGraph>(),
-                    //TypeId::of::<Frustum>(),
-                    TypeId::of::<GlobalTransform>(),
-                    //TypeId::of::<VisibleEntities>(),
-                    //TypeId::of::<Pickable>(),
-                ])),
-                ..Default::default()
-            },
-            // our custom plugins
-            // GamePlugin,           // specific to our game
-            ComponentsExamplesPlugin, // Showcases different type of components /structs
-        ))
+        .add_plugins(DefaultPlugins.set(AssetPlugin::default()))
+        .add_plugins(WorldInspectorPlugin::new())
+        .add_plugins(BlenvyPlugin {
+            save_component_filter: SceneFilter::Allowlist(HashSet::from([
+                TypeId::of::<Name>(),
+                TypeId::of::<Transform>(),
+                //TypeId::of::<Velocity>(),
+                TypeId::of::<InheritedVisibility>(),
+                TypeId::of::<Camera>(),
+                TypeId::of::<Camera3d>(),
+                //TypeId::of::<Tonemapping>(),
+                //TypeId::of::<CameraTrackingOffset>(),
+                TypeId::of::<Projection>(),
+                //TypeId::of::<CameraRenderGraph>(),
+                //TypeId::of::<Frustum>(),
+                TypeId::of::<GlobalTransform>(),
+                //TypeId::of::<VisibleEntities>(),
+                //TypeId::of::<Pickable>(),
+            ])),
+            ..Default::default()
+        })
+        // .add_plugins(GamePlugin)
+        .add_plugins(ComponentsExamplesPlugin)
         .add_systems(Startup, setup_game)
         .add_systems(
             Update,
@@ -84,7 +81,7 @@ fn spawn_blueprint_instance(keycode: Res<ButtonInput<KeyCode>>, mut commands: Co
 
 fn move_movers(mut movers: Query<&mut Transform, With<Dynamic>>) {
     for mut transform in movers.iter_mut() {
-        // debug!("moving dynamic entity");
+        // println!("moving dynamic entity");
         transform.translation.x += 0.005;
     }
 }

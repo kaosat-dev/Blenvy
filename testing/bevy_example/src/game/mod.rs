@@ -13,14 +13,17 @@ use blenvy::{
 
 use crate::{AppState, GameState};
 use bevy::{
-    prelude::*, render::view::screenshot::ScreenshotManager, time::common_conditions::on_timer,
-    window::PrimaryWindow,
+    prelude::*,
+    render::view::screenshot::{save_to_disk, Capturing, Screenshot},
+    time::common_conditions::on_timer,
+    window::SystemCursorIcon,
+    winit::cursor::CursorIcon,
 };
 
 use json_writer::to_json_string;
 
 fn start_game(mut next_app_state: ResMut<NextState<AppState>>) {
-    debug!("START GAME");
+    println!("START GAME");
     //next_app_state.set(AppState::AppLoading);
     next_app_state.set(AppState::AppRunning);
 }
@@ -91,7 +94,7 @@ fn validate_export(
             let child_name: String = names
                 .get(child)
                 .map_or(String::from("no_name"), |e| e.to_string()); //|e| e.to_string(), || "no_name".to_string());
-                                                                     //debug!("  child {}", child_name);
+                                                                     //println!("  child {}", child_name);
             let parent = parents.get(child).unwrap();
             let parent_name: String = names
                 .get(parent.get())
@@ -115,13 +118,33 @@ fn validate_export(
     .expect("Unable to write file");
 }
 
-fn generate_screenshot(
-    main_window: Query<Entity, With<PrimaryWindow>>,
-    mut screenshot_manager: ResMut<ScreenshotManager>,
+fn generate_screenshot(mut commands: Commands, mut counter: Local<u32>) {
+    let path = format!("./screenshot-{}.png", *counter);
+    *counter += 1;
+    commands
+        .spawn(Screenshot::primary_window())
+        .observe(save_to_disk(path));
+}
+
+fn screenshot_saving(
+    mut commands: Commands,
+    screenshot_saving: Query<Entity, With<Capturing>>,
+    windows: Query<Entity, With<Window>>,
 ) {
-    screenshot_manager
-        .save_screenshot_to_disk(main_window.single(), "screenshot.png")
-        .unwrap();
+    let Ok(window) = windows.get_single() else {
+        return;
+    };
+    match screenshot_saving.iter().count() {
+        0 => {
+            commands.entity(window).remove::<CursorIcon>();
+        }
+        x if x > 0 => {
+            commands
+                .entity(window)
+                .insert(CursorIcon::from(SystemCursorIcon::Progress));
+        }
+        _ => {}
+    }
 }
 
 fn exit_game(mut app_exit_events: ResMut<Events<bevy::app::AppExit>>) {
@@ -183,7 +206,7 @@ impl Plugin for GamePlugin {
             .add_systems(Update, play_animations) // check_animations
             //.add_systems(Update, react_to_animation_markers)
 
-            .add_systems(Update, generate_screenshot.run_if(on_timer(Duration::from_secs_f32(0.2)))) // TODO: run once
+            .add_systems(Update, (generate_screenshot, screenshot_saving).run_if(on_timer(Duration::from_secs_f32(0.2)))) // TODO: run once
             .add_systems(
                 Update,
                 exit_game.run_if(on_timer(Duration::from_secs_f32(0.5))),

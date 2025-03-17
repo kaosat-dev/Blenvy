@@ -244,7 +244,7 @@ pub(crate) fn blueprints_check_assets_metadata_files_loading(
         }
         let progress: f32 = loaded_amount as f32 / total as f32;
         assets_to_load.progress = progress;
-        // debug!("LOADING: in progress for ALL assets of {:?} (instance of {}): {} ",entity_name, blueprint_info.path, progress * 100.0);
+        // println!("LOADING: in progress for ALL assets of {:?} (instance of {}): {} ",entity_name, blueprint_info.path, progress * 100.0);
     }
 }
 
@@ -323,7 +323,7 @@ pub(super) fn blueprints_prepare_spawn(
                     if !assets_to_blueprint_instances.untyped_id_to_blueprint_entity_ids[&path_id]
                         .contains(&entity)
                     {
-                        // debug!("adding mapping between {} and entity {:?}", path_id, all_names.get(entity));
+                        // println!("adding mapping between {} and entity {:?}", path_id, all_names.get(entity));
                         assets_to_blueprint_instances
                             .untyped_id_to_blueprint_entity_ids
                             .get_mut(&path_id)
@@ -353,7 +353,7 @@ pub(super) fn blueprints_prepare_spawn(
                 [&blueprint_info.path]
                 .contains(&entity)
             {
-                // debug!("adding mapping between {} and entity {:?}", path_id, all_names.get(entity));
+                // println!("adding mapping between {} and entity {:?}", path_id, all_names.get(entity));
                 assets_to_blueprint_instances
                     .untyped_id_to_blueprint_entity_ids
                     .get_mut(&blueprint_info.path)
@@ -419,11 +419,11 @@ pub(crate) fn blueprints_check_assets_loading(
         }
         let progress: f32 = loaded_amount as f32 / total as f32;
         assets_to_load.progress = progress;
-        //debug!("LOADING: in progress for ALL assets of {:?} (instance of {}): {} ",entity_name, blueprint_info.path, progress * 100.0);
+        //println!("LOADING: in progress for ALL assets of {:?} (instance of {}): {} ",entity_name, blueprint_info.path, progress * 100.0);
 
         if all_loaded {
             assets_to_load.all_loaded = true;
-            // debug!("LOADING: DONE for ALL assets of {:?} (instance of {}), preparing for spawn", entity_name, blueprint_info.path);
+            // println!("LOADING: DONE for ALL assets of {:?} (instance of {}), preparing for spawn", entity_name, blueprint_info.path);
             blueprint_events.send(BlueprintEvent::AssetsLoaded {
                 entity,
                 blueprint_name: blueprint_info.name.clone(),
@@ -440,12 +440,7 @@ pub(crate) fn blueprints_check_assets_loading(
 
 pub(crate) fn blueprints_assets_loaded(
     spawn_placeholders: Query<
-        (
-            Entity,
-            &BlueprintInfo,
-            Option<(&Transform, &GlobalTransform)>,
-            Option<&Name>,
-        ),
+        (Entity, &BlueprintInfo, Option<&Transform>, Option<&Name>),
         (
             Added<BlueprintAssetsLoaded>,
             Without<BlueprintAssetsNotLoaded>,
@@ -459,7 +454,7 @@ pub(crate) fn blueprints_assets_loaded(
 
     mut commands: Commands,
 ) {
-    for (entity, blueprint_info, maybe_transform, name) in spawn_placeholders.iter() {
+    for (entity, blueprint_info, transform, name) in spawn_placeholders.iter() {
         /*info!(
             "BLUEPRINT: all assets loaded, attempting to spawn blueprint SCENE {:?} for entity {:?}, id: {:}, parent:{:?}",
             blueprint_info.name, name, entity, original_parent
@@ -490,10 +485,10 @@ pub(crate) fn blueprints_assets_loaded(
         let scene = &blueprint_gltf.named_scenes[main_scene_name];
 
         // transforms are optional, but still deal with them correctly
-        let (transform, global_transform) = match maybe_transform {
-            Some((transform, global_transform)) => (*transform, *global_transform),
-            None => (Transform::default(), GlobalTransform::default()),
-        };
+        let mut transforms: Transform = Transform::default();
+        if transform.is_some() {
+            transforms = *transform.unwrap();
+        }
 
         let mut original_children: Vec<Entity> = vec![];
         if let Ok(c) = all_children.get(entity) {
@@ -515,23 +510,19 @@ pub(crate) fn blueprints_assets_loaded(
         }
         let graph = graphs.add(graph);
 
-        //debug!("Named animations : {:?}", named_animations.keys());
-        //debug!("ANIMATION INFOS: {:?}", animation_infos);
+        //println!("Named animations : {:?}", named_animations.keys());
+        //println!("ANIMATION INFOS: {:?}", animation_infos);
 
         commands.entity(entity).insert((
-            SceneBundle {
-                scene: scene.clone(),
-                transform,
-                global_transform,
-                ..Default::default()
-            },
+            SceneRoot(scene.clone()),
+            Transform::from(transforms),
             OriginalChildren(original_children),
             BlueprintAnimations {
                 // TODO: perhaps swap this out with InstanceAnimations depending on whether we are spawning a level or a simple blueprint
                 // these are animations specific to the blueprint
                 named_animations,
                 named_indices,
-                graph,
+                graph: AnimationGraphHandle::from(graph),
             },
         ));
     }
@@ -587,7 +578,7 @@ pub(crate) fn blueprints_scenes_spawned(
         if track_root.is_none() {
             for parent in all_parents.iter_ancestors(entity) {
                 if with_blueprint_infos.get(parent).is_ok() {
-                    debug!(
+                    println!(
                         "found a parent with blueprint_info {:?} for {:?}",
                         all_names.get(parent),
                         all_names.get(entity)
@@ -603,12 +594,12 @@ pub(crate) fn blueprints_scenes_spawned(
         if children.is_some() {
             for child in all_children.iter_descendants(entity) {
                 if with_blueprint_infos.get(child).is_ok() {
-                    // debug!("Parent blueprint instance of {:?} is {:?}",  all_names.get(child), all_names.get(entity));
+                    // println!("Parent blueprint instance of {:?} is {:?}",  all_names.get(child), all_names.get(entity));
                     for parent in all_parents.iter_ancestors(child) {
                         if with_blueprint_infos.get(parent).is_ok() {
                             if parent == entity {
-                                //debug!("yohoho");
-                                /*debug!(
+                                //println!("yohoho");
+                                /*println!(
                                     "Parent blueprint instance of {:?} is {:?}",
                                     all_names.get(child),
                                     all_names.get(parent)
@@ -715,7 +706,7 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
         }
 
         // copy components into from blueprint instance's blueprint_root_entity to original entity
-        commands.add(CopyComponents {
+        commands.queue(CopyComponents {
             source: blueprint_root_entity,
             destination: original,
             exclude: vec![TypeId::of::<Parent>(), TypeId::of::<Children>()],
@@ -733,7 +724,7 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
         if animations.named_animations.keys().len() > 0 {
             for (entity_with_player, parent) in animation_players.iter() {
                 if parent.get() == blueprint_root_entity {
-                    debug!(
+                    println!(
                         "FOUND ANIMATION PLAYER FOR {:?} {:?} ",
                         all_names.get(original),
                         all_names.get(entity_with_player)
@@ -747,9 +738,11 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
 
                     // since v0.14 you need both AnimationTransitions and AnimationGraph components/handle on the same entity as the animationPlayer
                     let transitions = AnimationTransitions::new();
+
                     commands
                         .entity(entity_with_player)
-                        .insert((transitions, animations.graph.clone()));
+                        .insert(transitions)
+                        .insert(animations.graph.clone());
                 }
             }
             // FIXME VERY convoluted, but it works
@@ -757,7 +750,7 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
                 if with_animation_infos.get(child).is_ok() {
                     // player is already on the same entity as the animation_infos
                     if animation_players.get(child).is_ok() {
-                        debug!(
+                        println!(
                             "found BLUEPRINT animation player for {:?} at {:?} Root: {:?}",
                             all_names.get(child),
                             all_names.get(child),
@@ -770,13 +763,13 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
                     } else {
                         for parent in all_parents.iter_ancestors(child) {
                             if animation_players.get(parent).is_ok() {
-                                /*debug!(
+                                /*println!(
                                     "found SCENE animation player for {:?} at {:?} Root: {:?}",
                                     all_names.get(child),
                                     all_names.get(parent),
                                     all_names.get(original)
                                 );
-                                debug!("INSERTING SCENE ANIMATIONS INTO");*/
+                                println!("INSERTING SCENE ANIMATIONS INTO");*/
                                 let original_animations = anims.get(original).unwrap();
                                 commands.entity(child).insert((
                                     InstanceAnimationPlayerLink(parent),
@@ -879,7 +872,7 @@ pub(crate) fn blueprints_finalize_instances(
                     }
                     if all_spawned {
                         // let root_name = all_names.get(track_root.0);
-                        // debug!("ALLLLL SPAAAAWNED for {} named {:?}", track_root.0, root_name);
+                        // println!("ALLLLL SPAAAAWNED for {} named {:?}", track_root.0, root_name);
                         commands.entity(track_root.0).insert(BlueprintChildrenReady);
                     }
                 }

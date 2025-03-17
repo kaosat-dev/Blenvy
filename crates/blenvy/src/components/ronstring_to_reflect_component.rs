@@ -1,6 +1,7 @@
 use bevy::log::{debug, warn};
+use bevy::prelude::*;
 use bevy::reflect::serde::ReflectDeserializer;
-use bevy::reflect::{Reflect, TypeRegistration, TypeRegistry};
+use bevy::reflect::{TypeRegistration, TypeRegistry};
 use bevy::utils::HashMap;
 use ron::Value;
 use serde::de::DeserializeSeed;
@@ -10,10 +11,10 @@ use super::capitalize_first_letter;
 pub fn ronstring_to_reflect_component(
     ron_string: &str,
     type_registry: &TypeRegistry,
-) -> Vec<(Box<dyn Reflect>, TypeRegistration)> {
+) -> Vec<(Box<dyn PartialReflect>, TypeRegistration)> {
     let lookup: HashMap<String, Value> = ron::from_str(ron_string).unwrap();
-    let mut components: Vec<(Box<dyn Reflect>, TypeRegistration)> = Vec::new();
-    // debug!("ron_string {:?}", ron_string);
+    let mut components: Vec<(Box<dyn PartialReflect>, TypeRegistration)> = Vec::new();
+    // println!("ron_string {:?}", ron_string);
     for (name, value) in lookup.into_iter() {
         let parsed_value: String = match value.clone() {
             Value::String(str) => str,
@@ -40,7 +41,7 @@ fn components_string_to_components(
     value: Value,
     parsed_value: String,
     type_registry: &TypeRegistry,
-    components: &mut Vec<(Box<dyn Reflect>, TypeRegistration)>,
+    components: &mut Vec<(Box<dyn PartialReflect>, TypeRegistration)>,
 ) {
     let type_string = name.replace("component: ", "").trim().to_string();
     let capitalized_type_name = capitalize_first_letter(type_string.as_str());
@@ -63,7 +64,7 @@ fn components_string_to_components(
         let serializer = ReflectSerializer::new(&test_struct, &type_registry);
         let serialized =
             ron::ser::to_string_pretty(&serializer, ron::ser::PrettyConfig::default()).unwrap();
-        debug!("serialized Component {}", serialized);
+        println!("serialized Component {}", serialized);
         */
         debug!("component data ron string {}", ron_string);
         let mut deserializer = ron::Deserializer::from_str(ron_string.as_str())
@@ -97,7 +98,7 @@ fn components_string_to_components(
 fn bevy_components_string_to_components(
     parsed_value: String,
     type_registry: &TypeRegistry,
-    components: &mut Vec<(Box<dyn Reflect>, TypeRegistration)>,
+    components: &mut Vec<(Box<dyn PartialReflect>, TypeRegistration)>,
 ) {
     let lookup: HashMap<String, Value> = ron::from_str(&parsed_value).unwrap();
     for (key, value) in lookup.into_iter() {

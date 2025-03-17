@@ -20,9 +20,9 @@ If you can I would generally recommend starting fresh, but a lot of effort has b
 ## Installation: 
 
 
-* grab the latest release zip file from the [release page](https://github.com/kaosat-dev/Blenvy/releases/)
+* grab the latest release zip file
 
-  ![blender addon install](./docs/blender_addon_install_zip.png)
+![blender addon install](./docs/blender_addon_install_zip.png)
 
 * up to Blender 4.1 go to edit => preferences => add-ons, click on install and choose the path where ```blenvy.zip``` is stored
 

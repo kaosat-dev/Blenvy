@@ -28,17 +28,9 @@ pub(crate) fn inject_materials(
                                         With<BlueprintMaterialAssetsLoaded>,
                                     ),*/
     >,
-    with_materials_and_meshes: Query<
-        (),
-        (
-            With<Parent>,
-            With<Handle<StandardMaterial>>,
-            With<Handle<Mesh>>,
-        ),
-    >,
+    with_materials_and_meshes: Query<(), (With<Parent>, With<Mesh3d>)>,
     assets_gltf: Res<Assets<Gltf>>,
     asset_server: Res<AssetServer>,
-
     mut commands: Commands,
 ) {
     for (entity, material_infos, children) in material_infos_query.iter() {
@@ -95,7 +87,9 @@ pub(crate) fn inject_materials(
                             material_info.path.clone()
                         );
 
-                        commands.entity(*child).insert(material.clone());
+                        commands
+                            .entity(*child)
+                            .insert(MeshMaterial3d(material.clone()));
                     }
                 }
             }

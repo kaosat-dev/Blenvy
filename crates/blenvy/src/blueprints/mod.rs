@@ -53,7 +53,7 @@ impl Default for BluePrintBundle {
 pub struct BlueprintsPlugin {}
 
 fn hot_reload(watching_for_changes: Res<WatchingForChanges>) -> bool {
-    // debug!("hot reload ? {}", watching_for_changes.0);
+    // println!("hot reload ? {}", watching_for_changes.0);
     watching_for_changes.0
 }
 
@@ -107,12 +107,9 @@ impl Plugin for BlueprintsPlugin {
             .add_plugins(RonAssetPlugin::<BlueprintPreloadAssets>::new(&["meta.ron"]))
             .configure_sets(
                 Update,
-                (
-                    GltfComponentsSet::Injection,
-                    GltfBlueprintsSet::Spawn,
-                    GltfBlueprintsSet::AfterSpawn,
-                )
-                    .chain(),
+                (GltfBlueprintsSet::Spawn, GltfBlueprintsSet::AfterSpawn)
+                    .chain()
+                    .after(GltfComponentsSet::Injection),
             )
             .add_systems(
                 Update,
@@ -124,7 +121,7 @@ impl Plugin for BlueprintsPlugin {
                     blueprints_assets_loaded,
                     blueprints_scenes_spawned,
                     blueprints_cleanup_spawned_scene,
-                    // beyond this point : post processing to finalize blueprint instances
+                    // // beyond this point : post processing to finalize blueprint instances
                     inject_materials,
                     compute_scene_aabbs,
                     blueprints_finalize_instances,

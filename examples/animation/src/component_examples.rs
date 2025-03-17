@@ -60,6 +60,21 @@ pub enum EnumTest {
     None,
 }
 
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+/// Demo marker component
+pub struct Player;
+
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+/// Demo marker component
+pub struct Fox;
+
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
+/// Demo marker component
+pub struct Robot;
+
 pub struct ComponentsExamplesPlugin;
 impl Plugin for ComponentsExamplesPlugin {
     fn build(&self, app: &mut App) {
