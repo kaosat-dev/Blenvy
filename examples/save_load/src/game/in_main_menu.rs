@@ -96,7 +96,7 @@ pub fn setup_main_menu(mut commands: Commands) {
 
 pub fn teardown_main_menu(in_main_menu: Query<Entity, With<InMainMenu>>, mut commands: Commands) {
     for entity in in_main_menu.iter() {
-        commands.entity(entity).despawn_recursive();
+        commands.entity(entity).despawn();
     }
 }
 

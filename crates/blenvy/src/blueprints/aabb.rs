@@ -1,4 +1,5 @@
 use bevy::{math::Vec3A, prelude::*, render::primitives::Aabb};
+use tracing::info;
 
 use crate::{BlenvyConfig, BlueprintReadyForFinalizing, BlueprintReadyForPostProcess};
 
@@ -49,10 +50,10 @@ pub fn compute_descendant_aabb(
     if let Ok(children_list) = children.get(root_entity) {
         let mut chilren_aabbs: Vec<Aabb> = vec![];
         for child in children_list.iter() {
-            if let Ok(aabb) = existing_aabbs.get(*child) {
+            if let Ok(aabb) = existing_aabbs.get(child) {
                 chilren_aabbs.push(*aabb);
             } else {
-                let aabb = compute_descendant_aabb(*child, children, existing_aabbs);
+                let aabb = compute_descendant_aabb(child, children, existing_aabbs);
                 chilren_aabbs.push(aabb);
             }
         }

@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use tracing::info;
 
 use crate::{BlueprintInfo, DynamicEntitiesRoot, GameWorldTag, HideUntilReady, SpawnBlueprint};
 
@@ -55,7 +56,7 @@ pub(crate) fn prepare_loading(
 ) {
     for e in gameworlds.iter() {
         info!("--loading: despawn old world/level");
-        commands.entity(e).despawn_recursive();
+        commands.entity(e).despawn();
     }
 }
 
@@ -83,10 +84,7 @@ pub(crate) fn load_game(
     // let input = std::fs::read(&path)?;
     let _dynamic_data = commands
         .spawn((
-            DynamicSceneBundle {
-                scene: asset_server.load(load_request.path.clone()),
-                ..default()
-            },
+            DynamicSceneRoot(asset_server.load(load_request.path.clone())),
             bevy::prelude::Name::from("World_dynamic"),
             DynamicEntitiesRoot,
             GameWorldTag,

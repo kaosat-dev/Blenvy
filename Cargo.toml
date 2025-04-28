@@ -1,10 +1,20 @@
 [workspace]
-members = [
-    "crates/*",
-    "examples/*",
-    "testing/bevy_example/",
-]
+members = ["crates/*", "examples/*", "testing/bevy_example/"]
 resolver = "2"
+
+[workspace.dependencies]
+blenvy = { path = "crates/blenvy" }
+
+bevy-inspector-egui = "0.31"
+bevy = { version = "0.16", default-features = false }
+bevy_common_assets = "0.13"
+avian3d = "0.2.1"
+
+ron = "0.10.1"
+serde_json = "1.0.108"
+serde = "1.0.193"
+rand = "0.9.1"
+tracing = "0.1.41"
 
 [workspace.lints.clippy]
 type_complexity = "allow"

@@ -27,10 +27,10 @@ struct UnregisteredComponent;
 
 pub fn spawn_test(keycode: Res<ButtonInput<KeyCode>>, mut commands: Commands) {
     if keycode.just_pressed(KeyCode::KeyS) {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let range = 5.5;
-        let x: f32 = rng.gen_range(-range..range);
-        let y: f32 = rng.gen_range(-range..range);
+        let x: f32 = rng.random_range(-range..range);
+        let y: f32 = rng.random_range(-range..range);
 
         /*let mut rng = rand::thread_rng();
         let range = 0.8;
@@ -38,7 +38,7 @@ pub fn spawn_test(keycode: Res<ButtonInput<KeyCode>>, mut commands: Commands) {
         let vel_y: f32 = rng.gen_range(2.0..2.5);
         let vel_z: f32 = rng.gen_range(-range..range);*/
 
-        let name_index: u64 = rng.gen();
+        let name_index: u64 = rng.random();
 
         let __new_entity = commands
             .spawn((
@@ -53,7 +53,7 @@ pub fn spawn_test(keycode: Res<ButtonInput<KeyCode>>, mut commands: Commands) {
                 bevy::prelude::Name::from(format!("test{}", name_index)),
                 HideUntilReady,
                 AddToGameWorld,
-                TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
+                Transform::from_xyz(x, 2.0, y),
                 /*Velocity {
                     linvel: Vec3::new(vel_x, vel_y, vel_z),
                     angvel: Vec3::new(0.0, 0.0, 0.0),

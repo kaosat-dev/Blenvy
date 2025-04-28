@@ -44,7 +44,7 @@ pub(crate) fn mark_load_requested(
 pub(crate) fn unload_world(mut commands: Commands, gameworlds: Query<Entity, With<GameWorldTag>>) {
     for e in gameworlds.iter() {
         info!("--loading: despawn old world/level");
-        commands.entity(e).despawn_recursive();
+        commands.entity(e).despawn();
     }
 }
 

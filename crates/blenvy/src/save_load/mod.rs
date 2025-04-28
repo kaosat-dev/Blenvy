@@ -1,5 +1,5 @@
 pub mod common;
-pub use common::*;
+pub(crate) use common::*;
 
 pub mod saving;
 pub use saving::*;
@@ -68,7 +68,7 @@ impl Plugin for SaveLoadPlugin {
             .add_systems(Update, process_save_requests)
             .add_systems(
                 Update,
-                (prepare_save_game, apply_deferred, save_game, cleanup_save)
+                (prepare_save_game, ApplyDeferred, save_game, cleanup_save)
                     .chain()
                     .run_if(should_save),
             )
@@ -78,7 +78,7 @@ impl Plugin for SaveLoadPlugin {
             .add_systems(Update, process_load_requests)
             .add_systems(
                 Update,
-                (prepare_loading, apply_deferred, load_game)
+                (prepare_loading, ApplyDeferred, load_game)
                     .chain()
                     .run_if(should_load),
                 //.run_if(not(resource_exists::<LoadFirstStageDone>))

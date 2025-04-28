@@ -19,7 +19,7 @@ pub fn picking(
                 .translation()
                 .distance(pickable_transforms.translation());
             if distance < 2.5 {
-                commands.entity(pickable).despawn_recursive();
+                commands.entity(pickable).despawn();
             }
         }
     }

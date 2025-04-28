@@ -156,7 +156,7 @@ impl MaterialExtension for MyExtension {
     }
 }
 
-use bevy::utils::HashMap;
+use bevy::platform::collections::HashMap;
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]

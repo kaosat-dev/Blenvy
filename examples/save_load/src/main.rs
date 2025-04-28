@@ -1,6 +1,6 @@
 use std::any::TypeId;
 
-use bevy::{prelude::*, utils::hashbrown::HashSet};
+use bevy::{prelude::*, platform::collections::HashSet};
 use blenvy::{
     AddToGameWorld, BlenvyPlugin, BlueprintInfo, BlueprintWorld, Dynamic, HideUntilReady,
     LoadingRequest, SavingRequest, SpawnBlueprint,
@@ -11,6 +11,7 @@ use rand::Rng;
 // use game::*;
 
 mod component_examples;
+#[cfg(feature = "bevy-inspector")]
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use component_examples::*;
 
@@ -18,6 +19,7 @@ fn main() {
     App::new()
         .add_plugins((
             DefaultPlugins.set(AssetPlugin::default()),
+            #[cfg(feature = "bevy-inspector")]
             WorldInspectorPlugin::new(),
             BlenvyPlugin {
                 save_component_filter: SceneFilter::Allowlist(HashSet::from([
@@ -62,13 +64,13 @@ fn setup_game(mut commands: Commands) {
 fn spawn_blueprint_instance(keycode: Res<ButtonInput<KeyCode>>, mut commands: Commands) {
     if keycode.just_pressed(KeyCode::KeyT) {
         // random position
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let range = 5.5;
-        let x: f32 = rng.gen_range(-range..range);
-        let y: f32 = rng.gen_range(-range..range);
+        let x: f32 = rng.random_range(-range..range);
+        let y: f32 = rng.random_range(-range..range);
 
         // random name
-        let name_index: u64 = rng.gen();
+        let name_index: u64 = rng.random();
 
         commands.spawn((
             BlueprintInfo::from_path("blueprints/test.glb"),
@@ -77,7 +79,7 @@ fn spawn_blueprint_instance(keycode: Res<ButtonInput<KeyCode>>, mut commands: Co
             bevy::prelude::Name::from(format!("test{}", name_index)),
             HideUntilReady,
             AddToGameWorld,
-            TransformBundle::from_transform(Transform::from_xyz(x, 2.0, y)),
+            Transform::from_xyz(x, 2.0, y),
         ));
     }
 }
@@ -91,7 +93,7 @@ fn move_movers(mut movers: Query<&mut Transform, With<Dynamic>>) {
 
 fn save_game(keycode: Res<ButtonInput<KeyCode>>, mut save_requests: EventWriter<SavingRequest>) {
     if keycode.just_pressed(KeyCode::KeyS) {
-        save_requests.send(SavingRequest {
+        save_requests.write(SavingRequest {
             path: "scenes/save.scn.ron".into(),
         });
     }
@@ -99,7 +101,7 @@ fn save_game(keycode: Res<ButtonInput<KeyCode>>, mut save_requests: EventWriter<
 
 fn load_game(keycode: Res<ButtonInput<KeyCode>>, mut load_requests: EventWriter<LoadingRequest>) {
     if keycode.just_pressed(KeyCode::KeyL) {
-        load_requests.send(LoadingRequest {
+        load_requests.write(LoadingRequest {
             path: "scenes/save.scn.ron".into(),
         });
     }

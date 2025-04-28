@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use tracing::{debug, info, warn};
 
 use crate::BlenvyConfig;
 
@@ -31,9 +32,9 @@ pub(crate) fn inject_materials(
     with_materials_and_meshes: Query<
         (),
         (
-            With<Parent>,
-            With<Handle<StandardMaterial>>,
-            With<Handle<Mesh>>,
+            With<ChildOf>,
+            With<MeshMaterial3d<StandardMaterial>>,
+            With<Mesh3d>,
         ),
     >,
     assets_gltf: Res<Assets<Gltf>>,
@@ -88,14 +89,16 @@ pub(crate) fn inject_materials(
             if let Some(material) = material_found {
                 info!("Step 6: injecting/replacing materials");
                 for (child_index, child) in children.iter().enumerate() {
-                    if child_index == material_index && with_materials_and_meshes.contains(*child) {
+                    if child_index == material_index && with_materials_and_meshes.contains(child) {
                         info!(
                             "injecting material {}, path: {:?}",
                             material_info.name,
                             material_info.path.clone()
                         );
 
-                        commands.entity(*child).insert(material.clone());
+                        commands
+                            .entity(child)
+                            .insert(MeshMaterial3d(material.clone()));
                     }
                 }
             }

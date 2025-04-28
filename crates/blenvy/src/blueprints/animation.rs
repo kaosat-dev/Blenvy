@@ -1,5 +1,5 @@
+use bevy::platform::collections::HashMap;
 use bevy::prelude::*;
-use bevy::utils::HashMap;
 
 #[derive(Component, Reflect, Default, Debug)]
 #[reflect(Component)]
@@ -107,7 +107,7 @@ pub fn trigger_blueprint_animation_markers_events(
             let animation_player = animation_players.get(player_link.0).unwrap();
             let (animation_infos, animation_markers) = animation_infos.get(infos_link.0).unwrap();
 
-            if animation_player.animation_is_playing(*node_index) {
+            if animation_player.is_playing_animation(*node_index) {
                 if let Some(animation) = animation_player.animation(*node_index) {
                     // animation.speed()
                     // animation.completions()
@@ -146,7 +146,7 @@ pub fn trigger_blueprint_animation_markers_events(
                                 let diff = frame as f32 - frame_seconds;
                                 if diff < 0.1 {
                                     for marker_name in matching_markers_per_frame {
-                                        animation_marker_events.send(AnimationMarkerReached {
+                                        animation_marker_events.write(AnimationMarkerReached {
                                             entity,
                                             animation_name: animation_name.clone(),
                                             frame,
@@ -185,7 +185,7 @@ pub fn trigger_instance_animation_markers_events(
 
         for (animation_name, node_index) in animations.named_indices.iter() {
             let animation_player = animation_players.get(player_link.0).unwrap();
-            if animation_player.animation_is_playing(*node_index) {
+            if animation_player.is_playing_animation(*node_index) {
                 if let Some(__animation) = animation_player.animation(*node_index) {
                     if let Some(animation_clip_handle) =
                         animations.named_animations.get(animation_name)

@@ -3,9 +3,10 @@ use crate::{
     BlueprintSpawning, FromBlueprint, SpawnBlueprint, SubBlueprintsSpawnTracker,
 };
 use bevy::asset::AssetEvent;
+use bevy::platform::collections::HashMap;
 use bevy::prelude::*;
 use bevy::scene::SceneInstance;
-use bevy::utils::hashbrown::HashMap;
+use tracing::info;
 
 /// Resource mapping asset paths (ideally untyped ids, but more complex) to a list of blueprint instance entity ids
 #[derive(Debug, Clone, Resource, Default)]
@@ -21,7 +22,7 @@ pub(crate) fn react_to_asset_changes(
     blueprint_assets: Query<(Entity, Option<&Name>, &BlueprintInfo, Option<&Children>)>,
     _blueprint_children_entities: Query<&FromBlueprint>, //=> can only be used if the entites are tagged
     assets_to_blueprint_instances: Res<AssetToBlueprintInstancesMapper>,
-    all_parents: Query<&Parent>,
+    all_parents: Query<&ChildOf>,
     spawning_blueprints: Query<&BlueprintSpawning>,
 
     asset_server: Res<AssetServer>,
@@ -90,7 +91,7 @@ pub(crate) fn react_to_asset_changes(
             // TODO: only remove those that are "in blueprint"
             if children.is_some() {
                 for child in children.unwrap().iter() {
-                    commands.entity(*child).despawn_recursive();
+                    commands.entity(child).despawn();
                 }
             }
             commands

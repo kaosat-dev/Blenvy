@@ -26,6 +26,6 @@ pub fn teardown_saving_screen(
     mut commands: Commands,
 ) {
     for entity in in_main_menu.iter() {
-        commands.entity(entity).despawn_recursive();
+        commands.entity(entity).despawn();
     }
 }

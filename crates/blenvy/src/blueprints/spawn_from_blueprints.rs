@@ -1,6 +1,7 @@
 use std::path::Path;
 
-use bevy::{gltf::Gltf, prelude::*, scene::SceneInstance, utils::hashbrown::HashMap};
+use bevy::{gltf::Gltf, platform::collections::HashMap, prelude::*, scene::SceneInstance};
+use tracing::{debug, info, warn};
 
 use crate::{
     AnimationInfos, AssetLoadTracker, AssetToBlueprintInstancesMapper, BlueprintAnimationInfosLink,
@@ -118,7 +119,7 @@ pub(super) fn blueprints_prepare_metadata_file_for_spawn(
             Entity,
             &BlueprintInfo,
             Option<&Name>,
-            Option<&Parent>,
+            Option<&ChildOf>,
             Option<&HideUntilReady>,
             Option<&Visibility>,
             Option<&AddToGameWorld>,
@@ -199,7 +200,7 @@ pub(super) fn blueprints_prepare_metadata_file_for_spawn(
             // only allow automatically adding a newly spawned blueprint instance to the "world", if the entity does not have a parent
             if add_to_world.is_some() {
                 let world = game_world
-                    .get_single_mut()
+                    .single_mut()
                     .expect("there should be a game world present");
                 commands.entity(world).add_child(entity);
             }
@@ -424,7 +425,7 @@ pub(crate) fn blueprints_check_assets_loading(
         if all_loaded {
             assets_to_load.all_loaded = true;
             // println!("LOADING: DONE for ALL assets of {:?} (instance of {}), preparing for spawn", entity_name, blueprint_info.path);
-            blueprint_events.send(BlueprintEvent::AssetsLoaded {
+            blueprint_events.write(BlueprintEvent::AssetsLoaded {
                 entity,
                 blueprint_name: blueprint_info.name.clone(),
                 blueprint_path: blueprint_info.path.clone(),
@@ -493,7 +494,7 @@ pub(crate) fn blueprints_assets_loaded(
         let mut original_children: Vec<Entity> = vec![];
         if let Ok(c) = all_children.get(entity) {
             for child in c.iter() {
-                original_children.push(*child);
+                original_children.push(child);
             }
         }
 
@@ -514,11 +515,8 @@ pub(crate) fn blueprints_assets_loaded(
         //println!("ANIMATION INFOS: {:?}", animation_infos);
 
         commands.entity(entity).insert((
-            SceneBundle {
-                scene: scene.clone(),
-                transform: transforms,
-                ..Default::default()
-            },
+            SceneRoot(scene.clone()),
+            transforms,
             OriginalChildren(original_children),
             BlueprintAnimations {
                 // TODO: perhaps swap this out with InstanceAnimations depending on whether we are spawning a level or a simple blueprint
@@ -562,7 +560,7 @@ pub(crate) fn blueprints_scenes_spawned(
     with_blueprint_infos: Query<(Entity, Option<&Name>), With<BlueprintInfo>>,
 
     all_children: Query<&Children>,
-    all_parents: Query<&Parent>,
+    all_parents: Query<&ChildOf>,
 
     // mut sub_blueprint_trackers: Query<(Entity, &mut SubBlueprintsSpawnTracker, &BlueprintInfo)>,
     mut commands: Commands,
@@ -672,9 +670,9 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
         ),
         Added<BlueprintChildrenReady>,
     >,
-    animation_players: Query<(Entity, &Parent), With<AnimationPlayer>>,
+    animation_players: Query<(Entity, &ChildOf), With<AnimationPlayer>>,
     all_children: Query<&Children>,
-    all_parents: Query<&Parent>,
+    all_parents: Query<&ChildOf>,
     with_animation_infos: Query<&AnimationInfos>,
     // FIXME: meh
     anims: Query<&BlueprintAnimations>,
@@ -696,8 +694,8 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
                                                              // let diff = HashSet::from_iter(original_children.0).difference(HashSet::from_iter(children));
                                                              // we find the first child that was not in the entity before (aka added during the scene spawning)
         for child in children.iter() {
-            if !original_children.0.contains(child) {
-                blueprint_root_entity = *child;
+            if !original_children.0.contains(&child) {
+                blueprint_root_entity = child;
                 break;
             }
         }
@@ -709,24 +707,24 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
         }
 
         // copy components into from blueprint instance's blueprint_root_entity to original entity
-        commands.add(CopyComponents {
+        commands.queue(CopyComponents {
             source: blueprint_root_entity,
             destination: original,
-            exclude: vec![TypeId::of::<Parent>(), TypeId::of::<Children>()],
+            exclude: vec![TypeId::of::<ChildOf>(), TypeId::of::<Children>()],
             stringent: false,
         });
 
         // we move all of children of the blueprint instance one level to the original entity to avoid having an additional, useless nesting level
         if let Ok(root_entity_children) = all_children.get(blueprint_root_entity) {
             for child in root_entity_children.iter() {
-                // info!("copying child {:?} upward from {:?} to {:?}", names.get(*child), blueprint_root_entity, original);
-                commands.entity(original).add_child(*child);
+                // info!("copying child {:?} upward from {:?} to {:?}", names.get(child), blueprint_root_entity, original);
+                commands.entity(original).add_child(child);
             }
         }
 
         if animations.named_animations.keys().len() > 0 {
             for (entity_with_player, parent) in animation_players.iter() {
-                if parent.get() == blueprint_root_entity {
+                if parent.parent() == blueprint_root_entity {
                     println!(
                         "FOUND ANIMATION PLAYER FOR {:?} {:?} ",
                         all_names.get(original),
@@ -743,7 +741,7 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
                     let transitions = AnimationTransitions::new();
                     commands
                         .entity(entity_with_player)
-                        .insert((transitions, animations.graph.clone()));
+                        .insert((transitions, AnimationGraphHandle(animations.graph.clone())));
                 }
             }
             // FIXME VERY convoluted, but it works
@@ -799,7 +797,7 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
             .remove::<BlueprintChildrenReady>() // we are done with this step, we can remove the `BlueprintChildrenReady` tag component
             .insert(BlueprintReadyForPostProcess); // Tag the entity so any systems dealing with post processing can know it is now their "turn"
 
-        commands.entity(blueprint_root_entity).despawn_recursive(); // Remove the root entity that comes from the spawned-in scene
+        commands.entity(blueprint_root_entity).despawn(); // Remove the root entity that comes from the spawned-in scene
     }
 }
 
@@ -895,7 +893,7 @@ pub(crate) fn blueprints_finalize_instances(
             }
         }
 
-        blueprint_events.send(BlueprintEvent::InstanceReady {
+        blueprint_events.write(BlueprintEvent::InstanceReady {
             entity,
             blueprint_name: blueprint_info.name.clone(),
             blueprint_path: blueprint_info.path.clone(),

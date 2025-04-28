@@ -39,6 +39,6 @@ pub fn teardown_loading_screen(
     mut commands: Commands,
 ) {
     for entity in in_main_menu.iter() {
-        commands.entity(entity).despawn_recursive();
+        commands.entity(entity).despawn();
     }
 }
