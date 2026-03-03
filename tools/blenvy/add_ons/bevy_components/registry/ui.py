@@ -1,5 +1,5 @@
 import bpy
-from bpy_types import (UIList)
+from bpy.types import (UIList)
 
 class BLENVY_PT_components_missing_types_panel(bpy.types.Panel):
     """panel listing all the missing bevy types in the schema"""

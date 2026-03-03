@@ -4,7 +4,7 @@ import json
 import os
 import uuid
 from pathlib import Path
-from bpy_types import (PropertyGroup)
+from bpy.types import (PropertyGroup)
 from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorProperty, IntProperty, IntVectorProperty, EnumProperty, PointerProperty, CollectionProperty)
 
 from ..settings import load_settings

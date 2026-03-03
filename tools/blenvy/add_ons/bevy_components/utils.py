@@ -1,7 +1,7 @@
 import json
 import bpy
 from bpy.props import StringProperty, EnumProperty
-from bpy_types import Operator
+from bpy.types import Operator
 from ...core.helpers_collections import set_active_collection
 from .constants import HIDDEN_COMPONENTS
 

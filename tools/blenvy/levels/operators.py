@@ -1,6 +1,6 @@
 import os
 import bpy
-from bpy_types import (Operator)
+from bpy.types import (Operator)
 from bpy.props import (StringProperty)
 
 class BLENVY_OT_level_select(Operator):

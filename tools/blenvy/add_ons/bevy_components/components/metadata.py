@@ -1,6 +1,6 @@
 import bpy
 from bpy.props import (StringProperty, BoolProperty, PointerProperty)
-from bpy_types import (PropertyGroup)
+from bpy.types import (PropertyGroup)
 
 from ..propGroups.conversions_from_prop_group import property_group_value_to_custom_property_value
 from ..propGroups.conversions_to_prop_group import property_group_value_from_custom_property_value

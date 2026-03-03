@@ -1,6 +1,6 @@
 import os
 import bpy
-from bpy_types import (Operator)
+from bpy.types import (Operator)
 from bpy.props import (StringProperty)
 from bpy_extras.io_utils import ImportHelper
 from ....settings import upsert_settings

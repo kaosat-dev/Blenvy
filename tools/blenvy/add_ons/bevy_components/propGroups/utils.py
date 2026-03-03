@@ -4,7 +4,7 @@ def update_calback_helper(definition, update, component_name_override):
 
 import bpy
 from bpy.props import (StringProperty)
-from bpy_types import PropertyGroup
+from bpy.types import PropertyGroup
 
 # this helper creates a "fake"/wrapper property group that is NOT a real type in the registry
 # usefull for things like value types in list items etc

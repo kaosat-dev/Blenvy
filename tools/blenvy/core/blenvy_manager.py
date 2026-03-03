@@ -1,6 +1,6 @@
 import os
 import bpy
-from bpy_types import (PropertyGroup)
+from bpy.types import (PropertyGroup)
 from bpy.props import (BoolProperty, EnumProperty, PointerProperty, StringProperty, CollectionProperty, IntProperty, FloatProperty, FloatVectorProperty)
 from ..settings import upsert_settings, load_settings, generate_complete_settings_dict, clear_settings
 from ..add_ons.auto_export.settings import AutoExportSettings

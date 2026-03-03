@@ -1,5 +1,5 @@
 import json
-from bpy_types import Operator, UIList
+from bpy.types import Operator, UIList
 from bpy.props import (StringProperty, EnumProperty, PointerProperty, FloatVectorProperty, IntProperty)
 
 from ..propGroups.conversions_from_prop_group import property_group_value_to_custom_property_value

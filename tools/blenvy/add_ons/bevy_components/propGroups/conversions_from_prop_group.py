@@ -1,4 +1,4 @@
-from bpy_types import PropertyGroup
+from bpy.types import PropertyGroup
 
 conversion_tables = {
     "bool": lambda value: value,

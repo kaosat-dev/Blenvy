@@ -1,5 +1,5 @@
 import json
-from bpy_types import Operator
+from bpy.types import Operator
 from bpy.props import (StringProperty, EnumProperty, IntProperty)
 from ..utils import get_item_by_type
 

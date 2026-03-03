@@ -1,6 +1,6 @@
 import os
 import bpy
-from bpy_types import (PropertyGroup)
+from bpy.types import (PropertyGroup)
 from bpy.props import (StringProperty, BoolProperty, FloatProperty)
 from ...settings import load_settings, upsert_settings, generate_complete_settings_dict, clear_settings
 

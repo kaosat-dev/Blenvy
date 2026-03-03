@@ -1,4 +1,4 @@
-from bpy_types import PropertyGroup
+from bpy.types import PropertyGroup
 import re
 
 def parse_struct_string(string, start_nesting=0):

@@ -2,7 +2,7 @@
 import random
 import string
 import uuid
-from bpy_types import PropertyGroup
+from bpy.types import PropertyGroup
 
 def random_bool():
     return bool(random.getrandbits(1))

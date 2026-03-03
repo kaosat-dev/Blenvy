@@ -1,5 +1,5 @@
 import bpy
-from bpy_types import PropertyGroup
+from bpy.types import PropertyGroup
 from bpy.props import (PointerProperty)
 from . import process_structs
 from . import process_tupples

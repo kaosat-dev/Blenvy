@@ -1,4 +1,4 @@
-from bpy_types import (Operator)
+from bpy.types import (Operator)
 from bpy.props import (EnumProperty)
 
 from ..settings import clear_settings

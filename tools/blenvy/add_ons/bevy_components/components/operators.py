@@ -1,7 +1,7 @@
 import ast
 import json
 import bpy
-from bpy_types import Operator
+from bpy.types import Operator
 from bpy.props import (StringProperty, EnumProperty)
 
 from .metadata import add_component_from_custom_property, add_component_to_item, apply_customProperty_values_to_item_propertyGroups, apply_propertyGroup_values_to_item_customProperties, apply_propertyGroup_values_to_item_customProperties_for_component, copy_propertyGroup_values_to_another_item, get_bevy_component_value_by_long_name, get_bevy_components, is_bevy_component_in_item, remove_component_from_item, rename_component, toggle_component

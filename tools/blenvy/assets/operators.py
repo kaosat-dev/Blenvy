@@ -1,7 +1,7 @@
 import os
 import json
 import bpy
-from bpy_types import (Operator)
+from bpy.types import (Operator)
 from bpy.props import (BoolProperty, StringProperty, EnumProperty)
 
 from .asset_helpers import does_asset_exist, get_user_assets, remove_asset, upsert_asset
