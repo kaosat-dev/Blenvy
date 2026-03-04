@@ -11,6 +11,20 @@ def draw_settings_ui(layout, component_settings):
     col = row.column()
     col.operator(operator="blenvy.components_registry_browse_schema", text="", icon="FILE_FOLDER")
 
+   
+
+    row = layout.row()
+    col = row.column()
+    col.label(text="Registry: BRP(bevy remote protocol) HOST")
+    col = row.column()
+    col.prop(component_settings, "brp_host", text="")
+
+    row = layout.row()
+    col = row.column()
+    col.label(text="Registry: BRP(bevy remote protocol) PORT")
+    col = row.column()
+    col.prop(component_settings, "brp_port", text="")
+
     layout.separator()
     layout.operator(operator="blenvy.components_registry_reload", text="reload registry" , icon="FILE_REFRESH")
 

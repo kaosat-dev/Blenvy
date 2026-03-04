@@ -7,6 +7,7 @@ from bpy.types import (PropertyGroup)
 from bpy.props import (StringProperty, BoolProperty, FloatProperty, FloatVectorProperty, IntProperty, IntVectorProperty, EnumProperty, PointerProperty, CollectionProperty)
 from ..components.metadata import ComponentMetadata
 from .hashing.tiger import hash as tiger_hash
+from .brp import brp_request
 
 
 # helper class to store missing bevy types information
@@ -199,10 +200,33 @@ class ComponentsRegistry(PropertyGroup):
         self.invalid_components.clear()
         # now prepare paths to load data
 
-        with open(component_settings.schema_path_full) as f: 
-            data = json.load(f) 
-            defs = data["$defs"]
-            self.registry = json.dumps(defs) # FIXME:meh ?
+        #with open(component_settings.schema_path_full) as f: 
+        #    data = json.load(f) 
+        #    defs = data["$defs"]
+        #    self.registry = json.dumps(defs) # FIXME:meh ?
+
+        component_settings = blenvy.components
+        host = component_settings.brp_host
+        port =  component_settings.brp_port
+        rpc_response = brp_request("rpc.discover", host, port)
+        print("RPC RESPONSE", rpc_response)
+
+        brp_response = brp_request("registry.schema", host, port)
+        data = brp_response["result"]
+
+        # FIXME: temporary stop gap solution for compatibility with the rest of the code
+        for key in data :
+            data[key]["long_name"] = data[key]["typePath"]
+            data[key]["short_name"] = data[key]["shortPath"]
+        self.registry = json.dumps(data)
+        #print("RPC RESPONSE SCHEMA", data)
+
+        trigger_event_response =  brp_request("world.trigger_event", host, port, {"event":"blenvy::remote::PlayerKilled"}) 
+        print("trigger_event_response", trigger_event_response)
+
+        trigger_event_response =  brp_request("world.trigger_event", host, port, {"event":"blenvy::remote::WriteSceneStructure", "value":"{}"}) 
+        print("trigger_event_response", trigger_event_response)
+
 
         component_settings.start_schema_watcher()       
 

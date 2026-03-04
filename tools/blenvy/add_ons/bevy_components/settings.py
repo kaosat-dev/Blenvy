@@ -82,6 +82,21 @@ class ComponentsSettings(PropertyGroup):
         get=lambda self: os.path.abspath(os.path.join(bpy.context.window_manager.blenvy.assets_path_full, self.schema_path))
     ) # type: ignore
 
+
+    brp_host: StringProperty(
+        name="brp host",
+        description="host to use for the bevy remote protocol connection",
+        default="http://127.0.0.1",
+        update=save_settings
+    )# type: ignore
+
+    brp_port: StringProperty(
+        name="brp port",
+        description="port to use for the bevy remote protocol connection",
+        default="15702",
+        update=save_settings
+    )# type: ignore
+
     watcher_enabled: BoolProperty(name="Watcher_enabled", default=True, update=toggle_watcher)# type: ignore
     watcher_active: BoolProperty(name = "Flag for watcher status", default = False)# type: ignore
 
