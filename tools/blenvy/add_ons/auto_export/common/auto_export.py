@@ -54,14 +54,12 @@ def auto_export(changes_per_scene, changes_per_collection, changes_per_material,
             bpy.context.window_manager.blueprints_registry.add_blueprint(blueprint)
         #bpy.context.window_manager.blueprints_registry.refresh_blueprints()
 
+        
         if match_blender_visuals:
+            pass
             # inject/ update scene components
-            upsert_scene_components(settings.level_scenes)
-        #inject/ update light shadow information
-        for light in bpy.data.lights:
-            enabled = 'true' if light.use_shadow else 'false'
-            # TODO: directly set relevant components instead ?
-            light['BlenderLightShadows'] = f"(enabled: {enabled}, buffer_bias: {light.shadow_buffer_bias})"
+            match_blender_visuals_in_bevy()
+       
 
         # export
         if export_blueprints_enabled:
