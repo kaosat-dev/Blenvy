@@ -4,6 +4,7 @@ from bpy.props import StringProperty, EnumProperty
 from bpy.types import Operator
 from ...core.helpers_collections import set_active_collection
 from .constants import HIDDEN_COMPONENTS
+from .propGroups.utils import (get_long_name, get_short_name, is_component)
 
 def select_area(context, area_name):
     for area in context.screen.areas:
@@ -217,10 +218,10 @@ def add_component_to_ui_list(self, context, _):
         type_infos = context.window_manager.components_registry.type_infos
         for long_name in type_infos.keys():
             definition = type_infos[long_name]
-            short_name = definition["short_name"]
-            is_component = definition['isComponent']  if "isComponent" in definition else False
+            short_name = get_short_name(definition)
+            is_a_component = is_component(definition)
             """if self.filter.lower() in short_name.lower() and is_component:"""
-            if is_component and not 'Handle' in short_name and not "Cow" in short_name and not "AssetId" in short_name and short_name not in HIDDEN_COMPONENTS: # FIXME: hard coded, seems wrong
+            if is_a_component and not 'Handle' in short_name and not "Cow" in short_name and not "AssetId" in short_name and short_name not in HIDDEN_COMPONENTS: # FIXME: hard coded, seems wrong
                 items.append((long_name, short_name))
         items.sort(key=lambda a: a[1])
         return items

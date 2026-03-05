@@ -1,3 +1,6 @@
+import base64
+import hashlib
+
 import bpy
 import json
 import os
@@ -9,6 +12,12 @@ from ..components.metadata import ComponentMetadata
 from .hashing.tiger import hash as tiger_hash
 from .brp import brp_request
 
+def hash_type_path(data):
+    m = hashlib.md5(data.encode('ascii'))
+    base64_bytes = base64.b16encode(m.digest())
+    output = base64_bytes.decode("ascii")
+    return "SKEIN_" + output
+
 
 # helper class to store missing bevy types information
 class MissingBevyType(bpy.types.PropertyGroup):
@@ -18,7 +27,7 @@ class MissingBevyType(bpy.types.PropertyGroup):
 
 
 def property_group_from_infos(property_group_name, property_group_parameters):
-    # print("creating property group", property_group_name)
+    print("creating property group", property_group_name)
     property_group_class = type(property_group_name, (PropertyGroup,), property_group_parameters)
     
     bpy.utils.register_class(property_group_class)
@@ -215,16 +224,28 @@ class ComponentsRegistry(PropertyGroup):
         data = brp_response["result"]
 
         # FIXME: temporary stop gap solution for compatibility with the rest of the code
+        filtered_data = {}
         for key in data :
-            data[key]["long_name"] = data[key]["typePath"]
-            data[key]["short_name"] = data[key]["shortPath"]
-        self.registry = json.dumps(data)
+            is_component = "reflectTypes" in data[key] and "Component" in data[key]["reflectTypes"]
+            filtered_data[key] = data[key]
+            filtered_data[key]["isComponent"] = is_component
+            #filtered_data[key]["long_name"] = data[key]["typePath"]
+            #filtered_data[key]["short_name"] = data[key]["shortPath"]
+
+        huge_string = "sdfddddddsffffffffffffffffffffffsdffffffffffffffffffffdsffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"
+        
+        hashed = hash_type_path(huge_string)
+        print("HASHED", hashed)
+
+        self.registry = json.dumps(filtered_data)
+        #print("registry info", filtered_data)
         #print("RPC RESPONSE SCHEMA", data)
 
         trigger_event_response =  brp_request("world.trigger_event", host, port, {"event":"blenvy::remote::PlayerKilled"}) 
         print("trigger_event_response", trigger_event_response)
 
-        trigger_event_response =  brp_request("world.trigger_event", host, port, {"event":"blenvy::remote::WriteSceneStructure", "value":"{}"}) 
+        tmp = json.dumps({"event":"blenvy::remote::WriteSceneStructure", "value":15})
+        trigger_event_response =  brp_request("world.trigger_event", host, port, {"event":"blenvy::remote::WriteSceneStructure", "value":"a lot of stuff here"}) 
         print("trigger_event_response", trigger_event_response)
 
 

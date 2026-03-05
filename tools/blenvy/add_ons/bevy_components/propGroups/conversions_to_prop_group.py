@@ -185,7 +185,7 @@ def is_def_value_type(definition, registry):
 #converts the value of a single custom property into a value (values) of a property group 
 def property_group_value_from_custom_property_value(property_group, definition, registry, value, nesting = []):
     value_types_defaults = registry.value_types_defaults
-    type_info = definition["typeInfo"] if "typeInfo" in definition else None
+    type_info = definition["kind"] if "kind" in definition else None
     type_def = definition["type"] if "type" in definition else None
     properties = definition["properties"] if "properties" in definition else {}
     prefixItems = definition["prefixItems"] if "prefixItems" in definition else []
@@ -267,11 +267,11 @@ def property_group_value_from_custom_property_value(property_group, definition, 
             try:
                 chosen_variant_raw = regexp.group(1)
                 chosen_variant_value = regexp.group(3)
-                chosen_variant_name = "variant_" + chosen_variant_raw 
+                chosen_variant_name = "var__" + chosen_variant_raw 
             except:
                 chosen_variant_raw = value
                 chosen_variant_value = ""
-                chosen_variant_name = "variant_" + chosen_variant_raw 
+                chosen_variant_name = "var__" + chosen_variant_raw 
             selection_index = property_group.field_names.index(chosen_variant_name)
             variant_definition = definition["oneOf"][selection_index-1]
             # first we set WHAT variant is selected

@@ -1,11 +1,12 @@
 from bpy.props import (StringProperty)
 from . import process_component
+from .utils import (get_long_name, get_short_name)
 
 def process_tupples(registry, definition, prefixItems, update, nesting_long_names=[]):
     value_types_defaults = registry.value_types_defaults 
     blender_property_mapping = registry.blender_property_mapping
     type_infos = registry.type_infos
-    long_name = definition["long_name"]
+    long_name = get_long_name(definition)
 
     nesting_long_names = nesting_long_names + [long_name]
     __annotations__ = {}
@@ -19,7 +20,7 @@ def process_tupples(registry, definition, prefixItems, update, nesting_long_name
        
         if ref_name in type_infos:
             original = type_infos[ref_name]
-            original_long_name = original["long_name"]
+            original_long_name = get_long_name(original)
             is_value_type = original_long_name in value_types_defaults
 
             value = value_types_defaults[original_long_name] if is_value_type else None
@@ -38,7 +39,7 @@ def process_tupples(registry, definition, prefixItems, update, nesting_long_name
                   
                     __annotations__[property_name] = blender_property
             else:
-                original_long_name = original["long_name"]
+                original_long_name = get_long_name(original)
                 (sub_component_group, _) = process_component.process_component(registry, original, update, {"nested": True, "long_name": original_long_name}, nesting_long_names=nesting_long_names)
                 __annotations__[property_name] = sub_component_group
         else: 

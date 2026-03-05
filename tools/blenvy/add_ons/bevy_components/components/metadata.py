@@ -5,6 +5,7 @@ from bpy.types import (PropertyGroup)
 from ..propGroups.conversions_from_prop_group import property_group_value_to_custom_property_value
 from ..propGroups.conversions_to_prop_group import property_group_value_from_custom_property_value
 from ..utils import add_component_to_ui_list
+from ..propGroups.utils import (get_long_name, get_short_name)
 
 class ComponentMetadata(bpy.types.PropertyGroup):
     short_name : bpy.props.StringProperty(
@@ -177,18 +178,21 @@ def add_component_to_item_without_registry():
 
 # adds a component to an item (including metadata) using the provided component definition & optional value
 def add_component_to_item(item, component_definition, value=None):
+    print("add component", item, component_definition, value)
     warnings = []
     cleanup_invalid_metadata(item)
     if item is not None:
         # print("add_component_to_item", component_definition)
-        long_name = component_definition["long_name"]
+        long_name = get_long_name(component_definition)
         registry = bpy.context.window_manager.components_registry
         if not registry.has_type_infos():
             raise Exception('registry type infos have not been loaded yet or are missing !')
         definition = registry.type_infos[long_name]
+        print("definition", definition)
         # now we use our pre_generated property groups to set the initial value of our custom property
         (_, propertyGroup) = upsert_component_in_item(item, long_name=long_name, registry=registry)
         if value == None:
+            print("infering value")
             value = property_group_value_to_custom_property_value(propertyGroup, definition, registry, None)
         else: # we have provided a value, that is a raw , custom property value, to set the value of the propertyGroup
             item["__disable__update"] = True # disable update callback while we set the values of the propertyGroup "tree" (as a propertyGroup can contain other propertyGroups) 
@@ -208,8 +212,8 @@ def upsert_component_in_item(item, long_name, registry):
     target_components_metadata = item.components_meta.components
     component_definition = registry.type_infos.get(long_name, None)
     if component_definition is not None:
-        short_name = component_definition["short_name"]
-        long_name = component_definition["long_name"]
+        short_name = get_short_name(component_definition)
+        long_name = get_long_name(component_definition)
         property_group_name = registry.get_propertyGroupName_from_longName(long_name)
         propertyGroup = None
 

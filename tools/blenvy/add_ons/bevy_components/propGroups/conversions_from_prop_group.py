@@ -1,4 +1,5 @@
 from bpy.types import PropertyGroup
+from .utils import (get_long_name)
 
 conversion_tables = {
     "bool": lambda value: value,
@@ -30,8 +31,8 @@ conversion_tables = {
 #converts the value of a property group(no matter its complexity) into a single custom property value
 # this is more or less a glorified "to_ron()" method (not quite but close to)
 def property_group_value_to_custom_property_value(property_group, definition, registry, parent=None, value=None):
-    long_name = definition["long_name"]
-    type_info = definition["typeInfo"] if "typeInfo" in definition else None
+    long_name = get_long_name(definition)
+    type_info = definition["kind"] if "kind" in definition else None
     type_def = definition["type"] if "type" in definition else None
     is_value_type = long_name in conversion_tables
     # print("computing custom property: component name:", long_name, "type_info", type_info, "type_def", type_def, "value", value)
@@ -92,7 +93,7 @@ def property_group_value_to_custom_property_value(property_group, definition, re
     elif type_info == "Enum":
         selected = getattr(property_group, "selection")
         if type_def == "object":
-            selection_index = property_group.field_names.index("variant_"+selected)
+            selection_index = property_group.field_names.index("var__"+selected)
             variant_name = property_group.field_names[selection_index]
             variant_definition = definition["oneOf"][selection_index-1]
             if "prefixItems" in variant_definition:

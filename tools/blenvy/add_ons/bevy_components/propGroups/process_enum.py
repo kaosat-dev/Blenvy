@@ -1,11 +1,12 @@
 from bpy.props import (StringProperty)
 from . import process_component
+from .utils import (get_long_name)
 
 def process_enum(registry, definition, update, nesting_long_names):
     blender_property_mapping = registry.blender_property_mapping
-    long_name = definition["long_name"]
-
+    long_name = get_long_name(definition)
     type_def = definition["type"] if "type" in definition else None
+
     variants = definition["oneOf"]
 
     nesting_long_names = nesting_long_names + [long_name]
@@ -13,16 +14,17 @@ def process_enum(registry, definition, update, nesting_long_names):
     __annotations__ = {}
     original_type_name = "enum"
 
-    #print("processing enum", long_name)#, definition)
+    print("processing enum", long_name, variants)#, definition)
 
     if type_def == "object":
         labels = []
         additional_annotations = {}
         for variant in variants:
-            variant_name = variant["long_name"]
-            variant_prefixed_name = "variant_" + variant_name
+            variant_name = get_long_name(variant)
+            variant_prefixed_name = "var__" + variant_name
             labels.append(variant_name)
 
+            '''
             if "prefixItems" in variant:
                 #print("tupple variant in enum", variant)
                 registry.add_custom_type(variant_name, variant)
@@ -35,8 +37,9 @@ def process_enum(registry, definition, update, nesting_long_names):
                 additional_annotations[variant_prefixed_name] = sub_component_group
             else: # for the cases where it's neither a tupple nor a structs: FIXME: not 100% sure of this
                 #print("other variant in enum")
-                annotations = {"variant_"+variant_name: StringProperty(default="----<ignore_field>----")}
+                annotations = {"var__"+variant_name: StringProperty(default="----<ignore_field>----")}
                 additional_annotations = additional_annotations | annotations
+            '''
 
         items = tuple((e, e, e) for e in labels)
 

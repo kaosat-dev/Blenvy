@@ -128,7 +128,7 @@ class BLENVY_OT_component_map_actions(Operator):
                 else:
                     selection = getattr(value_setter, "selection", None)
                     setattr(value, 'selection', selection)
-                    selector = "variant_" + selection
+                    selector = "var__" + selection
                     try:
                         val = getattr(value_setter, selector, None)
                         for field_name in val.field_names:

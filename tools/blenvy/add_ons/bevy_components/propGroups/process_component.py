@@ -6,12 +6,12 @@ from . import process_tupples
 from . import process_enum
 from . import process_list
 from . import process_map
+from .utils import (get_long_name, get_short_name)
 
 def process_component(registry, definition, update, extras=None, nesting_long_names = []):
-    long_name = definition['long_name']
-    short_name = definition["short_name"]
-    type_info = definition["typeInfo"] if "typeInfo" in definition else None
-    type_def = definition["type"] if "type" in definition else None
+    long_name = get_long_name(definition)
+    short_name = get_short_name(definition)
+    type_info = definition["kind"] if "kind" in definition else None
     properties = definition["properties"] if "properties" in definition else {}
     prefixItems = definition["prefixItems"] if "prefixItems" in definition else []
 

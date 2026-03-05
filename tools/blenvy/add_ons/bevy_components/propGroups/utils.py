@@ -6,6 +6,20 @@ import bpy
 from bpy.props import (StringProperty)
 from bpy.types import PropertyGroup
 
+def get_long_name(definition):
+    long_name = definition["long_name"] if "long_name" in definition else definition["typePath"]
+    return long_name
+
+def get_short_name(definition):
+    long_name = definition["short_name"] if "short_name" in definition else definition["shortPath"]
+    return long_name
+
+def is_component(definition):
+    is_component = "reflectTypes" in definition and "Component" in definition["reflectTypes"]
+    # else False
+    return is_component
+
+
 # this helper creates a "fake"/wrapper property group that is NOT a real type in the registry
 # usefull for things like value types in list items etc
 def generate_wrapper_propertyGroup(wrapped_type_long_name, item_long_name, definition_link, registry, update, nesting_long_names=[]):
@@ -33,7 +47,7 @@ def generate_wrapper_propertyGroup(wrapped_type_long_name, item_long_name, defin
         "short_name": wrapper_name, # FIXME !!!
         "long_name": wrapper_name,
         "type": "array",
-        "typeInfo": "TupleStruct"
+        "kind": "TupleStruct"
     }
 
     # we generate a very small 'hash' for the component name
