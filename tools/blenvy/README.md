@@ -69,8 +69,8 @@ you **need** to tell Blenvy
 
 Blenvy is opinionated ! 
 
-  - keep you art/sources (usually not delivered with your game) seperate from your game assets
-  - keep your blueprints/levels/materials gltf files seperate
+  - keep you art/sources (usually not delivered with your game) separate from your game assets
+  - keep your blueprints/levels/materials gltf files separate
 
 ##### Root Folder (default: ../)
 
@@ -103,11 +103,11 @@ Blenvy is opinionated !
 
 #### Recomended folder structure
 
-![recomended folder structure](./docs/blenvy_recommended_folder_structure.png)
+![recommended folder structure](./docs/blenvy_recommended_folder_structure.png)
 
-![recomended folder structure art](./docs/blenvy_recommended_folder_structure_art.png)
+![recommended folder structure art](./docs/blenvy_recommended_folder_structure_art.png)
 
-![recomended folder structure assets](./docs/blenvy_recommended_folder_structure_assets.png)
+![recommended folder structure assets](./docs/blenvy_recommended_folder_structure_assets.png)
 
 
 ##### Components & export settings:
@@ -118,7 +118,7 @@ Blenvy is opinionated !
 
 ### Multiple blend file workflow
 
-If you want to use multiple blend files (recomended if your project starts to grow even a bit), use Blender's asset library etc, we got you coverred too !
+If you want to use multiple blend files (recommended if your project starts to grow even a bit), use Blender's asset library etc, we got you coverred too !
 There are only a few things to keep in mind 
 
 #### Assets/library/blueprints files
@@ -127,11 +127,11 @@ There are only a few things to keep in mind
 - choose "split" for the combine mode (as you want your gltf blueprints to be saved for external use)
 - do your Blender things as normal
 - anytime you save your file, it will automatically export any relevant collections/blueprints
-- (optional) activate the **material library** option, so you only have one set of material per asset library (recomended)
+- (optional) activate the **material library** option, so you only have one set of material per asset library (recommended)
 
 #### Level/world files
 - mark your level scenes as specified above ( personally I recommended **NOT** specifying a **library** scene in this case to keep things tidy, but that is up to you)
-- configure your asset libraries as you would usually do, I recomend using the "link" mode so that any changes to asset files are reflected correctly
+- configure your asset libraries as you would usually do, I recommend using the "link" mode so that any changes to asset files are reflected correctly
 - drag & drop any assets from the blueprints library (as you would normally do in Blender as well)
 - choose "split" for the combine mode (as you want your gltf blueprints to be external usually & use the gltf files generated from your assets library)
 - do your Blender things as normal
@@ -159,13 +159,13 @@ Take a look at the [relevant](../../examples/demo/) example for more [details](.
 - for a detailed overview of blueprints please see [here](./README-blueprints.md)
 
 > [!TIP]
-> you can right click on a Blueprint instance in your level scenes or press SHIFT  + F to edit a Blueprint in a seperate temprary scene !
+> you can right click on a Blueprint instance in your level scenes or press SHIFT  + F to edit a Blueprint in a separate temprary scene !
 > you can right click or press SHIFT + F to create a new empty Blueprint and an instance of it from your main scenes
 > right click again & select the option to stop editing it, or 
 
 ## Development 
 
-- I highly recomend (if you are using vscode like me) to use 
+- I highly recommend (if you are using vscode like me) to use 
 [this](https://marketplace.visualstudio.com/items?itemName=JacquesLucke.blender-development) excellent extension , works easilly and fast , even for the latest 
 versions of Blender (v4.0 as of this writing)
 - this [article](https://polynook.com/learn/set-up-blender-addon-development-environment-in-windows) might also help out 

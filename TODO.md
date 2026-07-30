@@ -60,7 +60,7 @@ Components:
     - [x] add handling for core::ops::Range<f32> & other ranges
     - [x] fix is_component_valid that is used in blenvy 
     - [x] Hashmap Support
-        - [x] fix parsing of keys's type either on Bevy side (prefered) or on the Blender side 
+        - [x] fix parsing of keys's type either on Bevy side (preferred) or on the Blender side 
         - [x] fix weird issue with missing "0" property when adding new entry in empty hashmap => happens only if the values for the "setter" have never been set
         - [x] handle missing types in registry for keys & values
         - [x] adding a hashmap nukes every existing component ??
@@ -217,7 +217,7 @@ Blender side:
                map asset id => [entity ids]
 
 - [ ] add option to 'split out' meshes from blueprints ? 
-    - [ ] ie considering meshletts etc , it would make sense to keep blueprints seperate from purely mesh gltfs
+    - [ ] ie considering meshletts etc , it would make sense to keep blueprints separate from purely mesh gltfs
 
 - [ ] materials fixes & upgrades
     - [x] materials do not get exported again if the files are missing, until you change a material
@@ -301,7 +301,7 @@ Bevy Side:
     - [x] move sub blueprint handling to blueprints_finalize_instances
 - [x] look into component overriding , it seems broken:
     - [x] blueprint level/ collection level components are now visible in instances in Blender
-    - [x] they do not seem to be transfered to the (instance) entity above:
+    - [x] they do not seem to be transferred to the (instance) entity above:
         could they be on the "empty node" ? 
 
 - [ ] simplify testing example:

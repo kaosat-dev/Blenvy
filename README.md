@@ -11,7 +11,7 @@ Crates & tools for adding components from gltf files in the [Bevy](https://bevye
 It enables a [Blender](https://www.blender.org/) (gltf) centric workflow for Bevy, ie defining entites & their components
 inside Blender. Aka "Blender as editor for Bevy"
 
-It also allows you to setup 'blueprints' in Blender by using collections (the recomended way to go most of the time), or directly on single use objects .
+It also allows you to setup 'blueprints' in Blender by using collections (the recommended way to go most of the time), or directly on single use objects .
 
 
 > [!CAUTION]

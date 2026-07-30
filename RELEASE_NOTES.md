@@ -15,7 +15,7 @@ Here is a rundown + rationale behing the changes:
                 * the gltf UI & settings will always keep up with the official releases
                 * less maintenance work
 
-            The only disadvantage is that the standard gltf exporter is a normal exporter, so it generates a 'fake' gltf file that immediatly gets deleted after export, 
+            The only disadvantage is that the standard gltf exporter is a normal exporter, so it generates a 'fake' gltf file that immediately gets deleted after export, 
             so you will need to use the new side panel to set your gltf settings:
              * this is also done to ensure that the gltf settings settings used for auto export are NOT interfering with the ones you might use when exporting gltf files normally
 
@@ -29,7 +29,7 @@ Here is a rundown + rationale behing the changes:
         - improved handling of multi-blend file projects
             Up until now, all export paths where relative ** to the blend file itself** which could lead to issues when working with multiple blend files
             Also for future improvements regarding assets managment, I changed the export paths to be relative to a new "project root" folder which is your *Bevy project's root folder*
-            - the levels/worlds now also got a seperate setting so you can easilly set where to export them too (they are not dumped out into the main export folder anymore), giving you more control over your non blueprint exports
+            - the levels/worlds now also got a separate setting so you can easilly set where to export them too (they are not dumped out into the main export folder anymore), giving you more control over your non blueprint exports
 
     - bevy_components
         Up until now , it was not possible to have multiple components with the same name (ie ) as all the logic was based on short names
