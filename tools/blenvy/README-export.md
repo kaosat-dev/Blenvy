@@ -48,8 +48,8 @@ you can turn this off
 
 select which option you want to use to deal with collection instances (aka combine mode) (both inside blueprint collections & main collections)
 
-  * split (default, highly recomended) : the addon will 'split out' any nested collections/ blueprints & export them
-  * embed: choose this option if you want to keep everything inside a gltf file (less efficient, not recomended)
+  * split (default, highly recommended) : the addon will 'split out' any nested collections/ blueprints & export them
+  * embed: choose this option if you want to keep everything inside a gltf file (less efficient, not recommended)
   * embedExternal: this will embed ONLY collection instances whose collections have not been found inside the current blend file
 
   These options can also be **overridden** on a per collection instance basis: (if you want to split out most collection instances, but keep a few specific ones embeded
@@ -67,7 +67,7 @@ For levels scenes only, toggle this to generate 2 files per level:
   - one with all dynamic data: collections or instances marked as dynamic (aka saveable)
   - one with all static data: anything else that is NOT marked as dynamic, the file name will have the suffix **_dynamic**
 
-  Ie if you add a **Dynamic** custom/ component to either your collection instances or your blueprint, you get a clean seperation between 
+  Ie if you add a **Dynamic** custom/ component to either your collection instances or your blueprint, you get a clean separation between 
 
   - your static level data (anything that will never change during the lifetime of your Bevy app)
   - your dynamic objects (anything that will change during the lifetime of your Bevy app, that can be saved & reloaded in save files for example)

@@ -1,7 +1,7 @@
 # Blender add-ons
 
-- gltf_auto_export and bevy_components have been replaced with a single Blenvy add-on for simplicity , I recomend reading the [documentation](./tools/blenvy/README.md)
-    * settings are **not** transfered from the legacy add-ons !
+- gltf_auto_export and bevy_components have been replaced with a single Blenvy add-on for simplicity , I recommend reading the [documentation](./tools/blenvy/README.md)
+    * settings are **not** transferred from the legacy add-ons !
     * first uninstall the old add-ons
     * install Blenvy
     * configure Blenvy (for these , see the Blenvy add-on docs)
@@ -127,7 +127,7 @@ you can now query for this component
 ## Keep your currently spawning blueprint instances hidden until they are ready with the HideUntilReady component
 
 If you want your blueprint instance to be hidden until it is ready, just add this component to the entity.
-This can be particularly usefull in at least two use cases:
+This can be particularly useful in at least two use cases:
 - when spawning levels 
 - when spawning bluprint instances that contain **lights** at runtime: in previous versions I have noticed some very unpleasant "flashing" effect when spawning blueprints with lights,
 this component avoids that issue  

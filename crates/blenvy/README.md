@@ -23,7 +23,7 @@ Its main use case is as a backbone for the [```blenvy``` Blender add-on](https:/
 (and any of your custom types & components that you register in Bevy).
 - adds the ability to easilly **save** and **load** your game worlds for [Bevy](https://bevyengine.org/) .
 
-* leverages blueprints & seperation between 
+* leverages blueprints & separation between 
     * **dynamic** entities : entities that can change during the lifetime of your app/game
     * **static** entities : entities that do NOT change (typically, a part of your levels/ environements)
 * and allows allow for :
@@ -33,7 +33,7 @@ Its main use case is as a backbone for the [```blenvy``` Blender add-on](https:/
     * ability to specify **which resources** to save or to exclude
     * small(er) save files (only a portion of the entities is saved)
 
-Particularly useful when using [Blender](https://www.blender.org/) as an editor for the [Bevy](https://bevyengine.org/) game engine, combined with the [Blender plugin](https://github.com/kaosat-dev/Blenvy/tree/main/tools/blenvy) that does a lot of the work for you (including spliting generating seperate gltf files for your static vs dynamic assets)
+Particularly useful when using [Blender](https://www.blender.org/) as an editor for the [Bevy](https://bevyengine.org/) game engine, combined with the [Blender plugin](https://github.com/kaosat-dev/Blenvy/tree/main/tools/blenvy) that does a lot of the work for you (including spliting generating separate gltf files for your static vs dynamic assets)
 
 ## Usage
 
@@ -203,7 +203,7 @@ There is also a ```BluePrintBundle``` for convenience , which just has
 - this crate also provides a special optional ```GameWorldTag``` component: this is useful when you want to keep all your spawned entities inside a root entity
 
 You can use it in your queries to add your entities as children of this "world"
-This way all your levels, your dynamic entities etc, are kept seperated from UI nodes & other entities that are not relevant to the game world
+This way all your levels, your dynamic entities etc, are kept separated from UI nodes & other entities that are not relevant to the game world
 
 > Note: you should only have a SINGLE entity tagged with that component !
 

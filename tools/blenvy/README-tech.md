@@ -5,7 +5,7 @@ You can enable this option to automatically replace all the **collection instanc
     * will be replaced with empties (this will not be visible to you)
     * those empties will have additional custom properties / components : ```BlueprintInfo``` & ```SpawnBlueprint```
     * your level scene/ level will be exported to a much more trimmed down gltf file (see next point)
-    * all the original collections (that you used to create the instances) will be exported as **seperate gltf files** into the "library" folder
+    * all the original collections (that you used to create the instances) will be exported as **separate gltf files** into the "library" folder
 
 - this means you will have 
     * one small main gltf file (your level/world)

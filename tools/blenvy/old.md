@@ -61,7 +61,7 @@ This issue has been resolved in v0.9.
 
 #### Collection instances & Nested blueprints
 
-To maximise reuse of meshes/components etc, you can also nest ***collections instances*** inside collections (as normally in Blender), but also export each nested Blueprint as a seperate blueprints.
+To maximise reuse of meshes/components etc, you can also nest ***collections instances*** inside collections (as normally in Blender), but also export each nested Blueprint as a separate blueprints.
 
 > Don't forget to choose the relevant option in the exporter settings (aka **"split"**)
 
@@ -130,7 +130,7 @@ generate the corresponding component for you:
 ### Existing components & custom properties
 
 * If you already have components defined manualy in Blender inside **custom properties** you will need to define them again using the UI!
-* avoid mixing & matching: if you change the values of **custom properties** that also have a component, the custom property will be **overriden** every time
+* avoid mixing & matching: if you change the values of **custom properties** that also have a component, the custom property will be **overridden** every time
 you change the component's value
 * you can of course still use non component custom properties as always, this add-on will only impact those that have corresponding Bevy components
 

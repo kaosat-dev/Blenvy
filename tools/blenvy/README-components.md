@@ -34,7 +34,7 @@ The second tab in the settings contains the component settings:
   * hashmaps
   * etc !
 
-![suported types](./docs/components_suported_types.png)
+![supported types](./docs/components_suported_types.png)
 
 ## Supported items for components
 
@@ -184,6 +184,6 @@ of your Bevy components you get a nicely packed custom_property
 - changing the values of a component in the UI  will automatically update the value of the underlying entry in the ```bevy_components``` custom property
 - different item types in Blender result in different types of GltfExtra components in Bevy (this all happens under the hood):
   - objects : GltfExtras
-  - collections/ blueprints: SceneGltfExtras (as the Blueprints get exported as seperate scenes)
+  - collections/ blueprints: SceneGltfExtras (as the Blueprints get exported as separate scenes)
   - meshes: MeshGltfExtras
   - materials: MaterialGltfExtras
