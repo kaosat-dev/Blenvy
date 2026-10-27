@@ -217,7 +217,7 @@ Blender side:
                map asset id => [entity ids]
 
 - [ ] add option to 'split out' meshes from blueprints ? 
-    - [ ] ie considering meshletts etc , it would make sense to keep blueprints seperate from purely mesh gltfs
+    - [ ] ie considering meshletts etc , it would make sense to keep blueprints separate from purely mesh gltfs
 
 - [ ] materials fixes & upgrades
     - [x] materials do not get exported again if the files are missing, until you change a material
